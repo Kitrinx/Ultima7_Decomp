@@ -37,7 +37,7 @@ void WaitForTextClick(void);
 void ClearSpeakerText(void);
 void ClearTextBox(int16_t n);
 void GetTextBoxSize(int16_t *width, int16_t *lines);
-void GetTextCharWidth(int8_t c);
+int16_t GetTextCharWidth(int8_t c);
 void ShowSignGump(int16_t shape, char *text);
 void EndConversation(void);
 void RunOptionsLoop(void);

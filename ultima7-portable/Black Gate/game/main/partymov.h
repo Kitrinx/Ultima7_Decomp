@@ -11,8 +11,8 @@
 /* The party and the eight compass directions. */
 extern char DirectionDX[8], DirectionDY[8];
 extern char DirectionBySign[3][3];
-extern objref PartyMembers[8];         /* defined as NPCRef; includers compile against objref */
-extern objref DownedPartyMembers[16];
+extern "C" objref PartyMembers[8];         /* defined as NPCRef; includers compile against objref */
+extern "C" objref DownedPartyMembers[16];
 extern int8_t PartySize, DownedPartyCount;
 
 void UpdatePartyFollow(void);

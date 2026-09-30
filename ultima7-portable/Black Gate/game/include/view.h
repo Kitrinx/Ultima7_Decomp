@@ -26,7 +26,7 @@ struct View {
 	}
 };
 
-extern View ScreenView;
+extern "C" View ScreenView;
 extern View Viewport;
 
 #ifdef __cplusplus

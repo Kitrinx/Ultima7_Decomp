@@ -116,7 +116,7 @@ void CheckItemHandle(uint16_t handle);
 void CheckItemLists(void);
 void ReportBadFreeList(char *file, int16_t line);
 
-extern uint8_t *ItemBufferBase;
+extern "C" uint8_t *ItemBufferBase;
 extern int16_t OffMapItemLink;
 extern int16_t ChunkItemLists[4][16][16];
 extern int16_t UnusedItemGlobal;

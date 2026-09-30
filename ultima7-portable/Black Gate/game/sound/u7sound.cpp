@@ -417,13 +417,16 @@ SoundChannel * AllocateSfxChannel(uint8_t number)
 	return selected;
 }
 
-/* Callers declare number as unsigned char, so its high byte is whatever AH held. */
+/* Callers declare number as unsigned char, so its high byte was whatever AH held. Only the low
+ * byte is kept: the rest is undefined on x64 Windows, and a stray high byte in the voice id
+ * leaves StopSfx unable to find a looping effect (the moongate hum never stopped). */
 extern "C" void PlaySfx(int16_t number, int16_t volume, int16_t pan, int16_t flags)
 {
 	uint8_t other;
 	int16_t v;
 	SoundChannel *c;
 
+	number = (uint8_t) number;
 	if (!SfxEnabled)
 		return;
 	if ((uint8_t) number >= SFX_COUNT)

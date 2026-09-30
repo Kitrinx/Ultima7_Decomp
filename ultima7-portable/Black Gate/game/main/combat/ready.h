@@ -8,9 +8,10 @@
 /* One READY.DAT record: where a type is worn or held. */
 struct ReadyRecord {
 	int16_t type;
-	uint16_t spell : 1, unusedBits : 2, slot : 5;
+	uint8_t spell : 1, unusedBits : 2, slot : 5;
 	char unusedTail[6];
 };
+static_assert(sizeof(ReadyRecord) == 9, "ReadyRecord is read from a 9-byte file record");
 
 /* Ready records: 9-byte records in voodoo memory, the last one read kept in current. */
 struct ReadyTable {

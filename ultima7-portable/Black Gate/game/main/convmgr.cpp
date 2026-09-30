@@ -436,9 +436,10 @@ void GetTextBoxSize(int16_t *width, int16_t *lines)
 	*lines = TextBoxes[SpeakingFace]->lines();
 }
 
-void GetTextCharWidth(int8_t c)
+/* Declared void in the original, but callers use the width left in AX. */
+int16_t GetTextCharWidth(int8_t c)
 {
-	YellowTextPrinter.charWidth(c);
+	return YellowTextPrinter.charWidth(c);
 }
 
 /* show a gump with a message until the player clicks */

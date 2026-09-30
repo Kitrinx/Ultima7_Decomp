@@ -71,7 +71,7 @@ struct MonsterRef {
 	MonsterRecord *operator->() { return MonsterRecords.get(index); }
 };
 
-extern uint8_t AvatarDontMove;
+extern "C" uint8_t AvatarDontMove;
 extern uint8_t OinkMode;
 extern int16_t ActiveSailor;
 extern int16_t CurrentVehicle;

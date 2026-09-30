@@ -37,8 +37,6 @@
 
 ProportionalTextPrinter InventoryTextPrinter;
 
-inline objref Gump::object() { return displayed; }
-
 struct PointOffset { int16_t x, y; };
 
 /* where each equipment slot sits on the paperdoll */

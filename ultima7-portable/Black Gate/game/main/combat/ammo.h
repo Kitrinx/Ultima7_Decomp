@@ -12,14 +12,15 @@ struct AmmoRecord {
 	int16_t family;
 	int16_t projectile;
 	int8_t damage;
-	uint16_t lucky : 1, autoHit : 1, returns : 1, passesBlockers : 1, removeOnStop : 1, keepOnStop : 1, explodes : 1,
+	uint8_t lucky : 1, autoHit : 1, returns : 1, passesBlockers : 1, removeOnStop : 1, keepOnStop : 1, explodes : 1,
 		unusedFlag : 1;
 	uint8_t unusedByte;
-	uint16_t unusedBits : 4, damageType : 4;
-	uint16_t sleep : 1, charm : 1, curse : 1, poison : 1, paralyze : 1, drainMana : 1, drainHealth : 1,
+	uint8_t unusedBits : 4, damageType : 4;
+	uint8_t sleep : 1, charm : 1, curse : 1, poison : 1, paralyze : 1, drainMana : 1, drainHealth : 1,
 		noDamage : 1;
 	char unusedTail[2];
 };
+static_assert(sizeof(AmmoRecord) == 13, "AmmoRecord is read from a 13-byte file record");
 
 /* Ammunition records: 13-byte records in voodoo memory, the last one read kept in current. */
 struct AmmoTable {

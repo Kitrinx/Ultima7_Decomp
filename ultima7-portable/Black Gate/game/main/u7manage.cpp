@@ -56,7 +56,7 @@ inline uint8_t IsDiscardable(int16_t i) { return (BlockSlotKeys[i] & 0x8000) == 
 
 RecordCache ShapeCache;
 int16_t BlockSlotKeys[40];
-extern View ScreenView;
+extern "C" View ScreenView;
 extern View Viewport;
 
 extern "C" int8_t TestShapeHit(int32_t, int16_t, const Point *, const Point *, int16_t);

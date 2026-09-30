@@ -48,7 +48,7 @@ void AddPartyToCollision(void);
 extern Coord Item_getX(objref &);
 extern Coord Item_getY(objref &);
 extern uint8_t Item_forceMove(objref *, Loc, Loc, int16_t);
-extern uint8_t Item_forceMove(objref *, uint8_t, int16_t);
+extern void Item_forceMove(objref *, uint8_t, int16_t);
 extern uint8_t Item_getQualityFlags(objref *);
 extern int16_t IsWorldPosOnScreen(Coord a, Coord b);
 extern uint8_t Item_move(objref *, Loc, Loc, int16_t);
@@ -104,8 +104,11 @@ char DirectionBySign[3][3] = { { 7, 6, 5 }, { 0, -1, 4 }, { 1, 2, 3 } };
 /* DirectionBySign row for each direction. */
 char DirectionSignRow[8] = { 0, 0, 1, 2, 2, 2, 1, 0 };
 
+/* C names, as partymov.h declares them as objref. */
+extern "C" {
 NPCRef PartyMembers[8];
 NPCRef DownedPartyMembers[16];
+}
 int8_t PartySize = 0;
 int8_t DownedPartyCount = 0;
 int8_t PartyFacing = 0;

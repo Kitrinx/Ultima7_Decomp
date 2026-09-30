@@ -511,3 +511,79 @@ int16_t plat_find_first(const char *pattern, plat_find *find)
 	find->state = list_matches(pattern);
 	return plat_find_next(find);
 }
+
+/* ---- Start-up check ---- */
+
+/* STATIC files every game needs. The game stops with its own message when one is missing, but
+ * a wrong folder then reads 'File "STATIC\linkdep1." not found!', and an empty file can show as
+ * an unrelated error (an empty SHAPES.VGA reads "Out of voodoo memory"). */
+static const char *const required_files[] = {
+	"AMMO.DAT", "ARMOR.DAT", "ENDSHAPE.FLX", "EQUIP.DAT", "FACES.VGA", "FONTS.VGA", "GUMPS.VGA",
+	"INITGAME.DAT", "LINKDEP1", "LINKDEP2", "MONSTERS.DAT", "OCCLUDE.DAT", "PALETTES.FLX",
+	"POINTERS.SHP", "READY.DAT", "SCHEDULE.DAT", "SHAPES.VGA", "SHPDIMS.DAT", "SPRITES.VGA",
+	"TEXT.FLX", "TFA.DAT", "U7CHUNKS", "U7MAP", "USECODE", "WEAPONS.DAT", "WGTVOL.DAT",
+	"WIHH.DAT", "XFORM.TBL",
+};
+
+static void append(char *message, size_t size, const char *text)
+{
+	size_t n = strlen(message);
+
+	if (n < size)
+		snprintf(message + n, size - n, "%s", text);
+}
+
+bool files_check_data(char *message, size_t size)
+{
+	char missing[512] = "", empty[512] = "";
+	int missing_count = 0, empty_count = 0;
+
+	message[0] = '\0';
+	if (!is_dir(root)) {
+		snprintf(message, size, "The game data folder \"%s\" does not exist.\n\n"
+			"Point the game at your Ultima VII folder with --data <folder> or the U7_DATA "
+			"variable.", root);
+		return false;
+	}
+	if (!plat_dir_exists("STATIC")) {
+		snprintf(message, size, "\"%s\" is not an Ultima VII folder: it has no STATIC folder.\n\n"
+			"Point the game at your Ultima VII folder with --data <folder> or the U7_DATA "
+			"variable.", root);
+		return false;
+	}
+	for (size_t i = 0; i < sizeof required_files / sizeof *required_files; i++) {
+		char name[64];
+		int16_t file;
+		int32_t length;
+
+		snprintf(name, sizeof name, "STATIC\\%s", required_files[i]);
+		file = plat_file_open(name, PLAT_FILE_READ);
+		if (file < 0) {
+			append(missing, sizeof missing, missing_count++ ? ", " : "");
+			append(missing, sizeof missing, required_files[i]);
+			continue;
+		}
+		length = plat_file_length(file);
+		plat_file_close(file);
+		if (length <= 0) {
+			append(empty, sizeof empty, empty_count++ ? ", " : "");
+			append(empty, sizeof empty, required_files[i]);
+		}
+	}
+	if (missing_count == 0 && empty_count == 0)
+		return true;
+
+	snprintf(message, size, "The Ultima VII installation in \"%s\" is incomplete.\n", root);
+	if (missing_count) {
+		append(message, size, "\nMissing from STATIC: ");
+		append(message, size, missing);
+		append(message, size, "\n");
+	}
+	if (empty_count) {
+		append(message, size, "\nEmpty in STATIC: ");
+		append(message, size, empty);
+		append(message, size, "\n");
+	}
+	append(message, size, "\nCopy these files from a complete installation.");
+	return false;
+}

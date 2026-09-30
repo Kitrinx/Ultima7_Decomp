@@ -5,18 +5,23 @@
 #include "objref.h"
 #endif
 
-/* A type's three flag bytes in TFA.DAT. */
+/* A type's three flag bytes in TFA.DAT. File records keep each 8-bit group of bit-fields on a
+ * uint8_t: on a wider type, the Microsoft layout (Windows) starts a new unit where GCC and clang
+ * elsewhere pack on, and the record grows. */
 struct TypeInfo {
-	uint16_t hasSfx:1, strangeMovement:1, animated:1, solid:1, water:1, height:3;
-	uint16_t typeClass:4, field:1, door:1, bargePart:1, transparent:1;
-	uint16_t footprintX:3, footprintY:3, light:1, translucent:1;
+	uint8_t hasSfx:1, strangeMovement:1, animated:1, solid:1, water:1, height:3;
+	uint8_t typeClass:4, field:1, door:1, bargePart:1, transparent:1;
+	uint8_t footprintX:3, footprintY:3, light:1, translucent:1;
 };
-
-extern struct TypeInfo gItemTypeInfo[];
+#ifdef __cplusplus
+static_assert(sizeof(TypeInfo) == 3, "TypeInfo is read from a 3-byte file record");
+#endif
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+extern struct TypeInfo gItemTypeInfo[];
+
 void LoadTfa(char *buf, char *name);
 int16_t GetTypeAnimation(uint16_t type);
 #ifdef __cplusplus

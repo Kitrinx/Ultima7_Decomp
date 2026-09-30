@@ -151,6 +151,10 @@ String &String::operator=(String &s)
 
 String &String::operator=(char *s)
 {
+	/* A null string read from the start of the data segment on DOS, which begins with a zero:
+	 * an empty string. Usecode comparisons pass one (Node::compare, with a number operand). */
+	if (s == 0)
+		s = "";
 	release(str);
 	len = _fstrlen(s);
 	str = allocate(len + 1);

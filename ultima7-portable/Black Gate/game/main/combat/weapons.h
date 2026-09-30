@@ -17,18 +17,19 @@ struct WeaponRecord {
 	int16_t ammo;                       /* ammo family, or -1 none, -2 thrown itself, -3 fires itself */
 	int16_t projectile;
 	int8_t damage;
-	uint16_t lucky : 1, explodes : 1, passesBlockers : 1, consumed : 1, damageType : 4;
-	uint16_t autoHit : 1, uses : 2, range : 5;
-	uint16_t returns : 1, homing : 1, missileSpeed : 2, frameStep : 4;
-	uint16_t meleeReadyFrame : 1, meleeStrikeFrame : 1, rangedReadyFrame : 1, rangedStrikeFrame : 1,
+	uint8_t lucky : 1, explodes : 1, passesBlockers : 1, consumed : 1, damageType : 4;
+	uint8_t autoHit : 1, uses : 2, range : 5;
+	uint8_t returns : 1, homing : 1, missileSpeed : 2, frameStep : 4;
+	uint8_t meleeReadyFrame : 1, meleeStrikeFrame : 1, rangedReadyFrame : 1, rangedStrikeFrame : 1,
 		unusedFlag : 1, speed : 3;
-	uint16_t sleep : 1, charm : 1, curse : 1, poison : 1, paralyze : 1, drainMana : 1, drainHealth : 1,
+	uint8_t sleep : 1, charm : 1, curse : 1, poison : 1, paralyze : 1, drainMana : 1, drainHealth : 1,
 		noDamage : 1;
 	uint8_t unusedByte;
 	int16_t usecode;
 	int8_t sound;
 	char unusedTail[5];
 };
+static_assert(sizeof(WeaponRecord) == 21, "WeaponRecord is read from a 21-byte file record");
 
 /* Weapon records: 21-byte records in voodoo memory, the last one read kept in current. */
 struct WeaponTable {

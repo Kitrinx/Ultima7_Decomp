@@ -57,7 +57,7 @@ struct SaveGump : Control {
 };
 
 extern View Viewport;
-extern View ScreenView;
+extern "C" View ScreenView;
 
 ProportionalTextPrinter SaveSlotTextPrinter;
 

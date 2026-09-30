@@ -24,14 +24,17 @@ ultima7-portable/Black Gate/
 
 ## Requirements
 
-| | macOS (tested) | Linux (builds; not yet run) | Windows (not yet supported) |
+| | macOS (tested) | Linux x64 (tested under WSL2, Ubuntu 24.04) | Windows x64 (tested) |
 | --- | --- | --- | --- |
-| Compiler | Xcode command line tools (clang) | GCC 11+ or clang 14+ | MSVC with nmake |
-| Build tools | CMake 3.20+, make | CMake 3.20+, make | CMake 3.20+ |
+| Compiler | Xcode command line tools (clang) | GCC 11+ or clang 14+ | clang-cl, from Visual Studio 2022 with "C++ Clang tools for Windows" |
+| Build tools | CMake 3.20+, make | CMake 3.20+, make | CMake 3.20+, Ninja and nmake (both come with Visual Studio) |
 | Extra | | `glslangValidator` (Ubuntu/Debian: `glslang-tools`), for libmatoya's shaders | |
 
 On Linux, libmatoya opens X11, OpenGL/Vulkan and ALSA at run time, so a desktop session with
-those libraries installed is needed to play.
+those libraries installed is needed to play. Under WSL, WSLg provides the window, but its sound
+server is PulseAudio only: install `libasound2-plugins` and route ALSA to it with a `~/.asoundrc`
+holding `pcm.!default { type pulse }` and `ctl.!default { type pulse }`, or the game starts with
+"no audio output".
 
 ## Build
 
@@ -40,8 +43,21 @@ cmake -S "ultima7-portable/Black Gate" -B build -DCMAKE_BUILD_TYPE=Release
 cmake --build build --target u7
 ```
 
+On Windows, build from an "x64 Native Tools Command Prompt for VS 2022", with clang-cl (MSVC's
+own `cl` rejects some of the game's C++):
+
+```bat
+cmake -S "ultima7-portable/Black Gate" -B build -G Ninja -DCMAKE_BUILD_TYPE=Release ^
+    -DCMAKE_C_COMPILER=clang-cl -DCMAKE_CXX_COMPILER=clang-cl
+cmake --build build --target u7
+```
+
+libmatoya's makefile relies on `cmd`'s `mkdir`. If Git's `usr\bin` is on `PATH`, nmake runs
+Git's `mkdir` instead and the libmatoya step fails, so build from a prompt without it.
+
 The first build also builds libmatoya (through its own makefile, into
-`third_party/libmatoya/bin/`) and mt32emu (as a CMake subproject). The program is `build/u7`.
+`third_party/libmatoya/bin/`) and mt32emu (as a CMake subproject). The program is `build/u7`
+(`build\u7.exe` on Windows).
 
 Options:
 
@@ -111,10 +127,9 @@ files or building mt32emu as a shared library with `-Dlibmt32emu_SHARED=ON`), an
 
 ## Known limitations
 
-- **Windows** is not supported yet. The backend has Windows file code, but the build has not
-  been tried there.
 - **Null-pointer reads** that the DOS game relied on are served by a fault handler that exists
-  only for arm64 macOS so far (`platform/matoya/nullpage.c`). Elsewhere they crash.
+  only for arm64 macOS, x64 Windows and x64 Linux so far (`platform/matoya/nullpage.c`).
+  Elsewhere (arm64 Linux or Windows, for one) they crash.
 - **AdLib** music is not supported: the AdLib driver inside `U7STRAX.DRV` has not been recovered.
   MT-32 music and speech work.
 - **The main menu, intro and endgame** are separate programs in the original and are not

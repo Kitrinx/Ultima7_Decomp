@@ -2,7 +2,13 @@
 #define DOSIO_H
 
 /* A shared 256-byte buffer for formatting text. */
+#ifdef __cplusplus
+extern "C" {
+#endif
 extern char *WorkString;
+#ifdef __cplusplus
+}
+#endif
 
 /* Report an error code with the caller's address. */
 #ifdef __cplusplus

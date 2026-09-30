@@ -12,7 +12,13 @@ struct VoodooBlock {
 #endif
 };
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 extern struct VoodooBlock VoodooXmsBlock;
+#ifdef __cplusplus
+}
+#endif
 
 #ifdef __cplusplus
 extern "C"

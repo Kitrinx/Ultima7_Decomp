@@ -55,7 +55,7 @@ struct ArmorRecord {
 };
 
 extern int16_t DeadPartyCount;
-extern objref DeadPartyMembers[];
+extern "C" objref DeadPartyMembers[];
 
 extern uint8_t IsTypeBlockedAt(CellCoord x, CellCoord y, int16_t z, TypeFrame typeFrame);
 extern uint8_t ShapeCrossesChunkX(TypeFrame &, uint8_t);

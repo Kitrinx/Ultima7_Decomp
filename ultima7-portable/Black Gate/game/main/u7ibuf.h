@@ -3,8 +3,14 @@
 
 extern uint8_t OinkMode;
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 extern int16_t DeadPartyMembers[12];
 extern uint8_t AvatarDontMove;
+#ifdef __cplusplus
+}
+#endif
 extern uint8_t ArmageddonDone;
 extern int16_t CurrentVehicle;
 extern int16_t ActiveBarge;

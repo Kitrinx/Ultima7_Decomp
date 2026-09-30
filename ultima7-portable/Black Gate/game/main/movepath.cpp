@@ -63,7 +63,7 @@ extern uint16_t GetCursorLength();
 extern uint8_t IsSentient(NPCRef &npc);
 inline uint8_t IsSentient(NPCRef &&npc) { return IsSentient(npc); }
 extern uint8_t Item_detach(objref *ref);
-extern int16_t PlaceItem(objref *, Loc, Loc, int16_t);
+extern uint8_t PlaceItem(objref *, Loc, Loc, int16_t);
 extern int16_t PlaceItem(objref *, Loc, Loc, int8_t);
 extern "C" int16_t Item_greatestDeltaToItem(objref &, objref);
 extern void Item_move(objref *, uint8_t, int16_t);

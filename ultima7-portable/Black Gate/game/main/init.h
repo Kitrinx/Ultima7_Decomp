@@ -26,6 +26,12 @@ void ExitForEndgame(void);
 extern uint8_t PlainErrors;
 
 extern int32_t ViewportFirstRow;
+#ifdef __cplusplus
+extern "C" {
+#endif
 extern int16_t FlatModeFlags;
+#ifdef __cplusplus
+}
+#endif
 
 #endif

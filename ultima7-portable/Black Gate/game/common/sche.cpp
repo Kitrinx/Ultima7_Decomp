@@ -18,6 +18,10 @@ uint8_t Schedule_findEntry(Schedules *s, uint8_t npc, uint8_t time);
 /* Whether NPC npc has an nth entry. */
 uint8_t Schedule_hasEntry(Schedules *s, uint8_t npc, uint8_t n)
 {
+	/* The first save of a new game comes before the schedules are read. DOS then read index
+	 * from the start of the data segment, but count was still 0, so the answer was 0. */
+	if (s->index == 0)
+		return 0;
 	if (s->index[npc] + n >= *(s->index + npc + 1) || (uint16_t)npc >= s->count)
 		return 0;
 	return 1;

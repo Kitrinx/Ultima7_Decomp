@@ -100,7 +100,8 @@ void plat_fatal(const char *message)
 {
 	fprintf(stderr, "u7: %s\n", message);
 	if (on_app_thread) {
-		if (MTY_HasDialogs())
+		/* A scripted run has no one to close the box. */
+		if (MTY_HasDialogs() && !test_input_active())
 			MTY_ShowMessageBox(WINDOW_TITLE, "%s", message);
 		end_process(1);
 	}
@@ -171,7 +172,7 @@ static bool on_frame(void *opaque)
 
 	(void) opaque;
 	if (MTY_Atomic32Get(&fatal_pending)) {
-		if (MTY_HasDialogs())
+		if (MTY_HasDialogs() && !test_input_active())
 			MTY_ShowMessageBox(WINDOW_TITLE, "%s", fatal_text);
 		MTY_Atomic32Set(&exit_code, 1);
 		return false;
@@ -219,11 +220,14 @@ static const char *take_data_dir(int argc, char **argv)
 int main(int argc, char **argv)
 {
 	MTY_Frame frame;
+	char problem[1024];
 
 	on_app_thread = true;
 	nullpage_install();
 	start_time = MTY_GetTime();
 	files_set_root(take_data_dir(argc, argv));
+	if (!files_check_data(problem, sizeof problem))
+		plat_fatal(problem);
 	events_init();
 	video_init();
 	view_lock = MTY_MutexCreate();

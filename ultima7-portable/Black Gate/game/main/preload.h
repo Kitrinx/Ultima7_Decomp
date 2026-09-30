@@ -31,7 +31,7 @@ extern char RolandKeyword[];
 extern char OnKeyword[];
 extern char OffKeyword[];
 extern char CheatPassword[];
-extern uint8_t CheatStart;
+extern "C" uint8_t CheatStart;
 extern SoundConfig SoundSetup;
 #ifdef __cplusplus
 extern "C" {

@@ -6,6 +6,17 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_EXTENSIONS ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+if(WIN32)
+    # MSVC's cl resolves some of the game's operator overloads differently and rejects them;
+    # clang-cl (Visual Studio's "C++ Clang tools for Windows") builds it as clang does elsewhere.
+    if(NOT CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+        message(FATAL_ERROR "On Windows, build with clang-cl: -DCMAKE_C_COMPILER=clang-cl "
+            "-DCMAKE_CXX_COMPILER=clang-cl")
+    endif()
+    # libmatoya's makefile builds with the static runtime (/MT); everything else matches it.
+    set(CMAKE_MSVC_RUNTIME_LIBRARY MultiThreaded)
+endif()
+
 set(U7_GAME_DIR "${CMAKE_CURRENT_SOURCE_DIR}/game")
 set(U7_PLATFORM_DIR "${CMAKE_CURRENT_SOURCE_DIR}/platform")
 set(U7_THIRD_PARTY_DIR "${CMAKE_CURRENT_SOURCE_DIR}/third_party")
@@ -61,7 +72,13 @@ target_include_directories(u7_game PUBLIC
 )
 # The code expects signed char, keeps null tests after a dereference as Borland did, and (C++)
 # passes the address of temporaries, which Borland allowed.
-if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+if(CMAKE_CXX_COMPILER_ID MATCHES "Clang" AND CMAKE_CXX_COMPILER_FRONTEND_VARIANT STREQUAL "MSVC")
+    # clang-cl: char is already signed on Windows.
+    target_compile_options(u7_game PRIVATE
+        -fno-delete-null-pointer-checks
+        -Wno-parentheses -Wno-dangling-else -Wno-pragma-pack
+        $<$<COMPILE_LANGUAGE:CXX>:-Wno-address-of-temporary -Wno-writable-strings>)
+elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     target_compile_options(u7_game PRIVATE
         -fsigned-char -fno-delete-null-pointer-checks
         -Wno-parentheses -Wno-dangling-else -Wno-pragma-pack
@@ -88,6 +105,9 @@ if(U7_BACKEND_MATOYA)
     add_executable(u7 ${U7_MATOYA_SOURCES})
     target_include_directories(u7 PRIVATE "${U7_PLATFORM_DIR}")
     target_link_libraries(u7 PRIVATE u7_game Matoya::matoya mt32emu)
+    if(WIN32)
+        target_link_libraries(u7 PRIVATE dbghelp)       # names null accesses (nullpage.c)
+    endif()
     if(U7_MT32_ROM_DIR)
         target_compile_definitions(u7 PRIVATE U7_DEFAULT_ROM_DIR="${U7_MT32_ROM_DIR}")
     endif()

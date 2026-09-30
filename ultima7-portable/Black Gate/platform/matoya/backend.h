@@ -52,6 +52,8 @@ bool video_write_shot(const char *path);
 
 /* files.c */
 void files_set_root(const char *dir);
+/* Whether the data folder holds the game's files; if not, says what is wrong in message. */
+bool files_check_data(char *message, size_t size);
 
 /* nullpage.c */
 /* Lets the game read and write through null pointers as DOS did; see nullpage.c. */

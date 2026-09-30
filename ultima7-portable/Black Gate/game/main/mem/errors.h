@@ -4,7 +4,7 @@
 /* Called before a fatal error ends the game. */
 typedef void (*FatalHandler)(void);
 
-extern char *WorkString;
+extern "C" char *WorkString;
 extern int16_t WorkstringSize;
 void DefaultFatalHook(void);
 extern FatalHandler FatalHook;

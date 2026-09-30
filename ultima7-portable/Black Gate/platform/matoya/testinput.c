@@ -14,6 +14,10 @@
 
 #include "backend.h"
 
+#ifdef _WIN32
+#define strtok_r strtok_s
+#endif
+
 #define MAX_STEPS 256
 
 typedef struct {

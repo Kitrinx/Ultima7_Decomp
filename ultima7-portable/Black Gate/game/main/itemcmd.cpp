@@ -426,14 +426,15 @@ uint8_t Item_isInParty(ItemId *object)
 	return (GetNpcBufferForIbo(&objref(object->off))->status & NPC_IN_PARTY) != 0;
 }
 
-void Item_updateMissile(ItemId *, int16_t value)
+/* Declared void in the original, but callers test the result left in AX. */
+uint8_t Item_updateMissile(ItemId *, int16_t value)
 {
-	UpdateMissile(value);
+	return UpdateMissile(value);
 }
 
-void Item_stopMissile(ItemId *, int16_t value)
+uint8_t Item_stopMissile(ItemId *, int16_t value)
 {
-	StopMissile(value);
+	return StopMissile(value);
 }
 
 void Item_playMusic(ItemId *, uint8_t track, uint8_t resume)
