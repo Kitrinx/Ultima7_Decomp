@@ -6,4 +6,6 @@ The `decompiled` folder contains the source code for the various binaries in Ult
 
 The `ultima7-portable` folder is a *very* WIP early attempt to clean up the decompiled code to make it more cross-platform friendly with minimal changes to the logic. There are a lot of situations where weird DOS quirks are expected. So far this has *ONLY* been tested on an ARM Mac, but in the coming period I will continue to refine this.
 
+The `ultima7-usecode` folder is tools for decompiling and building and working with U7 usecode. They haven't really been tested on anything but a mac.
+
 I also plan to do Serpent Isle as well, and that's next on my plate.
