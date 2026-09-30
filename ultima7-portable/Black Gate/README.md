@@ -11,7 +11,7 @@ Everything needed to build is in this folder. You supply the game data and the M
 ## Layout
 
 ```text
-ultima7-portable/
+ultima7-portable/Black Gate/
   CMakeLists.txt         the build
   cmake/Libmatoya.cmake  builds libmatoya with its own makefiles
   game/                  the game: .c files are C, .cpp files are C++, as originally written
@@ -36,7 +36,7 @@ those libraries installed is needed to play.
 ## Build
 
 ```sh
-cmake -S ultima7-portable -B build -DCMAKE_BUILD_TYPE=Release
+cmake -S "ultima7-portable/Black Gate" -B build -DCMAKE_BUILD_TYPE=Release
 cmake --build build --target u7
 ```
 
@@ -75,7 +75,7 @@ build/u7 --data /path/to/ultima7 -p
 the way the menu did, and the game builds it on its next start:
 
 ```sh
-python3 ultima7-portable/tools/u7_new_game.py /path/to/ultima7 --name Jamie --female
+python3 "ultima7-portable/Black Gate/tools/u7_new_game.py" /path/to/ultima7 --name Jamie --female
 ```
 
 It copies the current `GAMEDAT` next to the data folder first, because the game deletes it.

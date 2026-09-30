@@ -1,7 +1,7 @@
 #	INTRO.EXE, the Black Gate introduction
 #
 #	Borland C++ 2.0 with its MAKE, and Turbo Assembler 2.51.  Run MAKE in
-#	this directory, the build directory; U7's tree sits beside it as ..\bg,
+#	this directory, the build directory; U7's tree sits beside it as ..\U7,
 #	and the modules MAINMENU or ENDGAME also link as ..\shared.
 #
 #		make			compiler in C:\BORLANDC
@@ -40,19 +40,19 @@ INTRO.CFG: MAKEFILE
 -I..\shared\main
 -I..\shared\main\mem
 -I..\shared\zevent
--I..\bg\common
--I..\bg\inter
--I..\bg\main
--I..\bg\main\combat
--I..\bg\main\mem
--I..\bg\main\palette
--I..\bg\main\schedule
--I..\bg\main\video
--I..\bg\main\xmm
--I..\bg\sound
--I..\bg\sound\drv
--I..\bg\zevent
--I..\bg\include
+-I..\U7\common
+-I..\U7\inter
+-I..\U7\main
+-I..\U7\main\combat
+-I..\U7\main\mem
+-I..\U7\main\palette
+-I..\U7\main\schedule
+-I..\U7\main\video
+-I..\U7\main\xmm
+-I..\U7\sound
+-I..\U7\sound\drv
+-I..\U7\zevent
+-I..\U7\include
 -I$(BC)\include
 | INTRO.CFG
 
@@ -69,19 +69,19 @@ SHARED.CFG: MAKEFILE
 -Imain\mem
 -Isound\drv
 -Iinclude
--I..\bg\common
--I..\bg\inter
--I..\bg\main
--I..\bg\main\combat
--I..\bg\main\mem
--I..\bg\main\palette
--I..\bg\main\schedule
--I..\bg\main\video
--I..\bg\main\xmm
--I..\bg\sound
--I..\bg\sound\drv
--I..\bg\zevent
--I..\bg\include
+-I..\U7\common
+-I..\U7\inter
+-I..\U7\main
+-I..\U7\main\combat
+-I..\U7\main\mem
+-I..\U7\main\palette
+-I..\U7\main\schedule
+-I..\U7\main\video
+-I..\U7\main\xmm
+-I..\U7\sound
+-I..\U7\sound\drv
+-I..\U7\zevent
+-I..\U7\include
 -I$(BC)\include
 | SHARED.CFG
 
@@ -89,19 +89,19 @@ SHARED.CFG: MAKEFILE
 U7.CFG: MAKEFILE
 	copy &&|
 -c -mm
--I..\bg\main
--I..\bg\common
--I..\bg\inter
--I..\bg\main\combat
--I..\bg\main\mem
--I..\bg\main\palette
--I..\bg\main\schedule
--I..\bg\main\video
--I..\bg\main\xmm
--I..\bg\sound
--I..\bg\sound\drv
--I..\bg\zevent
--I..\bg\include
+-I..\U7\main
+-I..\U7\common
+-I..\U7\inter
+-I..\U7\main\combat
+-I..\U7\main\mem
+-I..\U7\main\palette
+-I..\U7\main\schedule
+-I..\U7\main\video
+-I..\U7\main\xmm
+-I..\U7\sound
+-I..\U7\sound\drv
+-I..\U7\zevent
+-I..\U7\include
 -I..\shared
 -I..\shared\main
 -I..\shared\main\mem
@@ -116,48 +116,48 @@ U7.CFG: MAKEFILE
 
 BG_COMMON_O1 = strfmt.obj
 $(BG_COMMON_O1):
-	$(CU7) -O -1 ..\bg\common\$&.c
+	$(CU7) -O -1 ..\U7\common\$&.c
 
 BG_COMMON_ASM = lstrtok.obj
 $(BG_COMMON_ASM):
-	$(AS) /mx ..\bg\common\$&.asm
+	$(AS) /mx ..\U7\common\$&.asm
 
 BG_MAIN_O1 = oops.obj rmhook.obj videomd.obj
 $(BG_MAIN_O1):
-	$(CU7) -O -1 ..\bg\main\$&.c
+	$(CU7) -O -1 ..\U7\main\$&.c
 
 BG_MAIN_DOS_ASM = addrptr.obj delay.obj doscreat.obj dosfile.obj \
 	dosread.obj dosseek.obj doswrite.obj memmove.obj ptraddr.obj
 $(BG_MAIN_DOS_ASM):
-	$(AS) /mx ..\bg\main\dos\$&.asm
+	$(AS) /mx ..\U7\main\dos\$&.asm
 
 BG_MAIN_MEM_OG = inthook.obj memmgr.obj memstat.obj
 $(BG_MAIN_MEM_OG):
-	$(CU7) -O -G ..\bg\main\mem\$&.c
+	$(CU7) -O -G ..\U7\main\mem\$&.c
 
 BG_MAIN_VIDEO_OG = colormap.obj vidmode.obj
 $(BG_MAIN_VIDEO_OG):
-	$(CU7) -O -G ..\bg\main\video\$&.c
+	$(CU7) -O -G ..\U7\main\video\$&.c
 
 BG_MAIN_VIDEO_OGP = colorreg.obj modecolr.obj
 $(BG_MAIN_VIDEO_OGP):
-	$(CU7) -O -G -P ..\bg\main\video\$&.c
+	$(CU7) -O -G -P ..\U7\main\video\$&.c
 
 BG_MAIN_VIDEO_ASM = crtport.obj vretrace.obj
 $(BG_MAIN_VIDEO_ASM):
-	$(AS) /mx ..\bg\main\video\$&.asm
+	$(AS) /mx ..\U7\main\video\$&.asm
 
 BG_SOUND_O1Pdb0 = gsound.obj
 $(BG_SOUND_O1Pdb0):
-	$(CU7) -O -1 -P -d -b- ..\bg\sound\$&.c
+	$(CU7) -O -1 -P -d -b- ..\U7\sound\$&.c
 
 BG_SOUND_DRV_ASM = vocirq.obj
 $(BG_SOUND_DRV_ASM):
-	$(AS) /mx ..\bg\sound\drv\$&.asm
+	$(AS) /mx ..\U7\sound\drv\$&.asm
 
 BG_ZEVENT_ASM = sysclk.obj syskey.obj
 $(BG_ZEVENT_ASM):
-	$(AS) /mx ..\bg\zevent\$&.asm
+	$(AS) /mx ..\U7\zevent\$&.asm
 
 IN_O1P = cfilcach.obj dirdelta.obj dlist.obj fadestep.obj shapebnd.obj \
 	synctrk.obj textspr.obj vecdump.obj

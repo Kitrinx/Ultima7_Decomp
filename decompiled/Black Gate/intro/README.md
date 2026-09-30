@@ -1,8 +1,7 @@
 # Recovered Black Gate routines
 
 Each admitted source recompiles under Borland C++ 2.0 to the shipped bytes exactly.
-Land a routine with `agents/tools/land.py`; check the whole corpus with
-`agents/tools/verify_corpus.py`. RELOC means every relocated operand was also checked by name.
+RELOC means every relocated operand was also checked by name.
 EXACT requires separate evidence for bindings the gate cannot resolve.
 Complete compiled units follow the original source layout; compound and library segments remain qualified.
 The top-level folders are the directories BG paths name (`common/`, `inter/`, `sound/`, `zevent/`,

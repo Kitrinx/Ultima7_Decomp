@@ -2,7 +2,7 @@
 #
 #	Borland C++ 2.0 with its MAKE and TLIB, and Turbo Assembler 2.51.  Run
 #	MAKE in this directory, the build directory; U7's tree sits beside it
-#	as ..\bg, and the modules MAINMENU or INTRO also link as ..\shared.
+#	as ..\U7, and the modules MAINMENU or INTRO also link as ..\shared.
 #
 #		make			compiler in C:\BORLANDC
 #		make -DBC=C:\BC20	compiler elsewhere
@@ -42,19 +42,19 @@ ENDGAME.CFG: MAKEFILE
 -I..\shared\main
 -I..\shared\main\mem
 -I..\shared\zevent
--I..\bg\common
--I..\bg\inter
--I..\bg\main
--I..\bg\main\combat
--I..\bg\main\mem
--I..\bg\main\palette
--I..\bg\main\schedule
--I..\bg\main\video
--I..\bg\main\xmm
--I..\bg\sound
--I..\bg\sound\drv
--I..\bg\zevent
--I..\bg\include
+-I..\U7\common
+-I..\U7\inter
+-I..\U7\main
+-I..\U7\main\combat
+-I..\U7\main\mem
+-I..\U7\main\palette
+-I..\U7\main\schedule
+-I..\U7\main\video
+-I..\U7\main\xmm
+-I..\U7\sound
+-I..\U7\sound\drv
+-I..\U7\zevent
+-I..\U7\include
 -I$(BC)\include
 | ENDGAME.CFG
 
@@ -62,19 +62,19 @@ ENDGAME.CFG: MAKEFILE
 U7.CFG: MAKEFILE
 	copy &&|
 -c -mm
--I..\bg\main
--I..\bg\common
--I..\bg\inter
--I..\bg\main\combat
--I..\bg\main\mem
--I..\bg\main\palette
--I..\bg\main\schedule
--I..\bg\main\video
--I..\bg\main\xmm
--I..\bg\sound
--I..\bg\sound\drv
--I..\bg\zevent
--I..\bg\include
+-I..\U7\main
+-I..\U7\common
+-I..\U7\inter
+-I..\U7\main\combat
+-I..\U7\main\mem
+-I..\U7\main\palette
+-I..\U7\main\schedule
+-I..\U7\main\video
+-I..\U7\main\xmm
+-I..\U7\sound
+-I..\U7\sound\drv
+-I..\U7\zevent
+-I..\U7\include
 -I..\shared
 -I..\shared\main
 -I..\shared\main\mem
@@ -92,48 +92,48 @@ U7.CFG: MAKEFILE
 
 BG_COMMON_ASM = lstrtok.obj
 $(BG_COMMON_ASM):
-	$(AS) /mx ..\bg\common\$&.asm
+	$(AS) /mx ..\U7\common\$&.asm
 
 BG_MAIN_DOS_ASM = addrptr.obj doscreat.obj dosfile.obj dosread.obj \
 	dosseek.obj memmove.obj ptraddr.obj
 $(BG_MAIN_DOS_ASM):
-	$(AS) /mx ..\bg\main\dos\$&.asm
+	$(AS) /mx ..\U7\main\dos\$&.asm
 
 BG_MAIN_MEM_OG = memhook.obj
 $(BG_MAIN_MEM_OG):
-	$(CU7) -O -G ..\bg\main\mem\$&.c
+	$(CU7) -O -G ..\U7\main\mem\$&.c
 
 BG_MAIN_MEM_OGP = errors.obj
 $(BG_MAIN_MEM_OGP):
-	$(CU7) -O -G -P ..\bg\main\mem\$&.c
+	$(CU7) -O -G -P ..\U7\main\mem\$&.c
 
 BG_MAIN_MEM_ASM = a20gate.obj
 $(BG_MAIN_MEM_ASM):
-	$(AS) /mx ..\bg\main\mem\$&.asm
+	$(AS) /mx ..\U7\main\mem\$&.asm
 
 BG_MAIN_VIDEO_ASM = crtport.obj vretrace.obj
 $(BG_MAIN_VIDEO_ASM):
-	$(AS) /mx ..\bg\main\video\$&.asm
+	$(AS) /mx ..\U7\main\video\$&.asm
 
 BG_MAIN_XMM_1G = vooalloc.obj
 $(BG_MAIN_XMM_1G):
-	$(CU7) -1 -G ..\bg\main\xmm\$&.c
+	$(CU7) -1 -G ..\U7\main\xmm\$&.c
 
 BG_MAIN_XMM_OG = xmmcheck.obj xmminit.obj xmmstale.obj
 $(BG_MAIN_XMM_OG):
-	$(CU7) -O -G ..\bg\main\xmm\$&.c
+	$(CU7) -O -G ..\U7\main\xmm\$&.c
 
 # __FILE__ gives these their bare names, so they compile in their own
 # directory, as in U7's build.
 BG_MAIN_XMM_OWN_OG = freexmm.obj xmmhand.obj
 $(BG_MAIN_XMM_OWN_OG):
-	cd ..\bg\main\xmm
+	cd ..\U7\main\xmm
 	$(BC)\bcc -c -mm -I..;..\mem;$(BC)\include -n..\..\..\endgame -O -G $&.c
 	cd ..\..\..\endgame
 
 BG_MAIN_XMM_ASM = emscheck.obj xmmblock.obj
 $(BG_MAIN_XMM_ASM):
-	$(AS) /mx ..\bg\main\xmm\$&.asm
+	$(AS) /mx ..\U7\main\xmm\$&.asm
 
 EG_1GPvi0 = chunknam.obj digital.obj display.obj doshandl.obj endgame.obj \
 	file.obj flic.obj iff.obj shapefnt.obj sounddrv.obj speech.obj \

@@ -24,18 +24,12 @@ in `main`.
 - `main/U7.LNK`: TLINK's response file: link order, overlays (`/o`), startup module, libraries.
 - `U7.CFG`: options every C module shares. MAKE writes it.
 
-Each source also names its options in its header, which the verification gate reads.
-`agents/tools/check_makefile.py` confirms the makefile, the sources and `trial_link.py` agree.
-
-From the repository root, `uv run python3 agents/tools/build_exe.py` runs this makefile in
-DOSBox-X from a clean copy of the tree. It takes the toolchain from `agents/tools/dos-build/dosroot`
-(`BC20` with `MAKE.EXE`, `TC` with `TASM.EXE`).
+Each source also names its options in its header.
 
 ## Output
 
-`U7.EXE` equals the one `trial_link.py` links, when both are linked under the name `U7.EXE`:
-TLINK stores the output name in the overlay header. The goal is the shipped `U7.EXE`: 689,248
-bytes, SHA-256 `4d588b12c775927c77c221531be4910eaf413864a8e2ec3f6f0d7a9c302b6e54`.
+TLINK stores the output name in the overlay header, so link under the name `U7.EXE`. The goal
+is the shipped `U7.EXE`: 689,248 bytes, SHA-256 `4d588b12c775927c77c221531be4910eaf413864a8e2ec3f6f0d7a9c302b6e54`.
 
 TLINK can leave stale memory in the alignment padding before an overlay, so a link run in a
 different memory layout may differ there.

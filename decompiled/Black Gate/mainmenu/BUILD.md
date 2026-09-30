@@ -5,7 +5,7 @@
 - Borland C++ 2.0: BCC 2.0, TLINK 4.0 and MAKE 3.5, with its libraries and headers.
 - Turbo Assembler 2.51, on the `PATH`.
 - DOS, or DOSBox-X with EMS off (BCC hangs when it spills into EMS).
-- U7's tree beside this one as `..\bg`: MAINMENU links 58 of its modules unchanged.
+- U7's tree beside this one as `..\U7`: MAINMENU links 58 of its modules unchanged.
 
 The Borland tools are commercial. Supply your own copy; never commit it.
 
@@ -21,18 +21,12 @@ here.
 
 - `MAKEFILE`: every module's compiler options. It is the source of truth.
 - `MAINMENU.LNK`: TLINK's response file: link order, startup module, `CM.LIB`.
-  `trial_link.py --target mainmenu` links in this order too.
 - `MAINMENU.CFG`, `SHARED.CFG`: include paths, which MAKE writes. The program's modules see its
   own, older headers first; U7's modules see U7's.
 - `IDESTUB.BAT`: Origin built MAINMENU with the BC 2.0 IDE, which compiles each file under its
   full upper-case path. `mouse.c` and `specache.c` keep theirs in `__FILE__`
   (`\U7\ZEVENT\MOUSE.C`), so the batch file copies each to that path on the build drive and
   writes a stub that includes it.
-
-From the repository root, `uv run python3 agents/tools/build_exe.py --target mainmenu` runs this
-makefile in DOSBox-X from a clean copy of both trees, and
-`uv run --with capstone python3 agents/tools/golden_check.py --target mainmenu` adds the style
-check, every module's status and a full comparison.
 
 ## Output
 

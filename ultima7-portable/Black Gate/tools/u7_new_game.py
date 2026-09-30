@@ -5,7 +5,7 @@ The menu wrote gameargs.dat beside the game: one byte for the Avatar's sex (nonz
 15 bytes of name. When the game starts and finds it, it deletes GAMEDAT, builds a new game from
 STATIC/INITGAME.DAT and applies the name and sex. The Avatar's portrait follows the sex.
 
-    python3 agents/tools/u7_new_game.py build-portable/data --name Jamie --female
+    python3 "ultima7-portable/Black Gate/tools/u7_new_game.py" /path/to/ultima7 --name Jamie --female
 
 The current GAMEDAT is copied aside first, since the game removes it.
 """
