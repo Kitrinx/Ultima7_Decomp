@@ -1,0 +1,293 @@
+Routine Iolo accepts a0 #locals(19) #uses(~AvatarName, ~LordOrLady, CauseTremor_i, ~IsNPCNear, ~AskYesNo, ~AskList, BarkAboutWork_i) {
+    $MetIolo = true;
+    v0 = ~AvatarName();
+    v1 = ~GetParty();
+    v2 = ~NPCToItem_i(_Iolo);
+    v3 = ~LordOrLady();
+    v4 = ~AvatarSex();
+    if (event = _Trigger) {
+        if (not flag(59) and (not flag(92) and ~GetItemFlag_i(_DontMove_i, _Avatar))) {
+            SetMusic(0, 35);
+            v5 = ~PostInFuture(125, << _aNO_HALT_i, _aUSABLE_i, #ArriveByMoongate_i >>, ~NPCToItem_i(_Avatar));
+            v5 = ~PostAction(<< _aNO_HALT_i, _aMUSIC_i, 35, 1, _aBARK_i, "@There, there...@" >>, ~NPCToItem_i(_Iolo));
+            v5 = ~PostInFuture(16, << _aNO_HALT_i, _aBARK_i, "@'Tis horrible!@" >>, ~NPCToItem_i(_Petre));
+            v5 = ~PostInFuture(33, << _aNO_HALT_i, _aBARK_i, "@I know, 'tis shocking!@" >>, ~NPCToItem_i(_Iolo));
+            v5 = ~PostInFuture(49, << _aNO_HALT_i, _aBARK_i, "@Who could have done it?@" >>, ~NPCToItem_i(_Petre));
+            v5 = ~PostInFuture(65, << _aNO_HALT_i, _aBARK_i, "@I know not...@" >>, ~NPCToItem_i(_Iolo));
+            v5 = ~PostInFuture(81, << _aNO_HALT_i, _aBARK_i, "@He had no enemies...@" >>, ~NPCToItem_i(_Petre));
+            v5 = ~PostInFuture(97, << _aNO_HALT_i, _aBARK_i, "@Poor man.@" >>, ~NPCToItem_i(_Iolo));
+            v5 = ~PostInFuture(113, << _aNO_HALT_i, _aBARK_i, "@What is to be done?@" >>, ~NPCToItem_i(_Petre));
+            v5 = ~PostInFuture(129, << _aNO_HALT_i, _aBARK_i, "@I know not...@" >>, ~NPCToItem_i(_Iolo));
+            flag(92) = true;
+            terminate;
+        } else {
+            JoinParty(_Iolo);
+        }
+    }
+    if ((flag(59) = false) and (event = _Posted_i)) {
+        SetSpeaker(0, _Iolo);
+        [A rather large, familiar man looks up and sees you. The shock that is evident from his dumbfounded expression quickly evolves into delight. He smiles broadly.~~"<v0>! If I did not trust the infallibility of mine own eyes, I would not believe it! I was just thinking to myself, 'If only the Avatar were here!' Then...~~"Lo and behold! Who says that magic is dying! Here is living proof that it is not!~~ "Dost thou realize, <v0>, that it hath been 200 Britannian years since we last met? Why, thou hast not aged at all!"];
+        [Iolo winks conspiratorially. He whispers, "Due no doubt to the difference in the structure of time in our original homeland and that of Britannia?"~~He resumes speaking aloud. "I have aged a little, as thou canst see. But of course, I have stayed here in Britannia all this time.~~"Oh, but Avatar! Wait until I tell the others! They will be happy to see thee! Welcome to Trinsic!"*];
+        SetSpeaker(0, _Petre);
+        if v4 {
+            v6 = "her";
+        } else {
+            v6 = "him";
+        }
+        [The distraught peasant interrupts Iolo. "Show <v6> the stables, milord. 'Tis horrible!"*];
+        CloseSpeaker(_Petre);
+        SetSpeaker(0, _Iolo);
+        [Iolo nods, his joy fading quickly as he is reminded of the reason he was standing there in the first place.~~ "Ah, yes. Our friend Petre here discovered something truly ghastly this morning. Take a look inside the stables. I shall accompany thee."];
+        if not ~IsMouse_i() {
+            [Iolo takes you aside and whispers, "Avatar, for the sake of our mutual sanity, I strongly suggest that thou shouldst purchase a mouse."];
+        }
+        v7 = ~PostInFuture(5, << _aNO_HALT_i, _aFINISH_i, _aWAIT_i, 20, _aUSABLE_i, #SayTremor_i >>, ~NPCToItem_i(_Avatar));
+        CauseTremor_i();
+        JoinParty(_Iolo);
+        SetWorkType(_TendShop, ~NPCToItem_i(_Petre));
+        SetWorkType(_Talk, ~NPCToItem_i(_Finnigan));
+        Kernel_resetRef(~NPCToItem_i(_Iolo));
+        Kernel_resetRef(~NPCToItem_i(_Petre));
+        if not flag(59) {
+            v5 = ~PostAction(<< _aNO_HALT_i, _aMUSIC_i, 0, 0 >>, item);
+            flag(59) = true;
+        }
+        terminate;
+    }
+    if (event = _Action) {
+        v0 = ~AvatarName();
+        v1 = ~GetParty();
+        v2 = ~NPCToItem_i(_Iolo);
+        v3 = ~LordOrLady();
+        SetSpeaker(0, _Iolo);
+        v8 = ~IsNPCNear(_Petre);
+        v9 = ~IsNPCNear(_Shamino);
+        v10 = false;
+        v11 = false;
+        TurnOn(<< "name", "job", "bye" >>);
+        if flag(746) {
+            if (~GetClock(11) < 1) {
+                ["I am sorry, I do not join thieves."];
+                terminate;
+            } else {
+                ["All right, I suppose thou hast learned thy lesson. I shall rejoin."];
+                JoinParty(_Iolo);
+                flag(746) = false;
+                terminate;
+            }
+        }
+        if not flag(87) {
+            TurnOn("Trinsic");
+        }
+        if (v2 in v1) {
+            TurnOn("leave");
+        }
+        if not (v2 in v1) {
+            TurnOn("join");
+        }
+        if $FOUND_MEDALLION {
+            TurnOn("Fellowship");
+        }
+        if v8 {
+            TurnOn("Petre");
+        }
+        if ($FOUND_BUCKET_KEY and not flag(87)) {
+            TurnOn("murder");
+        } else {
+            TurnOn("stables");
+        }
+        if $FOUND_BUCKET_KEY {
+            TurnOff("stables");
+        }
+        ["Yes, my friend?" Iolo asks.];
+        converse {
+            key ("name") {
+                [Your friend snorts. "What, art thou joking, <v3>? Thou dost not know thine old friend Iolo?"];
+                TurnOff("name");
+            }
+            key ("stables") {
+                ["Thou must see for thyself, <v0>. Brace thyself, my friend. 'Tis truly a horrible sight."*];
+                terminate;
+            }
+            key ("job") {
+                ["Why, right now 'tis adventuring with that most courageous of all legendary heroes, the Avatar!"];
+                TurnOn("Avatar");
+                TurnOff("job");
+            }
+            key ("Avatar") {
+                ["Why, there is no doubt -thou- art the Avatar, <v0>! However, thou mayest have some trouble convincing those who do not know thy face.~~"Of course, thou -shouldst- be safe around thy friends!"];
+                TurnOff("Avatar");
+                TurnOn(<< "trouble", "friends" >>);
+            }
+            key ("trouble") {
+                ["Well, after all, thou hast been gone for 200 years! Most of those who would recognize thee are long gone! Sorry to be blunt and all, my friend, but there it is."];
+                TurnOff("trouble");
+            }
+            key ("murder") {
+                if not $SEARCHED_STABLES {
+                    ["Ugly, is it not? From what I have heard, neither Christopher nor Inamo deserved so grisly a death. Thou shouldst certainly ask everyone in town about it."];
+                    TurnOn(<< "Christopher", "Inamo" >>);
+                } else {
+                    ["I wish thee luck in determining what is going on. I haven't a clue!" Iolo grins broadly, patting you on the back.];
+                }
+                TurnOff("murder");
+            }
+            key ("Lord British") {
+                v10 = true;
+                if $LEARNED_ABOUT_BLACKROCK {
+                    ["Well, between thee and me, I think that he hath aged much more than I!"];
+                    ["Full of information, that chap. But he never seems to leave Britain anymore."];
+                } else {
+                    ["My liege will be enormously pleased to see thee. We should travel to Britain post haste. I am sure he can give thee some valuable information and update thee on much of what thou hast missed in the 200 years of thine absence."];
+                }
+                if not v11 {
+                    TurnOn("Britain");
+                }
+                TurnOn("information");
+                TurnOff("Lord British");
+            }
+            key ("information") {
+                ["Certainly. LB is always a repository of the most amazing facts, eh? Probably something to do with listening and not always talking."];
+                if v9 {
+                    ["Right, Shamino?"~~Shamino grunts and turns away as Iolo grins mischievously.];
+                }
+                ["Speaking of information, reminds me of something! I have a little item which might be useful to thee. 'Tis an abacus. Use it to tally up all of our gold."];
+                TurnOff("information");
+            }
+            key ("friends") {
+                ["Thou must mean Shamino and Dupre."];
+                TurnOff("friends");
+                TurnOn(<< "Shamino", "Dupre" >>);
+            }
+            key ("Dupre") {
+                v12 = ~IsNPCNear(_Dupre);
+                if v12 {
+                    ["Why, he is right there, <v3>."*];
+                    SetSpeaker(0, _Dupre);
+                    ["I am right here, <v3>."*];
+                    CloseSpeaker(_Dupre);
+                    SetSpeaker(0, _Iolo);
+                    ["See? I told thee!"];
+                } else {
+                    ["I am sure we shall find him somewhere. Last I heard, he was in Jhelom. Didst thou know he was knighted?"];
+                    if ~AskYesNo() {
+                        ["Hard to believe, is it not?"];
+                    } else {
+                        ["It's true! Lord British knighted him recently. Why he did so, I cannot imagine!"];
+                        if not v10 {
+                            TurnOn("Lord British");
+                        }
+                    }
+                }
+                TurnOff("Dupre");
+            }
+            key ("Shamino") {
+                if v9 {
+                    ["Why, he is right there, <v3>."*];
+                    SetSpeaker(0, _Shamino);
+                    ["I am right here, <v3>."*];
+                    CloseSpeaker(_Shamino);
+                    SetSpeaker(0, _Iolo);
+                    ["See? I told thee!"];
+                } else {
+                    ["Thy best bet in finding that rascal is to look in Britain. He has a girlfriend employed as an actress at the Royal Theatre."];
+                    if not v11 {
+                        TurnOn("Britain");
+                    }
+                }
+                TurnOff("Shamino");
+            }
+            key ("Trinsic") {
+                ["The town has changed little, has it not? Everyone seems a little defensive, though. When we ran into each other, I was passing through and had stopped to visit my friend Finnigan."];
+                TurnOff("Trinsic");
+                TurnOn(<< "defensive", "Finnigan" >>);
+            }
+            key ("defensive") {
+                ["I think it best for thee to speak with them thyself. There have been many changes since last thou didst visit, Avatar. I think thou wilt feel at times a bit... well, old-fashioned."];
+                TurnOff("defensive");
+            }
+            key ("Britain") {
+                v11 = true;
+                ["It has grown since thou last saw it. Paws is now a virtual township of Britain! It dominates the east coast of Britannia.~~"Lord British's castle is still the overwhelming feature."];
+                TurnOff("Britain");
+                if not v10 {
+                    TurnOn("Lord British");
+                }
+                TurnOn("Paws");
+            }
+            key ("Paws") {
+                ["It still lies between Britain and Trinsic, but it has grown further into Britain itself."];
+                TurnOff("Paws");
+            }
+            key ("Finnigan") {
+                ["He is a good man. The Mayor of Trinsic, he is. I have known him for years."];
+                TurnOff("Finnigan");
+            }
+            key ("Christopher") {
+                ["I did not know him, <v3>."];
+                TurnOff("Christopher");
+            }
+            key ("Inamo") {
+                ["I never spoke with him. It is truly a shame. There are not many gargoyles living amongst the humans. This will only discourage the practice even more."];
+                TurnOff("Inamo");
+                TurnOn("gargoyles");
+            }
+            key ("leave") {
+                [Iolo looks hurt. "Thou dost really want me to leave?"];
+                v13 = ~AskYesNo();
+                if v13 {
+                    ["Dost thou want me to wait here or dost thou want me to go home to Yew?"];
+                    ClearKeys();
+                    v14 = ~AskList(<< "wait here", "go home" >>);
+                    if (v14 = "wait here") {
+                        ["Very well. I shall wait here until thou dost return and ask me to rejoin."*];
+                        LeaveParty(_Iolo);
+                        SetWorkType(_Wait, ~NPCToItem_i(_Iolo));
+                        terminate;
+                    } else {
+                        ["Farewell, then. I shall always rejoin if thou dost so desire." Iolo turns away from you.*];
+                        LeaveParty(_Iolo);
+                        SetWorkType(_Loiter, ~NPCToItem_i(_Iolo));
+                        terminate;
+                    }
+                } else {
+                    ["Whew. Thou didst frighten me!"];
+                }
+            }
+            key ("join") {
+                ["I was waiting until thou didst ask me!"];
+                v15 = 0;
+                Foreach v18 in v1 {
+                    v15 = (v15 + 1);
+                }
+                if (v15 < 8) {
+                    JoinParty(_Iolo);
+                    TurnOff("join");
+                    TurnOn("leave");
+                } else {
+                    ["It seems that thou hast enough members travelling with thee already! I shall wait until someone leaves the group."];
+                }
+            }
+            key ("gargoyles") {
+                ["Since thou wert last in Britannia, the Gargoyles have begun to integrate with the humans. Most of them live on Sutek's old island, which was renamed 'Terfin'. However, thou mayest see one here and there throughout the land."];
+                TurnOff("gargoyles");
+            }
+            key ("Fellowship") {
+                ["I do not know much about them, except that they originated about twenty Britannian years ago. They seem to do good deeds and are looked at with favor by most everyone. They have branch offices all over Britannia. I have not personally had any dealings with them."];
+                TurnOff("Fellowship");
+            }
+            key ("Petre") {
+                ["He is just an acquaintance."];
+                TurnOff("Petre");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["'Tis always a pleasure to speak with thee, my friend."*];
+    }
+    if (event = _Bark) {
+        BarkAboutWork_i(_Iolo);
+    }
+}

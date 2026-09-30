@@ -1,0 +1,209 @@
+Routine Julia accepts a0 #locals(14) #uses(~LordOrLady, ~AvatarName, ~IsNPCNear, ~AskYesNo, ~AskList, ~IsInInv, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Julia);
+        v0 = ~LordOrLady();
+        v1 = ~GetParty();
+        v2 = ~NPCToItem_i(_Julia);
+        v3 = ~AvatarName();
+        v4 = ~IsNPCNear(_Spark);
+        TurnOn(<< "name", "job", "bye" >>);
+        if $LEARNED_ABOUT_PLANS {
+            TurnOn("plans");
+        }
+        if v4 && not $ASKED_JULIA_ABOUT_SPARK {
+            TurnOn("Spark");
+        }
+        if (v2 in v1) {
+            TurnOn("leave");
+        }
+        if $ASKED_JULIA_TO_LEAVE {
+            TurnOn("join");
+        }
+        if not $MetJulia {
+            [You see Julia, a member of your party of adventurers from one of your previous visits to Britannia.];
+            $MetJulia = true;
+        } else {
+            ["It is good to speak with thee again, <v3>," Julia greets you.];
+        }
+        converse {
+            key ("name") {
+                ["Has it really been that long, <v3>? 'Tis I, Julia!"];
+                TurnOff("name");
+            }
+            key ("job") {
+                if $LEARNED_ABOUT_MINOC_MURDER {
+                    ["Since accompanying thee on thine adventures when thou wast last in Britannia, I have become the tinker of Minoc. I repair things for the people of the town. But my duties and obligations are not so pressing as to prevent me from joining thee again shouldst thou wish it. After all, when thou art in Britannia, thou hast usually come to repair very important things and help put the world to rights."];
+                    TurnOn(<< "tinker", "Minoc" >>);
+                    if not (v2 in v1) {
+                        TurnOn("join");
+                    }
+                } else {
+                    ["Now is not the proper time for a joyous reunion, <v3>. This town has been touched by a mysterious evil. There have been murders committed in Minoc."];
+                    $LEARNED_ABOUT_MINOC_MURDER = true;
+                    TurnOn(<< "murders", "Minoc" >>);
+                }
+            }
+            key ("tinker") {
+                ["It is not really what I wish to do with the rest of my life. I do not have the patience to be a proper tinkerer. If thou didst ask me, I would say I have sacrificed enough!"];
+                TurnOff("tinker");
+            }
+            key ("join") {
+                v5 = 0;
+                v1 = ~GetParty();
+                Foreach v8 in v1 {
+                    v5 = (v5 + 1);
+                }
+                if (v5 < 6) {
+                    if $ASKED_JULIA_TO_LEAVE {
+                        ["Well... All right. But I did not like thee telling me to leave!"];
+                    } else {
+                        ["Aye! It would be my pleasure!"];
+                    }
+                    $JULIA_IN_PARTY = true;
+                    JoinParty(_Julia);
+                    TurnOn(<< "Iolo", "Shamino", "Dupre", "leave" >>);
+                    TurnOff("join");
+                } else {
+                    ["I believe thou hast enough travellers for one group."];
+                }
+                TurnOff("join");
+            }
+            key ("leave") {
+                ["Art thou sure thou dost want me to leave?"];
+                if ~AskYesNo() {
+                    ["Dost thou want me to wait here or should I go home?"];
+                    ClearKeys();
+                    v9 = ~AskList(<< "wait here", "go home" >>);
+                    if (v9 = "wait here") {
+                        ["Very well. I shall wait here until thou dost return."*];
+                        $ASKED_JULIA_TO_LEAVE = true;
+                        $JULIA_IN_PARTY = false;
+                        LeaveParty(_Julia);
+                        SetWorkType(_Wait, ~NPCToItem_i(_Julia));
+                        terminate;
+                    } else {
+                        ["Well! Fine, if that is thy wish, I shall leave!"*];
+                        $ASKED_JULIA_TO_LEAVE = true;
+                        $JULIA_IN_PARTY = false;
+                        LeaveParty(_Julia);
+                        SetWorkType(_Loiter, ~NPCToItem_i(_Julia));
+                        terminate;
+                    }
+                } else {
+                    ["Then I shall stay."];
+                }
+                TurnOff("leave");
+            }
+            key ("Minoc") {
+                ["'Tis a terrible thing to be happening in our town, these murders. Minoc was once a safe and quiet place."];
+                TurnOff("Minoc");
+                TurnOn(<< "safe and quiet", "murders" >>);
+            }
+            key ("safe and quiet") {
+                ["Well, at least safe, if not necessarily quiet. Especially with all the commotion caused by Owen and his monument."];
+                TurnOff("safe and quiet");
+                TurnOn(<< "Owen", "monument" >>);
+            }
+            key ("Owen") {
+                ["Owen is our local shipwright. Frankly, I think he is something of a fool."];
+                TurnOff("Owen");
+            }
+            key ("monument") {
+                ["The Fellowship wanted to build a statue of Owen. That way they can use him as an example of the success of the Fellowship philosophy. It would also increase Owen's business to the point of upsetting the local economy and driving the Artist's Guild out of business!"];
+                if $COMPLETED_OWENS_QUEST {
+                    ["And it would have worked if thou hadst not put a stop to their plans."];
+                }
+                TurnOff("monument");
+            }
+            key ("murders") {
+                ["Frederico and Tania were killed at the Minoc sawmill in a manner most gruesome."];
+                TurnOff("murders");
+                TurnOn(<< "Frederico and Tania", "gruesome" >>);
+            }
+            key ("Frederico and Tania") {
+                ["Frederico was the leader of the Gypsies, and Tania was his wife. They lived outside of town. I know nothing more about them."];
+                TurnOff("Frederico and Tania");
+            }
+            key ("gruesome") {
+                ["The manner in which Frederico and Tania were murdered suggests a ritual killing. From what I have been hearing it is similar to one that thou hast run across in Trinsic\x09and one that occurred in Britain a while ago. 'Tis a most puzzling mystery."];
+                TurnOff("gruesome");
+            }
+            key ("plans") {
+                v10 = ~IsInInv(65177, 11, _Scroll, 1, _Party);
+                if v10 {
+                    ["May I see them?" She examines every line of the plans carefully. "These designs are unsound. Ships built to these specifications will easily capsize and sink. Thou shouldst show these plans to the Mayor."];
+                    $OWENS_PLANS_ARE_UNSAFE = true;
+                } else {
+                    ["Karl has the plans to the ships Owen built that sank?! I would very much like see them. Perhaps I could help discover why those tragedies occurred."];
+                }
+                TurnOff("plans");
+            }
+            key ("Iolo") {
+                v11 = ~IsNPCNear(_Iolo);
+                if not v11 {
+                    ["Perhaps we should go find Iolo and have him join us as well."];
+                } else {
+                    ["Hello, Iolo."*];
+                    SetSpeaker(0, _Iolo);
+                    ["'Tis a pleasure to see thee again, Julia."*];
+                    CloseSpeaker(_Iolo);
+                    SetSpeaker(0, _Julia);
+                }
+                TurnOff("Iolo");
+            }
+            key ("Shamino") {
+                v12 = ~IsNPCNear(_Shamino);
+                if not v12 {
+                    ["Perhaps we should go find Shamino and have him join us as well."];
+                } else {
+                    ["Hello, Shamino!"*];
+                    SetSpeaker(0, _Shamino);
+                    ["Oh, Julia! Good of thee to be joining us again!"*];
+                    CloseSpeaker(_Shamino);
+                    SetSpeaker(0, _Julia);
+                }
+                TurnOff("Shamino");
+            }
+            key ("Dupre") {
+                v13 = ~IsNPCNear(_Dupre);
+                if not v13 {
+                    ["Perhaps we should go find Sir Dupre and have him join us as well."];
+                } else {
+                    ["Once again our paths cross, Sir Dupre!"*];
+                    SetSpeaker(0, _Dupre);
+                    ["Julia! I was just wondering if we would ever see thee again!"*];
+                    SetSpeaker(0, _Julia);
+                    ["Well, thou canst wonder no more, Dupre."*];
+                    SetSpeaker(0, _Dupre);
+                    ["<v3>, just between thou, myself and the lamppost, thou hadst better watch Julia. She hath a temper."*];
+                    CloseSpeaker(_Dupre);
+                    SetSpeaker(0, _Julia);
+                }
+                TurnOff("Dupre");
+            }
+            key ("Spark") {
+                ["And who is this fine young lad?"];
+                if v4 {
+                    SetSpeaker(0, _Spark);
+                    ["My name is Spark, milady."*];
+                    SetSpeaker(0, _Julia);
+                    ["He is a cute one! And so well-mannered!"];
+                    SetSpeaker(0, _Spark);
+                    [Spark turns beet red.];
+                    CloseSpeaker(_Spark);
+                    SetSpeaker(0, _Julia);
+                    $ASKED_JULIA_ABOUT_SPARK = true;
+                }
+                TurnOff("Spark");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["Goodbye, <v3>."*];
+    }
+    if (event = _Bark) {
+        BarkAboutWork_i(_Julia);
+    }
+}

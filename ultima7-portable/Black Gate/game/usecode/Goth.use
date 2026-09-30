@@ -1,0 +1,128 @@
+Routine Goth accepts a0 #locals(13) #uses(~LordOrLady, ~AskYesNo) {
+    if (event = _Action) {
+        SetSpeaker(0, _Goth);
+        v0 = ~LordOrLady();
+        TurnOn(<< "name", "job", "bye" >>);
+        if not $MetGoth {
+            [The beady-eyed man sneers at you.];
+            $MetGoth = true;
+        } else {
+            ["What dost thou want now?" Goth spits.];
+        }
+        if flag(300) {
+            TurnOn("buy keys");
+        }
+        converse {
+            key ("name") {
+                ["Goth. Not that it is any of thy business!"];
+                TurnOff("name");
+            }
+            key ("job") {
+                ["What does it look like I do?" he says, holding up a ring of keys. "Gardening?"];
+                TurnOn(<< "keys", "gardening" >>);
+            }
+            key ("gardening") {
+                ["What? Art thou daft?" He shakes his head. "Well, at least thou art in the right area for gardening."];
+                TurnOn("area");
+                TurnOff("gardening");
+            }
+            key ("area") {
+                ["Empath Abbey, dolt!"];
+                TurnOn("Empath Abbey");
+                TurnOff("area");
+            }
+            key ("Empath Abbey") {
+                ["As a matter of fact,  know quite a bit about the people who live here. And I just might even tell thee. What is it worth to thee in gold?"];
+                PushKeys();
+                TurnOn(<< "nothing", "2", "3", "4", "5" >>);
+                TurnOff("Empath Abbey");
+            }
+            key ("nothing") {
+                PopKeys();
+                ["Fine by me!"];
+            }
+            key ("4", "3", "2") {
+                [He glowers at you. "Thou must do better than that, fool!"];
+            }
+            key ("5") {
+                PopKeys();
+                v1 = ~CountItem(_All, _All, _Gold_Coin, _Party);
+                if (v1 > 4) {
+                    v2 = ~TakeFromParty_i(0, 0, _All, _Gold_Coin, 5);
+                    ["I will tell thee what I know: Sir Jeff is in charge of the High Court. 'E's a real mean bastard, so I would stay away from 'im. The monks nearby make excellent wine, and Aimi doth warm a man's... heart. And whatever thou dost, do not waste time talking to the undertaker -- 'e's daft in the head."];
+                } else {
+                    ["Thou dost not have enough gold, toad."];
+                }
+                TurnOff(<< "2", "3", "4", "5" >>);
+            }
+            key ("keys") {
+                ["These? They are for the prisoner's cells, witless knave!"];
+                TurnOn(<< "prisoners", "buy keys" >>);
+                TurnOff("keys");
+            }
+            key ("prisoners") {
+                ["I will tell thee for 5 gold. Interested?"];
+                v3 = ~AskYesNo();
+                if v3 {
+                    v4 = ~CountItem(_All, _All, _Gold_Coin, _Party);
+                    if (v4 > 4) {
+                        v5 = ~TakeFromParty_i(true, _All, _All, _Gold_Coin, 5);
+                        ["One of them is named D'Rel. E's a pirate, from Buccaneer's Den."];
+                        TurnOn("another prisoner");
+                    } else {
+                        ["Thou dost not have enough money, stonehead."];
+                    }
+                } else {
+                    ["Pinchpenny!"*];
+                    terminate;
+                }
+                TurnOff("prisoners");
+            }
+            key ("another prisoner") {
+                ["Another, eh. Hast thou 5 more gold for me?"];
+                v6 = ~AskYesNo();
+                if v6 {
+                    v7 = ~CountItem(_All, _All, _Gold_Coin, _Party);
+                    if (v7 > 4) {
+                        ["The other one is a troll. 'E don't talk much, but\x09'e's the first troll prisoner I have ever seen."];
+                        v8 = ~TakeFromParty_i(true, _All, _All, _Gold_Coin, 5);
+                        TurnOff("another prisoner");
+                    } else {
+                        ["Thou canst not fool me, brainless dolt. Thou dost not have enough gold!"];
+                    }
+                } else {
+                    ["Fine, slug!"*];
+                    terminate;
+                }
+                TurnOff("another prisoner");
+            }
+            key ("buy keys") {
+                ["Thou dost want these, eh?" he asks, holding up keys. "'Twill cost thee... 20 gold. Still want them?"];
+                v9 = ~AskYesNo();
+                if v9 {
+                    v10 = ~CountItem(_All, _All, _Gold_Coin, _Party);
+                    if (v10 > 19) {
+                        ["Done!"];
+                        v11 = ~TakeFromParty_i(false, _All, _All, _Gold_Coin, 20);
+                        v12 = ~GiveToParty_i(false, _All, 248, _Key, 1);
+                        TurnOff("buy keys");
+                    } else {
+                        [He smiles cruelly. "I am afraid thou dost not have enough gold."];
+                    }
+                } else {
+                    ["Fine. Rot for all I care!*];
+                    terminate;
+                }
+                TurnOff("buy keys");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["Indeed, knave. Get thee gone!"*];
+    }
+    if (event = _Bark) {
+        terminate;
+    }
+}

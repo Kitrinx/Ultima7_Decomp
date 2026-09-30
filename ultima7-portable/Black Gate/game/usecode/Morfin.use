@@ -1,0 +1,270 @@
+Routine Morfin accepts a0 #locals(27) #uses(~AvatarName, ~LordOrLady, ~IsInInv, ~AskList, ~AskYesNo, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Morfin);
+        v0 = ~AvatarName();
+        v1 = ~LordOrLady();
+        v2 = "Avatar";
+        v3 = "None of thy concern";
+        v4 = ~GetTime();
+        v5 = ~GetWorkType(~NPCToItem_i(_Morfin));
+        TurnOn(<< "name", "job", "bye" >>);
+        if $MORFIN_KNOWS_PLAYER_NAME {
+            v6 = v0;
+        }
+        if $MORFIN_REFUSED_NAME {
+            v6 = v1;
+        }
+        if $MorfinTauntedAvatar {
+            v6 = v1;
+            if not $MORFIN_APOLOGIZED {
+                TurnOn("apology");
+            }
+        }
+        if ($FeridwynAccusedTobias and not $VENOM_CASE_SOLVED) {
+            TurnOn("Tobias stole venom");
+        }
+        if $READ_MORFIN_LEDGER {
+            TurnOn("ledger");
+        }
+        v7 = ~IsInInv(1, 65177, _Venom, 1, _Party);
+        if v7 {
+            TurnOn("return venom");
+        }
+        if not $MetMorfin {
+            [You see a man whose eyes slowly shift back and forth as a crooked smile curls his lips. He walks up to you, looks you up and down. "Oh, there must be a travelling show in town!" he says sniggering. "That is a very nice clown costume! Who art thou?"*];
+            v8 = ~AskList(<< v0, v2, v3 >>);
+            if (v8 = v0) {
+                ["Very well, <v0>. What dost thou want?"];
+                $MORFIN_KNOWS_PLAYER_NAME = true;
+                v6 = v0;
+            }
+            if (v8 = v3) {
+                ["Rude dog!"*];
+                $MORFIN_REFUSED_NAME = true;
+                $MetMorfin = true;
+                terminate;
+            }
+            if (v8 = v2) {
+                ["Thou art a vile fool, desperate for others to like thee. I would pity thee, were it not that I loathe thee even more!"*];
+                $MorfinTauntedAvatar = true;
+                v6 = v2;
+                $MetMorfin = true;
+                terminate;
+            }
+            $MetMorfin = true;
+        } else {
+            ["Greetings, <v6>," says Morfin.];
+        }
+        converse {
+            key ("name") {
+                ["My name is Morfin."];
+                TurnOff("name");
+            }
+            key ("job") {
+                ["I am a merchant who operates one of the most thriving businesses in Paws, which includes the slaughterhouse."];
+                TurnOn(<< "merchant", "Paws", "slaughterhouse" >>);
+            }
+            key ("merchant") {
+                ["Oh, I sell a little of this and that, here and there. Wherever there is a demand, I try to supply it."];
+                TurnOn(<< "demand", "supply" >>);
+                TurnOff("merchant");
+            }
+            key ("demand") {
+                ["There is quite a demand for the venom of the silver serpent in certain areas, for instance."];
+                TurnOff("demand");
+            }
+            key ("supply") {
+                ["I keep a small stock of silver serpent venom from time to time which I sell to the apothecary in Britannia for a modest profit. The government is trying to control sales of it until they can determine how dangerous the effects are."];
+                TurnOff("supply");
+                TurnOn(<< "apothecary", "effects" >>);
+            }
+            key ("apothecary") {
+                ["His name is Kessler."];
+                TurnOff("apothecary");
+            }
+            key ("Paws") {
+                ["I do suppose my ventures are profitable enough for me to afford to move to Britain, but things are so much less expensive here. Of course, the theft has me a bit wary.~~"If thou dost wish to know more about the people here, speak to the couple who run the Fellowship shelter, Feridwyn and Brita."];
+                TurnOff("Paws");
+                if not $VENOM_CASE_SOLVED {
+                    TurnOn("theft");
+                }
+            }
+            key ("slaughterhouse") {
+                ["I take it thou hast noticed the smell. If so I do apologize." He shrugs his shoulders, grinning, and holds his palms upward.~~"I think of it as the smell of success. Thou mayest purchase some meat if thou so wishest."];
+                TurnOn("buy meat");
+                TurnOff("slaughterhouse");
+            }
+            key ("buy meat") {
+                if (v5 = 7) {
+                    ["I sell mutton, beef, and ham. Which wouldst thou like?"];
+                    PushKeys();
+                    TurnOn(<< "nothing", "mutton", "beef", "ham" >>);
+                } else {
+                    ["The slaughterhouse is closed. Come around when it is open for business and I shall sell thee meats then."];
+                }
+                TurnOff("buy meat");
+            }
+            key ("nothing") {
+                ["Some other time, perhaps."];
+                PopKeys();
+            }
+            key ("mutton") {
+                ["'Twill cost thee 3 gold each. Still interested?"];
+                if ~AskYesNo() {
+                    ["How many dost thou want?"];
+                    v9 = ~AskBarInput(1, 1, 20, 1);
+                    v10 = (v9 * 3);
+                    v11 = ~TakeFromParty_i(true, _All, _All, _Gold_Coin, v10);
+                    if v11 {
+                        v12 = ~GiveToParty_i(true, 8, _All, _Food_Item, v9);
+                        if v12 {
+                            ["Here it is."];
+                        } else {
+                            ["Thou hast not the room for this meat."];
+                            v13 = ~GiveToParty_i(true, _All, _All, _Gold_Coin, v10);
+                        }
+                    } else {
+                        ["Thou hast not the gold for this, <v6>. Perhaps something else."];
+                    }
+                } else {
+                    ["Perhaps next time, <v6>."];
+                }
+                TurnOff("mutton");
+            }
+            key ("beef") {
+                ["'Twill cost thee 2 gold each. Still interested?"];
+                if ~AskYesNo() {
+                    ["How many dost thou want?"];
+                    v14 = ~AskBarInput(1, 1, 20, 1);
+                    v15 = (v14 * 2);
+                    v16 = ~TakeFromParty_i(true, _All, _All, _Gold_Coin, v15);
+                    if v16 {
+                        v17 = ~GiveToParty_i(true, 9, _All, _Food_Item, v14);
+                        if v17 {
+                            ["Here it is."];
+                        } else {
+                            ["Thou hast not the room for this meat."];
+                            v18 = ~GiveToParty_i(true, _All, _All, _Gold_Coin, v15);
+                        }
+                    } else {
+                        ["Thou hast not the gold for this, <v6>. Perhaps something else."];
+                    }
+                } else {
+                    ["Perhaps next time, <v6>."];
+                }
+                TurnOff("beef");
+            }
+            key ("ham") {
+                ["'Twill cost thee 4 gold each. Still interested?"];
+                if ~AskYesNo() {
+                    ["How many dost thou want?"];
+                    v19 = ~AskBarInput(1, 1, 20, 1);
+                    v20 = (v19 * 4);
+                    v21 = ~TakeFromParty_i(true, _All, _All, _Gold_Coin, v20);
+                    if v21 {
+                        v22 = ~GiveToParty_i(true, 11, _All, _Food_Item, v19);
+                        if v22 {
+                            ["Here it is."];
+                        } else {
+                            ["Thou hast not the room for this meat."];
+                            v23 = ~GiveToParty_i(true, _All, _All, _Gold_Coin, v20);
+                        }
+                    } else {
+                        ["Thou hast not the gold for this, <v6>. Perhaps something else."];
+                    }
+                } else {
+                    ["Perhaps next time, <v6>."];
+                }
+                TurnOff("ham");
+            }
+            key ("venom") {
+                ["A terrible crime, causing me no small amount of monetary distress. It has caused the surrounding community to worry about their possessions as well."];
+                if not $VENOM_CASE_SOLVED {
+                    ["I would be thine humble servant shouldst thou help investigate the matter. Wilt thou?"];
+                    v24 = ~AskYesNo();
+                    if v24 {
+                        ["Then I shall cooperate fully, <v1>." He bows.];
+                    } else {
+                        ["I do hope the culprit will be revealed through other methods then."];
+                    }
+                } else {
+                    ["I thank thee for solving the mystery of who was behind it."];
+                }
+                TurnOff("venom");
+            }
+            key ("theft") {
+                ["Thou art a stranger in Paws. Beware the thief who roams this town! The culprit has stolen a quantity of my valuable silver serpent venom!"];
+                $StolenVenom = true;
+                TurnOff("theft");
+                TurnOn("venom");
+            }
+            key ("apology") {
+                ["I do apologize for my rudeness earlier, <v6>. I have since realized that thou art an honest person. Please forgive mine insults." He bows, dripping insincerity.];
+                TurnOff("apology");
+                $MORFIN_APOLOGIZED = true;
+            }
+            key ("ledger") {
+                [You tell Morfin that you have seen his ledger. "Wait, <v6>! I admit I do sell Silver Serpent Venom to other places besides the Apothecary. But what I am doing is not -precisely- against the law!"];
+                TurnOn(<< "sell", "law" >>);
+                TurnOff("ledger");
+            }
+            key ("sell") {
+                ["My supply comes from some old friends in Buccaneer's Den. Where they get it, who can say?"];
+                TurnOff("sell");
+            }
+            key ("law") {
+                ["I have a notarized contract with the Britannian Mining Company. They use it to keep their gargoyles working longer hours. It seems gargoyles have a greater resistance to the effects of Silver Serpent Venom. Poor devils." He grins maliciously at his own joke.];
+                TurnOff("law");
+                TurnOn("effects");
+            }
+            key ("effects") {
+                ["They are widely known. Silver serpent venom is a reagent that, when ingested in small doses, temporarily enhances one's physical strength, stamina and quickness along with bringing a feeling of euphoria.~~"After the effects\x09wear off, the subject feels quite drained. This tends to make them want to take it again.~~"Prolonged use in such a fashion will bring about a condition that deteriorates the skin, eventually causing it to rot away.~~"Finally, too great a dose, or too great an accumulation of doses, is fatal, as the venom is a deadly poison.~~"It may very well have some healing properties when used in other ways we have yet to discover, but any user of the venom should not do so without caution."];
+                TurnOff("effects");
+                TurnOn("user");
+            }
+            key ("Tobias stole venom", "user") {
+                if $FeridwynAccusedTobias {
+                    ["I am not so sure Tobias was the one who stole the venom. I have not seen any of the signs of venom use in Tobias and I am quite familiar with its symptoms. But, now that I think about it, I have noticed that Garritt has appeared very tired lately. He seems hyperactive one moment and unhealthy the next."];
+                    if not $GOT_GARRITT_KEY {
+                        TurnOn("Garritt");
+                    }
+                    TurnOff("Tobias stole venom");
+                } else {
+                    ["I do not believe I have noticed anyone in town who is showing the symptoms of venom use. From now on I shall keep watch, so thou shouldst ask again later."];
+                }
+                TurnOff("user");
+            }
+            key ("Garritt") {
+                ["Perhaps thou shouldst make a search of Garritt's belongings! Which reminds me-- I saw him earlier playing near the slaughterhouse. He dropped this key. Perhaps it opens something... significant."];
+                v25 = ~GiveToParty_i(false, 6, 224, _Key, 1);
+                if v25 {
+                    ["Here it is."];
+                    $GOT_GARRITT_KEY = true;
+                } else {
+                    ["I shall give it to thee when thine hands are not so full."];
+                }
+                TurnOff("Garritt");
+            }
+            key ("return venom") {
+                v26 = ~TakeFromParty_i(true, _All, _All, _Venom, 1);
+                if v26 {
+                    ["I thank thee for ferreting out the thief and returning my snake venom."];
+                    if $VENOM_CASE_SOLVED {
+                        ["So Garritt was the culprit, eh? I am not surprised now that I think about it. I must keep closer tabs on my venom from now on."];
+                    }
+                } else {
+                    ["Of course, I do wish for thee to return my venom to me if thou hast recovered it."];
+                }
+                TurnOff("return venom");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["Good day to thee."*];
+    }
+    if (event = _Bark) {
+        BarkAboutWork_i(_Morfin);
+    }
+}

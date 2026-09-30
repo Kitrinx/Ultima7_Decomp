@@ -1,0 +1,90 @@
+Routine Diane accepts a0 #locals(7) #uses(~LordOrLady, ~AskYesNo, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Diane);
+        v0 = ~LordOrLady();
+        v1 = ~IsMedallionOn_i();
+        v2 = ~GetTime();
+        TurnOn(<< "name", "job", "bye" >>);
+        if v1 {
+            TurnOn("Fellowship");
+        }
+        if not $MetDiane {
+            [You see a pleasant-looking young peasant woman.];
+            $MetDiane = true;
+        } else {
+            ["Greetings to thee, <v0>," says Diane.];
+        }
+        converse {
+            key ("name") {
+                ["My name is Diane."];
+                TurnOff("name");
+            }
+            key ("job") {
+                ["My job is to oversee the stables here in Britain and sell thee a horse and carriage if thou dost want one."];
+                TurnOn(<< "stables", "Britain", "carriage" >>);
+            }
+            key ("stables") {
+                ["Here thou wilt find a selection of the finest horses produced by Lord British's personal horse breeder. If thou dost wish to buy one, I am sure we can come to some sort of arrangement. They come with a carriage, of course."];
+                TurnOff("stables");
+            }
+            key ("Britain") {
+                ["Britain is such a grand city, but it can be somewhat disconcerting if thou dost not know anyone. Fortunately, I know many people here."];
+                TurnOff("Britain");
+                TurnOn("people");
+            }
+            key ("carriage") {
+                ["The horse and carriage combination sells for 120 gold. Thou shalt find it in a small shelter just south of the stables, across the street. Dost thou want a title?"];
+                v3 = ~AskYesNo();
+                if v3 {
+                    v4 = ~CountItem(_All, _All, _Gold_Coin, _Party);
+                    if (v4 >= 120) {
+                        v5 = ~GiveToParty_i(false, _All, 29, _Scroll, 1);
+                        if v5 {
+                            ["Very good. Here is thy title."];
+                            v6 = ~TakeFromParty_i(true, _All, _All, _Gold_Coin, 120);
+                        } else {
+                            ["Oh, my. Thine hands are too full to take the title!"];
+                        }
+                    } else {
+                        ["Oh. Thou dost not have enough gold to buy the title."];
+                    }
+                } else {
+                    ["Some other time, then."];
+                }
+                TurnOff("carriage");
+            }
+            key ("people") {
+                ["I have many friends in Britannia. Among them are Greg, James, Brownie and Mack."];
+                TurnOff("people");
+                TurnOn(<< "Greg", "James", "Brownie", "Mack" >>);
+            }
+            key ("Greg") {
+                ["Greg runs a shop that sells provisions. If thou art planning any sort of expedition he is just the person to see. He seems to be lucky. Perhaps some of it will rub off on thee."];
+                TurnOff("Greg");
+            }
+            key ("James") {
+                ["James, who runs an inn not far from here, wanted a life of adventure. His family wanted him to run the inn after his father died and he has been discontent ever since. Still, I think he fancies Cynthia who works at the Mint."];
+                TurnOff("James");
+            }
+            key ("Brownie") {
+                ["Brownie is a decent and honest man who would have made a much better mayor than Patterson if thou dost want mine opinion. He uses our horses to plow his fields in the spring."];
+                TurnOff("Brownie");
+            }
+            key ("Mack") {
+                ["One word of warning about Mack. Do not let him start talking about the sky. Other than that he is perfectly fine, I can assure thee."];
+                TurnOff("Mack");
+            }
+            key ("Fellowship") {
+                [Diane notices your Fellowship medallion. "It is odd. If thou dost not mind me saying so, thou dost not seem like a Fellowship member. There is something about thee. I cannot place it."];
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["Good day to thee, <v0>."*];
+    }
+    if (event = _Bark) {
+        BarkAboutWork_i(_Diane);
+    }
+}

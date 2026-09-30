@@ -1,0 +1,20 @@
+Routine GlassSwordKeyEgg_i accepts a0 #locals(6) {
+    v0 = ~FindNearest_i(1, _Glass_Sword, item);
+    if v0 {
+        v1 = ~FindNearest_i(8, _Crystal_Ball, item);
+        if v1 {
+            v2 = ~GetQuality(v1);
+            if (v2 = 7) {
+                v3 = ~GetCoord(v1);
+                Item_destroy(v1);
+                Item_destroy(v0);
+                v4 = ~Item_create(_Key);
+                SetFrame(30, v4);
+                v5 = ~SetQuality(66, v4);
+                v5 = ~PopToMap(v3);
+                createSprite(65535, 0, 0, 0, (v3::2 - 2), (v3::1 - 1), 13);
+                Sfx(37);
+            }
+        }
+    }
+}

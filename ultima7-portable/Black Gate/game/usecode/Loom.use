@@ -1,0 +1,27 @@
+Routine Loom accepts a0 #locals(5) #uses(~DirFrom_i, MemberSays_i) {
+    if (event = 7) {
+        Kernel_resetRef(item);
+        v0 = ~PostAction(<< _aFRAME, 0, _aNEXT_FRAME, _aCONTINUE_i, _aSFX_i, 6, _aLOOP_i, 65532, 32, byte(85), 261 >>, item);
+        v1 = ~DirFrom_i(item, _Avatar);
+        v0 = ~PostAction(<< _aFACE_i, v1, _aCONTINUE_i, _aTHRUST1_FRAME_i, _aSTAND_FRAME_i, _aWAIT_i, 1, _aLOOP_i, 65531, 9 >>, _Avatar);
+    }
+    if (event = _Posted_i) {
+        v2 = ~GetContents(_All, _All, _Spindle_Of_Thread, _Avatar);
+        if v2 {
+            Item_destroy(v2);
+        }
+        v3 = ~Item_create(_Cloth);
+        if v3 {
+            SetItemFlag_i(_IsTemporary_i, v3);
+            SetItemFlag_i(_OkayToTake_i, v3);
+            SetFrame(~rndRange(4, 0), v3);
+            v4 = ~GetCoord(item);
+            v4::1 = (v4::1 + 1);
+            v4::2 = (v4::2 + 1);
+            v0 = ~PopToMap(v4);
+        }
+    }
+    if (event = _Action) {
+        MemberSays_i("@I believe that one threads a loom before using it.@");
+    }
+}

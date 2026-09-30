@@ -1,0 +1,158 @@
+Routine LaunchShip_i accepts a0 #locals(6) #uses(~SwingPlank_i, MemberSays_i, SetSails_i) {
+    v1 = ~GetCoord(v0);
+    v1 = (v1 & ~GetQuality(v0));
+    v1 = (v1 & 65177);
+    v2 = ~FindNearby_i(0, 12, _Gangplank, v1);
+    Foreach v5 in v2 {
+        if not ~SwingPlank_i(v5) {
+            MemberSays_i("@One of the gangplanks seems to be blocked. It must be lowered to sail.@");
+            return;
+        }
+    }
+    v6 = ~FindNearby_i(0, 18, _Sails, v1);
+    SetSails_i(1, v6);
+    ClearItemFlag_i(20, _Avatar);
+    SetItemFlag_i(_OnMovingBarge_i, v0);
+    SetItemFlag_i(_ActiveBarge_i, ~GetBarge_i(_Avatar));
+}
+
+Routine RaisePortcullis_i accepts a0, a1 #locals(1) {
+    v2 = ~PostAction(<< _aFRAME, 4, _aPREV_FRAME, _aSFX_i, 32, _aLOOP_i, 65533, 3, byte(85), v0, byte(88), 33 >>, v1);
+}
+
+Routine LowerPortcullis_i accepts a0, a1 #locals(1) {
+    v2 = ~PostAction(<< _aUSABLE_i, v0, _aNEXT_FRAME, _aSFX_i, 32, _aLOOP_i, 65533, 3, byte(88), 33 >>, v1);
+}
+
+Function ~OpenTrinsicGate_i #locals(18) {
+    if (flag(87) = false) {
+        flag(87) = true;
+    }
+    v0 = (~FindNearby_i(0, 25, _Crossbeam_276, _Avatar) & ~FindNearby_i(0, 25, _Crossbeam_277, _Avatar));
+    v1 = (~FindNearby_i(0, 25, _Portcullis_271, _Avatar) & ~FindNearby_i(0, 25, _Portcullis_272, _Avatar));
+    Foreach v4 in v1 {
+        v5 = ~Item_getZ(v4);
+        if (v5 = 0) {
+            v6 = ~PostAction(<< _aSFX_i, 32, _aUSABLE_i, #RaiseLevel_i, _aFRAME, 0, _aLOOP_i, 65529, 3 >>, v4);
+            Foreach v9 in v0 {
+                v6 = ~PostAction(<< _aFRAME, 1, _aFRAME, 2, _aFRAME, 3 >>, v9);
+            }
+        }
+        if (v5 = 1) {
+            v6 = ~PostAction(<< _aNO_HALT_i, _aSFX_i, 32, _aUSABLE_i, #RaiseLevel_i, _aFRAME, 1, _aLOOP_i, 65529, 2 >>, v4);
+            Foreach v9 in v0 {
+                v6 = ~PostAction(<< _aFRAME, 2, _aFRAME, 3 >>, v9);
+            }
+        }
+        if (v5 = 2) {
+            v6 = ~PostAction(<< _aSFX_i, 32, _aUSABLE_i, #RaiseLevel_i, _aFRAME, 2, _aLOOP_i, 65529, 1 >>, v4);
+            Foreach v9 in v0 {
+                v6 = ~PostAction(<< _aFRAME, 3 >>, v9);
+            }
+        }
+        if (v5 = 3) {
+            v6 = ~PostAction(<< _aSFX_i, 32, _aUSABLE_i, #RaiseLevel_i, _aFRAME, 2 >>, v4);
+            Foreach v9 in v0 {
+                v6 = ~PostAction(<< _aFRAME, 3 >>, v9);
+            }
+        }
+        if (v5 = 4) {
+            v6 = ~PostAction(<< _aSFX_i, 32, _aUSABLE_i, #LowerLevel_i, _aFRAME, 3, _aLOOP_i, 65529, 3 >>, v4);
+        }
+        Foreach v9 in v0 {
+            v6 = ~PostAction(<< _aFRAME, 2, _aFRAME, 1, _aFRAME, 0 >>, v9);
+        }
+    }
+    return true;
+}
+
+Routine SetStatTo_i accepts a0, a1, a2 #locals(2) {
+    v3 = ~GetNPCStat_i(v1, v2);
+    v4 = ~ChangeNPCStat_i((v0 - v3), v1, v2);
+}
+
+Routine SwitchPortcullis_i accepts a0, a1 #locals(6) #uses(RaisePortcullis_i, LowerPortcullis_i) {
+    v2 = ~GetQuality(v1);
+    v3 = << >>;
+    if ((v0 = 1) or (v0 = 65177)) {
+        v3 = (v3 & ~GetAllInRegion(_Metal_Wall_303));
+        v3 = (v3 & ~GetAllInRegion(_Metal_Wall_876));
+    }
+    if ((v0 = 0) or (v0 = 65177)) {
+        v3 = (v3 & ~GetAllInRegion(_Portcullis_Door_936));
+        v3 = (v3 & ~GetAllInRegion(_Portcullis_Door_935));
+    }
+    if v3 {
+        Foreach v6 in v3 {
+            if (~GetQuality(v6) = v2) {
+                v7 = ~Item_getType(v6);
+                switch v7 {
+                    case 303 {
+                        v7 = 936;
+                        RaisePortcullis_i(v7, v6);
+                    }
+                    case 876 {
+                        v7 = 935;
+                        RaisePortcullis_i(v7, v6);
+                    }
+                    case 936 {
+                        v7 = 303;
+                        LowerPortcullis_i(v7, v6);
+                    }
+                    case 935 {
+                        v7 = 876;
+                        LowerPortcullis_i(v7, v6);
+                    }
+                    default {
+                    }
+                }
+            }
+        }
+    }
+}
+
+Function ~PlaceOnTarget_i accepts a0, a1, a2, a3, a4 #locals(4) {
+    v5 = ~GetCoord(v3);
+    v5::1 = (v5::1 + v2);
+    v5::2 = (v5::2 + v1);
+    v5::3 = (v5::3 + v0);
+    v6 = ~Item_getContainer(item);
+    v7 = ~GetCoord(item);
+    v8 = ~Item_push(item);
+    if ~canExistAt(~GetFrame(item), ~Item_getType(item), v5) {
+        if ~PopToMap(v5) {
+            Sfx(73);
+            return 1;
+        }
+    } else {
+        FlashMouse_i(5);
+        if v6 {
+            if ~PopToNPC(v6) {
+                return 0;
+            }
+        } else {
+            if ~PopToMap(v7) {
+                return 0;
+            }
+        }
+    }
+}
+
+Routine CoolSwordBlank_i accepts a0 #locals(2) {
+    v1 = ~GetFrame(item);
+    if (v1 = 8) {
+        v2 = ~PostAction(<< _aWAIT_i, 2, _aFRAME, 8, _aWAIT_i, 25, _aUSABLE_i, #CoolBlank_i >>, item);
+    }
+    if (v1 = 9) {
+        v2 = ~PostAction(<< _aWAIT_i, 2, _aFRAME, 9, _aWAIT_i, 25, _aFRAME, 8, _aWAIT_i, 25, _aUSABLE_i, #CoolBlank_i >>, item);
+    }
+    if (v1 = 10) {
+        v2 = ~PostAction(<< _aWAIT_i, 2, _aFRAME, 10, _aWAIT_i, 25, _aFRAME, 9, _aWAIT_i, 25, _aFRAME, 8, _aWAIT_i, 25, _aUSABLE_i, #CoolBlank_i >>, item);
+    }
+    if (v1 = 11) {
+        v2 = ~PostAction(<< _aWAIT_i, 2, _aFRAME, 11, _aWAIT_i, 25, _aFRAME, 10, _aWAIT_i, 25, _aFRAME, 9, _aWAIT_i, 25, _aFRAME, 8, _aWAIT_i, 25, _aUSABLE_i, #CoolBlank_i >>, item);
+    }
+    if (v1 = 12) {
+        v2 = ~PostAction(<< _aWAIT_i, 2, _aFRAME, 12, _aWAIT_i, 25, _aFRAME, 11, _aWAIT_i, 25, _aFRAME, 10, _aWAIT_i, 25, _aFRAME, 9, _aWAIT_i, 25, _aFRAME, 8, _aWAIT_i, 25, _aUSABLE_i, #CoolBlank_i >>, item);
+    }
+}

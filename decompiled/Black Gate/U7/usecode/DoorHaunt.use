@@ -1,0 +1,39 @@
+Routine DoorHaunt #linear accepts a0 #locals(7) #uses(fn_093D, fn_081B, fn_010E, fn_0178) {
+label_0:
+    if not (event = 3) goto label_13;
+label_1:
+    event = 1;
+    v0 = intrinsic_35(0, 40, 270, item);
+    v0 = (v0 & intrinsic_35(0, 40, 376, item));
+    v1 = << >>;
+    iterate_setup;
+label_2:
+    iterate (v2, v3, v4, v0) goto label_4;
+label_3:
+    v1 = (v1 & intrinsic_19(v4, item));
+    goto label_2;
+label_4:
+    v0 = fn_093D(v1, v0);
+    v5 = 1;
+label_5:
+    v4 = v0::v5;
+    if not v4 goto label_13;
+label_6:
+    if not (fn_081B(v4) = 2) goto label_9;
+label_7:
+    v5 = (v5 + 1);
+    goto label_5;
+label_8:
+    goto label_13;
+label_9:
+    v6 = intrinsic_11(v4);
+    if not (v6 = 270) goto label_11;
+label_10:
+    fn_010E!(v4);
+label_11:
+    if not (v6 = 376) goto label_13;
+label_12:
+    fn_0178!(v4);
+label_13:
+    return;
+}

@@ -1,0 +1,10 @@
+Routine DamageGuyInParty accepts a0 #locals(4) #uses(~ListCount_i, DoDamage_i) {
+    if (event = _Trigger) {
+        Sfx(28);
+        v0 = ~GetParty();
+        v1 = ~ListCount_i(v0);
+        v2 = ~rndRange(v1, 1);
+        v3 = ~rndRange(~GetQuality(item), 1);
+        DoDamage_i(v3, ~NPCToItem_i(v0::v2));
+    }
+}

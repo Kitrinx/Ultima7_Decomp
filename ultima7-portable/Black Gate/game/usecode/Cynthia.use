@@ -1,0 +1,131 @@
+Routine Cynthia accepts a0 #locals(16) #uses(~LordOrLady, ~AskYesNo, ~IsInInv, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Cynthia);
+        v0 = ~LordOrLady();
+        v1 = ~GetTime();
+        TurnOn(<< "name", "job", "bye" >>);
+        if flag(220) {
+            TurnOn("exchange");
+        }
+        if $MetJames {
+            TurnOn("James");
+        }
+        if not $MetCynthia {
+            [You see a helpful and efficient-looking woman.];
+            $MetCynthia = true;
+        } else {
+            ["How may I help thee?" asks Cynthia.];
+        }
+        converse {
+            key ("name") {
+                ["My name is Cynthia."];
+                TurnOff("name");
+            }
+            key ("job") {
+                ["I am the teller at the Mint. I am also a member of the Britannian Tax Council."];
+                TurnOn(<< "Mint", "Britannian Tax Council" >>);
+            }
+            key ("Mint") {
+                ["Here at the Mint we store gold, oversee production of coins and keep an accurate count of how much money the kingdom has available for such things as farming, building the roads, developing sources of fresh water, seeing to the health of the citizenry, maintaining the estates of nobles, raising the guard militia and carrying out the decrees of Lord British."];
+                TurnOff("Mint");
+                TurnOn(<< "money", "farms", "roads", "water", "health", "estates", "guards" >>);
+            }
+            key ("Britannian Tax Council") {
+                ["The Britannian Tax Council is in charge of the accounting, assessment and collection of the taxes. If thou wilt be earning any money here in Britannia thou wilt need to take this paper."];
+                v2 = ~GiveToParty_i(true, _All, 12, _Scroll, 1);
+                if v2 {
+                    ["Fill it out and return it here at the end of the year when thou dost come back to pay thy taxes."];
+                } else {
+                    ["Thou art carrying too much. Come back and I will give thee thy paper when thou art not so greatly encumbered."];
+                }
+                TurnOff("Britannian Tax Council");
+            }
+            key ("money") {
+                ["In order to keep the standard of money constant, we also operate as an exchange for those who possess quantities of gold.~~We supply the equivalent value of their gold in spendable coin of the realm and then transform the gold we receive into more money. So, as thou canst see, it is a very efficient system."];
+                flag(220) = true;
+                TurnOff("money");
+                TurnOn(<< "exchange", "system" >>);
+            }
+            key ("farms") {
+                ["As I am certain thou dost know, the seven year drought, which thankfully ended several years ago, has left much of the farming in the Kingdom in disarray. That is why the cost of food is so expensive. But without the support of the Royal Treasury, the prices would be even higher."];
+                TurnOff("farms");
+            }
+            key ("roads") {
+                ["The increased use of wagons has caused many of the roads throughout Britannia to rapidly deteriorate. It costs a lot of money to build new roads and keep them all repaired."];
+                TurnOff("roads");
+            }
+            key ("water") {
+                ["It is of the utmost importance to the Kingdom to insure its populous a clean water supply, and that requires a regular supply of new and fresh wells."];
+                TurnOff("water");
+            }
+            key ("health") {
+                ["As Britannia's population has greatly increased in the last two hundred years, so has the risk of infectious diseases, such as the mysterious skin deterioration that afflicts those who partake in the venom of the silver serpent. The number of healers that the Kingdom needs has risen dramatically."];
+                TurnOff("health");
+            }
+            key ("estates") {
+                ["The local Lords and Mayors all have residences that are maintained through the auspices of the Kingdom."];
+                TurnOff("estates");
+            }
+            key ("guards") {
+                ["The military training is conducted at Serpent's Hold, where the guards that protect all of the towns and cities of Britannia are instructed. 'Tis funded by the Royal Treasury."];
+                TurnOff("guards");
+            }
+            key ("system") {
+                ["It not only applies to gold but it also applies to all minerals. We oversee the sale and rate of exchange for precious ores extracted by the Britannian Mining Company. But we do not handle the sale of gems. There is a jeweler in town who handles that."];
+                TurnOff("system");
+            }
+            key ("exchange") {
+                v3 = ~GetWorkType(~NPCToItem_i(_Cynthia));
+                if (v3 = 30) {
+                    ["Dost thou have some gold that thou wouldst like to exchange?"];
+                    v4 = ~AskYesNo();
+                    if v4 {
+                        v5 = ~IsInInv(65177, 65177, _Gold_Nugget, 1, _Party);
+                        v6 = ~IsInInv(65177, 65177, _Gold_Bar, 1, _Party);
+                        if (v5 or v6) {
+                            v7 = true;
+                        } else {
+                            v7 = false;
+                        }
+                        if not v7 {
+                            ["I can see thou hast no nuggets or bars of gold. Whatever gold thou mayest possess is already the coin of the realm. I cannot help thee anymore than that."];
+                        } else {
+                            ["We can exchange thy gold nuggets and bars into spendable coin for thee. I will give thee ten gold coins for each gold nugget and one-hundred gold coins for each gold bar."];
+                            v8 = ~CountItem(_All, _All, _Gold_Nugget, _Party);
+                            v9 = ~CountItem(_All, _All, _Gold_Bar, _Party);
+                            v10 = (10 * v8);
+                            v11 = (100 * v9);
+                            v12 = (v10 + v11);
+                            v13 = ~GiveToParty_i(true, _All, _All, _Gold_Coin, v12);
+                            if not v13 {
+                                ["Oh, my. Thou canst not possibly carry that many gold coins. Thou must return when thou dost have more space in thy pack."];
+                            } else {
+                                v14 = ~TakeFromParty_i(true, _All, _All, _Gold_Nugget, v8);
+                                v15 = ~TakeFromParty_i(true, _All, _All, _Gold_Bar, v9);
+                                ["And here are <v12> gold coins for thee in return, <v0>. I thank thee for thy business."];
+                            }
+                        }
+                    } else {
+                        ["Very well. Mayhaps another time."];
+                    }
+                } else {
+                    ["Please come to The Mint during regular daytime hours."];
+                }
+                TurnOff("exchange");
+            }
+            key ("James") {
+                ["James is mine husband and I am very worried about him. I know he is feeling very unhappy lately and he dislikes his job. If thou dost speak to him please tell him that even though we have not been speaking very much lately, that I am still thinking of him and that I still care about him."];
+                TurnOff("James");
+                flag(146) = true;
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["Good day, <v0>."*];
+    }
+    if (event = _Bark) {
+        BarkAboutWork_i(_Cynthia);
+    }
+}

@@ -1,0 +1,31 @@
+Routine Horn accepts a0 #locals(6) #uses(~RemoveFromList_i, SailFerry_i) {
+    if (event = _Action) {
+        if (~GetFrame(item) = 1) {
+            SetMusic(item, 48);
+            v0 = ~RemoveFromList_i(~FindNearby_i(0, 125, _Horn, item), item);
+            if (~ListSize_i(v0) = 1) {
+                v1 = ~GetCoord(item);
+                v2 = ~GetCoord(v0);
+                if (v1::1 < v2::1) {
+                    v3 = true;
+                } else {
+                    v3 = false;
+                }
+                if flag(407) {
+                    v4 = false;
+                } else {
+                    v4 = true;
+                }
+                if (v3 = v4) {
+                    v5 = ~FindNearby_i(0, 100, _The_Ferryman_155, _Avatar);
+                    if v5 {
+                        Camera_setCenterOn(v5);
+                        SailFerry_i(~GetBarge_i(v5));
+                    }
+                }
+            }
+        } else {
+            SetMusic(item, 24);
+        }
+    }
+}

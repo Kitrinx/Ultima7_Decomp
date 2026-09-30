@@ -1,0 +1,73 @@
+Routine Max accepts a0 #locals(4) #uses(~IsNPCNear) {
+    if (event = _Action) {
+        SetSpeaker(0, _Max);
+        TurnOn(<< "name", "job", "bye" >>);
+        if not $MetMax {
+            [This toddler is full of energy and is playing hard when he sees you. He stops what he is doing.];
+            $MetMax = true;
+        } else {
+            ["Hi!" Max grins at you.];
+        }
+        converse {
+            key ("name") {
+                ["Makth."];
+                v0 = ~IsNPCNear(_Nanna);
+                if v0 {
+                    SetSpeaker(0, _Nanna);
+                    ["He says his name is Max."];
+                    CloseSpeaker(_Nanna);
+                    SetSpeaker(0, _Max);
+                }
+                TurnOff("name");
+            }
+            key ("job") {
+                v1 = ~GetWorkType(_Max);
+                if (v1 = 25) {
+                    ["Playing tag!"];
+                    [The boy runs away from you to catch another child.*];
+                    terminate;
+                } else {
+                    ["I'm a funny boy!" Max laughs hysterically. "Makth sing too!"];
+                    TurnOn(<< "funny boy", "sing" >>);
+                }
+            }
+            key ("funny boy") {
+                ["Thou funny boy, -too-!" Max laughs madly as he throws his pacifier at you. He points at it and says, "Binky!"];
+                TurnOn("Binky");
+                TurnOff("funny boy");
+            }
+            key ("Binky") {
+                [Max nods furiously. "Binky! Get Binky! Get Binky!" ~~You realize that the boy wants you to pick it up. Apparently it is some kind of game that only toddlers understand. You pick it up and hand it to him. He immediately plugs it into his mouth.];
+                TurnOff("Binky");
+            }
+            key ("sing") {
+                [Max stands upright and bellows, "Old Lord British had a farm, -e-i-e-i-o-! On this farm he had a drake, -e-i-e-i-o-! With a -roar- -roar- here, a -roar- -roar- there, here a -roar-, there a -roar-, everywhere a -roar- -roar-!    Old Lord British had a farm, -e-i-e-i-o-!"];
+                TurnOff("sing");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["Bye bye!"*];
+    }
+    if (event = _Bark) {
+        v1 = ~GetWorkType(~NPCToItem_i(_Max));
+        if (v1 = 25) {
+            v2 = ~rndRange(4, 1);
+            if (v2 = 1) {
+                v3 = "@Tag! Thou art it!@";
+            }
+            if (v2 = 2) {
+                v3 = "@Cannot catch me!@";
+            }
+            if (v2 = 3) {
+                v3 = "@Nyah nyah! Thou art it!@";
+            }
+            if (v2 = 4) {
+                v3 = "@Catch me if thou can!@";
+            }
+            Item_bark(v3, _Max);
+        }
+    }
+}

@@ -1,0 +1,139 @@
+Routine Magenta accepts a0 #locals(5) #uses(~LordOrLady, ~AskYesNo, ~AskList, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Magenta);
+        v0 = ~LordOrLady();
+        TurnOn(<< "name", "job", "bye" >>);
+        if (flag(382) and not flag(383)) {
+            TurnOn("locket");
+        }
+        if flag(384) {
+            TurnOn("strangers");
+        }
+        if not $MetMagenta {
+            [You see a humble-looking older woman. She gives you a friendly smile.];
+            $MetMagenta = true;
+        } else {
+            [Magenta smiles. "Good day, <v0>. May I help thee?"];
+        }
+        converse {
+            key ("name") {
+                ["I am Magenta, of New Magincia."];
+                TurnOff("name");
+                TurnOn("New Magincia");
+            }
+            key ("job") {
+                ["I am the Mayor of New Magincia, and the wife of Boris."];
+                TurnOn(<< "Mayor", "Boris" >>);
+            }
+            key ("Mayor") {
+                ["It is a job that requires little actual administration. I mostly try to make sure that everyone is getting along with everyone else. Apart from that, the town practically runs itself."];
+                TurnOff("Mayor");
+                TurnOn("administration");
+            }
+            key ("administration") {
+                ["Why even the taxes here are less severe than anywhere else in Britannia. The Britannian Tax Council sometimes forgets to come collecting here for years on end."];
+                TurnOff("administration");
+            }
+            key ("Boris") {
+                ["Boris is the local innkeeper and a bit of a scoundrel if I say so myself. But he pours a good drink and tells a good story. Although I have to keep an eye on him, I love him."];
+                TurnOff("Boris");
+            }
+            key ("New Magincia") {
+                ["Oh, nothing is ever new in New Magincia, as the joke around here goes. But that is how we like it. We have few visitors here."];
+                TurnOn("visitors");
+                TurnOff("New Magincia");
+            }
+            key ("strangers", "visitors") {
+                ["I hear there are three other new arrivals wandering around here somewhere. I always try to give people the benefit of the doubt, but be careful of them."];
+                TurnOn("new arrivals");
+                TurnOff(<< "strangers", "visitors" >>);
+            }
+            key ("new arrivals") {
+                ["Certainly some of the other townsfolk must have seen them by now. Perhaps they will have more information."];
+                TurnOff("new arrivals");
+            }
+            key ("locket") {
+                [You see the locket Henry described to you hanging around Magenta's neck. "Is it not beautiful? I found it in the secret hiding place behind mine husband's bar."];
+                TurnOn("found");
+                TurnOff("locket");
+            }
+            key ("found") {
+                ["I would never have suspected anything so romantic from Boris. The locket must be a surprise for me!"];
+                TurnOn(<< "romantic", "surprise" >>);
+                TurnOff("found");
+            }
+            key ("romantic") {
+                if not flag(383) {
+                    ["He must be trying to get back on my good side after all of the times I have caught him wenching and carousing."];
+                } else {
+                    ["Well, I -did- think he was going to give it to me to make up for all the times I have caught him wenching and carousing."];
+                }
+                TurnOn("carousing");
+                TurnOff("romantic");
+            }
+            key ("carousing") {
+                ["Say, dost thou think that Boris could have meant to give this locket to someone else?"];
+                v1 = ~AskYesNo();
+                if v1 {
+                    [Magenta's eyes widen in shock. "Who?"];
+                    PushKeys();
+                    v2 = ~AskList(<< "Constance", "don't know who" >>);
+                    if (v2 = "Constance") {
+                        ["I cannot possibly wear a piece of jewelry meant for another woman. As mayor, I charge thee, Avatar, with the task of returning it to her, or more properly to the person who had intended to give it to her. As for Boris... well, I shall deal with him later!"];
+                        if not flag(383) {
+                            v3 = ~GiveToParty_i(false, 2, _All, _Amulet, 1);
+                            if v3 {
+                                ["Here is the locket. Take it."];
+                                flag(383) = true;
+                            } else {
+                                ["I cannot give thee the locket. Thou art too encumbered. Come back after thou hast put a few things down."];
+                            }
+                        }
+                    }
+                    if (v2 = "don't know who") {
+                        [Magenta looks puzzled. "I wonder who it could be?];
+                        [Then Magenta gets a devilish gleam in her eye. "Well then. I shall just beat it out of him!"];
+                    }
+                    PopKeys();
+                } else {
+                    [Magenta sighs with relief. "I am glad thou hast said this. Now I shall feel no guilt about keeping it."];
+                }
+                TurnOff("carousing");
+            }
+            key ("surprise") {
+                if not flag(383) {
+                    ["I am flattered Boris would buy me such an obviously expensive gift. But how could he ever have afforded it?"];
+                    PushKeys();
+                    v4 = ~AskList(<< "stolen", "don't know how" >>);
+                    if (v4 = "stolen") {
+                        [Although Magenta struggles to retain her dignity, she cannot hide her disappointment. "As Mayor, I charge thee with the task of locating the rightful owner of this locket and returning it to them."];
+                        if not flag(383) {
+                            v3 = ~GiveToParty_i(false, 2, _All, _Amulet, 1);
+                            if v3 {
+                                ["Here it is. Take it."];
+                                flag(383) = true;
+                            } else {
+                                ["Thou hast not room to carry even such a small thing as this! If thou wilt set something down, I will give thee the locket."];
+                            }
+                        }
+                    }
+                    if (v4 = "don't know how") {
+                        [Magenta looks puzzled. Then she smiles. "Oh well. It sure is nice, is it not? If he thought this would improve our marital relations, he was not altogether wrong!"];
+                    }
+                    PopKeys();
+                } else {
+                    ["Well, I thought at first that Boris had bought the locket for me as a surprise! Wait until I get mine hands on that no good..." Magenta's face turns as red as her hair.];
+                }
+                TurnOff("surprise");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["I look forward to the next time when I will see thee."*];
+    }
+    if (event = _Bark) {
+        BarkAboutWork_i(_Magenta);
+    }
+}

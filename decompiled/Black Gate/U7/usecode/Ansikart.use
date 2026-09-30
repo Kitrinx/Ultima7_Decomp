@@ -1,0 +1,157 @@
+Routine Ansikart accepts a0 #locals(6) #uses(AnsikartSellsFood_i, ~AskYesNo, GargBarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Ansikart);
+        TurnOn(<< "name", "job", "bye" >>);
+        if not $MetAnsikart {
+            [The winged gargoyle has a very calm air about him. As he first sees you, a smile of recognition appears on his face. "To present greetings, Avatar."];
+            $MetAnsikart = true;
+        } else {
+            ["To ask how to help you?"];
+        }
+        converse {
+            key ("name") {
+                ["To be called Ansikart."];
+                TurnOn("Ansikart");
+                TurnOff("name");
+            }
+            key ("Ansikart") {
+                ["To mean `anti-dry-master.'"];
+                TurnOff("Ansikart");
+            }
+            key ("job") {
+                ["To serve food and drink to others."];
+                TurnOn(<< "buy", "others" >>);
+            }
+            key ("buy") {
+                v0 = ~GetWorkType(~NPCToItem_i(_Ansikart));
+                if (v0 = 7) {
+                    AnsikartSellsFood_i();
+                } else {
+                    ["To apologize, but to ask you to return when I am open."];
+                }
+            }
+            key ("others") {
+                ["To know all the gargoyles in Vesper. To want to know about specific ones?"];
+                v1 = ~AskYesNo();
+                if v1 {
+                    ["To want information, perhaps, about the provisioner or the sage?];
+                    TurnOn(<< "sage", "provisioner" >>);
+                } else {
+                    ["To warn you that many hold resentment for their poor treatment. To be careful, please."];
+                }
+                TurnOn("Vesper");
+                TurnOff("others");
+            }
+            key ("Vesper") {
+                ["To be a town full of hate -- to have the humans hate us and to know many hate them, especially Anmanivas and Foranamo. To be not a good thing." He appears saddened.];
+                TurnOn(<< "Anmanivas", "Foranamo" >>);
+                TurnOff("Vesper");
+            }
+            key ("sage") {
+                ["To be named Wis-Sur."];
+                if $TetraGone {
+                    ["To be a great mind, knowledgeable in many things."];
+                } else {
+                    ["To have once been a great mind. To be now paranoid and reclusive. To feel pity for Wis-Sur."];
+                }
+                TurnOff("sage");
+            }
+            key ("provisioner") {
+                ["To be Aurvidlem. To have become sullen lately, but to know not why."];
+                TurnOff("provisioner");
+            }
+            key ("For-Lem") {
+                ["To be a laborer for the town."];
+                TurnOff("For-Lem");
+            }
+            key ("Lap-Lem") {
+                ["To mine for the Mining company here. To be the only gargoyle still mining here." He nods his head.~~ "To be very tolerant, like For-Lem."];
+                TurnOn(<< "tolerant", "For-Lem" >>);
+                TurnOff("Lap-Lem");
+            }
+            key ("tolerant") {
+                ["To work now with only humans, who hate and degrade him. To continue working, however, despite this. To be quite tolerant of human intolerance." He nods, as if to emphasize his point.];
+                TurnOff("tolerant");
+            }
+            key ("Anmanivas") {
+                v2 = ~IsDead(~NPCToItem_i(_Anmanivas));
+                if v2 {
+                    v3 = "have been";
+                    ["To have been killed by you in this very tavern. To remember not?~~"To have been his fault, but still, to tell you I feel remorse for him and his brother."];
+                } else {
+                    v3 = "be";
+                }
+                ["To have worked the mines with Lap-Lem, but to have left just recently." He shakes his head.~~"To hate the humans who work there, and who live on the other side of the oasis. To be too violent. To <v3> no longer permitted on the other side."];
+                TurnOn("Lap-Lem");
+                TurnOff("Anmanivas");
+            }
+            key ("Foranamo") {
+                v4 = ~IsDead(~NPCToItem_i(_Foranamo));
+                if v4 {
+                    v5 = "have been";
+                } else {
+                    v5 = "be";
+                }
+                ["To be brother to Anmanivas and to have been raised by the same parent. To hate humans as much as Anmanivas, and," he sighs, "to <v5> allowed no longer to visit the human side."];
+                TurnOff("Foranamo");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["To hope you will bring peace again to our people, Avatar."*];
+    }
+    if (event = _Bark) {
+        GargBarkAboutWork_i(_Ansikart);
+    }
+}
+
+Usable AnsikartSellsFood_i #locals(13) #uses(~AskOrdList, ~SellPriceString_i, ~AskYesNo, ~SellItem_i) {
+    PushKeys();
+    v0 = true;
+    v1 = << "nothing", "mutton rations", "cake", "ham", "wine", "ale" >>;
+    v2 = << 0, 377, 377, 377, 616, 616 >>;
+    v3 = << 65177, 15, 5, 11, 5, 3 >>;
+    v4 = << 0, 14, 5, 10, 9, 2, 1 >>;
+    v5 = "";
+    v6 = << 0, 1, 0, 0, 0, 0 >>;
+    v7 = << "", " for 10 pieces", " per portion", " per slice", " per bottle", " per bottle" >>;
+    v8 = << 0, 10, 1, 1, 1, 1 >>;
+    ["To make what purchase?"];
+    While v0 {
+        v9 = ~AskOrdList(v1);
+        if (v9 = 1) {
+            ["To be all right."];
+            v0 = false;
+        } else {
+            v10 = ~SellPriceString_i(v7::v9, v4::v9, v6::v9, v1::v9, v5);
+            v11 = 0;
+            ["^<v10> To be an acceptable price?"];
+            v12 = ~AskYesNo();
+            if v12 {
+                if (v2 = 616) {
+                    v11 = ~SellItem_i(true, 1, 0, v4::v9, v8::v9, v3::v9, v2::v9);
+                } else {
+                    ["To want how many?"];
+                    v11 = ~SellItem_i(true, 1, 20, v4::v9, v8::v9, v3::v9, v2::v9);
+                }
+            }
+            if (v11 = 1) {
+                ["To be agreed!"];
+            } else {
+                if (v11 = 2) {
+                    ["To have not the ability to carry that much!"];
+                } else {
+                    if (v11 = 3) {
+                        ["To be without enough gold!"];
+                    } else {
+                    }
+                }
+            }
+            ["To want another item?"];
+            v0 = ~AskYesNo();
+        }
+    }
+    PopKeys();
+}

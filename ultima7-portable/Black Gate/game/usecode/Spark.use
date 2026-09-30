@@ -1,0 +1,309 @@
+Routine Spark accepts a0 #locals(19) #uses(~AvatarName, ~LordOrLady, ~AskList, ~IsNPCNear, ~AskYesNo, ~IsInInv) {
+    if (event = _Action) {
+        v0 = ~AvatarName();
+        v1 = "Avatar";
+        v2 = ~GetParty();
+        v3 = ~AvatarSex();
+        v4 = ~NPCToItem_i(_Spark);
+        v5 = false;
+        v6 = false;
+        v7 = false;
+        if not $MetSpark {
+            SetSpeaker(1, _Spark);
+        } else {
+            if (v4 in v2) {
+                SetSpeaker(0, _Spark);
+            } else {
+                SetSpeaker(1, _Spark);
+            }
+        }
+        if $ToldSparkName {
+            v8 = v0;
+        }
+        if $ToldSparkAvat {
+            v8 = v1;
+        }
+        v9 = ~LordOrLady();
+        if not $MetSpark {
+            [You see a boy who appears to be a young teen. He is dirty and unkempt. He looks as if he has been crying, but he sits up straight and looks sharp when he sees you.];
+            ["Who art thou and what dost thou want?" You realize the boy has a sling in hand.];
+            [You face the boy and tell him who you are.];
+            v10 = ~AskList(<< v0, v1 >>);
+            if (v10 = v0) {
+                ["So? What makes thee so special?"*];
+                v8 = v0;
+                $ToldSparkName = true;
+            } else {
+                ["The last time I heard -that- one I fell off a prehistoric creature from Eodon!"];
+                v8 = v1;
+                $ToldSparkAvat = true;
+            }
+            v11 = ~IsNPCNear(_Iolo);
+            if v11 {
+                SetSpeaker(0, _Iolo);
+                ["Boy, this is the Avatar! ];
+                if not v3 {
+                    [Upon my word he is! He has come to help thee!"*];
+                } else {
+                    [Upon my word she is! She has come to help thee!"*];
+                }
+                CloseSpeaker(_Iolo);
+                SetSpeaker(1, _Spark);
+            }
+            [Then the boy narrows his eyes, studying you. He slowly lowers his weapon, ready to act in case it's a trap. You admire the boy's obvious experience in dealing with strangers.];
+            [You and Spark stare at each other. He is not sure what to do. Finally, he nods his head. "All right. I believe thee. Thou dost look like paintings I have seen. I am sorry, <v9>."];
+            $MetSpark = true;
+        } else {
+            ["Yes, <v8>?" Spark asks. "What dost thou want?"];
+        }
+        TurnOn(<< "name", "job", "murder", "bye" >>);
+        if $SPARK_KEY_TOPIC {
+            TurnOn("key");
+        }
+        if $FOUND_GOLD {
+            TurnOff("key");
+        }
+        if (v4 in v2) {
+            TurnOn("leave");
+        }
+        if ($SPARK_CAN_JOIN and not (v4 in v2)) {
+            TurnOn("join");
+        }
+        if ($FOUND_GOLD and not $SPARK_CLUES_DONE) {
+            TurnOn(<< "gold", "medallion", "scroll" >>);
+        }
+        converse {
+            key ("name") {
+                ["I have always been called Spark."];
+                TurnOff("name");
+            }
+            key ("job") {
+                ["I have no job. I am only fourteen, so I am just learning how to best help Father in the smithy," he says, proudly. But then he suddenly realizes something which terrifies him. "And now that Father is dead, I am an orphan!"];
+                TurnOn(<< "smithy", "Father", "orphan" >>);
+            }
+            key ("smithy") {
+                ["Father was the best blacksmith in Britannia. People were always coming from everywhere to get him to make this and that."];
+                TurnOff("smithy");
+            }
+            key ("orphan") {
+                ["My mother died a long time ago. I can just barely remember her."];
+                TurnOff("orphan");
+            }
+            key ("murder") {
+                if not $FOUND_SCROLL {
+                    ["I cannot believe Father is dead. And poor Inamo, too. It is so strange. I -dreamed- it was happening. Well, in a way.~~"Last night I was having a nightmare about Father. I dreamed that he screamed, and it woke me up. I looked around the house, but he was not in his bed. I was wide awake, so I went out to find him."];
+                    TurnOn(<< "Inamo", "nightmare", "find" >>);
+                } else {
+                    ["I am sure thou canst find the man who killed Father!"];
+                    ["Dost thou want me to repeat everything I know about the murder?"];
+                    if ~AskYesNo() {
+                        ["What dost thou want to know about?"];
+                        TurnOn(<< "my story", "key", "chest" >>);
+                    } else {
+                        ["All right."];
+                    }
+                }
+                TurnOff("murder");
+            }
+            key ("chest") {
+                if $FOUND_GOLD {
+                    ["I am not sure if it's the same one, but I think I saw Father with a scroll just like the one in the chest one or two days ago. I know he was making something special for someone. I am fairly certain it was at his shop. As for the medallion, he usually wore it. I do not know why it was in the chest. And the gold-- I have never seen so much gold in my life. I cannot imagine why father had it."];
+                } else {
+                    ["Thou shouldst try opening the chest."];
+                }
+                TurnOff("chest");
+            }
+            key ("my story") {
+                ["It is so strange. I -dreamed- it was happening. Well, in a way.~~"Last night I was having a nightmare about Father. I dreamed that he screamed, and it woke me up. I looked around the house, but he was not in his bed. I was wide awake, so I went out to find him."];
+                TurnOff("my story");
+                TurnOn(<< "find", "nightmare" >>);
+            }
+            key ("nightmare") {
+                ["I know it sounds witless, but... I dreamed that a big red-faced man was watching down on everything and... He looked down... And he noticed Father... That is all I remember."];
+                TurnOff("nightmare");
+            }
+            key ("find") {
+                ["No, I did not find him. At least, not right away. But I did see something."];
+                TurnOn("something");
+                TurnOff("find");
+            }
+            key ("something") {
+                ["I was in front of the stables. I saw a man and a wingless gargoyle running from behind the building. They ran toward the dock. Then I went inside and found... Father."~~Spark's voice falters, and he begins to sob a little.];
+                TurnOn(<< "man", "gargoyle" >>);
+                TurnOff("something");
+            }
+            key ("man") {
+                ["All I saw of him was that the man had a hook for a right hand."];
+                TurnOn("hook");
+                TurnOff("man");
+            }
+            key ("gargoyle") {
+                ["I cannot tell one gargoyle from another. I could not identify him, except that he had no wings."];
+                TurnOff("gargoyle");
+            }
+            key ("hook") {
+                if not $FOUND_SCROLL {
+                    if not (v4 in v2) {
+                        ["Wilt thou go find the Man with the Hook? Let me help thee!" the boy pleads. His tears cease, and his face takes on a determined, forceful look.];
+                        $FOUND_SCROLL = true;
+                        ["Take me with thee! Please! I must avenge Father's death! If thou dost not take me with thee, I will follow thee anyway!"];
+                        [The boy is all excited now. "I am an expert with a slingshot! I can strike sewer rats with almost every shot! And I am small -- I do not eat much! Please take me! Please ask me to join thee!"*];
+                        v11 = ~IsNPCNear(_Iolo);
+                        if v11 {
+                            SetSpeaker(0, _Iolo);
+                            [Iolo whispers to you. "I do not know about taking a child on the road with us, <v9>."*];
+                            CloseSpeaker(_Iolo);
+                            SetSpeaker(1, _Spark);
+                            [Suddenly, Spark lets his sling fly. His target, a small fly hovering above Iolo's head, is smacked out of the air. You laugh as Iolo\x09yelps, jumps away, curses and runs his fingers through his hair. ];
+                            Sfx(1);
+                        } else {
+                            [Suddenly, Spark lets his sling fly. His target, a small fly hovering above your head, is smacked out of the air. ];
+                        }
+                        ["I told thee I am good! May I join?"];
+                        v12 = ~AskYesNo();
+                        if v12 {
+                            CloseSpeaker(_Spark);
+                            SetSpeaker(0, _Spark);
+                            ["Hooray!" the boy leaps with delight.];
+                            TurnOn("leave");
+                            JoinParty(_Spark);
+                        } else {
+                            ["Fine." The boy looks angry. "But I'll follow thee anyway."];
+                            JoinParty(_Spark);
+                            TurnOn("leave");
+                        }
+                        $SPARK_CAN_JOIN = true;
+                    } else {
+                        ["I know thou wilt find that man."];
+                    }
+                } else {
+                    ["I know thou wilt find that man."];
+                }
+                TurnOff("hook");
+            }
+            key ("join") {
+                ["'Tis about time thou didst ask again!"];
+                v13 = 0;
+                Foreach v16 in v2 {
+                    v13 = (v13 + 1);
+                }
+                if (v13 < 8) {
+                    JoinParty(_Spark);
+                    CloseSpeaker(_Spark);
+                    SetSpeaker(0, _Spark);
+                    ["Hooray!"];
+                } else {
+                    ["Well, on second thought, it looks like too big of a crowd. I do not like crowds."];
+                }
+                TurnOff("join");
+                TurnOn("leave");
+            }
+            key ("leave") {
+                ["Don't make me go!" Spark cries. "Dost thou really want me to go?" He looks at you with puppy-dog eyes.];
+                v17 = ~AskYesNo();
+                if v17 {
+                    CloseSpeaker(_Spark);
+                    SetSpeaker(1, _Spark);
+                    ["Well, should I just wait here or dost thou want me to go home to Trinsic?"];
+                    ClearKeys();
+                    v10 = ~AskList(<< "wait here", "go home" >>);
+                    if (v10 = "wait here") {
+                        ["All right. I shall wait here until thou dost return and ask me to rejoin."*];
+                        LeaveParty(_Spark);
+                        SetWorkType(_Wait, ~NPCToItem_i(_Spark));
+                        terminate;
+                    } else {
+                        [Spark bows his head and murmurs, "Goodbye, then."*];
+                        LeaveParty(_Spark);
+                        SetWorkType(_Loiter, ~NPCToItem_i(_Spark));
+                        terminate;
+                    }
+                } else {
+                    ["Thou wilt not be sorry!"];
+                }
+            }
+            key ("Father") {
+                ["Father was the blacksmith. I cannot believe that he has been murdered! He had no enemies that I know of. Unless it was The Fellowship."];
+                TurnOn("Fellowship");
+                TurnOff("Father");
+            }
+            key ("Fellowship") {
+                ["Well, at first they harassed Father and me when they came around asking us to join. I suppose they do good things. Many people like them. Father eventually joined the group after he went to Britain and took one of their tests."];
+                TurnOn("tests");
+                $FOUND_MEDALLION = true;
+                TurnOff("Fellowship");
+            }
+            key ("tests") {
+                ["I do not know anything about them. I never took one. Maybe thou shouldst ask the man at the Fellowship Branch. Klog."];
+                TurnOn(<< "branch", "Klog" >>);
+                TurnOff("tests");
+            }
+            key ("branch") {
+                ["The Fellowship has branches all over Britannia."];
+                TurnOff("branch");
+            }
+            key ("Klog") {
+                ["He is the head of the Fellowship Branch here in Trinsic. He and Father got into an argument a week ago when Klog and two of his friends came over to talk with Father."];
+                TurnOn(<< "argument", "friends" >>);
+                TurnOff("Klog");
+            }
+            key ("argument") {
+                ["I don't know what it was about. Perhaps thou shouldst ask Klog."];
+                TurnOff("argument");
+            }
+            key ("friends") {
+                ["I do not remember what they look like. I did not recognize them.\x09They were most likely some other members of The Fellowship."];
+                TurnOff("friends");
+            }
+            key ("key") {
+                if $FOUND_GOLD {
+                    ["That key opened my Father's chest, did it not?"];
+                } else {
+                    v18 = ~IsInInv(65177, 253, _Key, 1, _Party);
+                    if v18 {
+                        ["That looks like the key to Father's chest. I wondered where it was!"];
+                    } else {
+                        ["What key? Dost thou have the key to Father's chest? Where is it?"];
+                    }
+                }
+                TurnOff("key");
+            }
+            key ("gold") {
+                [The boy's eyes widen. "I had no idea that Father had that much money hidden away!"];
+                ["I suppose I could give it to thee if thou art going to look for those who killed my Father!"];
+                TurnOff("gold");
+                v6 = true;
+            }
+            key ("medallion") {
+                ["Father was a member of The Fellowship. I don't know why the medallion was in the chest -- he usually wore it."];
+                TurnOff("medallion");
+                v7 = true;
+            }
+            key ("scroll") {
+                ["I am not sure if it's the same one, but I think I saw Father with a scroll just like that one or two days ago. I know he was making something special for someone. I am fairly certain it was at his shop."];
+                TurnOn("shop");
+                TurnOff("scroll");
+                v5 = true;
+            }
+            key ("shop") {
+                ["It's in the southwest corner of town."];
+                TurnOff("shop");
+            }
+            key ("Inamo") {
+                ["He was a very nice gargoyle. He helped Father a lot and did tasks in the stables. I cannot think why anyone would want to kill him!"];
+                TurnOff("Inamo");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["All right, I will speak with thee later."*];
+        if (v5 and (v6 and v7)) {
+            $SPARK_CLUES_DONE = true;
+        }
+    }
+    if (event = _Bark) {
+        terminate;
+    }
+}

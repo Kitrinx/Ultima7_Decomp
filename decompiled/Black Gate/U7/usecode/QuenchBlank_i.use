@@ -1,0 +1,10 @@
+Routine QuenchBlank_i accepts a0 #locals(3) #uses(~PlaceOnTarget_i) {
+    v0 = ~FindNearest_i(5, _Water_Trough_741, ~NPCToItem_i(_Avatar));
+    if ~PlaceOnTarget_i(2, 0, 0, v0, item) {
+        v1 = ~GetCoord(item);
+        createSprite(65535, 0, 0, 0, (v1::2 - 3), (v1::1 - 3), 9);
+        Sfx(46);
+        v2 = ~PostAction(<< _aFRAME, 8, _aUSABLE_i, #CoolBlank_i >>, item);
+        v2 = ~PostAction(<< _aPREV_FRAME, _aLOOP_i, 65535, 2 >>, v0);
+    }
+}

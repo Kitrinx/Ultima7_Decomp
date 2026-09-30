@@ -1,0 +1,192 @@
+Routine Coop accepts a0 #locals(9) #uses(~AvatarName, ~LordOrLady, ~IsNPCNear, CoopSellsBows_i, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Coop);
+        v0 = ~AvatarName();
+        v1 = ~LordOrLady();
+        v2 = ~GetTime();
+        v3 = ~GetWorkType(~NPCToItem_i(_Coop));
+        if (v2 = 7) {
+            v4 = ~IsNPCNear(_Neno);
+            v5 = ~IsNPCNear(_Judith);
+            if (v4 and v5) {
+                [Coop is onstage with The Avatars. He sees you and says, "Uhm, there is someone special listening tonight, and this next tune is dedicated to them."];
+                [He signals to his partners and they begin to play. He sings the following lyrics:];
+                ["Across the country we do fly -- ~Best to heed our battle cry!];
+                ["We fight for virtues, far and wide, ~And we cause the damsel's sigh."];
+                [Then Neno and Judith join in on the chorus:];
+                ["Oh, Avatars are we ~And virtuous we doth be!];
+                ["Beware ye ogre and ye beast ~Lest thou be served at our next feast!];
+                ["We rescue damsels, oh so fair, ~And battle pirates on a dare!];
+                ["No evil liche doth daunt or sway! ~Against them all we win the day!];
+                ["We are the Av-atars! ~We are the Av-atars! ~We are the Aaaa-Vaaa-Taaars!"];
+                [The applause is tumultuous.*];
+                v6 = ~IsNPCNear(_Iolo);
+                if v6 {
+                    SetSpeaker(0, _Iolo);
+                    ["Hmmm. They must have seen thee coming, <v1>."*];
+                    CloseSpeaker(_Iolo);
+                    SetSpeaker(0, _Coop);
+                    terminate;
+                }
+            } else {
+                ["Must not stop to speak now! I am late for a performance of The Avatars! Come and hear us play at The Blue Boar!"*];
+                terminate;
+            }
+        }
+        TurnOn(<< "name", "job", "bye" >>);
+        v6 = ~IsNPCNear(_Iolo);
+        if v6 {
+            TurnOn("Iolo");
+        }
+        if not $MetCoop {
+            [You see a young, wiry teen.];
+            if v6 {
+                SetSpeaker(0, _Iolo);
+                ["Hello, lad! This is <v0>, the Avatar! This is my young apprentice, Coop. How go things, Coop?"*];
+                SetSpeaker(0, _Coop);
+                ["Not too badly, milord. I sold a triple crossbow this morning."*];
+                SetSpeaker(0, _Iolo);
+                ["Lovely! Lovely! Keep that gold coming in, that's what I always say!"*];
+                CloseSpeaker(_Iolo);
+                SetSpeaker(0, _Coop);
+            }
+            $MetCoop = true;
+        } else {
+            ["Hello!" Coop says.];
+        }
+        converse {
+            key ("name") {
+                ["My name is Coop."];
+                TurnOff("name");
+            }
+            key ("job") {
+                ["I am the manager of Iolo's Bows! Master Iolo has entrusted me with this responsibility!];
+                if (v3 = 7) {
+                    ["If there is anything thou dost want in the way of bows and arrows, please say so!"];
+                    TurnOn(<< "bows and arrows", "buy" >>);
+                } else {
+                    ["Thou must come by the shoppe when it is open!"];
+                }
+                TurnOn(<< "Iolo's Bows", "responsibility" >>);
+            }
+            key ("Iolo's Bows") {
+                ["Iolo opened this shoppe many, many years ago. He opened Iolo's South in Serpent's Hold more recently. He is becoming quite an entrepreneur!"];
+                TurnOff("Iolo's Bows");
+            }
+            key ("responsibility") {
+                ["I sell many goods but I also plan to perpetuate the good name of Iolo by becoming a master archer! Iolo has taught me well!"*];
+                v6 = ~IsNPCNear(_Iolo);
+                if v6 {
+                    SetSpeaker(0, _Iolo);
+                    ["Yes, the lad is good! He was good before I taught him the first lesson."*];
+                    CloseSpeaker(_Iolo);
+                    SetSpeaker(0, _Coop);
+                }
+                ["What I would not give to join thy group and go adventuring! But, then there would be no one to run the shoppe. So I cannot go. But someday... Anyway, I please myself in the evenings by singing with a musical group."];
+                TurnOff("responsibility");
+                TurnOn("singing");
+            }
+            key ("Iolo") {
+                ["Hello, boss!"*];
+                SetSpeaker(0, _Iolo);
+                ["Greetings, lad. Thou art looking well."*];
+                CloseSpeaker(_Iolo);
+                SetSpeaker(0, _Coop);
+                ["The same to thee, milord!"*];
+                TurnOff("Iolo");
+            }
+            key ("singing") {
+                ["My group is called... well, it is called 'The Avatars'. I hope that does not offend thee."];
+                TurnOff("singing");
+                TurnOn("The Avatars");
+            }
+            key ("The Avatars") {
+                ["The band is just me and two musicians from The Music Hall. We play at the Blue Boar every night. I sing and write lyrics. The other two play the instruments. Please come to hear us!"];
+                TurnOff("The Avatars");
+            }
+            key ("bows and arrows") {
+                ["We sell all kinds of bows, along with arrows and bolts. If thou dost wish to buy something, please say so!"];
+                TurnOff("bows and arrows");
+            }
+            key ("buy") {
+                CoopSellsBows_i();
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["Goodbye!"*];
+    }
+    if (event = _Bark) {
+        v2 = ~GetTime();
+        v3 = ~GetWorkType(~NPCToItem_i(_Coop));
+        v7 = ~rndRange(4, 1);
+        if (v3 = 7) {
+            if (v7 = 1) {
+                v8 = "@Arrows? Bows?@";
+            }
+            if (v7 = 2) {
+                v8 = "@Iolo's is open!@";
+            }
+            if (v7 = 3) {
+                v8 = "@Bolts? Arrows?@";
+            }
+            if (v7 = 4) {
+                v8 = "@Archery equipment!@";
+            }
+            Item_bark(v8, _Coop);
+        } else {
+            BarkAboutWork_i(_Coop);
+        }
+    }
+}
+
+Usable CoopSellsBows_i #locals(13) #uses(~AskOrdList, ~PriceString_i, ~AskYesNo, ~SellItem_i) {
+    PushKeys();
+    v0 = true;
+    v1 = << "nothing", "bow", "crossbow", "triple crossbow", "arrows", "bolts" >>;
+    v2 = << 0, 597, 598, 647, 722, 723 >>;
+    v3 = 65177;
+    v4 = << 0, 40, 125, 400, 25, 30 >>;
+    v5 = << "", "a ", "a ", "a ", "", "" >>;
+    v6 = << 0, 0, 0, 0, 1, 1 >>;
+    v7 = << "", "", "", "", " for a dozen", " for a dozen" >>;
+    v8 = << 0, 1, 1, 1, 12, 12 >>;
+    ["What wouldst thou like to buy?"];
+    While v0 {
+        v9 = ~AskOrdList(v1);
+        if (v9 = 1) {
+            ["Fine."];
+            v0 = false;
+        } else {
+            v10 = ~PriceString_i(v7::v9, v4::v9, v6::v9, v1::v9, v5::v9);
+            v11 = 0;
+            ["^<v10> Wouldst thou still like to buy?"];
+            v12 = ~AskYesNo();
+            if v12 {
+                if ((v2::v9 = 722) or (v2::v9 = 723)) {
+                    ["How many dozen wouldst thou like?"];
+                    v11 = ~SellItem_i(true, 1, 20, v4::v9, v8::v9, v3, v2::v9);
+                } else {
+                    v11 = ~SellItem_i(false, 1, 0, v4::v9, v8::v9, v3, v2::v9);
+                }
+            }
+            if (v11 = 1) {
+                ["Done!"];
+            } else {
+                if (v11 = 2) {
+                    ["Thou cannot possibly carry that much!"];
+                } else {
+                    if (v11 = 3) {
+                        ["Thou dost not have enough gold for that!"];
+                    } else {
+                    }
+                }
+            }
+            ["Wouldst thou like something else?"];
+            v0 = ~AskYesNo();
+        }
+    }
+    PopKeys();
+}

@@ -1,0 +1,13 @@
+Routine TeleportBatlin_i accepts a0 #locals(2) #uses(CallLightning_i) {
+    if (event = _Action) {
+        Kernel_resetRef(item);
+        v0 = ~PostAction(<< _aFACE_i, byte(48), _aKNEEL_FRAME_i, _aWAIT_i, 1, _aBARK_i, "@Kal Ort Por@", _aSTAND_FRAME_i, _aUP_FRAME_i, _aOUT_FRAME_i, _aTHRUST2_FRAME_i, _aUSABLE_i, #TeleportBatlin_i >>, item);
+    }
+    if (event = _Posted_i) {
+        v1 = ~GetCoord(item);
+        createSprite(65535, 2, 0, 0, v1::2, v1::1, 7);
+        CallLightning_i(item);
+        SetWorkType(_Wait, item);
+        Item_move(<< 1450, 1280, 0 >>, item);
+    }
+}

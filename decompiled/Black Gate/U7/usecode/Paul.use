@@ -1,0 +1,160 @@
+Routine Paul accepts a0 #locals(13) #uses(~AskYesNo, ~IsNPCNear, PaulStagesPlay_i, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Paul);
+        v0 = ~GetWorkType(~NPCToItem_i(_Paul));
+        TurnOn(<< "name", "job", "bye" >>);
+        if not $MetPaul {
+            [You see a young entertainer who beckons to you.];
+            $MetPaul = true;
+        } else {
+            ["Yes?" Paul asks.];
+        }
+        converse {
+            key ("name") {
+                ["I am Paul. My colleagues' names are Meryl and Dustin."];
+                TurnOff("name");
+            }
+            key ("job") {
+                ["We perform a Passion Play about The Fellowship. It costs only 2 gold per person to see. If thou dost want us to perform it, please say so."];
+                TurnOn(<< "Passion Play", "Fellowship", "perform" >>);
+            }
+            key ("Passion Play") {
+                ["A Passion Play is a morality tale performed on stage."];
+                TurnOff("Passion Play");
+            }
+            key ("Fellowship") {
+                ["It would be much simpler to view the play."];
+                TurnOff("Fellowship");
+            }
+            key ("perform") {
+                if not (v0 = 29) {
+                    ["I am sorry to say we are on our break. Please return to the stage area during normal hours."];
+                } else {
+                    ["Wouldst thou like to see our Passion Play?"];
+                    if ~AskYesNo() {
+                        v1 = ~IsNPCNear(_Meryl);
+                        v2 = ~IsNPCNear(_Dustin);
+                        if (v1 and v2) {
+                            v3 = ~GetParty();
+                            v4 = 0;
+                            v5 = ~CountItem(_All, _All, _Gold_Coin, _Party);
+                            Foreach v8 in v3 {
+                                v4 = (v4 + 1);
+                            }
+                            if (v5 >= (v4 * 2)) {
+                                v9 = ~TakeFromParty_i(true, _All, _All, _Gold_Coin, v4);
+                                [Paul takes your gold. "We thank thee. If thou wouldst make thyself comfortable, we shall begin."];
+                                PaulStagesPlay_i();
+                            } else {
+                                ["Oh dear. I am afraid thou dost not have enough gold to pay for the performance. Some other time, I hope."*];
+                                terminate;
+                            }
+                        } else {
+                            ["I am sorry. It seems my fellow thespians are not available. The Passion Play has temporarily\x09closed."*];
+                            terminate;
+                        }
+                    } else {
+                        ["Some other time, then, I hope."*];
+                        terminate;
+                    }
+                }
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        [The actor bows to you.*];
+    }
+    if (event = _Bark) {
+        v10 = ~GetTime();
+        v0 = ~GetWorkType(~NPCToItem_i(_Paul));
+        v11 = ~rndRange(4, 1);
+        if (v0 = 29) {
+            if (v11 = 1) {
+                v12 = "@See the Passion Play!@";
+            }
+            if (v11 = 2) {
+                v12 = "@The Fellowship presents...@";
+            }
+            if (v11 = 3) {
+                v12 = "@Come view the Passion Play!@";
+            }
+            if (v11 = 4) {
+                v12 = "@We shall entertain thee!@";
+            }
+            Item_bark(v12, _Paul);
+        } else {
+            BarkAboutWork_i(_Paul);
+        }
+    }
+}
+
+Usable PaulStagesPlay_i #locals(2) #uses(~IsNPCNear) {
+    SetSpeaker(0, _Paul);
+    v0 = ~IsNPCNear(_Iolo);
+    v1 = ~IsNPCNear(_Spark);
+    [As the actors take their places and don masks, you settle down to watch the action.*];
+    if v1 {
+        SetSpeaker(0, _Spark);
+        [Spark whispers to you, "I wish there was a confectioner that sold candied apples!"*];
+        CloseSpeaker(_Spark);
+        SetSpeaker(0, _Paul);
+    }
+    [The music starts the play, as Paul takes center stage and addresses the audience.];
+    ["Welcome to Our Tale, ~A tale so true to life. ~'Tis a tale of tragedy ~A man has lost his wife.];
+    ["But the story need not be sad ~When The Fellowship is here. ~The Triad of Inner Strength ~Gives one no cause to fear."*];
+    CloseSpeaker(_Paul);
+    SetSpeaker(0, _Dustin);
+    [Dustin takes the stage as Paul moves away. Meryl lies on the ground in front of him and assumes a death-like pose.];
+    ["'Tis doom! 'Tis despair! 'Tis death! ~My beloved wife is gone! ~Disease has taken her away ~And left me with but a song."];
+    [Dustin puts his head in his hands and mimes sobbing. As he sobs, Meryl rises from her "death" in a ghost-like fashion, then addresses Dustin.*];
+    SetSpeaker(0, _Meryl);
+    ["Mine husband, my love! ~Do not despair! 'Tis not doom! ~Thou shalt rise above ~All this melancholy and gloom!"*];
+    SetSpeaker(0, _Dustin);
+    ["Who doth speak to me? ~Could it be she? ~Or have I indeed gone mad? ~But who else -could- it be?"*];
+    SetSpeaker(0, _Meryl);
+    ["Mine husband, thou must listen. ~Thou hast thy comfort within thy grip. ~Thou must only seek them out -- ~Those that can help -- The Fellowship!"*];
+    CloseSpeaker(_Meryl);
+    SetSpeaker(0, _Dustin);
+    [Meryl drifts off stage, leaving Dustin alone.];
+    ["The Fellowship, she said? ~But what do I need with it? ~I have mine eight virtues and mine healers ~With these nothing else will fit!"*];
+    SetSpeaker(0, _Paul);
+    [Paul enters the stage with Meryl, who now wears a different mask.];
+    ["But that is where thou art wrong! ~The Fellowship exists to help thee! ~The Triad of Inner Strength is here ~To give thee a sense of unity!"];
+    ["Join us now and thou wilt see. ~Join thy brothers and our plan ~To promote the tenets of our group -- ~Thou wilt be a better man."];
+    [At this point, an elaborate mimed sequence reveals how Dustin joins The Fellowship, receives his medallion from a "branch leader", portrayed by Paul, and receives congratulations from Meryl.];
+    ["Strive for Unity at all times, ~And Trust Thy Brother through all ill, ~For Worthiness Precedes thine own Reward ~Hark to our words -- it surely will!"*];
+    SetSpeaker(0, _Dustin);
+    ["I shall give half my wealth to thee! ~I shall do thy bidding and then wait. ~My reward shall come one day ~And free me from mine awful fate."];
+    [Dustin mimes giving Paul some money. Paul exits, then Dustin lies down on the stage and mimes going to sleep. After a moment, Meryl enters the stage, dances around Dustin's body, sprinkling some kind of sparkling dust on him.*];
+    if v0 {
+        CloseSpeaker(_Paul);
+        SetSpeaker(0, _Iolo);
+        [Iolo whispers to you. "I am particularly enjoying the visual effects. The script is a little weak, dost thou not think?"*];
+        CloseSpeaker(_Iolo);
+        SetSpeaker(0, _Dustin);
+    }
+    [Meryl leaves the stage and Dustin 'wakes up'. Lo and behold, he finds a bag near his place of sleep. Upon opening it, he finds a bundle of gold!];
+    ["By Lord British I declare! ~'Tis my reward! From the air! ~The voice I heard at night was right ~About my wretched life I will not care!];
+    ["The voice came to me in a dream ~'Twas mine 'inner' voice, so fair. ~I now have a companion and provider, ~And a master about whom I care."];
+    [You are jarred by the actor's choice of words -- 'companion', 'provider', and 'master'. You realize you have heard them before.*];
+    if v1 {
+        SetSpeaker(0, _Spark);
+        ["This is really awful."*];
+        CloseSpeaker(_Spark);
+        SetSpeaker(0, _Dustin);
+    }
+    [Paul and Meryl join Dustin on stage and they all hold hands.*];
+    SetSpeaker(0, _Paul);
+    ["The Fellowship can give thee purpose ~To join is thine only choice ~Commit thyself to our just cause ~And find thine inner voice."];
+    [At that point, the actors bow, and you realize it is the end. You give them polite applause.*];
+    flag(10) = true;
+    if v0 {
+        CloseSpeaker(_Paul);
+        SetSpeaker(0, _Iolo);
+        ["What do they mean about the voice? I am not sure I understand. 'Twas a confusing play. I did not like it at all. We have wasted our time and money! That is the last time that I let thee decide how best we entertain ourselves!"*];
+        CloseSpeaker(_Iolo);
+    }
+    terminate;
+}

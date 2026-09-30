@@ -1,0 +1,150 @@
+Routine Carrocio accepts a0 #locals(10) #uses(~LordOrLady, ~IsNPCNear, ~AskYesNo, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Carrocio);
+        v0 = ~LordOrLady();
+        v1 = ~GetTime();
+        v2 = ~GetWorkType(~NPCToItem_i(_Carrocio));
+        v3 = ~AvatarSex();
+        v4 = ~IsNPCNear(_Spark);
+        TurnOn(<< "name", "job", "bye" >>);
+        if flag(122) {
+            TurnOn("Nell with child");
+        }
+        if flag(137) {
+            TurnOn("Charles is angry");
+        }
+        if not $MetCarrocio {
+            [You see a flamboyant-looking gentleman. He is very cheerful and outgoing, greeting you with a smile and a wave.];
+            $MetCarrocio = true;
+        } else {
+            if not v3 {
+                ["In a wink, in a word,~"I do greet thee, Milord."];
+            } else {
+                ["To greet thee, On this day,~"'Tis my pleasure, Milady."];
+            }
+        }
+        converse {
+            key ("name") {
+                ["From out the dawn, when sun doth rise,~"Until next morn when moon must go,~"I answer to thy beck and cries,~"thine humble servant, Carrocio!"];
+                TurnOff("name");
+            }
+            key ("job") {
+                ["The puppet's curtain I unfurl,~"And from mine hands the story's told,~"For pleasure of a boy or girl,~"To see doth cost one coin of gold.~"To take good measure of thy power,~"Forged in fire of virtue's heart,~"To ring the bell this very hour,~"Do test thy strength 'til thy muscles smart."];
+                if not v3 {
+                    ["And perhaps impress thine own sweetheart!" Carrocio winks at you.];
+                }
+                ["Or dost thou wish to be a king?~"Yonder sticks a sword in stone.~"If thou canst only pull it out~ "Thou wilt be the next upon the throne!"];
+                TurnOn(<< "puppet show", "see", "strength test" >>);
+            }
+            key ("puppet show") {
+                ["My childhood's eye spied father's toil,~"A puppet's show of splendor royal.~"Time's breeze has blown, My father's gone,~"His child has grown, Regrets anon,~"Gears and wheels move the moppets now, in need of no one,~"And so I keep his carnival song playing on and on alone."];
+                TurnOff("puppet show");
+                TurnOn(<< "regrets", "gears and wheels" >>);
+            }
+            key ("strength test") {
+                if not (v2 = 7) {
+                    ["I am sorry to say~"I have called it a day.~"Come to the\x09grounds to test thy fitness~"when I am, yea verily, open for business."];
+                } else {
+                    ["Take the hammer in thine hands and strike a blow upon the ground,~"If thine arms be possessed of might then thou shalt hear a ringing sound.~"Once thou hast struck if thou hearest naught then thou dost know thy strength is flagging.~"But if thou dost win the strength test game thou shalt receive a stuffed dragon."];
+                }
+                TurnOff("strength test");
+            }
+            key ("gears and wheels") {
+                ["I fear an end to my family craft, where the show is run by human heart,~"But bones do age, not so machines, and we cannot simply replace a part.~"I carry on as best I can, A machine to play my father's role,~"Control the marionettes unseen, struggling to imbue them with a soul."];
+                TurnOff("gears and wheels");
+            }
+            key ("regrets") {
+                ["The faces pressed before me, fleeting moments chance of glee, From the lowly mongrel beggar to the resident of throne,~"Each know their place and gave me chase to find the one for me, Woman whom my life may share, this heart that waits alone."];
+                TurnOff("regrets");
+                TurnOn(<< "mongrel beggar", "resident of throne", "woman" >>);
+            }
+            key ("mongrel beggar") {
+                ["A beggar man called Snaz will come to watch my show, ~"to steal and sell all my best jokes, mine own personal foe."];
+                TurnOff("mongrel beggar");
+            }
+            key ("resident of throne") {
+                ["Thine ignorance doth make me skittish,~"surely thou hast heard of wise Lord British."];
+                TurnOff("resident of throne");
+            }
+            key ("woman") {
+                ["The awakening of mine heart's idyll,~"Lies 'neath me for I see her still,~"No bard could e'er describe nor tell,~"the tenderness of my fair Nell."];
+                TurnOff("woman");
+                TurnOn("Nell");
+            }
+            key ("Nell") {
+                ["'Tis said love is a fiery angel,~"Riding soft silk wings of pure redemption,~"My puppet's heart still as an anvil,~"At the wicked thrill of her attention.~"By mine angel Nell I am anointed,~"Humble cowardice felled by Passion's blade,~"As her beloved I was hence appointed,~"Perchance through destiny a marriage made."];
+                TurnOff("Nell");
+                TurnOn(<< "wicked thrill", "marriage" >>);
+            }
+            key ("wicked thrill") {
+                [Carrocio looks as if he is lost in a memory. After a moment he returns to reality.~~"I would not be a gentleman if I spoke of this more, Forgive me the candor of mine heart's open door."~He appears somewhat embarrassed and clears his throat loudly several times.];
+                TurnOff("wicked thrill");
+            }
+            key ("marriage") {
+                ["My coins are arrows rushing to make good,~"'Til the day when the jeweller sells his ring,~"For my sure heart is not but carved from wood,~"And she doth tend to the bed of a king."];
+                TurnOff("marriage");
+                if flag(122) {
+                    TurnOn("Nell with child");
+                }
+            }
+            key ("Nell with child") {
+                [Carrocio gives you a shocked look and drops to his knees before you. "I beseech thee, <v0>, ~"Keep still thy tongue,~"My Nell has ne'er harmed anyone,~"It would cause grievous injury to her reputation,~"Through the town's wagging lips our secret to spread,~"'Twould make a permanent end of mine occupation,~"And kill our hope of a happy life dead." He looks you in the eyes, pleadingly. "In thee I must place mine hope and trust,~"Part, parcel and whole.~"To ne'er again speak of the spoils of my lust, ~"Thou must not tell a soul!"];
+                if not flag(137) {
+                    [He looks at you awaiting some sort of indication. Will you keep his secret?];
+                    v5 = ~AskYesNo();
+                    if v5 {
+                        ["Thou dost walk with honor,~"I know thou wilt not tell,~"Of dignity's stains I do not bother,~"My concerns are none save for Nell."];
+                    } else {
+                        ["Reconsider, I must insist of thee, Thou art too thin of hide,~"If he knew, Nell's brother would murder me,~"And I would not see Nell widowed before having the chance to become a bride."];
+                    }
+                }
+                TurnOff("Nell with child");
+            }
+            key ("Charles is angry") {
+                ["I am grateful for thine honesty about thy lack of care,~"But why hast thou placed thyself in the center of our affair?~"For Nell's sake I could not bring myself to cause harm to her brother,~"I shall convince him of mine intentions,~"I love Nell and no other.~"Leave me now for I must use this time to properly prepare."];
+                terminate;
+            }
+            key ("see") {
+                if not (v2 = 7) {
+                    ["I am sorry to say~"I have called it a day.~"Come to the grounds at daybreak~"when the puppets are, yea verily, up and awake."];
+                } else {
+                    ["See foolish pride and love, brutality and sin, Carrocio's tiny world of moving dolls,~"Enough to make thee gasp, or cry or grin,~"All who wish to see 'tis time to hear my calls,~"For now the puppet show is about to begin!"*];
+                    v6 = ~GetAllInRegion(_Puppet_Show);
+                    Kernel_resetRef(v6::1);
+                    v7 = ~PostInFuture(15, << _aUSABLE_i, #PuppetShow >>, v6::1);
+                }
+                TurnOff("see");
+                terminate;
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["Perchance to find in mercy's ear, A voice to know as gentle friend,~"I bid thee well, but hark return, If thou wouldst see the puppet's play or test thy strength again."];
+    }
+    if (event = _Bark) {
+        v1 = ~GetTime();
+        v2 = ~GetWorkType(~NPCToItem_i(_Carrocio));
+        v8 = ~rndRange(4, 1);
+        if (v2 = 7) {
+            if ((v1 = 3) or ((v1 = 4) or ((v1 = 5) or (v1 = 6)))) {
+                if (v8 = 1) {
+                    v9 = "@See the puppets!@";
+                }
+                if (v8 = 2) {
+                    v9 = "@Canst thou ring the bell?@";
+                }
+                if (v8 = 3) {
+                    v9 = "@Next show starts soon!@";
+                }
+                if (v8 = 4) {
+                    v9 = "@Measure thy might!@";
+                }
+                Item_bark(v9, _Carrocio);
+            }
+        } else {
+            BarkAboutWork_i(_Carrocio);
+        }
+    }
+}

@@ -1,0 +1,211 @@
+Routine Nystul accepts a0 #locals(3) #uses(~IsNPCNear, ~AskYesNo, NystulSellsSpells_i, NystulSellsReagents_i) {
+    if (event = _Bark) {
+        terminate;
+    }
+    SetSpeaker(0, _Nystul);
+    TurnOn(<< "name", "job", "bye" >>);
+    if not $MetNystul {
+        [You see your old friend Nystul, now a decrepit old man in mage's robes. He seems lost in thought, far away.];
+        $MetNystul = true;
+    } else {
+        if not $TetraGone {
+            ["Do I know thee?" Nystul asks.];
+        } else {
+            ["Yes, Avatar?" Nystul asks.];
+        }
+    }
+    converse {
+        key ("name") {
+            if not $TetraGone {
+                [The mage looks confused a moment. "My name is Nystul? Yes, that is it!"];
+            } else {
+                ["Why, 'tis Nystul!"];
+            }
+            TurnOff("name");
+        }
+        key ("job") {
+            if not $TetraGone {
+                ["Well, I used to perform quite a bit of magic," he says apologetically. "At least... I -think- I used to do so. There is a man named Lord British, I think. I work for him."];
+            } else {
+                ["I am Lord British's personal mage!"];
+            }
+            TurnOn(<< "magic", "Lord British" >>);
+        }
+        key ("magic") {
+            if not $TetraGone {
+                ["Sometimes the magic works, sometimes it doth not." He waves his hand, and drops his wand. "Oops!" he cries, as he bends to pick it up.];
+                v0 = ~IsNPCNear(_Spark);
+                if v0 {
+                    SetSpeaker(0, _Spark);
+                    ["Art thou sure this man is not really the jester?"];
+                    CloseSpeaker(_Spark);
+                    SetSpeaker(0, _Nystul);
+                    ["Anyway, as I was saying, uhm, what was I saying? Oh yes. Magic. I can still sell thee some spells or reagents if thou wouldst like."];
+                }
+            } else {
+                ["The magic is much better now. My spells all work very nicely. I thank thee, Avatar, for clearing the ether. Interested in any spells or reagents?"];
+            }
+            TurnOff("magic");
+            TurnOn(<< "spells", "reagents" >>);
+        }
+        key ("spells") {
+            ["Dost thou wish to buy some spells?"];
+            v1 = ~AskYesNo();
+            if v1 {
+                NystulSellsSpells_i();
+            } else {
+                ["Oh. Never mind, then."];
+            }
+        }
+        key ("reagents") {
+            ["Dost thou wish to buy some reagents?"];
+            v2 = ~AskYesNo();
+            if v2 {
+                NystulSellsReagents_i();
+            } else {
+                ["Oh. Never mind, then."];
+            }
+        }
+        key ("Lord British") {
+            if not $TetraGone {
+                ["Lord who? Dost thou mean that old man who sometimes sits on the throne?"];
+            } else {
+                ["He is the greatest ruler this land has ever known and I am proud to serve him."];
+            }
+            TurnOff("Lord British");
+        }
+        key ("bye") {
+            break;
+        }
+    }
+    clear_answers;
+    if not $TetraGone {
+        ["Are we going somewhere?"*];
+    } else {
+        ["Goodbye, Avatar. Do come see us again soon."*];
+    }
+}
+
+Usable NystulSellsSpells_i #locals(10) #uses(~AskOrdList, ~SellSpell_i, ~AskYesNo) {
+    PushKeys();
+    v0 = true;
+    v1 = << 35, 55, 85, 95, 125, 145, 165, 195 >>;
+    While v0 {
+        ["In which circle dost thou wish to study?"];
+        v2 = ~AskOrdList(<< "none", "First", "Second", "Third", "Fourth", "Fifth", "Sixth", "Seventh", "Eighth" >>);
+        v2 = (v2 - 1);
+        if (v2 = 0) {
+            break;
+        }
+        switch v2 {
+            case 1 {
+                v3 = << "nothing", "Create Food", "Great Douse", "Light", "Locate" >>;
+                v4 = << 0, 8, 11, 13, 14 >>;
+            }
+            case 2 {
+                v3 = << "nothing", "Enchant", "Mass Cure", "Protection", "Telekinesis" >>;
+                v4 = << 0, 17, 20, 21, 22 >>;
+            }
+            case 3 {
+                v3 = << "nothing", "Heal", "Swarm", "Protect All", "Sleep" >>;
+                v4 = << 0, 25, 26, 27, 31 >>;
+            }
+            case 4 {
+                v3 = << "nothing", "Conjure", "Mass Curse", "Reveal", "Unlock Magic" >>;
+                v4 = << 0, 32, 35, 37, 39 >>;
+            }
+            case 5 {
+                v3 = << "nothing", "Dispel Field", "Great Heal", "Invisibility", "Fire Field" >>;
+                v4 = << 0, 42, 44, 45, 46 >>;
+            }
+            case 6 {
+                v3 = << "nothing", "Cause Fear", "Fire Ring", "Flame Strike", "Sleep Field" >>;
+                v4 = << 0, 48, 50, 51, 54 >>;
+            }
+            case 7 {
+                v3 = << "nothing", "Death Bolt", "Energy Field", "Energy Mist", "Mass Might" >>;
+                v4 = << 0, 57, 59, 60, 62 >>;
+            }
+            default {
+                v3 = << "nothing", "Death Vortex", "Mass Death", "Invisible All", "Time Stop" >>;
+                v4 = << 0, 65, 66, 67, 71 >>;
+            }
+        }
+        ["What spell wouldst thou like to buy?"];
+        v5 = ~AskOrdList(v3);
+        if (v5 = 1) {
+            ["Fine."];
+            break;
+        }
+        v6 = v4::v5;
+        v7 = v1::v2;
+        v8 = v3::v5;
+        ["The <v8> spell will cost <v7> gold."];
+        v9 = ~SellSpell_i(v7, v6);
+        if (v9 = 1) {
+            ["Done!"];
+        } else {
+            if (v9 = 2) {
+                ["Thou dost not have a spellbook."];
+                v0 = false;
+                break;
+            }
+            if (v9 = 3) {
+                ["Thou dost not have enough gold for that!"];
+            } else {
+                if (v9 = 4) {
+                    ["Thou dost already have that spell!"];
+                } else {
+                }
+            }
+        }
+        ["Would you like another spell?"];
+        v0 = ~AskYesNo();
+    }
+    PopKeys();
+}
+
+Usable NystulSellsReagents_i #locals(13) #uses(~AskOrdList, ~PriceString_i, ~AskYesNo, ~SellItem_i) {
+    PushKeys();
+    v0 = true;
+    v1 = << "nothing", "Ginseng", "Blood Moss", "Sulfurous Ash", "Mandrake Root", "Black Pearl" >>;
+    v2 = << 0, 842, 842, 842, 842, 842 >>;
+    v3 = << 65177, 5, 1, 7, 3, 0 >>;
+    v4 = << 0, 4, 6, 8, 10, 10 >>;
+    v5 = "";
+    v6 = 0;
+    v7 = "";
+    v8 = 1;
+    ["What reagent wouldst thou like to buy?"];
+    While v0 {
+        v9 = ~AskOrdList(v1);
+        if (v9 = 1) {
+            ["Fine."];
+            v0 = false;
+        } else {
+            v10 = ~PriceString_i(v7, v4::v9, v6, v1::v9, v5);
+            v11 = 0;
+            ["^<v10> Art thou willing to pay that much?"];
+            v12 = ~AskYesNo();
+            if v12 {
+                ["How many wouldst thou like?"];
+                v11 = ~SellItem_i(false, 1, 20, v4::v9, v8, v3::v9, v2::v9);
+            }
+            if (v11 = 1) {
+                ["Done!"];
+            } else {
+                if (v11 = 2) {
+                    ["Thou cannot possibly carry that much!"];
+                } else {
+                    if (v11 = 3) {
+                        ["Thou dost not have enough gold for that!"];
+                    } else {
+                    }
+                }
+            }
+            ["Wouldst thou like something else?"];
+            v0 = ~AskYesNo();
+        }
+    }
+    PopKeys();
+}

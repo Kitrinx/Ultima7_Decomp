@@ -1,0 +1,18 @@
+Routine VirtueRouletteWheel accepts a0 #locals(7) #uses(~IsAbleToTalk_i, BarkIfNear_i) {
+    if ((event = _Action) and not ~Kernel_getNumProcesses(item)) {
+        v0 = ~rndRange(16, 1);
+        Kernel_resetRef(item);
+        v1 = ~PostAction(<< _aSFX_i, 29, _aNEXT_FRAME, _aCONTINUE_i, _aNEXT_FRAME, _aCONTINUE_i, _aNEXT_FRAME, _aCONTINUE_i, _aLOOP_i, 65528, v0, byte(78), byte(1), byte(78), byte(88), 29, byte(11), 65531, v0, byte(78), byte(39), 1, byte(78), byte(39), 1, byte(78), byte(39), 1, byte(78), byte(39), 1, byte(88), 29, byte(11), 65522, 3, byte(78), byte(39), 3, byte(78), byte(88), 29, byte(85), 1546 >>, item);
+        if ((~GetHour() >= 15) or (~GetHour() <= 3)) {
+            if ~IsAbleToTalk_i(_Smithy) {
+                BarkIfNear_i(<< "@Place your bets.@", "@Round she goes!@" >>, _Smithy);
+            }
+            SetWorkType(_Hound, _Smithy);
+            v2 = ~FindNearby_i(0, 7, _Virtue_Roulette_Table, item);
+            v3 = ~FindNearby_i(0, 5, _Gold_Coin, v2);
+            Foreach v6 in v3 {
+                ClearItemFlag_i(_OkayToTake_i, v6);
+            }
+        }
+    }
+}

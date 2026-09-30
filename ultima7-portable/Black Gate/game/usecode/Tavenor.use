@@ -1,0 +1,135 @@
+Routine Tavenor accepts a0 #locals(4) #uses(~IsInInv, TavenorWantsHoney_i, ~AskYesNo, ~IsNPCNear) {
+    if (event = _Action) {
+        v0 = ~IsInInv(65177, 65177, _Honey, 1, _Party);
+        SetSpeaker(0, _Tavenor);
+        if not flag(340) {
+            if not v0 {
+                [The creature ignores you.*];
+                terminate;
+            } else {
+                TavenorWantsHoney_i();
+            }
+        }
+        if not $MetTavenor {
+            if not $EMP_COMMON {
+                [The ape-like creature in front of you approaches very cautiously.  After a few minutes of staring you up and down, it cocks its head toward you.~~"You are human."];
+                $EMP_COMMON = true;
+                $MetTavenor = true;
+            } else {
+                [The Emp in front of you approaches very cautiously. After a few minutes of staring you up and down, he cocks his head towards you.~~"You are human."];
+                $MetTavenor = true;
+            }
+        } else {
+            ["You are greeted by me, human." Tavenor slowly approaches.];
+        }
+        TurnOn(<< "name", "job", "bye" >>);
+        v1 = false;
+        converse {
+            key ("name") {
+                ["Tavenor is my name."];
+                TurnOff("name");
+            }
+            key ("job") {
+                if not flag(302) {
+                    ["The meaning of `job' is not understood."];
+                    TurnOn("explain job");
+                } else {
+                    ["No job is had by me. Food is gathered by me and my family."];
+                    TurnOn("food");
+                }
+            }
+            key ("explain job") {
+                ["`Job' now understood by me. No job is had by me. Food is gathered by me and my family." He watches you carefully. "Your job is to cut down Silverleaf trees, yes?"];
+                flag(302) = true;
+                v2 = ~AskYesNo();
+                if v2 {
+                    ["That is as I expected. You are a menace. You are asked to stop, please." He turns away from you.*];
+                    terminate;
+                } else {
+                    ["The truth is known to me, but, belief is hard for me."];
+                    v3 = ~IsNPCNear(_Trellek);
+                    if v3 {
+                        [*];
+                        SetSpeaker(0, _Trellek);
+                        ["The truth is spoken by the human," Trellek says to the other Emp. "He is to be trusted. His good will was felt by me."*];
+                        CloseSpeaker(_Trellek);
+                        SetSpeaker(0, _Tavenor);
+                        [The Emp nods at Trellek, and then turns to you. "The truth is now clear to me. You are wished good luck."];
+                    } else {
+                        [The Emp eyes you a little longer. "Your good intentions are known to    me. You are asked to be the messenger. Humans will not be destroyers, please."];
+                    }
+                    TurnOff("explain job");
+                    flag(302) = true;
+                }
+                TurnOn(<< "food", "Silverleaf trees" >>);
+            }
+            key ("food") {
+                ["Fruit and milk are Emp foods. Especially fruits are liked by me. Meats," he shakes his head,~~"are -not- liked by Emps."];
+                TurnOff("food");
+                TurnOn(<< "meats", "fruits", "milk" >>);
+            }
+            key ("milk") {
+                ["Milk is good. Milk with honey is preferred by me."];
+                if not v1 {
+                    TurnOn("honey");
+                }
+                TurnOff("milk");
+            }
+            key ("Silverleaf trees") {
+                ["Silverleaf trees are Emp homes."];
+                TurnOff("Silverleaf trees");
+            }
+            key ("meats") {
+                ["Meats are from killed animals. Killing is bad. Destroying is bad."];
+                TurnOff("meats");
+            }
+            key ("fruits") {
+                ["Fruits are good and sweet -- like honey!"];
+                TurnOff("fruits");
+                if not v1 {
+                    TurnOn("honey");
+                }
+            }
+            key ("honey") {
+                ["Honey is favorite food of all Emps!"];
+                v1 = true;
+                TurnOff("honey");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["You are told `goodbye.'"*];
+    }
+    if (event = _Bark) {
+        terminate;
+    }
+}
+
+Usable TavenorWantsHoney_i #locals(2) #uses(~AskYesNo, GivePartyExp_i) {
+    SetSpeaker(0, _Tavenor);
+    [The ape-like creature slowly and cautiously walks up to you. He, or she, sniffs for a moment, and then points to the honey you are carrying.];
+    TurnOn(<< "Want honey?", "Go away!" >>);
+    converse {
+        key ("Want honey?") {
+            ["Honey will be given by you to me?"];
+            v0 = ~AskYesNo();
+            if v0 {
+                v1 = ~TakeFromParty_i(true, _All, _All, _Honey, 1);
+                ["You are thanked."];
+                GivePartyExp_i(10);
+                flag(340) = true;
+            } else {
+                ["`Goodbye' is said to you."*];
+                terminate;
+            }
+        }
+        key ("Go away!") {
+            [It does.*];
+            terminate;
+        }
+        TurnOff(<< "Want honey?", "Go away!" >>);
+    }
+    clear_answers;
+}

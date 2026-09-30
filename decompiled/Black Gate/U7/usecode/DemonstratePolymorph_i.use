@@ -1,0 +1,107 @@
+Routine DemonstratePolymorph_i accepts a0 #locals(14) #uses(PetrifyAvatar_i, ~AvatarStatue_i) {
+    v0 = false;
+    v1 = false;
+    v2 = false;
+    v3 = false;
+    v4 = false;
+    v5 = false;
+    v6 = ~GetCoord(item);
+    SetWorkType(_Wait, item);
+    if $TetraGone {
+        if not flag(811) {
+            v7 = ~Item_push(item);
+            if not ~canExistAt(_All, _Dragon, v6) {
+                v4 = true;
+                v7 = ~PopToMap(v6);
+                goto label_17;
+            }
+            v7 = ~PopToMap(v6);
+            PetrifyAvatar_i();
+            SetSpeaker(1, _Wilbur);
+            [Erethian looks irritated by your question, "'Tis not a hindrance for one sensitive enough to feel the ridges the ink\x09makes on the page.];
+            [Dost thou think me an invalid? Know that in my searches, I\x09have faced dangers that would turn even one such as thee to quivering flesh."];
+            [The mage's eyes begin to glow softly. "My magic is strong enough to tear down the fabric of reality and reconstruct it as I see fit.];
+            [To prove this, I'll take on the form of a winged gargoyle noble..."];
+            [His hands move in passes you recognize as being magical, then he speaks softly the magic words,];
+            ["Rel An-Quas Ailem In Garge".*];
+            v0 = true;
+            goto label_17;
+        }
+        if not flag(812) {
+            SetSpeaker(3, _Wilbur);
+            ["Even the great dragon's form is not beyond my power." Erethian begins speaking softly, then rises to a crescendo with the words,];
+            ["Rel An-Quas Ailem In BAL-ZEN"!*];
+            v1 = true;
+            goto label_17;
+        } else {
+            SetSpeaker(2, _Wilbur);
+            [The dragon looks down its snout menacingly at what you guess is meant to be you. Even in this powerful form, it would seem that Erethian is still blind, however, you get the impression that he is quite capable of taking care of himself.];
+            ["Enough of these silly charades, I really am quite busy with my studies." He intones the words,];
+            ["An Ort Rel"!*];
+            v5 = true;
+            goto label_17;
+        }
+    } else {
+        SetSpeaker(1, _Wilbur);
+        if not flag(811) {
+            v7 = ~Item_push(item);
+            if not ~canExistAt(0, _Cow, v6) {
+                v4 = true;
+                v7 = ~PopToMap(v6);
+                goto label_17;
+            }
+            v7 = ~PopToMap(v6);
+            PetrifyAvatar_i();
+            [Erethian looks irritated by your question, "'Tis not a hindrance for one\x09sensitive enough to feel the ridges the ink makes on the page.];
+            [Dost thou think me an invalid? Know that in my searches, I have faced dangers that would turn even one such as thee to quivering flesh."];
+            [The mage's eyes begin to glow softly. "My magic is strong enough to tear down the fabric of reality and reconstruct it as I see fit."];
+            [To prove this, I'll take on the form of a winged gargoyle noble..."];
+            [His hands move in passes you recognize as being magical, then he speaks softly the magic words,];
+            ["Rel An-Quas Ailem In Bet-Zen".*];
+            v2 = true;
+        } else {
+            if not flag(812) {
+                [The elderly mage looks a bit perplexed after his experience as a rodent. "That spell always used to work, but with all of these damnable ether waves, I can't remember the proper words?];
+                ['Tis of no consequence, I'll take the form of a great dragon to prove my powers..." he begins speaking softly, then rises to a crescendo with the words,];
+                ["Rel An-Quas Ailem In MOO"!*];
+                v3 = true;
+            } else {
+                [The elderly mage looks quite embarrassed, "Enough of these silly charades, I really am quite busy with my studies." He turns away, his face blushing furiously.*];
+                SetWorkType(_Patrol, item);
+                ClearItemFlag_i(_DontMove_i, ~NPCToItem_i(_Avatar));
+                v8 = ~AvatarStatue_i();
+                v9 = ~PostInFuture(14, << _aFINISH_i, _aREMOVE_i >>, v8);
+                v10 = ~PostAction(<< _aWAIT_i, 12, _aUSABLE_i, #EndErethianScene_i >>, ~NPCToItem_i(_Avatar));
+            }
+        }
+    }
+    label_17:
+    if v0 {
+        v11 = ~PostAction(<< _aFACE_i, _South, _aWAIT_i, 1, _aOUT_FRAME_i, _aWAIT_i, 1, _aUP_FRAME_i, _aWAIT_i, 1, _aSTAND_FRAME_i, _aWAIT_i, 1, _aBEND_FRAME_i, _aWAIT_i, 1, _aKNEEL_FRAME_i, _aWAIT_i, 3, _aUSABLE_i, #PolymorphErethian_i >>, item);
+    }
+    if v1 {
+        v0 = ~FindNearest_i(1, _Gargoyle_Warrior, item);
+        v12 = ~PostAction(<< _aWAIT_i, 6, _aBEND_FRAME_i, _aWAIT_i, 3, _aKNEEL_FRAME_i, _aWAIT_i, 2, _aUSABLE_i, #PolymorphErethian_i >>, v0);
+    }
+    if v2 {
+        v11 = ~PostAction(<< _aFACE_i, _South, _aWAIT_i, 1, _aUP_FRAME_i, _aWAIT_i, 1, _aOUT_FRAME_i, _aWAIT_i, 1, _aBEND_FRAME_i, _aWAIT_i, 1, _aKNEEL_FRAME_i, _aWAIT_i, 3, _aUSABLE_i, #PolymorphErethian_i >>, item);
+    }
+    if v3 {
+        v11 = ~PostAction(<< _aFACE_i, _South, _aWAIT_i, 1, _aBEND_FRAME_i, _aWAIT_i, 1, _aKNEEL_FRAME_i, _aWAIT_i, 3, _aBEND_FRAME_i, _aWAIT_i, 1, _aOUT_FRAME_i, _aWAIT_i, 1, _aUP_FRAME_i, _aWAIT_i, 1, _aUSABLE_i, #PolymorphErethian_i >>, item);
+    }
+    if v5 {
+        v1 = ~FindNearest_i(1, _Dragon, item);
+        v13 = ~PostAction(<< _aWAIT_i, 3, _aRAISE2_FRAME_i, _aWAIT_i, 2, _aTHRUST2_FRAME_i, _aWAIT_i, 1, _aRAISE2_FRAME_i, _aWAIT_i, 1, _aEXTEND2_FRAME_i, _aWAIT_i, 2, _aTHRUST2_FRAME_i, _aWAIT_i, 1, _aUSABLE_i, #PolymorphErethian_i >>, v1);
+    }
+    if v4 {
+        SetSpeaker(1, _Wilbur);
+        if not flag(810) {
+            [The old mage seems on the verge of saying something, stops then says, "Were quarter's not so confined here, I'd show thee that my blindness in no way hampers my abilities." His affliction seems to be a touchy subject with the mage.*];
+        } else {
+            ["Have you nothing better to do than bother an old man?!" He seems quite put out with this line of conversation.*];
+        }
+        SetWorkType(_Patrol, v5);
+        flag(810) = true;
+        return;
+    }
+}

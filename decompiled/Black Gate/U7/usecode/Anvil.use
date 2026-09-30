@@ -1,0 +1,16 @@
+Routine Anvil accepts a0 #locals(4) #uses(Hammer) {
+    if (event = _Action) && ~IsEquipped_i(_All, _Hammer, 1, _Avatar) {
+        v0 = ~FindNearest_i(3, _Sword_Blank, item);
+        if v0 {
+            v1 = ~GetCoord(v0);
+            v2 = ~GetCoord(item);
+            if (v1::1 = v2::1) && (v1::2 = v2::2) && (v1::3 = (v2::3 + 1)) {
+                v3 = ~GetFrame(v0);
+                if ((v3 >= 10) and (v3 <= 12)) {
+                    Hammer(item);
+                    return;
+                }
+            }
+        }
+    }
+}

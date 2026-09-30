@@ -1,0 +1,161 @@
+Routine Russell accepts a0 #locals(12) #uses(~LordOrLady, ~AskYesNo, ~IsInInv, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Russell);
+        v0 = ~LordOrLady();
+        v1 = ~GetTime();
+        v2 = ~GetWorkType(~NPCToItem_i(_Russell));
+        v3 = ~IsMedallionOn_i();
+        TurnOn(<< "name", "job", "bye" >>);
+        if flag(381) {
+            TurnOn("locket");
+        }
+        if v3 {
+            TurnOn("medallion");
+        }
+        if flag(295) {
+            TurnOn(<< "Hook", "Crown Jewel" >>);
+        }
+        if flag(384) {
+            TurnOn("strangers");
+        }
+        if not $MetRussell {
+            [Before you is a shrewd-looking craftsman, obviously filled with the contentment of a peaceful life.];
+            $MetRussell = true;
+        } else {
+            ["What may I do for thee?" says Russell.];
+        }
+        converse {
+            key ("name") {
+                ["I am Russell, a shipwright."];
+                TurnOff("name");
+            }
+            key ("job") {
+                ["I build ships in New Magincia. It is a profession I enjoy very much. I also sell deeds for my ships, and sextants by which one can navigate the open seas."];
+                TurnOn(<< "New Magincia", "deeds", "sextants" >>);
+            }
+            key ("deeds") {
+                if (v2 = 7) {
+                    if flag(403) {
+                        ["But I have already sold thee the deed to 'The Nymphet'! I am afraid that was the only ship I had at this time."];
+                    } else {
+                        ["Thou wishest to purchase my ship 'The Nymphet'? The deed will cost thee 600 gold."];
+                        v4 = ~AskYesNo();
+                        if v4 {
+                            v5 = ~CountItem(_All, _All, _Gold_Coin, _Party);
+                            if (v5 >= 600) {
+                                v6 = ~GiveToParty_i(false, _All, 17, _Scroll, 1);
+                                if v6 {
+                                    ["'The Nymphet' is thine, <v0>. Enjoy the waters."];
+                                    v7 = ~TakeFromParty_i(true, _All, _All, _Gold_Coin, 600);
+                                    flag(403) = true;
+                                } else {
+                                    ["Thou art carrying too much to take thy deed. Come back after putting some things down."];
+                                }
+                            } else {
+                                ["Mine apologies, <v0>, thou dost not have enough gold."];
+                            }
+                        } else {
+                            ["I understand, <v0>, the seas aren't for everyone."];
+                        }
+                    }
+                } else {
+                    ["When my shop is again open I shall be more than happy to help thee."];
+                }
+                TurnOff("deeds");
+            }
+            key ("sextants") {
+                if (v2 = 7) {
+                    ["Thou wishest to purchase one of my fine sextants? 'Twill cost thee 40 gold."];
+                    v8 = ~AskYesNo();
+                    if v8 {
+                        v9 = ~IsInInv(65177, 65177, _Gold_Coin, 40, _Party);
+                        if v9 {
+                            ["'Tis thine, <v0>. Enjoy the waters."];
+                            v10 = ~TakeFromParty_i(true, _All, _All, _Gold_Coin, 40);
+                            v11 = ~GiveToParty_i(true, _All, _All, _Sextant, 1);
+                            if not v11 {
+                                ["I would gladly give thee thy sextant but thou shalt have to put something down! Thou art carrying\x09too much to take it."];
+                            }
+                        } else {
+                            ["Mine apologies, <v0>, thou dost not have enough gold."];
+                        }
+                    } else {
+                        ["I understand, <v0>, some of us can navigate with just the naked stars!"];
+                    }
+                } else {
+                    ["At present my shop is closed. If thou wilt come back during business hours I shall be more than happy to help thee."];
+                }
+                TurnOff("sextants");
+            }
+            key ("New Magincia") {
+                ["Things have been very peaceful in New Magincia. There has been little trouble from outsiders lately."];
+                TurnOn("outsiders");
+                TurnOff("New Magincia");
+            }
+            key ("outsiders") {
+                ["Before thine arrival there had not been a stranger in New Magincia for years, save for the survivors of the shipwreck."];
+                TurnOn("shipwreck");
+                TurnOff("outsiders");
+            }
+            key ("shipwreck") {
+                ["I found the wreckage. Three men were clinging to it for their lives."];
+                TurnOn(<< "wreckage", "three men" >>);
+                TurnOff("shipwreck");
+            }
+            key ("wreckage") {
+                ["I had never seen a ship like it before. The markings show it was constructed by a Minoc shipwright named Owen. It was not very well constructed."];
+                TurnOff("wreckage");
+            }
+            key ("strangers", "three men") {
+                ["They were from Buccaneer's Den. Most people that come here come because they are lost on their way to or from Buccaneer's Den."];
+                flag(384) = true;
+                TurnOn("Buccaneer's Den");
+                TurnOff(<< "strangers", "three men" >>);
+            }
+            key ("Buccaneer's Den") {
+                ["The three men wish to go back. They say there is a house of games in Buccaneer's Den." Russell shrugs. "As if that would be a reason to go there.];
+                ["I offered to sell them a ship, but they had no money. They actually seemed offended when I would not give it to them for free!"];
+                TurnOff("Buccaneer's Den");
+            }
+            key ("locket") {
+                ["The three strangers tried to offer me some kind of trinket to build or sell them a ship. It sounds like the locket thou art describing."];
+                TurnOn("trinket");
+                TurnOff("locket");
+            }
+            key ("trinket") {
+                ["I would not have accepted their offer, but I was curious. Later they said nothing when I wanted to see the trinket again. I doubt they have it."];
+                TurnOff("trinket");
+            }
+            key ("medallion") {
+                ["I could not help noticing your medallion. It does look somewhat sinister. I cannot recall ever having seen one like it before."];
+                TurnOff("medallion");
+            }
+            key ("Crown Jewel") {
+                if not flag(385) {
+                    ["The Crown Jewel just left here a short while ago. I do not know where it was headed."];
+                    flag(385) = true;
+                } else {
+                    ["I have heard nothing more of the Crown Jewel since we last spoke of it."];
+                }
+                TurnOff("Crown Jewel");
+            }
+            key ("Hook") {
+                if not flag(386) {
+                    ["Just as the Crown Jewel left I saw a man with a hook jump on board. There was a gargoyle accompanying him."];
+                    flag(386) = true;
+                } else {
+                    ["I have heard nothing more of this man Hook since we last spoke of him."];
+                }
+                TurnOff("Hook");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["Fare thee well, <v0>."*];
+    }
+    if (event = _Bark) {
+        BarkAboutWork_i(_Russell);
+    }
+}

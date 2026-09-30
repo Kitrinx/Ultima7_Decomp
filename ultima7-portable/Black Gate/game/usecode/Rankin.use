@@ -1,0 +1,287 @@
+Routine Rankin accepts a0 #locals(12) #uses(~AvatarName, ~IsNPCNear, ~IsInInv, RankinPreaches_i, GivePartyExp_i, ~AskYesNo, DescribeFellowship_i, ExplainPhilosophy_i, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Rankin);
+        v0 = ~AvatarName();
+        v1 = false;
+        v2 = ~IsNPCNear(_Balayna);
+        v3 = ~GetTime();
+        v4 = ~IsInInv(1, 65177, _Prism_981, 1, _Party);
+        if (v3 = 7) {
+            if $MetRankin {
+                [Rankin is unable to speak with you now, for he is conducting the Fellowship meeting.*];
+                RankinPreaches_i();
+                terminate;
+            } else {
+                [The man is too busy to speak with you now, for he is conducting the Fellowship meeting.*];
+                RankinPreaches_i();
+                terminate;
+            }
+        }
+        TurnOn(<< "name", "job", "Fellowship", "bye" >>);
+        if flag(644) {
+            TurnOn("Elizabeth and Abraham");
+        }
+        if not $MetRankin {
+            [The man greets you with a pleasant smile.];
+            $MetRankin = true;
+        } else {
+            [Rankin smiles. "Please tell me how I may be of assistance, <v0>."];
+            if (flag(472) and not flag(522)) && flag(523) {
+                TurnOn("Balayna's accusation");
+            }
+        }
+        if flag(527) {
+            TurnOn("merchant");
+        }
+        if (flag(522) and not flag(528)) {
+            TurnOn("Balayna");
+        }
+        converse {
+            key ("name") {
+                ["Thou mayest call me Rankin, <v0>."];
+                flag(523) = true;
+                TurnOff("name");
+                if (flag(472) and not flag(522)) && not v1 {
+                    TurnOn("Balayna's accusation");
+                }
+            }
+            key ("job") {
+                ["I am the new branch leader of The Fellowship here in Moonglow."];
+                if flag(501) {
+                    TurnOn("voice");
+                }
+                if (flag(472) and not flag(522)) && not v1 {
+                    TurnOn("Balayna's accusation");
+                }
+                TurnOn(<< "new", "Moonglow" >>);
+            }
+            key ("Balayna") {
+                GivePartyExp_i(50);
+                if flag(525) {
+                    ["What dost thou want to know about her, <v0>?"];
+                    TurnOn("liqueur");
+                } else {
+                    if flag(524) {
+                        v5 = ~GetClock(8);
+                        if (v5 > 6) {
+                            ["She has left for Britain on important business," he smiles. "I do not expect her return any time soon."];
+                        } else {
+                            ["Oh? Thou hast not seen her lately, either? I wonder what she has been up to." He gives a slight smile.];
+                            if v4 {
+                                [The Cube vibrates. "Actually, I know exactly where she is."];
+                                TurnOn("where");
+                            }
+                        }
+                    } else {
+                        if v2 {
+                            ["She is right there," he says, pointing to Balayna.];
+                        } else {
+                            ["I have not seen her in some time, <v0>. Perhaps thou mayest find her in her house."];
+                            RemoveNPC_i(_Balayna);
+                            flag(524) = true;
+                            SetClock(8);
+                        }
+                    }
+                }
+                TurnOff("Balayna");
+            }
+            key ("where") {
+                ["She has conveniently stopped breathing!" Rankin laughs.];
+                TurnOff("where");
+            }
+            key ("liqueur") {
+                ["Yes, I told thee the merchant brought it from Britain. Didst thou give it to her?];
+                v6 = ~AskYesNo();
+                if v6 {
+                    ["What then," he asks, "is the problem?"];
+                    PushKeys();
+                    TurnOn(<< "she died", "no problem" >>);
+                } else {
+                    ["Ah, well. Then I hope thou wilt have the chance later." He stares at you oddly for a moment, and then smiles again.];
+                }
+            }
+            key ("no problem") {
+                ["Excellent, then."];
+                TurnOff("no problem");
+                PopKeys();
+            }
+            key ("she died") {
+                flag(528) = true;
+                TurnOff(<< "no problem", "she died" >>);
+                ["What!" he appears stunned. "Died? How is that possible?"];
+                TurnOn(<< "don't know", "liqueur" >>);
+            }
+            key ("don't know") {
+                ["Well this is truly a tragedy! Please, <v0>, I would prefer to be alone now. If thou wouldst be so kind..."*];
+                terminate;
+            }
+            key ("liqueur") {
+                TurnOff(<< "liqueur", "don't know" >>);
+                PopKeys();
+                ["The liqueur? Why, art thou implying that the merchant had cause to kill her? That is absurd!" He appears thoughtful.~ "Or perhaps not. Mayhaps we will look into that, what sayest thou?"];
+                v7 = ~AskYesNo();
+                if v7 {
+                    ["Excellent. Let me know if thou dost find any information. Meanwhile, I will make arrangements for her funeral." He shakes his head sadly.];
+                    flag(527) = true;
+                } else {
+                    ["Very well, then I must conduct the search on mine own, -after- I have arranged for the funeral."*];
+                    terminate;
+                }
+            }
+            key ("merchant") {
+                ["Dost thou have any news of the travelling merchant who killed Balayna?];
+                v8 = ~AskYesNo();
+                if v8 {
+                    ["Very good, <v0>. What is thy news?"];
+                    PushKeys();
+                    TurnOn(<< "not ready", "dead" >>);
+                } else {
+                    ["Ah, well. Keep searching. I am positive thou wilt come across some information soon!"];
+                }
+                TurnOff("merchant");
+            }
+            key ("not ready") {
+                ["Very well, <v0>, I can wait until thou hast learned more."];
+                TurnOff("not ready");
+                PopKeys();
+            }
+            key ("dead") {
+                ["Really!" he seems genuinely surprised. "How, ah, wonderful." Then I guess the murder has been avenged."];
+                flag(527) = false;
+                TurnOff("dead");
+                PopKeys();
+            }
+            key ("new") {
+                ["He grins, obviously embarrassed. "I am sorry. Though the branch opened here several years ago, it is the newest branch on Britannia. I still consider myself a new branch head here."];
+                TurnOff("new");
+            }
+            key ("Moonglow") {
+                ["Ah, yes, Moonglow. It is a pleasant town. It is possible to find all sorts of people here."];
+                TurnOn("people");
+                TurnOff("Moonglow");
+            }
+            key ("people") {
+                ["I am sorry, but I prefer not to gossip."];
+                TurnOff("people");
+            }
+            key ("Fellowship") {
+                v9 = ~IsMedallionOn_i();
+                if v9 {
+                    if $JoinFellow {
+                        ["As is customary, our meetings are at 9 p.m. Please feel free to join us."];
+                    } else {
+                        ["Thou shouldst really return thy medallion to the person from whom it came. Only Fellowship members are permitted to wear them."];
+                    }
+                } else {
+                    DescribeFellowship_i();
+                    ["If thou hast a free moment, I would be quite happy to discuss our philosophy with thee."];
+                    TurnOn("philosophy");
+                }
+                TurnOff("Fellowship");
+            }
+            key ("philosophy") {
+                ExplainPhilosophy_i();
+                TurnOff("philosophy");
+            }
+            key ("voice") {
+                if $JoinFellow {
+                    ["Relax, friend, thou wilt hear when the time is right."];
+                } else {
+                    ["There is an inner voice that exists within each and every one of us. This voice is our companion and guide.~~"The deeper one's involvement with The Fellowship, the more often one is able to hear one's inner voice."];
+                }
+                TurnOff("voice");
+            }
+            key ("Elizabeth and Abraham") {
+                if not flag(579) {
+                    ["What dear people! They were just here in order to give me my training session. I was just appointed branch leader. This is a new branch, thou knowest. Anyway, Elizabeth and Abraham left to travel all the way to the gargoyle island, Terfin."];
+                    flag(495) = true;
+                } else {
+                    ["I have not seen them since they gave me my training session, many days ago."];
+                }
+                TurnOff("Elizabeth and Abraham");
+            }
+            key ("Balayna's accusation") {
+                if v2 {
+                    ["Shhh! Talk to me about it later," he whispers, gesturing subtly towards Balayna, "when she is not around."];
+                } else {
+                    [He begins to look amused.~~"I would not let it worry thee too much, <v0>. I am afraid Balayna is a bit too ambitious. I would expect she overheard one of my conversion speeches and misunderstood my words. I will have to discuss this with her when I have more time so I may allay her fears." His eyes widen, as if he is remembering something.~~"I had forgotten, she requested a small vial of liqueur from an itinerant merchant who would be passing through Britain. He brought it here a few days ago and I have not had a chance to give it to her. Wouldst thou be willing to deliver it to her for me, <v0>?"];
+                    v10 = ~AskYesNo();
+                    if v10 {
+                        ["Excellent, my friend."];
+                        v11 = ~GiveToParty_i(false, 30, _All, _Alchemist_Aparatus, 1);
+                        if v11 {
+                            ["I thank thee." He gives you the vial of liquor.];
+                            flag(526) = true;
+                        } else {
+                            ["Ah, well, thou art carrying too much. I will simply have to save it for when I have time to talk with her. Thank thee anyway."];
+                            SetClock(8);
+                            RemoveNPC_i(_Balayna);
+                            flag(524) = true;
+                        }
+                    } else {
+                        ["Very well. I will have to save it for when I have time to talk with her. Thank thee anyway."];
+                        SetClock(8);
+                        RemoveNPC_i(_Balayna);
+                        flag(524) = true;
+                    }
+                    flag(522) = true;
+                }
+                TurnOff("Balayna's accusation");
+                v1 = true;
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        if $JoinFellow {
+            ["May the triad guide thy life."*];
+        } else {
+            ["Shouldst thou find an interest in The Fellowship, <v0>, seek Batlin in Britain. Farewell, <v0>."*];
+        }
+    }
+    if (event = _Bark) {
+        BarkAboutWork_i(_Rankin);
+    }
+}
+
+Usable RankinPreaches_i #locals(5) #uses(~IsNPCNear, ~AskYesNo) {
+    v0 = ~IsNPCNear(_Balayna);
+    v1 = ~IsNPCNear(_Tolemac);
+    v2 = ~IsNPCNear(_Iolo);
+    v3 = ~IsNPCNear(_Dupre);
+    ["Fellow members, each of thee has faced -- and doubtless shall face again -- a moment in which thou dost feel the heat of the fever. A moment when thy mind has been clouded with illusory thoughts and visions. A moment when thy recognition has simply vanished, without rhyme or reason. A moment when, perhaps, thou hast even doubted the very words of The Fellowship itself!"*];
+    if v0 {
+        SetSpeaker(0, _Balayna);
+        [You see the clerk gasp, her eyes widening in disbelief.*];
+        CloseSpeaker(_Balayna);
+        SetSpeaker(0, _Rankin);
+    }
+    ["The second principle of the Triad is `trust thy brother.' 'Tis a simple practice when thou dost know thy brother. But The Fellowship was not always known to thee. It may, at one time, have been difficult to put thy trust in something as large as The Fellowship.~~ "However, to gain full knowledge of thine inner strength, one must have the courage to walk on the fire of trust!"*];
+    if v1 {
+        SetSpeaker(0, _Tolemac);
+        ["'Tis true! Trust was the key to my freedom!"*];
+        CloseSpeaker(_Tolemac);
+        SetSpeaker(0, _Rankin);
+    }
+    ["Trust requires great courage, and that courage exists within thyself."*];
+    if v2 {
+        SetSpeaker(0, _Iolo);
+        [Iolo leans toward you.~~ "I believe we have heard enough of this, no?"*];
+        v4 = ~AskYesNo();
+        if v4 {
+            ["Good. Let us leave."*];
+            terminate;
+        } else {
+            [Iolo sighs deeply.*];
+            CloseSpeaker(_Iolo);
+            SetSpeaker(0, _Rankin);
+        }
+    }
+    ["But as long as one remains aware, this problem will not plague thee."*];
+    if v3 {
+        SetSpeaker(0, _Dupre);
+        ["Come, friend. That is enough of this. Drinks are on me."~~ As you make your way out of the Hall, the leader's voice continues to drone on and on.*];
+        terminate;
+    }
+}

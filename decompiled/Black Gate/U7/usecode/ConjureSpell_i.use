@@ -1,0 +1,33 @@
+Routine ConjureSpell_i accepts a0 #locals(9) #uses(~IsMagicOK_i, ~NPCLevel_i) {
+    if (event = _Action) {
+        Kernel_resetRef(item);
+        Item_bark("@Kal Xen@", item);
+        if ~IsMagicOK_i() {
+            v0 = ~PostAction(<< _aSFX_i, 65, _aRAISE1_FRAME_i, _aEXTEND1_FRAME_i, _aTHRUST1_FRAME_i, _aUSABLE_i, #ConjureSpell_i >>, item);
+        } else {
+            v0 = ~PostAction(<< _aRAISE1_FRAME_i, _aEXTEND1_FRAME_i, _aTHRUST1_FRAME_i, _aUSABLE_i, #FizzleSpell_i >>, item);
+        }
+    }
+    if (event = _Posted_i) {
+        v1 = << 716, 811, 523, 510, 530, 502, 537 >>;
+        v2 = ~ListSize_i(v1);
+        v3 = ~NPCLevel_i(_Avatar);
+        if (v3 > v2) {
+            v3 = v2;
+        }
+        if (v3 < 2) {
+            v3 = 2;
+        }
+        v4 = (v3 / 2);
+        if (v4 < 1) {
+            v4 = 1;
+        }
+        v5 = ~rndRange(v3, v4);
+        While (v5 > 0) {
+            v5 = (v5 - 1);
+            v6 = ~rndRange(v3, v4);
+            v7 = v1::v6;
+            v8 = ~Summon_i(false, v7);
+        }
+    }
+}

@@ -1,0 +1,266 @@
+Routine Kliftin accepts a0 #locals(8) #uses(~LordOrLady, KliftinSellsArmour_i, KliftinSellsWeapons_i, ~AskYesNo, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Kliftin);
+        v0 = ~LordOrLady();
+        v1 = ~GetTime();
+        v2 = ~GetWorkType(~NPCToItem_i(_Kliftin));
+        TurnOn(<< "name", "job", "bye" >>);
+        if flag(390) {
+            TurnOn("Sprellic");
+        }
+        if flag(359) && not flag(360) {
+            TurnOn("false flag");
+        }
+        if not $MET_KLIFTIN {
+            [You see a battle-scarred old soldier.];
+            $MET_KLIFTIN = true;
+        } else {
+            ["Greetings!" says Kliftin. "Hast thou gotten into any scrapes lately?"];
+        }
+        converse {
+            key ("name") {
+                ["I am Kliftin."];
+                TurnOff("name");
+            }
+            key ("job") {
+                ["In my day I was a pretty damned good soldier. Now I am the master of the Armoury here in Jhelom."];
+                TurnOn(<< "soldier", "Armoury", "Jhelom", "buy" >>);
+            }
+            key ("buy") {
+                if ((v2 = 7) or (v2 = 19)) {
+                    ["I sell armour and weapons here. I have something to meet thine every need. Dost thou wish to see armour or weapons?"];
+                    PushKeys();
+                    TurnOn(<< "armour", "weapons" >>);
+                } else {
+                    ["My shop is presently closed for business, but do return again, <v0>."];
+                }
+                TurnOff("buy");
+            }
+            key ("armour") {
+                KliftinSellsArmour_i();
+            }
+            key ("weapons") {
+                KliftinSellsWeapons_i();
+            }
+            key ("soldier") {
+                ["Surely thou dost not want to listen to old war stories?! I have seen my share of death and destruction. Leave it at that."];
+                TurnOff("soldier");
+            }
+            key ("Armoury") {
+                ["I sell and collect weapons of all types. Business is always excellent, although my best customers keep getting killed in duels!"];
+                TurnOff("Armoury");
+                TurnOn(<< "duels", "buy" >>);
+            }
+            key ("Jhelom") {
+                ["Jhelom is a rough place. If thou dost not like trouble then I can think of many better places for thee to be than here."];
+                TurnOff("Jhelom");
+            }
+            key ("duels") {
+                ["Every day at noon in the Town Square people come to settle their differences. They fight to the blood or to the death. It is a madness! Like that Sprellic fellow for instance."];
+                TurnOff("duels");
+                TurnOn("Sprellic");
+            }
+            key ("Sprellic") {
+                if not flag(390) {
+                    ["Sprellic, our rather mild-mannered innkeeper, stole the honor flag from the wall of the Library of Scars and refused to return it. Now he must fight three of our best local fighters in a duel to the death."];
+                    TurnOn("fighters");
+                } else {
+                    if not flag(359) {
+                        [You relate Sprellic's story to the old man who listens intently. "It sounds to me like the work of Sullivan, the Trickster. He is a legendary thief and swindler who has never once been caught! Indeed, few even believe he actually exists. Thou shalt not be able to dissuade the duellists with a tale like that."];
+                        TurnOn("dissuade");
+                    } else {
+                        ["It is good of thee to help that poor Sprellic fellow in his hour of need."];
+                    }
+                }
+                TurnOff("Sprellic");
+            }
+            key ("fighters") {
+                ["Thou canst ask about the entire matter at the pub if thou dost wish to know more about it."];
+                TurnOff("fighters");
+            }
+            key ("dissuade") {
+                ["The only thing that can dissuade them from wanting to kill poor Sprellic is to return the honor flag! It must have been taken away by Sullivan, but the duellists do not know that! If we had a duplicate of the honor flag we could give them that instead!"];
+                TurnOff("dissuade");
+                TurnOn("duplicate");
+            }
+            key ("duplicate") {
+                ["In my day I was fairly handy at stitching wounds... Hmmm, perhaps I can make a duplicate of the honor flag. The deception only has to work long enough for them to formally call off the duel."];
+                TurnOff("duplicate");
+                TurnOn(<< "deception", "sewing" >>);
+            }
+            key ("sewing") {
+                ["I stitched so many of my comrades back together after all the battles I fought in. Now that I am retired, sewing has sort of become mine hobby." He looks at you with a little embarrassment. "There is nothing wrong with that!"];
+                TurnOff("sewing");
+            }
+            key ("deception") {
+                ["Even if they notice that it is not their true honor flag they would never admit it. To do so would make them look foolish. They would rather simply challenge anyone who might say it is not their honor flag to yet another\x09duel! But let us deal with one duel at a time here."];
+                TurnOff("deception");
+                TurnOn("honor flag");
+            }
+            key ("honor flag") {
+                ["Dost thou want me to make an honor flag that can be given to the Library of Scars so the duels can be stopped?"];
+                v3 = ~AskYesNo();
+                if v3 {
+                    if flag(368) {
+                        ["Then thou must be sure to come pick it up from me before thou dost go to the Duelling Area. It is the area outside my shop next to the Library of Scars. I had best get busy if I am to have it finished in time! Please return to my shop in a few hours."*];
+                        flag(359) = true;
+                        flag(379) = true;
+                        SetClock(0);
+                        terminate;
+                    } else {
+                        ["Then thou must be sure to come pick it up from me before Sprellic goes to the Duelling Area. I had best get busy if I am to have it finished in time. Please return to my shop in a few hours."*];
+                        flag(379) = true;
+                        flag(359) = true;
+                        SetClock(0);
+                        terminate;
+                    }
+                } else {
+                    if flag(368) {
+                        ["Thou dost wish to deal with the Library of Scars personally? Very well then, but be warned -- the only type of honor they believe in is victory."];
+                    } else {
+                        ["How canst thou have the key to saving Sprellic's life in thine hand and do nothing as he faces certain death?!"];
+                    }
+                }
+                TurnOff("honor flag");
+            }
+            key ("false flag") {
+                v4 = ~GetClock(0);
+                if not (v4 > 2) {
+                    ["Disturb me not! The flag is not finished! Come to my shop later."];
+                } else {
+                    ["Here is the imitation I have made of the Library of Scars' honor flag."];
+                    v5 = ~GiveToParty_i(false, _All, _All, _Banner, 1);
+                    if v5 {
+                        ["The time for the duels must be drawing near. Good luck to Sprellic, and to thee as well!"];
+                        flag(360) = true;
+                    } else {
+                        ["Thou must put something down if thou art to carry the flag!"];
+                    }
+                }
+                TurnOff("false flag");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["Good day."*];
+    }
+    if (event = _Bark) {
+        v1 = ~GetTime();
+        v2 = ~GetWorkType(~NPCToItem_i(_Kliftin));
+        v6 = ~rndRange(4, 1);
+        if ((v2 = 7) or (v2 = 19)) {
+            if (v6 = 1) {
+                v7 = "@Fine arms and armour for sale!@";
+            }
+            if (v6 = 2) {
+                v7 = "@Just look at this fine armoury!@";
+            }
+            if (v6 = 3) {
+                v7 = "@I have the fiercest weapons!@";
+            }
+            if (v6 = 4) {
+                v7 = "@I have the strongest armour!@";
+            }
+            Item_bark(v7, _Kliftin);
+        } else {
+            BarkAboutWork_i(_Kliftin);
+        }
+    }
+}
+
+Usable KliftinSellsWeapons_i #locals(13) #uses(~AskOrdList, ~PriceString_i, ~AskYesNo, ~SellItem_i) {
+    PushKeys();
+    v0 = true;
+    v1 = << "nothing", "club", "main gauche", "dagger", "mace", "morning star", "sword", "halberd" >>;
+    v2 = << 0, 590, 591, 594, 659, 596, 599, 603 >>;
+    v3 = << 0, 5, 20, 10, 15, 15, 60, 150 >>;
+    v4 = << "", "a ", "a ", "a ", "a ", "a ", "a ", "a " >>;
+    v5 = << 0, 0, 0, 0, 0, 0, 0, 0 >>;
+    v6 = << "", "", "", "", "", "", "", "" >>;
+    v7 = << 0, 1, 1, 1, 1, 1, 1, 1 >>;
+    v8 = 65177;
+    ["What wouldst thou like to buy?"];
+    While v0 {
+        v9 = ~AskOrdList(v1);
+        if (v9 = 1) {
+            ["Fine."];
+            v0 = false;
+        } else {
+            v10 = ~PriceString_i(v6::v9, v3::v9, v5::v9, v1::v9, v4::v9);
+            v11 = 0;
+            ["^<v10> Is that acceptable?"];
+            v12 = ~AskYesNo();
+            if v12 {
+                if (v2::v9 = 723) {
+                    ["How many dozen dost thou want?"];
+                    v11 = ~SellItem_i(true, 1, 20, v3::v9, v7::v9, v8, v2::v9);
+                } else {
+                    v11 = ~SellItem_i(true, 1, 0, v3::v9, v7::v9, v8, v2::v9);
+                }
+            }
+            if (v11 = 1) {
+                ["Done!"];
+            } else {
+                if (v11 = 2) {
+                    ["Thou cannot possibly carry that much!"];
+                } else {
+                    if (v11 = 3) {
+                        ["Thou dost not have enough gold for that!"];
+                    } else {
+                    }
+                }
+            }
+            ["Wouldst thou like something else?"];
+            v0 = ~AskYesNo();
+        }
+    }
+    PopKeys();
+    PopKeys();
+}
+
+Usable KliftinSellsArmour_i #locals(13) #uses(~AskOrdList, ~PriceString_i, ~AskYesNo, ~SellItem_i) {
+    PushKeys();
+    v0 = true;
+    v1 = << "nothing", "crested helm", "scale armour", "gorget" >>;
+    v2 = << 0, 542, 570, 586 >>;
+    v3 = << 0, 150, 120, 30 >>;
+    v4 = << "", "a ", "", "a " >>;
+    v5 = 0;
+    v6 = "";
+    v7 = 1;
+    v8 = 65177;
+    ["What wouldst thou like to buy?"];
+    While v0 {
+        v9 = ~AskOrdList(v1);
+        if (v9 = 1) {
+            ["Fine."];
+            v0 = false;
+        } else {
+            v10 = ~PriceString_i(v6, v3::v9, v5, v1::v9, v4::v9);
+            v11 = 0;
+            ["^<v10> Is that acceptable?"];
+            v12 = ~AskYesNo();
+            if v12 {
+                v11 = ~SellItem_i(true, 1, 0, v3::v9, v7, v8, v2::v9);
+            }
+            if (v11 = 1) {
+                ["Done!"];
+            } else {
+                if (v11 = 2) {
+                    ["Thou cannot possibly carry that much!"];
+                } else {
+                    if (v11 = 3) {
+                        ["Thou dost not have enough gold for that!"];
+                    } else {
+                    }
+                }
+            }
+            ["Wouldst thou like something else?"];
+            v0 = ~AskYesNo();
+        }
+    }
+    PopKeys();
+    PopKeys();
+}

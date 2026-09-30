@@ -1,0 +1,16 @@
+Routine RecallSpell_i accepts a0 #locals(3) #uses(~IsMagicOK_i) {
+    if (event = _Action) {
+        Kernel_resetRef(item);
+        v0 = ~GetTarget();
+        v1 = ~GetCoord(item);
+        Item_bark("@Kal Ort Por@", item);
+        if (~IsMagicOK_i() and (~Item_getType(v0) = _Virtue_Stone)) {
+            v2 = ~PostAction(<< _aUP_FRAME_i, _aOUT_FRAME_i, _aTHRUST2_FRAME_i >>, item);
+            v2 = ~PostInFuture(6, << _aNO_HALT_i, _aUSABLE_i, #RecallVirtueStone_i >>, v0);
+            createSprite(65535, 0, 0, 0, v0::3, v0::2, 7);
+            CreateSpriteOn_i(65535, 0, 0, 0, 65534, 65534, 7, item);
+        } else {
+            v2 = ~PostAction(<< _aUP_FRAME_i, _aOUT_FRAME_i, _aTHRUST2_FRAME_i, _aUSABLE_i, #FizzleSpell_i >>, item);
+        }
+    }
+}

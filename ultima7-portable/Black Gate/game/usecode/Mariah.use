@@ -1,0 +1,279 @@
+Routine Mariah accepts a0 #locals(6) #uses(~LordOrLady, ~AvatarName, ~IsNPCNear, MariahSellsSpells_i, MariahSellsWares_i, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Mariah);
+        v0 = ~LordOrLady();
+        v1 = ~AvatarName();
+        TurnOn(<< "name", "job", "bye" >>);
+        if not $MetMariah {
+            [You see your old friend Mariah.];
+            $MetMariah = true;
+        } else {
+            if $TetraGone {
+                ["Yes, <v1>? How may I help thee?" Mariah greets you.];
+            } else {
+                ["Yes, <v0>?" Mariah smiles, a trifle too sweetly.];
+            }
+        }
+        if $TetraGone {
+            converse {
+                key ("name") {
+                    v2 = ~IsNPCNear(_Iolo);
+                    if v2 {
+                        SetSpeaker(0, _Iolo);
+                        ["Surely thou dost recognize thine old companion, Mariah?"*];
+                        CloseSpeaker(_Iolo);
+                        SetSpeaker(0, _Mariah);
+                    } else {
+                        ["Hast thou already forgotten me, <v1>? I am Mariah."];
+                    }
+                    TurnOff("name");
+                }
+                key ("job") {
+                    ["I sell spells, reagents, and sometimes a few potions here at the Lycaeum. Dost thou wish to buy any of these, <v1>?"];
+                    TurnOn(<< "spells", "reagents", "potions", "Lycaeum" >>);
+                }
+                key ("spells") {
+                    MariahSellsSpells_i(65383);
+                }
+                key ("reagents") {
+                    MariahSellsWares_i("Reagents");
+                }
+                key ("potions") {
+                    ["I am afraid, <v1>, that I have a very meager selection."];
+                    MariahSellsWares_i("Potions");
+                }
+                key ("Lycaeum") {
+                    [She shakes her head sadly. "I have not been `myself' for so long that I no longer recognize this town." Her eyes widen.~~ "There are so many buildings around the Lycaeum now, hast thou seen them?"~~She pauses, looking at you.~~"By the way, old friend. I assume thou art responsible for returning the ether to its normal state. I thank thee."];
+                    TurnOff("Lycaeum");
+                }
+                key ("bye") {
+                    ["Fair days ahead, friend <v1>."*];
+                    terminate;
+                }
+            }
+            clear_answers;
+        } else {
+            converse {
+                key ("name") {
+                    v2 = ~IsNPCNear(_Iolo);
+                    if v2 {
+                        SetSpeaker(0, _Iolo);
+                        ["Surely thou dost recognize thine old companion, Mariah?"*];
+                        CloseSpeaker(_Iolo);
+                        SetSpeaker(0, _Mariah);
+                        ["Yes, dost thou not recognize me?" She pauses, glaring at you. "But who art thou, and where are my pastries?"];
+                    } else {
+                        ["Yes, thou mayest tell me thy name," she says, glancing around the building. "Are not the many books beautiful?"];
+                    }
+                    TurnOff("name");
+                }
+                key ("job") {
+                    [She smiles. "I have a very important job, I do. My, are not those shelves lovely? So neat and orderly." She looks back at you.~~"Be careful! The ink wells are full, and the quills so sharp." She giggles.];
+                    TurnOn(<< "shelves", "ink wells", "quills" >>);
+                }
+                key ("shelves") {
+                    ["Are not they the neatest, most orderly, and well-kept shelves thou hast seen? They do an excellent job of maintaining them!"];
+                    TurnOn("they");
+                    TurnOff("shelves");
+                }
+                key ("ink wells") {
+                    ["They are always so full and ready for use. They are so good about keeping them filled and clean!"];
+                    TurnOn("they");
+                    TurnOff("ink wells");
+                }
+                key ("quills") {
+                    ["Oh, yes, they are quite sharp! Always there when one needs to scribe a missive. They do an excellent job of having many ready at a moment's notice!"];
+                    TurnOn("they");
+                    TurnOff("quills");
+                }
+                key ("they") {
+                    ["Yes, they do!" Her face turns sad. "But I only sell."];
+                    TurnOn("sell");
+                    TurnOff("they");
+                }
+                key ("sell") {
+                    ["Yes," she agrees, "I do indeed sell. I even spell. In fact, I even sell spells! But, if thou desirest reagents, thou art out of luck, for I only sell those during one of the seven weekdays. Wouldst thou like to know which day?~~"What a lovely set of books thou must have! I have just the item for thee to match thy shelves -- a potion. If thou wilt buy a spell or reagent from me, I will sell thee a potion for only its normal price!"];
+                    TurnOn(<< "which day", "reagents", "potions" >>);
+                    TurnOff("sell");
+                }
+                key ("which day") {
+                    ["Why, today. Thou art in luck. Buy a spell."];
+                    MariahSellsSpells_i(65383);
+                    TurnOff("which day");
+                }
+                key ("reagents") {
+                    MariahSellsWares_i("Reagents");
+                }
+                key ("potions") {
+                    MariahSellsWares_i("Potions");
+                }
+                key ("bye") {
+                    ["Certainly, come back anytime and buy."*];
+                    terminate;
+                }
+            }
+            clear_answers;
+        }
+    }
+    if (event = _Bark) {
+        v3 = ~GetWorkType(~NPCToItem_i(_Mariah));
+        v4 = ~rndRange(4, 1);
+        if (v3 = 11) {
+            if not $TetraGone {
+                if (v4 = 1) {
+                    v5 = "@Where -are- those pastries!@";
+                }
+                if (v4 = 2) {
+                    v5 = "@Lovely, lovely shelves!@";
+                }
+                if (v4 = 3) {
+                    v5 = "@Lovely, lovely ink wells!@";
+                }
+                if (v4 = 4) {
+                    v5 = "@Magic is in the air...@";
+                }
+                Item_bark(v5, _Mariah);
+            }
+        } else {
+            BarkAboutWork_i(_Mariah);
+        }
+    }
+}
+
+Routine MariahSellsSpells_i accepts a0 #locals(10) #uses(~AskOrdList, ~SellSpell_i, ~AskYesNo) {
+    PushKeys();
+    v1 = true;
+    v2 = << 20, 40, 60, 80, 100, 130, 150, 180 >>;
+    While v1 {
+        ["Which circle art thou interested in?"];
+        v3 = ~AskOrdList(<< "nothing", "First", "Second", "Third", "Fourth", "Fifth", "Sixth", "Seventh", "Eighth" >>);
+        v3 = (v3 - 1);
+        if (v3 = 0) {
+            break;
+        }
+        switch v3 {
+            case 1 {
+                v4 = << "nothing", "Light", "Create Food", "Cure", "Detect Trap" >>;
+                v5 = << 0, 13, 8, 9, 10 >>;
+            }
+            case 2 {
+                v4 = << "nothing", "Wizard Eye", "Telekinesis", "Protection", "Destroy Trap" >>;
+                v5 = << 0, 23, 22, 21, 16 >>;
+            }
+            case 3 {
+                v4 = << "nothing", "Heal", "Peer", "Sleep", "Protect All" >>;
+                v5 = << 0, 25, 29, 31, 27 >>;
+            }
+            case 4 {
+                v4 = << "nothing", "Mark", "Recall", "Seance", "Unlock Magic" >>;
+                v5 = << 0, 34, 36, 38, 39 >>;
+            }
+            case 5 {
+                v4 = << "nothing", "Invisibility", "Charm", "Fire Field", "Dance" >>;
+                v5 = << 0, 45, 40, 46, 41 >>;
+            }
+            case 6 {
+                v4 = << "nothing", "Clone", "Sleep Field", "Cause Fear", "Magic Storm" >>;
+                v5 = << 0, 49, 54, 48, 52 >>;
+            }
+            case 7 {
+                v4 = << "nothing", "Mass Might", "Energy Mist", "Restoration", "Energy Field" >>;
+                v5 = << 0, 62, 60, 63, 59 >>;
+            }
+            default {
+                v4 = << "nothing", "Resurrect", "Time Stop", "Sword Strike", "Invisible All" >>;
+                v5 = << 0, 68, 71, 70, 67 >>;
+            }
+        }
+        ["What spell wouldst thou like to buy?"];
+        v6 = ~AskOrdList(v4);
+        if (v6 = 1) {
+            ["Fine."];
+            break;
+        }
+        v7 = v5::v6;
+        v8 = v2::v6;
+        v9 = v4::v6;
+        ["The <v9> spell will cost <v8> gold."];
+        v10 = ~SellSpell_i(v8, v7);
+        if (v10 = 1) {
+            ["Done!"];
+        } else {
+            if (v10 = 2) {
+                ["Thou dost not have a spellbook."];
+                v1 = false;
+                break;
+            }
+            if (v10 = 3) {
+                ["Thou dost not have enough gold for that!"];
+            } else {
+                if (v10 = 4) {
+                    ["Thou dost already have that spell!"];
+                } else {
+                }
+            }
+        }
+        ["Wouldst thou like another spell?"];
+        v1 = ~AskYesNo();
+    }
+    PopKeys();
+}
+
+Routine MariahSellsWares_i accepts a0 #locals(15) #uses(~AskOrdList, ~PriceString_i, ~AskYesNo, ~SellItem_i) {
+    PushKeys();
+    v1 = true;
+    if (v0 = "Reagents") {
+        v2 = << "Nothing", "Garlic", "Ginseng", "Mandrake Root", "Nightshade", "Black Pearl" >>;
+        v3 = << 0, 842, 842, 842, 842, 842 >>;
+        v4 = << 65177, 4, 5, 3, 2, 0 >>;
+        v5 = << 0, 1, 2, 7, 6, 8 >>;
+        v6 = "";
+        v7 = << "", " for one clove", " for one portion", " each", " for one button", " each" >>;
+    } else {
+        v2 = << "nothing", "orange potion", "black potion" >>;
+        v3 = << 0, 340, 340 >>;
+        v4 = << 65177, 4, 7 >>;
+        v5 = << 0, 15, 90 >>;
+        v8 = << "", "a ", "a " >>;
+        v7 = << "", " for one vial", " for one vial" >>;
+    }
+    v9 = 0;
+    v10 = 1;
+    v11 = 65383;
+    ["What wouldst thou like to buy?"];
+    While v1 {
+        v12 = ~AskOrdList(v2);
+        if (v12 = 1) {
+            ["Fine."];
+            v1 = false;
+        } else {
+            v13 = ~PriceString_i(v7::v12, v5::v12, v9, v2::v12, v6);
+            v14 = 0;
+            ["<v13> Dost thou like the price?"];
+            v15 = ~AskYesNo();
+            if v15 {
+                if (v0 = "Reagents") {
+                    ["How many dost thou want?"];
+                    v14 = ~SellItem_i(false, 1, 20, v5::v12, v10, v4::v12, v3::v12);
+                } else {
+                    v14 = ~SellItem_i(false, 1, 0, v5::v12, v10, v4::v12, v3::v12);
+                }
+            }
+            if (v14 = 1) {
+                ["Done!"];
+            } else {
+                if (v14 = 2) {
+                    ["Thou cannot possibly carry that much!"];
+                } else {
+                    if (v14 = 3) {
+                        ["Thou dost not have enough gold for that!"];
+                    } else {
+                    }
+                }
+            }
+            ["Wouldst thou like something else?"];
+            v1 = ~AskYesNo();
+        }
+    }
+    PopKeys();
+}

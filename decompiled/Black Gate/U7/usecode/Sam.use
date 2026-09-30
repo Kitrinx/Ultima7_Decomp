@@ -1,0 +1,176 @@
+Routine Sam accepts a0 #locals(16) #uses(~AvatarName, ~LordOrLady, ~AskList, ~AskYesNo, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Sam);
+        v0 = ~AvatarName();
+        v1 = ~LordOrLady();
+        v2 = ~GetTime();
+        v3 = ~GetWorkType(~NPCToItem_i(_Sam));
+        v4 = "Avatar";
+        v2 = ~GetTime();
+        v5 = ~AvatarSex();
+        TurnOn(<< "name", "job", "bye" >>);
+        if flag(384) {
+            TurnOn("strangers");
+        }
+        if flag(381) {
+            TurnOn("locket");
+        }
+        if $MetRobin {
+            TurnOn("Robin");
+        }
+        if $MetBattles {
+            TurnOn("Battles");
+        }
+        if $MetLeavell {
+            TurnOn("Leavell");
+        }
+        if flag(391) {
+            v6 = v0;
+        }
+        if flag(392) {
+            v6 = v4;
+        }
+        if not $MetSam {
+            [You see a content-looking bearded man, with deep-set laugh lines in his face and gentle eyes.];
+            $MetSam = true;
+        } else {
+            ["Hey there, how are things with thee?" says Sam.];
+        }
+        converse {
+            key ("name") {
+                ["My name is Sam. I am the Flower Man. And what is thy name?"];
+                PushKeys();
+                v7 = ~AskList(<< v0, v4 >>);
+                if (v7 = v0) {
+                    ["It is nice to meet thee."];
+                    flag(391) = true;
+                } else {
+                    ["Fine. If thou dost wish to be the Avatar, I will not argue. Thou canst be the Avatar if thou dost want to be."];
+                    v8 = true;
+                }
+                PopKeys();
+                TurnOff("name");
+            }
+            key ("job") {
+                ["The way I perceive it I do not really have a job. I sell flowers to the people of New Magincia. Although I am paid for it, it is something I enjoy doing very much. I wonder, does that still qualify as a job?" He scratches his chin thoughtfully.];
+                TurnOn(<< "flowers", "New Magincia" >>);
+            }
+            key ("flowers") {
+                ["I grow all of the flowers that I sell in a greenhouse which is also mine home. I sell a lot of red roses but I have many varieties. If thou art interested in buying some, please say so!"];
+                TurnOn(<< "greenhouse", "buy" >>);
+                TurnOff("flowers");
+            }
+            key ("greenhouse") {
+                ["I built my greenhouse by hand. When I am not selling flowers I am engaged in various studies of plants and nature there. I find it fascinating. As thou mayest have noticed, I prefer to grow them big!"];
+                TurnOff("greenhouse");
+                TurnOn(<< "studies", "big" >>);
+            }
+            key ("studies") {
+                ["Presently I am studying possible uses and applications of wheatgrass. One day soon I shall begin compiling my notes but it will require a long effort for there is much that I have learned. It is mostly to support my work that I operate my flower wagon."];
+                TurnOn("wagon");
+                TurnOff("studies");
+            }
+            key ("big") {
+                ["It is because of what I learn in my studies that I may grow my flowers to be so large and healthy."];
+                TurnOff("big");
+            }
+            key ("wagon") {
+                ["Actually my business does quite well and I do like the way my flowers brighten the whole place. But who really cares about business anyway, so why shouldst thou ask? Suffice it to say that life is sweet!"];
+                TurnOff("wagon");
+                TurnOn("life");
+            }
+            key ("life") {
+                ["Thou hast enough money as long as thou dost have a place to live and can afford food, so I consider myself a wealthy man. I enjoy a good drink and round of song at the Modest Damsel nightly. I have a thriving business and stimulating work. I consider every resident of this island a good friend. I feel anger towards no one and do not desire anything more. I have never had reason to feel lonely, worried or bored. What else is there? Life is good!"];
+                TurnOff("life");
+            }
+            key ("buy") {
+                if (v3 = 7) {
+                    if not v5 {
+                        ["There are many pretty ladies on this island and they are in the habit of receiving flowers from the gentlemen they meet. It would cause a dreadful embarrassment if thou didst not have any!];
+                    } else {
+                        ["The gentlemen of this island have a peculiarity in their taste in women. They cannot refuse anything of a woman who wears flowers. If thou dost not wear any they will simply ignore thee!];
+                    }
+                    ["Surely thou dost wish to purchase some?"];
+                    v9 = ~AskYesNo();
+                    if v9 {
+                        ["A bouquet costs 12 gold. Art thou still interested?"];
+                        v10 = ~AskYesNo();
+                        if v10 {
+                            v11 = ~CountItem(_All, _All, _Gold_Coin, _Party);
+                            if (v11 >= 12) {
+                                v12 = ~GiveToParty_i(true, 4, _All, _Plant_999, 1);
+                                if v12 {
+                                    ["The bouquet is thine!"];
+                                    v13 = ~TakeFromParty_i(true, _All, _All, _Gold_Coin, 12);
+                                } else {
+                                    ["Thine hands are too full to take the bouquet!"];
+                                }
+                            } else {
+                                ["Thou dost not have the money to buy flowers. But take heart, whenever thou canst afford them, I shall still be selling them."];
+                            }
+                        } else {
+                            ["Perhaps next time, <v1>," he responds, smiling.];
+                        }
+                    } else {
+                        ["Perhaps another time then."];
+                    }
+                } else {
+                    ["I am afraid that my shop is now closed, but if thou wilt return during business hours, I shall provide the solution to thine apparent floral emergency."];
+                }
+                TurnOff("buy");
+            }
+            key ("strangers") {
+                ["There are three strangers on this island that have washed ashore in a shipwreck. Perhaps thou shalt meet them."];
+                TurnOff("strangers");
+                flag(384) = true;
+            }
+            key ("locket") {
+                ["Yes, I saw Henry walking past my shop with that locket looking for Constance. It must have been shortly after he received it from Katrina. I remember it because I gave him a flower to give to Constance. Poor fellow, by the time he found her it was all he had to give her."];
+                TurnOff("locket");
+            }
+            key ("Robin") {
+                ["Why, he sounds like one of those three strangers! I have met him. He talked as if he wanted to buy some flowers but he just walked away. Later I noticed a bouquet of flowers was missing from my wagon. The scoundrel must have pilfered them!"];
+                TurnOff("Robin");
+            }
+            key ("Battles") {
+                ["He must be one of those shipwrecked visitors we have on our island. Yes, when the three of them came up to my wagon he gave me a stare that sent a chill through my blood. I did my best to ignore him. I absolutely abhor violence."];
+                TurnOff("Battles");
+            }
+            key ("Leavell") {
+                ["So that is the name of one of our uninvited guests! When the three of them came to my wagon earlier, he was very friendly while talking to me, but I saw through him. He mentioned noticing Constance, but the others gestured for him to be quiet."];
+                TurnOff("Leavell");
+            }
+            key ("New Magincia") {
+                ["I was not born here. I came here as a young man. My father was a nobleman who was more interested in my counting gold than devoting myself to my studies. For a time I travelled the world until I landed here. It is a special place unlike any other in all of Britannia. So while thou art here please help us take good care of it."];
+                TurnOff("New Magincia");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["Enjoy thy life, friend."*];
+    }
+    if (event = _Bark) {
+        v2 = ~GetTime();
+        v3 = ~GetWorkType(~NPCToItem_i(_Sam));
+        v14 = ~rndRange(4, 1);
+        if (v3 = 7) {
+            if (v14 = 1) {
+                v15 = "@Beautiful flowers!@";
+            }
+            if (v14 = 2) {
+                v15 = "@I have pretty flowers!@";
+            }
+            if (v14 = 3) {
+                v15 = "@Who will buy these lovely flowers?@";
+            }
+            if (v14 = 4) {
+                v15 = "@Thou dost need beautiful flowers!@";
+            }
+            Item_bark(v15, _Sam);
+        } else {
+            BarkAboutWork_i(_Sam);
+        }
+    }
+}

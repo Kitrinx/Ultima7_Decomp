@@ -1,0 +1,188 @@
+Routine Alagner accepts a0 #locals(5) #uses(~AvatarName, ~AskList, ~AskYesNo, AlagnerLendsNotebook_i, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Alagner);
+        v0 = ~AvatarName();
+        v1 = ~IsMedallionOn_i();
+        TurnOn(<< "name", "job", "bye" >>);
+        if (flag(307) and not flag(406)) {
+            TurnOn(<< "Wisps", "notebook" >>);
+        }
+        if flag(406) {
+            TurnOn("answers");
+        }
+        if not $MetAlagner {
+            [You see a large man with an almost cunning, erudite aura about him.];
+            $MetAlagner = true;
+        } else {
+            ["Hello, again," Alagner says.];
+        }
+        converse {
+            key ("name") {
+                [The sage smiles and nods his head. "My name is Alagner. And who art thou?"];
+                PushKeys();
+                v2 = ~AskList(<< v0, "Avatar" >>);
+                if (v2 = v0) {
+                    ["I see. Nice to meet thee. Go away. I am busy."*];
+                    terminate;
+                }
+                if (v2 = "Avatar") {
+                    [Alagner's eyes widen.~~"By the skies above! I do recognize thee! This is quite an honor! What may I do for thee?"];
+                    PopKeys();
+                    TurnOff("name");
+                }
+            }
+            key ("job") {
+                ["My profession -- rather, my destiny -- is to learn and know all things. I came to New Magincia to build my workshop and do so."];
+                TurnOn(<< "New Magincia", "workshop" >>);
+            }
+            key ("New Magincia") {
+                [The sage sighs. "I left the Britannian mainland to come to the relative peace and quiet of New Magincia. I am content here because it is isolated and free from... the filth and corruption going on in Britannia. Not many see it."];
+                TurnOff("New Magincia");
+                TurnOn("corruption");
+            }
+            key ("workshop") {
+                ["This is my workshop. I peruse my books and papers here. Occasionally, I invent things, such as this crystal ball."];
+                TurnOff("workshop");
+                TurnOn("crystal ball");
+            }
+            key ("crystal ball") {
+                ["It is a device for recording. If I forget a procedure or a step in an experiment, I may look into the crystal ball and see yesterday's events. Please, feel free to use it. Thou wilt see what I was doing yesterday."];
+                TurnOff("crystal ball");
+            }
+            key ("Wisps") {
+                ["They are unusually aloof creatures of another dimension. Thou wilt think they are thy friends, but they could very well be spying on -thee- for someone else! They have no loyalties to good or evil -- all they care about is the acquisition of information -- how they acquire it is sometimes honorable, sometimes not."];
+                TurnOff("Wisps");
+            }
+            key ("corruption") {
+                ["The Britannian people are becoming careless and lazy. They do not seek true knowledge. They do not respect their land. They do not respect each other. The resources of our land are being wasted. Miners are experimenting with dangerous reagents. There is an evil in the land, and I am not so sure that it is in the people themselves."];
+                TurnOff("corruption");
+                TurnOn(<< "true knowledge", "evil" >>);
+            }
+            key ("true knowledge") {
+                ["True knowledge is the only way to complete fulfillment."];
+                TurnOff("true knowledge");
+            }
+            key ("evil") {
+                if v1 {
+                    ["Thou art a member of The Fellowship, I see. Thou must not know everything about them. If thou didst, thou wouldst not be a member!];
+                    TurnOn("under cover");
+                } else {
+                    ["Thou hast heard of The Fellowship by now, I am sure.];
+                    TurnOn("suspect");
+                }
+                ["They are cunning and two-faced. I am working on obtaining proof of this."];
+                TurnOff("evil");
+                TurnOn("proof");
+            }
+            key ("proof") {
+                ["I am documenting this information in my notebook."];
+                TurnOff("proof");
+                TurnOn(<< "information", "notebook" >>);
+            }
+            key ("information") {
+                ["It is all contained within the notebook."];
+                TurnOff("information");
+            }
+            key ("under cover") {
+                ["Thou didst join The Fellowship to study their ways? Thou dost suspect them as well? Perhaps thou hast more substance to thee than I thought. We are working towards the same goal."];
+                TurnOff("under cover");
+            }
+            key ("suspect") {
+                ["Thou dost suspect The Fellowship of foul deeds? Well then! Thou art perceptive indeed! Perhaps we are working toward the same goal!"];
+                TurnOff("suspect");
+            }
+            key ("notebook") {
+                ["It is hidden in a safe place, along with mine other treasured sources of knowledge."];
+                if (flag(307) and not flag(406)) {
+                    [Alagner listens as you tell him you would like to borrow the notebook.];
+                    ["Since thou art on an honorable quest, I suppose I might allow thee to borrow it if thou dost give me thy word that thou wilt return it, and if thou dost offer proof of thine eagerness to learn the true knowledge of the world."];
+                    TurnOn("learn");
+                }
+                TurnOff("notebook");
+            }
+            key ("learn") {
+                ["Very well. Dost thou know the answers to the questions of Life and Death?"];
+                v3 = ~AskYesNo();
+                if v3 {
+                    if flag(406) {
+                        AlagnerLendsNotebook_i();
+                    } else {
+                        ["I do not believe thou dost.];
+                    }
+                } else {
+                    ["No, of course thou dost not.];
+                }
+                if not flag(380) {
+                    ["Only those souls who have passed on from this life know these things. Seek out the spirit of The Tortured One. Ask him what the answers are to the questions of life and death. When thou dost return with the correct answer, I will believe that thou art sincere in thy quest for knowledge. Only then will I allow thee to borrow the notebook."];
+                    TurnOn("Tortured One");
+                    flag(380) = true;
+                }
+                TurnOff("learn");
+            }
+            key ("Tortured One") {
+                ["Alas, he is a poor soul who is doomed to haunt his abode throughout eternity."];
+                TurnOff("Tortured One");
+                TurnOn("abode");
+            }
+            key ("abode") {
+                ["Seek him out in Skara Brae. But be careful. It is a dangerous place. I should also advise thee that thou must use Seance Spells to speak with anyone on that island. They are all undead."];
+                TurnOff("abode");
+            }
+            key ("answers") {
+                ["Thou hast spoken to the Tortured One and learned the answers to the questions of Life and Death?"];
+                v4 = ~AskYesNo();
+                if v4 {
+                    ["Then what are the answers?"];
+                    AlagnerLendsNotebook_i();
+                } else {
+                    ["Do not return until thou hast done so."];
+                }
+                TurnOff("answers");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["Farewell. May thy journeys be profitable."*];
+    }
+    if (event = _Bark) {
+        BarkAboutWork_i(_Alagner);
+    }
+}
+
+Usable AlagnerLendsNotebook_i #locals(4) #uses(~AskList, ~AskYesNo) {
+    PushKeys();
+    v0 = ~AskList(<< "Be Good", "No Answers", "Strive for Unity", "Have Faith", "I don't know" >>);
+    if (v0 = "No Answers") {
+        [The sage smiles. "Thou hast begun thy journey on the road to enlightenment. As thou hast heard, all is not what one has been taught by one's teachers. 'Tis a pity. Now I suppose thou dost want to borrow the notebook?"];
+        v1 = ~AskYesNo();
+        if v1 {
+            ["Very well. Dost thou promise to return my notebook?"];
+            v2 = ~AskYesNo();
+            if v2 {
+                if ~CountItem(_All, 254, _Key, _Party) {
+                    ["Then go find it! Thou hast the key!"];
+                } else {
+                    v3 = ~GiveToParty_i(false, _All, 254, _Key, 1);
+                    if v3 {
+                        ["Very well. I am counting on thee to return it to me personally. No telling what misfortune may befall thee if thou dost fail to do so. And as further incentive, I just might give thee something else which will help thee in thy quest if thou dost return it to me safely.~~"Here is the key to my storeroom, the first building to the south of here." He grins slyly. "Thou must determine how to find the notebook thyself!"];
+                    } else {
+                        ["Thou hast not enough room to take my key! Unload thy belongings and we shall try all of this again!"*];
+                    }
+                }
+                terminate;
+            } else {
+                ["Then I cannot let thee borrow the notebook!"];
+                terminate;
+            }
+        } else {
+            ["Oh. Very well, then."*];
+            terminate;
+        }
+    } else {
+        [The sage frowns. "That is not correct. Go and seek the true answer."*];
+        terminate;
+    }
+    PopKeys();
+}

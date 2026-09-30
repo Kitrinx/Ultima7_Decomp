@@ -1,0 +1,71 @@
+Routine Gharl accepts a0 #locals(4) #uses(~AvatarName, ~LordOrLady, ~AskYesNo) {
+    if (event = _Action) {
+        SetSpeaker(0, _Gharl);
+        v0 = ~AvatarName();
+        v1 = ~LordOrLady();
+        TurnOn(<< "name", "job", "bye" >>);
+        if not flag(329) {
+            [You see a troll, sulking in his cell. As he breathes, you can see his ribs protrude out from under his hide.];
+        } else {
+            ["What you want?" growls Gharl.];
+        }
+        converse {
+            key ("name") {
+                ["I Gharl."];
+                TurnOff("name");
+            }
+            key ("job") {
+                [He shakes his head. "No job. Hunt. Eat. Sleep. Now," he gestures around the cell, "no hunt, no eat, just sleep."];
+                TurnOn(<< "hunt", "eat", "sleep" >>);
+            }
+            key ("hunt") {
+                ["I good hunter. Catch many things."];
+                TurnOff("hunt");
+            }
+            key ("sleep") {
+                ["I still do that," he says, shrugging. "But not as good as when home."];
+                TurnOff("sleep");
+                TurnOn("home");
+            }
+            key ("home") {
+                [He stares at you oddly and says, "With other trolls, fleshface! Under bridges."];
+                TurnOff("home");
+            }
+            key ("eat") {
+                ["No eat." He shakes his head. "Not feed. Hate jailer!" he growls.];
+                TurnOff("eat");
+                TurnOn("offer food");
+            }
+            key ("offer food") {
+                ["You give me food?" His face displays a mixture of surprise and hope. "You give me food, I tell you secret. Yes?"];
+                v2 = ~AskYesNo();
+                if v2 {
+                    v3 = ~TakeFromParty_i(0, _All, _All, _Food_Item, 1);
+                    if v3 {
+                        [He quickly devours the food.~~"I thank. You want secret?"];
+                        TurnOn("secret");
+                    } else {
+                        ["You taunt me. I not like you."*];
+                        terminate;
+                    }
+                } else {
+                    ["Go away."*];
+                    terminate;
+                }
+                TurnOff("offer food");
+            }
+            key ("secret") {
+                ["Trolls have powerful ally. He warn us in head when trouble around corner."];
+                TurnOff("secret");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        [He grunts and turns away.*];
+    }
+    if (event = _Bark) {
+        terminate;
+    }
+}

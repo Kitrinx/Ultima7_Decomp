@@ -1,0 +1,129 @@
+Routine Brita accepts a0 #locals(4) #uses(~LordOrLady, ~IsInInv, ~IsNPCNear, ~AskYesNo, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Brita);
+        v0 = ~LordOrLady();
+        TurnOn(<< "name", "job", "bye" >>);
+        if ($StolenVenom and not $VENOM_CASE_SOLVED) {
+            TurnOn("thief");
+        }
+        if $VENOM_CASE_SOLVED {
+            TurnOn("venom found");
+        }
+        v1 = ~IsInInv(1, 65177, _Venom, 1, _Party);
+        if v1 {
+            TurnOn("venom found");
+        }
+        if not $MetBrita {
+            [A stern-looking woman stares back at you without humor.];
+            $MetBrita = true;
+        } else {
+            ["Greetings to thee, <v0>," you hear Brita say.];
+        }
+        converse {
+            key ("name") {
+                ["I am Brita."];
+                TurnOff("name");
+            }
+            key ("job") {
+                ["I help mine husband Feridwyn run The Fellowship's shelter in Paws."];
+                TurnOn(<< "Feridwyn", "Fellowship", "shelter", "Paws" >>);
+            }
+            key ("Feridwyn") {
+                if not $MET_FERIDWYN {
+                    ["Mine husband is a good man who devotes himself selflessly to helping the poor of this town, something they do not appreciate. He is a good man and a dutiful Fellowship member."];
+                } else {
+                    ["Mine husband is the most honorable man I have ever met in my life."];
+                    v2 = ~IsNPCNear(_Feridwyn);
+                    if v2 {
+                        SetSpeaker(0, _Feridwyn);
+                        ["Do not put stock in the proud boasts of wives, good Avatar. I am a simple man who only does what he can."*];
+                        CloseSpeaker(_Feridwyn);
+                        SetSpeaker(0, _Brita);
+                    }
+                }
+                TurnOff("Feridwyn");
+            }
+            key ("Fellowship") {
+                if not $JoinFellow {
+                    ["Thou shouldst speak to mine husband of The Fellowship. I am certain thou wilt be most impressed by what he shall have to tell thee."];
+                } else {
+                    ["Seeing that thou hast joined The Fellowship only confirms what I already know. That The Fellowship is the path by which we shall lead Britannia to a wonderful new future. News that thou hast joined us is spreading far and wide!"];
+                }
+                TurnOff("Fellowship");
+            }
+            key ("shelter") {
+                ["Running the shelter is hard work for mine husband and me, but it is worth the effort to ease the suffering of those less fortunate than we."];
+                TurnOff("shelter");
+            }
+            key ("Paws") {
+                ["We hear about everything that goes on in Paws. If I do not know about it then mine husband does. Is there anyone in particular thou dost wish to know about?"];
+                v3 = ~AskYesNo();
+                if v3 {
+                    ["I know about these people:"];
+                    TurnOn(<< "Alina", "Camille", "Polly" >>);
+                } else {
+                    ["It is good to determine an impression of others on one's own."];
+                }
+                TurnOff("Paws");
+            }
+            key ("Alina") {
+                ["Alina lives in the shelter with her baby, poor thing. Her husband is a common thief who even now sits in prison. But we shall help her get her life straightened out once we persuade her to join The Fellowship. She is not smart enough, thou knowest, to see the advantages for herself. She must be carefully instructed."];
+                TurnOff("Alina");
+            }
+            key ("Camille") {
+                ["Camille is a farm widow. She tends to live in the past, following the old virtues and questioning the ways of The Fellowship. These country folk are so superstitious, thou knowest. It is a fault of their low intellect. She does not even notice what a hooligan her boy, Tobias, is growing up to be! Not at all like our son, Garritt."];
+                TurnOn(<< "Tobias", "Garritt" >>);
+                TurnOff("Camille");
+            }
+            key ("Tobias") {
+                ["A simply wretched little urchin. Always sulking. But then, one must realize that he has no father to discipline him properly."];
+                TurnOff("Tobias");
+            }
+            key ("venom found") {
+                if not $VENOM_CASE_SOLVED {
+                    ["Thou dost say that vial of venom was found in Garritt's belongings? I do not believe it! Art thou saying my son is a liar and a thief? I wilt not believe it! Good day to thee!"*];
+                    terminate;
+                } else {
+                    ["So Garritt admits he stole the venom vial. I cannot believe it! I do not know what to say."];
+                    TurnOn("Garritt");
+                }
+                TurnOff("venom found");
+            }
+            key ("Garritt") {
+                if not $VENOM_CASE_SOLVED {
+                    [Brita beams. "Garritt is a wonderful son. He is being raised to follow the values of The Fellowship. His worthiness has been rewarded."];
+                    TurnOn("rewarded");
+                } else {
+                    [Brita frowns even more than before. "If thou dost ask me, 'twas all a plot to get my little boy in trouble. If thou had not come to town, this entire incident would not have happened!"];
+                }
+                TurnOff("Garritt");
+            }
+            key ("rewarded") {
+                ["Garritt is so talented at the whistle panpipes! It is truly a gift!"];
+                TurnOff("rewarded");
+            }
+            key ("Polly") {
+                ["Polly runs the local tavern to be near people. She is a lonely soul and feels that there is simply no one who wishes for her heart. It makes me so sad to think of her. She could find all the companionship she could want if she would join The Fellowship."];
+                TurnOff("Polly");
+            }
+            key ("thief") {
+                ["One of our members, a local merchant named Morfin, had a shipment of silver serpent venom stolen from him. Not that I care about the venom itself, but is it not shocking?"];
+                $StolenVenom = true;
+                TurnOff("thief");
+                TurnOn("serpent venom");
+            }
+            key ("serpent venom") {
+                ["I have never seen any myself. I have no idea what it does to someone, but it cannot possibly be good!"];
+                TurnOff("serpent venom");
+            }
+            key ("bye") {
+                ["Mayest thou walk with The Fellowship, Avatar."*];
+                terminate;
+            }
+        }
+        clear_answers;
+    }
+    if (event = _Bark) {
+        BarkAboutWork_i(_Brita);
+    }
+}

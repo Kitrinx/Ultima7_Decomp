@@ -1,0 +1,100 @@
+Routine Mama accepts a0 #locals(5) #uses(~IsNPCNear) {
+    if (event = _Bark) {
+        terminate;
+    }
+    SetSpeaker(0, _Mama);
+    v0 = ~IsNPCNear(_Papa);
+    v1 = ~IsNPCNear(_Spark);
+    v2 = ~IsNPCNear(_Iolo);
+    v3 = ~IsNPCNear(_Dupre);
+    v4 = false;
+    TurnOn(<< "name", "job", "bye" >>);
+    if not flag(704) {
+        [You see a lovely naked woman. She is not in the least concerned that she is wearing no clothes.*];
+        if (v1 and v2) {
+            SetSpeaker(0, _Spark);
+            [Spark's eyes widen and his jaw drops.*];
+            CloseSpeaker(_Spark);
+            SetSpeaker(0, _Iolo);
+            ["Close thy mouth, boy. An insect may fly in. And put thine eyes back in thine head. They shall look strange dangling out of their sockets."*];
+            CloseSpeaker(_Iolo);
+            SetSpeaker(0, _Mama);
+        }
+        ["Me Mama!" the woman exclaims proudly.];
+        if flag(724) {
+            if v0 {
+                SetSpeaker(0, _Papa);
+                ["Forget it, Myrtle. The jig is up. They know all about us."*];
+                SetSpeaker(0, _Mama);
+                ["Murray! Didst thou give us away? How couldst thou do it? This just isn't going to be much fun anymore knowing that someone is aware of the truth!"*];
+                SetSpeaker(0, _Papa);
+                ["Sorry, dear."*];
+                CloseSpeaker(_Papa);
+                SetSpeaker(0, _Mama);
+                v4 = true;
+            } else {
+                [You tell the woman what Papa said about their past lives.~~"Well, blast it! Why did he tell our secret? I will never forgive him! What a knave!"];
+                v4 = true;
+            }
+        }
+        flag(704) = true;
+    } else {
+        ["Hmm?" asks Mama.];
+        if flag(724) {
+            v4 = true;
+        }
+    }
+    converse {
+        key ("name") {
+            if not v4 {
+                ["Me Mama!" the woman exclaims again.];
+            } else {
+                ["All right. My name is Myrtle. But I like to be called Mama."];
+            }
+            TurnOff("name");
+        }
+        key ("job") {
+            if not v4 {
+                ["Me live with Papa here in cave!"];
+            } else {
+                ["Well, I would not call it a job, but I just live here in Bee Cave with Papa."];
+            }
+            TurnOn(<< "live", "Papa", "cave" >>);
+        }
+        key ("live") {
+            if not v4 {
+                [Mama explains. "Eat. Sleep. Love."*];
+                if v3 {
+                    SetSpeaker(0, _Dupre);
+                    ["What else is there?"*];
+                    CloseSpeaker(_Dupre);
+                    SetSpeaker(0, _Mama);
+                }
+            } else {
+                ["We do our best to eat, sleep, and love each other down here isolated from the rest of society."];
+            }
+            TurnOff("live");
+        }
+        key ("Papa") {
+            if not v4 {
+                ["Mmmmmmm. Papa! Mama love Papa!"];
+            } else {
+                ["He's mostly a lazy beggar, but I still love him."];
+            }
+            TurnOff("Papa");
+        }
+        key ("cave") {
+            if not v4 {
+                ["Cave good. Warm. Safe."];
+            } else {
+                ["It's been good to us. It keeps us warm. We are able to find food. I do not miss the old life."];
+            }
+            TurnOff("cave");
+        }
+        key ("bye") {
+            break;
+        }
+    }
+    clear_answers;
+    ["'Bye!"*];
+}

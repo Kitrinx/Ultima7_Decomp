@@ -1,0 +1,97 @@
+Routine DRel accepts a0 #locals(7) #uses(~AvatarName, ~LordOrLady, ~AskYesNo, ~AskList, GivePartyExp_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _DRel);
+        v0 = ~AvatarName();
+        v1 = ~LordOrLady();
+        v2 = false;
+        v3 = "Nystul";
+        v4 = "Geoffrey";
+        TurnOn(<< "name", "job", "bye" >>);
+        if not flag(330) {
+            [You see a rough-looking man with a bitter expression on his face.];
+            flag(330) = true;
+        } else {
+            [D'Rel scowls at you. "What in the blazes do ye want?"];
+        }
+        converse {
+            key ("name") {
+                ["What do ye care about the name of a wretch?"];
+                TurnOn(<< "wretch", "care" >>);
+                TurnOff("name");
+            }
+            key ("wretch") {
+                ["They've put me in here to rot, they have!"];
+                TurnOff("wretch");
+                TurnOn(<< "they", "rot" >>);
+            }
+            key ("they") {
+                ["The Britannian Tax Council done it. They and the two here -- Sir Jeff and Goth."];
+                TurnOff("they");
+                TurnOn(<< "Sir Jeff", "Goth" >>);
+                if not v2 {
+                    TurnOn("Britannian Tax Council");
+                }
+            }
+            key ("rot") {
+                ["They told me I'd be here for the rest of my life. I have no reason to doubt them either!"];
+                TurnOff("rot");
+            }
+            key ("Sir Jeff") {
+                ["That stuffed cock believes he's above everyone in Britannia. Just because he presides over the High Court he thinks he can pass judgement over any and everyone."];
+                TurnOff("Sir Jeff");
+            }
+            key ("Goth") {
+                ["That thieving scoundrel belongs in here more than I do! Don't trust him if ye've gotta choice."];
+                TurnOff("Goth");
+            }
+            key ("Britannian Tax Council") {
+                ["Thieves, the whole lot of 'em! Tryin' to take a person's hard-earned gold. Mayhaps they wouldn't need to take all of our money if they would go out and earn their own!"];
+                v2 = true;
+                TurnOff("Britannian Tax Council");
+            }
+            key ("care") {
+                ["Ye care, do ye? All right, then. I'll tell ye my name if ye tell me thine, deal?"];
+                v5 = ~AskYesNo();
+                if v5 {
+                    v6 = ~AskList(<< v0, v3, v4 >>);
+                    ["<v6>, eh. Very well, a deal's a deal. I'm D'Rel."];
+                } else {
+                    ["I thought as much."];
+                }
+                TurnOff("care");
+            }
+            key ("job") {
+                ["None now. But 'til I made this mine home, I was a sailor, a... privateer, out of Buccaneer's Den."];
+                TurnOn(<< "thine home", "Buccaneer's Den" >>);
+            }
+            key ("thine home") {
+                ["Well, actually I am in here for not paying my taxes. After all, I... earned the money, why should I give it to the Britannian Tax Council?"];
+                TurnOff("thine home");
+                if not v2 {
+                    TurnOn("Britannian Tax Council");
+                }
+            }
+            key ("Buccaneer's Den") {
+                ["Thou hast heard of Buccaneer's Den, hast thou not? 'Tis the island due east of the mainland. Home of the sort of men who walk with peg-legs, have hooks for hands, and carry parrots on their shoulders! Har! Har!"];
+                TurnOff("Buccaneer's Den");
+                if $FOUND_SCROLL {
+                    TurnOn("Hook");
+                }
+            }
+            key ("Hook") {
+                ["Yeah, I know Hook. Lookin' for him, are ye? He be from Buccaneer's Den. He usually travels with some gargoyle named Forskis or something like that. If ye see him, give him my... hello, for me." He gestures to his clenched fist.];
+                TurnOff("Hook");
+                flag(309) = true;
+                GivePartyExp_i(10);
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["Aye, get thy face from my sight!"*];
+    }
+    if (event = _Bark) {
+        terminate;
+    }
+}

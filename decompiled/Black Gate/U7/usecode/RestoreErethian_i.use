@@ -1,0 +1,20 @@
+Routine RestoreErethian_i accepts a0 #locals(4) {
+    v0 = ~GetCoord(item);
+    v1 = ~FindNearby_i(4, 1, _Mouse, item);
+    v2 = ~FindNearby_i(4, 1, _Cow, item);
+    if v1 {
+        createSprite(65535, 0, 0, 0, v0::2, v0::1, 13);
+        Sfx(67);
+        Item_destroy(v1);
+        SetFrame(28, item);
+        v3 = ~PostAction(<< _aKNEEL_FRAME_i, _aWAIT_i, 5, _aBEND_FRAME_i, _aWAIT_i, 4, _aSTAND_FRAME_i, _aWAIT_i, 3, _aUSABLE_i, #DemonstratePolymorph_i >>, item);
+    }
+    if v2 {
+        createSprite(65535, 0, 0, 0, v0::2, v0::1, 17);
+        createSprite(65535, 0, 0, 0, v0::2, v0::1, 7);
+        Sfx(62);
+        Item_destroy(v2);
+        SetFrame(30, item);
+        v3 = ~PostAction(<< _aUP_FRAME_i, _aWAIT_i, 5, _aOUT_FRAME_i, _aWAIT_i, 4, _aSTAND_FRAME_i, _aWAIT_i, 3, _aUSABLE_i, #DemonstratePolymorph_i >>, item);
+    }
+}

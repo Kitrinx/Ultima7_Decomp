@@ -1,0 +1,186 @@
+Routine Beverlea accepts a0 #locals(20) #uses(~LordOrLady, ~AskYesNo, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Beverlea);
+        v0 = ~LordOrLady();
+        v1 = ~GetTime();
+        v2 = ~GetWorkType(~NPCToItem_i(_Beverlea));
+        v3 = ~FindNearest_i(65535, _Hourglass, _Avatar);
+        TurnOn(<< "name", "job", "bye" >>);
+        if not $MetBeverlea {
+            [You see an old woman who gives you a smile of grandmotherly sweetness. You can see immediately that her vision is poor.];
+            $MetBeverlea = true;
+        } else {
+            ["Why, hello again, <v0>. It is so good to see thee!" says Beverlea.];
+        }
+        converse {
+            key ("name") {
+                ["My name is Beverlea."];
+                TurnOff("name");
+            }
+            key ("job") {
+                ["Why, I run the House of Items here in Paws."];
+                TurnOn(<< "House of Items", "Paws" >>);
+            }
+            key ("House of Items") {
+                ["It is a shop that sells antiques and previously used items. Running this shop allows me to remain youthful and active. It is heartening to sell things to the poor people of this town that they might not otherwise be able to\x09afford."];
+                TurnOff("House of Items");
+                TurnOn("buy");
+            }
+            key ("Paws") {
+                ["Here in Paws the people have very little money, but it matters not, because they care for each other."];
+                TurnOff("Paws");
+            }
+            key ("buy") {
+                if (v2 = 7) {
+                    ["There are many rare and fine things to be bought here in my shop. Bargains to be had nowhere else in all of Britannia."];
+                    TurnOn("many fine things");
+                } else {
+                    ["My store is now closed. I am usually open in the afternoons."];
+                }
+                TurnOff("buy");
+            }
+            key ("many fine things") {
+                ["Let me see... There is a cradle for sale. A rocking horse. A bell. An hourglass. A spittoon. A lute. A sextant... Since I am moving a bit more slowly these days, I let my customers help themselves and take what they have bought. Providing they pay me first, of course. I do trust folks to pay me the correct amount. I am nearly blind, I am afraid."];
+                TurnOff("many fine things");
+                TurnOn(<< "cradle", "rocking horse", "bell", "hourglass", "spittoon", "lute", "sextant" >>);
+            }
+            key ("cradle") {
+                ["That old cradle was the cradle used to rock Gorn the Barbarian to sleep at night when he was just a baby. Thou canst see that there is a crack in its side proving that even as a child Gorn was a strong little tyke. I can let thee take it for ten gold coins. Dost thou wish to buy the cradle?"];
+                v4 = ~AskYesNo();
+                if v4 {
+                    v5 = ~TakeFromParty_i(true, _All, _All, _Gold_Coin, 10);
+                    if v5 {
+                        ["Thou mayest take it then. I hope that thou dost enjoy it."];
+                    } else {
+                        ["Thou dost not have enough gold!"];
+                    }
+                } else {
+                    [A sour look flashes across Beverlea's face. "Very well. Perhaps I may interest thee in something else."];
+                }
+                TurnOff("cradle");
+            }
+            key ("rocking horse") {
+                ["This is the rocking horse that once belonged to a little girl from Britain named Diane. She grew to be one of the finest equestriennes to ever sit upon a horse. I could let thee have this rare and unusual piece for twelve gold. Dost thou wish to buy it?"];
+                v6 = ~AskYesNo();
+                if v6 {
+                    v7 = ~TakeFromParty_i(true, _All, _All, _Gold_Coin, 12);
+                    if v7 {
+                        ["Then thou art free to take the rocking horse. It is thine!"];
+                    } else {
+                        ["Thou dost not have enough money to pay for it!"];
+                    }
+                } else {
+                    [Beverlea rolls her eyes. "In a browsing mood, are we? Take thy time."];
+                }
+                TurnOff("rocking horse");
+            }
+            key ("bell") {
+                ["That bell came from the High Court of Justice in Yew. It was rung to announce that court was in session. I can sell thee that interesting conversation piece for six gold coins.\x09Dost thou wish to buy it?"];
+                v8 = ~AskYesNo();
+                if v8 {
+                    v9 = ~TakeFromParty_i(true, _All, _All, _Gold_Coin, 6);
+                    if v9 {
+                        ["Thou mayest take thy bell. Use it in good health!"];
+                    } else {
+                        ["Thou dost not have enough money to buy it!"];
+                    }
+                } else {
+                    ["Not in the mood for a bell today?" She wrinkles her lips in the best attempt at a smile. "Perhaps something else will strike thy fancy."];
+                }
+                TurnOff("bell");
+            }
+            key ("hourglass") {
+                if v3 {
+                    ["I also have an antique hourglass. It was sold to me by this old man who was so daft that he could not recall how to use it! I will sell it to thee for five gold pieces. Dost thou wish to buy it?"];
+                    v10 = ~AskYesNo();
+                    if v10 {
+                        v11 = ~TakeFromParty_i(true, _All, _All, _Gold_Coin, 5);
+                        if v11 {
+                            ["I thank thee. Thou mayest take thy glass."];
+                            $GotHourglass = true;
+                        } else {
+                            ["Thou dost not have enough money."];
+                        }
+                    } else {
+                        ["Thou art not interested in the hourglass?" She sighs, "Very well. Look around. I have all the time in the world." You catch just a hint of sarcasm in her voice.];
+                    }
+                } else {
+                    ["Curse mine old head and failing memory! Has the hourglass already been sold?! No! It must have been stolen! One of the few dishonest people in this town must have taken it!"];
+                }
+                TurnOff("hourglass");
+            }
+            key ("spittoon") {
+                ["I also have an old spittoon. It was once used by... a great many people. Thou mayest have it for a gold piece. Take it! Please!"];
+                v12 = ~AskYesNo();
+                if v12 {
+                    v13 = ~TakeFromParty_i(true, _All, _All, _Gold_Coin, 1);
+                    if v13 {
+                        ["I thank thee! Now thou canst go and please do not forget to take it with thee when thou dost leave!"];
+                    } else {
+                        ["Thou dost not even have a single gold piece! Nor the decency to inform me that I was wasting my time in talking with thee."];
+                        terminate;
+                    }
+                } else {
+                    ["I have many more things in my shop. Many things of high quality and great value as well. Please keep looking."];
+                }
+                TurnOff("spittoon");
+            }
+            key ("lute") {
+                ["I have a lute for sale that once belonged to a travelling bard who lost it in a game of dice. I am asking twenty gold coins for it. A song! Wouldst thou like to buy it?"];
+                v14 = ~AskYesNo();
+                if v14 {
+                    v15 = ~TakeFromParty_i(true, _All, _All, _Gold_Coin, 20);
+                    if v15 {
+                        ["I thank thee, kind customer. Thou mayest take thy lute. I can see that thou art a true artisan with an appreciation for quality."];
+                    } else {
+                        ["Thou canst not afford the lute!"];
+                    }
+                } else {
+                    ["Very well, then. Do keep looking. After all, that is why my shop is here." You thought you could also hear Beverlea mutter to herself for a few moments after saying this, but you are not entirely certain.];
+                }
+                TurnOff("lute");
+            }
+            key ("sextant") {
+                ["I have a sextant that was sold by the world-famous shipwright Owen of Minoc. They are going to be building a monument to him, I understand. Anyway, the sailor who sold it to me had just suffered some harrowing experience out on the waters. He said when he sold it to me that he was going to retire. He obviously did not realize the value of this item. But I can let thee have it for twenty gold pieces. Dost thou wish to buy it?"];
+                v16 = ~AskYesNo();
+                if v16 {
+                    v17 = ~TakeFromParty_i(true, _All, _All, _Gold_Coin, 20);
+                    if v17 {
+                        ["Thou mayest take thy sextant! And may thou always have smooth sailing!"];
+                    } else {
+                        ["Thou dost not have enough money!"];
+                    }
+                } else {
+                    ["I am certain I have something that will interest thee. Browse to thine heart's content."];
+                }
+                TurnOff("sextant");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["A good day to thee, <v0>." *];
+    }
+    if (event = _Bark) {
+        v2 = ~GetWorkType(~NPCToItem_i(_Beverlea));
+        if (v2 = 7) {
+            v18 = ~rndRange(4, 1);
+            if (v18 = 1) {
+                v19 = "@Antiques?@";
+            }
+            if (v18 = 2) {
+                v19 = "@Curios? Knick knacks?@";
+            }
+            if (v18 = 3) {
+                v19 = "@Trinkets? Antiques?@";
+            }
+            if (v18 = 4) {
+                v19 = "@Collectibles? Antiques?@";
+            }
+            Item_bark(v19, _Beverlea);
+        } else {
+            BarkAboutWork_i(_Beverlea);
+        }
+    }
+}

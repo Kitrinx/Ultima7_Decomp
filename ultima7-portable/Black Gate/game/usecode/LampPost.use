@@ -1,0 +1,15 @@
+Routine LampPost accepts a0 #locals(2) {
+    if ((event = _Action) or (event = _Posted_i)) {
+        v0 = ~Item_create(_Light_440);
+        if v0 {
+            v1 = ~GetCoord(item);
+            v1::1 = (v1::1 + 3);
+            v1::2 = (v1::2 + 3);
+            SetFrame(~rndRange(7, 0), v0);
+            if ~PopToMap(v1) {
+                Item_setType(_Lit_Lamp, item);
+                playSFX(item, 106);
+            }
+        }
+    }
+}

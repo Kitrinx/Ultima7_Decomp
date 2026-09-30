@@ -1,0 +1,15 @@
+Routine InvisibilityDust accepts a0 #locals(1) #uses(MemberBarks_i, ConsumeOne_i) {
+    if (event = _Action) {
+        v0 = ~GetTarget();
+        if ~Item_isNpc(v0) {
+            SetItemFlag_i(_Invisible, v0);
+        } else {
+            if ~GetItemFlag_i(_IsTemporary_i, v0) {
+                SetItemFlag_i(_Invisible, v0);
+            }
+            MemberBarks_i("@Do not waste that!@");
+        }
+        playSFX(item, 67);
+        ConsumeOne_i(item);
+    }
+}

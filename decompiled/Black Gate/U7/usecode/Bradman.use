@@ -1,0 +1,140 @@
+Routine Bradman accepts a0 #locals(3) #uses(~LordOrLady, ~IsNPCNear, ~AskYesNo, BradmanTrains_i, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Bradman);
+        v0 = ~LordOrLady();
+        TurnOn(<< "name", "job", "bye" >>);
+        if not $MetBradman {
+            [You see a man leaning on a longbow.];
+            $MetBradman = true;
+        } else {
+            [Bradman greets you. "Hail, <v0>."];
+        }
+        converse {
+            key ("name") {
+                ["I am Bradman."];
+                TurnOff("name");
+            }
+            key ("job") {
+                ["Why, 'tis my job to train the many who visit Yew to become more agile."];
+                TurnOn(<< "Yew", "train", "many" >>);
+                if $MetPenni {
+                    TurnOn("Penni");
+                }
+            }
+            key ("many") {
+                ["The forest attracts a lot of people who want to spend some time away from the larger towns like Minoc and Britain. So they come to Yew.~~"And, something about the woods makes most people want to explore." He pats his bow.~~"That is where this comes in. The bow is the tool of survival in the forest. And I," he jerks his thumb to his chest, "teach proficiency with the bow."];
+                TurnOff("many");
+                TurnOn(<< "explore", "bow" >>);
+            }
+            key ("explore") {
+                ["There are many exciting things to see in the forest. Not a day goes by when I do not see something interesting: a new type of bird, a beautiful butterfly, or, best of all -- a deer."];
+                TurnOff("explore");
+            }
+            key ("bow") {
+                ["'Tis my weapon of choice. It takes a keen eye and a steady arm to shoot accurately. I think it has more finesse than a sword or a spear, for example."];
+                TurnOff("bow");
+            }
+            key ("Yew") {
+                ["I love the forest. It is very beautiful. Also," he raises his bow, "I moved out here to be near the two great archers, Iolo and Tseramed."*];
+                v1 = ~IsNPCNear(_Iolo);
+                v2 = ~IsNPCNear(_Tseramed);
+                if v1 {
+                    SetSpeaker(0, _Iolo);
+                    [Iolo blushes. "I am honored, my friend. I was not aware I had an admirer in this part of the land." He bows to Bradman, who returns the gesture.*];
+                    CloseSpeaker(_Iolo);
+                    SetSpeaker(0, _Bradman);
+                }
+                if v2 {
+                    SetSpeaker(0, _Tseramed);
+                    ["Thank you for thy kind words, good sir. Perhaps we may practice sometime in the future."*];
+                    CloseSpeaker(_Tseramed);
+                    SetSpeaker(0, _Bradman);
+                    ["I would be greatly honored, milord!"];
+                } else {
+                    TurnOn("Tseramed");
+                }
+                TurnOff("Yew");
+            }
+            key ("Tseramed") {
+                ["He is a great archer who resides in the forest. He moved here to get away from the far-too-quickly growing towns."];
+                TurnOff("Tseramed");
+            }
+            key ("train") {
+                ["If thou wantest to train, my charge is 30 gold. Art thou still interested?"];
+                if ~AskYesNo() {
+                    BradmanTrains_i(30, 1);
+                } else {
+                    ["I understand, <v0>."];
+                }
+            }
+            key ("Penni") {
+                ["Thou hast met Penni? I hope thou hast not trained with her," he winks. "She is a valuable friend, but she hunts as well as a weed and she is as clumsy as an ox. I am afraid she knows nothing about fighting."];
+                TurnOff("Penni");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["May the trees part around thee, <v0>."*];
+    }
+    if (event = _Bark) {
+        BarkAboutWork_i(_Bradman);
+    }
+}
+
+Routine BradmanTrains_i accepts a0, a1 #locals(10) #uses(~GetStudent, ~CanTrain, ~GetStat, DexTrain) {
+    v2 = ~GetStudent();
+    v3 = ~GetNPCName_i(v2);
+    if (v2 = 65180) {
+        v3 = "you";
+    }
+    if (v2 = 0) {
+    } else {
+        if ((v2 = 65535) or (v2 = 65526)) {
+            v0 = (v0 / 2);
+            ["I cannot charge a master such as thyself full price."];
+        }
+        v4 = 2;
+        v5 = ~CanTrain(v4, v2, v0, v1);
+        if (v5 = 0) {
+            [After a bit of target practice, he says, "I am sorry to say this, but thou dost need more practice before I will be able to train thee. Perhaps at a later time thou wilt be in a better position to receive mine instruction."];
+        } else {
+            if (v5 = 1) {
+                v6 = ~CountItem(_All, _All, _Gold_Coin, _Party);
+                [You gather your gold and count it, finding that you have <v6> gold altogether.];
+                if (v6 < v0) {
+                    ["Thou hast not the gold to train."];
+                    goto label_24;
+                }
+            }
+            if (v5 = 2) {
+                [After a few target shots, he exclaims, "Thou art already as proficient as I! I can do nothing to improve thy coordination of hand and eye!"];
+            } else {
+                v7 = ~TakeFromParty_i(true, _All, _All, _Gold_Coin, v0);
+                [You pay <v0> gold, and the training session begins.];
+                if (v2 = 65180) {
+                    v8 = "You";
+                } else {
+                    v8 = v3;
+                }
+                if (v2 = 65180) {
+                    v9 = "you";
+                } else {
+                    v9 = v3;
+                }
+                if (v2 = 65180) {
+                    v10 = "";
+                } else {
+                    v10 = "s";
+                }
+                [<v8> and Bradman spend some time taking target practice with the bow. Shortly, <v9> notice<v10> a significant increase in hand-eye coordination.];
+                v11 = ~GetStat(_Dex, v2);
+                if (v11 < 30) {
+                    DexTrain(2, v2);
+                }
+            }
+        }
+    }
+    label_24:
+}

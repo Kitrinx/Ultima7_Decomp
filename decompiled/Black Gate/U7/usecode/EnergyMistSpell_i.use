@@ -1,0 +1,14 @@
+Routine EnergyMistSpell_i accepts a0 #locals(3) #uses(~DirFromAvatar_i, ~IsMagicOK_i) {
+    if (event = _Action) {
+        Kernel_resetRef(item);
+        v0 = ~GetTarget();
+        v1 = ~DirFromAvatar_i(v0);
+        Item_bark("@In Hur Grav Ylem@", item);
+        if ~IsMagicOK_i() {
+            v2 = ~SetAttack_i(_Energy_Mist, v0, item);
+            v2 = ~PostAction(<< _aFACE_i, v1, _aSFX_i, 65, _aUP_FRAME_i, _aOUT_FRAME_i, _aUP_FRAME_i, _aTHRUST2_FRAME_i, _aATTACK_i >>, item);
+        } else {
+            v2 = ~PostAction(<< _aFACE_i, v1, _aUP_FRAME_i, _aOUT_FRAME_i, _aUP_FRAME_i, _aTHRUST2_FRAME_i, _aUSABLE_i, #FizzleSpell_i >>, item);
+        }
+    }
+}

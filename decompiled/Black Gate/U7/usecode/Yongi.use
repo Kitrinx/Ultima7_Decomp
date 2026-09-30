@@ -1,0 +1,233 @@
+Routine Yongi accepts a0 #locals(14) #uses(~AvatarName, ~LordOrLady, ~IsNPCNear, ~AskList, YongiSellsFood_i, YongiSellsDrink_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Yongi);
+        v0 = ~AvatarName();
+        v1 = ~LordOrLady();
+        v2 = "the Avatar";
+        v3 = ~IsNPCNear(_Dupre);
+        v4 = false;
+        v5 = false;
+        v6 = false;
+        TurnOn(<< "name", "job", "bye" >>);
+        if v3 {
+            ["Ah, me good friend, Dupre. What kinna do fer ye this fine day?"];
+            SetSpeaker(0, _Dupre);
+            ["Ah, master Yongi, always ready to offer a tankard of thy finest."];
+            CloseSpeaker(_Dupre);
+            SetSpeaker(0, _Yongi);
+        }
+        if not $MetYongi {
+            [Tending the bar is a jovial-looking man. "Welcome ta the Gilded Lizard."];
+            v6 = true;
+            $MetYongi = true;
+        } else {
+            ["Welcome back ta the Gilded Lizard. What may I do fer ye?" asks Yongi.];
+        }
+        converse {
+            key ("name") {
+                ["Me name is Yongi, <v1>."];
+                TurnOff("name");
+                if v6 {
+                    ["And ye are?"];
+                    v7 = ~AskList(<< v0, v2, v1 >>);
+                    if (v7 = v2) {
+                        ["Aye, <v1>. Right ye are. If ye dinna care ta tell me, I don't mind a bit." He winks.];
+                    }
+                    if (v7 = v0) {
+                        ["Welcome ta me tavern, <v0>."];
+                    }
+                    if (v7 = v1) {
+                        ["Right ye are, <v1>. There's no need ta tell anyone yer name."];
+                    }
+                }
+            }
+            key ("job") {
+                ["Why, I tend me bar. And lend me ear ta the customers," he adds, touching his right ear for emphasis.];
+                TurnOn(<< "customers", "buy" >>);
+            }
+            key ("Vesper") {
+                ["Why, I wouldna wanna live anyplace else. 'Course, this town would be a better place if we could rid ourselves of those jackals, the gargoyles."];
+                if not v5 {
+                    TurnOn("gargoyles");
+                }
+                TurnOff("Vesper");
+            }
+            key ("gargoyles") {
+                ["Gargoyles! What about them? They be the vilest, evilest, cruelest, most despicable things ever ta crawl upon this great land. I kinna tell ye too well ta stay away from them. I kin only imagine whata fine town this'd be if there weren't na more gargoyles. 'Course, I know those dogs are probably sayin' the same about us. Everybody knows they're gonna come an' kill allus in our sleep one evenin'."];
+                if not v4 {
+                    ["Why, only the other day one attacked Blorn. G'won, ask him about it."];
+                    v4 = true;
+                    TurnOn("Blorn");
+                }
+                v5 = true;
+                TurnOff("gargoyles");
+                flag(643) = true;
+            }
+            key ("customers") {
+                ["Well, all I really know in Vesper are me regulars: Cador, Mara, and Blorn. Ye might be wantin' ta talk to Auston, the mayor, or his clerk, Liana. Ah, now there's a fine, young lass." He winks at you.];
+                TurnOn(<< "Cador", "Mara", "Blorn", "Vesper" >>);
+                TurnOff("customers");
+            }
+            key ("Cador") {
+                v8 = ~IsDead(~NPCToItem_i(_Cador));
+                if v8 {
+                    ["He used ta come here every night, 'til he was killed in a brawl." The bartender's eyes narrow as he talks.];
+                } else {
+                    ["He be in here every night after work. Good man, hard worker."];
+                }
+                TurnOff("Cador");
+            }
+            key ("Mara") {
+                v9 = ~IsDead(~NPCToItem_i(_Mara));
+                if v9 {
+                    ["She worked with Cador at the mines. She was more man than most men, that one was. An' she died like it, too -- in a brawl here at the tavern!" He says, eyeing you suspiciously.];
+                } else {
+                    ["She works with Cador at the mines. Hard as stone, that one. She be more man than most of the men in town."];
+                }
+                TurnOff("Mara");
+            }
+            key ("Blorn") {
+                ["There be one who knows what's what. He knows what be wrong with this town! Gargoyles! That is what be wrong. He hates 'em, 'e does."];
+                if not v4 {
+                    ["He was even accosted by one of those jackals not too long ago. Ask 'im about it, why don't ye."];
+                    v4 = true;
+                }
+                if not flag(643) && not v5 {
+                    TurnOn("gargoyles");
+                }
+                TurnOff("Blorn");
+                flag(643) = true;
+            }
+            key ("buy") {
+                ["Be ye wantin' food or drink?"];
+                TurnOn(<< "food", "drink" >>);
+                TurnOff("buy");
+            }
+            key ("food") {
+                YongiSellsFood_i();
+                TurnOff("food");
+            }
+            key ("drink") {
+                YongiSellsDrink_i();
+                TurnOff("drink");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["May the road rise up ta meet ye!"*];
+    }
+    if (event = _Bark) {
+        v10 = ~GetTime();
+        v11 = ~GetWorkType(~NPCToItem_i(_Yongi));
+        v12 = ~rndRange(4, 1);
+        if ((v10 >= 1) and (v10 <= 3)) && (v11 = 14) {
+            v13 = "@Zzzzz . . .@";
+        }
+        if ((v10 = 4) or ((v10 = 5) or ((v10 = 6) or ((v10 = 7) or (v10 = 0))))) && (v11 = 11) {
+            if (v12 = 1) {
+                v13 = "@Refreshments here!@";
+            }
+            if (v12 = 2) {
+                v13 = "@Get a fine cup o' wine here!@";
+            }
+            if (v12 = 3) {
+                v13 = "@We have the best spirits here!@";
+            }
+            if (v12 = 4) {
+                v13 = "@No gargoyles allowed!@";
+            }
+        }
+        Item_bark(v13, _Yongi);
+    }
+}
+
+Usable YongiSellsFood_i #locals(13) #uses(~AskOrdList, ~PriceString_i, ~AskYesNo, ~SellItem_i) {
+    PushKeys();
+    v0 = true;
+    v1 = << "nothing", "mutton rations", "bread", "flounder" >>;
+    v2 = << 0, 20, 4, 4 >>;
+    v3 = 377;
+    v4 = << 65177, 15, 0, 13 >>;
+    v5 = "";
+    v6 = << 0, 1, 0, 0 >>;
+    v7 = << "", " for 10 portions", " for one loaf", " for one portion" >>;
+    v8 = << 0, 10, 1, 1 >>;
+    ["What would ye like?"];
+    While v0 {
+        v9 = ~AskOrdList(v1);
+        if (v9 = 1) {
+            ["If ye say so. I know that blasted Britannian Tax Council or what have ye has made the cost o' things too high! Maybe next time!"];
+            v0 = false;
+        } else {
+            v10 = ~PriceString_i(v7::v9, v2::v9, v6::v9, v1::v9, v5);
+            v11 = 0;
+            ["^<v10> Is that acceptable?"];
+            v12 = ~AskYesNo();
+            if v12 {
+                ["How much do ye want?"];
+                v11 = ~SellItem_i(true, 1, 20, v2::v9, v8::v9, v4::v9, v3);
+            }
+            if (v11 = 1) {
+                ["Done!"];
+            } else {
+                if (v11 = 2) {
+                    ["Ye got ta lighten yer load first!"];
+                } else {
+                    if (v11 = 3) {
+                        ["Ye've not got the gold. I kinna do business like that!"];
+                    } else {
+                    }
+                }
+            }
+            ["Anything else ye want?"];
+            v0 = ~AskYesNo();
+        }
+    }
+    PopKeys();
+}
+
+Usable YongiSellsDrink_i #locals(13) #uses(~AskOrdList, ~PriceString_i, ~AskYesNo, ~SellItem_i) {
+    PushKeys();
+    v0 = true;
+    v1 = << "nothing", "mead", "wine", "ale" >>;
+    v2 = << 0, 5, 1, 1 >>;
+    v3 = 616;
+    v4 = << 65177, 0, 5, 3 >>;
+    v5 = "";
+    v6 = 0;
+    v7 = " per bottle";
+    v8 = 1;
+    ["What would ye like?"];
+    While v0 {
+        v9 = ~AskOrdList(v1);
+        if (v9 = 1) {
+            ["If ye say so. I know that blasted Britannian Tax Council or what have ye has made the cost o' things too high! Maybe next time!"];
+            v0 = false;
+        } else {
+            v10 = ~PriceString_i(v7, v2::v9, v6, v1::v9, v5);
+            v11 = 0;
+            ["^<v10>. Do ye find the price agreeable?"];
+            v12 = ~AskYesNo();
+            if v12 {
+                v11 = ~SellItem_i(true, 1, 0, v2::v9, v8, v4::v9, v3);
+            }
+            if (v11 = 1) {
+                ["Done!"];
+            } else {
+                if (v11 = 2) {
+                    ["Ye got ta lighten yer load first!"];
+                } else {
+                    if (v11 = 3) {
+                        ["Ye've not got the gold. I kinna do business like that!"];
+                    } else {
+                    }
+                }
+            }
+            ["Anything else ye want?"];
+            v0 = ~AskYesNo();
+        }
+    }
+    PopKeys();
+}

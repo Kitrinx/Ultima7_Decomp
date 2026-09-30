@@ -1,0 +1,180 @@
+Routine OrbOfTheMoons accepts a0 #locals(17) #uses(MemberBarks_i, ~InTrinsic_i, ~TargetCoord_i, CloseMoongate_i, ~IsOrbMoongate_i, EnterMoongate_i) {
+    if (event = _Action) {
+        if $SphereGone {
+            MemberBarks_i(<< "@How odd!@", "@It work before.@" >>);
+            return;
+        }
+        if (flag(87) or not ~InTrinsic_i()) {
+            v0 = ~GetTarget();
+            v1 = ~TargetCoord_i(v0);
+            v2 = ~GetDir(v1, _Avatar);
+            if ((v2 = 0) or (v2 = 4)) {
+                v3 = 1;
+                v4 = 779;
+            } else {
+                v3 = 2;
+                v4 = 157;
+            }
+            v1::v3 = (v1::v3 + 2);
+            if not ~canExistAt(0, v4, v1) {
+                v5 = << 1, 2, 3 >>;
+                Foreach v8 in v5 {
+                    v1::3 = (v1::3 + 1);
+                    if ~canExistAt(0, v4, v1) {
+                        goto label_14;
+                    }
+                }
+                FlashMouse_i(0);
+                return;
+            }
+            label_14:
+            closeAllGumps();
+            v9 = ~Item_create(v4);
+            if v9 {
+                closeAllGumps();
+                v10 = ~PopToMap(v1);
+                v1::v3 = (v1::v3 - 2);
+                SetMusic(0, 51);
+                SetItemFlag_i(_IsTemporary_i, v9);
+                v10 = ~SetQuality(v2, v9);
+                v10 = ~PostAction(<< _aFRAME, 0, _aNEXT_FRAME, _aLOOP_i, 65535, 10, byte(70), 4, byte(78), byte(12), 65535, 5, 5, byte(11), 65529, 5, byte(70), 4, byte(80), byte(11), 65535, 3, byte(45) >>, v9);
+                v11 = (5 - ~GetDist(v9, _Avatar));
+                v12 = << byte(89), (byte(48) + v2) >>;
+                if (v11 > 0) {
+                    v12 = (v12 & << byte(39), v11 >>);
+                }
+                v10 = ~PostAction(v12, _Avatar);
+                v13 = ~GetCoord(_Avatar);
+                if (v3 = 1) {
+                    v3 = 2;
+                } else {
+                    v3 = 1;
+                }
+                if (v1::v3 < v13::v3) {
+                    v14 = 1;
+                } else {
+                    v14 = 65535;
+                }
+                v1::v3 = (v1::v3 + v14);
+                v10 = ~PathfindAvatar_i(7, v9, #OrbOfTheMoons, v1);
+                if v10 {
+                    SetPathFailure_i(8, v9, #OrbOfTheMoons);
+                    v15 = ~Item_getContainer(item);
+                    v16 = ~GetParty();
+                    While (1 > 0) {
+                        if v15 {
+                            if (v15 in v16) {
+                                break;
+                            } else {
+                                v15 = ~Item_getContainer(v15);
+                            }
+                        } else {
+                            Item_destroy(item);
+                            v10 = ~GiveToParty_i(false, 0, 0, _Orb_Of_The_Moons, 1);
+                            break;
+                        }
+                    }
+                } else {
+                    CloseMoongate_i(v9);
+                }
+            }
+        }
+    }
+    if (event = 8) && ~IsOrbMoongate_i(item) {
+        CloseMoongate_i(item);
+        MemberBarks_i(<< "@No, Avatar.@", "@Let thyself enter.@" >>);
+    }
+    if (event = 7) && ~IsOrbMoongate_i(item) {
+        CloseMoongate_i(item);
+        EnterMoongate_i(item);
+    }
+}
+
+Routine CloseMoongate_i accepts a0 #locals(1) {
+    v1 = ~PostAction(<< _aFINISH_i, _aFRAME, 4, _aPREV_FRAME, _aLOOP_i, 65535, 3, byte(45) >>, v0);
+}
+
+Function ~TargetCoord_i accepts a0 #locals(1) {
+    v1::1 = v0::2;
+    v1::2 = v0::3;
+    v1::3 = v0::4;
+    return v1;
+}
+
+Function ~MoongateDestination_i accepts a0 #locals(5) {
+    v1 = << 1231, 261, 519, 1855, 1023, 2175, 567, 2919, 2879 >>;
+    v2 = << 1314, 2826, 491, 402, 2435, 2338, 1609, 2402, 1810 >>;
+    v3 = << 0, 0, 0, 0, 1, 0, 0, 2, 0 >>;
+    v4 = (~GetQuality(v0) + 1);
+    if (not $ORB_FIXED_TIMELORD and (v4 = 8)) {
+        v4 = 9;
+    }
+    v5::1 = v1::v4;
+    v5::2 = v2::v4;
+    v5::3 = v3::v4;
+    return v5;
+}
+
+Routine EnterMoongate_i accepts a0 #locals(4) #uses(~ThrowBackCoord_i, ~MoongateDestination_i) {
+    if ((~rndRange(3, 1) = 1) and not (~GetQuality(v0) = 8)) {
+        ReduceHits_i(4, 3, _Avatar);
+        playSFX(item, 62);
+        v1 = ~GetCoord(_Avatar);
+        v2 = ~GetCoord(v0);
+        v3 = ~Item_getType(v0);
+        if ((v3 = 776) or ((v3 = 777) or (v3 = 779))) {
+            v1 = ~ThrowBackCoord_i(2, v2, v1);
+        }
+        if (v3 = 157) {
+            v1 = ~ThrowBackCoord_i(1, v2, v1);
+        }
+        Item_move(v1, _Avatar);
+    } else {
+        FadePalette_i(0, 1, 12);
+        playSFX(item, 11);
+        Item_move(~MoongateDestination_i(v0), _Party);
+        v4 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #FadeInArrival_i >>, _Avatar);
+    }
+}
+
+Function ~ThrowBackCoord_i accepts a0, a1, a2 #locals(4) {
+    if (v2::v0 >= v1::v0) {
+        if (v0 = 1) {
+            v3 = byte(54);
+            v4 = byte(50);
+        }
+        if (v0 = 2) {
+            v3 = byte(48);
+            v4 = byte(52);
+        }
+        if (v2::v0 = v1::v0) {
+            v5 = 4;
+        } else {
+            v5 = 3;
+        }
+    } else {
+        if (v0 = 1) {
+            v3 = byte(50);
+            v4 = byte(54);
+        }
+        if (v0 = 2) {
+            v3 = byte(52);
+            v4 = byte(48);
+        }
+        v5 = 65533;
+    }
+    v2::v0 = (v2::v0 + v5);
+    if (~GetNPCStat_i(_Hits, _Avatar) > 0) {
+        v6 = ~PostAction(<< _aFACE_i, v4, _aLIE_FRAME_i, _aWAIT_i, 3, _aKNEEL_FRAME_i, _aWAIT_i, 1 >>, _Avatar);
+    }
+    return v2;
+}
+
+Function ~IsOrbMoongate_i accepts a0 #locals(1) {
+    v1 = << 779, 157 >>;
+    if (~Item_getType(v0) in v1) {
+        return true;
+    } else {
+        return false;
+    }
+}

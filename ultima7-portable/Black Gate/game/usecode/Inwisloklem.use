@@ -1,0 +1,81 @@
+Routine Inwisloklem accepts a0 #locals(0) #uses(GargBarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Inwisloklem);
+        TurnOn(<< "name", "job", "bye" >>);
+        if not $MetInwisloklem {
+            [A winged gargoyle looks at you with interest and obvious intelligence.];
+            ["To welcome thee to Britain, Avatar!"];
+            $MetInwisloklem = true;
+        } else {
+            ["To greet thee again, Avatar!" Inwisloklem smiles.];
+        }
+        converse {
+            key ("name") {
+                ["To be called Inwisloklem."];
+                TurnOff("name");
+                TurnOn("Inwisloklem");
+            }
+            key ("Inwisloklem") {
+                ["To mean `interpreter' in your language."];
+                TurnOff("Inwisloklem");
+            }
+            key ("job") {
+                ["To be, indeed, an interpreter in my homeland. To be now on the Great Council to serve our most noble ruler, Lord British. To be honored as one of the two gargoyles on the Council."];
+                TurnOn(<< "gargoyles", "Great Council" >>);
+            }
+            key ("gargoyles") {
+                ["To be one of the surviving gargoyles, and to preserve our heritage is my life work. To tell you our race emigrated to Britannia many, many years ago. To have settled on the island known as Terfin."];
+                TurnOn(<< "surviving", "Terfin" >>);
+                TurnOff("gargoyles");
+            }
+            key ("surviving") {
+                ["To be so many of my people killed two hundred years ago in the War of the False Prophet. To be the war that you ended by bringing peace between our races."];
+                TurnOff("surviving");
+            }
+            key ("Terfin") {
+                ["To be a lonely place. To be desolate. To be not what humans call `homey'. To desire to establish a new way of life for gargoyles in Britannia, and to eliminate the hatred and misunderstanding of our race in humans. To know that ignorance breeds bigotry. To be one of those who are correcting this."];
+                TurnOn(<< "way of life", "those" >>);
+                TurnOff("Terfin");
+            }
+            key ("way of life") {
+                ["To desire a world where humans and gargoyles could live together in peace as equals in Britannian society."];
+                TurnOff("way of life");
+            }
+            key ("those") {
+                ["To be called The Fellowship."];
+                TurnOn("Fellowship");
+                TurnOff("those");
+            }
+            key ("Fellowship") {
+                ["To be dedicated to promoting good will and trust in the land. To be thinking of joining the group soon!"];
+                TurnOff("Fellowship");
+            }
+            key ("Great Council") {
+                ["To create the laws of the land. To inform you that my colleague, Miranda, can tell you more of what we are doing now. To be unfortunate that most of the Council is away now."];
+                TurnOn(<< "Miranda", "away" >>);
+                TurnOff("Great Council");
+            }
+            key ("Miranda") {
+                ["To inform you that Miranda is an intelligent woman who has great concern for the well being of all of Britannia's citizens. To be one of Lord British's most trusted advisors."];
+                TurnOff("Miranda");
+            }
+            key ("away") {
+                ["To be on holiday at the moment. To have only Miranda and myself present to enact this new law."];
+                TurnOn("law");
+                TurnOff("away");
+            }
+            key ("law") {
+                ["To tell you to ask Miranda about it, for she knows more than I."];
+                TurnOff("law");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["To say farewell."*];
+    }
+    if (event = _Bark) {
+        GargBarkAboutWork_i(_Inwisloklem);
+    }
+}

@@ -1,0 +1,160 @@
+Routine Polly accepts a0 #locals(12) #uses(~LordOrLady, PollySellsFood_i, ~AskYesNo, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Polly);
+        v0 = ~LordOrLady();
+        v1 = ~GetTime();
+        v2 = ~GetWorkType(~NPCToItem_i(_Polly));
+        TurnOn(<< "name", "job", "bye" >>);
+        if $StolenVenom {
+            TurnOn("thief");
+        }
+        if $VENOM_CASE_SOLVED {
+            TurnOff("thief");
+        }
+        if $MerrickTauntedAvatar {
+            TurnOn("Merrick");
+        }
+        if $MorfinTauntedAvatar {
+            TurnOn("Morfin");
+        }
+        if $ThurstonLovesPolly {
+            TurnOn("Thurston");
+        }
+        if not $MetPolly {
+            [You see the town bartender. She looks very busy, but she obviously takes pride in her work.];
+            $MetPolly = true;
+        } else {
+            [Polly smiles. "What can I do for thee, <v0>?"];
+        }
+        converse {
+            key ("name") {
+                ["I am Polly. It is a pleasure to meet thee."];
+                TurnOff("name");
+            }
+            key ("job") {
+                ["The owner and proprietor of the Salty Dog, the finest eating and drinking establishment in all of Paws, at thy service."];
+                if (v2 = 23) {
+                    TurnOn(<< "Paws", "buy", "room" >>);
+                } else {
+                    ["However, the Salty Dog is now closed. Please return during business hours."];
+                    TurnOn("Paws");
+                }
+            }
+            key ("buy") {
+                PollySellsFood_i();
+                TurnOff("buy");
+            }
+            key ("room") {
+                ["For but 5 gold thou canst let one of our lovely rooms. Dost thou wish to stay here for the night?"];
+                if ~AskYesNo() {
+                    v3 = ~GetParty();
+                    v4 = 0;
+                    Foreach v7 in v3 {
+                        v4 = (v4 + 1);
+                    }
+                    v8 = (v4 * 5);
+                    v9 = ~CountItem(_All, _All, _Gold_Coin, _Party);
+                    if (v9 >= v8) {
+                        v10 = ~GiveToParty_i(true, _All, 255, _Key, 1);
+                        if v10 {
+                            ["Here is thy key for this inn. 'Twill only work once."];
+                            v11 = ~TakeFromParty_i(true, _All, _All, _Gold_Coin, v8);
+                        } else {
+                            ["Sorry, <v0>, thou must lose some of thy bundles before I can give thee thy key."];
+                        }
+                    } else {
+                        ["I am truly sorry, <v0>, but the rooms cost more gold than thou hast."];
+                    }
+                } else {
+                    ["Perhaps another evening then."];
+                }
+                TurnOff("room");
+            }
+            key ("Paws") {
+                ["Actually, there are no other inns or pubs in Paws. It is a small place, but our food and drink here is quite good, honestly."];
+                TurnOff("Paws");
+            }
+            key ("thief") {
+                ["There is a thief in this town! Silver serpent venom was stolen from Morfin, the merchant who operates the slaughterhouse."];
+                $StolenVenom = true;
+                TurnOff("thief");
+            }
+            key ("Merrick") {
+                ["He used to be a farmer. He is not a bad sort. He has just had a bad run of luck. Now he is a devout Fellowship member."];
+                TurnOff("Merrick");
+            }
+            key ("Morfin") {
+                ["Morfin is a very shrewd and successful merchant, and also a Fellowship member, but I cannot help but feel that he would sell his own mother if he could get the right price for her. 'Tis little wonder why the thief chose to steal from him."];
+                TurnOn("thief");
+                TurnOff("Morfin");
+            }
+            key ("Thurston") {
+                [You relate to Polly what you heard Thurston say about her. She is taken completely by surprise. "Thurston really said that about me! I have always liked him, but in truth I have always thought I was not good enough for him!"];
+                $POLLY_TOLD_ABOUT_THURSTON = true;
+                TurnOff("Thurston");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["Good day to thee, <v0>."*];
+    }
+    if (event = _Bark) {
+        BarkAboutWork_i(_Polly);
+    }
+}
+
+Usable PollySellsFood_i #locals(13) #uses(~AskOrdList, ~PriceString_i, ~AskYesNo, ~SellItem_i) {
+    PushKeys();
+    v0 = true;
+    v1 = << "nothing", "jerky", "mead", "grapes", "cheese", "bread", "ale", "wine" >>;
+    v2 = << 0, 377, 616, 377, 377, 377, 616, 616 >>;
+    v3 = << 65177, 15, 0, 19, 27, 0, 3, 5 >>;
+    v4 = << 0, 12, 4, 1, 4, 2, 1, 2 >>;
+    v5 = "";
+    v6 = << 0, 0, 0, 1, 0, 0, 0 >>;
+    v7 = << "", " for 10 pieces", " for a bottle", " for one bunch", " per wedge", " for a loaf", " for a bottle", " for a bottle" >>;
+    v8 = << 0, 10, 1, 1, 1, 1, 1, 1 >>;
+    ["What wouldst thou like to buy?"];
+    While v0 {
+        v9 = ~AskOrdList(v1);
+        if (v9 = 1) {
+            ["All right."];
+            v0 = false;
+        } else {
+            v10 = ~PriceString_i(v7::v9, v4::v9, v6::v9, v1::v9, v5);
+            v11 = 0;
+            ["^<v10> Canst thou afford my price?"];
+            v12 = ~AskYesNo();
+            if v12 {
+                if (v2::v9 = 616) {
+                    v11 = ~SellItem_i(true, 1, 0, v4::v9, v8::v9, v3::v9, v2::v9);
+                } else {
+                    v10 = "How many ";
+                    if (v8::v9 > 1) {
+                        v10 = (v10 + "sets ");
+                    }
+                    v10 = (v10 + "wouldst thou like?");
+                    ["^<v10>"];
+                    v11 = ~SellItem_i(true, 1, 20, v4::v9, v8::v9, v3::v9, v2::v9);
+                }
+            }
+            if (v11 = 1) {
+                ["Excellent."];
+            } else {
+                if (v11 = 2) {
+                    ["Thou cannot carry that much of a load."];
+                } else {
+                    if (v11 = 3) {
+                        ["Thou dost not have the gold for that!"];
+                    } else {
+                    }
+                }
+            }
+            ["Is there something else thou mayest wish to buy?"];
+            v0 = ~AskYesNo();
+        }
+    }
+    PopKeys();
+}

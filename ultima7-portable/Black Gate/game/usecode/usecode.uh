@@ -1,0 +1,2607 @@
+// Engine calls, numbered in the order they are declared.
+cfunction Random;
+cfunction PostAction;
+cfunction PostInFuture;
+croutine SetSpeaker;
+croutine CloseSpeaker;
+croutine TurnOn;
+croutine TurnOff;
+croutine PushKeys;
+croutine PopKeys;
+croutine ClearKeys;
+cfunction GetInput;
+cfunction GetOrdInput;
+cfunction AskBarInput;
+croutine Item_setType;
+cfunction FindNearest_i;
+croutine Sfx;
+cfunction rndRange;
+cfunction Item_getType;
+cfunction GetFrame;
+croutine SetFrame;
+cfunction GetQuality;
+cfunction SetQuality;
+cfunction GetQuantity;
+cfunction SetQuantity;
+cfunction GetCoord;
+cfunction GetDist;
+cfunction GetDir;
+cfunction NPCToItem_i;
+cfunction GetWorkType;
+croutine SetWorkType;
+croutine JoinParty;
+croutine LeaveParty;
+cfunction GetNPCStat_i;
+cfunction ChangeNPCStat_i;
+cfunction AvatarItem_i;
+cfunction GetParty;
+cfunction Item_create;
+cfunction Item_push;
+cfunction PopToMap;
+cfunction GetNPCName_i;
+cfunction CountItem;
+cfunction FindItem;
+cfunction GetContents;
+cfunction TakeFromParty_i;
+cfunction GiveToParty_i;
+croutine GetMusic;
+croutine SetMusic;
+cfunction IsNPCNear_i;
+cfunction GetAllInRegion;
+cfunction Item_isNpc;
+croutine ShowSign_i;
+cfunction GetTarget;
+croutine intrinsic_34;
+cfunction FindNearby_i;
+cfunction PopToNPC;
+cfunction IsDead;
+cfunction GetHour;
+cfunction GetMinute_i;
+cfunction ItemToNPC_i;
+cfunction GetTime;
+cfunction Npc_getAlignment;
+croutine Npc_setAlignment;
+croutine Item_move;
+croutine RemoveNPC_i;
+croutine Item_bark;
+cfunction SetAttack_i;
+cfunction Item_getZ;
+croutine SetLevel_i;
+cfunction GetWeather_i;
+croutine SetWeather_i;
+croutine SitDown_i;
+cfunction Summon_i;
+cfunction ShowMap_i;
+croutine KillNPC_i;
+cfunction RollToWin_i;
+croutine SetAttackMode_i;
+croutine SetAttacker_i;
+cfunction CloneNPC_i;
+croutine intrinsic_4E;
+croutine ShowArea_i;
+croutine WizardEye_i;
+cfunction Resurrect_i;
+cfunction AddSpell_i;
+croutine createSprite;
+cfunction Attack_i;
+croutine ShowBook_i;
+croutine StopTime_i;
+croutine StartLight_i;
+cfunction GetBarge_i;
+croutine Earthquake_i;
+cfunction AvatarSex;
+croutine Armageddon_i;
+croutine Kernel_resetRef;
+croutine LightningBolt;
+cfunction ListSize_i;
+croutine MarkStone_i;
+croutine RecallStone_i;
+cfunction DamageItem_i;
+cfunction IsAvatarInside_i;
+croutine SetOrrery_i;
+croutine intrinsic_64;
+cfunction GetClock;
+croutine SetClock;
+cfunction IsMedallionOn_i;
+cfunction IsMouse_i;
+cfunction SpeechTrack_i;
+croutine FlashMouse_i;
+cfunction GetFullFrame_i;
+croutine SetFullFrame_i;
+cfunction IsOnBarge_i;
+cfunction Item_getContainer;
+croutine Item_destroy;
+croutine ClearSpeakers_i;
+croutine ReduceHits_i;
+cfunction IsEquipped_i;
+croutine RestartGame_i;
+cfunction PlaySpeech_i;
+croutine playEndgame;
+croutine FireMissile_i;
+croutine SleepInBed_i;
+croutine AdvanceTime_i;
+cfunction Kernel_getNumProcesses;
+croutine CallGuards_i;
+croutine CreateSpriteOn_i;
+croutine TurnTownHostile_i;
+cfunction PathfindAvatar_i;
+croutine closeAllGumps;
+croutine BarkInGump_i;
+croutine Item_closeGump;
+cfunction InGumpMode_i;
+croutine SetLight_i;
+croutine ResetPalette_i;
+croutine SetTimePalette_i;
+cfunction canExistAt;
+croutine playSFX;
+cfunction GetDirToward_i;
+cfunction GetItemFlag_i;
+croutine SetItemFlag_i;
+croutine ClearItemFlag_i;
+croutine SetPathFailure_i;
+croutine FadePalette_i;
+cfunction GetParty_i;
+cfunction IsAvatarInCombat;
+cfunction PlaySpeechWait_i;
+cfunction IsWater_i;
+croutine ResetSpeaker_i;
+croutine Camera_setCenterOn;
+cfunction GetDeadParty_i;
+croutine Camera_move_to;
+croutine Telekinesis_i;
+cfunction AOrAn_i;
+
+// Usables, by number.
+usableindex #Gangplank_0096 150;
+usableindex #Mage 154;
+usableindex #TheFerryman 155;
+usableindex #Pocketwatch 159;
+usableindex #ClothMap 178;
+usableindex #ChickenCoop 210;
+usableindex #AbbeyDoor_00E1 225;
+usableindex #AbbeyDoor_00F6 246;
+usableindex #AbbeyDoor_00FA 250;
+usableindex #Sails 251;
+usableindex #GrandfatherClock_00FC 252;
+usableindex #Keg 258;
+usableindex #Loom 261;
+usableindex #MysteriousCraft 267;
+usableindex #Door_010E 270;
+usableindex #Sundial 284;
+usableindex #ClosedShutters_0122 290;
+usableindex #ClosedShutters_0123 291;
+usableindex #Seat 292;
+usableindex #RingOfInvisibility 296;
+usableindex #RingOfRegeneration 298;
+usableindex #Cart_012D 301;
+usableindex #MetalWall_012F 303;
+usableindex #LaboratoryBurner 307;
+usableindex #OpenShutters_0142 322;
+usableindex #Kite 329;
+usableindex #LightSource 336;
+usableindex #LitLightSource 338;
+usableindex #Potion 340;
+usableindex #OpenShutters_0174 372;
+usableindex #Door_0178 376;
+usableindex #FoodItem 377;
+usableindex #Sign 379;
+usableindex #AbbeyDoor_0188 392;
+usableindex #Guard_018A 394;
+usableindex #MiningMachine 410;
+usableindex #GiantBones 418;
+usableindex #Bellows 431;
+usableindex #Door_01B0 432;
+usableindex #Door_01B1 433;
+usableindex #Cask 434;
+usableindex #LitSconce 435;
+usableindex #WoundedMan 447;
+usableindex #Well_01D6 470;
+usableindex #Emp 479;
+usableindex #Sconce 481;
+usableindex #Cat 495;
+usableindex #Dog 496;
+usableindex #Cow 500;
+usableindex #PuppetShow 503;
+usableindex #Dragon 504;
+usableindex #Hook 506;
+usableindex #LockedChest 522;
+usableindex #LitLamp 526;
+usableindex #Wisp 534;
+usableindex #BedRoll 583;
+usableindex #Torch 595;
+usableindex #Bottle 616;
+usableindex #TheTimeLord 617;
+usableindex #Hammer 623;
+usableindex #Pick 624;
+usableindex #Lockpick 627;
+usableindex #LightningWand 629;
+usableindex #FireWand 630;
+usableindex #Key 641;
+usableindex #Book 642;
+usableindex #GoldCoin 644;
+usableindex #GoldNugget 645;
+usableindex #GoldBar 646;
+usableindex #SleepingPowder 648;
+usableindex #Venom 649;
+usableindex #Sextant 650;
+usableindex #SpinningWheel 651;
+usableindex #Cart_028C 652;
+usableindex #BaleOfWool 653;
+usableindex #SpindleOfThread 654;
+usableindex #Curtain_0291 657;
+usableindex #Dough 658;
+usableindex #Cart_0294 660;
+usableindex #FishingRod 662;
+usableindex #SwordBlank 668;
+usableindex #DeskItem 675;
+usableindex #Curtain_02A6 678;
+usableindex #Harpsichord 689;
+usableindex #Xylophone 690;
+usableindex #Lyre 691;
+usableindex #Lute 692;
+usableindex #Whistle 693;
+usableindex #GrandfatherClock_02B7 695;
+usableindex #Bed_02B8 696;
+usableindex #Shears 698;
+usableindex #LitTorch 701;
+usableindex #Cannon 702;
+usableindex #PowderKeg 704;
+usableindex #TheBlackSword 707;
+usableindex #Stocks 708;
+usableindex #Guillotine_02C5 709;
+usableindex #Tombstone 715;
+usableindex #WaterTrough_02CF 719;
+usableindex #Bolt 723;
+usableindex #VirtueRouletteWheel 725;
+usableindex #CaddelliteChunks 728;
+usableindex #CrystalBall 729;
+usableindex #Baby 730;
+usableindex #Guillotine_02DE 734;
+usableindex #ArcheryTarget 735;
+usableindex #Firepit 739;
+usableindex #Well_02E4 740;
+usableindex #WaterTrough_02E5 741;
+usableindex #StuffedToy 742;
+usableindex #StrengthTester 743;
+usableindex #Telescope 744;
+usableindex #Harp 745;
+usableindex #SoulCage 747;
+usableindex #MusicBox 752;
+usableindex #Vial 754;
+usableindex #Cart_02F5 757;
+usableindex #Gem 760;
+usableindex #TheRatRaceGame 763;
+usableindex #Smokebomb 769;
+usableindex #OrreryViewer 770;
+usableindex #RudyomsWand 771;
+usableindex #Cart_0305 773;
+usableindex #Cart_0306 774;
+usableindex #GangPlank_030D 781;
+usableindex #FlamingOil 782;
+usableindex #OrbOfTheMoons 785;
+usableindex #Lever 787;
+usableindex #Switch 788;
+usableindex #InvisibilityDust 790;
+usableindex #DraftHorse 796;
+usableindex #Scroll 797;
+usableindex #SealedBox 798;
+usableindex #Guard_0326 806;
+usableindex #TheTriplesGame 809;
+usableindex #Bucket 810;
+usableindex #Plaque 820;
+usableindex #Diaper 822;
+usableindex #ArtistsEquipment 823;
+usableindex #Bandage 827;
+usableindex #Wall_033C 828;
+usableindex #Easel 837;
+usableindex #Hourglass 839;
+usableindex #FlyingCarpet 840;
+usableindex #Reagent 842;
+usableindex #Wall_034D 845;
+usableindex #Mirror 848;
+usableindex #Cloth 851;
+usableindex #Statue 854;
+usableindex #KitchenItems 863;
+usableindex #Chair 873;
+usableindex #MetalWall_036C 876;
+usableindex #Horn 888;
+usableindex #LampPost 889;
+usableindex #PoolOfWater 893;
+usableindex #PortcullisDoor_03A7 935;
+usableindex #PortcullisDoor_03A8 936;
+usableindex #Pot 944;
+usableindex #Guard_03B2 946;
+usableindex #Winch_03B5 949;
+usableindex #Winch_03B6 950;
+usableindex #EnclosedPrism 968;
+usableindex #Prism 981;
+usableindex #BabyInACradle 987;
+usableindex #TheDarkCore 990;
+usableindex #Anvil 991;
+usableindex #Cradle 992;
+usableindex #Bed_03F3 1011;
+usableindex #RockingHorse 1013;
+usableindex #Golem 1015;
+usableindex #TimeBarrier 1021;
+usableindex #Iolo 1025;
+usableindex #Spark 1026;
+usableindex #Shamino 1027;
+usableindex #Dupre 1028;
+usableindex #Jaana 1029;
+usableindex #Trellek 1030;
+usableindex #Sentri 1031;
+usableindex #Julia 1032;
+usableindex #Katrina 1033;
+usableindex #Tseramed 1034;
+usableindex #Petre 1035;
+usableindex #Finnigan 1036;
+usableindex #Gilberto 1037;
+usableindex #Johnson 1038;
+usableindex #Eiko 1039;
+usableindex #Klog 1040;
+usableindex #Chantu 1041;
+usableindex #Dell 1042;
+usableindex #Apollonia 1043;
+usableindex #Markus 1044;
+usableindex #Gargan 1045;
+usableindex #Caroline 1046;
+usableindex #LordBritish 1047;
+usableindex #Nystul 1048;
+usableindex #Chuckles 1049;
+usableindex #Batlin 1050;
+usableindex #Raymundo 1051;
+usableindex #Jesse 1052;
+usableindex #Stuart 1053;
+usableindex #Amber 1054;
+usableindex #Kristy 1055;
+usableindex #Max 1056;
+usableindex #Nicholas 1057;
+usableindex #Nanna 1058;
+usableindex #Csil 1059;
+usableindex #Zella 1060;
+usableindex #Lucy 1061;
+usableindex #Greg 1062;
+usableindex #Neno 1063;
+usableindex #Judith 1064;
+usableindex #Candice 1065;
+usableindex #Cynthia 1066;
+usableindex #Patterson 1067;
+usableindex #Carrocio 1068;
+usableindex #Figg 1069;
+usableindex #James 1070;
+usableindex #Jeanette 1071;
+usableindex #Amanda 1072;
+usableindex #Denby 1073;
+usableindex #Fred 1074;
+usableindex #Kelly 1075;
+usableindex #Willy 1076;
+usableindex #Gaye 1077;
+usableindex #Coop 1078;
+usableindex #Grayson 1079;
+usableindex #Diane 1080;
+usableindex #Clint 1081;
+usableindex #Gordon 1082;
+usableindex #Sean 1083;
+usableindex #Brownie 1084;
+usableindex #Mack 1085;
+usableindex #Snaz 1086;
+usableindex #Millie 1087;
+usableindex #Geoffrey 1088;
+usableindex #Wislem 1089;
+usableindex #Sherry 1090;
+usableindex #Boots 1091;
+usableindex #Bennie 1092;
+usableindex #Weston 1093;
+usableindex #Miranda 1094;
+usableindex #Inwisloklem 1095;
+usableindex #Nell 1096;
+usableindex #Charles 1097;
+usableindex #Rudyom 1098;
+usableindex #Nastassia 1099;
+usableindex #Rayburt 1100;
+usableindex #LordHeather 1101;
+usableindex #Pamela 1102;
+usableindex #Zinaida 1103;
+usableindex #DeMaria 1104;
+usableindex #Elynor 1105;
+usableindex #Gregor 1106;
+usableindex #Margareta 1107;
+usableindex #Sasha 1108;
+usableindex #Gladstone 1109;
+usableindex #Xanthia 1110;
+usableindex #Zorn 1111;
+usableindex #Seara 1112;
+usableindex #Karl 1113;
+usableindex #Owen 1114;
+usableindex #Burnside 1115;
+usableindex #Rutherford 1116;
+usableindex #William 1117;
+usableindex #Karenna 1118;
+usableindex #Jakher 1119;
+usableindex #Jergi 1120;
+usableindex #Mikos 1121;
+usableindex #Saralek 1122;
+usableindex #Fodus 1123;
+usableindex #Tavenor 1124;
+usableindex #Salamon 1125;
+usableindex #Nicodemus 1126;
+usableindex #Thad 1127;
+usableindex #Bradman 1128;
+usableindex #SirJeff 1129;
+usableindex #Tiery 1130;
+usableindex #Iskander 1131;
+usableindex #Reyna 1132;
+usableindex #Wayne 1133;
+usableindex #Garok 1134;
+usableindex #Gharl 1135;
+usableindex #DRel 1136;
+usableindex #Smith 1137;
+usableindex #Aimi 1138;
+usableindex #Penni 1139;
+usableindex #Ben 1140;
+usableindex #Goth 1141;
+usableindex #Carlyn 1142;
+usableindex #DeSnel 1143;
+usableindex #Joseph 1144;
+usableindex #Kliftin 1145;
+usableindex #Ophelia 1146;
+usableindex #Daphne 1147;
+usableindex #Sprellic 1148;
+usableindex #Vokes 1149;
+usableindex #Syria 1150;
+usableindex #Timmons 1151;
+usableindex #Iriale 1152;
+usableindex #Russell 1153;
+usableindex #Boris 1154;
+usableindex #Magenta 1155;
+usableindex #Henry 1156;
+usableindex #Constance 1157;
+usableindex #Robin 1158;
+usableindex #Battles 1159;
+usableindex #Leavell 1160;
+usableindex #Sam 1161;
+usableindex #Gorn 1162;
+usableindex #Markham 1164;
+usableindex #Horance 1165;
+usableindex #Trent 1166;
+usableindex #Mordra 1167;
+usableindex #Rowena 1168;
+usableindex #Paulette 1169;
+usableindex #Quenton 1170;
+usableindex #Forsythe 1171;
+usableindex #Brothers 1173;
+usableindex #Penumbra 1174;
+usableindex #Kissme 1175;
+usableindex #Zelda 1176;
+usableindex #Mariah 1177;
+usableindex #Grod 1178;
+usableindex #Cubolt 1179;
+usableindex #Balayna 1180;
+usableindex #Tolemac 1181;
+usableindex #Morz 1182;
+usableindex #Jillian 1183;
+usableindex #Effrem 1184;
+usableindex #Chad 1185;
+usableindex #Elad 1186;
+usableindex #Phearcy 1187;
+usableindex #Addom 1188;
+usableindex #Frank 1189;
+usableindex #Thurston 1190;
+usableindex #Feridwyn 1191;
+usableindex #Brita 1192;
+usableindex #Alina 1193;
+usableindex #Merrick 1194;
+usableindex #Garritt 1195;
+usableindex #Morfin 1196;
+usableindex #Beverlea 1197;
+usableindex #Komor 1198;
+usableindex #Fenn 1199;
+usableindex #Andrew 1200;
+usableindex #Camille 1201;
+usableindex #Tobias 1202;
+usableindex #Polly 1203;
+usableindex #Draxinusom 1204;
+usableindex #Inforlem 1205;
+usableindex #Inmanilem 1206;
+usableindex #Teregus 1207;
+usableindex #Runeb 1208;
+usableindex #Quan 1209;
+usableindex #Quaeven 1210;
+usableindex #Silamo 1211;
+usableindex #Sarpling 1212;
+usableindex #Forbrak 1213;
+usableindex #Betra 1214;
+usableindex #Martingo 1215;
+usableindex #Menion 1216;
+usableindex #Pendaran 1217;
+usableindex #Jehanne 1218;
+usableindex #JohnPaul 1219;
+usableindex #Richter 1220;
+usableindex #Horffe 1221;
+usableindex #Jordan 1222;
+usableindex #Denton 1223;
+usableindex #Tory 1224;
+usableindex #Leigh 1225;
+usableindex #Ian 1226;
+usableindex #Cador 1227;
+usableindex #Mara 1228;
+usableindex #Zaksam 1229;
+usableindex #Eldroth 1230;
+usableindex #Yongi 1231;
+usableindex #Blorn 1232;
+usableindex #Auston 1233;
+usableindex #Liana 1234;
+usableindex #Laplem 1235;
+usableindex #Yvella 1236;
+usableindex #Catherine 1237;
+usableindex #Forlem 1238;
+usableindex #Ansikart 1239;
+usableindex #WisSur 1240;
+usableindex #Anmanivas 1241;
+usableindex #Foranamo 1242;
+usableindex #Aurvidlem 1243;
+usableindex #Sullivan 1244;
+usableindex #Wench 1245;
+usableindex #Glenno 1246;
+usableindex #Martine 1247;
+usableindex #Roberto 1248;
+usableindex #Sintag 1249;
+usableindex #Blacktooth 1250;
+usableindex #Mole 1251;
+usableindex #Lucky 1252;
+usableindex #Budo 1253;
+usableindex #Gordy 1254;
+usableindex #Mandy 1255;
+usableindex #Smithy 1256;
+usableindex #Paul 1257;
+usableindex #Meryl 1258;
+usableindex #Dustin 1259;
+usableindex #Ellen 1260;
+usableindex #Kessler 1261;
+usableindex #Perrin 1262;
+usableindex #Owings 1263;
+usableindex #Anton 1264;
+usableindex #Papa 1265;
+usableindex #Taylor 1266;
+usableindex #Malloy 1267;
+usableindex #Cairbre 1268;
+usableindex #Kreg 1269;
+usableindex #Alagner 1270;
+usableindex #Caine 1271;
+usableindex #Brion 1272;
+usableindex #Nelson 1273;
+usableindex #Rankin 1274;
+usableindex #Danag 1275;
+usableindex #Kallibrus 1276;
+usableindex #Cosmo 1277;
+usableindex #Lasher 1278;
+usableindex #Mama 1279;
+usableindex #Xorinia 1280;
+usableindex #Doug 1281;
+usableindex #Bob 1282;
+usableindex #Rodric 1286;
+usableindex #Stanley 1287;
+usableindex #Micael 1288;
+usableindex #John 1289;
+usableindex #Brennon 1290;
+usableindex #Daniel 1293;
+usableindex #BurnLight_i 1536;
+usableindex #VenomWearsOff_i 1539;
+usableindex #FizzleSpell_i 1542;
+usableindex #RaiseLevel_i 1543;
+usableindex #BatlinAmbushEgg_i 1544;
+usableindex #LowerLevel_i 1545;
+usableindex #EndRouletteSpin_i 1546;
+usableindex #EndTriplesSpin_i 1547;
+usableindex #EndRatRace_i 1548;
+usableindex #MoveConveyor_i 1549;
+usableindex #ReviveAtShelter_i 1550;
+usableindex #CallLightning_i 1551;
+usableindex #GreetRevivedAvatar_i 1552;
+usableindex #SwapDrawbridge_i 1553;
+usableindex #MarkVirtueStone_i 1554;
+usableindex #RecallVirtueStone_i 1555;
+usableindex #ShowSpeechText_i 1556;
+usableindex #ChangeToEmptyVial_i 1557;
+usableindex #FinishSoulCage_i 1559;
+usableindex #StepFromMoongate_i 1560;
+usableindex #RouseSleeper_i 1561;
+usableindex #EndIntroTalk_i 1562;
+usableindex #CollapseSphere_i 1563;
+usableindex #SailFerry_i 1564;
+usableindex #CollapseCube_i 1565;
+usableindex #CollapseTetra_i 1566;
+usableindex #ClearBusy_i 1567;
+usableindex #SetBusy_i 1568;
+usableindex #PartyRemarkEgg_i 1569;
+usableindex #RestInBed_i 1570;
+usableindex #WakeUp_i 1571;
+usableindex #RollUpBedroll_i 1572;
+usableindex #ArrestAvatar_i 1573;
+usableindex #BreakItem_i 1574;
+usableindex #GremlinStealsFood_i 1575;
+usableindex #PourKeg_i 1576;
+usableindex #PourCask_i 1577;
+usableindex #FinishGolemRitual_i 1580;
+usableindex #SpinWool_i 1581;
+usableindex #WeaveCloth_i 1582;
+usableindex #TurnWinch_i 1585;
+usableindex #TeleportGarok_i 1586;
+usableindex #ReactToTheft_i 1587;
+usableindex #BargeUsable_i 1588;
+usableindex #BakeBreadEgg_i 1589;
+usableindex #FadeInArrival_i 1590;
+usableindex #StopBarge_i 1591;
+usableindex #Book2Usable_i 1592;
+usableindex #TeleportBatlin_i 1593;
+usableindex #ScoldTheft_i 1594;
+usableindex #CloseJailDoor_i 1596;
+usableindex #CretinUsable_i 1597;
+usableindex #CheaterVerdictEgg_i 1598;
+usableindex #ReturnCameraToAvatar_i 1599;
+usableindex #AwakenSpell_i 1600;
+usableindex #WeatherSpell_i 1601;
+usableindex #DouseSpell_i 1602;
+usableindex #FireworksSpell_i 1603;
+usableindex #GlimmerSpell_i 1604;
+usableindex #HelpSpell_i 1605;
+usableindex #IgniteSpell_i 1606;
+usableindex #ThunderSpell_i 1607;
+usableindex #CreateFoodSpell_i 1608;
+usableindex #CureSpell_i 1609;
+usableindex #DetectTrapSpell_i 1610;
+usableindex #GreatDouseSpell_i 1611;
+usableindex #GreatIgniteSpell_i 1612;
+usableindex #LightSpell_i 1613;
+usableindex #LocateSpell_i 1614;
+usableindex #AwakenAllSpell_i 1615;
+usableindex #DestroyTrapSpell_i 1616;
+usableindex #EnchantSpell_i 1617;
+usableindex #FireBlastSpell_i 1618;
+usableindex #GreatLightSpell_i 1619;
+usableindex #MassCureSpell_i 1620;
+usableindex #ProtectionSpell_i 1621;
+usableindex #TelekinesisSpell_i 1622;
+usableindex #WizardEyeSpell_i 1623;
+usableindex #CurseSpell_i 1624;
+usableindex #HealSpell_i 1625;
+usableindex #SwarmSpell_i 1626;
+usableindex #ProtectAllSpell_i 1627;
+usableindex #ParalyzeSpell_i 1628;
+usableindex #PeerSpell_i 1629;
+usableindex #PoisonSpell_i 1630;
+usableindex #SleepSpell_i 1631;
+usableindex #ConjureSpell_i 1632;
+usableindex #LightningSpell_i 1633;
+usableindex #MarkSpell_i 1634;
+usableindex #MassCurseSpell_i 1635;
+usableindex #RecallSpell_i 1636;
+usableindex #RevealSpell_i 1637;
+usableindex #SeanceSpell_i 1638;
+usableindex #UnlockMagicSpell_i 1639;
+usableindex #CharmSpell_i 1640;
+usableindex #DanceSpell_i 1641;
+usableindex #DispelFieldSpell_i 1642;
+usableindex #ExplosionSpell_i 1643;
+usableindex #GreatHealSpell_i 1644;
+usableindex #InvisibilitySpell_i 1645;
+usableindex #FireFieldSpell_i 1646;
+usableindex #MassSleepSpell_i 1647;
+usableindex #CauseFearSpell_i 1648;
+usableindex #CloneSpell_i 1649;
+usableindex #FireRingSpell_i 1650;
+usableindex #FlameStrikeSpell_i 1651;
+usableindex #MagicStormSpell_i 1652;
+usableindex #PoisonFieldSpell_i 1653;
+usableindex #SleepFieldSpell_i 1654;
+usableindex #TremorSpell_i 1655;
+usableindex #CreateGoldSpell_i 1656;
+usableindex #DeathBoltSpell_i 1657;
+usableindex #DelayedBlastSpell_i 1658;
+usableindex #EnergyFieldSpell_i 1659;
+usableindex #EnergyMistSpell_i 1660;
+usableindex #MassCharmSpell_i 1661;
+usableindex #MassMightSpell_i 1662;
+usableindex #RestorationSpell_i 1663;
+usableindex #ArmageddonSpell_i 1664;
+usableindex #DeathVortexSpell_i 1665;
+usableindex #MassDeathSpell_i 1666;
+usableindex #InvisibleAllSpell_i 1667;
+usableindex #ResurrectSpell_i 1668;
+usableindex #SummonSpell_i 1669;
+usableindex #SwordstrikeSpell_i 1670;
+usableindex #TimeStopSpell_i 1671;
+usableindex #StopDancing_i 1672;
+usableindex #DeathBoltHit_i 1673;
+usableindex #EndMagicStorm_i 1674;
+usableindex #PutBlankOnAnvil_i 1675;
+usableindex #PutBlankInFire_i 1676;
+usableindex #DipBlank_i 1677;
+usableindex #QuenchBlank_i 1678;
+usableindex #CoolBlank_i 1679;
+usableindex #PostForgeUsable_i 1680;
+usableindex #HammerSwordBlank_i 1681;
+usableindex #PickUpItem_i 1682;
+usableindex #ShowSteam_i 1683;
+usableindex #EmptyBucket_i 1684;
+usableindex #FillBucketAtWell_i 1685;
+usableindex #DemonstratePolymorph_i 1686;
+usableindex #PolymorphErethian_i 1687;
+usableindex #RestoreErethian_i 1688;
+usableindex #MoveToForge_i 1689;
+usableindex #TeleportToForge_i 1690;
+usableindex #FadeToForge_i 1691;
+usableindex #ArriveAtForge_i 1692;
+usableindex #EndErethianScene_i 1693;
+usableindex #WarnOfForgeSpell_i 1694;
+usableindex #ConjureForge_i 1695;
+usableindex #PrepareForgeTools_i 1696;
+usableindex #ConjureForgeTools_i 1697;
+usableindex #BotchForgeTools_i 1698;
+usableindex #IsleOfFireCreatureEgg_i 1699;
+usableindex #StablesKeyEgg_i 1700;
+usableindex #ThadAccostsEgg_i 1701;
+usableindex #SeenTetraEgg_i 1702;
+usableindex #SeenSphereEgg_i 1703;
+usableindex #SeenCubeEgg_i 1704;
+usableindex #SeenBlackGateEgg_i 1705;
+usableindex #ArriveByMoongate_i 1706;
+usableindex #MinocCrowdEgg_i 1707;
+usableindex #HarpieAttackEgg_i 1708;
+usableindex #PowderKegEgg_i 1709;
+usableindex #BrothersTalkEgg_i 1710;
+usableindex #Sleep 1711;
+usableindex #Poison 1712;
+usableindex #Paralyze 1713;
+usableindex #LightStuff 1714;
+usableindex #SnuffStuff 1715;
+usableindex #DamageGuyInParty 1716;
+usableindex #DoorHaunt 1717;
+usableindex #ChairHaunt 1718;
+usableindex #Lightning 1719;
+usableindex #Dance 1720;
+usableindex #CryWolf 1721;
+usableindex #Puke 1722;
+usableindex #Fear 1723;
+usableindex #GetMad 1724;
+usableindex #Tremor 1725;
+usableindex #StopTime 1726;
+usableindex #DamageParty 1727;
+usableindex #BeeAttackEgg_i 1728;
+usableindex #AlagnerMurderEgg_i 1729;
+usableindex #TrinsicCleanupEgg_i 1730;
+usableindex #MinocMurderEgg_i 1731;
+usableindex #BuccaneersDenChestEgg_i 1732;
+usableindex #DestardChestEgg_i 1733;
+usableindex #PawsAccusationEgg_i 1734;
+usableindex #MinocMillCrowdEgg_i 1735;
+usableindex #MinocBridgeCrowdEgg_i 1736;
+usableindex #MinocEastCrowdEgg_i 1737;
+usableindex #MinocNorthCrowdEgg_i 1738;
+usableindex #DoNothingEgg_i 1739;
+usableindex #CubeDamageEgg_i 1740;
+usableindex #HourglassCheckEgg_i 1743;
+usableindex #CubeFloorOnEgg_i 1744;
+usableindex #CubeFloorOffEgg_i 1745;
+usableindex #CubeFloor2OnEgg_i 1746;
+usableindex #CubeFloor2OffEgg_i 1747;
+usableindex #EnterSphereEgg_i 1748;
+usableindex #EnterCubeEgg_i 1749;
+usableindex #PrismPedestalEgg_i 1750;
+usableindex #TimeLordSpeechEgg_i 1751;
+usableindex #NotebookSpeechEgg_i 1752;
+usableindex #DestardSpeechEgg_i 1753;
+usableindex #ToggleSlidersEgg_i 1754;
+usableindex #MoongateEgg_i 1755;
+usableindex #EndgameEgg_i 1756;
+usableindex #OpenSlidersEgg_i 1757;
+usableindex #CloseSlidersEgg_i 1758;
+usableindex #EnterTetraEgg_i 1759;
+usableindex #RemoveMoongatesEgg_i 1760;
+usableindex #SetOrreryEgg_i 1761;
+usableindex #IrialeAttacksEgg_i 1762;
+usableindex #ErethianGivesSwordBlank_i 1781;
+usableindex #ArcadionUsable_i 1782;
+usableindex #WatchForDeath_i 1783;
+usableindex #ExileExodusEgg_i 1784;
+usableindex #IsleOfFireTeleportEgg_i 1785;
+usableindex #SayTremor_i 1786;
+usableindex #IsleOfFireTremorEgg_i 1787;
+usableindex #StartFireTrail_i 1788;
+usableindex #AdvanceFireTrail_i 1789;
+usableindex #RemoveFire_i 1800;
+usableindex #DoNothing_i 1801;
+usableindex #SummonLicheEgg_i 1802;
+usableindex #KeepWithAvatar_i 1803;
+usableindex #GlassSwordKeyEgg_i 1804;
+usableindex #HelmPedestalEgg_i 1805;
+usableindex #RestoreHelmGatesEgg_i 1806;
+usableindex #KillTarget_i 1807;
+usableindex #GolemScrollUsable_i 1808;
+usableindex #RemoveBeastsEgg_i 1810;
+usableindex #ConsumeBlood_i 1811;
+usableindex #ReviveGolem_i 1812;
+usableindex #WakeGolem_i 1813;
+usableindex #BeginGolemWaking_i 1814;
+usableindex #TakeSwordBlank_i 1815;
+
+// Flags.
+global flag $SeenTetra = False; //flag number 0
+global flag $SeenSphere = False; //flag number 1
+global flag $SeenCube = False; //flag number 2
+global flag $TetraGone = False; //flag number 3
+global flag $SphereGone = False; //flag number 4
+global flag $CubeGone = False; //flag number 5
+global flag $JoinFellow = False; //flag number 6
+global flag $TLSaidPenumbra = False; //flag number 7
+global flag $TLSaidBrion = False; //flag number 8
+global flag $SeenBlackGate = False; //flag number 9
+global flag $MetIolo = False; //flag number 20
+global flag $MetSpark = False; //flag number 21
+global flag $MetShamino = False; //flag number 22
+global flag $MetDupre = False; //flag number 23
+global flag $MetJaana = False; //flag number 24
+global flag $MetSentri = False; //flag number 26
+global flag $MetJulia = False; //flag number 27
+global flag $MetKatrina = False; //flag number 28
+global flag $CAST_ARMAGEDDON = False; //flag number 30
+global flag $FOUND_BUCKET_KEY = False; //flag number 60
+global flag $SEARCHED_STABLES = False; //flag number 61
+global flag $FOUND_GOLD = False; //flag number 62
+global flag $FOUND_MEDALLION = False; //flag number 63
+global flag $LEARNED_ABOUT_CROWN_JEWEL = False; //flag number 64
+global flag $PASSWORD_ATTEMPTED = False; //flag number 66
+global flag $FOUND_SCROLL = False; //flag number 67
+global flag $GotPassword = False; //flag number 68
+global flag $AskedForPassword = False; //flag number 69
+global flag $ToldSparkName = False; //flag number 70
+global flag $ToldSparkAvat = False; //flag number 71
+global flag $SPARK_KEY_TOPIC = False; //flag number 72
+global flag $SPARK_CAN_JOIN = False; //flag number 73
+global flag $MetPetre = False; //flag number 75
+global flag $MetFinnigan = False; //flag number 76
+global flag $MetGilberto = False; //flag number 77
+global flag $MetJohnson = False; //flag number 78
+global flag $MetKlog = False; //flag number 79
+global flag $MetEllen = False; //flag number 80
+global flag $MetApollonia = False; //flag number 81
+global flag $MetChantu = False; //flag number 82
+global flag $MET_MARKUS = False; //flag number 84
+global flag $MetGargan = False; //flag number 85
+global flag $MetCaroline = False; //flag number 86
+global flag $REFUSED_MURDER_INVESTIGATION = False; //flag number 89
+global flag $TRINSIC_INVESTIGATION = False; //flag number 90
+global flag $FINNIGAN_STABLES_CHECKED = False; //flag number 91
+global flag $FINNIGAN_EXTRA = False; //flag number 93
+global flag $SPARK_CLUES_DONE = False; //flag number 100
+global flag $LEARNED_ABOUT_BLACKROCK = False; //flag number 101
+global flag $ASKED_LB_ABOUT_MAGIC = False; //flag number 102
+global flag $MetNell = False; //flag number 120
+global flag $HEARD_ABOUT_PATTERSONS_AFFAIR = False; //flag number 128
+global flag $MetLucy = False; //flag number 131
+global flag $JEANETTE_LOVES_WILLY = False; //flag number 133
+global flag $HEARD_ABOUT_VOICE = False; //flag number 140
+global flag $MET_LORD_BRITISH = False; //flag number 152
+global flag $MetNystul = False; //flag number 153
+global flag $MetChuckles = False; //flag number 154
+global flag $MetBatlin = False; //flag number 155
+global flag $MetRaymundo = False; //flag number 156
+global flag $MetJesse = False; //flag number 157
+global flag $MetStuart = False; //flag number 158
+global flag $MetAmber = False; //flag number 159
+global flag $MetKristy = False; //flag number 160
+global flag $MetMax = False; //flag number 161
+global flag $MetNicholas = False; //flag number 162
+global flag $MetNanna = False; //flag number 163
+global flag $MetCsil = False; //flag number 164
+global flag $MetZella = False; //flag number 165
+global flag $MetGreg = False; //flag number 167
+global flag $MetNeno = False; //flag number 168
+global flag $MetJudith = False; //flag number 169
+global flag $MET_CANDICE = False; //flag number 170
+global flag $MetCynthia = False; //flag number 171
+global flag $MetPatterson = False; //flag number 172
+global flag $MetCarrocio = False; //flag number 173
+global flag $MetFigg = False; //flag number 174
+global flag $MetJames = False; //flag number 175
+global flag $MetJeanette = False; //flag number 176
+global flag $MetKessler = False; //flag number 177
+global flag $MetDenby = False; //flag number 178
+global flag $MetFred = False; //flag number 179
+global flag $MET_KELLY = False; //flag number 180
+global flag $MetWilly = False; //flag number 181
+global flag $MetGaye = False; //flag number 182
+global flag $MetCoop = False; //flag number 183
+global flag $MetGrayson = False; //flag number 184
+global flag $MetDiane = False; //flag number 185
+global flag $MetClint = False; //flag number 186
+global flag $MetGordon = False; //flag number 187
+global flag $MetSean = False; //flag number 188
+global flag $MetBrownie = False; //flag number 189
+global flag $MET_MACK = False; //flag number 190
+global flag $MetSnaz = False; //flag number 191
+global flag $MetMillie = False; //flag number 192
+global flag $MetGeoffrey = False; //flag number 193
+global flag $MetWislem = False; //flag number 194
+global flag $MetSherry = False; //flag number 195
+global flag $MetBoots = False; //flag number 196
+global flag $MetBennie = False; //flag number 197
+global flag $MetWeston = False; //flag number 198
+global flag $MetMiranda = False; //flag number 199
+global flag $MetInwisloklem = False; //flag number 200
+global flag $MetCharles = False; //flag number 202
+global flag $HIRED_BY_WILLY = False; //flag number 203
+global flag $WESTON_PARDONED = False; //flag number 204
+global flag $AGREED_TO_FREE_WESTON = False; //flag number 205
+global flag $LEARNED_ABOUT_BRITAIN_MURDER = False; //flag number 209
+global flag $ASKED_LB_ABOUT_HEAL = False; //flag number 211
+global flag $ASKED_LB_ABOUT_GUARDIAN = False; //flag number 212
+global flag $BATLIN_MISSING = False; //flag number 218
+global flag $GOT_ORB = False; //flag number 221
+global flag $MetRudyom = False; //flag number 231
+global flag $MetLordHeather = False; //flag number 234
+global flag $MetPamela = False; //flag number 235
+global flag $Metzinaida = False; //flag number 236
+global flag $MetDe_Maria = False; //flag number 237
+global flag $COMPLETED_OWENS_QUEST = False; //flag number 247
+global flag $OWENS_PLANS_ARE_UNSAFE = False; //flag number 253
+global flag $ASKED_JULIA_TO_LEAVE = False; //flag number 257
+global flag $HEARD_ELIZABETH_ABRAHAM = False; //flag number 261
+global flag $JULIA_IN_PARTY = False; //flag number 264
+global flag $LEARNED_ABOUT_PLANS = False; //flag number 267
+global flag $MetElynor = False; //flag number 268
+global flag $MET_GREGOR = False; //flag number 269
+global flag $MetMargareta = False; //flag number 270
+global flag $MetSasha = False; //flag number 271
+global flag $MetGladstone = False; //flag number 272
+global flag $MetXanthia = False; //flag number 273
+global flag $MetZorn = False; //flag number 274
+global flag $MET_SEARA = False; //flag number 275
+global flag $Metkarl = False; //flag number 276
+global flag $MetOwen = False; //flag number 277
+global flag $MetBurnside = False; //flag number 278
+global flag $MetRutherford = False; //flag number 279
+global flag $MetWilliam = False; //flag number 280
+global flag $MetKarenna = False; //flag number 281
+global flag $MetJakher = False; //flag number 282
+global flag $MetJergi = False; //flag number 283
+global flag $MetMikos = False; //flag number 284
+global flag $MetFodus = False; //flag number 285
+global flag $LEARNED_ABOUT_MINOC_MURDER = False; //flag number 287
+global flag $ASKED_JULIA_ABOUT_SPARK = False; //flag number 289
+global flag $ORB_FIXED_TIMELORD = False; //flag number 308
+global flag $EMP_COMMON = False; //flag number 316
+global flag $MetSaralek = False; //flag number 317
+global flag $MetTavenor = False; //flag number 318
+global flag $MetSalamon = False; //flag number 319
+global flag $MetNicodemus = False; //flag number 320
+global flag $MetThad = False; //flag number 321
+global flag $MetBradman = False; //flag number 322
+global flag $MetSirJeff = False; //flag number 323
+global flag $MetTiery = False; //flag number 324
+global flag $MetReyna = False; //flag number 326
+global flag $MetTaylor = False; //flag number 327
+global flag $MetKreg = False; //flag number 328
+global flag $MetSmith = False; //flag number 331
+global flag $MetAimi = False; //flag number 332
+global flag $MetPenni = False; //flag number 333
+global flag $MetBen = False; //flag number 334
+global flag $MetGoth = False; //flag number 335
+global flag $TSERAMED_THINKS_MAGE = False; //flag number 350
+global flag $EA_LEFT_JHELOM = False; //flag number 363
+global flag $MET_MASTER_DE_SNEL = False; //flag number 369
+global flag $MetJoseph = False; //flag number 370
+global flag $MET_KLIFTIN = False; //flag number 371
+global flag $MetOphelia = False; //flag number 372
+global flag $MetDaphne = False; //flag number 373
+global flag $MET_SPRELLIC = False; //flag number 374
+global flag $MetVokes = False; //flag number 375
+global flag $MetSyria = False; //flag number 376
+global flag $MetTimmons = False; //flag number 377
+global flag $MetAlagner = False; //flag number 393
+global flag $MetRussell = False; //flag number 394
+global flag $MetBoris = False; //flag number 395
+global flag $MetMagenta = False; //flag number 396
+global flag $MetHenry = False; //flag number 397
+global flag $MetConstance = False; //flag number 398
+global flag $MetRobin = False; //flag number 399
+global flag $MetBattles = False; //flag number 400
+global flag $MetLeavell = False; //flag number 401
+global flag $MetSam = False; //flag number 402
+global flag $MetMordra = False; //flag number 439
+global flag $MET_CAINE = False; //flag number 450
+global flag $MetTrent = False; //flag number 455
+global flag $MetRowena = False; //flag number 457
+global flag $MetPaulette = False; //flag number 458
+global flag $MetChad = False; //flag number 497
+global flag $MetBrion = False; //flag number 503
+global flag $MetNelson = False; //flag number 505
+global flag $MetZelda = False; //flag number 506
+global flag $MetMariah = False; //flag number 507
+global flag $MetRankin = False; //flag number 508
+global flag $MetBalayna = False; //flag number 509
+global flag $MetTolemac = False; //flag number 510
+global flag $MET_CUBOLT = False; //flag number 511
+global flag $MetMorz = False; //flag number 512
+global flag $MetJillian = False; //flag number 513
+global flag $MetEffrem = False; //flag number 514
+global flag $MET_ELAD = False; //flag number 516
+global flag $MetPhearcy = False; //flag number 517
+global flag $MetAddom = False; //flag number 518
+global flag $MetFrank = False; //flag number 519
+global flag $MET_CARLYN = False; //flag number 520
+global flag $GotHourglass = False; //flag number 529
+global flag $StolenVenom = False; //flag number 530
+global flag $FeridwynAccusedTobias = False; //flag number 531
+global flag $MorfinTauntedAvatar = False; //flag number 532
+global flag $MerrickTauntedAvatar = False; //flag number 533
+global flag $ThurstonLovesPolly = False; //flag number 534
+global flag $EA_LEFT_PAWS_FOR_JHELOM = False; //flag number 535
+global flag $VENOM_CASE_SOLVED = False; //flag number 536
+global flag $GARRITT_PARENTS_SECRET = False; //flag number 537
+global flag $CAMILLE_GAVE_WHEAT = False; //flag number 538
+global flag $POLLY_TOLD_ABOUT_THURSTON = False; //flag number 539
+global flag $TOBIAS_FRAMED = False; //flag number 540
+global flag $THURSTON_PAID_DELIVERY = False; //flag number 541
+global flag $MERRICK_APOLOGIZED = False; //flag number 542
+global flag $MetThurston = False; //flag number 543
+global flag $MET_FERIDWYN = False; //flag number 544
+global flag $MetBrita = False; //flag number 545
+global flag $MetAlina = False; //flag number 546
+global flag $MetMerrick = False; //flag number 547
+global flag $MetGarritt = False; //flag number 548
+global flag $MetMorfin = False; //flag number 549
+global flag $MetBeverlea = False; //flag number 550
+global flag $MetKomor = False; //flag number 551
+global flag $MetFenn = False; //flag number 552
+global flag $MetAndrew = False; //flag number 553
+global flag $MetCamille = False; //flag number 554
+global flag $MetTobias = False; //flag number 555
+global flag $MetPolly = False; //flag number 556
+global flag $MERRICK_KNOWS_PLAYER_NAME = False; //flag number 557
+global flag $MERRICK_REFUSED_NAME = False; //flag number 558
+global flag $MORFIN_KNOWS_PLAYER_NAME = False; //flag number 559
+global flag $MORFIN_REFUSED_NAME = False; //flag number 560
+global flag $THURSTON_COURTING_POLLY = False; //flag number 561
+global flag $READ_MORFIN_LEDGER = False; //flag number 563
+global flag $CAMILLE_BEGGED_CLEAR_TOBIAS = False; //flag number 564
+global flag $MORFIN_APOLOGIZED = False; //flag number 565
+global flag $PAWS_FRAME_READY = False; //flag number 566
+global flag $GOT_GARRITT_KEY = False; //flag number 567
+global flag $MET_DRAXINUSOM = False; //flag number 581
+global flag $MetInforlem = False; //flag number 582
+global flag $MetInmanilem = False; //flag number 583
+global flag $MetTeregus = False; //flag number 584
+global flag $MetRuneb = False; //flag number 585
+global flag $MetQuan = False; //flag number 586
+global flag $MetQuaeven = False; //flag number 587
+global flag $MetSilamo = False; //flag number 588
+global flag $MetSarpling = False; //flag number 589
+global flag $MetBetra = False; //flag number 591
+global flag $MET_SIR_JORDAN = False; //flag number 602
+global flag $STARTED_HOLD_INVESTIGATION = False; //flag number 606
+global flag $FINISHED_HOLD_INVESTIGATION = False; //flag number 609
+global flag $MET_SIR_RICHTER = False; //flag number 614
+global flag $MetMenion = False; //flag number 617
+global flag $MET_SIR_PENDARAN = False; //flag number 618
+global flag $MET_LADY_JEHANNE = False; //flag number 619
+global flag $MET_LORD_JOHNPAUL = False; //flag number 620
+global flag $MET_SIR_HORFFE = False; //flag number 622
+global flag $MET_LADY_TORY = False; //flag number 625
+global flag $MET_LADY_LEIGH = False; //flag number 626
+global flag $MET_IAN = False; //flag number 627
+global flag $HEARD_ABOUT_RIKY = False; //flag number 631
+global flag $RESCUED_RIKY = False; //flag number 632
+global flag $MetYvella = False; //flag number 646
+global flag $MetCador = False; //flag number 648
+global flag $MetMara = False; //flag number 649
+global flag $MetEldroth = False; //flag number 651
+global flag $MetYongi = False; //flag number 652
+global flag $MetBlorn = False; //flag number 653
+global flag $MetAuston = False; //flag number 654
+global flag $MetLiana = False; //flag number 655
+global flag $MET_LAPLEM = False; //flag number 656
+global flag $MetCatherine = False; //flag number 658
+global flag $MET_FORLEM = False; //flag number 659
+global flag $MetAnsikart = False; //flag number 660
+global flag $MET_WISSUR = False; //flag number 661
+global flag $MET_AURVIDLEM = False; //flag number 664
+global flag $MetBlacktooth = False; //flag number 675
+global flag $MetDanag = False; //flag number 681
+global flag $MetGlenno = False; //flag number 683
+global flag $MetSintag = False; //flag number 686
+global flag $MetMole = False; //flag number 688
+global flag $MetLucky = False; //flag number 689
+global flag $MetGordy = False; //flag number 691
+global flag $MetMandy = False; //flag number 692
+global flag $MetSmithy = False; //flag number 693
+global flag $MetPaul = False; //flag number 696
+global flag $MET_GORN = False; //flag number 699
+global flag $MET_OWINGS = False; //flag number 700
+global flag $MET_MALLOY = False; //flag number 701
+global flag $MET_GROD = False; //flag number 702
+global flag $MET_MURRAY = False; //flag number 703
+global flag $MET_ANTON = False; //flag number 707
+global flag $MET_EIKO = False; //flag number 708
+global flag $MET_AMANDA = False; //flag number 709
+global flag $MET_KISSME = False; //flag number 710
+global flag $MET_CAIRBRE = False; //flag number 712
+global flag $MET_KALLIBRUS = False; //flag number 713
+global flag $MET_BROTHER_WAYNE = False; //flag number 714
+global flag $MET_COSMO = False; //flag number 715
+global flag $MET_IRIALE = False; //flag number 716
+global flag $MET_LASHER = False; //flag number 717
+global flag $MET_GAROK_ALMAT = False; //flag number 718
+global flag $MET_ISKANDER = False; //flag number 719
+global flag $LB_REWARDED_FOR_FV = False; //flag number 781
+
+// Constants, and script action codes, which are pushed as bytes.
+constant _Party 65179;
+constant _Avatar 65180;
+constant _BatlinMonster 65235;
+constant _Lizbeth 65236;
+constant _Abraham 65237;
+constant _Forskis 65238;
+constant _Korryn 65244;
+constant _Hook 65245;
+constant _Fransisco 65246;
+constant _Corwin 65247;
+constant _Brax 65248;
+constant _Epimetrius 65249;
+constant _Wilbur 65250;
+constant _Aaargh 65251;
+constant _MrEd 65253;
+constant _OneEyedMarl 65256;
+constant _DavrosIllomen 65258;
+constant _Uuungh 65259;
+constant _CloneAbraham 65260;
+constant _CloneElizabeth 65261;
+constant _CloneForskis 65262;
+constant _HookClone 65263;
+constant _Clone2Alagner 65264;
+constant _Regal 65265;
+constant _CloneAlagner 65266;
+constant _Daniel 65267;
+constant _Toth 65268;
+constant _Leonardo 65269;
+constant _Brennon 65270;
+constant _John 65271;
+constant _Micael 65272;
+constant _Stanley 65273;
+constant _Rodric 65274;
+constant _StoneHarpie 65275;
+constant _Kali 65276;
+constant _TheJuggernaut 65277;
+constant _Bob 65278;
+constant _Doug 65279;
+constant _Xorinia 65280;
+constant _Mama 65281;
+constant _Lasher 65282;
+constant _Cosmo 65283;
+constant _Kallibrus 65284;
+constant _Danag 65285;
+constant _Rankin 65286;
+constant _Nelson 65287;
+constant _Brion 65288;
+constant _Caine 65289;
+constant _Alagner 65290;
+constant _Kreg 65291;
+constant _Cairbre 65292;
+constant _Malloy 65293;
+constant _Taylor 65294;
+constant _Papa 65295;
+constant _Anton 65296;
+constant _Owings 65297;
+constant _Perrin 65298;
+constant _Kessler 65299;
+constant _Ellen 65300;
+constant _Dustin 65301;
+constant _Meryl 65302;
+constant _Paul 65303;
+constant _Smithy 65304;
+constant _Mandy 65305;
+constant _Gordy 65306;
+constant _Budo 65307;
+constant _Lucky 65308;
+constant _Mole 65309;
+constant _Blacktooth 65310;
+constant _Sintag 65311;
+constant _Roberto 65312;
+constant _Martine 65313;
+constant _Glenno 65314;
+constant _Wench 65315;
+constant _Sullivan 65316;
+constant _Aurvidlem 65317;
+constant _Foranamo 65318;
+constant _Anmanivas 65319;
+constant _WisSur 65320;
+constant _Ansikart 65321;
+constant _Forlem 65322;
+constant _Catherine 65323;
+constant _Yvella 65324;
+constant _Laplem 65325;
+constant _Liana 65326;
+constant _Auston 65327;
+constant _Blorn 65328;
+constant _Yongi 65329;
+constant _Eldroth 65330;
+constant _Zaksam 65331;
+constant _Mara 65332;
+constant _Cador 65333;
+constant _Ian 65334;
+constant _Leigh 65335;
+constant _Tory 65336;
+constant _Denton 65337;
+constant _Jordan 65338;
+constant _Horffe 65339;
+constant _Richter 65340;
+constant _JohnPaul 65341;
+constant _Jehanne 65342;
+constant _Pendaran 65343;
+constant _Menion 65344;
+constant _Martingo 65345;
+constant _Betra 65346;
+constant _Forbrak 65347;
+constant _Sarpling 65348;
+constant _Silamo 65349;
+constant _Quaeven 65350;
+constant _Quan 65351;
+constant _Runeb 65352;
+constant _Teregus 65353;
+constant _Inmanilem 65354;
+constant _Inforlem 65355;
+constant _Draxinusom 65356;
+constant _Polly 65357;
+constant _Tobias 65358;
+constant _Camille 65359;
+constant _Andrew 65360;
+constant _Fenn 65361;
+constant _Komor 65362;
+constant _Beverlea 65363;
+constant _Morfin 65364;
+constant _Garritt 65365;
+constant _Merrick 65366;
+constant _Alina 65367;
+constant _Brita 65368;
+constant _Feridwyn 65369;
+constant _Thurston 65370;
+constant _Frank 65371;
+constant _Addom 65372;
+constant _Phearcy 65373;
+constant _Elad 65374;
+constant _Chad 65375;
+constant _Effrem 65376;
+constant _Jillian 65377;
+constant _Morz 65378;
+constant _Tolemac 65379;
+constant _Balayna 65380;
+constant _Cubolt 65381;
+constant _Grod 65382;
+constant _Mariah 65383;
+constant _Zelda 65384;
+constant _Kissme 65385;
+constant _Penumbra 65386;
+constant _Brothers 65387;
+constant _Forsythe 65389;
+constant _Quenton 65390;
+constant _Paulette 65391;
+constant _Rowena 65392;
+constant _Mordra 65393;
+constant _Trent 65394;
+constant _Horance 65395;
+constant _Markham 65396;
+constant _Gorn 65398;
+constant _Sam 65399;
+constant _Leavell 65400;
+constant _Battles 65401;
+constant _Robin 65402;
+constant _Constance 65403;
+constant _Henry 65404;
+constant _Magenta 65405;
+constant _Boris 65406;
+constant _Russell 65407;
+constant _Iriale 65408;
+constant _Timmons 65409;
+constant _Syria 65410;
+constant _Vokes 65411;
+constant _Sprellic 65412;
+constant _Daphne 65413;
+constant _Ophelia 65414;
+constant _Kliftin 65415;
+constant _Joseph 65416;
+constant _DeSnel 65417;
+constant _Carlyn 65418;
+constant _Goth 65419;
+constant _Ben 65420;
+constant _Penni 65421;
+constant _Aimi 65422;
+constant _Smith 65423;
+constant _DRel 65424;
+constant _Gharl 65425;
+constant _Garok 65426;
+constant _Wayne 65427;
+constant _Reyna 65428;
+constant _Iskander 65429;
+constant _Tiery 65430;
+constant _SirJeff 65431;
+constant _Bradman 65432;
+constant _Thad 65433;
+constant _Nicodemus 65434;
+constant _Salamon 65435;
+constant _Tavenor 65436;
+constant _Fodus 65437;
+constant _Saralek 65438;
+constant _Mikos 65439;
+constant _Jergi 65440;
+constant _Jakher 65441;
+constant _Karenna 65442;
+constant _William 65443;
+constant _Rutherford 65444;
+constant _Burnside 65445;
+constant _Owen 65446;
+constant _Karl 65447;
+constant _Seara 65448;
+constant _Zorn 65449;
+constant _Xanthia 65450;
+constant _Gladstone 65451;
+constant _Sasha 65452;
+constant _Margareta 65453;
+constant _Gregor 65454;
+constant _Elynor 65455;
+constant _DeMaria 65456;
+constant _Zinaida 65457;
+constant _Pamela 65458;
+constant _LordHeather 65459;
+constant _Rayburt 65460;
+constant _Nastassia 65461;
+constant _Rudyom 65462;
+constant _Charles 65463;
+constant _Nell 65464;
+constant _Inwisloklem 65465;
+constant _Miranda 65466;
+constant _Weston 65467;
+constant _Bennie 65468;
+constant _Boots 65469;
+constant _Sherry 65470;
+constant _Wislem 65471;
+constant _Geoffrey 65472;
+constant _Millie 65473;
+constant _Snaz 65474;
+constant _Mack 65475;
+constant _Brownie 65476;
+constant _Sean 65477;
+constant _Gordon 65478;
+constant _Clint 65479;
+constant _Diane 65480;
+constant _Grayson 65481;
+constant _Coop 65482;
+constant _Gaye 65483;
+constant _Willy 65484;
+constant _Kelly 65485;
+constant _Fred 65486;
+constant _Denby 65487;
+constant _Amanda 65488;
+constant _Jeanette 65489;
+constant _James 65490;
+constant _Figg 65491;
+constant _Carrocio 65492;
+constant _Patterson 65493;
+constant _Cynthia 65494;
+constant _Candice 65495;
+constant _Judith 65496;
+constant _Neno 65497;
+constant _Greg 65498;
+constant _Lucy 65499;
+constant _Zella 65500;
+constant _Csil 65501;
+constant _Nanna 65502;
+constant _Nicholas 65503;
+constant _Max 65504;
+constant _Kristy 65505;
+constant _Amber 65506;
+constant _Stuart 65507;
+constant _Jesse 65508;
+constant _Raymundo 65509;
+constant _Batlin 65510;
+constant _Chuckles 65511;
+constant _Nystul 65512;
+constant _LordBritish 65513;
+constant _Caroline 65514;
+constant _Gargan 65515;
+constant _Markus 65516;
+constant _Apollonia 65517;
+constant _Dell 65518;
+constant _Chantu 65519;
+constant _Klog 65520;
+constant _Eiko 65521;
+constant _Johnson 65522;
+constant _Gilberto 65523;
+constant _Finnigan 65524;
+constant _Petre 65525;
+constant _Tseramed 65526;
+constant _Katrina 65527;
+constant _Julia 65528;
+constant _Sentri 65529;
+constant _Trellek 65530;
+constant _Jaana 65531;
+constant _Dupre 65532;
+constant _Shamino 65533;
+constant _Spark 65534;
+constant _Iolo 65535;
+constant _Bark 0;
+constant _Action 1;
+constant _Posted_i 2;
+constant _Trigger 3;
+constant _Combat 4;
+constant _Equip 5;
+constant _Unequip 6;
+constant _Invisible 0;
+constant _Asleep 1;
+constant _Charmed 2;
+constant _Cursed 3;
+constant _Dead 4;
+constant _InParty_i 6;
+constant _Paralyzed 7;
+constant _Poisoned 8;
+constant _Protected 9;
+constant _OnMovingBarge_i 10;
+constant _OkayToTake_i 11;
+constant _Might_i 12;
+constant _CantDie_i 14;
+constant _InAction 15;
+constant _DontMove_i 16;
+constant _IsTemporary_i 18;
+constant _OkayToLand_i 21;
+constant _InDungeon_i 23;
+constant _ActiveBarge_i 26;
+constant _Str 0;
+constant _Dex 1;
+constant _Int 2;
+constant _Hits 3;
+constant _Cbt 4;
+constant _Mag 5;
+constant _MaxMagic 6;
+constant _TrainingPoints 7;
+constant _Experience 8;
+constant _FoodLevel 9;
+constant _Sex 10;
+constant _Combat_0 0;
+constant _HorPace 1;
+constant _VerPace 2;
+constant _Talk 3;
+constant _Dance 4;
+constant _Eat 5;
+constant _Farm 6;
+constant _TendShop 7;
+constant _Miner 8;
+constant _Hound 9;
+constant _Stand 10;
+constant _Loiter 11;
+constant _Wander 12;
+constant _Blacksmith 13;
+constant _Sleep 14;
+constant _Wait 15;
+constant _MajorSit 16;
+constant _Graze 17;
+constant _Bake 18;
+constant _Sew 19;
+constant _Shy 20;
+constant _Lab 21;
+constant _Thief 22;
+constant _Waiter 23;
+constant _Special 24;
+constant _KidGames 25;
+constant _EatAtInn 26;
+constant _Duel 27;
+constant _Preach 28;
+constant _Patrol 29;
+constant _DeskWork 30;
+constant _FollowAvt 31;
+constant _North 0;
+constant _NorthEast 1;
+constant _East 2;
+constant _SouthEast 3;
+constant _South 4;
+constant _SouthWest 5;
+constant _West 6;
+constant _NorthWest 7;
+constant _Carpet_0 0;
+constant _Sidewalk 1;
+constant _Lightning_3 3;
+constant _Grass_4 4;
+constant _Cavefloor_5 5;
+constant _Arrow_6 6;
+constant _Spring_7 7;
+constant _Water_8 8;
+constant _Fireball 9;
+constant _Sand 10;
+constant _Ether 11;
+constant _Void 12;
+constant _Spring_13 13;
+constant _Ford_14 14;
+constant _Ford_15 15;
+constant _Rut_16 16;
+constant _Planking 17;
+constant _Tile 18;
+constant _Stone_Floor 21;
+constant _Swamp_22 22;
+constant _Dirt 23;
+constant _Cobblestone 24;
+constant _Rut_25 25;
+constant _Carpet_27 27;
+constant _Sandy_Grass_28 28;
+constant _Muddy_Bank_29 29;
+constant _Grass_31 31;
+constant _Grass_32 32;
+constant _Grass_33 33;
+constant _Grass_34 34;
+constant _Grass_35 35;
+constant _Grass_36 36;
+constant _Grass_37 37;
+constant _Grass_38 38;
+constant _Grass_39 39;
+constant _Grass_40 40;
+constant _Grass_41 41;
+constant _Grass_42 42;
+constant _Grass_43 43;
+constant _Grass_44 44;
+constant _Grass_45 45;
+constant _Rocky_Grass 46;
+constant _Carpet_47 47;
+constant _Ethereal_Void 48;
+constant _Cavefloor_49 49;
+constant _Cavefloor_50 50;
+constant _Cavefloor_51 51;
+constant _Cavefloor_52 52;
+constant _Cavefloor_53 53;
+constant _Cavefloor_54 54;
+constant _Cavefloor_55 55;
+constant _Cavefloor_56 56;
+constant _Cavefloor_57 57;
+constant _Cavefloor_58 58;
+constant _Cavefloor_59 59;
+constant _Cavefloor_60 60;
+constant _Cavefloor_61 61;
+constant _Cavefloor_62 62;
+constant _Cavefloor_63 63;
+constant _Grass_66 66;
+constant _Muck 67;
+constant _Enchant_Missiles 68;
+constant _Heal_69 69;
+constant _Light_70 70;
+constant _Destroy_Trap 71;
+constant _Sleep_72 72;
+constant _Unlock_Magic 73;
+constant _Light_74 74;
+constant _Dispel_Field 75;
+constant _Heal_76 76;
+constant _Seance 77;
+constant _Explosion 78;
+constant _Reveal 79;
+constant _Charm 80;
+constant _Flamestrike 81;
+constant _Delayed_Explosion_82 82;
+constant _Ford_84 84;
+constant _Muddy_Bank_85 85;
+constant _Muddy_Bank_86 86;
+constant _Muddy_Bank_87 87;
+constant _Muddy_Bank_88 88;
+constant _Muddy_Bank_89 89;
+constant _Muddy_Bank_90 90;
+constant _Muddy_Bank_91 91;
+constant _Muddy_Bank_92 92;
+constant _Muddy_Bank_93 93;
+constant _Muddy_Bank_94 94;
+constant _Muddy_Bank_95 95;
+constant _Muddy_Bank_96 96;
+constant _Muddy_Bank_97 97;
+constant _Muddy_Bank_98 98;
+constant _Muddy_Bank_99 99;
+constant _Muddy_Bank_100 100;
+constant _Muddy_Bank_101 101;
+constant _Muddy_Bank_102 102;
+constant _Muddy_Bank_103 103;
+constant _Muddy_Bank_104 104;
+constant _Muddy_Bank_105 105;
+constant _Muddy_Bank_106 106;
+constant _Muddy_Bank_107 107;
+constant _Muddy_Bank_108 108;
+constant _Muddy_Bank_109 109;
+constant _Sandy_Ground 111;
+constant _Ford_112 112;
+constant _Swamp_113 113;
+constant _Swamp_114 114;
+constant _Swamp_115 115;
+constant _Swamp_116 116;
+constant _Swamp_117 117;
+constant _Sandy_Grass_118 118;
+constant _Sandy_Grass_119 119;
+constant _Sandy_Grass_120 120;
+constant _Sandy_Grass_121 121;
+constant _Sandy_Grass_122 122;
+constant _Sandy_Grass_123 123;
+constant _Sandy_Grass_124 124;
+constant _Sandy_Grass_125 125;
+constant _Sandy_Grass_126 126;
+constant _Sandy_Grass_127 127;
+constant _Sandy_Grass_128 128;
+constant _Sandy_Grass_129 129;
+constant _Sandy_Grass_130 130;
+constant _Sandy_Grass_131 131;
+constant _Sandy_Grass_132 132;
+constant _Sandy_Grass_133 133;
+constant _Grassy_Mud_134 134;
+constant _Grassy_Mud_135 135;
+constant _Grassy_Mud_136 136;
+constant _Grassy_Mud_137 137;
+constant _Grassy_Mud_138 138;
+constant _Grassy_Mud_139 139;
+constant _Grassy_Mud_140 140;
+constant _Grassy_Mud_141 141;
+constant _Grassy_Mud_142 142;
+constant _Grassy_Mud_143 143;
+constant _Grassy_Mud_144 144;
+constant _Grassy_Mud_145 145;
+constant _Grass_146 146;
+constant _Grass_147 147;
+constant _Grass_148 148;
+constant _Mud 149;
+constant _Gangplank 150;
+constant _Wall_151 151;
+constant _Wall_152 152;
+constant _Oppressor 153;
+constant _Mage_154 154;
+constant _The_Ferryman_155 155;
+constant _Tile_Roof_156 156;
+constant _Moongate_157 157;
+constant _Stand_158 158;
+constant _Pocketwatch 159;
+constant _Greer_Plant 160;
+constant _Rock_Outcropping 163;
+constant _Slate_Roof_164 164;
+constant _Slate_Roof_165 165;
+constant _Slate_Roof_166 166;
+constant _Slate_Roof_167 167;
+constant _Beam_Of_Light 168;
+constant _Slate_Roof_169 169;
+constant _Wood_Roof_170 170;
+constant _Wood_Roof_171 171;
+constant _Wood_Roof_172 172;
+constant _Wood_Roof_173 173;
+constant _Wood_Roof_174 174;
+constant _Wood_Roof_175 175;
+constant _Wood_Roof_176 176;
+constant _Alchemist_Device 177;
+constant _Cloth_Map 178;
+constant _Lightning_179 179;
+constant _Mountain_180 180;
+constant _Tree_181 181;
+constant _Mountain_182 182;
+constant _Mountain_183 183;
+constant _Caddelite_Meteor 184;
+constant _Dead_Tree_185 185;
+constant _Carpet_186 186;
+constant _Carpet_187 187;
+constant _Rug_188 188;
+constant _Floor_189 189;
+constant _Carpet_190 190;
+constant _Fortress_191 191;
+constant _Fortress_192 192;
+constant _Floor_193 193;
+constant _Knights_Bridge_Piece 194;
+constant _Mountain_195 195;
+constant _Mountain_196 196;
+constant _Mountain_197 197;
+constant _Light_198 198;
+constant _Mast 199;
+constant _Trap 200;
+constant _Debris_201 201;
+constant _Debris_202 202;
+constant _Small_Rock 203;
+constant _Scorch_Mark_204 204;
+constant _Wall_205 205;
+constant _Wall_206 206;
+constant _Scorch_Mark_207 207;
+constant _Broken_Door_208 208;
+constant _Dust_209 209;
+constant _Chicken_Coop 210;
+constant _Broken_Door_211 211;
+constant _Bridge_212 212;
+constant _Bridge_213 213;
+constant _Bridge_214 214;
+constant _Bridge_215 215;
+constant _Broken_Wall_216 216;
+constant _Broken_Wall_217 217;
+constant _Wall_218 218;
+constant _Wall_219 219;
+constant _Wall_220 220;
+constant _Wall_221 221;
+constant _Blue_Flag 222;
+constant _Broken_Roof 223;
+constant _Dust_224 224;
+constant _Abbey_Door_225 225;
+constant _Flying_Gargoyle 226;
+constant _Alagner_227 227;
+constant _Papa_228 228;
+constant _Mama_229 229;
+constant _Ethereal_Monster 230;
+constant _Blinker 231;
+constant _Red_Flag 232;
+constant _Platform_233 233;
+constant _Sphere_Generator_234 234;
+constant _Sphere_Generator_235 235;
+constant _Sphere_Generator_236 236;
+constant _Sphere_Generator_237 237;
+constant _Cube_Generator_238 238;
+constant _Cube_Generator_239 239;
+constant _Cube_Generator_240 240;
+constant _Cube_Generator_241 241;
+constant _Tetrahedron_Generator_242 242;
+constant _Tetrahedron_Generator_243 243;
+constant _Tetrahedron_Generator_244 244;
+constant _Tetrahedron_Generator_245 245;
+constant _Abbey_Door_246 246;
+constant _Paladin_247 247;
+constant _Green_Flag 248;
+constant _Top 249;
+constant _Abbey_Door_250 250;
+constant _Sails 251;
+constant _Grandfather_Clock_252 252;
+constant _Wall_253 253;
+constant _Wall_254 254;
+constant _Broken_Wall_255 255;
+constant _Delta_256 256;
+constant _Fortress_Gateway 257;
+constant _Keg 258;
+constant _Fighter_259 259;
+constant _Fortress_260 260;
+constant _Loom 261;
+constant _Go_Away 262;
+constant _Fortress_263 263;
+constant _Iron_Bars 264;
+constant _Townsman 265;
+constant _Wall_266 266;
+constant _Mysterious_Craft 267;
+constant _Mirror_268 268;
+constant _Carpet_269 269;
+constant _Door_270 270;
+constant _Portcullis_271 271;
+constant _Portcullis_272 272;
+constant _Wall_273 273;
+constant _Gargoyle_Warrior 274;
+constant _Egg 275;
+constant _Crossbeam_276 276;
+constant _Crossbeam_277 277;
+constant _Musket 278;
+constant _Cavern_279 279;
+constant _Ignite 280;
+constant _Curse 281;
+constant _Painting_282 282;
+constant _Desk_283 283;
+constant _Sundial 284;
+constant _Cloak 285;
+constant _Banner 286;
+constant _Swordstrike 287;
+constant _Slime_Attack 288;
+constant _The_Passion_Play_Theatre 289;
+constant _Closed_Shutters_290 290;
+constant _Closed_Shutters_291 291;
+constant _Seat_292 292;
+constant _Tapestry_293 293;
+constant _Carpet_294 294;
+constant _Wedding_Ring 295;
+constant _Ring_Of_Invisibility 296;
+constant _Ring_Of_Protection 297;
+constant _Ring_Of_Regeneration 298;
+constant _Ghost_299 299;
+constant _Cooking_Utensils 300;
+constant _Cart_301 301;
+constant _Pumpkin 302;
+constant _Metal_Wall_303 303;
+constant _Blacksmith_304 304;
+constant _The_Black_Gate 305;
+constant _Evergreen 306;
+constant _Laboratory_Burner 307;
+constant _Wall_308 308;
+constant _Fallen_Tree_309 309;
+constant _Tree_310 310;
+constant _Trophy_311 311;
+constant _Gargoyle_Futon_312 312;
+constant _Stump 313;
+constant _Weeds 314;
+constant _Fallen_Tree_315 315;
+constant _Large_Rock 316;
+constant _Ghost_317 317;
+constant _Sage_318 318;
+constant _Peasant_319 319;
+constant _Brambles 320;
+constant _Reeds 321;
+constant _Open_Shutters_322 322;
+constant _Cattails 323;
+constant _Mountain_324 324;
+constant _Dead_Tree_325 325;
+constant _Tropical_Plant 326;
+constant _Cypress_Tree 327;
+constant _Baobab_Tree 328;
+constant _Kite 329;
+constant _Virtue_Stone 330;
+constant _Rock_331 331;
+constant _Tree_332 332;
+constant _Table_333 333;
+constant _Bubbles_334 334;
+constant _Bubbles_335 335;
+constant _Light_Source 336;
+constant _Ghost_337 337;
+constant _Lit_Light_Source 338;
+constant _Dispel_Magic 339;
+constant _Potion 340;
+constant _Rock_341 341;
+constant _Boulder_342 342;
+constant _Boulder_343 343;
+constant _Wall_344 344;
+constant _Wall_345 345;
+constant _Wall_346 346;
+constant _Broken_Wall_347 347;
+constant _Wall_348 348;
+constant _Wall_349 349;
+constant _Wall_350 350;
+constant _Wall_351 351;
+constant _Fortress_352 352;
+constant _Greaves 353;
+constant _Liche_354 354;
+constant _Wall_355 355;
+constant _Broken_Wall_356 356;
+constant _Wall_357 357;
+constant _Wall_358 358;
+constant _Wall_359 359;
+constant _Sign_360 360;
+constant _Sign_361 361;
+constant _Wall_362 362;
+constant _Gargoyle_Futon_363 363;
+constant _Platform_364 364;
+constant _Wall_365 365;
+constant _Wall_366 366;
+constant _Floor_367 367;
+constant _Floor_368 368;
+constant _Floor_369 369;
+constant _Floor_370 370;
+constant _Wall_371 371;
+constant _Open_Shutters_372 372;
+constant _Glass_Wall_373 373;
+constant _Wall_374 374;
+constant _Unicorn 375;
+constant _Door_376 376;
+constant _Food_Item 377;
+constant _Fence_378 378;
+constant _Sign_379 379;
+constant _Cyclops_380 380;
+constant _Three_Headed_Hydra 381;
+constant _Kissme_382 382;
+constant _Magic_Helm 383;
+constant _Waves_384 384;
+constant _Stairs_385 385;
+constant _Stairs_386 386;
+constant _Stairs_387 387;
+constant _Eating_Utensils 388;
+constant _Cavern_389 389;
+constant _Cavern_390 390;
+constant _Cavern_391 391;
+constant _Abbey_Door_392 392;
+constant _Wall_393 393;
+constant _Guard_394 394;
+constant _Mountain_395 395;
+constant _Mountain_396 396;
+constant _Energy_Mist 399;
+constant _Body_400 400;
+constant _Pirate_401 401;
+constant _Ferry 402;
+constant _Batlin_403 403;
+constant _Honeycomb 404;
+constant _Ships_Hold 405;
+constant _Nightstand 406;
+constant _Desk_407 407;
+constant _Paralyze 408;
+constant _Trophy_409 409;
+constant _Mining_Machine 410;
+constant _Conveyer_Belt 411;
+constant _The_Black_Gate_Dais 412;
+constant _Carpet_413 413;
+constant _Body_414 414;
+constant _Garbage 415;
+constant _Drawers_416 416;
+constant _Magic_Bolt 417;
+constant _Giant_Bones 418;
+constant _Delta_419 419;
+constant _Fence_420 420;
+constant _Fence_421 421;
+constant _Fence_422 422;
+constant _Crops 423;
+constant _Poison 424;
+constant _Wall_425 425;
+constant _Stairs_426 426;
+constant _Stairs_427 427;
+constant _Stairs_428 428;
+constant _Stairs_429 429;
+constant _Stairs_430 430;
+constant _Bellows 431;
+constant _Door_432 432;
+constant _Door_433 433;
+constant _Cask 434;
+constant _Lit_Sconce 435;
+constant _Wagon_Floor 436;
+constant _Wagon_Wheel 437;
+constant _Window_438 438;
+constant _Chimney_439 439;
+constant _Light_440 440;
+constant _Floor_441 441;
+constant _Fireplace 442;
+constant _Telekinesis 443;
+constant _Hood 444;
+constant _Mage_445 445;
+constant _Mage_446 446;
+constant _Wounded_Man 447;
+constant _Sage_448 448;
+constant _Beggar_449 449;
+constant _Beggar_450 450;
+constant _Noble_451 451;
+constant _Peasant_452 452;
+constant _Tree_453 453;
+constant _Shopkeeper_454 454;
+constant _Shopkeeper_455 455;
+constant _Noble_456 456;
+constant _Gypsy 457;
+constant _Pirate_458 458;
+constant _Wench_459 459;
+constant _Ranger_460 460;
+constant _Ranger_461 461;
+constant _Fighter_462 462;
+constant _Fighter_463 463;
+constant _Paladin_464 464;
+constant _Iolo_465 465;
+constant _Lord_British 466;
+constant _Jester 467;
+constant _Entertainer_468 468;
+constant _Entertainer_469 469;
+constant _Well_470 470;
+constant _Child_471 471;
+constant _Child_472 472;
+constant _Gargoyle_Noble 473;
+constant _Sling 474;
+constant _Gargoyle_Worker 475;
+constant _Smith_The_Horse 476;
+constant _Frank_The_Fox 477;
+constant _Sherry_The_Mouse 478;
+constant _Emp_479 479;
+constant _Draxinusom_480 480;
+constant _Sconce 481;
+constant _Batlin_482 482;
+constant _Rug_483 483;
+constant _Bars 484;
+constant _Highwayman 485;
+constant _Statue_486 486;
+constant _Shamino_487 487;
+constant _Dupre_488 488;
+constant _Spark_489 489;
+constant _Jaana_490 490;
+constant _Acid_Slug 491;
+constant _Alligator 492;
+constant _Bat 493;
+constant _Bee 494;
+constant _Cat 495;
+constant _Dog 496;
+constant _Wall_497 497;
+constant _Chicken 498;
+constant _Corpser 499;
+constant _Cow 500;
+constant _Cyclops_501 501;
+constant _Deer 502;
+constant _Puppet_Show 503;
+constant _Dragon 504;
+constant _Drake 505;
+constant _Hook_506 506;
+constant _Corpse 507;
+constant _Stained_Glass_Window_508 508;
+constant _Fish 509;
+constant _Fox 510;
+constant _Gazer 511;
+constant _Stained_Glass_Window_512 512;
+constant _Gremlin 513;
+constant _Headless 514;
+constant _Closed_Drawbridge 515;
+constant _Delta_516 516;
+constant _Insects 517;
+constant _Glass_Counter_Tops 518;
+constant _Liche_519 519;
+constant _Virtue_Roulette_Table 520;
+constant _Mouse 521;
+constant _Locked_Chest 522;
+constant _Rat 523;
+constant _Reaper 524;
+constant _Sea_Serpent_525 525;
+constant _Lit_Lamp 526;
+constant _Death_Bolt 527;
+constant _Skeleton 528;
+constant _Slime 529;
+constant _Snake 530;
+constant _Cavern_531 531;
+constant _Harpie 532;
+constant _Troll_533 533;
+constant _Wisp 534;
+constant _Spent_Sconce 535;
+constant _Tentacles 536;
+constant _Wolf 537;
+constant _Fence_538 538;
+constant _Chain_Coif 539;
+constant _Douse 540;
+constant _Great_Helm 541;
+constant _Crested_Helm 542;
+constant _Buckler 543;
+constant _Broken_Columns 544;
+constant _Curved_Heater 545;
+constant _Broken_Dish 546;
+constant _Magic_Sword 547;
+constant _Hoe_Of_Destruction 548;
+constant _Lightning_Whip 549;
+constant _Magic_Boomerang 550;
+constant _Fire_Sword 551;
+constant _Magic_Axe 552;
+constant _Firedoom_Staff 553;
+constant _Burst_Arrow 554;
+constant _Hawk 555;
+constant _Magic_Arrow 556;
+constant _Juggernaut_Hammer 557;
+constant _Lucky_Arrow 558;
+constant _Magebane 559;
+constant _Love_Arrow 560;
+constant _Great_Dagger 561;
+constant _The_Death_Scythe 562;
+constant _Blowgun 563;
+constant _Poison_Dagger 564;
+constant _Starburst 565;
+constant _Glimmer 566;
+constant _Sword_Of_Defense 567;
+constant _Tseramed_Arrow 568;
+constant _Leather_Armour 569;
+constant _Scale_Armour 570;
+constant _Chain_Armour 571;
+constant _Wooden_Shield 572;
+constant _Plate_Armour 573;
+constant _Leather_Leggings 574;
+constant _Chain_Leggings 575;
+constant _Plate_Leggings 576;
+constant _Pedestal_577 577;
+constant _Spiked_Shield 578;
+constant _Leather_Gloves 579;
+constant _Gauntlets 580;
+constant _Ammunition 581;
+constant _Leather_Collar 582;
+constant _Bed_Roll 583;
+constant _Kidney_Belt 584;
+constant _Shoes 585;
+constant _Gorget 586;
+constant _Boots_587 587;
+constant _Swamp_Boots 588;
+constant _Pitchfork 589;
+constant _Club 590;
+constant _Main_Gauche 591;
+constant _Spear 592;
+constant _Throwing_Axe 593;
+constant _Dagger 594;
+constant _Torch 595;
+constant _Morning_Star 596;
+constant _Bow 597;
+constant _Crossbow 598;
+constant _Sword 599;
+constant _Two_Handed_Hammer 600;
+constant _Two_Handed_Axe 601;
+constant _Two_Handed_Sword 602;
+constant _Halberd 603;
+constant _Glass_Sword 604;
+constant _Boomerang 605;
+constant _Magic_Bow 606;
+constant _Path 607;
+constant _Decorative_Sword 608;
+constant _Kite_Shield 609;
+constant _Delta_610 610;
+constant _Lily_Pads 611;
+constant _Surf_612 612;
+constant _Surf_613 613;
+constant _Cleaver 614;
+constant _Knife 615;
+constant _Bottle 616;
+constant _The_Time_Lord 617;
+constant _Scythe 618;
+constant _Fern 619;
+constant _Rake 620;
+constant _Delayed_Explosion_621 621;
+constant _Whip 622;
+constant _Hammer 623;
+constant _Pick 624;
+constant _Shovel 625;
+constant _Hoe 626;
+constant _Lockpick 627;
+constant _Cup 628;
+constant _Lightning_Wand 629;
+constant _Fire_Wand 630;
+constant _Tree_631 631;
+constant _Surf_632 632;
+constant _Table_633 633;
+constant _Standing_Stone 634;
+constant _Custom_Sword 635;
+constant _Serpentine_Dagger 636;
+constant _Serpentine_Sword 637;
+constant _Caddellite_Helmet 638;
+constant _Death_Vortex 639;
+constant _Ring 640;
+constant _Key 641;
+constant _Book 642;
+constant _Tree_643 643;
+constant _Gold_Coin 644;
+constant _Gold_Nugget 645;
+constant _Gold_Bar 646;
+constant _Triple_Crossbow 647;
+constant _Sleeping_Powder 648;
+constant _Venom 649;
+constant _Sextant 650;
+constant _Spinning_Wheel 651;
+constant _Cart_652 652;
+constant _Bale_Of_Wool 653;
+constant _Spindle_Of_Thread 654;
+constant _Topiary 655;
+constant _Wine_Press 656;
+constant _Curtain_657 657;
+constant _Dough 658;
+constant _Mace 659;
+constant _Cart_660 660;
+constant _Mongbat 661;
+constant _Fishing_Rod 662;
+constant _Magic_Shield 663;
+constant _Stove_664 664;
+constant _Prow 665;
+constant _Magic_Armor 666;
+constant _Cobwebs 667;
+constant _Sword_Blank 668;
+constant _Cactus_669 669;
+constant _Maple_Tree 670;
+constant _Mushrooms 671;
+constant _Shrubbery 672;
+constant _Plant_673 673;
+constant _Silverleaf_Tree 674;
+constant _Desk_Item 675;
+constant _Sack_Of_Wheat 677;
+constant _Curtain_678 678;
+constant _Drawers_679 679;
+constant _Deck_680 680;
+constant _Jar 681;
+constant _Glass_Item 682;
+constant _Tree_683 683;
+constant _Trellis 684;
+constant _Mechanism 685;
+constant _Magic_Leggings 686;
+constant _Pillar_687 687;
+constant _Blank_Type 688;
+constant _Harpsichord 689;
+constant _Xylophone 690;
+constant _Lyre 691;
+constant _Lute 692;
+constant _Whistle 693;
+constant _Cave_Door 694;
+constant _Grandfather_Clock_695 695;
+constant _Bed_696 696;
+constant _Podium 697;
+constant _Shears 698;
+constant _Surf_699 699;
+constant _Deck_700 700;
+constant _Lit_Torch 701;
+constant _Cannon 702;
+constant _Cannon_Ball 703;
+constant _Powder_Keg 704;
+constant _Rope_Ladder_705 705;
+constant _Scorpion 706;
+constant _The_Black_Sword 707;
+constant _Stocks 708;
+constant _Guillotine_709 709;
+constant _Log_Saw 710;
+constant _Mill_Stone 711;
+constant _Stove_712 712;
+constant _Post 713;
+constant _Rope_Ladder_714 714;
+constant _Tombstone 715;
+constant _Bird 716;
+constant _Plate 717;
+constant _Pedestal_718 718;
+constant _Water_Trough_719 719;
+constant _Guard_720 720;
+constant _Avatar_721 721;
+constant _Arrow_722 722;
+constant _Bolt_723 723;
+constant _Fellowship_Icon 724;
+constant _Virtue_Roulette_Wheel 725;
+constant _Lens 726;
+constant _Horse 727;
+constant _Caddellite_Chunks 728;
+constant _Crystal_Ball 729;
+constant _Baby 730;
+constant _Window_732 732;
+constant _Carpet_733 733;
+constant _Guillotine_734 734;
+constant _Archery_Target 735;
+constant _Surf_736 736;
+constant _Surf_737 737;
+constant _Pants 738;
+constant _Firepit 739;
+constant _Well_740 740;
+constant _Water_Trough_741 741;
+constant _Stuffed_Toy 742;
+constant _Strength_Tester 743;
+constant _Telescope 744;
+constant _Harp 745;
+constant _The_Orrery_Crystal 746;
+constant _Soul_Cage 747;
+constant _Well_Of_Souls 748;
+constant _Alchemist_Aparatus 749;
+constant _Carpet_750 750;
+constant _Surf_751 751;
+constant _Music_Box 752;
+constant _Stone_Harpie 753;
+constant _Vial 754;
+constant _Orrery_Paths 755;
+constant _Caltrops 756;
+constant _Cart_757 757;
+constant _Carpet_758 758;
+constant _Ethereal_Ring 759;
+constant _Gem 760;
+constant _Spellbook 761;
+constant _Body_762 762;
+constant _The_Rat_Race_Game_763 763;
+constant _The_Rat_Race_Game_764 764;
+constant _The_Planet_Britannia 765;
+constant _The_Moon_Trammel 766;
+constant _Small_Orrery 767;
+constant _Energy_Field 768;
+constant _Smokebomb 769;
+constant _Orrery_Viewer 770;
+constant _Rudyoms_Wand 771;
+constant _Honey 772;
+constant _Cart_773 773;
+constant _Cart_774 774;
+constant _Ship_Rails 775;
+constant _Moongate_776 776;
+constant _Moongate_777 777;
+constant _Body_778 778;
+constant _Moongate_779 779;
+constant _Bubbles_780 780;
+constant _Gang_Plank 781;
+constant _Flaming_Oil 782;
+constant _Tree_783 783;
+constant _Emp_784 784;
+constant _Orb_Of_The_Moons 785;
+constant _The_Vortex_Cube 786;
+constant _Lever 787;
+constant _Switch 788;
+constant _Sword_In_A_Stone 789;
+constant _Invisibility_Dust 790;
+constant _Ship_791 791;
+constant _Magicians_Wand 792;
+constant _Water_794 794;
+constant _Mantle_795 795;
+constant _Draft_Horse 796;
+constant _Scroll 797;
+constant _Sealed_Box 798;
+constant _Unsealed_Box 799;
+constant _Chest 800;
+constant _Backpack 801;
+constant _Bag 802;
+constant _Basket 803;
+constant _Crate 804;
+constant _Forskis_805 805;
+constant _Guard_806 806;
+constant _Lightning_807 807;
+constant _Surf_808 808;
+constant _The_Triples_Game_809 809;
+constant _Bucket 810;
+constant _Rabbit 811;
+constant _Iron_Maiden 812;
+constant _The_Rack 813;
+constant _The_Triples_Game_814 814;
+constant _Stone_Chips 815;
+constant _Nest 816;
+constant _Cactus_817 817;
+constant _The_Triples_Game_818 818;
+constant _Barrel 819;
+constant _Plaque 820;
+constant _Painting_821 821;
+constant _Diaper 822;
+constant _Artists_Equipment 823;
+constant _Pitcher 824;
+constant _Campfire 825;
+constant _Tree_Top 826;
+constant _Bandage 827;
+constant _Wall_828 828;
+constant _Floor_829 829;
+constant _Gear 830;
+constant _Baking_Hearth 831;
+constant _Glass_Wall_832 832;
+constant _Glass_Wall_833 833;
+constant _Surf_834 834;
+constant _Magic_Gauntlets 835;
+constant _Antique_Armor 836;
+constant _Easel 837;
+constant _Avatar_Costume 838;
+constant _Hourglass 839;
+constant _Flying_Carpet 840;
+constant _Glass_Wall_841 841;
+constant _Reagent 842;
+constant _Magic_Gorget 843;
+constant _Sea_Serpent_844 844;
+constant _Wall_845 845;
+constant _Mantle_846 846;
+constant _Table_847 847;
+constant _Mirror_848 848;
+constant _Tapestry_849 849;
+constant _Carpet_850 850;
+constant _Cloth 851;
+constant _Crenellations_852 852;
+constant _Greenhouse_Roof_853 853;
+constant _Statue_854 854;
+constant _Rats_Face_Cage 855;
+constant _Fire_Bolt 856;
+constant _Dragon_Breath 857;
+constant _Bookshelf_858 858;
+constant _Casting_Frames 859;
+constant _Fencing_Dummy 860;
+constant _Troll_861 861;
+constant _Shaft_862 862;
+constant _Kitchen_Items 863;
+constant _Toddler 864;
+constant _Spider 865;
+constant _Thumbscrews 866;
+constant _Victim 867;
+constant _Wall_Mount 868;
+constant _Wall_869 869;
+constant _Drawbridge 870;
+constant _Wall_871 871;
+constant _Stove_872 872;
+constant _Chair 873;
+constant _Surf_875 875;
+constant _Metal_Wall_876 876;
+constant _Rune 877;
+constant _Crenellations_878 878;
+constant _Wall_879 879;
+constant _Shaft_880 880;
+constant _Elizabeth 881;
+constant _Abraham_882 882;
+constant _Wingless_Gargoyle 883;
+constant _Fellowship_Member_884 884;
+constant _Fellowship_Staff 885;
+constant _Anchor 886;
+constant _Test_Tubes 887;
+constant _Horn 888;
+constant _Lamp_Post 889;
+constant _Table_890 890;
+constant _Wood_Roof_891 891;
+constant _Body_892 892;
+constant _Pool_Of_Water 893;
+constant _Monolith 894;
+constant _Fire_Field 895;
+constant _Crenellations_896 896;
+constant _Seat_897 897;
+constant _Altar 898;
+constant _Wall_899 899;
+constant _Poison_Field 900;
+constant _Crenellations_901 901;
+constant _Sleep_Field 902;
+constant _Crenellations_903 903;
+constant _Wall_904 904;
+constant _Cavern_905 905;
+constant _Statue_906 906;
+constant _Surf_907 907;
+constant _Tile_Roof_908 908;
+constant _Wall_909 909;
+constant _Wall_910 910;
+constant _Surf_911 911;
+constant _Blood 912;
+constant _Pillar_913 913;
+constant _Blackrock 914;
+constant _Chunks_Of_Lead 915;
+constant _Chunks_Of_Iron_Ore 916;
+constant _Shaft_917 917;
+constant _Surf_918 918;
+constant _Bookshelf_919 919;
+constant _Pillar_920 920;
+constant _Betting_Marker 921;
+constant _Small_Bush 922;
+constant _Piece_Of_Wood_923 923;
+constant _Cavern_924 924;
+constant _Cavern_925 925;
+constant _Delta_926 926;
+constant _Delta_927 927;
+constant _Cavern_928 928;
+constant _Fellowship_Member_929 929;
+constant _Delta_930 930;
+constant _Mountain_931 931;
+constant _Tree_932 932;
+constant _Millsaw 933;
+constant _Water_Wheel_934 934;
+constant _Portcullis_Door_935 935;
+constant _Portcullis_Door_936 936;
+constant _Gargoyle_Jewelry 937;
+constant _Delta_938 938;
+constant _Wall_939 939;
+constant _Wall_940 940;
+constant _Water_Wheel_941 941;
+constant _Water_Wheel_942 942;
+constant _Wall_943 943;
+constant _Pot 944;
+constant _Guardian_Statue 945;
+constant _Guard_946 946;
+constant _Bee_Stinger 947;
+constant _Bolt_948 948;
+constant _Winch_949 949;
+constant _Winch_950 950;
+constant _Water_Wheel_951 951;
+constant _The_Ferryman_952 952;
+constant _Wall_953 953;
+constant _Greenhouse_Roof_954 954;
+constant _Amulet 955;
+constant _Wood_Roof_956 956;
+constant _Barkeep 957;
+constant _The_Moon_Felucca 958;
+constant _Mountain_959 959;
+constant _Mushroom_960 960;
+constant _Barge 961;
+constant _Slate_Roof_962 962;
+constant _Slate_Roof_963 963;
+constant _Table_964 964;
+constant _Child_965 965;
+constant _Tile_Roof_966 966;
+constant _Broken_Wall_967 967;
+constant _Enclosed_Prism 968;
+constant _Mountain_969 969;
+constant _Sheep 970;
+constant _Table_971 971;
+constant _Wall_972 972;
+constant _Stairs_973 973;
+constant _Stairs_974 974;
+constant _Wagon_Door 975;
+constant _Wagon_976 976;
+constant _Wagon_977 977;
+constant _Wagon_978 978;
+constant _Wagon_Roof 979;
+constant _Wall_980 980;
+constant _Prism_981 981;
+constant _Chimney_982 982;
+constant _Mountain_983 983;
+constant _Piece_Of_Wood_984 984;
+constant _Waves_985 985;
+constant _Stove_Top 986;
+constant _Baby_In_A_Cradle 987;
+constant _Planet 988;
+constant _Avatar_989 989;
+constant _The_Dark_Core 990;
+constant _Anvil 991;
+constant _Cradle 992;
+constant _Mushroom_993 993;
+constant _Tongs 994;
+constant _Cauldron 995;
+constant _Glass_Wall_996 996;
+constant _Spent_Light_Source 997;
+constant _Horseshoe 998;
+constant _Plant_999 999;
+constant _Table_1000 1000;
+constant _Table_1001 1001;
+constant _Table_1002 1002;
+constant _Table_1003 1003;
+constant _Leather_Helm 1004;
+constant _Glass_Wall_1005 1005;
+constant _Broken_Wall_1006 1006;
+constant _Glass_Wall_1007 1007;
+constant _Waves_1008 1008;
+constant _Waves_1009 1009;
+constant _Prism_1010 1010;
+constant _Bed_1011 1011;
+constant _Surf_1012 1012;
+constant _Rocking_Horse 1013;
+constant _Floor_1014 1014;
+constant _Golem 1015;
+constant _Floor_1016 1016;
+constant _Ship_1017 1017;
+constant _Table_1018 1018;
+constant _Glass_Wall_1019 1019;
+constant _Surf_1020 1020;
+constant _Time_Barrier 1021;
+constant _Surf_1022 1022;
+constant _Haystack 1023;
+constant _Neutral 0;
+constant _Good 1;
+constant _Evil 2;
+constant _Chaotic 3;
+constant _Nearest 0;
+constant _Weakest 1;
+constant _Strongest 2;
+constant _Berserk 3;
+constant _Protect 4;
+constant _Defend 5;
+constant _Flank 6;
+constant _Fleeing 7;
+constant _Random 8;
+constant _Manual 9;
+constant _Clear 0;
+constant _Snow 1;
+constant _Rain 2;
+constant _Sparkle 3;
+constant _Fog 4;
+constant _Overcast 5;
+constant _Cloudy 6;
+constant _CachedIn 0;
+constant _PartyNear 1;
+constant _AvatarNear 2;
+constant _AvatarFar 3;
+constant _AvatarFootpad 4;
+constant _PartyFootpad 5;
+constant _SomethingOn 6;
+constant _External 7;
+constant _All 65177;
+constant _Destroy 65178;
+constant _Party 65179;
+constant _Avatar 65180;
+action _aEND_i 0;
+action _aCONTINUE_i 1;
+action _aNOP_i 2;
+action _aGOTO_START_i 10;
+action _aLOOP_i 11;
+action _aLOOP2_i 12;
+action _aBREAK 33;
+action _aNO_HALT_i 35;
+action _aWAIT_WHILE_NEAR_i 36;
+action _aWAIT_i 39;
+action _aWAIT_MINUTES_i 40;
+action _aWAIT_HOURS_i 41;
+action _aWAIT_WHILE_FAR_i 43;
+action _aFINISH_i 44;
+action _aREMOVE_i 45;
+action _aGO_N 48;
+action _aGO_NE 49;
+action _aGO_E 50;
+action _aGO_SE 51;
+action _aGO_S 52;
+action _aGO_SW 53;
+action _aGO_W 54;
+action _aGO_NW 55;
+action _aGO_DOWN_i 56;
+action _aGO_UP_i 57;
+action _aFRAME 70;
+action _aHATCH_i 72;
+action _aSET_EGG_i 73;
+action _aNEXT_FRAME_MAX_i 77;
+action _aNEXT_FRAME 78;
+action _aPREV_FRAME_MIN_i 79;
+action _aPREV_FRAME 80;
+action _aBARK_i 82;
+action _aSTEP_i 83;
+action _aMUSIC_i 84;
+action _aUSABLE_i 85;
+action _aSPEECH_i 86;
+action _aSFX_i 88;
+action _aFACE_i 89;
+action _aWEATHER_i 90;
+action _aSTAND_FRAME_i 97;
+action _aSTEP_RIGHT_FRAME_i 98;
+action _aSTEP_LEFT_FRAME_i 99;
+action _aREADY_FRAME_i 100;
+action _aRAISE1_FRAME_i 101;
+action _aEXTEND1_FRAME_i 102;
+action _aTHRUST1_FRAME_i 103;
+action _aRAISE2_FRAME_i 104;
+action _aEXTEND2_FRAME_i 105;
+action _aTHRUST2_FRAME_i 106;
+action _aSIT_FRAME_i 107;
+action _aBEND_FRAME_i 108;
+action _aKNEEL_FRAME_i 109;
+action _aLIE_FRAME_i 110;
+action _aUP_FRAME_i 111;
+action _aOUT_FRAME_i 112;
+action _aHIT_i 120;
+action _aATTACK_i 122;
+action _aUSABLE_EVENT_i 128;
+action _aRESURRECT_i 129;

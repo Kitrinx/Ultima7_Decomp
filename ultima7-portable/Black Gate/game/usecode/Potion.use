@@ -1,0 +1,59 @@
+Routine Potion accepts a0 #locals(6) #uses(StealItem_i, ChangeHits_i, MemberSays_i, ~LordOrLady, FlashBlocked_i, ConsumeOne_i) {
+    if (event = _Action) {
+        StealItem_i(item);
+        v0 = ~GetFrame(item);
+        v1 = ~GetTarget();
+        v2 = ~Item_isNpc(v1);
+        playSFX(item, 90);
+        if v2 {
+            Sfx(68);
+            if (v0 = 0) {
+                SetItemFlag_i(_Asleep, v1);
+            }
+            if (v0 = 1) {
+                v3 = ~rndRange(12, 3);
+                ChangeHits_i(v3, v1);
+            }
+            if (v0 = 2) {
+                ClearItemFlag_i(_Poisoned, v1);
+                ClearItemFlag_i(_Paralyzed, v1);
+                ClearItemFlag_i(_Asleep, v1);
+                ClearItemFlag_i(_Charmed, v1);
+                ClearItemFlag_i(_Cursed, v1);
+            }
+            if (v0 = 3) {
+                SetItemFlag_i(_Poisoned, v1);
+            }
+            if (v0 = 4) {
+                ClearItemFlag_i(_Asleep, v1);
+                if (~ItemToNPC_i(v1) = 65386) {
+                    SetWorkType(_TendShop, v1);
+                }
+            }
+            if (v0 = 5) {
+                SetItemFlag_i(_Protected, v1);
+            }
+            if (v0 = 6) {
+                StartLight_i(100);
+            }
+            if (v0 = 7) {
+                SetItemFlag_i(_Invisible, v1);
+            }
+            if (v0 >= 8) {
+                MemberSays_i("@What is this!@");
+                terminate;
+            }
+        } else {
+            v3 = ~rndRange(3, 1);
+            if (v3 = 1) {
+                v4 = ~LordOrLady();
+                v5 = ("@Those are expensive, <Gender>! " + "Plese waste them not!@");
+                MemberSays_i(v5);
+            } else {
+                FlashBlocked_i(60);
+                return;
+            }
+        }
+        ConsumeOne_i(item);
+    }
+}

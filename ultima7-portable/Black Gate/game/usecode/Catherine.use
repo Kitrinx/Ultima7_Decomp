@@ -1,0 +1,63 @@
+Routine Catherine accepts a0 #locals(3) #uses(~LordOrLady, ~IsNPCNear) {
+    if (event = _Action) {
+        SetSpeaker(0, _Catherine);
+        v0 = ~LordOrLady();
+        TurnOn(<< "name", "job", "bye" >>);
+        v1 = ~IsNPCNear(_Forlem);
+        if v1 {
+            TurnOn("gargoyle");
+        }
+        if flag(645) {
+            TurnOff("gargoyle");
+            TurnOn("For-Lem");
+        }
+        if not $MetCatherine {
+            [You see before you a young girl with a carefree expression. As she notices you, her eyes grow wide as she exclaims, "Thou art the person in one of For... one of -my- story books! Thou art the Avatar!"];
+            $MetCatherine = true;
+        } else {
+            ["How dost thou do, <v0> Avatar?" She curtseys.];
+        }
+        converse {
+            key ("name") {
+                ["My name is Catherine, <v0> Avatar."];
+                TurnOff("name");
+            }
+            key ("job") {
+                ["I have no job, <v0> Avatar. I live with my father and mother here in Vesper."];
+                TurnOn(<< "father", "mother", "Vesper" >>);
+            }
+            key ("father") {
+                ["He is the overseer at the mines, <v0> Avatar."];
+                v2 = ~IsDead(~NPCToItem_i(_Cador));
+                if v2 {
+                    ["Of course, he's gone now..." She looks down at her feet.];
+                }
+                TurnOff("father");
+            }
+            key ("mother") {
+                ["Yes, <v0> Avatar. She is there right now." She points, apparently indicating her house.];
+                TurnOff("mother");
+            }
+            key ("Vesper") {
+                ["That is the name of our city, <v0> Avatar. If thou art lost, thou mayest wish to speak with the town clerk."];
+                TurnOff("Vesper");
+            }
+            key ("gargoyle") {
+                ["I'm sorry, <v0> Avatar, my mother told me never to speak with strangers." She quickly turns away.*];
+                terminate;
+            }
+            key ("For-Lem") {
+                [A tear glistens as it rolls gently down her cheek. "He is no more. My -- my father killed him for talking to me, and -- and 'tis all thy fault!" She turns away, sobbing.*];
+                terminate;
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["Goodbye, <v0> Avatar."*];
+    }
+    if (event = _Bark) {
+        terminate;
+    }
+}

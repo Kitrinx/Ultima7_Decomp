@@ -1,0 +1,52 @@
+Routine SeanceSpell_i accepts a0 #locals(7) #uses(~IsMagicOK_i) {
+    if (event = _Action) {
+        Kernel_resetRef(item);
+        Item_bark("@Kal Wis Corp@", item);
+        if ~IsMagicOK_i() {
+            v0 = ~PostAction(<< _aSFX_i, 67, _aEXTEND1_FRAME_i, _aRAISE1_FRAME_i, _aTHRUST1_FRAME_i >>, item);
+            v1 = ~GetCoord(item);
+            v2 = (v1::1 - 2);
+            v3 = (v1::2 - 2);
+            createSprite(65535, 0, 0, 0, v3, v2, 13);
+            createSprite(65535, 0, 0, 0, v3, v2, 7);
+            flag(434) = true;
+            flag(435) = true;
+            flag(436) = true;
+            flag(437) = true;
+            flag(438) = true;
+            $MetMordra = true;
+            flag(440) = true;
+            flag(441) = true;
+            flag(442) = true;
+            flag(443) = true;
+            $MetMordra = true;
+            v4 = ~GetHour();
+            v5 = ~GetMinute_i();
+            if (v4 < 6) {
+                v6 = ((6 - v4) * 60);
+                v6 = (v6 + (60 - v5));
+                v6 = (v6 * 25);
+            } else {
+                v6 = ((23 - v4) * 60);
+                v6 = (v6 + (60 - v5));
+                v6 = (v6 * 25);
+            }
+            v0 = ~PostInFuture(v6, << _aNO_HALT_i, _aFINISH_i, _aUSABLE_i, #SeanceSpell_i >>, item);
+        } else {
+            v0 = ~PostAction(<< _aEXTEND1_FRAME_i, _aRAISE1_FRAME_i, _aTHRUST1_FRAME_i, _aUSABLE_i, #FizzleSpell_i >>, item);
+        }
+    }
+    if (event = _Posted_i) {
+        flag(434) = false;
+        flag(435) = false;
+        flag(436) = false;
+        flag(437) = false;
+        flag(438) = false;
+        $MetMordra = false;
+        flag(440) = false;
+        flag(441) = false;
+        flag(442) = false;
+        flag(443) = false;
+        $MetMordra = false;
+    }
+}

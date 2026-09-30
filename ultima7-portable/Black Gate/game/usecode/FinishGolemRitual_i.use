@@ -1,0 +1,37 @@
+Routine FinishGolemRitual_i accepts a0 #locals(20) #uses(~OuterContainer_i, RemoveAll_i) {
+    v0 = item;
+    v1 = ~OuterContainer_i(v0);
+    v2 = ~FindNearby_i(0, 18, _Rock_331, << 2487, 1736, 0 >>);
+    Foreach v5 in v2 {
+        v6 = ~FindNearby_i(176, 3, _Blood, v5);
+        Foreach v9 in v6 {
+            v10 = ~GetFrame(v9);
+            v11 = ~GetCoord(v9);
+            Item_destroy(v9);
+            v12 = ~Item_create(_Blood);
+            SetFrame(v10, v12);
+            v13 = ~PopToMap(v11);
+        }
+    }
+    v14 = ~GetContents(4, _All, _Scroll, v1);
+    v15 = ~PostAction(<< _aNO_HALT_i, _aFINISH_i, _aREMOVE_i >>, v0);
+    if (~GetQuality(v14) = 243) {
+        RemoveAll_i(v1);
+        flag(753) = false;
+        flag(795) = true;
+    }
+    if (~GetQuality(v14) = 244) {
+        RemoveAll_i(v1);
+        flag(796) = false;
+        flag(754) = false;
+    }
+    v2 = ~GetAllInRegion(_Tree_932);
+    Foreach v18 in v2 {
+        if ((~GetFrame(v18) = 2) or (~GetFrame(v18) = 3)) {
+            Camera_setCenterOn(v18);
+            FadePalette_i(0, 1, 12);
+            v19 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #FadeInArrival_i, _aUSABLE_i, #ConsumeBlood_i, _aWAIT_i, 30, _aUSABLE_i, #ReturnCameraToAvatar_i >>, v18);
+            return;
+        }
+    }
+}

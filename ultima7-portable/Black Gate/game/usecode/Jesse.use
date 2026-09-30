@@ -1,0 +1,97 @@
+Routine Jesse accepts a0 #locals(6) #uses(BarkAboutWork_i) {
+    if (event = _Action) {
+        v0 = ~AvatarSex();
+        if v0 {
+            SetSpeaker(1, _Jesse);
+        } else {
+            SetSpeaker(0, _Jesse);
+        }
+        TurnOn(<< "name", "job", "bye" >>);
+        if not $MetJesse {
+            [This is a tall, skinny actor with knobby knees.];
+            if v0 {
+                [He wears a woman's wig and is dressed in drag.];
+            }
+            $MetJesse = true;
+        } else {
+            if v0 {
+                v1 = " he says in falsetto.";
+            } else {
+                v1 = "";
+            }
+            append "Jesse clears his throat. \"Hello again!\"";
+            append v1;
+            append "";
+            say;
+        }
+        converse {
+            key ("name") {
+                if v0 {
+                    [The actor speaks in falsetto.];
+                }
+                ["I am Jesse and I am a star."];
+                TurnOff("name");
+                if v0 {
+                    [He slaps his own face and speaks in a normal register, "Oops, sorry! I am so entrenched in the role that I sometimes forget that I am not a woman!"];
+                }
+            }
+            key ("job") {
+                ["I work at the Royal Theatre as an actor. I have played -all- the great roles in my career. I now have the chance to play the part of a lifetime -- the Avatar!"];
+                TurnOn(<< "Royal Theatre", "Avatar" >>);
+            }
+            key ("Royal Theatre") {
+                ["Because it must cater to the masses, we never have the opportunity to do experimental works -- only the traditional gruel of mediocrity. But 'tis a wonderful space and it has marvelous acoustics."];
+                TurnOn(<< "masses", "experimental works" >>);
+                TurnOff("Royal Theatre");
+            }
+            key ("masses") {
+                ["People like to see tales of heroic adventures, knights in armour, beautiful princesses, wise kings, wizards, evil monsters. All that rot."];
+                TurnOff("masses");
+            }
+            key ("Avatar") {
+                ["The role is very challenging. I have a plethora of lines and I had to work with a trainer for weeks to prepare for the enormous amount of activity required. This role will make 'Jesse' a household name!"];
+                TurnOn(<< "challenging", "lines" >>);
+                TurnOff("Avatar");
+            }
+            key ("challenging") {
+                ["It is easily the most ambitious theatrical production ever conceived. There is over a hundred hours of play time. That is a long time for an audience."];
+                TurnOff("challenging");
+            }
+            key ("lines") {
+                ["My biggest lines are:~~"Name!"~~"Job!"~~"Bye!"];
+                TurnOff("lines");
+            }
+            key ("experimental works") {
+                ["My favorite piece is something Raymundo wrote for me entitled 'Three on a Codpiece'. I stand on stage and invite the audience to join me in tearing an undergarment into tiny pieces, after which they are placed in funeral urns and mixed with wheat paste. The pieces of cloth, not the audience members. Then the audience may glue the pieces anywhere on my body that they wish."];
+                TurnOff("experimental works");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["Goodbye. Be sure to come to the show when it opens!"*];
+    }
+    if (event = _Bark) {
+        v2 = ~GetTime();
+        v3 = ~GetWorkType(~NPCToItem_i(_Jesse));
+        v4 = ~rndRange(4, 1);
+        if (v3 = 29) {
+            if (v4 = 1) {
+                v5 = "@Name!@";
+            }
+            if (v4 = 2) {
+                v5 = "@Job!@";
+            }
+            if (v4 = 3) {
+                v5 = "@Yes! Er, I mean No!@";
+            }
+            if (v4 = 4) {
+                v5 = "@Bye!@";
+            }
+            Item_bark(v5, _Jesse);
+        } else {
+            BarkAboutWork_i(_Jesse);
+        }
+    }
+}

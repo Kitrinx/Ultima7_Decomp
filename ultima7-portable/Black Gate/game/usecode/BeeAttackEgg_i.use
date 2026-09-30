@@ -1,0 +1,11 @@
+Routine BeeAttackEgg_i accepts a0 #locals(5) #uses(SetWorkTypeUnlessWaiting_i) {
+    if (event = _Trigger) {
+        v0 = ~FindNearby_i(0, 99, _Bee, item);
+        Foreach v3 in v0 {
+            v4 = ~GetWorkType(v3);
+            if not (v4 = 0) {
+                SetWorkTypeUnlessWaiting_i(_Combat_0, v3);
+            }
+        }
+    }
+}

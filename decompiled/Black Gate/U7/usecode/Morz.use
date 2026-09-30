@@ -1,0 +1,73 @@
+Routine Morz accepts a0 #locals(2) #uses(~AvatarName, ~LordOrLady, GivePartyExp_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Morz);
+        v0 = ~AvatarName();
+        v1 = ~LordOrLady();
+        TurnOn(<< "name", "job", "bye" >>);
+        if not $MetMorz {
+            [The man before you shyly looks away.];
+            $MetMorz = true;
+        } else {
+            ["H-H-How m-m-may I h-h-help thee, <v1>?"];
+            TurnOn("stutter");
+        }
+        converse {
+            key ("stutter") {
+                ["What st-st-stutter?"  He turns to leave.*];
+                terminate;
+            }
+            key ("Moonglow") {
+                [He points to the ground. "That is here!"];
+                TurnOff("Moonglow");
+            }
+            key ("name") {
+                ["M-M-Morz."];
+                TurnOn("stutter");
+                TurnOff("name");
+            }
+            key ("job") {
+                ["I work with C-C-Cubolt, f-f-farming here."];
+                TurnOn(<< "Cubolt", "C-C-Cubolt", "stutter", "here" >>);
+            }
+            key ("here") {
+                ["M-M-Moonglow."];
+                TurnOn("Moonglow");
+                TurnOff("here");
+            }
+            key ("T-T-Tolemac", "C-C-Cubolt") {
+                ["That is n-n-not f-f-funny!" He blushes, and angrily turns away.*];
+                terminate;
+            }
+            key ("Cubolt") {
+                ["He is T-T-Tolemac's older br-br-brother. I t-t-trust him."];
+                TurnOn(<< "Tolemac", "T-T-Tolemac", "stutter" >>);
+                TurnOff(<< "Cubolt", "C-C-Cubolt" >>);
+            }
+            key ("Tolemac") {
+                ["T-T-Tolemac is m-m-my f-f-friend. I've kn-kn-known h-h-him f-f-for a long t-t-time. He just joined The F-F-Fellowship. He wants m-m-me t-t-to join, t-t-too."];
+                TurnOn("Fellowship");
+                TurnOff(<< "Tolemac", "T-T-Tolemac" >>);
+            }
+            key ("Fellowship") {
+                ["T-T-Tolemac says they d-d-do m-m-many g-g-good things and they would h-h-help m-m-me m-m-make f-f-friends m-m-more easily. C-C-Cubolt thinks they're b-b-bad. I d-d-do not kn-kn-know what t-t-to d-d-do."];
+                if flag(471) {
+                    TurnOn("don't join");
+                }
+                TurnOff("Fellowship");
+            }
+            key ("don't join") {
+                ["Thou d-d-dost n-n-not think I should join? C-C-Cubolt does not want m-m-me t-t-to either. I s-s-suppose I won't. I thank thee."];
+                GivePartyExp_i(20);
+                TurnOff("don't join");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["B-b-bye."*];
+    }
+    if (event = _Bark) {
+        terminate;
+    }
+}

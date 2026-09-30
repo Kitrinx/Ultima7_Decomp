@@ -1,0 +1,55 @@
+Routine StrengthTester accepts a0 #locals(6) #uses(PathToItem_i, ~DirFrom_i, ~IsAbleToTalk_i) {
+    if (event = _Action) {
+        closeAllGumps();
+        v0 = << 0, 65535, 1 >>;
+        v1 = << 1, 1, 1 >>;
+        v2 = 65535;
+        PathToItem_i(7, item, #StrengthTester, v2, v1, v0, item);
+    }
+    if (event = 7) {
+        v3 = ~DirFrom_i(item, _Avatar);
+        v4 = ~PostAction(<< _aFACE_i, v3, _aCONTINUE_i, _aBEND_FRAME_i, _aSTAND_FRAME_i >>, _Avatar);
+        v5 = ~GetNPCStat_i(_Str, _Avatar);
+        if ((v5 >= 0) and (v5 < 4)) {
+            v5 = 0;
+        }
+        if ((v5 >= 4) and (v5 < 8)) {
+            v5 = 1;
+        }
+        if ((v5 >= 8) and (v5 < 12)) {
+            v5 = 2;
+        }
+        if ((v5 >= 12) and (v5 < 15)) {
+            v5 = 3;
+        }
+        if ((v5 >= 15) and (v5 < 18)) {
+            v5 = 4;
+        }
+        if ((v5 >= 18) and (v5 < 23)) {
+            v5 = 5;
+        }
+        if ((v5 >= 23) and (v5 < 27)) {
+            v5 = 6;
+        }
+        if ((v5 >= 27) and (v5 < 30)) {
+            v5 = 7;
+        }
+        if (v5 >= 30) {
+            v5 = 8;
+        }
+        if (v5 > 3) {
+            v5 = (v5 - ~rndRange(2, 0));
+        }
+        if (v5 = 7) {
+            v5 = 6;
+        }
+        if (v5 > 7) {
+            v4 = ~PostInFuture((v5 + 1), << _aNO_HALT_i, _aSFX_i, 24 >>, item);
+            if (~IsNPCNear_i(_Carrocio) and ~IsAbleToTalk_i(_Carrocio)) {
+                v4 = ~PostInFuture(15, << _aNO_HALT_i, _aBARK_i, "@Avatar wins a Dragon!@" >>, _Carrocio);
+                v4 = ~GiveToParty_i(false, 0, _All, _Stuffed_Toy, 1);
+            }
+        }
+        v4 = ~PostAction(<< _aFRAME, 0, _aSFX_i, 4, _aNEXT_FRAME_MAX_i, _aLOOP_i, 65535, v5, byte(79), byte(11), 65535, v5, byte(70), 0 >>, item);
+    }
+}

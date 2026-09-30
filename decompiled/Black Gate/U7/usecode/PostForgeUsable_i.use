@@ -1,0 +1,18 @@
+Routine PostForgeUsable_i accepts a0 #locals(2) #uses(HammerSwordBlank_i) {
+    v0 = ~Item_getType(item);
+    if (v0 = 707) {
+        v1 = ~PostAction(<< _aWAIT_i, 1, _aUSABLE_i, #ArcadionUsable_i >>, item);
+        return;
+    }
+    if (v0 = 760) {
+        v1 = ~PostAction(<< _aWAIT_i, 1, _aUSABLE_i, #ArcadionUsable_i >>, item);
+        return;
+    }
+    if (event = _Action) {
+        v1 = ~PostAction(<< _aWAIT_i, 1, _aUSABLE_i, #Hammer >>, item);
+    }
+    if (event = _Posted_i) {
+        event = 1;
+        HammerSwordBlank_i(item);
+    }
+}

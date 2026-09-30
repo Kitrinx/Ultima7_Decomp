@@ -1,0 +1,36 @@
+Routine Diaper accepts a0 #locals(3) #uses(ConsumeOne_i, MemberBarks_i) {
+    if (event = _Action) {
+        v0 = ~GetFrame(item);
+        if (v0 = 0) {
+            v1 = ~GetTarget();
+            v2 = ~Item_getType(v1);
+            if ((v2 = 730) or (v2 = 864)) {
+                SetFrame(1, item);
+            } else {
+                if (~Item_getType(v1) = _Diaper) {
+                    if (~GetFrame(v1) = 2) {
+                        ConsumeOne_i(item);
+                    }
+                } else {
+                    MemberBarks_i("@Those are for babies.@");
+                }
+            }
+        }
+        if (v0 = 1) {
+            v1 = ~GetTarget();
+            if ~Item_isNpc(v1) {
+                SetWorkType(_Combat_0, v1);
+                SetAttackMode_i(_Fleeing, v1);
+                SetAttacker_i(_Avatar, v1);
+                ConsumeOne_i(item);
+            } else {
+                if (~Item_getType(v1) = _Diaper) && (~GetFrame(v1) = 2) {
+                    ConsumeOne_i(item);
+                }
+            }
+        }
+        if (v0 = 2) {
+            MemberBarks_i("@That is for dirty diapers.@");
+        }
+    }
+}

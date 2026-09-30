@@ -1,0 +1,199 @@
+Routine Snaz accepts a0 #locals(19) #uses(~LordOrLady, ~AskYesNo, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Snaz);
+        v0 = ~LordOrLady();
+        TurnOn(<< "name", "job", "bye" >>);
+        if not $MetSnaz {
+            [You see a filthy beggar who flashes you a grin as though you were his best friend in the whole world.];
+            $MetSnaz = true;
+        } else {
+            ["Hello again, <v0>," says Snaz.];
+        }
+        converse {
+            key ("name") {
+                ["I am called Snaz."];
+                TurnOff("name");
+            }
+            key ("job") {
+                ["I have no job for I am a beggar. For a gold coin I shall tell thee a joke."];
+                TurnOn(<< "beggar", "tell a joke" >>);
+            }
+            key ("beggar") {
+                ["When I was just a little boy I was made an orphan and left homeless and penniless. That was a joke life played on me. 'Tis a funny joke, eh?~~"But I would not charge thee a gold piece for that one."];
+                TurnOff("beggar");
+            }
+            key ("tell a joke") {
+                ["Dost thou wish to hear one?"];
+                v1 = ~AskYesNo();
+                if v1 {
+                    v2 = ~TakeFromParty_i(true, _All, _All, _Gold_Coin, 1);
+                    if v2 {
+                        ["All right, here is one..."];
+                        TurnOn("Fellowship joke");
+                    } else {
+                        ["If thou dost want to hear a joke, thou must pay me, <v0>. Come back when thy pockets are full. The richer thou art, the funnier I get!"];
+                    }
+                } else {
+                    ["Have a heart, I pray thee! I have a wife and six hungry children to feed." He feels your stare upon him. "Oh, very well. Wouldst thou believe I have a cat and it just had kittens?"];
+                }
+                TurnOff("tell a joke");
+            }
+            key ("Fellowship joke") {
+                ["I was discussing philosophy with a Fellowship member the other day and he asked me, 'What, in thine opinion, is the height of stupidity?'~~"So I said, 'I do not know. How tall art thou?'~~"No, really, I make sport of The Fellowship, but I mean it sincerely..."];
+                TurnOff("Fellowship joke");
+                TurnOn(<< "Fellowship", "Lord British joke" >>);
+            }
+            key ("Fellowship") {
+                ["That is what I dearly love about The Fellowship. They could always take a joke!~~"And from what I hear they play funny jokes themselves! Like the joke they played in Trinsic!"];
+                TurnOff("Fellowship");
+            }
+            key ("Lord British joke") {
+                ["For a gold coin I will tell thee another. Dost thou wish to hear it?"];
+                v3 = ~AskYesNo();
+                if not v3 {
+                    ["I see I have reached the limits of thy sense of humor."];
+                    TurnOff("Lord British joke");
+                } else {
+                    v4 = ~TakeFromParty_i(true, _All, _All, _Gold_Coin, 1);
+                    if v4 {
+                        ["I was at the castle of Lord British the other day and I noticed he has three large pools. So I asked why he doth have three of them.~~"He pointed to the first one and said the first was to swim in cool water. ~~"The second was for friends to swim in warm water.~~"I noticed that the third pool was empty and I asked him why.~~"He said that it was for people who could not swim!"];
+                        TurnOff("Lord British joke");
+                        TurnOn(<< "Lord British", "Weston joke" >>);
+                    } else {
+                        ["Thou art more destitute than I! If I tell thee any more jokes now thou mayest steal mine act!"];
+                        TurnOff("Lord British joke");
+                    }
+                }
+            }
+            key ("Lord British") {
+                ["Poor Lord British! When faced with a gigantic menace that threatens his entire kingdom he is an extremely capable ruler.~~"But what happens when there are a myriad of smaller things that all threaten the welfare of his people indirectly?~~"There is a riddle for thee to solve!"];
+                TurnOff("Lord British");
+            }
+            key ("Weston joke") {
+                ["For a gold coin I will tell thee another. Dost thou wish to hear it?"];
+                v5 = ~AskYesNo();
+                if not v5 {
+                    ["Very well. If thou didst not get the first two there is no good reason for me to continue now."];
+                    TurnOff("Weston joke");
+                } else {
+                    v6 = ~TakeFromParty_i(true, _All, _All, _Gold_Coin, 1);
+                    if v6 {
+                        ["A man named Weston came to me deep in perplexity.~~"He told me he wanted to steal some apples from the Royal Orchards but if he did he would feel bad about it in the morning.~~"So I gave him this advice -- sleep until noon!"];
+                        TurnOff("Weston joke");
+                        TurnOn(<< "Weston", "mage joke" >>);
+                    } else {
+                        ["Thy pockets are empty, <v0>. Perhaps it is time to stop laughing and start worrying!"];
+                        TurnOff("Weston joke");
+                    }
+                }
+            }
+            key ("Weston") {
+                ["Weston now sits in the castle prison, where he shall most certainly rot for the rest of his life. Heh-heh-heh! ~~"Try as I might, I cannot best that little jest!"];
+                TurnOff("Weston");
+            }
+            key ("mage joke") {
+                ["For a gold coin I will tell thee another. Dost thou wish to hear it?"];
+                v7 = ~AskYesNo();
+                if not v7 {
+                    ["Thou art wise. Thou shouldst save thy gold to pay a healer to cure that ache in thy side."];
+                    TurnOff("mage joke");
+                } else {
+                    v8 = ~TakeFromParty_i(true, _All, _All, _Gold_Coin, 1);
+                    if v8 {
+                        ["Whilst travelling on the road I came across a mage.~~"He looked as if he had not eaten for days and complained of a terrible pain in his stomach.~~"So I told him his stomach was empty. If he put something in it he would feel better.~~"Later he complained to me of a headache. I said his headache was caused by a similar\x09problem as his stomach.~~"No doubt it did hurt him so because, being a mage, there was nothing left in it!"];
+                        TurnOff("mage joke");
+                        TurnOn(<< "mages", "Sullivan joke" >>);
+                    } else {
+                        ["Now thou art playing a joke on me. Thou art broke!"];
+                        TurnOff("mage joke");
+                    }
+                }
+            }
+            key ("mages") {
+                ["All of the mages have gone daft or mad! What other proper response is there in a world that is so terrifically funny?!"];
+                TurnOff("mages");
+            }
+            key ("Sullivan joke") {
+                ["Thou art a brave Avatar! Dost thou wish to hear another?"];
+                v9 = ~AskYesNo();
+                if not v9 {
+                    ["Aha! Not as brave as I thought!"];
+                    TurnOff("joke five");
+                } else {
+                    v10 = ~TakeFromParty_i(true, _All, _All, _Gold_Coin, 1);
+                    if v10 {
+                        ["Didst thou knowest that the notorious Sullivan the Trickster recently became a father?~~"It is true! They say the baby has his father's eyes and his mother's nose, but they made the baby give them back."];
+                        TurnOff("Sullivan joke");
+                        TurnOn(<< "Sullivan", "gold joke" >>);
+                    } else {
+                        ["Thou mayest be laughing but surely thy purse is not, for it is empty."];
+                    }
+                }
+            }
+            key ("Sullivan") {
+                ["Yes, I know the man they call Sullivan the Trickster! In fact thou dost remind me of him!~~"Or does he remind me of thee?~~"He is so tricky that just talking about him has caused me to trick myself! Heh-Hee-Haa!"];
+                TurnOff("Sullivan");
+            }
+            key ("gold joke") {
+                ["I have amused thee so far! Wouldst thou like to hear another? It is a joke about gold!"];
+                v11 = ~AskYesNo();
+                if v11 {
+                    v12 = ~TakeFromParty_i(true, _All, _All, _Gold_Coin, 1);
+                    if v12 {
+                        loop {
+                            Sfx(23);
+                            ["Thank thee very much! Now, goodbye!"];
+                            ["Dost thou get it? Ha! Ha! Ha! Ha! If not, it would be my pleasure to repeat it."];
+                            ["Wouldst thou like to hear the gold joke again?"];
+                            v13 = ~AskYesNo();
+                        } while v13 {
+                            ["Now listen carefully..."];
+                            v14 = ~TakeFromParty_i(true, _All, _All, _Gold_Coin, 1);
+                            if v14 {
+                                continue;
+                            } else {
+                                ["Oh, I am so sorry. I cannot tell thee the joke again for thou art out of money."];
+                            }
+                            goto label_65;
+                        }
+                        ["I see thou art becoming wise to the ways of show business, <v0>. Good day to thee!"];
+                        terminate;
+                        label_65:
+                    } else {
+                        ["I can see thou art so poor that thou cannot even afford a sense of humor!"];
+                    }
+                } else {
+                    ["Oh, it is a pity that thou dost not wish to hear it! It is the funniest one yet and my personal favorite!"];
+                }
+                TurnOff("gold joke");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["I do hope I did amuse thee."*];
+    }
+    if (event = _Bark) {
+        v15 = ~GetTime();
+        v16 = ~GetWorkType(~NPCToItem_i(_Snaz));
+        v17 = ~rndRange(4, 1);
+        if (v16 = 12) {
+            if (v17 = 1) {
+                v18 = "@Spare change?@";
+            }
+            if (v17 = 2) {
+                v18 = "@Got a coin for me?@";
+            }
+            if (v17 = 3) {
+                v18 = "@Jokes for sale!@";
+            }
+            if (v17 = 4) {
+                v18 = "@Handouts accepted!@";
+            }
+            Item_bark(v18, _Snaz);
+        } else {
+            BarkAboutWork_i(_Snaz);
+        }
+    }
+}

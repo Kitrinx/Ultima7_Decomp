@@ -1,0 +1,198 @@
+Routine Brion accepts a0 #locals(18) #uses(~AvatarName, ~LordOrLady, ~AskYesNo, ~IsInInv, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Brion);
+        v0 = ~AvatarName();
+        v1 = ~LordOrLady();
+        v2 = false;
+        v3 = false;
+        TurnOn(<< "name", "job", "bye" >>);
+        if not $MetBrion {
+            [You see a scholarly-looking man with a friendly expression.];
+            $MetBrion = true;
+            $MetNelson = true;
+        } else {
+            ["Salutations, <v1>." Brion smiles.];
+        }
+        if $TLSaidBrion {
+            TurnOn("Caddellite");
+        }
+        if flag(494) {
+            TurnOn("crystals");
+        }
+        if (flag(493) and not flag(496)) {
+            TurnOn("have crystal");
+        }
+        if flag(521) && (flag(474) and not v2) {
+            TurnOn("Zelda's feelings");
+        }
+        converse {
+            key ("name") {
+                ["Why, thou mayest call me Brion."];
+                if (flag(474) and not v2) {
+                    TurnOn("Zelda's feelings");
+                }
+                TurnOff("name");
+            }
+            key ("job") {
+                ["I am the head of the observatory here in Moonglow," he says proudly. "This is where the telescope is kept."];
+                TurnOn(<< "telescope", "Moonglow" >>);
+                if flag(256) {
+                    TurnOn("event");
+                }
+            }
+            key ("Moonglow") {
+                ["Why, I love living here in Moonglow. I very much like the people here."];
+                TurnOn("people");
+                TurnOff("Moonglow");
+            }
+            key ("people") {
+                ["Hast thou spoken with my twin, Nelson? He heads the Lycaeum. Or Elad? And surely thou knowest about the mage, Penumbra."];
+                TurnOn(<< "Nelson", "Elad", "Penumbra" >>);
+                TurnOff("people");
+            }
+            key ("Zelda's feelings") {
+                v2 = true;
+                flag(475) = true;
+                ["Oh, I see," he shrugs. "I never really thought about my brother's assistant in such a manner. That is too bad, for my time permits nothing but mine observations. Ah, well, what else can I help thee with?"];
+                TurnOff("Zelda's feelings");
+            }
+            key ("Nelson") {
+                ["I do not see him as often as I would like, for we are so heavily involved with our work. He will be easy to recognize shouldst thou see him, for people tell us we look identical. I do not see it, of course, for, not only was he born with the brains, but also the handsome face."];
+                TurnOff("Nelson");
+            }
+            key ("Elad") {
+                ["Poor Elad. He sometimes joins me at night to view the heavens. He has been trying to leave Moonglow for many years. He likes the island, but is filled with wanderlust." He smiles.];
+                TurnOff("Elad");
+            }
+            key ("Penumbra") {
+                ["Thou hast not heard? Why, two hundred years ago she put herself to sleep."];
+                TurnOff("Penumbra");
+            }
+            key ("telescope") {
+                ["I have it upstairs, of course. Thou art welcome to use it as often as thou wishest. In fact, I also have an orrery, shouldst thou desire to see that as well."];
+                TurnOn("orrery");
+                TurnOff("telescope");
+            }
+            key ("Caddellite") {
+                [He looks at you strangely, shrugs, and says, "Why, Caddellite is a mineral that is not native to Britannia. In fact, it only comes from meteorites.~~ "And the last known meteor to strike the planet landed somewhere in the North East sea. Why dost thou want to know?"];
+                TurnOn("helmet");
+                TurnOff("Caddellite");
+            }
+            key ("helmet") {
+                ["Thou dost want a helmet made of Caddellite?" He thinks carefully. "Perhaps Zorn in Minoc would have the skills to build a helmet such as thou desirest. If thou findest the Caddellite, take it to him.~~"I have heard rumors of an island that once existed in the North East sea. Perhaps my brother at the Lycaeum could help with that."];
+                TurnOff("helmet");
+                flag(502) = true;
+            }
+            key ("orrery") {
+                [The orrery? Why, 'tis a model of all the planets in our solar system, including the two moons of Britannia. The orrery moves to match the actual, current orbits of our real system.];
+                if not v3 {
+                    ["I am very excited, for shortly a very rare event will occur!"];
+                    TurnOn("event");
+                }
+                TurnOff("orrery");
+            }
+            key ("event") {
+                ["Thou art referring to what we in the business call the Astronomical Alignment. The planets and the moons will all line up perfectly, something that happens only once every 800 years!"];
+                v3 = true;
+                TurnOff("event");
+            }
+            key ("bye") {
+                if (flag(488) and (flag(489) and (flag(490) and flag(477)))) {
+                    ["Good day, <v1>. Thou mayest use mine observatory as often as thou wishest."*];
+                    terminate;
+                } else {
+                    ["Before thou dost depart, let me show thee a few of my trinkets. Here is my..."];
+                    PushKeys();
+                    TurnOn(<< "moon", "sextant", "kite", "crystals", "nothing" >>);
+                }
+            }
+            key ("nothing") {
+                PopKeys();
+            }
+            key ("moon") {
+                v4 = false;
+                v5 = ~FindNearby_i(0, 20, _Food_Item, item);
+                Foreach v8 in v5 {
+                    if (~GetFrame(v8) = 28) {
+                        v4 = true;
+                    }
+                }
+                if v4 {
+                    ["This represents one of the moons that orbit Britannia." He hands the model to you. Taking it, you quickly realize that it is made up entirely of green cheese.~~"I carved it myself," he says as you return it to him.];
+                } else {
+                    ["Now where did that go?" he says, scratching his head. "Well, it is around here somewhere. I can show thee at a later time." He seems more distraught than he is willing to convey.];
+                }
+                TurnOff("moon");
+                flag(488) = true;
+            }
+            key ("sextant") {
+                v9 = false;
+                v10 = ~FindNearby_i(0, 40, _Sextant, _Avatar);
+                Foreach v8 in v10 {
+                    if (~GetFrame(v8) = 1) {
+                        v9 = true;
+                    }
+                }
+                if v9 {
+                    [He hands you a solid gold sextant. "This has been passed on to each and every individual who has ever held a position at the observatory here in Moonglow. 'Tis more than 200 years old." He beams as you return it to him.];
+                } else {
+                    ["Damn! 'Tis gone! That has been here for more than 200 years." He does not seem pleased.];
+                }
+                TurnOff("sextant");
+                flag(489) = true;
+            }
+            key ("kite") {
+                v13 = ~FindNearest_i(65535, _Kite, _Avatar);
+                if v13 {
+                    [He shows you a kite. "I made this myself by reading one of the books in my brother's library."];
+                } else {
+                    ["Where did that disappear to?" He scratches his chin, obviously puzzled. "I do hope it has not disappeared. I constructed it from a book in my brother's library."];
+                }
+                TurnOff("kite");
+                flag(490) = true;
+            }
+            key ("crystals") {
+                if not flag(494) {
+                    ["This," he says, presenting a collection of crystals that seem to be attached in some indeterminable fashion, "is an orrery viewer. It permits one to see mine orrery here from anywhere in Britannia."~~He seems thoughtful.~~"I know thou cannot stay around here to see the alignment.];
+                }
+                [Wouldst thou like to have this to view mine orrery and better predict the planet's position?"];
+                flag(477) = true;
+                v14 = ~AskYesNo();
+                if v14 {
+                    [He smiles proudly. "I thought thou wouldst. However, there is one problem. I still need one more crystal to completely finish the viewer. If thou wouldst visit the tavern, thou mightest find one of the merchants or travellers there who sometimes provide me with crystals. If thou canst find another crystal, I will be able to give thee the completed viewer."];
+                } else {
+                    ["Very well, <v1>. I hope thou dost not regret this later."];
+                    flag(494) = true;
+                }
+                TurnOff("crystals");
+            }
+            key ("have crystal") {
+                v15 = ~IsInInv(65177, 65177, _The_Orrery_Crystal, 1, _Party);
+                if v15 {
+                    ["Thou hast the crystal? Excellent." He takes the crystal that you got from the adventurer and begins attaching it to his orrery viewer. Shortly he is finished.];
+                    flag(493) = false;
+                    RemoveNPC_i(_Addom);
+                    TurnOff("have crystal");
+                    TurnOn("want crystal");
+                    v16 = ~TakeFromParty_i(false, _All, _All, _The_Orrery_Crystal, 1);
+                } else {
+                    ["I am sorry, <v1>, but I must have the crystal to complete the viewer."];
+                }
+            }
+            key ("want crystal") {
+                v17 = ~GiveToParty_i(0, 1, _All, _Orrery_Viewer, 1);
+                if v17 {
+                    ["Use it well, <v1>." He gives the contraption to you.];
+                    flag(496) = true;
+                } else {
+                    [He shakes his head. "Thou dost not have enough room for it. Perhaps when thou dost return at a later time."];
+                }
+                TurnOff("want crystal");
+            }
+        }
+        clear_answers;
+    }
+    if (event = _Bark) {
+        BarkAboutWork_i(_Brion);
+    }
+}

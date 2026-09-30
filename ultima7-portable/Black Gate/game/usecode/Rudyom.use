@@ -1,0 +1,227 @@
+Routine Rudyom accepts a0 #locals(2) #uses(~AskYesNo, RudyomSellsSpells_i, RudyomSellsReagents_i, GivePartyExp_i) {
+    if (event = _Bark) {
+        terminate;
+    }
+    SetSpeaker(0, _Rudyom);
+    TurnOn(<< "name", "job", "bye" >>);
+    if $LEARNED_ABOUT_BLACKROCK {
+        TurnOn(<< "blackrock", "Moongates" >>);
+    }
+    if not $MetRudyom {
+        [This elderly mage looks older and more senile than when you last saw him.];
+        $MetRudyom = true;
+    } else {
+        if not $TetraGone {
+            ["Who art thou?" Rudyom asks. "Oh -- I remember."];
+        } else {
+            ["Hello again, Avatar!" Rudyom says, beaming.];
+        }
+    }
+    converse {
+        key ("name") {
+            ["That I know. My name is Rudyom."];
+            TurnOff("name");
+        }
+        key ("job") {
+            if not $TetraGone {
+                ["I am not sure anymore. I was a powerful mage at one time! Now nothing works. Magic is afoul! I suppose I could sell thee some reagents and spells if thou dost want. And mind the carpet -- it does not work!"];
+                TurnOn("carpet");
+            } else {
+                ["I am a powerful mage! Magic is my milieu! I can sell thee spells or reagents."];
+            }
+            TurnOn(<< "magic", "spells", "reagents" >>);
+        }
+        key ("magic") {
+            if not $TetraGone {
+                ["I do not understand what is wrong. My magic does not work so well anymore."];
+            } else {
+                ["The ether is flowing freely! Magic is with us once again!"];
+            }
+            TurnOff("magic");
+        }
+        key ("carpet") {
+            ["The big blue carpet. 'Tis a flying carpet. It does not work like it should."];
+            [Rudyom looks around and scratches his head.];
+            ["Funny. It was here a while ago. Oh! I remember now. Some adventurers borrowed my flying carpet a few weeks ago. When they returned they said they had lost it near Serpent's Spine. Somewhere in the vicinity of the Lost River. I suppose\x09if thou didst want to go and find it, thou couldst keep it. It did not work very well. Perhaps thou canst make it work. I did not like the color, anyway!"];
+            TurnOff("carpet");
+        }
+        key ("spells") {
+            ["Dost thou wish to buy some spells?"];
+            v0 = ~AskYesNo();
+            if v0 {
+                RudyomSellsSpells_i();
+            } else {
+                ["Oh. Never mind, then."];
+            }
+        }
+        key ("reagents") {
+            ["Dost thou wish to buy some reagents?"];
+            v1 = ~AskYesNo();
+            if v1 {
+                RudyomSellsReagents_i();
+            } else {
+                ["Oh. Never mind, then."];
+            }
+        }
+        key ("blackrock") {
+            ["Do not mention that foul mineral's name to me! It hast caused me much frustration! Before my mind lost me I was conducting experiments with the infernal material. But now I cannot for the life of me remember what it was I was trying to do."];
+            TurnOn("experiments");
+            TurnOff("blackrock");
+        }
+        key ("Moongates") {
+            if not $SphereGone {
+                ["They are a nuisance, are they not? I do believe that blackrock is the solution to the problem. I wish my mind had not lost me, or I could continue my work..."];
+            } else {
+                ["I understand they are gone for good. Do not blame thyself, Avatar. The disaster will only pave the way for a new era in experimentation and discovery. I hope."];
+            }
+            TurnOff("Moongates");
+        }
+        key ("experiments") {
+            ["I wrote them all down in my notebook, which is somewhere around here. Thou art welcome to look at it. But stay away from that damned transmuter -- 'tis dangerous!"];
+            TurnOn(<< "transmuter", "notebook" >>);
+            TurnOff("experiments");
+        }
+        key ("notebook") {
+            ["I used it to record mine experiments with blackrock and the blackrock transmuter."];
+            TurnOff("notebook");
+        }
+        key ("transmuter") {
+            ["'Tis that wand-like thing. It was supposed to magnetize and magically transmute blackrock, but it doth not work correctly. Try pointing it at a piece of blackrock and thou wilt see what I mean. But do not stand too close! Thou art welcome to take it if thou dost want a piece of garbage!"];
+            GivePartyExp_i(50);
+            TurnOff("transmuter");
+        }
+        key ("bye") {
+            break;
+        }
+    }
+    clear_answers;
+    if not $TetraGone {
+        ["Leaving so soon? Deary me. I hope I remember thee if thou dost come back."*];
+    } else {
+        ["Goodbye, Avatar."*];
+    }
+}
+
+Usable RudyomSellsSpells_i #locals(10) #uses(~AskOrdList, ~SellSpell_i, ~AskYesNo) {
+    PushKeys();
+    v0 = true;
+    v1 = << 25, 45, 65, 85, 115, 135, 155, 185 >>;
+    While v0 {
+        ["In which circle dost thou wish to study?"];
+        v2 = ~AskOrdList(<< "none", "First", "Second", "Third", "Fourth", "Fifth", "Sixth", "Seventh", "Eighth" >>);
+        v2 = (v2 - 1);
+        if (v2 = 0) {
+            break;
+        }
+        switch v2 {
+            case 1 {
+                v3 = << "nothing", "Cure", "Detect Trap", "Light", "Awaken All" >>;
+                v4 = << 0, 9, 10, 13, 15 >>;
+            }
+            case 2 {
+                v3 = << "nothing", "Destroy Trap", "Fire Blast", "Great Light", "Telekinesis" >>;
+                v4 = << 0, 16, 18, 19, 22 >>;
+            }
+            case 3 {
+                v3 = << "nothing", "Curse", "Heal", "Paralyze", "Poison" >>;
+                v4 = << 0, 24, 25, 28, 30 >>;
+            }
+            case 4 {
+                v3 = << "nothing", "Lightning", "Mark", "Recall", "Seance" >>;
+                v4 = << 0, 33, 34, 36, 38 >>;
+            }
+            case 5 {
+                v3 = << "nothing", "Charm", "Dance", "Explosion", "Great Heal" >>;
+                v4 = << 0, 40, 41, 43, 44 >>;
+            }
+            case 6 {
+                v3 = << "nothing", "Clone", "Magic Storm", "Poison Field", "Sleep Field" >>;
+                v4 = << 0, 49, 52, 53, 54 >>;
+            }
+            case 7 {
+                v3 = << "nothing", "Create Gold", "Delayed Blast", "Mass Charm", "Restoration" >>;
+                v4 = << 0, 56, 58, 61, 63 >>;
+            }
+            default {
+                v3 = << "nothing", "Armageddon", "Resurrect", "Summon", "Swordstrike" >>;
+                v4 = << 0, 64, 68, 69, 70 >>;
+            }
+        }
+        ["What spell wouldst thou like to buy?"];
+        v5 = ~AskOrdList(v3);
+        if (v5 = 1) {
+            ["Fine."];
+            break;
+        }
+        v6 = v4::v5;
+        v7 = v1::v2;
+        v8 = v3::v5;
+        ["The <v8> spell will cost <v7> gold."];
+        v9 = ~SellSpell_i(v7, v6);
+        if (v9 = 1) {
+            ["Done!"];
+        } else {
+            if (v9 = 2) {
+                ["Thou dost not have a spellbook."];
+                v0 = false;
+                break;
+            }
+            if (v9 = 3) {
+                ["Thou dost not have enough gold for that!"];
+            } else {
+                if (v9 = 4) {
+                    ["Thou dost already have that spell!"];
+                } else {
+                }
+            }
+        }
+        ["Wouldst thou like another spell?"];
+        v0 = ~AskYesNo();
+    }
+    PopKeys();
+}
+
+Usable RudyomSellsReagents_i #locals(13) #uses(~AskOrdList, ~PriceString_i, ~AskYesNo, ~SellItem_i) {
+    PushKeys();
+    v0 = true;
+    v1 = << "nothing", "Ginseng", "Blood Moss", "Sulfurous Ash", "Mandrake Root", "Black Pearl" >>;
+    v2 = << 0, 842, 842, 842, 842, 842 >>;
+    v3 = << 65177, 5, 1, 7, 3, 0 >>;
+    v4 = << 0, 2, 3, 4, 5, 5 >>;
+    v5 = "";
+    v6 = 0;
+    v7 = "";
+    v8 = 1;
+    ["What reagent wouldst thou like to buy?"];
+    While v0 {
+        v9 = ~AskOrdList(v1);
+        if (v9 = 1) {
+            ["Fine."];
+            v0 = false;
+        } else {
+            v10 = ~PriceString_i(v7, v4::v9, v6, v1::v9, v5);
+            v11 = 0;
+            ["^<v10> Art thou willing to pay that much?"];
+            v12 = ~AskYesNo();
+            if v12 {
+                ["How many wouldst thou like?"];
+                v11 = ~SellItem_i(false, 1, 20, v4::v9, v8, v3::v9, v2::v9);
+            }
+            if (v11 = 1) {
+                ["Done!"];
+            } else {
+                if (v11 = 2) {
+                    ["Thou cannot possibly carry that much!"];
+                } else {
+                    if (v11 = 3) {
+                        ["Thou dost not have enough gold for that!"];
+                    } else {
+                    }
+                }
+            }
+            ["Wouldst thou like something else?"];
+            v0 = ~AskYesNo();
+        }
+    }
+    PopKeys();
+}

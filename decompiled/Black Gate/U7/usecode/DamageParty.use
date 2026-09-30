@@ -1,0 +1,10 @@
+Routine DamageParty accepts a0 #locals(6) #uses(DoDamage_i) {
+    if (event = _Trigger) {
+        v0 = ~GetParty();
+        v1 = ~GetQuality(item);
+        Foreach v4 in v0 {
+            v5 = ~rndRange(v1, 1);
+            DoDamage_i(v5, v4);
+        }
+    }
+}

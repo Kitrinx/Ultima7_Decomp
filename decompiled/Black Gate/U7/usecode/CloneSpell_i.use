@@ -1,0 +1,17 @@
+Routine CloneSpell_i accepts a0 #locals(3) #uses(~DirFromAvatar_i, ~IsMagicOK_i) {
+    if (event = _Action) {
+        v0 = ~GetTarget();
+        v1 = ~DirFromAvatar_i(v0);
+        Kernel_resetRef(item);
+        Item_bark("@In Quas Xen@", item);
+        if (~IsMagicOK_i() and (~Item_isNpc(v0) and not (~GetItemFlag_i(27, 0) = 65535))) {
+            v2 = ~PostAction(<< _aRAISE1_FRAME_i, _aOUT_FRAME_i, _aTHRUST2_FRAME_i >>, item);
+            v2 = ~PostInFuture(4, << _aNO_HALT_i, _aUSABLE_i, #CloneSpell_i >>, v0);
+        } else {
+            v2 = ~PostAction(<< _aRAISE1_FRAME_i, _aOUT_FRAME_i, _aTHRUST2_FRAME_i, _aUSABLE_i, #FizzleSpell_i >>, item);
+        }
+    }
+    if (event = _Posted_i) {
+        v2 = ~CloneNPC_i(item);
+    }
+}

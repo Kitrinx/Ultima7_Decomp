@@ -1,0 +1,59 @@
+Routine ReviveGolem_i accepts a0 #locals(19) #uses(~GolemsInPentacle_i, ~IsInInv, MemberSays_i, BarkIfNear_i, ~DirFromAvatar_i) {
+    v0 = ~FindNearby_i(8, 40, _Golem, item);
+    v1 = false;
+    v2 = false;
+    Foreach v5 in v0 {
+        if ~GetContents(4, 243, _Scroll, v5) {
+            v1 = v5;
+            v6 = v1;
+        }
+        if ~GetContents(4, 244, _Scroll, v5) {
+            v2 = v5;
+            v6 = v2;
+        }
+    }
+    if (event = _Posted_i) {
+        v7 = false;
+        v8 = ~GolemsInPentacle_i();
+        Foreach v11 in v8 {
+            v7 = ~GetContents(10, _All, _Small_Rock, v11);
+            if v7 {
+                break;
+            }
+        }
+        if not v7 {
+            v12 = (~GetCoord(_Avatar) & (65177 & 10));
+            v0 = ~FindNearby_i(0, 30, _Small_Rock, v12);
+            if (v0 or ~IsInInv(10, 65177, _Small_Rock, 1, _Party)) {
+                MemberSays_i("@The heart must be placed in the body.@");
+                terminate;
+            }
+            MemberSays_i("@According to the tome, a `heart' will be necessary to perform this ritual.@");
+            if not flag(796) {
+                SetSpeaker(0, _Corwin);
+                ["I will give him mine!"];
+                CloseSpeaker(_Corwin);
+                v13 = ~PostAction(<< _aWAIT_i, 500 >>, _Avatar);
+                v0 = ~FindNearby_i(0, 80, _Body_414, item);
+                Foreach v5 in v0 {
+                    if ~GetContents(4, 243, _Scroll, v5) {
+                        SetSpeaker(0, _Corwin);
+                        [You watch in stunned horror as Bollux pierces his chest open with his fingers.];
+                        CloseSpeaker(_Corwin);
+                        v16 = ~GetDirToward_i(v5, v2);
+                        SetSpeaker(0, _Corwin);
+                        [He pulls forth a heart-shape stone and, with a final flurry of action, drops the stone upon Adjhar's chest as he falls dead to the ground.];
+                        CloseSpeaker(_Corwin);
+                        v17 = ~PostAction(<< _aFACE_i, v16, _aWAIT_i, 2, _aKNEEL_FRAME_i, _aWAIT_i, 2, _aUP_FRAME_i, _aWAIT_i, 2, _aLIE_FRAME_i, _aWAIT_i, 1, _aUSABLE_i, #GolemScrollUsable_i >>, v2);
+                        return;
+                    }
+                }
+            }
+            terminate;
+        }
+        BarkIfNear_i(<< "@In Ylem...@", "@In Grav...@", "@In Mani...@", "@Kal Por...@", "@Vas Flam Uus...@" >>, _Avatar);
+        v16 = ~DirFromAvatar_i(v7);
+        v18 = ~PostAction(<< _aFACE_i, v16, _aWAIT_i, 1, _aKNEEL_FRAME_i, _aWAIT_i, 3, _aSTAND_FRAME_i, _aWAIT_i, 3, _aOUT_FRAME_i, _aWAIT_i, 3, _aSTAND_FRAME_i, _aWAIT_i, 2, _aKNEEL_FRAME_i, _aWAIT_i, 3, _aSTAND_FRAME_i, _aWAIT_i, 3, _aUP_FRAME_i, _aWAIT_i, 3, _aSTAND_FRAME_i, _aWAIT_i, 2, _aLOOP_i, 65512, 1, byte(111), byte(39), 2, byte(103), byte(39), 1, byte(108), byte(39), 1, byte(97) >>, _Avatar);
+        v18 = ~PostInFuture(76, << _aUSABLE_i, #FinishGolemRitual_i, _aNOP_i >>, v7);
+    }
+}

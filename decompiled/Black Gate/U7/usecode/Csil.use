@@ -1,0 +1,162 @@
+Routine Csil accepts a0 #locals(5) #uses(~IsNPCNear, ~AskYesNo, CsilHeals_i, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Csil);
+        v0 = ~GetWorkType(~NPCToItem_i(_Csil));
+        TurnOn(<< "name", "job", "services", "bye" >>);
+        if not $MetCsil {
+            [You see a healer who looks wise and honest.];
+            ["I have been looking forward to thine arrival, Avatar. Word spreads quickly. I am pleased to meet thee!"];
+            $MetCsil = true;
+        } else {
+            ["Hello again, Avatar!" Csil says with a smile.];
+        }
+        converse {
+            key ("name") {
+                ["I am Csil the Healer, although in a past life I was known as Abrams. I became Csil when I was advanced."];
+                TurnOff("name");
+                TurnOn("advanced");
+            }
+            key ("job") {
+                ["I am Britain's healer, and have been for many years. If thou wishest to employ my services, please say so. I shall be only too happy to help."];
+            }
+            key ("advanced") {
+                ["When my name was Abrams, I lived on the island of New Magincia and did mine apprentice work there. My practice grew, and soon I was travelling by ship to Moonglow to see patients there."];
+                TurnOff("advanced");
+                TurnOn(<< "patients", "practice" >>);
+            }
+            key ("patients") {
+                ["Soon I had patients on three islands. It was then that Lord British received word of my practice."];
+                TurnOff("patients");
+                TurnOn("Lord British");
+            }
+            key ("practice") {
+                ["My practice grew swiftly. I am a modest man, but I do not mind saying that I was a popular healer."];
+                TurnOff("practice");
+                v1 = ~IsNPCNear(_Shamino);
+                if v1 {
+                    SetSpeaker(0, _Shamino);
+                    ["He is probably the best healer in all Britannia. Why, he cured a, er, particular problem I had in no time at all."*];
+                    v2 = ~IsNPCNear(_Iolo);
+                    if v2 {
+                        CloseSpeaker(_Shamino);
+                        SetSpeaker(0, _Iolo);
+                        ["Oh? What problem was that?"*];
+                        CloseSpeaker(_Iolo);
+                        SetSpeaker(0, _Shamino);
+                        ["Never mind. The whole world does not need to know about it."*];
+                    }
+                    CloseSpeaker(_Shamino);
+                    SetSpeaker(0, _Csil);
+                }
+            }
+            key ("Lord British") {
+                ["Well, Lord British himself was struck down with some sort of malady. He sent for me. I arrived at the castle as soon as I could leave my patients, and I examined the king. It appeared to me that something had infested his blood. I have a theory about it, which I am convinced is correct. Others, however, do not share my view."];
+                TurnOff("Lord British");
+                TurnOn(<< "theory", "others" >>);
+            }
+            key ("theory") {
+                ["I believe that most sicknesses are caused by tiny living things. We cannot see these things with the naked eye. However, I am working on developing an instrument which -can- see these creatures. I believe that someday, healing will not depend on magic at all, but on some form of treatment which makes one less vulnerable to these living creatures. Since these animals are biological, I call this theorized treatment 'antibiotics'. What dost thou think, Avatar? Am I on the right track?"];
+                TurnOff("theory");
+                v3 = ~AskYesNo();
+                if v3 {
+                    ["Good. I thought so."];
+                } else {
+                    ["No? Hmmm." Csil looks concerned. "Well, I cannot believe in the archaic tradition of bleeding a person until the sickness has left his body. There must be another way..."~~Csil looks at his notes, worried that his theory is invalid.];
+                }
+            }
+            key ("others") {
+                ["There is a group of people who do not encourage my studies. We do not get along at all. I think they have something against healers which goes beyond simple distrust. Dost thou know whom I mean?"];
+                v4 = ~AskYesNo();
+                if v4 {
+                    [Csil nods. "I thought so. The Fellowship is not... quite what they seem."];
+                } else {
+                    ["No?" Csil lowers his voice. "The Fellowship."];
+                }
+                TurnOff("others");
+                TurnOn("Fellowship");
+            }
+            key ("Fellowship") {
+                ["They have a doctrine which outlines their beliefs. They believe if one is faced with pain, then he has no choice but to go through it in order to be a 'better person'. I do not agree with this. No one should ever go through needless pain. But... they are entitled to their own opinions."];
+                TurnOff("Fellowship");
+            }
+            key ("services") {
+                CsilHeals_i(450, 30, 40);
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["Goodbye, Avatar."*];
+    }
+    if (event = _Bark) {
+        BarkAboutWork_i(_Csil);
+    }
+}
+
+Routine CsilHeals_i accepts a0, a1, a2 #locals(10) #uses(~AskYesNo, ~AskList, ~AskParty2_i, SellHealing_i, SellCure_i, SellResurrection_i) {
+    ["I am qualified to heal, cure poison, and resurrect. Art thou interested in one of these services?"];
+    PushKeys();
+    v3 = ~AskYesNo();
+    if v3 {
+        ["Which of my services dost thou have need of?"];
+        v4 = << "heal", "cure poison", "resurrect" >>;
+        v5 = ~AskList(v4);
+        if ((v5 = "heal") or (v5 = "cure poison")) {
+            if (v5 = "heal") {
+                v6 = "healed";
+                v7 = v2;
+            }
+            if (v5 = "cure poison") {
+                v6 = "cured of poison";
+                v7 = v1;
+            }
+            ["Who dost thou wish to be <v6>?"];
+            v8 = ~AskParty2_i();
+            if (v8 = 0) {
+                ["Very well. It pleases me that thou art healthy."];
+                goto label_27;
+            }
+        }
+        if (v5 = "resurrect") {
+            v9 = ~AvatarItem_i();
+            v10 = ~FindNearest_i(25, _Body_400, v9);
+            if (v10 = 0) {
+                v10 = ~FindNearest_i(25, _Body_414, v9);
+                if (v10 = 0) {
+                    ["I do not see anyone who needs resurrecting. I must be able to see the body to resurrect. If thou art carrying thy friend, pray lay them on the ground so that I may attend to them."];
+                    terminate;
+                }
+            }
+            ["Thy friend is badly wounded. I will attempt to restore them."];
+            v7 = v0;
+        }
+        ["My price is <v7> gold. Is this price agreeable?"];
+        v11 = ~AskYesNo();
+        if v11 {
+            v12 = ~CountItem(_All, _All, _Gold_Coin, _Party);
+            if (v12 >= v7) {
+                if (v5 = "heal") {
+                    SellHealing_i(v7, v8);
+                } else {
+                    if (v5 = "cure poison") {
+                        SellCure_i(v7, v8);
+                    } else {
+                        if (v5 = "resurrect") {
+                            SellResurrection_i(v7, v10);
+                        } else {
+                        }
+                    }
+                }
+            } else {
+                ["Tsk, tsk. Thou dost not have enough gold for the service. I do hope I may help thee another day."];
+            }
+        } else {
+            ["Then thou must look elsewhere for that service."];
+        }
+    } else {
+        ["If thou hast need of my services later, I will be here."];
+    }
+    label_27:
+    PopKeys();
+}

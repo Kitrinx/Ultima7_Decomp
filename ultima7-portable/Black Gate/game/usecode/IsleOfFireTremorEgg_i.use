@@ -1,0 +1,17 @@
+Routine IsleOfFireTremorEgg_i accepts a0 #locals(1) #uses(CauseTremor_i) {
+    if (event = _Trigger) && (~GetQuality(item) = 100) {
+        if not flag(767) {
+            flag(767) = true;
+            v0 = ~PostAction(<< _aNO_HALT_i, _aFINISH_i, _aWAIT_i, 20, _aUSABLE_i, #SayTremor_i >>, item);
+            CauseTremor_i();
+        } else {
+            if not flag(780) && (~Random(100) <= 10) {
+                CauseTremor_i();
+            }
+        }
+    }
+    if (event = _Posted_i) {
+        v0 = ~PostAction(<< _aNO_HALT_i, _aFINISH_i, _aWAIT_i, 20, _aUSABLE_i, #SayTremor_i >>, ~NPCToItem_i(_Avatar));
+        CauseTremor_i();
+    }
+}

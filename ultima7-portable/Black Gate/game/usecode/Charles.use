@@ -1,0 +1,105 @@
+Routine Charles accepts a0 #locals(8) #uses(~AskYesNo, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Charles);
+        TurnOn(<< "name", "job", "bye" >>);
+        if flag(118) {
+            TurnOn("Nell");
+        }
+        if flag(125) {
+            TurnOn("Jeanette");
+        }
+        if flag(126) {
+            TurnOn("Thou art in luck");
+        }
+        if not $MetCharles {
+            [You see a young peasant with a tray of wine glasses.];
+            $MetCharles = true;
+        } else {
+            ["Hello, Avatar."];
+        }
+        converse {
+            key ("name") {
+                ["I am Charles."];
+                TurnOff("name");
+            }
+            key ("job") {
+                ["I am a servant in Lord British's castle. I serve as a gentleman's gentleman, among other things. Right now I am serving wine."];
+                TurnOn(<< "servant", "wine" >>);
+            }
+            key ("servant") {
+                ["My family has been employed by Lord British for many years. My father, Bennie, once held the position I now hold. He is the head servant. I shall be head servant one day, I suppose. Then perhaps my sweetheart will love me."];
+                TurnOff("servant");
+                TurnOn(<< "family", "sweetheart" >>);
+            }
+            key ("family") {
+                ["Thou wilt encounter them. My mother cooks in the kitchen. My prudish sister is the chambermaid."];
+                TurnOff("family");
+            }
+            key ("sweetheart") {
+                [Charles sighs. He is clearly smitten. "She is Jeanette. She works in the Blue Boar. But I am afraid I am not 'up to her standards'. I believe she has her eye set on someone else. I do not know what to do about it."];
+                flag(123) = true;
+                TurnOff("sweetheart");
+                TurnOn("Jeanette");
+            }
+            key ("Jeanette") {
+                ["She does not love me, I know. She would rather marry a rich man. I have not a chance."];
+                TurnOff("Jeanette");
+            }
+            key ("Thou art in luck") {
+                [You tell Charles what Jeanette said.];
+                ["Really? Thou dost mean I have a chance?" Charles becomes so excited he nearly drops his tray. "Oh, I thank thee, Avatar, for giving me this hopeful news! I must run and send her flowers or some gift! I must declare my love!" He turns away from you, obviously walking on clouds.*];
+                terminate;
+            }
+            key ("Nell") {
+                ["She is engaged to the carousel manager. It is hard to get used to. I have always been overly protective of my little sister. I would wager she has never even been kissed! Not even by Carrocio! That is mainly because I have looked after her all this time. I would smite anyone who laid a hand on her! Besides, Nell has always been chaste and prudish. She would never think to allow a man to kiss her."];
+                TurnOff("Nell");
+                flag(124) = true;
+                if flag(122) {
+                    TurnOn("child");
+                }
+            }
+            key ("child") {
+                [You remember what Nell told you about her 'condition'. Do you mention it to Charles?];
+                v0 = ~AskYesNo();
+                if v0 {
+                    [You tell Charles what Nell revealed in confidence.];
+                    [Charles is wide-eyed and shocked. "Why, that hussy! My sister! She is nothing more than a tramp! And wait until I get mine hands on Carrocio!"];
+                    [Charles turns away. There is murder in his eyes.*];
+                    flag(137) = true;
+                    terminate;
+                } else {
+                    [Your conscience rests easy, knowing that you resisted the temptation to carry tales.];
+                    TurnOff("child");
+                }
+            }
+            key ("wine") {
+                ["Wouldst thou like some wine?"];
+                v1 = ~AskYesNo();
+                if v1 {
+                    v2 = ~GetParty();
+                    v3 = 0;
+                    Foreach v6 in v2 {
+                        v3 = (v3 + 1);
+                    }
+                    v7 = ~GiveToParty_i(true, 0, _All, _Cup, v3);
+                    if v7 {
+                        ["'Tis on the house." Charles hands you and your friends glasses of wine.];
+                    } else {
+                        ["Oops. Thou art carrying too much. Ask me again when thou dost not have thine hands full!"];
+                    }
+                } else {
+                    ["Some other time, then."];
+                }
+                TurnOff("wine");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        [Charles nods his head at you, then goes about his business.*];
+    }
+    if (event = _Bark) {
+        BarkAboutWork_i(_Charles);
+    }
+}

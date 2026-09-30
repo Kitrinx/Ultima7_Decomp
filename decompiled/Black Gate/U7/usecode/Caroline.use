@@ -1,0 +1,80 @@
+Routine Caroline accepts a0 #locals(5) #uses(~IsNearEachOther_i, DescribeFellowship_i, ExplainPhilosophy_i, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Caroline);
+        v0 = ~GetTime();
+        if (v0 = 7) {
+            v1 = ~IsNearEachOther_i(_Klog, _Caroline);
+            if v1 {
+                [Caroline asks you to keep your voice down. The Fellowship meeting is in progress.*];
+            } else {
+                ["Oh! I cannot stop to speak with thee now! I am late for the Fellowship meeting!"*];
+            }
+            terminate;
+        }
+        TurnOn(<< "name", "job", "murder", "bye" >>);
+        if not $MetCaroline {
+            [You see a young woman with a bright smile.];
+            $MetCaroline = true;
+        } else {
+            ["Hello again!" Caroline says brightly.];
+        }
+        converse {
+            key ("name") {
+                ["My parents named me Caroline," she says proudly.];
+                TurnOff("name");
+            }
+            key ("job") {
+                ["I have no 'job' per se. I have devoted mine energies to helping The Fellowship. I hope to recruit new members."];
+                TurnOn("Fellowship");
+            }
+            key ("murder") {
+                [She looks concerned. "'Tis awful! Christopher was a nice man. Didst thou know he was one of our members? I cannot believe he is dead..."];
+                TurnOff("murder");
+                TurnOn("members");
+            }
+            key ("members") {
+                ["Of The Fellowship. We meet every night at the hall. Thou shouldst visit!"];
+                TurnOff("members");
+            }
+            key ("Fellowship") {
+                DescribeFellowship_i();
+                TurnOff("Fellowship");
+                TurnOn(<< "society", "philosophy" >>);
+            }
+            key ("society") {
+                ["Every night at nine o'clock we have a meeting in the Fellowship hall. Thou mayest consider thyself invited to attend."];
+                TurnOff("society");
+            }
+            key ("philosophy") {
+                ExplainPhilosophy_i();
+                TurnOff("philosophy");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["Goodbye!"*];
+    }
+    if (event = _Bark) {
+        v2 = ~GetWorkType(~NPCToItem_i(_Caroline));
+        v3 = ~rndRange(4, 1);
+        if (v2 = 12) {
+            if (v3 = 1) {
+                v4 = "@Come to Fellowship Hall!@";
+            }
+            if (v3 = 2) {
+                v4 = "@Strive For Unity!@";
+            }
+            if (v3 = 3) {
+                v4 = "@Trust Thy Brother!@";
+            }
+            if (v3 = 4) {
+                v4 = "@Worthiness Precedes Reward!@";
+            }
+            Item_bark(v4, _Caroline);
+        } else {
+            BarkAboutWork_i(_Caroline);
+        }
+    }
+}

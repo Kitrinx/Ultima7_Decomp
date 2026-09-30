@@ -1,0 +1,33 @@
+Routine DestroyTrapSpell_i accepts a0 #locals(9) #uses(~DirFromAvatar_i, ~IsMagicOK_i) {
+    if (event = _Action) {
+        v0 = ~GetTarget();
+        v1 = ~DirFromAvatar_i(v0);
+        Kernel_resetRef(item);
+        Item_bark("@An Jux@", item);
+        if ~IsMagicOK_i() {
+            v2 = ~PostAction(<< _aFACE_i, v1, _aUP_FRAME_i, _aOUT_FRAME_i, _aTHRUST2_FRAME_i >>, item);
+            v3 = ~FindNearby_i(176, 2, _Trap, v0);
+            Foreach v6 in v3 {
+                v0 = ~GetCoord(v6);
+                v2 = ~Item_push(v6);
+                if v2 {
+                    v2 = ~PopToMap(_Destroy);
+                    Kernel_resetRef(v6);
+                    createSprite(65535, 0, 0, 0, v0::2, v0::1, 13);
+                    Sfx(66);
+                }
+            }
+            v3 = ~FindNearby_i(176, 2, _Locked_Chest, item);
+            Foreach v6 in v3 {
+                v0 = ~GetCoord(v6);
+                if (~GetQuality(v6) = 255) {
+                    v2 = ~SetQuality(0, v6);
+                    createSprite(65535, 0, 0, 0, v0::2, v0::1, 13);
+                    Sfx(66);
+                }
+            }
+        } else {
+            v2 = ~PostAction(<< _aUP_FRAME_i, _aOUT_FRAME_i, _aTHRUST2_FRAME_i, _aUSABLE_i, #FizzleSpell_i >>, item);
+        }
+    }
+}

@@ -1,0 +1,468 @@
+Routine Golem accepts a0 #locals(6) #uses(AdjharDutyDone_i, AdjharGivesTalisman_i, ~IsInInv, ~AskYesNo, AdjharReadsBook_i, AdjharAsksHelp_i, BolluxUsable_i) {
+    if (event = _Action) {
+        if ~GetContents(4, 243, _Scroll, item) {
+            SetSpeaker(0, _Brax);
+            if flag(808) {
+                AdjharDutyDone_i();
+            }
+            if not flag(796) {
+                AdjharGivesTalisman_i();
+            }
+            if flag(799) && not flag(802) {
+                v0 = ~IsInInv(65177, 144, _Book, 1, _Party);
+                if v0 {
+                    ["Hast thou in thy possesion the book on the Stone of Castambre?"];
+                    if ~AskYesNo() {
+                        [His eyes reveal his hope. As he takes the book from you, it almost appears as if he is smiling."];
+                        AdjharReadsBook_i();
+                    } else {
+                        ["That is, indeed, a pity," he says, shaking his head in sadness.];
+                    }
+                }
+            }
+            if not flag(788) {
+                ["Greetings to thee, honorable one. I can but assume that my presence here was thy doing." It becomes quickly apparent that this creature possesses a greater\x09capability for speech than his fallen companion.];
+                if flag(796) {
+                    v1 = ~FindNearby_i(0, 40, _Body_414, _Avatar);
+                    Foreach v4 in v1 {
+                        v5 = ~GetFrame(v4);
+                        if ((v5 = 4) or (v5 = 5)) {
+                            [The recently raised golem stares down at the prone, lifeless body of Bollux. Quickly he looks up at you.~"Wh-what has happened?"];
+                            AdjharAsksHelp_i();
+                            return;
+                        }
+                    }
+                } else {
+                    ["Now thou must excuse me, for I am off to find my fellow sentry."*];
+                    flag(788) = true;
+                    terminate;
+                }
+            } else {
+                if flag(798) {
+                    ["Hail, friend. I hope that I may assist thee in some way."];
+                    AdjharAsksHelp_i();
+                } else {
+                    ["Art thou here to aid me in healing my brother?"];
+                    if ~AskYesNo() {
+                        ["Very good. I am pleased to call thee friend."];
+                        flag(798) = true;
+                        AdjharAsksHelp_i();
+                    } else {
+                        ["Then begone, for I have work to do!"*];
+                        terminate;
+                    }
+                }
+            }
+        } else {
+            if (~GetContents(4, 244, _Scroll, item) or (~GetQuality(~FindNearby_i(176, 1, _Scroll, item)) = 244)) {
+                BolluxUsable_i(item);
+            }
+        }
+    }
+}
+
+Usable AdjharAsksHelp_i #locals(1) #uses(~AskYesNo, ~IsInInv, AdjharReadsBook_i) {
+    SetSpeaker(0, _Brax);
+    if not flag(788) {
+        TurnOn(<< "Don't know", "sacrificed", "bye" >>);
+        flag(788) = true;
+    } else {
+        TurnOn(<< "name", "job", "bye" >>);
+    }
+    if flag(798) {
+        TurnOn("what next");
+    }
+    converse {
+        key ("Don't know") {
+            [He kneels over the body and inspects the other golem. As his fingers trace around the gaping hole in Bollux's chest, an expression of understanding fills his visage.~"H-his heart is gone!"~ He stares down at his own chest. "He sacrificed himself by giving me his heart... the fool!" His words are insulting but his tone is affectionate.];
+            TurnOff(<< "Don't know", "sacrificed" >>);
+            ["I must help him, as he helped me! Wilt thou assist?"];
+            if ~AskYesNo() {
+                ["Very good," he says, noticeably relieved. "I thank thee in advance."];
+                flag(798) = true;
+                TurnOn(<< "name", "job", "fool" >>);
+            } else {
+                ["Then I must go this one myself," he says angrily. "'Tis no more than one friend would do for another... no more than Bollux did for me!"];
+                [He looks at you carefully. His stoney features do nothing to hide the suspicion on his face, or in his voice.~"It is quite obvious to me thou art but a lost traveler and certainly not the Avatar for whom I mistook thee."*];
+                terminate;
+            }
+        }
+        key ("sacrificed") {
+            [You quickly relate the details of Bollux's death as he pulled the object from his chest and placed it in the other golem's.~"He sacrificed himself by giving me his heart... the fool!" His words are insulting but his tone is affectionate.];
+            TurnOff(<< "Don't know", "sacrificed" >>);
+            ["I must help him, as he helped me! Wilt thou assist?"];
+            if ~AskYesNo() {
+                ["Very good," he says, notably relieved. "I thank thee in advance."];
+                flag(798) = true;
+                TurnOn(<< "name", "job", "fool" >>);
+            } else {
+                ["Then I must go this one myself," he says angrily. "'Tis no more than one friend would do for another... no more than Bollux did for me!"];
+                [He looks at you carefully. His stoney features do nothing to hide the suspicion on his face, or in his voice.~"It is quite obvious to me thou art but a lost traveler and certainly not the Avatar for whom I mistook thee."*];
+                terminate;
+            }
+        }
+        key ("name") {
+            TurnOff("name");
+            ["I am the golem called Adjhar, at thy service."];
+        }
+        key ("job") {
+            ["I am one of the guardians of the Shrines of the Principles. That was exactly what Bollux and I were doing when the wall fell and crushed me."];
+            TurnOn(<< "Bollux", "Shrines", "wall" >>);
+        }
+        key ("Shrines") {
+            TurnOff("Shrines");
+            ["Surely thou hast heard of the Shrines of the Three Principles: Truth, Love, and Courage! We golems were fabricated to protect the Shrines, for only an Avatar -- -the- Avatar -- may utilize the awesome power they can convey."];
+        }
+        key ("wall") {
+            TurnOff("wall");
+            ["I do not remember the incident clearly. However, I will relate what I can recall. Bollux and I were standing guard in the Shrine Room of the Principles when we detected an intrusion into the the castle. I remember nothing more than being aware of great heat, and then part of the wall crumbling atop me, crushing my legs. I suppose Bollux was more forunate. Was it he who carried me here?"];
+            if ~AskYesNo() {
+                ["Then it is imperative that we find a way to bring him back! If nothing else, I owe him my gratitude."];
+            } else {
+                ["Strange," he says, puzzled. "I am at a loss then to explain my arrival here.~Regardless, I -must- find a way to restore life to him!"];
+            }
+        }
+        key ("Bollux") {
+            ["Hast thou not already met him? He is my older brother, and my friend."];
+            TurnOff("Bollux");
+            TurnOn("older");
+        }
+        key ("older") {
+            ["Master Astelleron -- we actually called him our father -- created him before he did me. And he instilled Bollux with a personality first."];
+            TurnOff("older");
+        }
+        key ("what next") {
+            TurnOff("what next");
+            ["Dost thou have the book entitled, `The Stone of Castambre?'"];
+            if ~AskYesNo() {
+                v0 = ~IsInInv(65177, 144, _Book, 1, _Party);
+                if v0 {
+                    [His eyes reveal his hope. As he takes the book from you, it almost appears as if he is smiling."];
+                    AdjharReadsBook_i();
+                } else {
+                    ["I must see the book the book to use it. Perhaps thou hast mislaid it about somewhere." He stares directly at you. "'Tis vital that I have that tome. I beg thee, retrieve it for me!"];
+                    flag(799) = true;
+                }
+            } else {
+                ["Please go and recover it then. I believe it contains information that may help my companion."];
+                flag(799) = true;
+            }
+        }
+        key ("fool") {
+            TurnOff("fool");
+            ["Poor Bollux did not know of the Stone of Castambre. His sacrifice was, perhaps, unnecessary. Hast thou, perchance, come across MacCuth's "The Stone of Castambre?"];
+            if ~AskYesNo() {
+                ["Dost thou have it with thee?"];
+                if ~AskYesNo() {
+                    v0 = ~IsInInv(65177, 144, _Book, 1, _Party);
+                    if v0 {
+                        [His eyes reveal his hope. As he takes the book from you, it almost appears as if he is smiling."];
+                        AdjharReadsBook_i();
+                    } else {
+                        ["I must see the book the book to use it. Perhaps thou hast mislaid it about somewhere." He stares directly at you. "'Tis vital that I have that tome. I beg thee, retrieve it for me!"];
+                        flag(799) = true;
+                    }
+                } else {
+                    ["Please go and recover it then. I believe it contains information that may help my companion."];
+                    flag(799) = true;
+                }
+            } else {
+                ["Then I recommend thou dost search within my master's chambers for it. The pages contain words which may help my companion."];
+            }
+        }
+        key ("bye") {
+            ["I can offer nothing more for thine assistance than my deepest appreciation. Please journey in peace."*];
+            terminate;
+        }
+    }
+    clear_answers;
+}
+
+Usable AdjharReadsBook_i #locals(0) #uses(MemberSays_i) {
+    flag(802) = true;
+    ["'Tis as I suspected. Bollux thought he must sacrifice his own heart to return my life."~If you were to believe it possible, you would feel positive you had just seen a drop of water fall from the golem's right eye.~"The poor fool gave his life for mine. I can only hope I would have done the same.~"Doing so now, however, would help nothing, for once I was gone Bollux would simply repeat his act." You hear a sigh come from the golem.];
+    CloseSpeaker(_Brax);
+    MemberSays_i("I don't mean to be irreverent, but did the matter not involve death, 'twould be a humorous sight: the two golems popping up and down as each one passed the `heart' to the other...@");
+    SetSpeaker(0, _Brax);
+    ["However," smiles Adjhar, "'tis not necessary, for had Bollux known what is covered by this smudge, he could have told thee that a new heart may be cut from the Tree of Life. Look here," he says, pointing to a line in the tome smeared with dried mud. "I remember this from before. Thou canst take the very same pick with which thou didst collect the blood and procure a `heart' for Bollux. Of course, after thou dost place the heart upon Bollux's body, thou must again perform the same ritual of blood."];
+    flag(801) = true;
+}
+
+Usable AdjharGivesTalisman_i #locals(2) #uses(~AskYesNo, ~PopToNPCNumber_i, IsleOfFireTeleportEgg_i) {
+    SetSpeaker(0, _Brax);
+    [Adjhar appears to have resumed the stance of a more traditional golem guardian -- staunch and unmoving. However, it is impossible to miss the glimmer of intelligence in his eyes.];
+    TurnOn(<< "name", "job", "bye" >>);
+    v0 = false;
+    converse {
+        key ("name") {
+            ["As thou must know by now, my creator chose to call me Adjhar."];
+            TurnOff("name");
+        }
+        key ("job") {
+            ["I was created to be one of many protectors to the Shrines of the Three Principles. However," he pauses, "my duty also included being the keeper of the Talisman of Love."];
+            TurnOff("job");
+            TurnOn("Talisman");
+        }
+        key ("Talisman") {
+            ["Dost thou want the Talisman of Love?"];
+            TurnOff("Talisman");
+            if ~AskYesNo() {
+                ["I was put here to protect the Shrines and prevent any from acquiring the Talisman. Any except the Avatar who demonstrated knowledge and understanding of Love. The Talisman is thine, Avatar."~He brings his stone hand to his heart and opens a panel on the front of his chest. Reaching inside with his other hand, he brings forth a beautiful yellow talisman.];
+                v0 = ~Item_create(_Amulet);
+                SetFrame(10, v0);
+                v1 = ~PopToNPCNumber_i(~NPCToItem_i(_Avatar));
+                if v1 {
+                    [He places the Talisman in your palm. ~"Thou hast earned this and the honors and powers associated with it. Thou art truly an Avatar."];
+                    flag(808) = true;
+                    goto label_20;
+                } else {
+                    ["I am sorry, but thou must be less burdened to receive this one of three greatest of all blessings."];
+                }
+            } else {
+                ["Thou art truly deserving of such an artifact. But if thou dost not wish to utilize the Shrines, I must respect thy wishes."];
+            }
+        }
+        key ("bye") {
+            ["I bid thee farewell."*];
+            if flag(808) {
+                ["Mark the wisdom of the Shrine of Love well, Avatar."*];
+            }
+            terminate;
+        }
+    }
+    clear_answers;
+    label_20:
+    if (flag(808) and not flag(807)) {
+        event = 7;
+        IsleOfFireTeleportEgg_i(v0);
+        terminate;
+    }
+}
+
+Usable AdjharDutyDone_i #locals(0) {
+    SetSpeaker(0, _Brax);
+    [Adjhar appears to have resumed the stance of a more traditional golem guardian -- staunch and distant. However, it is impossible to miss the glimmer of intelligence in his eyes.];
+    TurnOn(<< "name", "job", "bye" >>);
+    converse {
+        key ("name") {
+            ["I am and always will be the one called Adjhar."];
+            TurnOff("name");
+        }
+        key ("job") {
+            ["Now that thou hast mastered the Principle of Love, I no longer serve a function."];
+            TurnOff("job");
+        }
+        key ("bye") {
+            ["Goodbye, Avatar. As always I thank thee for thy kindness in assisting two brothers in need. Forget not the lessons taught by the Shrines."*];
+            terminate;
+        }
+    }
+    clear_answers;
+}
+
+Routine BolluxUsable_i accepts a0 #locals(4) #uses(BolluxDutyDone_i, BolluxRevived_i, MemberSays_i) {
+    if flag(795) {
+        SetWorkType(_Loiter, v0);
+    }
+    if (event = _Action) {
+        SetSpeaker(0, _Corwin);
+        if (flag(804) and not flag(796)) {
+            ["I -must- return his life to him. He -will- have a new heart!" The determination is quite evident by his forceful glare and stance.];
+        }
+        if flag(808) {
+            BolluxDutyDone_i();
+        }
+        if flag(795) {
+            BolluxRevived_i();
+        }
+        if not flag(789) {
+            flag(789) = true;
+            [The stone statue stands with a lowered head. Despite its granite features, a downcast look is apparent on its face. Surprisingly, it turns to speak with you.];
+            MemberSays_i("@Why, by the stars, I believe it \x0D\n\x09\x09\x09\x09is a creature!@");
+            [Slowly, as if with great effort, it raises it head.];
+            SetSpeaker(0, _Corwin);
+            v1 = ~GetFrame(~FindNearest_i(40, _Body_414, _Avatar));
+            if not ((v1 = 4) or (v1 = 5)) {
+                ["What dost thou... want?" it asks slowly.];
+            } else {
+                ["Help him?" it asks carefully, pointing to the fallen statue lying beside it.];
+                TurnOn("help");
+            }
+            TurnOn("Creature?");
+        } else {
+            ["In what way may I assist thee?"];
+        }
+        TurnOn(<< "name", "job", "bye" >>);
+        v2 = false;
+        v3 = false;
+        converse {
+            SetSpeaker(0, _Corwin);
+            key ("name") {
+                TurnOff("name");
+                if flag(797) {
+                    [He tilts his head and stares at you quizzicaly.~ "I apologize. Did I not already tell thee my master called me Bollux?"];
+                } else {
+                    ["My master named me Bollux.];
+                    flag(797) = true;
+                }
+                if not v3 {
+                    TurnOn("master");
+                }
+            }
+            key ("job") {
+                ["I am a guardian of the Shrines of the Principles."];
+                TurnOn("guardian");
+            }
+            key ("guardian") {
+                TurnOff("guardian");
+                ["We were... created to protect the Shrines of the Principles. Only the... Avatar should use their power. Adjhar and I were... keeping watch... when the wall fell on Adjhar. And the loud noise came...  I carried him here so that I could restore him, but I do not... know how."];
+            }
+            key ("Creature?") {
+                TurnOff("Creature?");
+                ["We are called stone golems... because we are made out of stone and rock."];
+                if not v2 {
+                    TurnOn("made");
+                    v2 = true;
+                }
+                TurnOn("stone");
+            }
+            key ("Astelleron", "master") {
+                TurnOff(<< "Astelleron", "master" >>);
+                v3 = true;
+                ["Astelleron made us. He is our master."];
+                if not v2 {
+                    TurnOn("made");
+                    v2 = true;
+                }
+            }
+            key ("stone") {
+                TurnOff("stone");
+                ["We were... fashioned... out of the rock from the quarry on this small island."];
+            }
+            key ("made") {
+                v2 = true;
+                TurnOff("made");
+                ["I know nothing about the process, but Astelleron once told me he used something called... magic to give us life and... animation." The golem pauses, obviously conscious of his next thought.~"He did not like his... solitude. He said he was... lonely."];
+                TurnOn(<< "magic", "lonely" >>);
+                if not v3 {
+                    TurnOn("Astelleron");
+                }
+            }
+            key ("magic") {
+                TurnOff("magic");
+                ["I do not know what... it is, but there are many books in his house. Perhaps... there is something there about... magic."];
+                TurnOn("books");
+            }
+            key ("books") {
+                TurnOff("books");
+                if not flag(803) {
+                    ["I have a book here that Adjhar said told about... our... creation. This might help bring Adjhar back."];
+                    v4 = ~GiveToParty_i(false, _All, 144, _Book, 1);
+                    if v4 {
+                        [He hands to you a very old tome. It is evident the book has seen much use, for the leather covering is wearing away to reveal the wood beneath and the pages are quite dog-earred.~"I already put rocks down," he adds, "just like the... book said to."];
+                        flag(803) = true;
+                    } else {
+                        [Thou art... carrying too much. Put something down and I can give this to you."];
+                    }
+                } else {
+                    ["There are several... more books lying about the house. I do not... know what they are about.  Adjhar read them."];
+                }
+            }
+            key ("lonely") {
+                TurnOff("lonely");
+                ["Astelleron said it was how... a person feels when no one is around. He told us how... happy he felt after we were... born.~ He called me... a son."];
+            }
+            key ("help") {
+                TurnOff("help");
+                ["My companion... Adjhar... He is dying. Thou must help repair him. Please, I beg... thee."];
+                if not flag(803) {
+                    ["I have a book here that Adjhar said told about... our... creation. This might help bring him back."];
+                    v4 = ~GiveToParty_i(false, _All, 144, _Book, 1);
+                    if v4 {
+                        [He hands to you a very old tome. It is evident the book has seen much use, for the leather covering is wearing away to reveal the wood beneath and the pages are quite dog-earred. "I have already set up five... rocks to mark a spot for the... blood."];
+                        TurnOn("blood");
+                        flag(803) = true;
+                    } else {
+                        [Thou art... carrying too much. Put something down and I can give this to you."];
+                    }
+                }
+                TurnOn("Adjhar");
+            }
+            key ("Adjhar") {
+                TurnOff("Adjhar");
+                ["He is my brother... and my friend. We protected the... Shrines together. We cannot let him... stay like that. Help me... assist him."];
+            }
+            key ("blood") {
+                TurnOff("blood");
+                ["I did not... understand the book, but I remember... blood..."];
+            }
+            key ("bye") {
+                ["Good... bye."*];
+                terminate;
+            }
+        }
+        clear_answers;
+    }
+}
+
+Usable BolluxRevived_i #locals(4) {
+    SetSpeaker(0, _Corwin);
+    [Bollux stares ahead, almost vacantly. Despite his features and lack of motion, it is apparent by his expression that some of Castambre's magic still resides within.];
+    v0 = ~FindNearby_i(0, 40, _Golem, item);
+    Foreach v3 in v0 {
+        if (~GetContents(4, 243, _Scroll, item) or (~GetQuality(~FindNearby_i(176, 1, _Scroll, item)) = 243)) {
+            ["Bollux turns to see Adjar standing nearby, quite alive. Instantly, Bollux's expression changes detectably.];
+            CloseSpeaker(_Corwin);
+            SetSpeaker(1, _Corwin);
+            SetSpeaker(0, _Brax);
+            [Adjhar simply smiles.~"Greetings, brother."];
+        }
+    }
+    TurnOn(<< "name", "job", "bye" >>);
+    converse {
+        key ("name") {
+            TurnOff("name");
+            if flag(797) {
+                TurnOff("name");
+                [He tilts his head and stares at you quizzicaly.~ "I apologize. Did I not already tell thee my master called me Bollux?"];
+            } else {
+                ["My master named me Bollux.];
+                flag(797) = true;
+            }
+        }
+        key ("job") {
+            ["I am here... to guard the Shrine... of Love."];
+        }
+        key ("bye") {
+            ["Fare thee... well."*];
+            terminate;
+        }
+    }
+    clear_answers;
+}
+
+Usable BolluxDutyDone_i #locals(0) {
+    SetSpeaker(0, _Corwin);
+    [The golem seems to have regained his staid composure. However, life is still evident within his gem-like eyes.];
+    TurnOn(<< "name", "job", "bye" >>);
+    converse {
+        key ("name") {
+            TurnOff("name");
+            if flag(797) {
+                [He tilts his head and stares at you quizzicaly.~ "I apologize. Did I not already tell thee my master called me Bollux?"];
+            } else {
+                ["My master named me Bollux.];
+                flag(797) = true;
+            }
+        }
+        key ("job") {
+            ["I am here to guard...." He pauses, obviously deep in thought."I am without a duty now."];
+            TurnOff("job");
+        }
+        key ("bye") {
+            ["Good... bye."*];
+            terminate;
+        }
+    }
+    clear_answers;
+}

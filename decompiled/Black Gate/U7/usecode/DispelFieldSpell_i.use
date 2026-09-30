@@ -1,0 +1,23 @@
+Routine DispelFieldSpell_i accepts a0 #locals(7) #uses(~DirFromAvatar_i, ~IsMagicOK_i) {
+    if (event = _Action) {
+        v0 = ~GetTarget();
+        v1 = ~DirFromAvatar_i(v0);
+        Kernel_resetRef(item);
+        v2 = << 768, 895, 900, 902 >>;
+        Item_bark("@An Grav@", item);
+        if ~IsMagicOK_i() {
+            v3 = ~PostAction(<< _aSFX_i, 65, _aFACE_i, v1, _aUP_FRAME_i, _aOUT_FRAME_i, _aTHRUST2_FRAME_i >>, item);
+            Foreach v6 in v2 {
+                if (v6 = ~Item_getType(v0)) {
+                    v3 = ~Item_push(v0);
+                    if v3 {
+                        v3 = ~PopToMap(_Destroy);
+                        Kernel_resetRef(v0);
+                    }
+                }
+            }
+        } else {
+            v3 = ~PostAction(<< _aFACE_i, v1, _aUP_FRAME_i, _aOUT_FRAME_i, _aTHRUST2_FRAME_i, _aUSABLE_i, #FizzleSpell_i >>, item);
+        }
+    }
+}

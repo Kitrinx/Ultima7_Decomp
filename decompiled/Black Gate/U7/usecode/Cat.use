@@ -1,0 +1,14 @@
+Routine Cat accepts a0 #locals(1) {
+    if (event = _Action) {
+        Item_bark("@Here kitty, kitty@", _Avatar);
+        SetWorkType(_Combat_0, item);
+        SetAttackMode_i(_Fleeing, item);
+        SetAttacker_i(_Avatar, item);
+        if ~IsNPCNear_i(_Shamino) {
+            v0 = ~PostInFuture(4, << _aNO_HALT_i, _aBARK_i, "@I hate cats.@" >>, _Shamino);
+        }
+    }
+    if (event = _Bark) {
+        Item_bark("@Meow@", item);
+    }
+}

@@ -1,0 +1,807 @@
+Routine Batlin accepts a0 #locals(14) #uses(~IsInInv, ~AskYesNo, AskFellowshipQuiz_i, GivePartyExp_i, ~LordOrLady, ~AvatarName, BatlinInductsAvatar_i, BatlinHoldsMeeting_i, BatlinOffersMembership_i, BatlinGivesPackage_i, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Batlin);
+        v0 = ~GetWorkType(~NPCToItem_i(_Batlin));
+        v1 = ~IsInInv(1, 65177, _Prism_981, 1, _Party);
+        if v1 {
+            [Batlin's eyes narrow to red slits as he peers practically through you.];
+            ["Thou hast the Cube! Thou cannot use it against -me-!"];
+            [With that, Batlin turns with a flourish, and vanishes before your eyes!*];
+            $BATLIN_MISSING = true;
+            RemoveNPC_i(~NPCToItem_i(_Batlin));
+            terminate;
+        }
+        if $CAST_ARMAGEDDON {
+            [Batlin looks at you and his gaze returns to the Armageddon winter storm. "Many years ago, Avatar, I went to Skara Brae, the ghost city. The way the world is now reminds me of that dead place. In Skara Brae I had a spiritual experience so profound that I have never spoken of to another soul. I would like to share that experience with thee now, Avatar.];
+            ["There at Skara Brae I saw a man who was called The Tortured One. I asked this dead man, pray tell, what is the answer to the question of Life and Death? He gave me no reply, and I asked him again. I beseeched him to impart some small parcel of wisdom upon me. What is the answer to the question of Life and Death?! He said nothing, but in his eyes... In his eyes I could see, Avatar, that he could not answer me for there was no answer to give. No answers to the question of Life and Death! It was then I understood. No meanings! No virtues! No values!!!... I commend thee, Avatar, for reaching that same liberating illumination!"*];
+            terminate;
+        }
+        if flag(56) {
+            ["Art thou ready to answer questions from the Book of Fellowship?"];
+            if ~AskYesNo() {
+                AskFellowshipQuiz_i();
+                if not flag(56) {
+                    if (v0 = 28) {
+                        ["Excellent, Avatar!"];
+                        [Fighting a tremble of hesitation you take a long deep drink from the goblet. Batlin steps up to you. "May the news spread far and wide that our newest member is none other than the Avatar!"];
+                        [The other Fellowship members cheer with pleasure.];
+                    } else {
+                        ["Very good, Avatar."];
+                    }
+                    v2 = ~GiveToParty_i(false, 1, _All, _Amulet, 1);
+                    flag(145) = true;
+                    $JoinFellow = true;
+                    GivePartyExp_i(500);
+                    if v2 {
+                        ["Allow me to present thee with thy Fellowship medallion." Batlin gives you the medallion. "Please -- wear thy medallion at all times for it shall be a symbol to all who see it that thou dost walk with the Fellowship. Ready it to thy neck immediately! Oh, and... welcome to The Fellowship, Avatar."*];
+                        flag(144) = true;
+                    } else {
+                        ["Thou art too encumbered to receive thy Fellowship medallion. Thou must lighten thy load."*];
+                    }
+                    v3 = ~PostAction(<< _aNO_HALT_i, _aSPEECH_i, 23 >>, item);
+                    terminate;
+                } else {
+                    ["My dear Avatar. Thou must realize that thou must know everything there is to know about The Fellowship before I can induct thee. Please study thy Book of Fellowship and return to me.];
+                    [Your mind seems unclear. I would not be surprised if thou dost not understand\x09another soul with whom thou dost speak."];
+                    SetItemFlag_i(25, item);
+                    terminate;
+                }
+            } else {
+                ["Come back when thou art ready."*];
+                terminate;
+            }
+        }
+        v4 = ~LordOrLady();
+        v5 = ~IsMedallionOn_i();
+        v6 = ~GetTime();
+        v0 = ~GetWorkType(~NPCToItem_i(_Batlin));
+        v7 = ~AvatarName();
+        if (v0 = 28) {
+            if (flag(141) and not flag(145)) {
+                BatlinInductsAvatar_i();
+            } else {
+                BatlinHoldsMeeting_i();
+            }
+        }
+        TurnOn(<< "name", "job", "bye" >>);
+        if flag(65) {
+            TurnOn("Elizabeth and Abraham");
+        }
+        if flag(150) && not $JoinFellow {
+            TurnOn("join");
+        }
+        if (flag(215) or (flag(214) and not flag(265))) {
+            TurnOn("package");
+        }
+        if flag(265) {
+            TurnOn("delivered package");
+            TurnOff("package");
+        }
+        if flag(258) {
+            TurnOn("package delivered");
+        }
+        if flag(286) {
+            TurnOn("package delivered");
+        }
+        if flag(142) {
+            TurnOff(<< "delivered package", "package delivered" >>);
+            if flag(151) {
+                TurnOn("chest");
+            }
+        }
+        if flag(141) {
+            TurnOff("chest");
+        }
+        if flag(145) && not flag(144) {
+            TurnOn("medallion");
+        }
+        if flag(148) {
+            TurnOn("apples");
+        }
+        if (flag(138) or ($HEARD_ABOUT_VOICE or flag(10))) {
+            TurnOn("voice");
+        }
+        if flag(139) {
+            TurnOn("Meditation Retreat");
+        }
+        if not $MetBatlin {
+            [You see a rotund older gentleman, who is at once humble yet dignified. His gentle eyes exude caring for his fellow person.];
+            $MetBatlin = true;
+            if (v5 and not $JoinFellow) {
+                [The man's eyes focus on the Fellowship medallion around your neck.];
+                ["My dear friend, thou art falsely impersonating a Fellowship member! Remove that medallion at once!"*];
+                terminate;
+            }
+        } else {
+            if (v5 and not $JoinFellow) {
+                ["I shall not speak to thee unless thou dost remove that Fellowship medallion. Thou art falsely impersonating a Fellowship member!"*];
+                terminate;
+            } else {
+                ["<v7>, my dear, dear friend! How wonderful to see thee again!" says Batlin.];
+            }
+        }
+        converse {
+            key ("name") {
+                ["My name, good friend, is Batlin. And indeed it is truly a privilege to meet the Avatar in the flesh."];
+                TurnOff("name");
+            }
+            key ("job") {
+                ["I was once a druid. Now I am the leader and the originator of The Fellowship. It is rapidly growing throughout Britannia and keeps me very busy, as thou canst well imagine. Ha! Ha! Ha!"];
+                TurnOn("Fellowship");
+            }
+            key ("Fellowship") {
+                ["The Fellowship was formed twenty years ago with the full approval and support of Lord British. It is a society of spiritual seekers who strive to reach the highest levels of human potential and to share this knowledge freely with all people."];
+                TurnOff("Fellowship");
+                TurnOn("spiritual");
+            }
+            key ("spiritual") {
+                ["The Fellowship advances the philosophy of sanguine cognition, a way to apply a positive order of thought to one's life through what is called the Triad of Inner Strength."];
+                TurnOff("spiritual");
+                TurnOn(<< "sanguine cognition", "Triad" >>);
+            }
+            key ("sanguine cognition") {
+                ["We strive to avoid the mistakes made by mystics and sages since the dawn of time. They apply the standards of the past, such as the virtues, for example, to qualify the present, and thus they do not perceive it correctly. We seek to examine our present lives each on our own terms and see the world the way it is."];
+                TurnOff("sanguine cognition");
+                TurnOn("virtues");
+            }
+            key ("virtues") {
+                ["They are perfectly adequate for those who feel that they still need them for whatever reason. But no one, not even thyself, thou must admit, Avatar, can fulfill them perfectly. Therefore they are a philosophy that is ultimately based upon failure. We have never claimed that our teachings are a substitute for the virtues. However, ours is a belief that is based upon success, not failure."];
+                TurnOff("virtues");
+            }
+            key ("Triad") {
+                ["The Triad of Inner Strength is simply three basic values that, when applied in unison, enable one to be more creative, satisfied and successful in life."];
+                TurnOff("Triad");
+                TurnOn("values");
+            }
+            key ("values") {
+                ["The three values of the Triad of Inner Strength are Strive For Unity, Trust Thy Brother and Worthiness Precedes Reward."];
+                TurnOff("values");
+                TurnOn(<< "Unity", "Trust", "Worthiness" >>);
+            }
+            key ("Unity") {
+                ["When we say Strive For Unity, it is simply our way of expressing how the people of Britannia should all cooperate and work together. A worthwhile sentiment, I am certain thou wouldst concur."];
+                TurnOff("Unity");
+                TurnOn("join");
+            }
+            key ("Trust") {
+                ["What The Fellowship means by this is that people are all the same and the world is, generally speaking, a supportive, nurturing place. The trust we place in each other is like the pinions that hold our society together. Quite true, wouldst thou not say?"];
+                TurnOff("Trust");
+                TurnOn("join");
+            }
+            key ("Worthiness") {
+                ["Allow me to explain the meaning of Worthiness Precedes Reward. Each one of us seeks something which we desire from life and we must strive to be worthy of that which we seek. It would be difficult for thee to disagree I am quite sure."];
+                TurnOff("Worthiness");
+                TurnOn("join");
+            }
+            key ("Elizabeth and Abraham") {
+                if not $HEARD_ELIZABETH_ABRAHAM {
+                    ["Ah, my good colleagues Elizabeth and Abraham were just here. They left this morning for Minoc on Fellowship business. They deal with the distribution and collection of funds."];
+                    flag(135) = true;
+                }
+                if ($HEARD_ELIZABETH_ABRAHAM and not $EA_LEFT_JHELOM) {
+                    ["I have not seen my colleagues since they were last here. They are busy folk."];
+                }
+                if ($EA_LEFT_PAWS_FOR_JHELOM and not $EA_LEFT_JHELOM) {
+                    ["I have not seen my colleagues since they were last here. They are busy folk."];
+                }
+                if ($EA_LEFT_JHELOM and not flag(644)) {
+                    [Batlin smiles and shakes his head. "Thou art not having much luck tracking them down, art thou? They were here, having done some work in Jhelom, but now they have gone to Vesper to see about starting a branch there."];
+                    flag(136) = true;
+                }
+                if flag(644) {
+                    ["I have not seen my colleagues since they were last here. They are busy folk."];
+                }
+                TurnOff("Elizabeth and Abraham");
+            }
+            key ("join") {
+                if $JoinFellow {
+                    ["But thou art already a member, Avatar! One can only join once!"];
+                } else {
+                    if (flag(150) and not flag(151)) {
+                        ["Thou hast not completed thy tasks. Remember that Worthiness Precedes Reward. Once thou hast completed the missions, thou mayest join."];
+                    } else {
+                        BatlinOffersMembership_i();
+                    }
+                }
+                TurnOff("join");
+            }
+            key ("package") {
+                if (flag(215) and not flag(143)) {
+                    ["Ah! I do hope thine hands are not too full to take the package."];
+                    v8 = ~FindItem(_All, _All, _Sealed_Box, _Batlin);
+                    v9 = ~Item_push(v8);
+                    v10 = ~PopToNPC(_Avatar);
+                    if v10 {
+                        ["Excellent! Here it is. Thou must now be on thy way!"*];
+                        flag(143) = true;
+                        terminate;
+                    }
+                    v10 = ~PopToNPC(_Batlin);
+                    ["Avatar! I am tired of this! Please make room in thine inventory for the package!"*];
+                    terminate;
+                } else {
+                    BatlinGivesPackage_i();
+                }
+            }
+            key ("delivered package") {
+                ["Congratulations, Avatar, and our thanks to thee for successfully delivering our package to Elynor of Minoc. Now we have another task at hand before thou canst join The Fellowship. Because thou didst deliver the package thou hast proven thyself worthy of performing another mission."];
+                TurnOff("delivered package");
+                TurnOn("mission");
+            }
+            key ("package delivered") {
+                ["Avatar, didst thou deliver the package to Elynor of Minoc?"];
+                v11 = ~AskYesNo();
+                if v11 {
+                    ["Didst thou open the package?"];
+                    v12 = ~AskYesNo();
+                    if v12 {
+                        ["Thou knew that thou wast instructed not to open it. We put trust in thee to carry out our instructions to the letter and that trust was broken."];
+                        TurnOn("mission");
+                    } else {
+                        ["That is not what Elynor of Minoc tells us. We put trust in thee to carry out our instructions to the letter and that trust was broken.];
+                    }
+                    if flag(286) {
+                        ["I understand that the contents of the package were missing as well, and this is very serious indeed!];
+                    }
+                    ["I am afraid that thou must carry out a mission for us as a test of trust if thou art to begin truly walking with The Fellowship."];
+                    TurnOn("mission");
+                } else {
+                    [Batlin's eyes open wide in surprise.];
+                    ["What has happened? Hast thou lost the package?"];
+                    v13 = ~AskYesNo();
+                    if v13 {
+                        ["Tsk. Tsk. Tsk. That is most unfortunate. We put trust in thee to deliver the package and that trust was broken. I am afraid that thou must carry out a mission for us as a test of trust if thou art to begin truly walking with The Fellowship."];
+                        TurnOn("mission");
+                    } else {
+                        ["Please deliver our package, Avatar. We have more business to discuss once thou art finished."*];
+                        terminate;
+                    }
+                }
+                TurnOff("package delivered");
+            }
+            key ("mission") {
+                ["Thou shalt visit the dungeon of Destard, which is in the mountains just west of Trinsic. Do not worry, it is completely deserted. There thou shalt find a chest of Fellowship funds which was hidden for safekeeping just a few days ago. Thou wilt know the chest because it will contain not only gold but two Fellowship medallions. The site is also most likely marked with a Fellowship staff. Bring these funds back to us without losing a single coin and thou wilt have successfully completed thy mission. No need to bring the chest, just the gold. Now, thou must be on thy way!"*];
+                flag(142) = true;
+                GivePartyExp_i(100);
+                TurnOff("mission");
+                terminate;
+            }
+            key ("chest") {
+                ["Ah yes, thou hast returned from Dungeon Destard! But wait! I do not see the Fellowship funds that thou wast to bring back! What has happened?!"];
+                TurnOn(<< "a highwayman", "monsters", "pirates", "ship sunk" >>);
+                TurnOff("chest");
+            }
+            key ("a highwayman") {
+                ["Why, thy tale is outlandish! I refuse to believe it!" Batlin sniffs in irritation.];
+                TurnOff("a highwayman");
+                TurnOn("join");
+            }
+            key ("monsters") {
+                ["Monsters! There are monsters lurking in dungeon Destard?! Well then, I do apologize for thine inconvenience."];
+                TurnOff(<< "monsters", "a highwayman", "ship sunk", "pirates" >>);
+                TurnOn("join");
+            }
+            key ("pirates") {
+                ["Surely thou canst do better than that! If thou simply dost not wish to answer my question why dost thou not say so?"];
+                TurnOff("pirates");
+                TurnOn("join");
+            }
+            key ("ship sunk") {
+                [Batlin slowly rolls his eyes. "Thou ought to have been a bard, thou dost regale me with such stories!"];
+                TurnOff("ship sunk");
+                TurnOn("join");
+            }
+            key ("medallion") {
+                v2 = ~GiveToParty_i(false, 1, _All, _Amulet, 1);
+                if v2 {
+                    ["Allow me to present thee with thy Fellowship medallion." Batlin gives you the medallion. "Please -- wear the medallion at all times. Ready it to thy neck immediately! Oh, and... welcome to The Fellowship, Avatar."];
+                    flag(144) = true;
+                    TurnOff("medallion");
+                } else {
+                    ["Thou cannot receive thy Fellowship medallion. Thou art too encumbered!"*];
+                    break;
+                }
+            }
+            key ("apples") {
+                ["While thou art here, please feel free to enjoy an apple. The finest in all of Britannia, I am certain thou wilt find. They are provided to The Fellowship by the Royal Orchards."];
+                TurnOff("apples");
+            }
+            key ("voice") {
+                if flag(150) {
+                    ["Once a person has walked with The Fellowship long enough and applied the Triad of Inner Strength to his life, he has cleared his mind of all conflicting, counterproductive thoughts to the point where he may actually hear his internal voice of reason. This voice of reason is the core of thine inner mind which guides thee through pure instinct, wisdom and irreproachable logic. Once one starts to listen to it and follow its guidance, one has achieved the height of enlightenment. Perhaps thou shalt hear it one day."];
+                    GivePartyExp_i(20);
+                } else {
+                    ["Only active or potential Fellowship members are privy to the concept of 'the voice'. I can tell thee more when thou dost take the Fellowship test."];
+                    TurnOn("test");
+                }
+                TurnOff("voice");
+            }
+            key ("test") {
+                ["Oh, art thou ready to join The Fellowship?"];
+                if ~AskYesNo() {
+                    BatlinOffersMembership_i();
+                } else {
+                    ["Until thou art ready to join, I cannot tell thee any more about the test."];
+                    TurnOn("join");
+                }
+                TurnOff("test");
+            }
+            key ("Meditation Retreat") {
+                ["It is a retreat from the pressures and distractions of everyday life where new members of The Fellowship may go and study the philosophies of The Fellowship. It is located on an island east of Serpent's Hold."];
+                TurnOff("Meditation Retreat");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["Until we meet again, Avatar."*];
+    }
+    if (event = _Bark) {
+        BarkAboutWork_i(_Batlin);
+    }
+}
+
+Usable BatlinOffersMembership_i #locals(3) #uses(~AskYesNo, BatlinInductsAvatar_i, BatlinGivesExam_i) {
+    v0 = ~GetTime();
+    if (flag(150) and flag(151)) {
+        ["Well, thou didst certainly attempt to complete the quest. I cannot understand why the chest in Destard was empty. But we shall forget it, shall we?];
+        ["Now that thou hast worked a little for The Fellowship, and hast learned what we stand for, dost thou still wish to join?"];
+        v1 = ~AskYesNo();
+        if v1 {
+            flag(141) = true;
+            ["Then thou art most welcome to The Fellowship. ];
+            if not (v0 = 7) {
+                ["Thou wilt officially be inducted during our nightly meeting this evening. Please come, and thou shalt receive thy medallion then. Once again, we thank thee, Avatar."*];
+                terminate;
+            } else {
+                ["The Ceremony shall begin."];
+                BatlinInductsAvatar_i();
+            }
+            TurnOff("join");
+        } else {
+            ["I can see that thou art not yet ready to take such a courageous step in thy thinking and in thy life. But do remember what we spoke of today, my friend! Perhaps in time thou wilt become ready."*];
+            terminate;
+        }
+    } else {
+        ["Ah, but first things first. I recommend that thou takest our Examination to determine if thou art truly in need of The Fellowship's teachings. Dost thou want to take the test?"];
+        v2 = ~AskYesNo();
+        if v2 {
+            PushKeys();
+            BatlinGivesExam_i();
+            PopKeys();
+        } else {
+            ["Perhaps another time, then."*];
+            terminate;
+        }
+    }
+}
+
+Usable BatlinGivesExam_i #locals(9) #uses(~AvatarName, ~AskList, BatlinGivesPackage_i) {
+    SetSpeaker(0, _Batlin);
+    v0 = ~AvatarName();
+    ["These questions are all hypothetical. Do not let them confuse or upset thee.~~"Question One: Thou art feeling depressed right now. Is it more likely because -~A: Thou hast disappointed a friend, or~B: A friend has disappointed thee?"];
+    v1 = ~AskList(<< "A: I disappointed a friend", "B: Friend has disappointed me" >>);
+    if (v1 = "A: I disappointed a friend") {
+        ["I can tell from thine answer that thou art a person who takes their responsibilities to others very seriously, and perhaps tends to put too much pressure on oneself to please others." Batlin smiles and nods.];
+    } else {
+        ["I can tell from thine answer thou art a person who tends to trust people and is often willing to give people another chance - even after ample demonstration that they are not worthy of one." Batlin smiles and nods.];
+    }
+    ClearKeys();
+    ["Question Two: Thou art at a feast hosted by a very high-ranking local official. Thou dost believe the food he has ordered to be served is little more than swill, and thou dost notice that the other guests certainly think so. When thine host asks if thou dost like the food, dost thou~A: tell the truth, or~B: lie to him?"];
+    v2 = ~AskList(<< "A: Tell the truth", "B: Lie to him" >>);
+    if (v2 = "A: Tell the truth") {
+        ["Thy response shows thou art a bluntly honest person, who mayest occasionally say things that people may not like hearing, but thine intentions are noble ones." Batlin makes a sweeping gesture with his hand.];
+    } else {
+        ["Thy response shows thou art a person who is deeply concerned with the feelings of others, a person to whom manners and graciousness are of the highest import." Batlin makes a sweeping gesture with his hand.];
+    }
+    ClearKeys();
+    ["Question Three: Thou hast taken the last room available at an inn. Upon entering it thou dost find that it is filthy. It is the middle of the night, there is no one to clean it and there is nowhere else to stay. Dost thou~A: clean up the room thyself, at least somewhat, before reposing in it, or~B: dost thou just go to sleep, letting the room remain as thou hast found it?"];
+    v3 = ~AskList(<< "A: Clean the room myself", "B: Leave the room as is" >>);
+    if (v3 = "A: Clean the room myself") {
+        ["Thou hast revealed that thou art a person who instinctively believes they are responsible for anything that goes wrong and that it falls to thee to put the whole world right." Batlin sighs.];
+    } else {
+        ["Thou hast revealed that thou art a person who tends to accept their fate complacently whenever life appears to be unfair. Thou dost naturally assume that life will be unkind as a protection against when it is." Batlin sighs.];
+    }
+    ClearKeys();
+    ["Question Four: At a festive gathering thou dost tell a humorous anecdote, and thou dost tell it very well, creating much amusement. Didst thou tell this comedic story because~A: thou didst enjoy the response that thou didst receive from thine audience, or~B: because thou didst want to please thy friends?"];
+    v4 = ~AskList(<< "A: I enjoyed the response", "B: I wanted to please friends" >>);
+    if (v4 = "A: I enjoyed the response") {
+        ["Thine answer shows thou art a person who instinctively sees friends as tools to be used for thine own gratification." Batlin frowns slightly.];
+    } else {
+        ["Thine answer shows thou art a person who instinctively feels unworthy of having friends. Thou must continuously buy their attentions by amusing them." Batlin frowns slightly.];
+    }
+    ClearKeys();
+    ["Question Five: If thou wert to become a person of leisure, one who had amassed a fantastic fortune of wealth, would it most likely be because~A: thou hadst discovered an infallible method of stealing the money of others, or~B: thou hadst discovered an infallible method of illicitly duplicating the coin of the realm?"];
+    v5 = ~AskList(<< "A: I stole the money", "B: I duplicated the coin" >>);
+    if (v5 = "A: I stole the money") {
+        ["From Question Five we learn that thou art a person who instinctively believes that they are incapable of achieving success, someone who feels that they can only profit through the exploitation of others." Batlin slowly shakes his head.];
+    } else {
+        ["From Question Five we learn that thou art a person who instinctively believes that they are incapable of achieving success, at best only presenting the illusion of success." Batlin slowly shakes his head.];
+    }
+    ClearKeys();
+    ["Question Six: While travelling thou dost find a man in terrible pain. His arm has been grievously injured. A healer tending to him tells thee that the man's arm will have to be removed and that he will require thine assistance to do it. The man says he will recover from his injury and asks thee not to let the healer amputate his arm. Dost thou~A: heed the words of the healer, or~B: respect the wishes of the injured man?"];
+    v6 = ~AskList(<< "A: Heed the healer", "B: Respect the man" >>);
+    if (v6 = "A: Heed the healer") {
+        ["By thine answer thou art a person who believes in mercy even when it is not an easy thing, and a person who tries to have the courage of thy convictions." Batlin gives thee a knowing look.];
+    } else {
+        ["By thine answer thou art a person who deeply believes in the value of human life and who has a strong sense of faith in the possibilities that life continuously gives us." Batlin gives thee a knowing look.];
+    }
+    ClearKeys();
+    ["Question Seven: Thou hast just killed a small dog by throwing a rock at it. Is it more likely that thou hast done this because~A: the dog was going to attack thee, or~B: the dog was going to attack someone else?"];
+    v7 = ~AskList(<< "A: It was to attack me", "B: It was to attack another" >>);
+    if (v7 = "A: It was to attack me") {
+        ["This question tells us that thou art an overly defensive person. Thou dost need to stop assuming that the world around thee exists only to bring thee potential harm." Batlin strokes his chin thoughtfully.];
+    } else {
+        ["This question tells is that thou art an overly aggressive person. Thou dost need to stop trying to solve all of thy problems through violence." Batlin strokes his chin thoughtfully.];
+    }
+    ClearKeys();
+    ["Question Eight: Thou art in a boat with thy betrothed and thy mother. The boat capsizes. In the choppy waters thou canst only save thyself and one other person. Who dost thou save from drowning,~A: thy betrothed, or~B: thy mother?"];
+    v8 = ~AskList(<< "A: My betrothed", "B: My mother" >>);
+    if (v8 = "A: My betrothed") {
+        ["While risking thy life to save the life of thy betrothed is admirable, I cannot help but wonder what suppressed hostility thou dost have towards thy mother as thou wouldst simply let her drown." Batlin shrugs.];
+    } else {
+        ["While risking thy life to save the life of thy mother is admirable, I cannot help but wonder if thou mightest have a problem getting along with the opposite gender as thou wouldst simply let thy betrothed drown." Batlin shrugs.];
+    }
+    ClearKeys();
+    ["Thou art a person of strong character, Avatar, but one who is troubled by deep personal problems that prevent thee from achieving thy true potential for greatness. In short, thou art precisely the type of person for which The Fellowship was created.];
+    ["I welcome thee to our fold. Know that the path of the Triad is not an easy one but its rewards are bountiful. I will, of course, waive the usual sabbatical of study that is required before one achieves membership. Thou art, after all, the Avatar.];
+    ["However, as one of our tenets prescribes, Worthiness Precedes Reward. Thou must embark on a task or two for The Fellowship before thou can be properly inducted and receive thy medallion."];
+    flag(150) = true;
+    BatlinGivesPackage_i();
+}
+
+Usable BatlinInductsAvatar_i #locals(20) #uses(~AvatarName, ~LordOrLady, ~IsNPCNear, ~AskYesNo, AskFellowshipQuiz_i, GivePartyExp_i) {
+    SetSpeaker(0, _Batlin);
+    v0 = ~AvatarName();
+    v1 = ~LordOrLady();
+    [The ceremony begins as Batlin stands before the gathered members of The Fellowship in Britain. He begins his sermon. "My friends, I originally created The Fellowship to help ready Britannia and its people for the future. Today one of the greatest symbols of its past has come here to join our Fellowship. This is a great day, for as our past and present intertwine we shall send a message which shall be heard throughout Britannia. Soon all of its peoples will strive together for unity." The gathering breaks into loud cheers. "When they hear that the Avatar has become a member of The Fellowship those who were at first distrustful of us will come to see the truth of what we stand for. Then we may bring about a day when all of Britannia is worthy of the ample rewards it shall receive."];
+    v2 = ~IsNPCNear(_Iolo);
+    if v2 {
+        SetSpeaker(0, _Iolo);
+        [Iolo whispers to you. "Art thou quite certain, <v0>, that thou dost wish to join with these people?"];
+        v3 = ~AskYesNo();
+        if v3 {
+            ["I am not certain if thou art brave or simply foolish."*];
+        } else {
+            ["It is a relief to me to hear that thou art not certain! Allow me to remind thee that it is not too late to refuse their offer! Let us leave, and quickly!"*];
+            terminate;
+        }
+        CloseSpeaker(_Iolo);
+    }
+    SetSpeaker(0, _Batlin);
+    ["Now is the time when our members give their testimonials of how they have been applying the Triad of Inner Strength to their lives. Who shall be the first?"];
+    v4 = ~IsNPCNear(_Gaye);
+    if v4 {
+        SetSpeaker(0, _Gaye);
+        ["The Fellowship has taught me to live with the shortcomings of others," says Gaye.];
+        CloseSpeaker(_Gaye);
+    }
+    v5 = ~IsNPCNear(_Candice);
+    if v5 {
+        SetSpeaker(0, _Candice);
+        ["I had lost all enthusiasm for life before I joined The Fellowship," says Candice.*];
+        SetSpeaker(0, _Batlin);
+        ["Thank thee for sharing, Candice."*];
+        CloseSpeaker(_Candice);
+    }
+    v6 = ~IsNPCNear(_Patterson);
+    if v6 {
+        SetSpeaker(0, _Patterson);
+        ["The Fellowship helps me to be more honest with people," says Patterson.*];
+        CloseSpeaker(_Patterson);
+    }
+    v7 = ~IsNPCNear(_Figg);
+    if v7 {
+        SetSpeaker(0, _Figg);
+        ["The Fellowship has taught me not to let others push me around," says Figg.*];
+        CloseSpeaker(_Figg);
+    }
+    v8 = ~IsNPCNear(_Grayson);
+    if v8 {
+        SetSpeaker(0, _Grayson);
+        ["The Triad of Inner Strength has helped me to improve my skills and build better weapons," says Grayson.*];
+        CloseSpeaker(_Grayson);
+    }
+    v9 = ~IsNPCNear(_Gordon);
+    if v9 {
+        SetSpeaker(0, _Gordon);
+        ["The Fellowship has put me back on the path to prosperity," says Gordon.*];
+        SetSpeaker(0, _Batlin);
+        ["Yes! Thank thee for sharing, brother!"*];
+        CloseSpeaker(_Gordon);
+    }
+    v10 = ~IsNPCNear(_Sean);
+    if v10 {
+        SetSpeaker(0, _Sean);
+        ["The Fellowship has taught me not to be afraid of success," says Sean.*];
+        CloseSpeaker(_Sean);
+    }
+    v11 = ~IsNPCNear(_Millie);
+    if v11 {
+        SetSpeaker(0, _Millie);
+        ["The Fellowship has given my life a whole new purpose. Just today I have recruited two more potential members!" says Millie.*];
+        CloseSpeaker(_Millie);
+    }
+    v12 = ~IsNPCNear(_Nanna);
+    if v12 {
+        SetSpeaker(0, _Nanna);
+        ["The Fellowship has taught me about the evils of the class structure," says Nanna.*];
+        CloseSpeaker(_Nanna);
+    }
+    v2 = ~IsNPCNear(_Iolo);
+    v13 = ~IsNPCNear(_Shamino);
+    if (v13 and v2) {
+        SetSpeaker(0, _Iolo);
+        [You notice Iolo is whispering to Shamino. "I do not think that <v0> doth realize the significance of the situation. <v1> cannot be dissuaded. Perhaps thou shouldst give it a try."];
+        CloseSpeaker(_Iolo);
+        SetSpeaker(0, _Shamino);
+        ["All right, I shall give it a try." He nudges you and whispers. "Perhaps we should get out of here, <v1>, before one of us does something they may later regret? Let us leave these premises, all right?"];
+        v14 = ~AskYesNo();
+        if v14 {
+            ["I am glad thou dost see it my way. We can leave whenever thou art ready."*];
+            terminate;
+        } else {
+            ["Then I guess it is too late for I already regret coming here."*];
+        }
+        CloseSpeaker(_Shamino);
+    }
+    SetSpeaker(0, _Batlin);
+    ["Now is the time to welcome the newest member of The Fellowship to sit at our table." Batlin beckons you to join him at the podium.];
+    [He pours a glass of wine into a crystal goblet and takes a sip.];
+    [The goblet is passed around the hall, each member respectively taking a sip. Finally, the goblet is handed to you. You look at it thoughtfully as you feel all eyes in the room upon you.];
+    if v13 {
+        v15 = ~IsNPCNear(_Dupre);
+        v16 = ~AvatarSex();
+        if v16 {
+            v17 = "she";
+        } else {
+            v17 = "he";
+        }
+        if v15 {
+            SetSpeaker(0, _Shamino);
+            [You hear Shamino desperately whispering to Dupre as they stand behind you. "Dupre, we are having no success in showing the Avatar the mistake <v17> must surely be making. Thou art our last hope."];
+            CloseSpeaker(_Shamino);
+            SetSpeaker(0, _Dupre);
+            [You feel a tapping on your shoulder and you turn to see Dupre as he whispers in your ear. "I know a much better place to get a drink than this one. Perhaps thou wouldst like to join thy comrades there?"];
+            v18 = ~AskYesNo();
+            if v18 {
+                ["Then let us be off. Now!"*];
+                terminate;
+            } else {
+                ["Then I hope this game amuses thee, for it makes thy comrades sorely worried."*];
+            }
+            CloseSpeaker(_Dupre);
+        }
+    }
+    SetSpeaker(0, _Batlin);
+    ["Now there remains but one more test of thy loyalty to The Fellowship. I presume thou hast read the Book of Fellowship by now. I must ask you two questions. The answers may be found within the book." Batlin smiles modestly. "I am the author, didst thou know? Well, never mind. Here we go."];
+    AskFellowshipQuiz_i();
+    if not flag(56) {
+        ["Excellent, Avatar!"];
+        [Fighting a tremble of hesitation you take a long deep drink from the goblet. Batlin steps up to you. "May the news spread far and wide that our newest member is none other than the Avatar!"];
+        [The other Fellowship members cheer with pleasure.];
+        v19 = ~GiveToParty_i(false, 1, _All, _Amulet, 1);
+        flag(145) = true;
+        $JoinFellow = true;
+        GivePartyExp_i(500);
+        if v19 {
+            ["Allow me to present thee with thy Fellowship medallion." Batlin gives you the medallion. "Please -- wear thy medallion at all times for it shall be a symbol to all who see it that thou dost walk with the Fellowship. Ready it to thy neck immediately! Oh, and... welcome to The Fellowship, Avatar."*];
+            flag(144) = true;
+        } else {
+            ["Thou art too encumbered to receive thy Fellowship medallion. Thou must lighten thy load."*];
+        }
+        terminate;
+    } else {
+        ["My dear Avatar. Thou must realize that thou must know everything there is to know about The Fellowship before I can induct thee. Please study thy Book of Fellowship and return to me."];
+        [Your mind seems unclear. I would not be surprised if thou dost not understand\x09another soul with whom thou dost speak."];
+        terminate;
+    }
+}
+
+Usable BatlinHoldsMeeting_i #locals(14) #uses(~AvatarName, ~LordOrLady, ~IsNPCNear) {
+    SetSpeaker(0, _Batlin);
+    v0 = ~AvatarName();
+    v1 = ~LordOrLady();
+    [The ceremony begins as Batlin stands before the gathered Fellowship members. The hall fills with thunderous cheers. They look at him with a mixture of awe and sheer adoration. Batlin stands and basks in the warm reception for a moment, a triumphant smile on his face. With a slight gesture of his hand the crowd becomes quiet.];
+    ["It is good to see you here this evening!" Batlin says. "Surely you make me feel proud to be part of what we lovingly call The Fellowship." There is another eruption of applause.];
+    ["In thine heart be glad for thou dost walk with The Fellowship! The people of Britannia live in a fevered state of illusory thoughts and emotions. But those whom I look upon here tonight are seekers of what is good and true in the world! They walk the path which leads to becoming truly cognizant. But how dost thou find thy way? Ask any Fellowship member and they will tell thee! The path to complete awareness is easy to find. One must apply to one's life the Triad of Inner Strength.];
+    ["The Triad of Inner Strength is a series of three values that can bring the mind to a perfect state of sanguine cognition. The first value is Strive For Unity. When the totality of the people of the world want to accomplish something, then it becomes done. Thus once the people of the world all strive towards the same ends there is nothing that is impossible. Just think of it! A world where any dream can be fulfilled, any good can be achieved. But as thou canst see plainly by looking at our own sad society, when the people of the world are disunited, it is a miracle that anything gets accomplished!];
+    ["The second value is Trust Thy Brother. Thou must surrender thy fear, prejudice and suspicion. Look to thine own self! Before thou dost question anything, question thyself! The world is a place where the balances of nature are at work to protect thee every second without thee even realizing it! What canst thou accomplish in this world if thou dost spend all thy time questioning thy brother?! Is he working as hard as I? What are his true motivations? As thou dost waste thine energies wondering, he sees thee and starts wondering these same things about thee. Thus is the world diminished!];
+    ["The third value is Worthiness Precedes Reward. There is not one among us who is without desire. Much of the misery in the world can be traced to unfulfilled desires. But one moment! Why dost thou deserve what thou dost desire? Most people get what they are worthy of in this life. If thou art not worthy of thy desire then thou shouldst not be surprised if thy desires are unfulfilled. If thou dost become worthy only then hast thou become open to fulfilling thy desires. Desire is a strange thing. Many long for things they do not really want. What they really desire is worthiness itself!];
+    ["I have just told thee all that thou dost need to follow the Triad Of Inner Strength. The lessons are simple. The true measure of thine understanding comes in how absolutely thou wilt apply them to thy life. Thou now knowest all thou wilt ever need. Thou dost not need the arcane knowledge of the dying art of magic. Thou dost not need the unsure hand of the healer and his limited knowledge. All that thou wilt ever need is to continuously seek out the best in thyself and to live amongst those that would do the same. Only then art thou truly walking with The Fellowship.];
+    ["Now I think would be a good time to hear the words of our fellow members. To hear them share with us how The Fellowship has been bringing positive change to their lives."];
+    v2 = ~IsNPCNear(_Candice);
+    if v2 {
+        SetSpeaker(0, _Candice);
+        ["The Fellowship has shown me that I was afraid of myself and that I had to open myself up to life's experiences," says Candice.*];
+        CloseSpeaker(_Candice);
+    }
+    v3 = ~IsNPCNear(_Patterson);
+    if v3 {
+        SetSpeaker(0, _Patterson);
+        ["The Fellowship helps me be more honest with people," says Patterson.*];
+        SetSpeaker(0, _Batlin);
+        ["Thank thee for sharing, Patterson."*];
+        CloseSpeaker(_Patterson);
+    }
+    v4 = ~IsNPCNear(_Figg);
+    if v4 {
+        SetSpeaker(0, _Figg);
+        ["The Fellowship has taught me how to better perform my duties as the Caretaker of the Royal Orchards," says Figg.*];
+        CloseSpeaker(_Figg);
+    }
+    v5 = ~IsNPCNear(_Gaye);
+    if v5 {
+        SetSpeaker(0, _Gaye);
+        ["The Fellowship has taught me to, first and foremost, treat people with respect," says Gaye.*];
+        CloseSpeaker(_Gaye);
+    }
+    v6 = ~IsNPCNear(_Grayson);
+    if v6 {
+        SetSpeaker(0, _Grayson);
+        ["After joining The Fellowship I learned how to be a man's man," says Grayson.*];
+        CloseSpeaker(_Grayson);
+    }
+    v7 = ~IsNPCNear(_Gordon);
+    if v7 {
+        SetSpeaker(0, _Gordon);
+        ["The Fellowship is helping me back from the brink of personal and financial oblivion," says Gordon.*];
+        SetSpeaker(0, _Batlin);
+        ["Right thou art, brother!"*];
+        CloseSpeaker(_Gordon);
+    }
+    v8 = ~IsNPCNear(_Sean);
+    if v8 {
+        SetSpeaker(0, _Sean);
+        ["The Fellowship has freed me from the illusory appeals of mediocrity," says Sean.*];
+        CloseSpeaker(_Sean);
+    }
+    v9 = ~IsNPCNear(_Millie);
+    if v9 {
+        SetSpeaker(0, _Millie);
+        ["In The Fellowship I am learning that I need to devote my life to a special purpose," says Millie.*];
+        CloseSpeaker(_Millie);
+    }
+    v10 = ~IsNPCNear(_Spark);
+    if v10 {
+        SetSpeaker(0, _Spark);
+        ["This whole ceremony and everyone in it doth give me the willies!"*];
+        CloseSpeaker(_Spark);
+    }
+    v11 = ~IsNPCNear(_Iolo);
+    if v11 {
+        SetSpeaker(0, _Iolo);
+        ["'Tis a sad thing to see so many people who have nothing else better in their lives than blindly following this dubious spiritual leader."*];
+        CloseSpeaker(_Iolo);
+    }
+    v12 = ~IsNPCNear(_Shamino);
+    if v12 {
+        SetSpeaker(0, _Shamino);
+        ["'Tis a sad thing that Britannia has fallen so far as to leave itself open to a group like this Fellowship."*];
+        CloseSpeaker(_Shamino);
+    }
+    v13 = ~IsNPCNear(_Dupre);
+    if v13 {
+        SetSpeaker(0, _Dupre);
+        ["'Tis a sad thing when I cannot even keep my eyes open from the boredom of this Fellowship ceremony!"*];
+        CloseSpeaker(_Dupre);
+    }
+    SetSpeaker(0, _Batlin);
+    [From watching Batlin and the others you get the feeling that the Fellowship ceremony is going to last long into the night. Now would be a good moment to slip away without drawing much attention to yourself...*];
+    terminate;
+}
+
+Usable BatlinGivesPackage_i #locals(4) #uses(~AskYesNo, GivePartyExp_i) {
+    if not flag(214) {
+        ["I need thee to deliver this sealed package unopened to Elynor, the leader of our Fellowship branch in Minoc. Elynor will reward thee upon receiving it, thou dost have my word. May I trust thee to do it?"];
+    } else {
+        ["Hast thou reconsidered thy task? Wilt thou deliver the package to Elynor in Minoc?"];
+    }
+    v0 = ~AskYesNo();
+    if v0 {
+        v1 = ~FindItem(_All, _All, _Sealed_Box, _Batlin);
+        v2 = ~Item_push(v1);
+        v3 = ~PopToNPC(_Avatar);
+        if v3 {
+            ["Excellent! Here it is. Thou must now be on thy way!"*];
+            flag(143) = true;
+            GivePartyExp_i(200);
+            terminate;
+        }
+        v3 = ~PopToNPC(_Batlin);
+        ["Zounds! Thine hands are too full to take the box. Please divest thyself of some of thy belongings."*];
+        flag(215) = true;
+        terminate;
+    } else {
+        ["Avatar, I know that thou hast gone on many quests. The quest for the spiritual is often the most fearsome and elusive one of all, as we both know. Do not be afraid of thyself, Avatar, for that is what prevents us from doing that which we must do. We shall speak of this again once thou hast reconsidered. Ask me about the package again tomorrow."*];
+        flag(214) = true;
+        terminate;
+    }
+}
+
+Usable AskFellowshipQuiz_i #locals(27) {
+    v0 = << 0, 0 >>;
+    v1 = << 1, 2 >>;
+    v2 = false;
+    if (not flag(50) and (not flag(51) and (not flag(52) and (not flag(53) and (not flag(54) and not flag(55)))))) {
+        Foreach v5 in v1 {
+            loop {
+                v6 = ~rndRange(6, 1);
+            } while (v6 in v0) {
+                continue;
+                goto label_7;
+            }
+            v0::v5 = v6;
+            label_7:
+        }
+        Foreach v5 in v1 {
+            if (v0::v5 = 1) {
+                flag(50) = true;
+            }
+        }
+        Foreach v5 in v1 {
+            if (v0::v5 = 2) {
+                flag(51) = true;
+            }
+        }
+        Foreach v5 in v1 {
+            if (v0::v5 = 3) {
+                flag(52) = true;
+            }
+        }
+        Foreach v5 in v1 {
+            if (v0::v5 = 4) {
+                flag(53) = true;
+            }
+        }
+        Foreach v5 in v1 {
+            if (v0::v5 = 5) {
+                flag(54) = true;
+            }
+        }
+        Foreach v5 in v1 {
+            if (v0::v5 = 6) {
+                flag(55) = true;
+            }
+        }
+    } else {
+        Foreach v5 in v1 {
+            if (flag(50) and not (1 in v0)) {
+                v0::v5 = 1;
+            }
+            if (flag(51) and not (2 in v0)) {
+                v0::v5 = 2;
+            }
+            if (flag(52) and not (3 in v0)) {
+                v0::v5 = 3;
+            }
+            if (flag(53) and not (4 in v0)) {
+                v0::v5 = 4;
+            }
+            if (flag(54) and not (5 in v0)) {
+                v0::v5 = 5;
+            }
+            if (flag(55) and not (6 in v0)) {
+                v0::v5 = 6;
+            }
+        }
+    }
+    v21 = << "According to the Book of Archaic Knowledge, how many times must ginseng be reboiled in order for it to be properly used as a magical reagent?", "How many runes are in the archaic script of the outdated Britannian language?", "According to the Book of Archaic Knowledge, how many places may the Mandrake Root naturally be found?", "In the Book of Fellowship, how many bandits can be seen surrounding on the old man in the illustration on page three?", "According to the Traveller's Companion, how many parts of the body should one wish to protect with armour?", "According to the Book of Archaic Knowledge, fewer than how many pearls in 10,000 are black?" >>;
+    v22 = << 40, 31, 2, 6, 6, 1 >>;
+    Foreach v5 in v1 {
+        v25 = v21::v0::v5;
+        ["<v25>"];
+        v26 = ~AskBarInput(0, 1, 60, 0);
+        if not (v26 = v22::v0::v5) {
+            v2 = true;
+        }
+    }
+    if v2 {
+        SetItemFlag_i(25, item);
+        flag(56) = true;
+    } else {
+        ClearItemFlag_i(25, item);
+        flag(56) = false;
+    }
+}

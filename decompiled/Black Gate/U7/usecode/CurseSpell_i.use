@@ -1,0 +1,14 @@
+Routine CurseSpell_i accepts a0 #locals(4) #uses(~DirFromAvatar_i, ~IsMagicOK_i) {
+    if (event = _Action) {
+        Kernel_resetRef(item);
+        v0 = ~GetTarget();
+        v1 = ~DirFromAvatar_i(v0);
+        Item_bark("@Des Sanct@", item);
+        if (~IsMagicOK_i() and (v0::1 <> 0)) {
+            v2 = ~SetAttack_i(_Curse, v0, item);
+            v3 = ~PostAction(<< _aFACE_i, v1, _aSFX_i, 67, _aRAISE1_FRAME_i, _aOUT_FRAME_i, _aTHRUST2_FRAME_i, _aATTACK_i >>, item);
+        } else {
+            v3 = ~PostAction(<< _aFACE_i, v1, _aRAISE1_FRAME_i, _aOUT_FRAME_i, _aTHRUST2_FRAME_i, _aUSABLE_i, #FizzleSpell_i >>, item);
+        }
+    }
+}

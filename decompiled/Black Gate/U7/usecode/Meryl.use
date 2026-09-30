@@ -1,0 +1,28 @@
+Routine Meryl accepts a0 #locals(4) #uses(BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Meryl);
+        [You see a middle-aged actress with a very serious expression. She is unable to speak with you because she is concentrating on her part in the Passion Play. Perhaps you should speak to Paul.*];
+    }
+    if (event = _Bark) {
+        v0 = ~GetTime();
+        v1 = ~GetWorkType(~NPCToItem_i(_Meryl));
+        v2 = ~rndRange(4, 1);
+        if (v1 = 29) {
+            if (v2 = 1) {
+                v3 = "@See the Passion Play!@";
+            }
+            if (v2 = 2) {
+                v3 = "@The Fellowship presents...@";
+            }
+            if (v2 = 3) {
+                v3 = "@Come view the Passion Play!@";
+            }
+            if (v2 = 4) {
+                v3 = "@We shall entertain thee!@";
+            }
+            Item_bark(v3, _Meryl);
+        } else {
+            BarkAboutWork_i(_Meryl);
+        }
+    }
+}

@@ -1,0 +1,30 @@
+Routine BedRoll accepts a0 #locals(5) #uses(PathToItem_i, MemberSays_i) {
+    if ((event = _Action) and not ~Item_getContainer(item)) {
+        v0 = ~GetCoord(item);
+        if (~GetFrame(item) = 0) {
+            v1 = ~Item_push(item);
+            if v1 {
+                v2 = ~canExistAt(17, _Bed_1011, v0);
+                v1 = ~PopToMap(v0);
+                if (v2 and v1) {
+                    closeAllGumps();
+                    v3 = << 65535, 65535, 65535, 0, 0, 0, 1, 1, 1 >>;
+                    v4 = << 1, 0, 65535, 1, 0, 65535, 1, 0, 65535 >>;
+                    Kernel_resetRef(_Avatar);
+                    PathToItem_i(7, item, #BedRoll, 65535, v4, v3, item);
+                } else {
+                    v0::2 = (v0::2 - 5);
+                    MemberSays_i("@There is no room for thy bedroll there.@");
+                }
+            }
+        }
+    }
+    if (event = 7) {
+        v1 = ~PostAction(<< _aFACE_i, byte(48), _aBEND_FRAME_i, _aSTAND_FRAME_i >>, _Avatar);
+        v1 = ~PostAction(<< _aWAIT_i, 2, _aUSABLE_i, #BedRoll >>, item);
+    }
+    if (event = _Posted_i) {
+        Item_setType(_Bed_1011, item);
+        SetFrame(17, item);
+    }
+}

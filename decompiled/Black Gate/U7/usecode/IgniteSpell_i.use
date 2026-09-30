@@ -1,0 +1,23 @@
+Routine IgniteSpell_i accepts a0 #locals(4) #uses(~DirFromAvatar_i, ~IsMagicOK_i, FlashBlocked_i) {
+    if (event = _Action) {
+        Kernel_resetRef(item);
+        v0 = ~GetTarget();
+        v1 = ~DirFromAvatar_i(v0);
+        Item_bark("@In Flam@", item);
+        if ~IsMagicOK_i() {
+            v2 = ~SetAttack_i(_Ignite, v0, item);
+            v2 = ~PostAction(<< _aFACE_i, v1, _aUP_FRAME_i, _aOUT_FRAME_i, _aTHRUST2_FRAME_i, _aATTACK_i >>, item);
+        } else {
+            v2 = ~PostAction(<< _aFACE_i, v1, _aUP_FRAME_i, _aOUT_FRAME_i, _aTHRUST2_FRAME_i, _aUSABLE_i, #FizzleSpell_i >>, item);
+        }
+    }
+    if (event = _Combat) {
+        v3 = ~Item_getType(item);
+        if (v3 in << 595, 889, 336, 481 >>) {
+            Telekinesis_i(v3);
+            v2 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, v3 >>, item);
+        } else {
+            FlashBlocked_i(60);
+        }
+    }
+}

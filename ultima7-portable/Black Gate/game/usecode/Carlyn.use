@@ -1,0 +1,250 @@
+Routine Carlyn accepts a0 #locals(5) #uses(~LordOrLady, CarlynSellsFood_i, CarlynSellsDrink_i, ~AskYesNo, CarlynSellsClothes_i, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Carlyn);
+        v0 = ~LordOrLady();
+        v1 = ~GetTime();
+        v2 = false;
+        TurnOn(<< "name", "job", "bye" >>);
+        if not $MET_CARLYN {
+            [At your approach, the woman raises her eyebrows to indicate she is aware of your presence and interested in what you are about to say.];
+            $MET_CARLYN = true;
+        } else {
+            ["And how may I help thee, <v0>?" asks Carlyn.];
+        }
+        converse {
+            key ("name") {
+                ["I am Carlyn." She smiles broadly.];
+                TurnOff("name");
+            }
+            key ("job") {
+                ["I am the tailor of Moonglow."];
+                if (v1 = 7) {
+                    ["I also tend the bar for Phearcy in the evenings."];
+                    TurnOn("buy refreshment");
+                    if not v2 {
+                        TurnOn("Phearcy");
+                    }
+                }
+                TurnOn(<< "tailor", "Moonglow" >>);
+            }
+            key ("buy refreshment") {
+                ["Wouldst thou prefer food or drink, <v0>?"];
+                PushKeys();
+                TurnOn(<< "food", "drink" >>);
+                TurnOff("buy refreshment");
+            }
+            key ("food") {
+                CarlynSellsFood_i();
+                PopKeys();
+                TurnOff("food");
+            }
+            key ("drink") {
+                CarlynSellsDrink_i();
+                PopKeys();
+                TurnOff("drink");
+            }
+            key ("Phearcy") {
+                if (v1 = 7) {
+                    v3 = "here";
+                } else {
+                    v3 = "at the Friendly Knave";
+                }
+                ["He is the owner and bartender. Every night at 9, he goes to the Fellowship meetings, so I serve refreshment for him <v3>."];
+                v2 = true;
+                TurnOff("Phearcy");
+                TurnOn("Fellowship");
+            }
+            key ("Moonglow") {
+                ["'Tis a very pleasant town, <v0>. There are so many different types of people here. I wish I knew more of them.~~"If thou hast any questions about them, I highly recommend to thee that thou speakest with Phearcy."];
+                if not v2 {
+                    TurnOn("Phearcy");
+                }
+                TurnOff("Moonglow");
+            }
+            key ("Fellowship") {
+                ["I know little about the group. Every night at 9 they have a meeting or some such of all the members. And, if I remember correctly, the leader of that branch doth give a speech -- a sermon is what I believe it is called.~~"There is another member in town, if thou hast questions about The Fellowship."];
+                TurnOn(<< "another", "leader" >>);
+                TurnOff("Fellowship");
+            }
+            key ("another") {
+                ["I believe his name is Tolemac. He is a farmer, from what I have heard. Phearcy would know more than I. Or thou couldst ask their clerk."];
+                TurnOn("clerk");
+                TurnOff("another");
+            }
+            key ("clerk") {
+                ["'Tis a woman, I know that, but I do not know her name."];
+                TurnOff("clerk");
+            }
+            key ("leader") {
+                ["His name is Rankin. I do not believe he has been here terribly long."];
+                TurnOff("leader");
+            }
+            key ("tailor") {
+                if ((v1 = 3) or ((v1 = 4) or ((v1 = 5) or (v1 = 6)))) {
+                    ["Yes, I love sewing clothing. Wouldst thou be interested in seeing or purchasing some of my creations?"];
+                    v4 = ~AskYesNo();
+                    if v4 {
+                        CarlynSellsClothes_i();
+                    } else {
+                        [Shock covers her face.~~"Well," she huffs.];
+                    }
+                } else {
+                    ["Yes, <v0>. 'Tis my job, and my passion. I love sewing clothing. If thou were to come to my shop when it was open, I could show thee many exquisite things."];
+                }
+                TurnOff("tailor");
+            }
+            key ("bye") {
+                ["Fare thee well, <v0>."*];
+                terminate;
+            }
+        }
+        clear_answers;
+    }
+    if (event = _Bark) {
+        BarkAboutWork_i(_Carlyn);
+    }
+}
+
+Usable CarlynSellsClothes_i #locals(13) #uses(~AskOrdList, ~PriceString_i, ~AskYesNo, ~SellItem_i) {
+    PushKeys();
+    v0 = true;
+    v1 = << "nothing", "heavy cloak", "tunic", "pants", "dress", "hood" >>;
+    v2 = << 0, 285, 249, 738, 249, 444 >>;
+    v3 = << 0, 50, 30, 30, 45, 10 >>;
+    v4 = << "", "a ", "a ", "", "a ", "a " >>;
+    v5 = << 0, 0, 0, 1, 0, 0 >>;
+    v6 = << "", "", "", " per pair", "", "" >>;
+    v7 = << 65177, 1, 0, 1, 1, 1 >>;
+    v8 = 1;
+    ["What article wouldst thou like to buy?"];
+    While v0 {
+        v9 = ~AskOrdList(v1);
+        if (v9 = 1) {
+            ["Fine!"];
+            v0 = false;
+        } else {
+            v10 = ~PriceString_i(v6::v9, v3::v9, v5::v9, v1::v9, v4::v9);
+            v11 = 0;
+            ["^<v10> Art thou willing to pay my price?"];
+            v12 = ~AskYesNo();
+            if v12 {
+                v11 = ~SellItem_i(false, 1, 0, v3::v9, v8, v7::v9, v2::v9);
+            }
+            if (v11 = 1) {
+                ["Excellent choice!"];
+            } else {
+                if (v11 = 2) {
+                    ["Thou must put away one of thine other items before thou canst take this fine piece of clothing."];
+                } else {
+                    if (v11 = 3) {
+                        ["Thou dost not have enough gold for my fine apparel. Perhaps in the near future."];
+                    } else {
+                    }
+                }
+            }
+            ["Is there something else thou wouldst like to see?"];
+            v0 = ~AskYesNo();
+        }
+    }
+    PopKeys();
+}
+
+Usable CarlynSellsFood_i #locals(14) #uses(~LordOrLady, ~AskOrdList, ~PriceString_i, ~AskYesNo, ~SellItem_i) {
+    v0 = ~LordOrLady();
+    PushKeys();
+    v1 = true;
+    v2 = << "nothing", "mutton rations", "trout", "Silverleaf", "cake", "ham" >>;
+    v3 = << 0, 377, 377, 377, 377, 377 >>;
+    v4 = << 65177, 15, 12, 31, 5, 11 >>;
+    v5 = << 0, 12, 2, 25, 2, 10 >>;
+    v6 = "";
+    v7 = << 0, 1, 0, 0, 0, 0 >>;
+    v8 = << "", " for ten portions", " for one portion", " for one portion", " per piece", " for a slice" >>;
+    v9 = << 0, 10, 1, 1, 1, 1 >>;
+    ["What wouldst thou like to buy?"];
+    While v1 {
+        v10 = ~AskOrdList(v2);
+        if (v10 = 1) {
+            ["Very well, <v0>."];
+            v1 = false;
+        } else {
+            if (v10 = 4) && flag(299) {
+                ["Phearcy has said that we can no longer sell Silverleaf because we have no more and cannot again acquire the meal. I am truly sorry. Perhaps thou wouldst be interested in something else."];
+            } else {
+                v11 = ~PriceString_i(v8::v10, v5::v10, v7::v10, v2::v10, v6);
+                v12 = 0;
+                ["^<v11> Dost thou accept my price?"];
+                v13 = ~AskYesNo();
+                if v13 {
+                    v11 = "How many ";
+                    if (v4::v10 = 15) {
+                        v11 = (v11 + "sets ");
+                    }
+                    v11 = (v11 + "dost thou want?");
+                    ["<v11>"];
+                    v12 = ~SellItem_i(true, 1, 20, v5::v10, v9::v10, v4::v10, v3::v10);
+                }
+                if (v12 = 1) {
+                    ["Agreed."];
+                } else {
+                    if (v12 = 2) {
+                        ["Thou cannot carry that much!"];
+                    } else {
+                        if (v12 = 3) {
+                            ["Thou hast not the gold for that!"];
+                        } else {
+                        }
+                    }
+                }
+            }
+            ["Wouldst thou like something else?"];
+            v1 = ~AskYesNo();
+        }
+    }
+    PopKeys();
+}
+
+Usable CarlynSellsDrink_i #locals(14) #uses(~LordOrLady, ~AskOrdList, ~PriceString_i, ~AskYesNo, ~SellItem_i) {
+    v0 = ~LordOrLady();
+    PushKeys();
+    v1 = true;
+    v2 = << "nothing", "wine", "ale" >>;
+    v3 = << 0, 616, 616 >>;
+    v4 = << 65177, 5, 3 >>;
+    v5 = << 0, 4, 3 >>;
+    v6 = "";
+    v7 = 0;
+    v8 = " per bottle";
+    v9 = 1;
+    ["What wouldst thou like to buy?"];
+    While v1 {
+        v10 = ~AskOrdList(v2);
+        if (v10 = 1) {
+            ["Very well, <v0>."];
+            v1 = false;
+        } else {
+            v11 = ~PriceString_i(v8, v5::v10, v7, v2::v10, v6);
+            v12 = 0;
+            ["^<v11> Dost thou accept my price?"];
+            v13 = ~AskYesNo();
+            if v13 {
+                v12 = ~SellItem_i(true, 1, 0, v5::v10, v9, v4::v10, v3::v10);
+            }
+            if (v12 = 1) {
+                ["Agreed."];
+            } else {
+                if (v12 = 2) {
+                    ["Thou cannot carry that much!"];
+                } else {
+                    if (v12 = 3) {
+                        ["Thou hast not the gold for that!"];
+                    } else {
+                    }
+                }
+            }
+            ["Wouldst thou like something else?"];
+            v1 = ~AskYesNo();
+        }
+    }
+    PopKeys();
+}

@@ -1,0 +1,151 @@
+Routine Kelly accepts a0 #locals(6) #uses(~LordOrLady, ~AskYesNo, KellySellsProduce_i, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Kelly);
+        v0 = ~LordOrLady();
+        v1 = ~GetTime();
+        v2 = ~GetWorkType(~NPCToItem_i(_Kelly));
+        TurnOn(<< "name", "job", "bye" >>);
+        if not $MET_KELLY {
+            [You see a sturdy-looking farmer's wife. She gives you a hospitable smile before returning to her chores.];
+            $MET_KELLY = true;
+        } else {
+            ["What brings us the pleasure of having thee back on this day, <v0>?" says Kelly.];
+        }
+        converse {
+            key ("name") {
+                ["I am called Kelly, <v0>."];
+                TurnOff("name");
+            }
+            key ("job") {
+                ["Mine husband Fred and I run the Farmer's Market."];
+                TurnOn(<< "Fred", "Farmer's Market", "buy" >>);
+            }
+            key ("Fred") {
+                ["My Fred is one of the most respected merchants in Britain. He sells the eggs and vegetables grown by Brownie and Mack, as well as exotic imported fruits."];
+                TurnOff("Fred");
+                TurnOn(<< "eggs", "fruits and vegetables", "Brownie", "Mack" >>);
+            }
+            key ("Farmer's Market") {
+                ["The Farmer's Market is where most of Britain buys its food. Why even the people in Paws will come here to buy eggs and vegetables. Fred has never raised the price of anything since opening this market many years ago."];
+                TurnOff("Farmer's Market");
+                TurnOn(<< "Britain", "Paws" >>);
+            }
+            key ("eggs") {
+                ["Farmer Mack's chickens lay plenty of eggs. It is a good thing the people here have such healthy appetites!"];
+                TurnOff("eggs");
+            }
+            key ("fruits and vegetables") {
+                ["We sell those mostly to older people. Thou dost know, I am sure, how children do not like to eat their vegetables. Some people do not want to keep a lot of fruit in their home as they are afraid of attracting fruit flies."];
+                TurnOff("fruits and vegetables");
+            }
+            key ("Brownie") {
+                ["Brownie is a good man. I do hope he runs for the mayorship again. If he does thou must be sure to vote for him."];
+                TurnOff("Brownie");
+            }
+            key ("Mack") {
+                ["I do believe that poor old Mack has been cooped up with his chickens for too long. He is a good person. Do not be put off by the strange stories he doth tell. He rarely ever sleeps as he spends most of the night staring at the sky. Of course his rooster crows at dawn and no farmer can afford to sleep past the dawn. So his mind is a bit ragged."];
+                TurnOff("Mack");
+            }
+            key ("Britain") {
+                ["Oh, in Britain they look for quality produce. I see the people who buy here look over every egg for cracks and every vegetable for any sign of spoilage."];
+                TurnOff("Britain");
+            }
+            key ("Paws") {
+                ["The people of Paws are always short of money. Mine heart goes out to them. They are always looking to buy the least expensive items for it is all they can afford."];
+                TurnOff("Paws");
+            }
+            key ("buy") {
+                if not (v2 = 7) {
+                    ["The market is now closed. Thou must return when we are open for business."];
+                } else {
+                    ["Wouldst thou like to buy some eggs, fruits or vegetables? We have plenty of delicious fresh eggs here for thee. And our vegetables are sure to keep thee in good health."];
+                    v3 = ~AskYesNo();
+                    if v3 {
+                        ["I am sure we have something here that will be to thy liking."];
+                        KellySellsProduce_i();
+                    } else {
+                        ["Perhaps another time then."];
+                    }
+                }
+                TurnOff("buy");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["Good day to thee, <v0>."*];
+    }
+    if (event = _Bark) {
+        v1 = ~GetTime();
+        v2 = ~GetWorkType(~NPCToItem_i(_Kelly));
+        v4 = ~rndRange(4, 1);
+        if (v2 = 7) {
+            if (v4 = 1) {
+                v5 = "@Come to the Farmer's Market!@";
+            }
+            if (v4 = 2) {
+                v5 = "@The Market is open!@";
+            }
+            if (v4 = 3) {
+                v5 = "@Vegetables! Meats!@";
+            }
+            if (v4 = 4) {
+                v5 = "@Come one, come all!@";
+            }
+            Item_bark(v5, _Kelly);
+        } else {
+            BarkAboutWork_i(_Kelly);
+        }
+    }
+}
+
+Usable KellySellsProduce_i #locals(13) #uses(~AskOrdList, ~PriceString_i, ~AskYesNo, ~SellItem_i) {
+    PushKeys();
+    v0 = true;
+    v1 = << "nothing", "eggs", "apple", "banana", "carrot", "pumpkin", "grapes" >>;
+    v2 = << 0, 377, 377, 377, 377, 377, 377 >>;
+    v3 = << 65177, 24, 16, 17, 18, 21, 19 >>;
+    v4 = << 0, 12, 3, 3, 3, 4, 3 >>;
+    v5 = << "", "", "an ", "a ", "a ", "a ", "" >>;
+    v6 = << 0, 12, 0, 0, 0, 0, 1 >>;
+    v7 = << "", " for one dozen", "", "", "", "", " for a bunch" >>;
+    v8 = << 0, 12, 1, 1, 1, 1, 1 >>;
+    ["What wouldst thou like to buy?"];
+    While v0 {
+        v9 = ~AskOrdList(v1);
+        if (v9 = 1) {
+            ["Fine."];
+            v0 = false;
+        } else {
+            v10 = ~PriceString_i(v7::v9, v4::v9, v6::v9, v1::v9, v5::v9);
+            v11 = 0;
+            ["^<v10> Wilt thou pay my price?"];
+            v12 = ~AskYesNo();
+            if v12 {
+                v10 = "How many ";
+                if (v8::v9 > 1) {
+                    v10 = (v10 + "dozen ");
+                }
+                v10 = (v10 + "wouldst thou like?");
+                ["<v10>"];
+                v11 = ~SellItem_i(true, 1, 20, v4::v9, v8::v9, v3::v9, v2::v9);
+            }
+            if (v11 = 1) {
+                ["Thou wilt indeed be pleased with thy purchase. We have only the finest produce."];
+            } else {
+                if (v11 = 2) {
+                    ["Thou cannot possibly carry that much!"];
+                } else {
+                    if (v11 = 3) {
+                        ["Thou dost not have enough coin to pay for that!"];
+                    } else {
+                    }
+                }
+            }
+            ["Wouldst thou like to purchase something else?"];
+            v0 = ~AskYesNo();
+        }
+    }
+    PopKeys();
+}

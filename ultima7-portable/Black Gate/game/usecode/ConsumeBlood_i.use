@@ -1,0 +1,18 @@
+Routine ConsumeBlood_i accepts a0 #locals(6) {
+    v0 = item;
+    if (event = _Posted_i) {
+        v1 = ~GetCoord(v0);
+        createSprite(65535, 0, 0, 0, v1::2, v1::1, 12);
+        Sfx(62);
+        if (~GetFrame(v0) = 3) {
+            SetFrame(2, v0);
+        }
+        v2 = ~FindNearby_i(176, 20, _Blood, v0);
+        Foreach v5 in v2 {
+            createSprite(65535, 0, 0, 0, v1::2, v1::1, 12);
+            Sfx(62);
+            Item_destroy(v5);
+        }
+        return;
+    }
+}

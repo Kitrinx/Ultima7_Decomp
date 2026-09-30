@@ -1,0 +1,198 @@
+Routine Rutherford accepts a0 #locals(14) #uses(~LordOrLady, ~IsNPCNear, RutherfordSellsFood_i, ~AskYesNo, GivePartyExp_i, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Rutherford);
+        v0 = ~LordOrLady();
+        v1 = ~GetTime();
+        v2 = ~GetWorkType(~NPCToItem_i(_Rutherford));
+        TurnOn(<< "name", "job", "bye" >>);
+        if $LEARNED_ABOUT_MINOC_MURDER {
+            TurnOn("murders");
+        }
+        if $LEARNED_ABOUT_CROWN_JEWEL {
+            TurnOn("Crown Jewel");
+        }
+        if $FOUND_SCROLL {
+            TurnOn("Hook");
+        }
+        if not $MetRutherford {
+            [You see a weary-looking man who is missing his right arm. With his one hand he scratches his head and squints in your general direction.];
+            $MetRutherford = true;
+        } else {
+            ["Oy, how ye been, <v0>?" Rutherford calls out to you.];
+        }
+        converse {
+            key ("name") {
+                [He lets out a sharp cough to clear his throat. "Rutherford's me name. Pleased ta meet 'chur."~~ He extends his greasy hand for you to shake and does not retract it until it is clasped.];
+                TurnOff("name");
+            }
+            key ("job") {
+                if $LEARNED_ABOUT_MINOC_MURDER {
+                    ["Why I be the barkeep of The Checquered Cork. No better place in Minoc to discuss the events of the day."];
+                    if (v2 = 23) {
+                        [He coughs into the rag he had just been using to polish the bar.];
+                        v3 = ~IsNPCNear(_Dupre);
+                        if v3 {
+                            ["Hello again, Sir Dupre! Didst thou enjoy mine establishment so much that thou hast returned?"*];
+                            SetSpeaker(0, _Dupre);
+                            ["My dear Rutherford, this is not a reflection on The Checquered Cork, but I simply like a good drink!"*];
+                            CloseSpeaker(_Dupre);
+                            SetSpeaker(0, _Rutherford);
+                        }
+                    }
+                    TurnOn(<< "Minoc", "events", "buy", "room" >>);
+                } else {
+                    ["'Tis no time for idle chatter! There have been two people murdered over at William's sawmill!"];
+                    $LEARNED_ABOUT_MINOC_MURDER = true;
+                }
+            }
+            key ("buy") {
+                if (v2 = 23) {
+                    ["We have a cornucopian variety of elixirs to quench thy tongue and gourmet dishes to appease thy palate."];
+                    RutherfordSellsFood_i();
+                } else {
+                    ["As I have finished my workday, I ask thee to come back another time. Thou dost have my thanks."];
+                }
+                TurnOff("buy");
+            }
+            key ("room") {
+                if (v2 = 23) {
+                    ["A room for the night is quite reasonable. Only 8 gold per person. Want one?"];
+                    if ~AskYesNo() {
+                        v4 = ~GetParty();
+                        v5 = 0;
+                        Foreach v8 in v4 {
+                            v5 = (v5 + 1);
+                        }
+                        v9 = (v5 * 8);
+                        v10 = ~CountItem(_All, _All, _Gold_Coin, _Party);
+                        if (v10 >= v9) {
+                            v11 = ~GiveToParty_i(true, _All, 255, _Key, 1);
+                            if not v11 {
+                                ["Thou art carrying too much to take the room key, <v0>!"];
+                            } else {
+                                ["Here is thy room key. It is good only until thou dost leave."];
+                                v12 = ~TakeFromParty_i(true, _All, _All, _Gold_Coin, v9);
+                            }
+                        } else {
+                            ["Thou dost not have enough gold, eh? That be right bad."];
+                        }
+                    } else {
+                        ["Mayhaps another night, then."];
+                    }
+                } else {
+                    ["If thou wouldst please make thy request at a time that was during my normal business hours, I would be most grateful."];
+                }
+                TurnOff("room");
+            }
+            key ("Minoc") {
+                ["Yep, this town's usually bloody quiet. That was until recently!" His squinting eye suddenly opens wide and stares straight at you.];
+                if (v2 = 23) {
+                    ["Say, when exackly again didst thou say thou didst arrive in town, stranger?"~~After a moment of carefully observing you, he shrugs his shoulders and goes back to wiping off the bar.];
+                }
+                TurnOff("Minoc");
+            }
+            key ("events") {
+                ["Before all this evil at the sawmill, the buzz were all about the monument."];
+                TurnOff("events");
+                TurnOn(<< "monument", "sawmill" >>);
+            }
+            key ("murders") {
+                ["Well, I suppose that clears thee from the list o' possible murderers. If'n thou wert the murderer, thou wouldst not have to be askin' questions o'people about wha' 'appened regardin' the murders. Thou wouldst already know, havin' been there."];
+                TurnOff("murders");
+            }
+            key ("sawmill") {
+                ["Say, thou be not from around here?" He looks at you skeptically. "Thou art not from the Fellowship by any chance, art thou?"];
+                v13 = ~AskYesNo();
+                if v13 {
+                    ["I thought so!"];
+                    TurnOn(<< "murders", "Fellowship" >>);
+                } else {
+                    ["Just askin'! Thou dost not have to take any offense!"];
+                    TurnOn(<< "murders", "Fellowship" >>);
+                }
+                TurnOff("sawmill");
+            }
+            key ("Hook") {
+                ["I know him! He be a pirate who lives in Buccaneer's Den. They say Hook is so mean he'd kill his own mudder for the right price, an' I would wager they's right.~~"Why, I got into a fight with this Hook once. I was lucky and I escaped losin' only my right arm and still with one good eye left. It was somewhere around that time that I started having second thoughts about my career as a pirate and now here I be.];
+                ["I have not seen him recently, but the description of the murder scene certainly sounds like his handiwork!"];
+                flag(260) = true;
+                GivePartyExp_i(10);
+                TurnOff("Hook");
+            }
+            key ("Crown Jewel") {
+                ["That ship was, indeed, here of late. In fact, 'twas the night of the murders! Could there be a connection? Hmmm..."];
+                TurnOff("Crown Jewel");
+            }
+            key ("Fellowship") {
+                ["Thank goodness that with all the town at each others' throats in recent weeks we have the Fellowship tryin' to hold the town together. I be no member or nothin', but I just a'heared of all the good things they done. Feedin' the poor an' such."];
+                TurnOff("Fellowship");
+            }
+            key ("monument") {
+                ["Oh, thou must mean thet statuer they are goin' ta build of our shipwright. His name is Owen, a local boy. I understan' it is to be as tall as a man on horseback and shows Owen gazin' through a telerscope or some such thing like that."];
+                TurnOff("monument");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["I shall see thee later... At least I will if thou dost stay in the front o' me good eye."*];
+    }
+    if (event = _Bark) {
+        BarkAboutWork_i(_Rutherford);
+    }
+}
+
+Usable RutherfordSellsFood_i #locals(14) #uses(~LordOrLady, ~AskOrdList, ~PriceString_i, ~AskYesNo, ~SellItem_i) {
+    v0 = ~LordOrLady();
+    PushKeys();
+    v1 = true;
+    v2 = << "nothing", "cheese", "mead", "grapes", "silverleaf", "bread", "ale", "wine" >>;
+    v3 = << 0, 377, 616, 377, 377, 377, 616, 616 >>;
+    v4 = << 65177, 26, 0, 19, 31, 1, 3, 5 >>;
+    v5 = << 0, 7, 10, 2, 35, 3, 3, 5 >>;
+    v6 = "";
+    v7 = << 0, 0, 0, 1, 0, 0, 0, 0 >>;
+    v8 = << "", " for a wheel", " for a bottle", " for a bunch", " for one portion", " for a loaf", " for a bottle", " for a bottle" >>;
+    v9 = 1;
+    ["What wouldst thou like to buy?"];
+    While v1 {
+        v10 = ~AskOrdList(v2);
+        if (v10 = 1) {
+            ["Fine."];
+            v1 = false;
+        } else {
+            if (v10 = 5) && flag(299) {
+                ["I am all out of Silverleaf, <v0>. For some reason, there is a shortage, and I cannot get any more."];
+            } else {
+                v11 = ~PriceString_i(v8::v10, v5::v10, v7::v10, v2::v10, v6);
+                v12 = 0;
+                ["^<v11> Dost thou still want it?"];
+                v13 = ~AskYesNo();
+                if v13 {
+                    if (v3::v10 = 377) {
+                        ["How many wouldst thou like?"];
+                        v12 = ~SellItem_i(true, 1, 20, v5::v10, v9, v4::v10, v3::v10);
+                    } else {
+                        v12 = ~SellItem_i(true, 1, 0, v5::v10, v9, v4::v10, v3::v10);
+                    }
+                }
+                if (v12 = 1) {
+                    ["Done! Eat hearty!"];
+                } else {
+                    if (v12 = 2) {
+                        ["No one could possibly carry that much!"];
+                    } else {
+                        if (v12 = 3) {
+                            ["Thou dost not have enough gold for that!"];
+                        } else {
+                        }
+                    }
+                }
+            }
+            ["Wouldst thou like to purchase anything else?"];
+            v1 = ~AskYesNo();
+        }
+    }
+    PopKeys();
+}

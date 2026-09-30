@@ -1,0 +1,79 @@
+Routine Anmanivas accepts a0 #locals(16) #uses(~AvatarName, ~LordOrLady, ~AskList, ~IsNPCNear) {
+    if (event = _Action) {
+        SetSpeaker(0, _Anmanivas);
+        v0 = ~NPCToItem_i(_Anmanivas);
+        v1 = ~NPCToItem_i(_Foranamo);
+        v2 = ~AvatarName();
+        v3 = ~LordOrLady();
+        v4 = "the Avatar";
+        v5 = ~Npc_getAlignment(v0);
+        if (v5 = 1) {
+            [The gargoyle's hatred is so bitter that he resists the spell.*];
+            Npc_setAlignment(_Evil, v0);
+            Npc_setAlignment(_Evil, v1);
+            terminate;
+        } else {
+            v6 = ~GetWorkType(v0);
+            if (v6 = 16) {
+                TurnOn(<< "name", "job", "bye" >>);
+                [The gargoyle stares at you, displeased at the interruption.];
+                converse {
+                    key ("name") {
+                        ["To have no desire to tell you. To demand to know who you are!"];
+                        TurnOff("name");
+                        v7 = ~AskList(<< v2, v4, v3 >>);
+                        if (v7 = v4) {
+                            [As the gargoyle looks up at you, anger crosses his face. He stands quickly, overturning his drink.];
+                            v8 = 0;
+                            v9 = ~GetParty();
+                            Foreach v12 in v9 {
+                                v8 = (v8 + 1);
+                            }
+                            if (v8 = 1) {
+                                v13 = "human";
+                                v14 = " he says, pointing at you.";
+                            } else {
+                                v13 = "humans";
+                                v14 = " he says, pointing at you and your companions.";
+                            }
+                            ["^<v13>!"<v14> "To be the cause for our unhappiness."];
+                            v15 = ~IsNPCNear(_Foranamo);
+                            if v15 {
+                                SetSpeaker(0, _Foranamo);
+                                [The gargoyle by his side also rises.~~"To be the reason for our poverty. To die, <v13>, to die!"*];
+                                CloseSpeaker(_Foranamo);
+                                SetSpeaker(0, _Anmanivas);
+                                [The two gargoyles force the table from their path with ease as they charge to attack you.*];
+                            } else {
+                                [He forces the table from his path with ease as he charges to attack you.*];
+                            }
+                            SetWorkType(_Combat_0, v0);
+                            SetWorkType(_Combat_0, v1);
+                            Npc_setAlignment(_Evil, v0);
+                            Npc_setAlignment(_Evil, v1);
+                            terminate;
+                        } else {
+                            ["To tell you to go away!"*];
+                            terminate;
+                        }
+                    }
+                    key ("job") {
+                        ["To have none!" He glares fiercly at you."];
+                        TurnOff("job");
+                    }
+                    key ("bye") {
+                        [He grunts his dismissal.*];
+                        terminate;
+                    }
+                }
+                clear_answers;
+            } else {
+                [Though he glares as he passes, the gargoyle seems much too intent on reaching his destination to bother with you.*];
+                terminate;
+            }
+        }
+    }
+    if (event = _Bark) {
+        terminate;
+    }
+}

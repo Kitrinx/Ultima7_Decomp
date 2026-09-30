@@ -1,0 +1,18 @@
+Routine Fear accepts a0 #locals(6) #uses(SetWorkTypeUnlessWaiting_i) {
+    if (event = _Trigger) {
+        v0 = ~GetQuality(item);
+        v1 = ~GetParty();
+        Foreach v4 in v1 {
+            if (v4 <> ~NPCToItem_i(_Avatar)) && not ~RollToWin_i(15, ~GetNPCStat_i(_Int, v4)) {
+                Kernel_resetRef(v4);
+                SetWorkTypeUnlessWaiting_i(_Combat_0, v4);
+                SetAttackMode_i(_Fleeing, v4);
+                SetAttacker_i(_Avatar, v4);
+                v5 = ~PostInFuture(v0, << _aNO_HALT_i, _aUSABLE_i, #Fear >>, v4);
+            }
+        }
+    }
+    if (event = _Posted_i) {
+        SetWorkTypeUnlessWaiting_i(_FollowAvt, item);
+    }
+}

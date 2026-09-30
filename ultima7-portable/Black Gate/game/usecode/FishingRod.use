@@ -1,0 +1,60 @@
+Routine FishingRod accepts a0 #locals(10) #uses(MemberBarks_i, Bark_i) {
+    if ((event = _Action) or (event = _Combat)) {
+        closeAllGumps();
+        v0 = ~GetTarget();
+        v1 = ~PostAction(<< _aTHRUST1_FRAME_i, _aSTAND_FRAME_i >>, _Avatar);
+        if not ~IsWater_i(<< v0::2, v0::3, v0::4 >>) {
+            FlashMouse_i(0);
+            return;
+        }
+        v2 = ~GetCoord(_Avatar);
+        v2::1 = (v2::1 + 1);
+        v3 = false;
+        v4 = 0;
+        v5 = ~FindNearby_i(0, 15, _Fish, _Avatar);
+        Foreach v8 in v5 {
+            v4 = (v4 + 1);
+        }
+        if (v4 <> 0) && (~rndRange(10, 1) <= v4) {
+            v3 = true;
+        }
+        if v3 {
+            v8 = ~Item_create(_Food_Item);
+            if v8 {
+                SetFrame(12, v8);
+                SetItemFlag_i(_OkayToTake_i, v8);
+                v1 = ~PopToMap(v2);
+                v9 = ~rndRange(3, 1);
+                if (v9 = 1) {
+                    MemberBarks_i("@Indded, a whopper!@");
+                    if ~IsNPCNear_i(_Spark) {
+                        Bark_i(16, "@I have seen bigger.@", _Spark);
+                    }
+                }
+                if (v9 = 2) {
+                    MemberBarks_i("@What a meal!@");
+                }
+                if (v9 = 3) {
+                    MemberBarks_i(<< "@That fish does not", "look right.@" >>);
+                }
+            }
+        } else {
+            v9 = ~rndRange(4, 1);
+            if (v9 = 1) {
+                Bark_i(0, "@Not even a bite!@", _Avatar);
+            }
+            if (v9 = 2) {
+                Bark_i(0, "@It got away!@", _Avatar);
+                if ~IsNPCNear_i(_Iolo) {
+                    Bark_i(16, "@It was the Big One!@", _Iolo);
+                }
+            }
+            if (v9 = 3) {
+                Bark_i(0, "@I've lost my bait.@", _Avatar);
+            }
+            if (v9 = 4) {
+                Bark_i(0, "@I felt a nibble.@", _Avatar);
+            }
+        }
+    }
+}

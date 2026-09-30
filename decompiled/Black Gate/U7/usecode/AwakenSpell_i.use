@@ -1,0 +1,21 @@
+Routine AwakenSpell_i accepts a0 #locals(3) #uses(~DirFromAvatar_i, ~IsMagicOK_i, FlashBlocked_i) {
+    if (event = _Action) {
+        Kernel_resetRef(item);
+        v0 = ~GetTarget();
+        v1 = ~DirFromAvatar_i(v0);
+        Item_bark("@An Zu@", item);
+        if (~IsMagicOK_i() and (v0::1 <> 0)) {
+            v2 = ~PostAction(<< _aFACE_i, v1, _aSFX_i, 64, _aRAISE1_FRAME_i, _aTHRUST1_FRAME_i >>, item);
+            v2 = ~PostInFuture(5, << _aNO_HALT_i, _aUSABLE_i, #AwakenSpell_i >>, v0);
+        } else {
+            v2 = ~PostAction(<< _aFACE_i, v1, _aRAISE1_FRAME_i, _aTHRUST1_FRAME_i, _aUSABLE_i, #FizzleSpell_i >>, item);
+        }
+    }
+    if (event = _Posted_i) {
+        if ~Item_isNpc(item) {
+            ClearItemFlag_i(_Asleep, item);
+        } else {
+            FlashBlocked_i(60);
+        }
+    }
+}

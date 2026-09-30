@@ -1,0 +1,57 @@
+Routine Gem accepts a0 #locals(9) #uses(MemberSays_i, ~InIsleOfFire_i, ArcadionUsable_i, PathToItem_i, ~DirFromAvatar_i) {
+    v0 = ~GetFrame(item);
+    if (event = _Action) {
+        if (v0 <= 11) {
+            v1 = ("@Those are beautiful. I am sure that they would fetch " + "a high price at the jewelers' in Britain.@");
+            MemberSays_i(v1);
+            goto label_18;
+        }
+        if (v0 = 14) {
+            if not ~InIsleOfFire_i() {
+                v2 = << 2191, 1552, 6 >>;
+                ShowArea_i(v2);
+                return;
+            } else {
+                Item_destroy(item);
+                Sfx(37);
+            }
+        }
+        if flag(815) && not flag(816) {
+            ArcadionUsable_i(item);
+            goto label_24;
+        }
+        if flag(819) {
+            if (v0 = 13) {
+                ArcadionUsable_i(item);
+                goto label_24;
+            }
+            if (v0 = 12) {
+                if not ~IsEquipped_i(12, _Gem, 1, _Avatar) {
+                    MemberSays_i("@I believe the gem must be held in the weapon hand to break the mirror.@");
+                    return;
+                }
+                closeAllGumps();
+                v3 = ~PostAction(<< _aWAIT_i, 2, _aUSABLE_i, #Gem >>, item);
+            }
+        }
+    }
+    label_18:
+    if (event = _Posted_i) {
+        v4 = ~GetTarget();
+        v5 = ~Item_getType(v4);
+        v6 = ~GetFrame(v4);
+        if (v5 = 848) && (v6 = 3) {
+            PathToItem_i(7, v4, #Gem, 65534, 2, 0, v4);
+        }
+    }
+    if (event = 7) {
+        v7 = ~DirFromAvatar_i(item);
+        v3 = ~PostAction(<< _aFACE_i, v7, _aWAIT_i, 2, _aRAISE1_FRAME_i, _aWAIT_i, 2, _aEXTEND1_FRAME_i, _aWAIT_i, 2, _aTHRUST1_FRAME_i, _aSFX_i, 37 >>, ~NPCToItem_i(_Avatar));
+        v3 = ~PostAction(<< _aWAIT_i, 10, _aFRAME, 9 >>, item);
+        v8 = ~GetContents(12, _All, _Gem, ~NPCToItem_i(_Avatar));
+        v3 = ~PostAction(<< _aWAIT_i, 10, _aFRAME, 13, _aWAIT_i, 2, _aUSABLE_i, #Mirror >>, v8);
+        flag(787) = false;
+        flag(819) = false;
+    }
+    label_24:
+}

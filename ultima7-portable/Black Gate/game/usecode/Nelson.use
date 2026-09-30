@@ -1,0 +1,179 @@
+Routine Nelson accepts a0 #locals(20) #uses(~AvatarName, ~LordOrLady, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Nelson);
+        v0 = ~AvatarName();
+        v1 = ~LordOrLady();
+        TurnOn(<< "name", "job", "bye" >>);
+        if not $MetNelson {
+            [You see a scholarly-looking man with a friendly expression.];
+            $MetNelson = true;
+            $MetBrion = true;
+        } else {
+            ["Salutations, <v0>."];
+            if flag(502) {
+                TurnOn("North East sea");
+            }
+        }
+        if flag(483) {
+            TurnOn("Zelda's response");
+        }
+        converse {
+            key ("name") {
+                ["Thou mayest call me Nelson."];
+                TurnOff("name");
+                if flag(502) {
+                    TurnOn("North East sea");
+                }
+            }
+            key ("job") {
+                ["I am the Lycaeum head here in Moonglow, but," he leans close to you, "mine assistant, Zelda, does most of the work."];
+                TurnOn(<< "Moonglow", "Zelda" >>);
+            }
+            key ("Zelda") {
+                ["She is an excellent assistant. The Lycaeum has never performed better. However, she is a little too stern, I believe, and," he leans in again, "I think she is quite beautiful."];
+                TurnOn(<< "stern", "beautiful" >>);
+                TurnOff("Zelda");
+            }
+            key ("North East sea") {
+                ["I have heard the rumors of an island, but I know nothing else about it, I am afraid. Thou mightest wish to speak with Jillian -- she should know a little about the area."];
+                TurnOff("North East sea");
+            }
+            key ("stern") {
+                ["She has put an extraordinary amount of time and effort into ensuring the activities in this edifice happen smoothly. And," he adds, "she takes it personally when they do not!"];
+                TurnOff("stern");
+            }
+            key ("beautiful") {
+                ["Dost thou not agree? I am flushed whenever her fair presence passes by. But!" he holds up his index finger, "I fear she does not share a mutual attraction. And she is far too serious for me to feel comfortable with a proposal."];
+                flag(476) = true;
+                if flag(474) {
+                    TurnOn("Zelda's feelings");
+                }
+                TurnOff("beautiful");
+            }
+            key ("Moonglow") {
+                ["I love the island and the people. Mostly the people."];
+                TurnOn("people");
+                TurnOff("Moonglow");
+            }
+            key ("people") {
+                ["Hast thou met my twin brother? He heads the Observatory here. And somewhere in the Lycaeum thou canst find Mariah. Sadly, she is not well up here." He touches his head.~~"Jillian, the sage, also studies here in the Lycaeum. A good person to see about other residents of Moonglow would be the bartender at the Friendly Knave. Phearcy knows almost all of us here on the island.~~"Oh, and thou must not forget the legend of Penumbra. 'Twas two hundred years ago she cast herself into a deep slumber. Now that I think about it, <v0>, thou art the one she predicted would awaken her.~~"Better hasten, <v1>," he chuckles.];
+                TurnOff("people");
+                TurnOn(<< "twin", "Mariah", "Jillian", "Phearcy", "Penumbra" >>);
+            }
+            key ("twin") {
+                ["His name is Brion. People often mistake us for each other, but I think we are nothing alike -- he got all the looks -and- the brains!"];
+                TurnOff("twin");
+            }
+            key ("Mariah") {
+                ["She was once an adept mage, but ever since the wizards began losing their, er, faculties, she followed suit."];
+                TurnOff("Mariah");
+            }
+            key ("Jillian") {
+                ["She rarely has time for visitors, but I know she takes on students every now and then."];
+                TurnOff("Jillian");
+            }
+            key ("Phearcy") {
+                ["That one keeps up on his politics, or rather, his gossip," he says, grinning. "If thou dost want to learn about a resident of Moonglow, visit him."];
+                TurnOff("Phearcy");
+            }
+            key ("Penumbra") {
+                ["Interestingly enough, no one has ever discovered how to enter her house. I believe those mysterious signs on the door require one to have specific items to place next to the plaques."];
+                TurnOff("Penumbra");
+            }
+            key ("Zelda's response") {
+                [He smiles broadly. "Truly that was her response? I am pleased to no end! I thank thee, <v0>, for bringing this joyful message."];
+                TurnOff("Zelda's response");
+            }
+            key ("Zelda's feelings") {
+                ["Oh. Oh well," he shrugs in an attempt at indifference. "She was not truly important anyway."];
+                TurnOff("Zelda's feelings");
+            }
+            key ("bye") {
+                if (flag(484) and (flag(485) and (flag(486) and flag(487)))) {
+                    ["Good day, <v1>. Thou of course dost have free reign of the Lycaeum."*];
+                    terminate;
+                } else {
+                    ["Of course thou mayest have free reign of the building. But first," he grins, "let me show thee my..."];
+                    PushKeys();
+                    TurnOn(<< "bookstand", "bookmark", "quill holder", "book", "nothing" >>);
+                }
+            }
+            key ("bookstand") {
+                v2 = ~FindNearest_i(65535, _Podium, _Avatar);
+                if v2 {
+                    ["This solid brass bookstand has matching, overhanging candleholder for late-night exploration in literature. I invented it myself."];
+                } else {
+                    ["'Twas just here..." he scratches his chin. "Oh well, never mind."];
+                }
+                TurnOff("bookstand");
+                flag(484) = true;
+            }
+            key ("bookmark") {
+                v3 = false;
+                v4 = ~FindNearby_i(0, 20, _Desk_Item, item);
+                Foreach v7 in v4 {
+                    if (~GetFrame(v7) = 4) {
+                        v3 = true;
+                    }
+                }
+                if v3 {
+                    ["This," he says, holding a solid-gold sheet shaped like a maple leaf, "I purchased at an auction for only half of its value."];
+                } else {
+                    [He appears upset. "I knew someday that would be stolen," he says angrily.~~"I should have known better than to show it to every person who comes to visit."];
+                }
+                TurnOff("bookmark");
+                flag(485) = true;
+            }
+            key ("quill holder") {
+                v8 = false;
+                v9 = ~FindNearby_i(0, 20, _Desk_Item, item);
+                Foreach v7 in v9 {
+                    if (~GetFrame(v7) = 3) {
+                        v8 = true;
+                    }
+                }
+                v12 = false;
+                v13 = ~FindNearby_i(0, 20, _Desk_Item, item);
+                Foreach v7 in v13 {
+                    if (~GetFrame(v7) = 5) {
+                        v12 = true;
+                    }
+                }
+                if v8 {
+                    if v12 {
+                        [He shows you a serpent-shaped, oaken quill holder and its matching scroll opener. "This I picked up\x09while travelling through -- thou canst guess it -- Serpent's Hold."];
+                    } else {
+                        [He shows you a serpent-shaped, oaken quill holder.\x09"This I picked up while travelling through -- thou\x09canst guess it -- Serpent's Hold. But," he appears puzzled, "I could have sworn the matching letter opener was here as well. How odd."];
+                    }
+                } else {
+                    ["The quill holder is gone?" he exclaims. "And what about the..." he seems to be searching for something.~~"The matching scroll opener is also missing!"];
+                }
+                TurnOff("quill holder");
+                flag(486) = true;
+            }
+            key ("book") {
+                v16 = false;
+                v17 = ~FindNearby_i(0, 20, _Desk_Item, item);
+                Foreach v16 in v9 {
+                    if (~GetQuality(v16) = 4) {
+                        v16 = true;
+                    }
+                }
+                if v16 {
+                    [He gingerly pulls out a leatherbound tome. From his robe, he removes a handkerchief and meticulously wipes away the dust.~~"This was given to me by Lord British himself. See, 'tis the first edition."~~The book he carefully places in your palms is very old, and the gold leaf plating of the title has been almost entirely rubbed off. Turning the book right side up, you can read the title: "Stranger in a Strange Land."];
+                } else {
+                    ["'Tis not here... Oh well, Zelda must have put it back on the shelf." He sighs.];
+                }
+                TurnOff("book");
+                flag(487) = true;
+            }
+            key ("nothing") {
+                PopKeys();
+            }
+        }
+        clear_answers;
+    }
+    if (event = _Bark) {
+        BarkAboutWork_i(_Nelson);
+    }
+}

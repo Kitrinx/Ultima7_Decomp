@@ -1,0 +1,147 @@
+Routine Jeanette accepts a0 #locals(4) #uses(~IsNPCNear, JeanetteSellsFood_i, GivePartyExp_i, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Jeanette);
+        v0 = ~GetTime();
+        v1 = ~GetWorkType(~NPCToItem_i(_Jeanette));
+        TurnOn(<< "name", "job", "bye" >>);
+        if flag(123) {
+            TurnOn("Charles");
+        }
+        if not $MetJeanette {
+            [This young, lovely tavern wench is sexy and sweet.];
+            $MetJeanette = true;
+        } else {
+            ["Hello again!" bubbly Jeanette says.];
+        }
+        converse {
+            key ("name") {
+                ["Jeanette, at thy service!"];
+                TurnOff("name");
+            }
+            key ("job") {
+                ["I work for Lucy at the Blue Boar. I serve food and drinks.];
+                if (v1 = 23) {
+                    ["If there is anything thou wouldst like, please say so! And, er, I shall give thee a discount if thou dost buy from me!"];
+                    v2 = ~IsNPCNear(_Dupre);
+                    if v2 {
+                        ["Why, Sir Dupre! How good to see thee again!"*];
+                        SetSpeaker(0, _Dupre);
+                        ["Hello milady! I thought I might re-sample The Blue Boar's fine beverages!"*];
+                        SetSpeaker(0, _Jeanette);
+                        ["Any time, milord! Any time!"*];
+                        CloseSpeaker(_Dupre);
+                        SetSpeaker(0, _Jeanette);
+                    }
+                    TurnOn(<< "food", "drink", "buy" >>);
+                } else {
+                    ["I work during the day and evening hours. Thou shouldst come by the pub then and we shall talk more!"];
+                }
+            }
+            key ("food") {
+                ["Lucy is a good cook. I recommend everything. Especially Silverleaf."];
+                TurnOn("Silverleaf");
+                TurnOff("food");
+            }
+            key ("Silverleaf") {
+                ["Wonderful dish. Try it!"];
+                TurnOff("Silverleaf");
+            }
+            key ("drink") {
+                ["Thou dost look like thou dost need a good drink!"];
+                TurnOff("drink");
+            }
+            key ("buy") {
+                JeanetteSellsFood_i();
+            }
+            key ("Charles") {
+                ["He spoke of me, did he? Well, he may think again! I cannot bring myself to socialize with the upper class. Those bourgeoisie rich men are obnoxious and egotistical. Besides, I am in love with another."];
+                flag(125) = true;
+                TurnOff("Charles");
+                TurnOn(<< "upper class", "another" >>);
+            }
+            key ("upper class") {
+                ["They are all alike. They work in castles and have piles of gold and can have any woman they want! On the other hand, a humble merchant is the perfect man."];
+                TurnOff("upper class");
+            }
+            key ("another") {
+                ["'Tis Willy the Baker! But he does not know it yet!" she giggles.];
+                $JEANETTE_LOVES_WILLY = true;
+                v3 = ~IsNPCNear(_Lucy);
+                if v3 {
+                    SetSpeaker(0, _Lucy);
+                    ["A moment, Jeanette! Thou hast it all wrong! Charles is a -servant-! Thou art an ignoramus! Charles is not 'upper class'! He is as working class as thee! 'Tis Willy who is the rich merchant! If thou dost ask me, 'tis Willy who is obnoxious and egotistical. Charles is a dream!"];
+                    CloseSpeaker(_Lucy);
+                    SetSpeaker(0, _Jeanette);
+                } else {
+                    [You point out to Jeanette that Charles is a servant.];
+                }
+                [Jeanette thinks about what was said. "Thou art right! I cannot believe I have been so blind! Oh, Charles! I can actually consider Charles! And he is... so handsome!" Jeanette squeals with delight. "I shall have to flirt with him in earnest next time he is in the pub!"];
+                flag(126) = true;
+                GivePartyExp_i(20);
+                TurnOff("another");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["Farewell!"*];
+    }
+    if (event = _Bark) {
+        BarkAboutWork_i(_Jeanette);
+    }
+}
+
+Usable JeanetteSellsFood_i #locals(14) #uses(~LordOrLady, ~AskOrdList, ~PriceString_i, ~AskYesNo, ~SellItem_i) {
+    v0 = ~LordOrLady();
+    PushKeys();
+    v1 = true;
+    v2 = << "nothing", "mutton", "beef", "mead", "trout", "ham", "Silverleaf", "bread", "cake", "ale", "wine" >>;
+    v3 = << 0, 377, 377, 616, 377, 377, 377, 377, 377, 616, 616 >>;
+    v4 = << 65177, 8, 9, 0, 12, 11, 31, 0, 4, 3, 5 >>;
+    v5 = << 0, 5, 18, 12, 4, 18, 45, 3, 2, 4, 4 >>;
+    v6 = "";
+    v7 = 0;
+    v8 = << "", " for one portion", " for a rack", " for a bottle", " for one portion", " for one slice", " for one portion", " for a loaf", " for one piece", " for a bottle", " for a bottle" >>;
+    v9 = 1;
+    ["What wouldst thou like to buy?"];
+    While v1 {
+        v10 = ~AskOrdList(v2);
+        if (v10 = 1) {
+            ["Fine."];
+            v1 = false;
+        } else {
+            if (v10 = 7) && flag(299) {
+                ["'Tis all gone, <v0>. And the logger will cut down no more Silverleaf trees. I expect it will become even more of a delicacy, and more expensive, if I can ever get any more to sell."];
+            } else {
+                v11 = ~PriceString_i(v8::v10, v5::v10, v7, v2::v10, v6);
+                v12 = 0;
+                ["^<v11> Does that sound like a fair price?"];
+                v13 = ~AskYesNo();
+                if v13 {
+                    if (v3::v10 = 377) {
+                        ["How many wouldst thou like?"];
+                        v12 = ~SellItem_i(true, 1, 20, v5::v10, v9, v4::v10, v3::v10);
+                    } else {
+                        v12 = ~SellItem_i(true, 1, 0, v5::v10, v9, v4::v10, v3::v10);
+                    }
+                }
+                if (v12 = 1) {
+                    ["Done!"];
+                } else {
+                    if (v12 = 2) {
+                        ["Thou cannot possibly carry that much!"];
+                    } else {
+                        if (v12 = 3) {
+                            ["Thou dost not have enough gold for that!"];
+                        } else {
+                        }
+                    }
+                }
+            }
+            ["Wouldst thou like something else?"];
+            v1 = ~AskYesNo();
+        }
+    }
+    PopKeys();
+}

@@ -1,0 +1,172 @@
+Routine Grod accepts a0 #locals(15) #uses(~IsNPCNear, ~LordOrLady, ~AvatarName, ~AskYesNo, ~AskList) {
+    if (event = _Action) {
+        SetSpeaker(0, _Grod);
+        TurnOn(<< "name", "job", "Fellowship", "bye" >>);
+        v0 = ~IsNPCNear(_Iolo);
+        v1 = ~IsNPCNear(_Spark);
+        v2 = ~IsNPCNear(_Anton);
+        v3 = ~IsNPCNear(_Sullivan);
+        v4 = ~LordOrLady();
+        v5 = ~AvatarName();
+        Npc_setAlignment(_Evil, ~NPCToItem_i(_Grod));
+        if not $MET_GROD {
+            [The troll snarls at you, obviously displeased at your presence.];
+            $MET_GROD = true;
+        } else {
+            ["What you want?" asks Grod.];
+        }
+        converse {
+            key ("name") {
+                v6 = ~IsMedallionOn_i();
+                if v6 {
+                    ["I Grod. Why you want know? Is voice unhappy?"];
+                    v7 = ~AskYesNo();
+                    if v7 {
+                        [He seems truly worried.~~"I will do job better. I promise! I beat harder and more often!"];
+                        if v2 {
+                            [*];
+                            SetSpeaker(0, _Anton);
+                            if $MET_ANTON {
+                                v8 = "Anton,";
+                            } else {
+                                v8 = "a prisoner,";
+                            }
+                            ["Thank thee ever so much, <v4>," says <v8> sarcastically.*];
+                            CloseSpeaker(_Anton);
+                            SetSpeaker(0, _Grod);
+                        }
+                        if (v2 and v3) {
+                            SetSpeaker(0, _Sullivan);
+                            ["Now, now, Anton, the nice person was simply answering a question."*];
+                            CloseSpeaker(_Sullivan);
+                            SetSpeaker(0, _Grod);
+                        }
+                    } else {
+                        ["Good. I do my job good!"];
+                    }
+                } else {
+                    ["I Grod. Who you?"];
+                    v5 = ~AvatarName();
+                    v9 = "the Avatar";
+                    v10 = ~AskList(<< v5, v9, v4 >>);
+                    if (v10 = v5) {
+                        ["I not know you." He shrugs.];
+                    }
+                    if (v10 = v4) {
+                        ["Funny name. But, all humans have funny names." He shrugs.];
+                    }
+                    if (v10 = v9) {
+                        ["The Avatar?" He begins laughing. "The Avatar not been here for...," he begins counting on his fingers. After several attempts, he gives up, saying, "for many years!~~"You no Avatar."];
+                    }
+                }
+                TurnOff("name");
+            }
+            key ("job") {
+                ["I torture prisoners," he says, thumping his chest proudly.*];
+                if v1 {
+                    SetSpeaker(0, _Spark);
+                    [Spark's eyes light up.~"Torture? Wow! He quickly looks at you and changes expressions.~~ "I, er, mean, that is very awful."*];
+                    CloseSpeaker(_Spark);
+                    SetSpeaker(0, _Grod);
+                }
+                v11 = ~IsMedallionOn_i();
+                if v11 {
+                    ["Want to help?"];
+                    v12 = ~AskYesNo();
+                    if v12 {
+                        if (v3 and v2) {
+                            [He points to one of the prisoners.~~"He not fun like the other. Torture other first."*];
+                            SetSpeaker(0, _Sullivan);
+                            ["What? No, that's all right, <v4>. Torture me, first."*];
+                            CloseSpeaker(_Sullivan);
+                            SetSpeaker(0, _Anton);
+                            ["Yes, <v4>. Torture him first."*];
+                            CloseSpeaker(_Anton);
+                            SetSpeaker(0, _Sullivan);
+                            ["I thank thee," he says to the other.*];
+                            CloseSpeaker(_Sullivan);
+                            SetSpeaker(0, _Grod);
+                            ["Go ahead," says Grod.*];
+                            v13 = ~GiveToParty_i(true, _All, _All, _Whip, 1);
+                            if v13 {
+                                [He hands you a whip.];
+                            } else {
+                                ["You too wimpy to use whip!"];
+                            }
+                            terminate;
+                        } else {
+                            ["No one here to abuse." He appears disappointed.];
+                        }
+                    } else {
+                        ["You make funny joke. Go ahead, torture."*];
+                        terminate;
+                    }
+                }
+                TurnOn(<< "torture", "prisoners" >>);
+            }
+            key ("Fellowship") {
+                v14 = ~IsMedallionOn_i();
+                if v14 {
+                    ["Yes," he nods. "I belong, too. I strive for unity. I be worthy for my reward. And I trust my brother."~~ He smiles, obviously pleased with himself."];
+                    TurnOn(<< "strive", "worthy", "trust" >>);
+                } else {
+                    ["Big group, many people. You should join!"];
+                    TurnOn("join");
+                }
+                TurnOff("Fellowship");
+            }
+            key ("trust", "worthy", "strive") {
+                ["You don't know?" He frowns.~~ "You should learn before the voice become angry!"];
+                TurnOff(<< "strive", "worthy", "trust" >>);
+            }
+            key ("join") {
+                ["Good, join. See Abraham or Danag about join."];
+                TurnOff("join");
+            }
+            key ("prisoners") {
+                if (flag(738) and flag(737)) {
+                    ["None here at the moment..." he appears truly disconcerted.];
+                } else {
+                    ["There one!" he says, pointing to a man.*];
+                    if not (flag(737) and not flag(738)) {
+                        ["There another one!" he says, indicating the other man.];
+                        SetSpeaker(0, _Sullivan);
+                        ["How art thou today, <v4>?" he says, smiling.];
+                        CloseSpeaker(_Sullivan);
+                    }
+                    SetSpeaker(0, _Grod);
+                }
+                TurnOff("prisoners");
+            }
+            key ("torture") {
+                ["Much fun! Prisoners scream loudly."*];
+                if v3 {
+                    ["Except that one. He not scream. He just talk. And talk. I get so bored I get mad. So I torture more. And," he throws up his hands, "he just talk more! I no know what to do."*];
+                }
+                if v0 {
+                    SetSpeaker(0, _Iolo);
+                    ["That is terrible, <v5>. We must command him to stop!"*];
+                    CloseSpeaker(_Iolo);
+                    SetSpeaker(0, _Grod);
+                    if v3 {
+                        ["I try make him stop. But he talk and talk. You try? Maybe he stop."];
+                    }
+                    TurnOn("stop torturing");
+                }
+                TurnOff("torture");
+            }
+            key ("stop torturing") {
+                ["Oh, no! Grod love job! Grod never stop. You go away now."*];
+                terminate;
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["Come back and visit Grod. Hear victims squeal!"*];
+    }
+    if (event = _Bark) {
+        terminate;
+    }
+}

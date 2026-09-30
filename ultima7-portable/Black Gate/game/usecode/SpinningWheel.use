@@ -1,0 +1,34 @@
+Routine SpinningWheel accepts a0 #locals(7) #uses(MemberSays_i) {
+    if (event = 7) {
+        v0 = ~FindNearby_i(0, 1, _Chair, _Avatar);
+        v1 = 0;
+        if (~ListSize_i(v0) > 0) {
+            v2 = ~PostAction(<< _aFACE_i, _West, _aBEND_FRAME_i, _aSIT_FRAME_i, _aLOOP_i, 65535, 12 >>, _Avatar);
+            v1 = 3;
+        }
+        Kernel_resetRef(item);
+        v2 = ~PostInFuture(v1, << _aFRAME, 0, _aNEXT_FRAME, _aCONTINUE_i, _aSFX_i, 6, _aLOOP_i, 65532, 12, byte(85), 651 >>, item);
+        return;
+    }
+    if (event = _Posted_i) {
+        v3 = ~GetContents(_All, _All, _Bale_Of_Wool, _Avatar);
+        if v3 {
+            Item_destroy(v3);
+        }
+        v4 = ~Item_create(_Spindle_Of_Thread);
+        if v4 {
+            SetItemFlag_i(_IsTemporary_i, v4);
+            SetItemFlag_i(_OkayToTake_i, v4);
+            SetFrame(~rndRange(9, 0), v4);
+            v5 = ~GetCoord(item);
+            v5::1 = (v5::1 + 1);
+            v5::2 = (v5::2 + 1);
+            v2 = ~PopToMap(v5);
+        }
+        return;
+    }
+    if (event = _Action) {
+        v6 = ("@I suspect spinning the wool will be more fruitful " + "than spinning an empty wheel.@");
+        MemberSays_i(v6);
+    }
+}

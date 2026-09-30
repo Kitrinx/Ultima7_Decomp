@@ -1,0 +1,129 @@
+Routine Menion accepts a0 #locals(5) #uses(~LordOrLady, ~AskYesNo, MenionTrains_i, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Menion);
+        v0 = ~LordOrLady();
+        v1 = ~GetWorkType(~NPCToItem_i(_Menion));
+        v2 = ~GetTime();
+        TurnOn(<< "name", "job", "bye" >>);
+        if not $MetMenion {
+            [The large, muscle-bound man smiles pleasantly at you.];
+            $MetMenion = true;
+        } else {
+            ["Greetings, <v0>," says Menion.];
+        }
+        converse {
+            key ("name") {
+                ["I am Menion, <v0>." He shakes your hand.];
+                TurnOff("name");
+            }
+            key ("job") {
+                ["I am a trainer. I help warriors become bigger and stronger and better fighters. I also forge swords to match the strength in my students' arms."];
+                TurnOn(<< "train", "forge", "students" >>);
+            }
+            key ("students") {
+                ["I have taught many a warrior how to use his -- or her -- force against an opponent."];
+                TurnOff("students");
+                TurnOn("force");
+            }
+            key ("force") {
+                ["Yes, <v0>. The key to effective fighting is striking hard and accurately at one's foe."];
+                TurnOff("force");
+                TurnOn(<< "hard", "accurately" >>);
+            }
+            key ("hard") {
+                ["Physical strength permits the attacker a better chance of penetrating the other fighter's armour. Obviously, in a lethal combat, that is an important objective."];
+                TurnOff("hard");
+            }
+            key ("accurately") {
+                ["Needless to say, some targets on an individual are better than others. 'Tis always best to hit something that will either seriously incapacitate one's foe, or create enough pain to distract him."];
+                TurnOff("accurately");
+            }
+            key ("train") {
+                if (v1 = 7) {
+                    ["I will train thee for 45 gold. Wilt thou pay?"];
+                    if ~AskYesNo() {
+                        MenionTrains_i(45, << 0, 4 >>);
+                    } else {
+                        ["Fine."];
+                    }
+                } else {
+                    ["Perhaps this would be a more appropriate topic when I am at work."];
+                }
+            }
+            key ("forge") {
+                ["Dost thou wish to make a sword?"];
+                if ((v2 = 3) or ((v2 = 4) or (v2 = 5))) {
+                    v3 = ~AskYesNo();
+                    if not v3 {
+                        ["Perhaps sometime when thou hast more time."];
+                    } else {
+                        [He smiles. "I would be very happy to show thee the steps necessary to create a very fine blade." He quickly jots down a few things on a scroll and turns to give it to you.*];
+                        v4 = ~GiveToParty_i(true, 0, 13, _Scroll, 1);
+                        if v4 {
+                            ["May thy blade be sturdy and sharp!"*];
+                        } else {
+                            ["Perhaps when thou hast fewer things to occupy thy pack, I can give this to thee."];
+                        }
+                    }
+                } else {
+                    ["I can help thee with that when I am at work."];
+                }
+                TurnOff("forge");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["May the strength in thine arms always match the strength of thy will."*];
+    }
+    if (event = _Bark) {
+        BarkAboutWork_i(_Menion);
+    }
+}
+
+Routine MenionTrains_i accepts a0, a1 #locals(10) #uses(~GetStudent, ~CanTrain, ~GetStat, StrTrain, ~GetStat, CombatTrain_i) {
+    v2 = ~GetStudent();
+    if (v2 = 0) {
+    } else {
+        v3 = 3;
+        v4 = ~CanTrain(v3, v2, v0, v1);
+        if (v4 = 0) {
+            ["I am sorry, but thou dost not have enough practical experience with weights to train at this time. Perhaps in the future, when thou art ready, I could train thee."];
+        } else {
+            if (v4 = 1) {
+                v5 = ~CountItem(_All, _All, _Gold_Coin, _Party);
+                [You gather your gold and count it, finding that you have <v5> gold altogether.];
+                if (v5 < v0) {
+                    ["Thou dost not have enough gold to train here."];
+                    goto label_16;
+                }
+            }
+            v6 = ~GetNPCName_i(v2);
+            if (v2 = 65180) {
+                v7 = "you begin";
+                v8 = "your";
+            } else {
+                v7 = (v6 + " begins");
+                v8 = (v6 + "'s");
+            }
+            if (v4 = 2) {
+                ["Thou art already as strong as I!" he exclaims, noticing <v8> muscles and build. "Thou dost certainly know as much as I about building strong muscles."];
+            } else {
+                v9 = ~TakeFromParty_i(true, _All, _All, _Gold_Coin, v0);
+                [You pay <v0> gold, and the training session begins.];
+                v6 = ~GetNPCName_i(v2);
+                [He begins with a short, but extensive, weight training program, followed by a sparring match with heavy weaponry. Shortly, <v7> to feel stronger, and better able to utilize that strength in battle.];
+                v10 = ~GetStat#2(_Str, v2);
+                if (v10 < 30) {
+                    StrTrain(2, v2);
+                }
+                v11 = ~GetStat#4(_Cbt, v2);
+                if (v11 < 30) {
+                    CombatTrain_i(1, v2);
+                }
+            }
+        }
+    }
+    label_16:
+}

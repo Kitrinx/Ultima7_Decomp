@@ -1,0 +1,24 @@
+Routine CreateFoodSpell_i accepts a0 #locals(8) #uses(~IsMagicOK_i) {
+    if (event = _Action) {
+        Kernel_resetRef(item);
+        Item_bark("@In Mani Ylem@", item);
+        if ~IsMagicOK_i() {
+            v0 = ~PostAction(<< _aSFX_i, 68, _aEXTEND1_FRAME_i, _aRAISE1_FRAME_i, _aTHRUST1_FRAME_i, _aUSABLE_i, #CreateFoodSpell_i >>, item);
+        } else {
+            v0 = ~PostAction(<< _aEXTEND1_FRAME_i, _aRAISE1_FRAME_i, _aTHRUST1_FRAME_i, _aUSABLE_i, #FizzleSpell_i >>, item);
+        }
+    }
+    if (event = _Posted_i) {
+        v1 = ~GetParty();
+        Foreach v4 in v1 {
+            v5 = ~GetCoord(v4);
+            v6 = ~Item_create(_Food_Item);
+            if v6 {
+                v7 = ~rndRange(30, 1);
+                SetFrame(v7, v6);
+                SetItemFlag_i(_IsTemporary_i, v6);
+                v0 = ~PopToMap(v5);
+            }
+        }
+    }
+}

@@ -1,0 +1,93 @@
+Routine Dragon accepts a0 #locals(15) #uses(~AskYesNo) {
+    if (event = _Action) {
+        return;
+    }
+    if (event = _Trigger) {
+        v0 = false;
+        v1 = ~Item_getType(item);
+        if not (v1 = 504) {
+            v2 = ~FindNearby_i(4, 80, _Dragon, item);
+            Foreach v5 in v2 {
+                if ~GetContents(4, 241, _Scroll, v5) {
+                    v0 = v5;
+                }
+            }
+        } else {
+            v0 = item;
+        }
+        if not ~GetContents(4, 241, _Scroll, v0) {
+            return;
+        }
+        SetSpeaker(0, 65243);
+        if not flag(785) {
+            ["Well met, seeker. I am Dracothraxus. Thy test, and I fear, thy defeat lies before thee. For thou shouldst know that I am made immortal by the Keeper of Courage. 'Twould take a truly powerful artifact to destroy me... one that does not exist." The great dragon paws the earth in expectation of your imminent battle.];
+            CloseSpeaker(65243);
+            flag(785) = true;
+            SetWorkType(_Combat_0, v0);
+        } else {
+            if ~CountItem(_All, _All, _The_Black_Sword, _Party) {
+                [Dracothraxus sniffs the air distastefully, "I sense my doom nearby. Perhaps I am to be released at long last. I wish thee good luck mortal. Defend thyself!"  With that, the dragon leaps at you.];
+                CloseSpeaker(65243);
+                SetWorkType(_Combat_0, v0);
+            } else {
+                if ~FindNearest_i(30, _The_Black_Sword, v0) {
+                    [Dracothraxus sniffs the air distastefully, "I sense my doom nearby. Perhaps I am to be released at long last. I wish thee good luck mortal. Defend thyself!"  With that, the dragon leaps at you.];
+                    CloseSpeaker(65243);
+                    SetWorkType(_Combat_0, v0);
+                } else {
+                    ["Thou hast returned to test thy mettle, little one. Thy courage does thee honor, however, I think that thou shalt take thine honor to the grave with thee."*];
+                    CloseSpeaker(65243);
+                    SetWorkType(_Combat_0, v0);
+                }
+            }
+        }
+    }
+    if (event = _Posted_i) {
+        SetSpeaker(0, 65243);
+        if flag(751) {
+            [The dragon lets out a searing sigh, "Released at last. I go now to seek my reward, for this has been a test of my courage as well as thine. Thy reward lies beyond the door to the north. Enter the blue gate and the Amulet of Courage will be thine."*];
+            Item_destroy(item);
+            CloseSpeaker(65243);
+            v6 = ~FindNearby_i(0, 40, _Metal_Wall_876, ~NPCToItem_i(_Avatar));
+            Foreach v9 in v6 {
+                if (~GetQuality(v9) = 10) {
+                    v10 = ~PostAction(<< _aFRAME, 4, _aSFX_i, 33, _aPREV_FRAME, _aLOOP_i, 65535, 3, byte(85), 935 >>, v9);
+                }
+            }
+            return;
+        }
+        if flag(822) {
+        } else {
+            ["Well done, little human. Thou art as powerful as thou art courageous. Do not think that thou hast destroyed me, thou hast merely bested me. And for this wonderous feat, I think thou dost deserve a reward. I have a truly magnificent gem that I would give to thee, if thy courage can but continue for a bit." Dracothraxus opens her mouth wide. Within, you can see a multitude of teeth, each one needle sharp. Also, near the back, you see a small but brilliant blue gem. Do you reach in and take it?];
+            if ~AskYesNo() {
+                [As you place your hand in the furnace that is the dragon's maw, you can't help but wonder if a small gem is worth the risk.];
+                v11 = ~Item_create(_Gem);
+                SetFrame(12, v11);
+                v12 = ~PopToNPC(~NPCToItem_i(_Avatar));
+                if v12 {
+                    [Nevertheless, you persevere and retrieve the lovely little gem.];
+                } else {
+                    [Just as you are about to pluck the gem literally from the jaws of death, the dragon gently places it within her nest. Dracothraxus closes her mouth and winks at you. "'Twas merely a test of thy courage, little one."];
+                    v13 = (~GetCoord(_Avatar) & (65177 & 3));
+                    v14 = ~FindNearby_i(16, 30, _Egg, v13);
+                    if v14 {
+                        v10 = ~PopToMap(~GetCoord(v14));
+                    }
+                }
+            } else {
+                ["Tis a pity thy courage goes only so far as bravery in battle, and not to trust of an honorable opponent. However, thou hast earned thy reward, and here it is." The dragon pushes the gem forward with her tongue, and removes it from her mouth. She then places it gently within her nest.];
+                v11 = ~Item_create(_Gem);
+                SetFrame(12, v11);
+                v13 = (~GetCoord(_Avatar) & (65177 & 3));
+                v14 = ~FindNearby_i(16, 30, _Egg, v13);
+                if v14 {
+                    v10 = ~PopToMap(~GetCoord(v14));
+                }
+            }
+        }
+        ["I go now to rest, but I shall return. The door will not open until thou hast found a way to best me for good and for all. Farewell, little mortal.*];
+        Item_destroy(item);
+        flag(822) = true;
+        CloseSpeaker(65243);
+    }
+}

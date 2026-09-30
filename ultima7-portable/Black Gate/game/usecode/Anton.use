@@ -1,0 +1,140 @@
+Routine Anton accepts a0 #locals(7) #uses(~LordOrLady, ~IsNPCNear) {
+    if (event = _Action) {
+        SetSpeaker(0, _Anton);
+        v0 = ~LordOrLady();
+        v1 = ~IsNPCNear(_Sullivan);
+        v2 = ~IsNPCNear(_Grod);
+        v3 = false;
+        v4 = false;
+        TurnOn(<< "name", "job", "bye" >>);
+        if flag(737) {
+            ["I thank thee,<v0>. Truly thou possesseth great honor! I hope one day to be able to repay thee for thy kindness!"*];
+            terminate;
+        } else {
+            v5 = ~NPCToItem_i(_Anton);
+            SetWorkType(_Wait, v5);
+        }
+        if not $MET_ANTON {
+            [You are greeted by a man with a sour expression.];
+            $MET_ANTON = true;
+        } else {
+            ["Harrumph," says Anton.];
+        }
+        converse {
+            key ("name") {
+                ["I," he says scratching his nose, "am Anton, not that thou wouldst be concerned with me. Unless, of course, thou art about to put me in the stocks."];
+                if v1 {
+                    [*];
+                    SetSpeaker(0, _Sullivan);
+                    ["Be polite, Anton. I am sure <v0> is truly interested in thy name."];
+                    CloseSpeaker(_Sullivan);
+                    SetSpeaker(0, _Anton);
+                }
+                TurnOff("name");
+                TurnOn(<< "concerned", "stocks" >>);
+            }
+            key ("job") {
+                ["What kind of bloody stupid question is that? I am in the prison! What kind of job could I possibly have?"];
+                if v2 {
+                    [*];
+                    SetSpeaker(0, _Grod);
+                    ["Yeah, stupid question."];
+                    CloseSpeaker(_Grod);
+                }
+                if v1 {
+                    [*];
+                    SetSpeaker(0, _Sullivan);
+                    ["Relax, Anton. I am sure that thou wilt have a job again soon enough." He turns to you.~~"He was apprenticed to the sage Alagner who bade him find out information about The Fellowship..."];
+                    SetSpeaker(0, _Anton);
+                    ["Silence, fool! They will slay me for sure, now!" He looks at you with despair.*];
+                    SetSpeaker(0, _Sullivan);
+                    ["Hast thou already forgotten, dear Anton? Thou didst divulge that information to them some time ago."*];
+                    SetSpeaker(0, _Anton);
+                    ["I did?"*];
+                    SetSpeaker(0, _Sullivan);
+                    [He nods.*];
+                    SetSpeaker(0, _Anton);
+                    CloseSpeaker(_Sullivan);
+                    if v2 {
+                        [Anton turns to the troll.~~"I did?"*];
+                        SetSpeaker(0, _Grod);
+                        [The troll nods.*];
+                        CloseSpeaker(_Grod);
+                        SetSpeaker(0, _Anton);
+                    }
+                    ["Oh, well, then. Carry on!"*];
+                    SetSpeaker(0, _Sullivan);
+                    ["As I was saying, his instructor sent him to observe the Fellowship. Of course, he was discovered and brought here for torturing." He turns back to Anton.~~"Never fear, however, Anton. 'Twill be no time before thou art free again, able to return to thy tutor, Alagner, and resume thy studies," he says, smiling.*];
+                    CloseSpeaker(_Sullivan);
+                    v4 = true;
+                    TurnOn("Alagner");
+                    if not v3 {
+                        TurnOn("Fellowship");
+                    }
+                }
+                SetSpeaker(0, _Anton);
+            }
+            key ("stocks") {
+                if v4 {
+                    ["Yes, they are likely to keep me in them the next time until I rot. Or, at the very least, until I die from the troll's lashings."];
+                    TurnOn(<< "they", "lashings" >>);
+                } else {
+                    ["I am being held here for spying, <v0>. 'Tis a false accusation, but they will likely kill me anyway...."];
+                    TurnOn(<< "spying", "false", "they" >>);
+                }
+                TurnOff("stocks");
+            }
+            key ("concerned") {
+                ["Well, so few people are, really."];
+                TurnOff("concerned");
+            }
+            key ("false") {
+                ["Well, I am certainly not guilty of such an act!"];
+                TurnOff("false");
+            }
+            key ("spying") {
+                ["To think I would seek information for any reason other than to enhance myself with knowledge is more than preposterous! It is... it is... ludicrous is what it is!"];
+                TurnOff("spying");
+            }
+            key ("they") {
+                ["Why, The Fellowship, <v0>."];
+                TurnOff("they");
+                if not v3 {
+                    TurnOn("Fellowship");
+                }
+            }
+            key ("lashings") {
+                ["The troll beats me many times during the day. I will not be able to survive for much longer."];
+                if v1 {
+                    [*];
+                    SetSpeaker(0, _Sullivan);
+                    ["Come, come, Anton, surely it cannot be that terrible. After all, The Fellowship is providing us with a place to stay and more food than we could... more food... Well, they are also giving us food!"*];
+                    CloseSpeaker(_Sullivan);
+                    SetSpeaker(0, _Anton);
+                }
+                TurnOff("lashings");
+            }
+            key ("Alagner") {
+                ["He is a sage who resides in New Magincia. Perhaps the most learned man in all Britannia! And now," he sighs, "I will no longer have the opportunity to glean knowledge from his voluminous body of wisdom."];
+                TurnOff("Alagner");
+            }
+            key ("Fellowship") {
+                ["Why, they are a wonderful group of people who are constantly seeking to bring health, happiness, and spirituality to the people of Britannia."];
+                v6 = ~IsMedallionOn_i();
+                if not v6 {
+                    [With his index finger, he motions you closer to him and lowers his voice.~~"In a pig's eye, that is! I am departing this den of evil as soon as I get the chance. And I advise thee to do the same!"];
+                }
+                v3 = true;
+                TurnOff("Fellowship");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["Do not hurry too much, <v0>, for the world as we know it will soon be no more."*];
+    }
+    if (event = _Bark) {
+        terminate;
+    }
+}

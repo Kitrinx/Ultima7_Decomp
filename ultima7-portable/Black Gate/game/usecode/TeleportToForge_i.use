@@ -1,0 +1,12 @@
+Routine TeleportToForge_i accepts a0 #locals(5) #uses(PetrifyAvatar_i, ~DirFromAvatar_i) {
+    SetWorkType(_Wait, item);
+    PetrifyAvatar_i();
+    v0 = ~GetCoord(item);
+    createSprite(65535, 0, 0, 0, (v0::2 - 2), (v0::1 - 2), 13);
+    v1 = ~GetCoord(~NPCToItem_i(_Avatar));
+    createSprite(65535, 0, 0, 0, (v1::2 - 2), (v1::1 - 2), 7);
+    Sfx(68);
+    v2 = ~DirFromAvatar_i(item);
+    v3 = ((v2 + 4) modulo 8);
+    v4 = ~PostAction(<< _aFACE_i, v3, _aWAIT_i, 1, _aBEND_FRAME_i, _aWAIT_i, 1, _aKNEEL_FRAME_i, _aWAIT_i, 3, _aBEND_FRAME_i, _aWAIT_i, 1, _aSTAND_FRAME_i, _aWAIT_i, 1, _aOUT_FRAME_i, _aWAIT_i, 1, _aUP_FRAME_i, _aWAIT_i, 4, _aUSABLE_i, #FadeToForge_i >>, item);
+}

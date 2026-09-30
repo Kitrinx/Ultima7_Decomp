@@ -1,0 +1,42 @@
+Routine BatlinAmbushEgg_i accepts a0 #locals(12) #uses(PlaySpeechOrTextAndWait_i, GivePartyExp_i) {
+    if (event = _Trigger) {
+        PlaySpeechOrTextAndWait_i(13);
+        v0 = ~AvatarSex();
+        SetSpeaker(0, _Batlin);
+        ["Avatar! Stop where thou art! Thou shalt not succeed in thy quest to destroy the Black Gate! Art thou mad??! The Guardian is much too powerful for thee! He shall crush thee like an insect! The fate of Britannia now belongs to him and to The Fellowship! The Guardian is the land's true ruler! Bow down to him, Avatar, and perhaps he shall give thee a place at his side. Bow down to him -now-!"*];
+        CloseSpeaker(_Batlin);
+        SetSpeaker(0, _HookClone);
+        if v0 {
+            v1 = "She";
+            v2 = "her";
+            v3 = "her";
+        } else {
+            v1 = "He";
+            v2 = "his";
+            v3 = "him";
+        }
+        [Hook points to you.];
+        ["I say -kill- the Avatar! <v1> is dangerous! Cut <v2> throat! I say we attack -now-!"*];
+        CloseSpeaker(_HookClone);
+        SetSpeaker(0, _CloneForskis);
+        [Forskis shouts, "To kill! To kill!"*];
+        CloseSpeaker(_CloneForskis);
+        SetSpeaker(0, _CloneElizabeth);
+        [Abraham yells, "Let us make fish bait out of <v3>!"*];
+        CloseSpeaker(_CloneElizabeth);
+        SetSpeaker(0, _CloneAbraham);
+        ["Death to the Avatar! Long live The Guardian!" screams Elizabeth.*];
+        CloseSpeaker(_CloneAbraham);
+        SetSpeaker(0, _Batlin);
+        ["So be it! The Fellowship hereby sentences the Avatar to immediate death! Kill <v3> now!"*];
+        CloseSpeaker(_Batlin);
+        v4 = << 403, 506, 805, 882, 881 >>;
+        Foreach v7 in v4 {
+            v8 = ~FindNearby_i(0, 30, v7, item);
+            Foreach v11 in v8 {
+                SetWorkType(_Combat_0, v11);
+            }
+        }
+        GivePartyExp_i(10000);
+    }
+}

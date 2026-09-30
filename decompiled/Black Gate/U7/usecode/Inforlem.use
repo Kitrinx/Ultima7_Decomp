@@ -1,0 +1,232 @@
+Routine Inforlem accepts a0 #locals(2) #uses(InforlemSellsWeapons_i, ~AskYesNo, InforlemTrainsCombat_i, InforlemTrainsMagic_i, GargBarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Inforlem);
+        v0 = false;
+        v1 = ~GetTime();
+        TurnOn(<< "name", "job", "bye" >>);
+        if not $MetInforlem {
+            [The gargoyle has a pleasant expression on his face.];
+            $MetInforlem = true;
+        } else {
+            ["To be pleased at your return, human," says Inforlem.];
+        }
+        converse {
+            key ("name") {
+                ["To be known as Inforlem."];
+                TurnOff("name");
+                TurnOn("Inforlem");
+            }
+            key ("Inforlem") {
+                ["To mean `make strong one.'"];
+                TurnOff("Inforlem");
+            }
+            key ("job") {
+                ["To train others in Terfin to be strong and powerful. To sell some weapons, also."];
+                TurnOn(<< "train", "others", "Terfin", "buy" >>);
+                if (flag(580) and not v0) {
+                    TurnOn("conflicts");
+                }
+            }
+            key ("buy") {
+                if ((v1 = 3) or ((v1 = 4) or (v1 = 5))) {
+                    InforlemSellsWeapons_i();
+                } else {
+                    ["To sell during shop hours. To ask you to come back to me at that time, please."];
+                }
+            }
+            key ("train") {
+                if ((v1 = 3) or ((v1 = 4) or (v1 = 5))) {
+                    ["To be a better warrior or mage?"];
+                    TurnOn(<< "warrior", "mage" >>);
+                } else {
+                    ["To train during training hours. To ask you to come back to me at that time, please."];
+                }
+            }
+            key ("warrior") {
+                ["To charge 50 gold for each training session. To be all right?"];
+                if ~AskYesNo() {
+                    InforlemTrainsCombat_i(50, << 0, 1, 4 >>);
+                } else {
+                    ["To apologize, but I must charge that amount!"];
+                }
+            }
+            key ("mage") {
+                ["To charge 50 gold for each training session. To be acceptable?"];
+                if ~AskYesNo() {
+                    InforlemTrainsMagic_i(50, << 6, 2 >>);
+                } else {
+                    ["To apologize, but I must charge that amount!"];
+                }
+            }
+            key ("conflicts") {
+                ["To know of the conflicts between the altars and the Fellowship, but to have no information. To suggest you see Quan, The Fellowship leader here and ask him."];
+                v0 = true;
+                flag(572) = true;
+                TurnOff("conflicts");
+            }
+            key ("Terfin") {
+                ["To see there are troubles here, but to be unaware of the causes and solutions."];
+                TurnOff("Terfin");
+            }
+            key ("others") {
+                ["To tell you Forbrak knows much about Terfin and its residents, and," he says, "about its conflicts."];
+                TurnOff("others");
+                TurnOn("Forbrak");
+                if not v0 {
+                    TurnOn("conflicts");
+                }
+            }
+            key ("Forbrak") {
+                ["To be the tavernkeeper."];
+                TurnOff("Forbrak");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["To expect to see you again, human."*];
+    }
+    if (event = _Bark) {
+        GargBarkAboutWork_i(_Inforlem);
+    }
+}
+
+Routine InforlemTrainsMagic_i accepts a0, a1 #locals(9) #uses(~GetStudent, ~CanTrain, ~GetStat, IntTrain_i, MagicTrain_i) {
+    v2 = ~GetStudent();
+    v3 = ~GetNPCName_i(v2);
+    if (v2 = 0) {
+    } else {
+        v4 = 3;
+        v5 = ~CanTrain(v4, v2, v0, v1);
+        if (v5 = 0) {
+            ["To see you need more experience to train at this time."];
+        } else {
+            if (v5 = 1) {
+                v6 = ~CountItem(_All, _All, _Gold_Coin, _Party);
+                [You gather your gold and count it, finding that you have <v6> gold altogether.];
+                if (v6 < v0) {
+                    ["To have not enough gold to train here."];
+                    goto label_16;
+                }
+            }
+            if (v5 = 2) {
+                [After asking a few questions, he exclaims, "To be already as well-educated as I. To apologize for my inability to increase your knowledge, but there is nothing I can do."];
+            } else {
+                v7 = ~TakeFromParty_i(true, _All, _All, _Gold_Coin, v0);
+                [You pay <v0> gold, and the training session begins.];
+                if (v2 = 65180) {
+                    v8 = "you begin";
+                } else {
+                    v8 = (v3 + "begins");
+                }
+                [The gargoyle begins with some intense memorization exercises which eventually lead to concepts of spell theory. At the end, <v8> to notice a change in mental capabilities and thought reaction speed.];
+                v9 = ~GetStat(_Int, v2);
+                if (v9 < 30) {
+                    IntTrain_i(2, v2);
+                }
+                v10 = ~GetStat(_MaxMagic, v2);
+                if (v10 < 30) {
+                    MagicTrain_i(1, v2);
+                }
+            }
+        }
+    }
+    label_16:
+}
+
+Routine InforlemTrainsCombat_i accepts a0, a1 #locals(11) #uses(~GetStudent, ~CanTrain, ~GetStat, StrTrain, DexTrain, CombatTrain_i) {
+    v2 = ~GetStudent();
+    v3 = ~GetNPCName_i(v2);
+    if (v2 = 65180) {
+        v4 = "your";
+    } else {
+        v4 = "their";
+    }
+    if (v2 = 0) {
+    } else {
+        v5 = 3;
+        v6 = ~CanTrain(v5, v2, v0, v1);
+        if (v6 = 0) {
+            ["To be without the practical experience required to train at this time."];
+        } else {
+            if (v6 = 1) {
+                v7 = ~CountItem(_All, _All, _Gold_Coin, _Party);
+                [You gather your gold and count it, finding that you have <v7> gold altogether.];
+                if (v7 < v0) {
+                    ["To need more gold than you have. To need 50 gold."];
+                    goto label_21;
+                }
+            }
+            if (v6 = 2) {
+                [After examining <v4> muscles, he says, "To be stronger than I. To need no further training in combat."];
+            } else {
+                v8 = ~TakeFromParty_i(true, _All, _All, _Gold_Coin, v0);
+                [You pay <v0> gold, and the training session begins.];
+                if (v2 = 65180) {
+                    v9 = "you begin";
+                } else {
+                    v9 = (v3 + "begins");
+                }
+                [The gargoyle begins with some intense weight-lifting which eventually leads to target practice with throwing axes. At the end, <v9> to notice a change in physical prowess and hand-eye coordination.];
+                v10 = ~GetStat(_Str, v2);
+                if (v10 < 30) {
+                    StrTrain(1, v2);
+                }
+                v11 = ~GetStat(_Dex, v2);
+                if (v11 < 30) {
+                    DexTrain(1, v2);
+                }
+                v12 = ~GetStat(_Cbt, v2);
+                if (v12 < 30) {
+                    CombatTrain_i(1, v2);
+                }
+            }
+        }
+    }
+    label_21:
+}
+
+Usable InforlemSellsWeapons_i #locals(13) #uses(~AskOrdList, ~SellPriceString_i, ~AskYesNo, ~SellItem_i) {
+    PushKeys();
+    v0 = true;
+    v1 = << "nothing", "throwing axe", "two-handed axe", "boomerang" >>;
+    v2 = << 0, 593, 601, 605 >>;
+    v3 = 65177;
+    v4 = << 0, 18, 50, 12 >>;
+    v5 = "a ";
+    v6 = 1;
+    v7 = "";
+    v8 = 1;
+    ["To purchase what item?"];
+    While v0 {
+        v9 = ~AskOrdList(v1);
+        if (v9 = 1) {
+            ["To be accepted."];
+            v0 = false;
+        } else {
+            v10 = ~SellPriceString_i(v7, v4::v9, v6, v1::v9, v5);
+            v11 = 0;
+            ["^<v10> To be agreeable?"];
+            v12 = ~AskYesNo();
+            if v12 {
+                v11 = ~SellItem_i(false, 1, 0, v4::v9, v8, v3, v2::v9);
+            }
+            if (v11 = 1) {
+                ["To be agreed."];
+            } else {
+                if (v11 = 2) {
+                    ["To be without the ability to carry that much!"];
+                } else {
+                    if (v11 = 3) {
+                        ["To have less than enough gold for that."];
+                    } else {
+                    }
+                }
+            }
+            ["To want something else?"];
+            v0 = ~AskYesNo();
+        }
+    }
+    PopKeys();
+}

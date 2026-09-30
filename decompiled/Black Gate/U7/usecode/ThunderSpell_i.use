@@ -1,0 +1,11 @@
+Routine ThunderSpell_i accepts a0 #locals(1) #uses(~IsMagicOK_i) {
+    if (event = _Action) {
+        Kernel_resetRef(item);
+        Item_bark("@Vas Kal@", item);
+        if ~IsMagicOK_i() {
+            v0 = ~PostAction(<< _aEXTEND2_FRAME_i, _aTHRUST2_FRAME_i, _aSFX_i, 62 >>, item);
+        } else {
+            v0 = ~PostAction(<< _aEXTEND2_FRAME_i, _aTHRUST2_FRAME_i, _aUSABLE_i, #FizzleSpell_i >>, item);
+        }
+    }
+}

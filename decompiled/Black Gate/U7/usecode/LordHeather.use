@@ -1,0 +1,122 @@
+Routine LordHeather accepts a0 #locals(6) #uses(~IsNPCNear, ~IsInInv, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _LordHeather);
+        v0 = ~AvatarSex();
+        TurnOn(<< "name", "job", "bye" >>);
+        if flag(224) {
+            TurnOn("Nastassia");
+        }
+        if flag(106) {
+            TurnOn(<< "bill", "Lock Lake" >>);
+        }
+        if not $MetLordHeather {
+            [This regal gentleman epitomizes a well-liked politician.];
+            ["Hello! Lord British sent word that thou might come to visit us. Welcome to Cove, Avatar!"];
+            $MetLordHeather = true;
+        } else {
+            ["Hello again, Avatar!" Lord Heather proclaims.];
+        }
+        converse {
+            key ("name") {
+                ["I am Lord Heather. And I recognize thee, Avatar!"];
+                TurnOff("name");
+            }
+            key ("job") {
+                ["I am the Town Mayor of Cove, home of the Shrine of Compassion."];
+                TurnOn(<< "Cove", "Shrine" >>);
+            }
+            key ("Cove") {
+                ["It's a small place, I know. Many of our residents have moved away to the larger towns, especially Britain. But we have maintained a small core of loyal Covites."];
+                TurnOff("Cove");
+            }
+            key ("Shrine") {
+                ["We are proud of our Shrine. One of our residents takes good care of it. Thou must try and visit the Shrine if thou hast not already. It is a monument to all the lovers in town."];
+                TurnOn("lovers");
+                TurnOff("Shrine");
+            }
+            key ("lovers") {
+                ["Britain may be the city of Compassion, but Cove has become the city of Passion. Everyone here seems to fall in love rather easily. Thou wilt find that everyone loves someone. Almost everyone, that is."];
+                TurnOff("lovers");
+                TurnOn(<< "everyone", "almost everyone" >>);
+            }
+            key ("everyone") {
+                ["Well, let's see... I am in love with Jaana, our healer.\x09And she is in love with me, of course. Then there is Zinaida, who runs the Emerald. She has an interest in De Maria, our local bard. And vice versa. Rayburt, our trainer, is courting Pamela, the innkeeper."];
+                v1 = ~IsNPCNear(_Iolo);
+                if v1 {
+                    SetSpeaker(0, _Iolo);
+                    ["Sounds like bad theatre to me!"];
+                    CloseSpeaker(_Iolo);
+                    SetSpeaker(0, _LordHeather);
+                }
+                v2 = ~IsNPCNear(_Spark);
+                if v2 {
+                    SetSpeaker(0, _Spark);
+                    ["Any wenches mine own age around here?"*];
+                    CloseSpeaker(_Spark);
+                    SetSpeaker(0, _LordHeather);
+                }
+                flag(228) = true;
+                TurnOff("everyone");
+                v3 = ~IsNPCNear(_Jaana);
+                if v3 {
+                    ["I see that thou art leaving Cove for a while, my dear?"*];
+                    SetSpeaker(0, _Jaana);
+                    ["Yes, milord. But I shall return. I promise thee."*];
+                    SetSpeaker(0, _LordHeather);
+                    ["I shall try not to worry about thee, but it will be difficult."*];
+                    SetSpeaker(0, _Jaana);
+                    ["Do not worry. I shall be safe with the Avatar."*];
+                    SetSpeaker(0, _LordHeather);
+                    ["I do hope so." The Mayor embraces Jaana.*];
+                    CloseSpeaker(_Jaana);
+                    SetSpeaker(0, _LordHeather);
+                }
+            }
+            key ("almost everyone") {
+                ["Except for Nastassia."];
+                TurnOff("almost everyone");
+                TurnOn("Nastassia");
+            }
+            key ("Nastassia") {
+                if not flag(224) {
+                    ["She is a lovely young woman who is always melancholy. De Maria can tell thee more about her. I suggest thou seekest him at the Emerald. 'Tis a sad but compelling tale."];
+                    flag(227) = true;
+                } else {
+                    if v0 {
+                        v4 = "someone";
+                    } else {
+                        v4 = "a man like thee";
+                    }
+                    ["I do hope thou canst help her. She needs <v4> to bring her out of her depression."];
+                }
+                TurnOff("Nastassia");
+            }
+            key ("bill") {
+                if not flag(222) {
+                    v5 = ~IsInInv(65177, 4, _Scroll, 1, _Party);
+                    if v5 {
+                        ["'Tis about time that the government did something about the awful stench coming from that lake! I shall be happy to sign thy bill of law! Take it back to the Great Council post haste!" Lord Heather signs the bill and hands it back to you.];
+                        flag(222) = true;
+                    } else {
+                        ["But thou dost not have a bill of law!"];
+                    }
+                } else {
+                    ["I thought I already signed that bill!"];
+                }
+                TurnOff("bill");
+            }
+            key ("Lock Lake") {
+                ["It has gotten so putrid that on hot summer days the stink is suffocating. I believe that the Britannian Mining Company in Minoc is the source of the problem. Mining waste is being deposited in the Lake. Thou shouldst be glad it is nearly winter!"];
+                TurnOff("Lock Lake");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["Do come and visit again, Avatar!"*];
+    }
+    if (event = _Bark) {
+        BarkAboutWork_i(_LordHeather);
+    }
+}

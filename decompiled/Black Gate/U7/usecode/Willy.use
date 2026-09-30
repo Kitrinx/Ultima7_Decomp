@@ -1,0 +1,317 @@
+Routine Willy accepts a0 #locals(15) #uses(~LordOrLady, ~AvatarName, ~IsNPCNear, ~IsInInv, ~AskYesNo, WillySellsBread_i, WillyBuysBread_i, WillyBuysFlour_i, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Willy);
+        v0 = ~LordOrLady();
+        v1 = ~AvatarName();
+        v2 = ~GetWorkType(~NPCToItem_i(_Willy));
+        v3 = ~GetTime();
+        v4 = ~IsNPCNear(_Spark);
+        TurnOn(<< "name", "job", "bye" >>);
+        if $JEANETTE_LOVES_WILLY {
+            TurnOn("Jeanette");
+        }
+        if $HIRED_BY_WILLY {
+            TurnOn("made bread");
+        }
+        v5 = ~IsInInv(14, 65177, _Kitchen_Items, 1, _Party);
+        v6 = ~IsInInv(15, 65177, _Kitchen_Items, 1, _Party);
+        if (v5 or v6) {
+            TurnOn("sell flour");
+        }
+        if not $MetWilly {
+            [You see a very clean-looking, portly young man who waves at you frantically.];
+            $MetWilly = true;
+        } else {
+            ["Ah, hello there! Good to see thee again!" says Willy.];
+        }
+        converse {
+            key ("name") {
+                ["My given name is Wilhelm, although no one calls me that. I prefer to be addressed as Willy. Thank thee very much."];
+                TurnOff("name");
+            }
+            key ("job") {
+                ["I am the baker here in Britain and I make the sweetest bread thou hast ever tasted! ];
+                if (v2 = 18) {
+                    ["Hast thou had a chance to sample any of my bread yet?"];
+                    v7 = ~AskYesNo();
+                    if v7 {
+                        ["Ah, then thou dost agree it is the sweetest, dost thou not?"];
+                        v8 = ~AskYesNo();
+                        if v8 {
+                            ["Ha! Thou dost see, then? Everyone agrees! That should be proof enough!"];
+                            v4 = ~IsNPCNear(_Spark);
+                            if v4 {
+                                SetSpeaker(0, _Spark);
+                                ["I want some!"*];
+                                SetSpeaker(0, _Willy);
+                                ["Here thou art, laddie." Willy hands Spark a pastry and the boy devours it in one gulp.*];
+                                SetSpeaker(0, _Spark);
+                                ["Mmmmm! I say, <v1>, I think we need a lot of this for the road. We had best buy some, all right?"*];
+                                CloseSpeaker(_Spark);
+                                SetSpeaker(0, _Willy);
+                            }
+                        } else {
+                            ["Thou dost not?! Why, do not be ridiculous! Of course thou dost!"];
+                        }
+                    } else {
+                        ["Then here, thou must have some!" He tears a piece of bread off of one of several loaves he is carrying and stuffs it into your mouth. "There! Is it not the sweetest bread thou hast ever tasted? It is, is it not?!" You chew as fast as you can in order to answer him.];
+                        v9 = ~AskYesNo();
+                        if v9 {
+                            [He grabs your face by the cheeks and plants a big kiss on your forehead. "Thou art truly a person of good palate and refined taste!"];
+                        } else {
+                            [Dejectedly Willy looks down at the loaf of bread he is carrying. He sniffs at it twice and tosses it out of sight.];
+                        }
+                    }
+                    TurnOn(<< "baker", "bread" >>);
+                } else {
+                    ["Please come to the bakery when it is open in daytime hours and thou shalt sample some!"];
+                }
+            }
+            key ("baker") {
+                [He nods. "Yes, I am a baker and I have many secret recipes passed down to me by my father and mother. Why, there are even those who say I am a master baker!];
+                ["And there are those who call me a... doughnut," he says with a frown.];
+                TurnOff("baker");
+                TurnOn(<< "secret recipes", "father and mother", "master baker", "doughnut" >>);
+            }
+            key ("secret recipes") {
+                ["Oh, dear. Do not tell me that thou art yet another person who is trying to pry one of my secret recipes out of me! If that is what thou art after then thou wilt just be disappointed!"];
+                TurnOff("secret recipes");
+            }
+            key ("father and mother") {
+                [Willy wipes away a tear. "Gone. Both of them. Gone to join mine ancestors in that great kitchen in the sky. I will never be able to cook as they did. Still I plod along, trying to keep the family name alive, and that is why I am a baker. But I suppose it is not the only reason."];
+                TurnOff("father and mother");
+                TurnOn("why");
+            }
+            key ("master baker") {
+                ["Yes, many people tell me that. Now thou dost say it, too. If thou dost say so, then it must be true!"];
+                [Willy takes a bite of his own bread. "Mmmm. I -am- a master baker!"];
+                TurnOff("master baker");
+            }
+            key ("doughnut") {
+                [He gives you a long puzzled look. After a moment he takes one of his loaves of bread and swats you over the head with it.];
+                TurnOff("doughnut");
+            }
+            key ("why") {
+                ["Actually, there is a very good reason why I am a baker."];
+                TurnOff("why");
+                TurnOn("reason");
+            }
+            key ("reason") {
+                ["Because the way to a woman's heart is through her stomach. Why, I have two women in love with me right now and I did not even have to pursue either one."];
+                TurnOff("reason");
+                TurnOn("two women");
+            }
+            key ("two women") {
+                [He sighs. "If thou must know, their names are Jeanette and Gaye."];
+                TurnOff("two women");
+                TurnOn(<< "Jeanette", "Gaye" >>);
+            }
+            key ("Jeanette") {
+                ["Jeanette is a pleasant enough girl, but to be honest I cannot see myself with a tavern wench. She thinks I have not noticed how she feels about me. Frankly, I wish she would just leave me alone."];
+                TurnOff("Jeanette");
+            }
+            key ("Gaye") {
+                ["Gaye, who runs the costume shoppe, is of more interest to me. But she is a Fellowship member and I have no wish to become one. I hope that it does not prevent us from courting."];
+                TurnOff("Gaye");
+            }
+            key ("bread") {
+                ["My bread is the finest in Britannia. It is renown for both its pleasant taste and its very reasonable price. But it is a lot of work making enough to satisfy the constant demand for it. I need to hire someone to help me."];
+                TurnOff("bread");
+                TurnOn(<< "buy", "hire" >>);
+            }
+            key ("buy") {
+                if (v2 = 18) {
+                    ["I not only have bread for sale, but pastries, cakes and rolls as well. The most delicious baked goods thou couldst ever wish to pop into thy mouth! Wouldst thou like to buy some?"];
+                    v10 = ~AskYesNo();
+                    if v10 {
+                        WillySellsBread_i();
+                    } else {
+                        ["If thou wert a person of truly refined taste, thou wouldst buy some!"];
+                    }
+                } else {
+                    ["I am afraid the bakery is closed. Please come back during normal business hours."];
+                }
+                TurnOff("buy");
+            }
+            key ("hire") {
+                if (v2 = 18) {
+                    ["Thou couldst work for me here in the shoppe making bread. Or I will buy sacks of flour from thee. Thou couldst buy them wholesale in Paws, and I will pay thee 4 gold per sack."];
+                    ["Dost thou wish to work here in the shoppe for me?" Willy asks hopefully.];
+                    v11 = ~AskYesNo();
+                    if v11 {
+                        ["Excellent! Thou canst start work immediately! I shall pay thee 5 gold for every five loaves of bread thou dost make. All right?"];
+                        v12 = ~AskYesNo();
+                        if v12 {
+                            $HIRED_BY_WILLY = true;
+                            ["First thou must make dough from the flour. Simply spread some flour out on the table, add some water to make it thick and, well, doughy. Then use the dough in the oven to bake it. Wait a bit, then-- voila! Thou dost have bread!"];
+                        } else {
+                            ["Very well. But I warn thee that employment is hard to obtain in these times!"];
+                        }
+                    } else {
+                        ["'Tis a pity thou art unavailable. Thou dost look like one who doth know their way around a kitchen."];
+                    }
+                } else {
+                    ["I would be happy to talk with thee about employment at my shoppe during normal business hours."];
+                }
+                TurnOff("hire");
+            }
+            key ("made bread") {
+                WillyBuysBread_i();
+                TurnOff("made bread");
+            }
+            key ("sell flour") {
+                WillyBuysFlour_i();
+                TurnOff("sell flour");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["Good day to thee, <v0>, and bon appetit!"*];
+    }
+    if (event = _Bark) {
+        v3 = ~GetTime();
+        v2 = ~GetWorkType(~NPCToItem_i(_Willy));
+        v13 = ~rndRange(4, 1);
+        if (v2 = 18) {
+            if (v13 = 1) {
+                v14 = "@Luscious bread!@";
+            }
+            if (v13 = 2) {
+                v14 = "@Delicious pastries!@";
+            }
+            if (v13 = 3) {
+                v14 = "@Bread fit for a king!@";
+            }
+            if (v13 = 4) {
+                v14 = "@Fresh pastries!@";
+            }
+            Item_bark(v14, _Willy);
+        } else {
+            BarkAboutWork_i(_Willy);
+        }
+    }
+}
+
+Usable WillySellsBread_i #locals(13) #uses(~AskOrdList, ~PriceString_i, ~AskYesNo, ~SellItem_i) {
+    PushKeys();
+    v0 = true;
+    v1 = << "nothing", "bread", "cake", "rolls", "pastry" >>;
+    v2 = << 0, 377, 377, 377, 377 >>;
+    v3 = << 65177, 1, 5, 2, 6 >>;
+    v4 = << 0, 4, 3, 4, 3 >>;
+    v5 = "";
+    v6 = << 0, 0, 0, 1, 0 >>;
+    v7 = << "", " for a loaf", " for a slice", " for a batch", " for one" >>;
+    v8 = 1;
+    ["What wouldst thou like to buy?"];
+    While v0 {
+        v9 = ~AskOrdList(v1);
+        if (v9 = 1) {
+            ["Fine."];
+            v0 = false;
+        } else {
+            v10 = ~PriceString_i(v7::v9, v4::v9, v6::v9, v1::v9, v5);
+            v11 = 0;
+            ["^<v10> A fair price, wouldst thou not agree?"];
+            v12 = ~AskYesNo();
+            if v12 {
+                ["How many wouldst thou like?"];
+                v11 = ~SellItem_i(true, 1, 20, v4::v9, v8, v3::v9, v2::v9);
+            }
+            if (v11 = 1) {
+                ["Done!"];
+            } else {
+                if (v11 = 2) {
+                    ["Thou cannot possibly carry that much!"];
+                } else {
+                    if (v11 = 3) {
+                        ["Thou dost not have enough gold for that!"];
+                    } else {
+                    }
+                }
+            }
+            ["Wouldst thou like something else?"];
+            v0 = ~AskYesNo();
+        }
+    }
+    PopKeys();
+}
+
+Usable WillyBuysBread_i #locals(15) #uses(~AskYesNo, ConsumeOne_i) {
+    PushKeys();
+    ["Excellent! Dost thou have some loaves for me?"];
+    v0 = ~AskYesNo();
+    if v0 {
+        ["Very good! Let me see how many thou dost have..."];
+        v1 = ~FindNearby_i(0, 25, _Food_Item, _Avatar);
+        v2 = ~GetParty();
+        Foreach v5 in v2 {
+            v1 = (v1 & ~GetContents(0, _All, _Food_Item, v5));
+        }
+        v6 = 0;
+        v7 = << >>;
+        Foreach v10 in v1 {
+            if ((~GetFrame(v10) = 0) and ~GetItemFlag_i(_OkayToTake_i, v10)) && (~GetDist(_Willy, v10) <= 25) {
+                v6 = (v6 + 1);
+                v7 = (v7 & v10);
+            }
+        }
+        v11 = ((v6 / 5) * 5);
+        if (v11 = 0) {
+            ["Thou have not made enough bread to be worthy of any payment at all."];
+        } else {
+            ["Scrumptious! <v6> loaves! That means I owe thee <v11> gold. Here thou art! I shall take the loaves from thee now!"];
+            v12 = ~GiveToParty_i(true, _All, _All, _Gold_Coin, v11);
+            if v12 {
+                Foreach v10 in v7 {
+                    if ~Item_getContainer(v10) {
+                        ConsumeOne_i(v10);
+                    } else {
+                        ClearItemFlag_i(_OkayToTake_i, v10);
+                    }
+                }
+                ["Come back and work for me at any time!"];
+                terminate;
+            } else {
+                ["If thou dost travel in a lighter fashion, thou wouldst have hands to take my gold!"];
+            }
+        }
+    } else {
+        ["No? What hast thou been doing? -Loaf-ing around? Ha ha ha!"];
+    }
+    PopKeys();
+}
+
+Usable WillyBuysFlour_i #locals(9) #uses(~AskYesNo) {
+    PushKeys();
+    v0 = 4;
+    v1 = 1;
+    ["Excellent! Dost thou have some flour for me?"];
+    v2 = ~AskYesNo();
+    if v2 {
+        ["Very good! Let me see how many sacks thou dost have..."];
+        v3 = ~CountItem(14, _All, _Kitchen_Items, _Party);
+        v4 = ~CountItem(15, _All, _Kitchen_Items, _Party);
+        if ((v3 = 0) or (v4 = 0)) {
+            ["But thou dost not have a single one in thy possession! Art thou trying to trick me? Get out of my shoppe!"*];
+            terminate;
+        } else {
+            v5 = ((v3 + (v4 / v1)) * v0);
+            ["Beautiful flour! <v3>! That means I owe thee <v5> gold. Here thou art! I shall take the flour from thee now!"];
+            v6 = ~GiveToParty_i(true, _All, _All, _Gold_Coin, v5);
+            if v6 {
+                v7 = ~TakeFromParty_i(true, 14, _All, _Kitchen_Items, v3);
+                v8 = ~TakeFromParty_i(true, 15, _All, _Kitchen_Items, v4);
+                ["Come back and work for me at any time!"*];
+                terminate;
+            } else {
+                ["If thou dost travel in a lighter fashion, thou wouldst have hands to take my gold!"];
+            }
+        }
+    } else {
+        ["No? Then thou art a -loaf-er! Ha ha ha!"];
+    }
+    PopKeys();
+}

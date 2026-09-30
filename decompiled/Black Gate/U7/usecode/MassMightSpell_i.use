@@ -1,0 +1,22 @@
+Routine MassMightSpell_i accepts a0 #locals(7) #uses(~IsMagicOK_i) {
+    if (event = _Action) {
+        Kernel_resetRef(item);
+        Item_bark("@In Vas Por@", item);
+        if ~IsMagicOK_i() {
+            v0 = ~PostAction(<< _aUP_FRAME_i, _aSFX_i, 64, _aOUT_FRAME_i, _aUP_FRAME_i, _aTHRUST2_FRAME_i, _aUSABLE_i, #MassMightSpell_i >>, item);
+            v1 = ~GetCoord(item);
+            createSprite(65535, 0, 0, 0, (v1::2 - 2), (v1::1 - 2), 7);
+            v2 = ~GetParty();
+            Foreach v5 in v2 {
+                v6 = ~GetDist(v5, item);
+                v6 = ((v6 / 3) + 5);
+                v0 = ~PostInFuture(v6, << _aNO_HALT_i, _aUSABLE_i, #MassMightSpell_i >>, v5);
+            }
+        } else {
+            v0 = ~PostAction(<< _aUP_FRAME_i, _aOUT_FRAME_i, _aUP_FRAME_i, _aTHRUST2_FRAME_i, _aUSABLE_i, #FizzleSpell_i >>, item);
+        }
+    }
+    if (event = _Posted_i) {
+        SetItemFlag_i(_Might_i, item);
+    }
+}

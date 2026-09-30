@@ -1,0 +1,181 @@
+Routine Robin accepts a0 #locals(11) #uses(~LordOrLady, ~IsInInv, ~AskYesNo, GivePartyExp_i, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Robin);
+        v0 = ~LordOrLady();
+        v1 = ~NPCToItem_i(_Robin);
+        v2 = ~NPCToItem_i(_Leavell);
+        v3 = ~NPCToItem_i(_Battles);
+        v4 = ~IsInInv(2, 65177, _Amulet, 1, _Avatar);
+        v5 = ~IsMedallionOn_i();
+        TurnOn(<< "name", "job", "bye" >>);
+        if flag(381) {
+            TurnOn("locket");
+        }
+        if v4 {
+            TurnOn("show locket");
+        }
+        if v5 {
+            TurnOn("Fellowship");
+        }
+        if not $MetRobin {
+            [You see a roguish man dressed in what appears to be some nobleman's ratty hand-me-downs.];
+            $MetRobin = true;
+            if flag(384) {
+                TurnOn("strangers");
+            }
+        } else {
+            ["Greetings, and how may I be of service to thee?" asks Robin.];
+        }
+        converse {
+            key ("name") {
+                ["My name, <v0>, is Robin. A pleasure to meet thee. I have come to New Magincia only recently."];
+                $MetRobin = true;
+                TurnOff("name");
+                TurnOn("New Magincia");
+            }
+            key ("job") {
+                ["My father, a well-respected nobleman whose name I will not defame by mentioning, bastardized and disowned me. But he did teach me mine occupation."];
+                TurnOn("occupation");
+            }
+            key ("occupation") {
+                ["Why, that most glamorous and respected of occupations, <v0>. Winning at games of chance."];
+                TurnOff("occupation");
+            }
+            key ("New Magincia") {
+                ["I am not from here. My colleagues and I had to quickly leave Buccaneer's Den after a dispute with the casino owner. And a rough voyage it was, too."];
+                TurnOn(<< "colleagues", "Buccaneer's Den", "dispute", "voyage" >>);
+                TurnOff("New Magincia");
+            }
+            key ("colleagues") {
+                ["My friends are Battles and Leavell. Their job is to protect me and my winnings. In exchange they share in my profits."];
+                TurnOn(<< "Battles", "Leavell" >>);
+                TurnOff("colleagues");
+            }
+            key ("Battles") {
+                ["I rescued him from his captain who was about to make him walk the plank. I diced with that Captain for the lad's life. Later, Battles led a mutiny that took the ship, and... well, that is another story."];
+                TurnOff("Battles");
+            }
+            key ("Leavell") {
+                ["I rescued him from a gaggle of angry noblemen's daughters who had just discovered he was courting all of them simultaneously. If not for me he would have certainly perished! But I am ahead of myself."];
+                TurnOff("Leavell");
+            }
+            key ("Buccaneer's Den") {
+                ["It is where we live most of the year. There are a lot of rough characters there and it is not a place to be seen carrying large amounts of money."];
+                TurnOn("rough characters");
+                TurnOff("Buccaneer's Den");
+            }
+            key ("dispute") {
+                ["I won a vulgar amount of the casino's gold and 'The Mister' of the place, Gordy, accused me of cheating. He sent his legbreaker, Sintag, after us. Pirates do not like to lose!"];
+                TurnOff("dispute");
+                TurnOn("The Mister");
+            }
+            key ("The Mister") {
+                ["Do not ask me why he is called that! Everyone there calls him that, though!"];
+                TurnOff("The Mister");
+            }
+            key ("voyage") {
+                ["We took the first ship out, but before we got back to the mainland it had sunk. The three of us barely managed to make it to New Magincia with our lives. Now we are marooned here."];
+                TurnOff("voyage");
+                TurnOn("marooned");
+            }
+            key ("strangers") {
+                ["I do not know of any. I only just arrived here myself."];
+                TurnOff("strangers");
+            }
+            key ("rough characters") {
+                ["One rough character in particular to stay away from is a man called Hook. He would kill thee for a trifle. Thou canst tell him by the hook he has for a hand."];
+                TurnOn("Hook");
+                TurnOff("rough characters");
+            }
+            key ("Hook") {
+                ["I know nothing more. If thou thinkest that I would willingly cross paths with the likes of him thou must have me mistaken for someone else!"];
+                TurnOff("Hook");
+            }
+            key ("locket") {
+                ["We are trying to return to Buccaneer's Den. I was hoping to sell a gold locket which came into my possession to buy our passage back, but I fear it is lost. If thou dost come across it be sure to let me know."];
+                TurnOff("locket");
+            }
+            key ("Fellowship") {
+                ["Thou art a member of The Fellowship! For years I have been seeing Fellowship members winning heavy stakes at the House of Games. Canst thou tell me their secret?"];
+                v6 = ~AskYesNo();
+                if v6 {
+                    ["Of course thou canst. But I do not suspect that thou wilt." Robin shrugs his shoulders.];
+                } else {
+                    ["Forgive me if I do not believe thee."];
+                }
+                TurnOff("Fellowship");
+            }
+            key ("marooned") {
+                ["That is right. We cannot afford the stinking ship sold by the shipwright.];
+                ["But say, thou must have gotten here in some manner! Dost thou have some manner of ship on which we could leave the island?"];
+                v7 = ~AskYesNo();
+                if v7 {
+                    ["I could pay thee well if thou wouldst\x09take us back to Buccaneer's Den."];
+                    TurnOn("pay");
+                } else {
+                    ["If thou shouldst come across a way off this island please permit us to leave with thee."];
+                }
+                TurnOff("marooned");
+            }
+            key ("pay") {
+                ["Of course, I cannot pay thee right now at this moment.\x09But when we reach Buccaneer's Den, I promise thee, I shall be able to get mine hands on a lot of money."];
+                TurnOff("pay");
+                TurnOn("money");
+            }
+            key ("money") {
+                ["Yes, money! For I have found something here in New Magincia that will be worth more than gold in Buccaneer's Den."];
+                TurnOff("money");
+                TurnOn("something");
+            }
+            key ("something") {
+                ["Before I tell thee what it is, wilt thou promise to take me and my mates back to Buccaneer's Den?"];
+                v8 = ~AskYesNo();
+                if v8 {
+                    v9 = true;
+                    [Robin looks you in the eye. "Thou art truly a kind friend. I suppose then I should tell thee what it is we are planning on bringing back from New Magincia."];
+                    TurnOn("bringing back");
+                } else {
+                    ["Then I cannot trust thee enough to tell thee of my plans. Go away."];
+                    terminate;
+                }
+                TurnOff("something");
+            }
+            key ("bringing back") {
+                if not v4 {
+                    ["Since thou art truly a friend then I know that I can ask a favor of thee. Why dost thou not bring back that lost locket to me and we shall speak of these things some more." He flashes you a wicked grin.];
+                } else {
+                    ["Since thou hast brought my locket back here, I suppose that I can trust thee. I intend to take Constance back with us and sell her to the operator of the baths."];
+                }
+                TurnOff("bringing back");
+            }
+            key ("show locket") {
+                ["Now that I know I can trust thee, I can let thee in on our plan. I intend to take another passenger in thy boat back with us to Buccaneer's Den. Her name is Constance and she should fetch a goodly price from Glenno, operator of the baths. Enough to pay my debts, pay thee for passage and still have plenty left over for another go at the House of Games!"];
+                GivePartyExp_i(100);
+                flag(388) = true;
+                TurnOn("boat");
+                TurnOff("show locket");
+            }
+            key ("boat") {
+                ["Thou must get thy boat ready to leave this place immediately. My lads and I shall get Constance and then we shall join thee. But wilt thou tell me where thy boat is located?"];
+                v10 = ~AskYesNo();
+                if v10 {
+                    [You give Robin the location of your boat. He slowly breaks into an evil laugh. "I thank thee, friend. All that is left for us is to eliminate one remaining loose end. Now that we know where thy boat is we will collect more on our investment by simply killing thee and taking it."*];
+                } else {
+                    ["Thou hast lost thy stomach for our game, eh? If that is the case then my lads and I have no choice but to kill thee dead to protect our secret!"*];
+                }
+                SetWorkType(_Combat_0, v1);
+                SetWorkType(_Combat_0, v2);
+                SetWorkType(_Combat_0, v3);
+                terminate;
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["It has been a pleasure speaking with thee, <v0>."*];
+    }
+    if (event = _Bark) {
+        BarkAboutWork_i(_Robin);
+    }
+}

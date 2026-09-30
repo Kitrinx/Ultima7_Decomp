@@ -1,0 +1,14 @@
+Routine CharmSpell_i accepts a0 #locals(3) #uses(~DirFromAvatar_i, ~IsMagicOK_i) {
+    if (event = _Action) {
+        v0 = ~GetTarget();
+        v1 = ~DirFromAvatar_i(v0);
+        Kernel_resetRef(item);
+        Item_bark("@An Xen Ex@", item);
+        if ~IsMagicOK_i() {
+            v2 = ~SetAttack_i(_Charm, v0, item);
+            v2 = ~PostAction(<< _aFACE_i, v1, _aSFX_i, 68, _aRAISE1_FRAME_i, _aOUT_FRAME_i, _aTHRUST2_FRAME_i, _aATTACK_i >>, item);
+        } else {
+            v2 = ~PostAction(<< _aFACE_i, v1, _aRAISE1_FRAME_i, _aOUT_FRAME_i, _aTHRUST2_FRAME_i, _aUSABLE_i, #FizzleSpell_i >>, item);
+        }
+    }
+}

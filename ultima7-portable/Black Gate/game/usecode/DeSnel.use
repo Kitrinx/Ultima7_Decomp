@@ -1,0 +1,183 @@
+Routine DeSnel accepts a0 #locals(11) #uses(~LordOrLady, ~IsInInv, ~AskList, ~AskYesNo, GivePartyExp_i, DeSnelTrains_i, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _DeSnel);
+        v0 = ~LordOrLady();
+        v1 = ~GetTime();
+        v2 = ~GetWorkType(~NPCToItem_i(_DeSnel));
+        v3 = ~NPCToItem_i(_DeSnel);
+        TurnOn(<< "name", "job", "bye" >>);
+        if not $MET_MASTER_DE_SNEL {
+            [Though he does not seem hostile, the man greets you in a fighting stance.];
+            $MET_MASTER_DE_SNEL = true;
+        } else {
+            ["What dost thou need?" asks De Snel.];
+        }
+        v4 = ~IsDead(_Sprellic);
+        if v4 {
+            TurnOn("Sprellic");
+        }
+        v5 = ~IsDead(_Vokes);
+        v6 = ~IsDead(_Syria);
+        v7 = ~IsDead(_Timmons);
+        if (v5 and (v6 and v7)) {
+            TurnOn("duellists");
+        }
+        if flag(362) {
+            TurnOn("honor flag");
+        }
+        converse {
+            key ("name") {
+                ["I am called Master De Snel."];
+                TurnOff("name");
+            }
+            key ("job") {
+                ["I operate the famous fighting school here in Jhelom, the Library of Scars. I also train fighters personally from time to time, if they show potential."];
+                TurnOn(<< "Jhelom", "Library of Scars", "potential" >>);
+            }
+            key ("potential") {
+                ["I teach a fighting style of mine own invention. It enables one to gain complete mastery over his opponent. I could arrange a little demonstration for thee..."];
+                TurnOn("demonstration");
+                TurnOff("potential");
+            }
+            key ("Jhelom") {
+                ["This city is devoted to the art of combat. Not mere slavish military discipline, but pure violent confrontation. It is a place after mine own heart."];
+                TurnOff("Jhelom");
+            }
+            key ("Library of Scars") {
+                if (v2 = 7) {
+                    ["An elite school of fighters with a long, proud history. Many great fighters have trained within its walls. The group even has its own special weaponry."];
+                    TurnOn(<< "fighters", "weaponry" >>);
+                } else {
+                    ["I do not feel like discussing business at the moment. Some other time perhaps."];
+                    terminate;
+                }
+                TurnOff("Library of Scars");
+            }
+            key ("fighters") {
+                ["I train my students to be fierce and ruthless fighters!"];
+                TurnOff("fighters");
+            }
+            key ("weaponry") {
+                [He unsheathes his own sword and shows it to you. The sword has an elaborate serpentine pattern engraved in it. "Thou mayest recognize a weapon of the Library of Scars by its engraving. It is the sign of the snake. Striking quick, silent, deadly, as are we!"];
+                TurnOff("weaponry");
+                v8 = ~IsInInv(65177, 65177, _Serpentine_Dagger, 1, _Party);
+                if v8 {
+                    TurnOn("dagger");
+                }
+            }
+            key ("dagger") {
+                [You produce the dagger found at the scene of the murders in Minoc. The serpentine engraving matches the markings of the Library of Scars exactly. De Snel looks at it and then back at you. He cannot conceal his surprise.~"From where didst thou get that dagger?"];
+                PushKeys();
+                v9 = ~AskList(<< "found it", "murder site" >>);
+                if (v9 = "found it") {
+                    [De Snel peers at you, obviously aware you are lying.];
+                }
+                if (v9 = "murder site") {
+                    [You look De Snel in the eye and tell him that you found it at the scene of the murders in Minoc. He gives you a curious look.];
+                }
+                ["That dagger was stolen from the Library of Scars weeks ago. I have no further knowledge of it."];
+                ["By the way, hast thou had a demonstration of my training technique?"];
+                if ~AskYesNo() {
+                    ["Then perhaps thou shouldst have another."];
+                } else {
+                    ["Then perhaps thou shouldst try one."];
+                }
+                PopKeys();
+                TurnOff("dagger");
+                TurnOn("demonstration");
+                flag(364) = true;
+                GivePartyExp_i(50);
+            }
+            key ("demonstration") {
+                if flag(364) {
+                    ["Very well. Let us begin!"*];
+                    Npc_setAlignment(_Evil, v3);
+                    SetWorkType(_Combat_0, v3);
+                    terminate;
+                } else {
+                    ["I must apologize for the discourtesy, but mine unequaled talents demand that I charge thee 40 gold for a training demonstration. Wilt thou accept?"];
+                    if ~AskYesNo() {
+                        DeSnelTrains_i(40, 4);
+                    } else {
+                        ["Very well, then!" His scowl indicates his displeasure. "If thou dost not like it, perhaps the Library of Scars is not the place for thee."];
+                        TurnOff("demonstration");
+                    }
+                }
+            }
+            key ("Sprellic") {
+                ["As thou hast probably seen, a few of our members had a dispute with a local troublemaker over our honor flag. We of the Library of Scars have a fierce dedication to our institution. I do not know what exactly happened to this upstart, but I understand that he is now dead. I am not trying to suggest the Library of Scars had anything to do with it, of course. Only that it would be wise not to cross us."];
+                TurnOff("Sprellic");
+            }
+            key ("duellists") {
+                ["I have heard that thou didst kill several of our members while champion of a duel defending the thief of our honor flag." His eyes narrow as he stares at you intensely. "Outstanding! I am a man who values nothing higher than the application of skill. I salute thee on thy victory. Perhaps thou wouldst like to join our group?"];
+                v10 = ~AskYesNo();
+                if v10 {
+                    if flag(364) {
+                        ["Thy companions and thee look fit enough for an informal practice session. Consider it a demonstration of my fighting style."];
+                        TurnOn("demonstration");
+                    } else {
+                        ["As my style of fighting is the superior style, I am only interested in training the best. Perhaps thy companions and thee qualify. We might find out, that is, if thou art courageous enough."];
+                        TurnOn("demonstration");
+                    }
+                }
+                TurnOff("duellists");
+            }
+            key ("honor flag") {
+                ["Fortunately for Sprellic our honor flag was returned. If it had not been we would have had no choice but to regain our honor with his blood."];
+                TurnOff("honor flag");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        if flag(364) {
+            ["Thou canst walk away so easy without a demonstration! Thou shalt have one anyway!"*];
+            Npc_setAlignment(_Evil, v3);
+            SetWorkType(_Combat_0, v3);
+        } else {
+            ["May thy stay in Jhelom be a memorable one," De Snel laughs as he turns and walks away.*];
+        }
+    }
+    if (event = _Bark) {
+        BarkAboutWork_i(_DeSnel);
+    }
+}
+
+Routine DeSnelTrains_i accepts a0, a1 #locals(8) #uses(~GetStudent, ~CanTrain, ~GetNPCName, ~AvatarName, ~GetStat, CombatTrain_i) {
+    v2 = ~GetStudent();
+    if (v2 = 0) {
+    } else {
+        v3 = 2;
+        v4 = ~CanTrain(v3, v2, v0, v1);
+        if (v4 = 0) {
+            ["Thou dost not have enough practical experience to study fighting with me at this time!" he scoffs.];
+        } else {
+            if (v4 = 1) {
+                v5 = ~CountItem(_All, _All, _Gold_Coin, _Party);
+                [You gather your gold and count it, finding that you have <v5> gold altogether.];
+                if (v5 < v0) {
+                    ["Hmmm... it appears thou art without the necessary amount of gold. When thy coffers are more full, I might be able to help thee." He smirks.];
+                    goto label_13;
+                }
+            }
+            if (v4 = 2) {
+                ["Thou art already close in skill to me! Thou hast peaked in thine own potential. There is nothing further I can do for thee."];
+            } else {
+                v6 = ~TakeFromParty_i(true, _All, _All, _Gold_Coin, v0);
+                [You pay <v0> gold, and the training session begins.];
+                v7 = ~GetNPCName(v2);
+                v8 = ~AvatarName();
+                if (v7 = v8) {
+                    v7 = "you";
+                }
+                [The session, which consists of various techniques involving sleight of hand and strike feints, takes a fairly short amount of time.~ De Snel straightens suddenly and sheathes his blade. "That is all for now. If thou dost wish more training, thou couldst most assuredly benefit from mine experience." He looks <v7> up and down insolently. "Thou seemest to be an apt pupil. Thou mayest return at a later time and advance thy training."];
+                v9 = ~GetStat(_Cbt, v2);
+                if (v9 < 30) {
+                    CombatTrain_i(2, v2);
+                }
+            }
+        }
+    }
+    label_13:
+}

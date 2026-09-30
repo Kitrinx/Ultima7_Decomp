@@ -1,0 +1,127 @@
+Routine Timmons #linear accepts a0 #locals(5) #uses(fn_0909, fn_0911, fn_092E) {
+label_0:
+    if not (event = 1) goto label_35;
+label_1:
+    intrinsic_03(0, 65409);
+    v0 = fn_0909();
+    v1 = intrinsic_3B();
+    v2 = intrinsic_1B(65409);
+    v3 = intrinsic_1B(65410);
+    v4 = intrinsic_1B(65411);
+    if not not flag(377) goto label_3;
+label_2:
+    append "You see a very serious young man. He carries himself like a learned and mannered gentleman.";
+    say;
+    flag(377) = true;
+    goto label_4;
+label_3:
+    append "\"Dost thou wish to speak with me?\" asks Timmons.";
+    say;
+label_4:
+    if not flag(360) goto label_8;
+label_5:
+    if not not flag(356) goto label_7;
+label_6:
+    append "\"I see thou hast the honor flag. As little more than an interested third party in this affair, I ask thee to return the flag to Syria. Please do so.\"*";
+    say;
+    terminate;
+label_7:
+    goto label_13;
+label_8:
+    if not flag(368) goto label_13;
+label_9:
+    if not (v1 = 4) goto label_12;
+label_10:
+    append "\"Well, "#0;
+    append v0;
+    append ", I must prove myself to De Snel. If thou art the one who suffers, I will apologize, but I will not back down!\"";
+    say;
+    append "\"Prepare to die!\"*";
+    say;
+    fn_0911(100);
+    intrinsic_3D(3, v2);
+    intrinsic_3D(3, v3);
+    intrinsic_3D(3, v4);
+    intrinsic_1D(0, v2);
+    intrinsic_1D(0, v3);
+    intrinsic_1D(0, v4);
+    terminate;
+label_11:
+    goto label_13;
+label_12:
+    append "\"Well, "#1;
+    append v0;
+    append ", I must prove myself to De Snel. If thou art the one who suffers, so be it! Meet us at the dueling area at next noon!\"*";
+    say;
+    goto label_13;
+label_13:
+    intrinsic_05(<< "name"#0, "job"#0, "bye"#0 >>);
+label_14:
+    ask goto label_34;
+label_15:
+    answer ("name"#1) goto label_17;
+label_16:
+    append "\"Timmons is my name, ";
+    append v0;
+    append ".\"";
+    say;
+    intrinsic_06("name"#2);
+label_17:
+    answer ("job"#1) goto label_19;
+label_18:
+    append "\"At the moment I have no job. I left all that behind in New Magincia. I have come to Jhelom to study under Master De Snel in the Library of Scars.\"";
+    say;
+    intrinsic_05(<< "Jhelom"#0, "Library of Scars"#0 >>);
+label_19:
+    answer ("Jhelom"#1) goto label_21;
+label_20:
+    append "\"I am afraid I would not be able to help thee. I know little of this town, except for the duels. I am newly arrived here myself. Perhaps thou shouldst ask someone else.\"";
+    say;
+    intrinsic_05("duels"#0);
+    intrinsic_06("Jhelom"#2);
+label_21:
+    answer ("duels"#1) goto label_26;
+label_22:
+    if not not flag(356) goto label_24;
+label_23:
+    append "\"I had heard of this man Sprellic who claims he is a greater fighter than any in the Library of Scars and how he had stolen the honor flag from their wall. So I sought this man out and challenged him to a duel myself.\"";
+    say;
+    intrinsic_05("Library of Scars"#1);
+    goto label_25;
+label_24:
+    append "\"Unfortunately, the duels with Sprellic were called off before I had the opportunity to impress Master De Snel.\"";
+    say;
+label_25:
+    intrinsic_06("duels"#2);
+label_26:
+    answer ("Library of Scars"#2) goto label_31;
+label_27:
+    if not not flag(356) goto label_29;
+label_28:
+    append "\"A sailor on a ship at port in New Magincia first told me of the Library of Scars, of how it was the greatest fighting guild in Britannia and how its trainer, Master De Snel, had created the perfect fighting style. I immediately spent every coin I had to come here. But De Snel now refuses to accept me as a student. I know if I can defeat a fighter who claims to be better than anyone in the guild, and help restore its honor in the process, De Snel will have to finally accept me.\"";
+    say;
+    goto label_30;
+label_29:
+    append "\"Master De Snel, the trainer at the Library of Scars, has refused me entry until I have proven myself in combat. The only way to prove oneself in combat in the town of Jhelom is by duelling. But my mother raised me to be a perfect gentleman. So far I have not succeeded in offending anyone sufficiently to have them challenge me to a duel. Hmmm. Perhaps I am just not suited to be a member of the Library of Scars.\"";
+    say;
+label_30:
+    intrinsic_06("Library of Scars"#3);
+label_31:
+    answer ("bye"#1) goto label_33;
+label_32:
+    goto label_34;
+label_33:
+    goto label_14;
+label_34:
+    clear_answers;
+    append "\"It was a pleasure speaking to thee, ";
+    append v0;
+    append ".\"*";
+    say;
+label_35:
+    if not (event = 0) goto label_37;
+label_36:
+    fn_092E(65409);
+label_37:
+    return;
+}

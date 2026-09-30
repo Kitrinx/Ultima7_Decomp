@@ -1,0 +1,57 @@
+Routine DeskItem accepts a0 #locals(6) {
+    if (event = _Action) {
+        v0 = ~GetFrame(item);
+        if (v0 = 0) {
+            v1 = ~GetTarget();
+            playSFX(item, 15);
+            if ~Item_isNpc(v1) {
+                Item_bark("@Hey, that hurt!@", v1);
+                return;
+            }
+            if (~Item_getType(v1) = _Desk_Item) && (~GetFrame(v1) = 10) {
+                v2 = ~PostAction(<< _aNO_HALT_i, _aBARK_i, "@I will tell!@" >>, v1);
+                v2 = ~PostInFuture(16, << _aNO_HALT_i, _aBARK_i, "@The treasure is at@" >>, v1);
+                v2 = ~PostInFuture(32, << _aNO_HALT_i, _aBARK_i, "@169 South@" >>, v1);
+                v2 = ~PostInFuture(48, << _aNO_HALT_i, _aBARK_i, "@28 East@" >>, v1);
+            }
+        }
+        if (v0 = 10) {
+            v3 = ~rndRange(7, 1);
+            if (v3 = 1) {
+                v2 = ~PostAction(<< _aNO_HALT_i, _aBARK_i, "@Squawk!@" >>, item);
+            }
+            if (v3 = 2) {
+                v2 = ~PostAction(<< _aNO_HALT_i, _aBARK_i, "@Polly want a cracker?@" >>, item);
+            }
+            if ((v3 = 3) or (v3 = 4)) {
+                v2 = ~PostAction(<< _aNO_HALT_i, _aBARK_i, "@I know where@" >>, item);
+                v2 = ~PostInFuture(16, << _aNO_HALT_i, _aBARK_i, "@the treasure is!@" >>, item);
+            }
+            if (v3 = 5) {
+                v2 = ~PostAction(<< _aNO_HALT_i, _aBARK_i, "@Gimmee a cracker!@" >>, item);
+            }
+            if ((v3 = 6) or (v3 = 7)) {
+                v2 = ~PostAction(<< _aNO_HALT_i, _aBARK_i, "@Pretty bird!@" >>, item);
+                if ~IsNPCNear_i(_Spark) {
+                    v2 = ~PostInFuture(16, << _aNO_HALT_i, _aBARK_i, "@Ugly Bird!@" >>, ~NPCToItem_i(_Spark));
+                    v2 = ~PostInFuture(32, << _aNO_HALT_i, _aBARK_i, "@Ugly Boy!@" >>, item);
+                    v2 = ~PostInFuture(48, << _aNO_HALT_i, _aBARK_i, "@Hey!!@" >>, ~NPCToItem_i(_Spark));
+                }
+            }
+        }
+        if ((v0 = 17) or ((v0 = 18) or (v0 = 19))) && not ~Kernel_getNumProcesses(item) {
+            v2 = ~PostAction(<< _aSFX_i, 17, _aFRAME, 17, _aSFX_i, 18, _aFRAME, 19, _aLOOP_i, 65528, 12, byte(70), 18 >>, item);
+            if ~IsNPCNear_i(_Spark) {
+                v2 = ~PostInFuture(4, << _aBARK_i, "@That is really weird.@" >>, ~NPCToItem_i(_Spark));
+            }
+        }
+        if (v0 = 11) {
+            v4 = ~CountItem(_All, _All, _Gold_Coin, _Party);
+            v5 = ("Party gold: " + v4);
+            Item_bark(v5, item);
+        }
+        if (v0 = 20) {
+            v2 = ~PostAction(<< _aSFX_i, 23, _aLOOP_i, 65534, 4 >>, item);
+        }
+    }
+}

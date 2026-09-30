@@ -1,0 +1,98 @@
+Routine Ben accepts a0 #locals(5) #uses(~LordOrLady, ~AskYesNo, ~IsInInv, ~IsNPCNear, GivePartyExp_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Ben);
+        v0 = ~LordOrLady();
+        TurnOn(<< "name", "job", "bye" >>);
+        if not $MetBen {
+            [Resting an axe on his shoulder, a tall, broad-chested man smiles and nods at you.];
+            $MetBen = true;
+        } else {
+            ["'ello, <v0>. Good day, ay?"];
+        }
+        converse {
+            key ("name") {
+                ["Thou kin call me Ben, <v0>. I live 'ere in the forest of Yew."];
+                TurnOff("name");
+                TurnOn(<< "Yew", "forest" >>);
+            }
+            key ("job") {
+                ["I be a logger, <v0>. 'Tis what I have done all my life. In fact, <v0>, 'tis what my father did. And 'is father before 'im. And so on. We have been doin' this for more than ten generations."];
+                if flag(298) {
+                    TurnOn("Silverleaf");
+                }
+            }
+            key ("Yew") {
+                ["It was once a large town, but now, 'tis but a smattering of cottages livin' throughout the woods."];
+                TurnOff("Yew");
+            }
+            key ("forest") {
+                ["I am afraid, <v0>, that I know no one in this area. But," he adds proudly, "I do know 'oo runs the sawmill in Minoc. I also know that monks reside in the abbey, next to the high court."];
+                TurnOn(<< "sawmill", "high court" >>);
+                TurnOff("forest");
+            }
+            key ("sawmill") {
+                ["The sawyer there is named William."];
+                TurnOff("sawmill");
+            }
+            key ("high court") {
+                ["'Tis in the building just northeast of the Brotherhood. I know they keep prisoners there."];
+                TurnOff("high court");
+            }
+            key ("Silverleaf") {
+                ["Why, yes, <v0>, I cut down Silverleaf trees. They only grow in one area, so I 'afta travel quite a distance when I needs some of their wood. Why dost thou ask, <v0>?~~"Oh, I see," he grins, "Thou wants some for thyself, ay?"];
+                v1 = ~AskYesNo();
+                if v1 {
+                    ["I am sorry, <v0>, I do not know 'ow to prepare it. Perhaps thou shouldst try a pub."];
+                } else {
+                    ["Thou'st got another reason for askin'?"];
+                    v2 = ~AskYesNo();
+                    if v2 {
+                        PushKeys();
+                        TurnOn("Emps");
+                    } else {
+                        ["All right, <v0>," he shrugs.];
+                    }
+                }
+                TurnOn("one area");
+                TurnOff("Silverleaf");
+            }
+            key ("one area") {
+                ["They mainly populate the east part o' the Great Forest, way on the other side."];
+                TurnOff("one area");
+            }
+            key ("Emps") {
+                ["What in the bloody 'ell are emps?"~~After you quickly explain the Silverleaf Tree situation to him, he exclaims, "Oh, well, that's 'orrible. I did not realize anyone -- er -- any other creature used the Silverleaf trees. What\x09kin I do about it?"];
+                PopKeys();
+                TurnOn("sign contract");
+                TurnOff("Emps");
+            }
+            key ("sign contract") {
+                ["Why, o' course I'll sign. No more Silverleaf trees for me."];
+                v3 = ~IsInInv(65177, 3, _Scroll, 1, _Party);
+                if v3 {
+                    [He takes the contract from you and signs it.];
+                    v4 = ~IsNPCNear(_Trellek);
+                    if v4 {
+                        [He turns to Trellek. "Please apologize to thy kindred for me. I never meant to destroy thine 'omes. Friends, ay?"~~ Trellek smiles and nods.];
+                    } else {
+                        ["And please apologize to the Emps for me, <v0>. I never meant to destroy their 'omes."];
+                    }
+                    flag(299) = true;
+                    GivePartyExp_i(500);
+                } else {
+                    ["Well, I would sign it, but it seems thou hast lost it. If thou dost find it again I will be more than happy to help thee and the Emps."];
+                }
+                PopKeys();
+                TurnOff("sign contract");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["G'bye, <v0>. Pleasant journeys, ay."*];
+    }
+    if (event = _Bark) {
+        terminate;
+    }
+}

@@ -1,0 +1,22 @@
+Routine GiantBones accepts a0 #locals(5) {
+    if (event = _Action) {
+        v0 = ~GetQuality(item);
+        if not (v0 = ~GetHour()) {
+            v1 = ~FindNearby_i(0, 5, _Ammunition, item);
+            if not v1 {
+                v2 = ~Item_create(_Ammunition);
+                if v2 {
+                    SetItemFlag_i(_IsTemporary_i, v2);
+                    SetItemFlag_i(_OkayToTake_i, v2);
+                    v3 = ~SetQuantity(~rndRange(100, 1), v2);
+                    v4 = ~GetCoord(item);
+                    v4::1 = (v4::1 + 1);
+                    v3 = ~PopToMap(v4);
+                    if v3 {
+                        v3 = ~SetQuality(~GetHour(), item);
+                    }
+                }
+            }
+        }
+    }
+}

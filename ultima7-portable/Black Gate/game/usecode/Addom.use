@@ -1,0 +1,111 @@
+Routine Addom accepts a0 #locals(7) #uses(~AvatarName, ~LordOrLady, ~AskYesNo) {
+    if (event = _Action) {
+        SetSpeaker(0, _Addom);
+        v0 = ~AvatarName();
+        v1 = ~LordOrLady();
+        v2 = false;
+        TurnOn(<< "name", "job", "bye" >>);
+        if not $MetAddom {
+            [You see a handsome,hardened, muscular man who, surprisingly, bears a friendly smile on his face.];
+            $MetAddom = true;
+        } else {
+            ["Please, <v1>. Join me for some company."];
+            if (flag(477) and not flag(493)) {
+                TurnOn("crystal");
+            }
+        }
+        converse {
+            key ("name") {
+                ["I am called Addom, <v1>.];
+                TurnOff("name");
+            }
+            key ("job") {
+                ["I travel the world in search of rare and unique items to sell to museums. I am not a resident of Moonglow."];
+                TurnOn(<< "Moonglow", "travel", "items" >>);
+                if (flag(477) and not flag(493)) {
+                    TurnOn("crystal");
+                }
+            }
+            key ("travel") {
+                ["I have been all over Britannia, <v1>. Nothing about the land frightens me any longer."~~ He grins. "The same is not true of some of the residents."];
+                TurnOn("residents");
+                TurnOff("travel");
+            }
+            key ("residents") {
+                ["'Twas a joke, <v1>."];
+                TurnOff("residents");
+            }
+            key ("items") {
+                ["I have found many odd artifacts. Many of the things thou hast seen in The Music Hall and the Lycaeum have been brought to them by me."];
+                if not flag(477) {
+                    ["In fact, <v1>, I have this unique crystal I found on the mainland near Jhelom that I am hoping will fetch a fair price from Nelson."~~He pulls out a small clear crystal and shows it to you.~~The facets gleam in the light.];
+                    if not v2 {
+                        TurnOn("Nelson");
+                    }
+                }
+                TurnOff("items");
+            }
+            key ("Nelson") {
+                ["He is in charge of the Lycaeum. He loves trinkets and rarities."];
+                v2 = true;
+                TurnOff("Nelson");
+            }
+            key ("Moonglow") {
+                ["I am afraid, <v1>, that I know nothing about this fair city. I reside in Yew with my wife, Penni, who is the trainer there.~~"Actually, <v1>, I have met two people here, other than Nelson."];
+                TurnOff("Moonglow");
+                TurnOn(<< "people", "Penni" >>);
+                flag(478) = true;
+            }
+            key ("people") {
+                [I have come to know the bartender and the healer."];
+                TurnOff("people");
+                TurnOn(<< "bartender", "healer" >>);
+            }
+            key ("bartender") {
+                ["Phearcy is quite friendly. But he does love to gossip. He has offered me a deal whereby I might earn free meals if I can discover why Nelson's assistant reacts differently to some man, or something like that. I am not going to bother, but pray, do not tell Phearcy that!"];
+                if not v2 {
+                    TurnOn("Nelson");
+                }
+                TurnOff("bartender");
+            }
+            key ("healer") {
+                ["Elad is very generous. In fact, he is letting me sleep in one of his spare beds while I am in town. His only charge," he laughs, "is the stories I tell him about mine adventures.~~"Not a bad trade if I say so myself," he shrugs.];
+                TurnOff("healer");
+            }
+            key ("Penni") {
+                ["She teaches close-quarter combat. Everything I needed to know to survive on my journeys I learned from her."];
+                TurnOff("Penni");
+            }
+            key ("crystal") {
+                ["Dost thou mean this?" He pulls a small, clear, multi-faceted gem from a pouch beneath his cloak. "I just found this recently. I was hoping to sell it to the Lycaeum, but, alas, they have no use for it. Dost thou want it, perhaps?" he asks, hopefully. "I will sell it to thee for 20 gold."];
+                v3 = ~AskYesNo();
+                if v3 {
+                    v4 = ~GiveToParty_i(false, _All, _All, _The_Orrery_Crystal, 1);
+                    v5 = ~TakeFromParty_i(true, _All, _All, _Gold_Coin, 20);
+                    if v5 {
+                        if v4 {
+                            ["I thank thee."];
+                            flag(493) = true;
+                        } else {
+                            ["I am truly sorry, <v1>, but thou dost not have enough room."];
+                        }
+                    } else {
+                        ["I am truly sorry, <v1>, but thou dost not have enough gold."];
+                        v6 = ~TakeFromParty_i(false, _All, _All, _The_Orrery_Crystal, 1);
+                    }
+                } else {
+                    ["Very well," he sighs, disappointed.];
+                }
+                TurnOff("crystal");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["May thy days be always pleasant, <v1>."*];
+    }
+    if (event = _Bark) {
+        terminate;
+    }
+}

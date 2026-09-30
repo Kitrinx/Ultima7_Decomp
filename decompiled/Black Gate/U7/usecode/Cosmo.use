@@ -1,0 +1,112 @@
+Routine Cosmo accepts a0 #locals(3) #uses(~LordOrLady, ~IsNPCNear, CosmoBarks_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Cosmo);
+        v0 = ~LordOrLady();
+        v1 = ~IsNPCNear(_Kallibrus);
+        v2 = ~IsNPCNear(_Cairbre);
+        TurnOn(<< "name", "job", "bye" >>);
+        if not $MET_COSMO {
+            [The wide-eyed expression of this youth seems indicative of his naivete.];
+            $MET_COSMO = true;
+        } else {
+            ["Why, hello there, <v0>," says Cosmo.];
+        }
+        converse {
+            key ("name") {
+                ["I am Cosmo, <v0>, betrothed of Ophelia."];
+                flag(727) = true;
+                TurnOff("name");
+                TurnOn(<< "betrothed", "Ophelia" >>);
+            }
+            key ("job") {
+                ["I am, uh, searching for something, <v0>."];
+                TurnOn("searching");
+            }
+            key ("betrothed") {
+                ["Aye, <v0>, we are to be wed as soon I return to her silky arms."];
+                if v2 {
+                    [*];
+                    SetSpeaker(0, _Cairbre);
+                    ["Oh, please!" He rolls his eyes.*];
+                    CloseSpeaker(_Cairbre);
+                    SetSpeaker(0, _Cosmo);
+                }
+                TurnOff("betrothed");
+            }
+            key ("searching") {
+                ["Well, <v0>, 'tis a bit of a personal matter."];
+                if v2 {
+                    [*];
+                    SetSpeaker(0, _Cairbre);
+                    ["What he is searching for, <v0>, is his virginity!"*];
+                    SetSpeaker(0, _Cosmo);
+                    ["That is not true!" He blushes.~~"I am looking for a way to -prove-... my virginity!"*];
+                    CloseSpeaker(_Cairbre);
+                    TurnOn("proof");
+                }
+                TurnOn("personal");
+                TurnOff("searching");
+            }
+            key ("personal") {
+                ["I would... rather... not discuss it, <v0>," he stammers.];
+                TurnOff("personal");
+            }
+            key ("Ophelia") {
+                ["She is the most beautiful woman in all Britannia. I still find it hard to believe she has agreed to marry me, a lowly warrior. I will travel to the ends of the world for her, if that be necessary, to keep her heart!"];
+                TurnOff("Ophelia");
+            }
+            key ("proof") {
+                [He looks down at his feet. "Milady Ophelia is concerned that I might not be... pure. I have waited mine entire life for someone like her. Can she not see that I held myself for marriage?"];
+                TurnOn(<< "held", "pure" >>);
+                TurnOff("proof");
+            }
+            key ("held") {
+                ["Surely thou dost see the value in that, <v0>. No woman would want me if I had not refrained from... well... thou dost understand."];
+                TurnOff("held");
+            }
+            key ("pure") {
+                ["I must prove to the lovely Ophelia that I am still a virgin. To do this I need to demonstrate that a unicorn will allow me to touch it. My friends and I are here to find such a creature, for recent legend purports that one lives in this dungeon."];
+                flag(736) = true;
+                if flag(720) {
+                    TurnOn("the unicorn said no");
+                }
+                TurnOff("pure");
+            }
+            key ("the unicorn said no") {
+                ["Thou hast seen the unicorn?" He frowns for a moment, but that quickly melts away.~~"Nevertheless, I shall endeavor to seek it out. Nothing shall keep me from my beloved Ophelia."];
+                TurnOff("the unicorn said no");
+                flag(720) = false;
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["Good day,<v0>. If thou dost see the unicorn, tell it to wait for me."*];
+    }
+    if (event = _Bark) {
+        CosmoBarks_i();
+    }
+}
+
+Usable CosmoBarks_i #locals(4) {
+    v0 = ~NPCToItem_i(_Cosmo);
+    v1 = ~GetWorkType(v0);
+    v2 = "";
+    v3 = ~rndRange(4, 1);
+    if (v1 = 11) {
+        if (v3 = 1) {
+            v2 = "@It should not be much longer!@";
+        }
+        if (v3 = 2) {
+            v2 = "@Love will show the way.@";
+        }
+        if (v3 = 3) {
+            v2 = "@Me? Thou brought it!@";
+        }
+        if (v3 = 4) {
+            v2 = "@I am sorry, truly!@";
+        }
+    }
+    Item_bark(v2, v0);
+}

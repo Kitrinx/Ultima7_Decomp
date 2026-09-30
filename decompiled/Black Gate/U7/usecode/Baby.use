@@ -1,0 +1,21 @@
+Routine Baby accepts a0 #locals(3) #uses(MemberSays_i, ConsumeOne_i, FlashBlocked_i) {
+    if (event = _Action) {
+        if (~GetFrame(item) = 2) {
+            v0 = ("@Praise All! The child is still alive. He must" + " be returned to Lady Tory immediately!@");
+            MemberSays_i(v0);
+        } else {
+            v1 = ~GetTarget();
+            v2 = ~Item_getType(v1);
+            if (v2 = 987) {
+                MemberSays_i("@Pardon me my friend, dost thou not think that would be a little crowded?@");
+            } else {
+                if (v2 = 992) {
+                    Item_setType(_Baby_In_A_Cradle, v1);
+                    ConsumeOne_i(item);
+                } else {
+                    FlashBlocked_i(60);
+                }
+            }
+        }
+    }
+}

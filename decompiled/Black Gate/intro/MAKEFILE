@@ -1,0 +1,287 @@
+#	INTRO.EXE, the Black Gate introduction
+#
+#	Borland C++ 2.0 with its MAKE, and Turbo Assembler 2.51.  Run MAKE in
+#	this directory, the build directory; U7's tree sits beside it as ..\bg,
+#	and the modules MAINMENU or ENDGAME also link as ..\shared.
+#
+#		make			compiler in C:\BORLANDC
+#		make -DBC=C:\BC20	compiler elsewhere
+#
+#	Origin built INTRO from a BC 2.0 IDE project that also took modules
+#	from U7's tree.  Each module searches its own tree's headers first.
+#	Each list of objects shares one set of options, which its name spells:
+#	IN_O1Pd is -O -1 -P -d in this directory; b0 is -b-, BG_ lists are
+#	U7 modules and SH_ lists shared ones.
+
+.autodepend
+
+!if !$d(BC)
+BC = C:\BORLANDC
+!endif
+
+CC = $(BC)\bcc +INTRO.CFG
+CSH = $(BC)\bcc +SHARED.CFG
+CU7 = $(BC)\bcc +U7.CFG
+AS = tasm
+
+all: INTRO.CFG SHARED.CFG U7.CFG INTRO.EXE
+
+# The program's own modules; the compiler's headers come last.
+# One directory a line: BCC hangs on a long -I line.
+INTRO.CFG: MAKEFILE
+	copy &&|
+-c -mm
+-I.
+-Imain
+-Imain\mem
+-Isound\drv
+-Iinclude
+-I..\shared
+-I..\shared\main
+-I..\shared\main\mem
+-I..\shared\zevent
+-I..\bg\common
+-I..\bg\inter
+-I..\bg\main
+-I..\bg\main\combat
+-I..\bg\main\mem
+-I..\bg\main\palette
+-I..\bg\main\schedule
+-I..\bg\main\video
+-I..\bg\main\xmm
+-I..\bg\sound
+-I..\bg\sound\drv
+-I..\bg\zevent
+-I..\bg\include
+-I$(BC)\include
+| INTRO.CFG
+
+# Modules in ..\shared: their headers first.
+SHARED.CFG: MAKEFILE
+	copy &&|
+-c -mm
+-I..\shared
+-I..\shared\main
+-I..\shared\main\mem
+-I..\shared\zevent
+-I.
+-Imain
+-Imain\mem
+-Isound\drv
+-Iinclude
+-I..\bg\common
+-I..\bg\inter
+-I..\bg\main
+-I..\bg\main\combat
+-I..\bg\main\mem
+-I..\bg\main\palette
+-I..\bg\main\schedule
+-I..\bg\main\video
+-I..\bg\main\xmm
+-I..\bg\sound
+-I..\bg\sound\drv
+-I..\bg\zevent
+-I..\bg\include
+-I$(BC)\include
+| SHARED.CFG
+
+# U7's modules: U7's headers first.
+U7.CFG: MAKEFILE
+	copy &&|
+-c -mm
+-I..\bg\main
+-I..\bg\common
+-I..\bg\inter
+-I..\bg\main\combat
+-I..\bg\main\mem
+-I..\bg\main\palette
+-I..\bg\main\schedule
+-I..\bg\main\video
+-I..\bg\main\xmm
+-I..\bg\sound
+-I..\bg\sound\drv
+-I..\bg\zevent
+-I..\bg\include
+-I..\shared
+-I..\shared\main
+-I..\shared\main\mem
+-I..\shared\zevent
+-I.
+-Imain
+-Imain\mem
+-Isound\drv
+-Iinclude
+-I$(BC)\include
+| U7.CFG
+
+BG_COMMON_O1 = strfmt.obj
+$(BG_COMMON_O1):
+	$(CU7) -O -1 ..\bg\common\$&.c
+
+BG_COMMON_ASM = lstrtok.obj
+$(BG_COMMON_ASM):
+	$(AS) /mx ..\bg\common\$&.asm
+
+BG_MAIN_O1 = oops.obj rmhook.obj videomd.obj
+$(BG_MAIN_O1):
+	$(CU7) -O -1 ..\bg\main\$&.c
+
+BG_MAIN_DOS_ASM = addrptr.obj delay.obj doscreat.obj dosfile.obj \
+	dosread.obj dosseek.obj doswrite.obj memmove.obj ptraddr.obj
+$(BG_MAIN_DOS_ASM):
+	$(AS) /mx ..\bg\main\dos\$&.asm
+
+BG_MAIN_MEM_OG = inthook.obj memmgr.obj memstat.obj
+$(BG_MAIN_MEM_OG):
+	$(CU7) -O -G ..\bg\main\mem\$&.c
+
+BG_MAIN_VIDEO_OG = colormap.obj vidmode.obj
+$(BG_MAIN_VIDEO_OG):
+	$(CU7) -O -G ..\bg\main\video\$&.c
+
+BG_MAIN_VIDEO_OGP = colorreg.obj modecolr.obj
+$(BG_MAIN_VIDEO_OGP):
+	$(CU7) -O -G -P ..\bg\main\video\$&.c
+
+BG_MAIN_VIDEO_ASM = crtport.obj vretrace.obj
+$(BG_MAIN_VIDEO_ASM):
+	$(AS) /mx ..\bg\main\video\$&.asm
+
+BG_SOUND_O1Pdb0 = gsound.obj
+$(BG_SOUND_O1Pdb0):
+	$(CU7) -O -1 -P -d -b- ..\bg\sound\$&.c
+
+BG_SOUND_DRV_ASM = vocirq.obj
+$(BG_SOUND_DRV_ASM):
+	$(AS) /mx ..\bg\sound\drv\$&.asm
+
+BG_ZEVENT_ASM = sysclk.obj syskey.obj
+$(BG_ZEVENT_ASM):
+	$(AS) /mx ..\bg\zevent\$&.asm
+
+IN_O1P = cfilcach.obj dirdelta.obj dlist.obj fadestep.obj shapebnd.obj \
+	synctrk.obj textspr.obj vecdump.obj
+$(IN_O1P):
+	$(CC) -O -1 -P $&.c
+
+IN_O1Pd = intro.obj unused.obj
+$(IN_O1Pd):
+	$(CC) -O -1 -P -d $&.c
+
+IN_OGP = emshgt.obj emswid.obj
+$(IN_OGP):
+	$(CC) -O -G -P $&.c
+
+IN_ASM = emsalloc.obj emsdraw.obj emsfcnt.obj emsrest.obj emssave.obj \
+	emsstat.obj enlarge.obj enlside.obj enlturn.obj fixed.obj scalfram.obj \
+	shrink.obj shrside.obj shrturn.obj static.obj usedcol.obj
+$(IN_ASM):
+	$(AS) /mx $&.asm
+
+IN_COMMON_O1P = flex.obj
+$(IN_COMMON_O1P):
+	$(CC) -O -1 -P common\$&.c
+
+IN_COMMON_O1Pd = easyfile.obj
+$(IN_COMMON_O1Pd):
+	$(CC) -O -1 -P -d common\$&.c
+
+IN_MAIN_O1Pd = controls.obj
+$(IN_MAIN_O1Pd):
+	$(CC) -O -1 -P -d main\$&.c
+
+IN_MAIN_OGPb0 = chkfile.obj
+$(IN_MAIN_OGPb0):
+	$(CC) -O -G -P -b- main\$&.c
+
+IN_MAIN_MEM_OG = drawbuf.obj memapi.obj
+$(IN_MAIN_MEM_OG):
+	$(CC) -O -G main\mem\$&.c
+
+IN_MAIN_MEM_OGP = screen.obj
+$(IN_MAIN_MEM_OGP):
+	$(CC) -O -G -P main\mem\$&.c
+
+IN_MAIN_VIDEO_ASM = farptrs.obj
+$(IN_MAIN_VIDEO_ASM):
+	$(AS) /mx main\video\$&.asm
+
+IN_MAIN_XMM_OGP = shapehgt.obj shapewid.obj
+$(IN_MAIN_XMM_OGP):
+	$(CC) -O -G -P main\xmm\$&.c
+
+IN_MAIN_XMM_ASM = drawfram.obj framecnt.obj restfram.obj restrect.obj \
+	savefram.obj saverect.obj
+$(IN_MAIN_XMM_ASM):
+	$(AS) /mx main\xmm\$&.asm
+
+IN_SOUND_DRV_O1P = specard.obj
+$(IN_SOUND_DRV_O1P):
+	$(CC) -O -1 -P sound\drv\$&.c
+
+IN_ZEVENT_O1P = systimer.obj
+$(IN_ZEVENT_O1P):
+	$(CC) -O -1 -P zevent\$&.c
+
+SH_O1P = fade.obj fadecol.obj fadepal.obj farbuf.obj inttrap.obj \
+	modebyte.obj music.obj rgbpal.obj textfile.obj
+$(SH_O1P):
+	$(CSH) -O -1 -P ..\shared\$&.c
+
+SH_ASM = emsinit.obj emsmap.obj palfade.obj
+$(SH_ASM):
+	$(AS) /mx ..\shared\$&.asm
+
+SH_MAIN_O1P = itable.obj
+$(SH_MAIN_O1P):
+	$(CSH) -O -1 -P ..\shared\main\$&.c
+
+SH_MAIN_DOS_ASM = fileread.obj filewrit.obj
+$(SH_MAIN_DOS_ASM):
+	$(AS) /mx ..\shared\main\dos\$&.asm
+
+SH_MAIN_MEM_OGP = errors.obj
+$(SH_MAIN_MEM_OGP):
+	$(CSH) -O -G -P ..\shared\main\mem\$&.c
+
+SH_MAIN_XMM_ASM = clrview.obj copyview.obj framebnd.obj
+$(SH_MAIN_XMM_ASM):
+	$(AS) /mx ..\shared\main\xmm\$&.asm
+
+SH_SOUND_DRV_O1Pd = midiplay.obj
+$(SH_SOUND_DRV_O1Pd):
+	$(CSH) -O -1 -P -d ..\shared\sound\drv\$&.c
+
+# The IDE compiled this under its full upper-case path, which __FILE__
+# keeps.  IDESTUB.BAT puts the source there and writes a stub including it.
+specache.obj: sound\specache.c
+	idestub sound\specache.c \U7\SOUND SPECACHE.C
+	$(CC) -O -1 -P SPECACHE.C
+
+# Its code joins U7 vidmode.c's segment.
+vidpage.obj: vidpage.c
+	$(CC) -O -G -zCVIDMODE_TEXT vidpage.c
+
+# MAKE limits the length of a rule line, so INTRO.EXE depends on a few
+# lists.
+all_bg: $(BG_COMMON_O1) $(BG_COMMON_ASM) $(BG_MAIN_O1) $(BG_MAIN_DOS_ASM)
+
+all_bg_sub: $(BG_MAIN_MEM_OG) $(BG_MAIN_VIDEO_OG) $(BG_MAIN_VIDEO_OGP) $(BG_MAIN_VIDEO_ASM)
+
+all_bg_io: $(BG_SOUND_O1Pdb0) $(BG_SOUND_DRV_ASM) $(BG_ZEVENT_ASM)
+
+all_in: $(IN_O1P) $(IN_O1Pd) $(IN_OGP) $(IN_ASM)
+
+all_in_main: $(IN_COMMON_O1P) $(IN_COMMON_O1Pd) $(IN_MAIN_O1Pd) $(IN_MAIN_OGPb0)
+
+all_in_sub: $(IN_MAIN_MEM_OG) $(IN_MAIN_MEM_OGP) $(IN_MAIN_VIDEO_ASM) $(IN_MAIN_XMM_OGP)
+
+all_in_io: $(IN_MAIN_XMM_ASM) $(IN_SOUND_DRV_O1P) $(IN_ZEVENT_O1P)
+
+all_sh: $(SH_O1P) $(SH_ASM) $(SH_MAIN_O1P) $(SH_MAIN_DOS_ASM)
+
+all_sh_sub: $(SH_MAIN_MEM_OGP) $(SH_MAIN_XMM_ASM) $(SH_SOUND_DRV_O1Pd)
+
+INTRO.EXE: all_bg all_bg_sub all_bg_io all_in all_in_main all_in_sub \
+	all_in_io all_sh all_sh_sub specache.obj vidpage.obj INTRO.LNK
+	$(BC)\tlink /m /s /c /d /L$(BC)\lib @INTRO.LNK

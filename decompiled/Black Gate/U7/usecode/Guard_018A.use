@@ -1,0 +1,41 @@
+Routine Guard_018A accepts a0 #locals(4) {
+    v0 = ~GetWorkType(~NPCToItem_i(394));
+    if (event = _Action) {
+        SetSpeaker(0, _Bob);
+        TurnOn(<< "name", "job", "bye" >>);
+        [You see a tough-looking palace guard who takes his job -very- seriously.];
+        converse {
+            key ("name") {
+                ["I am a guard."];
+                TurnOff("name");
+            }
+            key ("job") {
+                [The man looks at you like you are an ignoramus. "I am a guard for the palace, idiot. Thou shouldst go about thy business."];
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["Goodbye."*];
+    }
+    if (event = _Bark) {
+        v1 = ~GetWorkType(~NPCToItem_i(394));
+        if (v1 = 29) {
+            v2 = ~rndRange(4, 1);
+            if (v2 = 1) {
+                v3 = "@Move along!@";
+            }
+            if (v2 = 2) {
+                v3 = "@Stand aside!@";
+            }
+            if (v2 = 3) {
+                v3 = "@Go about thy business!@";
+            }
+            if (v2 = 4) {
+                v3 = "@Keep moving!@";
+            }
+            Item_bark(v3, 394);
+        }
+    }
+}

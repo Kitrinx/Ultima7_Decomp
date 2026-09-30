@@ -1,0 +1,34 @@
+Routine EnergyFieldSpell_i accepts a0 #locals(11) #uses(~IsMagicOK_i) {
+    v0 = false;
+    if (event = _Action) {
+        Kernel_resetRef(item);
+        v1 = ~GetTarget();
+        Item_bark("@In Sanct Grav@", item);
+        v2 = (v1::2 + 1);
+        v3 = (v1::3 + 1);
+        v4 = v1::4;
+        v5 = << v2, v3, v4 >>;
+        v6 = ~canExistAt(0, _Energy_Field, v5);
+        if (~IsMagicOK_i() and v6) {
+            v7 = ~PostAction(<< _aRAISE1_FRAME_i, _aEXTEND1_FRAME_i, _aTHRUST1_FRAME_i >>, item);
+            v8 = ~Item_create(_Energy_Field);
+            if v8 {
+                v9 = ~PopToMap(v5);
+                if v9 {
+                    v10 = 200;
+                    v9 = ~SetQuality(v10, v8);
+                    v9 = ~PostInFuture(v10, byte(45), v8);
+                } else {
+                    v0 = true;
+                }
+            } else {
+                v0 = true;
+            }
+        } else {
+            v0 = true;
+        }
+        if (1542 = true) {
+            v7 = ~PostAction(<< _aRAISE1_FRAME_i, _aEXTEND1_FRAME_i, _aTHRUST1_FRAME_i, _aUSABLE_i, #FizzleSpell_i >>, item);
+        }
+    }
+}

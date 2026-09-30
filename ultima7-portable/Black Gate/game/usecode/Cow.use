@@ -1,0 +1,12 @@
+Routine Cow accepts a0 #locals(5) {
+    if (event = _Action) {
+        v0 = ~GetParty();
+        Foreach v3 in v0 {
+            v4 = ~PostInFuture(~rndRange(10, 1), << _aNO_HALT_i, _aBARK_i, "@Moo!@" >>, v3);
+            v4 = ~PostInFuture(~rndRange(30, 21), << _aNO_HALT_i, _aBARK_i, "@Moo!@" >>, v3);
+        }
+    }
+    if (event = _Bark) {
+        Item_bark("@Moo@", item);
+    }
+}

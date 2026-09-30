@@ -1,0 +1,33 @@
+Routine Venom accepts a0 #locals(5) #uses(SetStatTo_i, FlashBlocked_i) {
+    if (event = _Action) {
+        v0 = ~GetTarget();
+        if ~Item_isNpc(v0) {
+            v1 = ~GetNPCStat_i(_Str, v0);
+            v2 = ~GetNPCStat_i(_Dex, v0);
+            v3 = ~GetNPCStat_i(_Int, v0);
+            if ((v1 + 5) > 30) {
+                v1 = 30;
+            } else {
+                v1 = (v1 + 5);
+            }
+            if ((v2 + 5) > 30) {
+                v2 = 30;
+            } else {
+                v2 = (v2 + 5);
+            }
+            if ((v3 + 5) > 30) {
+                v3 = 30;
+            } else {
+                v3 = (v3 + 5);
+            }
+            SetStatTo_i(v1, _Str, v0);
+            SetStatTo_i(v2, _Dex, v0);
+            SetStatTo_i(v3, _Int, v0);
+            playSFX(item, 72);
+            v4 = ~PostAction(<< _aNO_HALT_i, _aWAIT_HOURS_i, 1, _aUSABLE_i, #VenomWearsOff_i, _aSFX_i, 71 >>, v0);
+            Item_destroy(item);
+        } else {
+            FlashBlocked_i(60);
+        }
+    }
+}

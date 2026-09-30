@@ -1,0 +1,146 @@
+Routine Iskander accepts a0 #locals(5) #uses(~AvatarName, ~LordOrLady, ~AskList) {
+    if (event = _Bark) {
+        terminate;
+    }
+    SetSpeaker(0, _Iskander);
+    v0 = ~AvatarName();
+    v1 = "Avatar";
+    v2 = ~LordOrLady();
+    if not $MET_ISKANDER {
+        [You see a large cyclops. It looks at you and blinks its eye in irritation.];
+        $MET_ISKANDER = true;
+    } else {
+        ["What dost thou want?" says Iskander.];
+    }
+    TurnOn(<< "name", "job", "bye" >>);
+    if flag(731) {
+        TurnOn("Eiko and Amanda");
+    }
+    converse {
+        key ("name") {
+            ["I am of the clan Ironheart, the eleventh son of Valador. They call me Iskander."];
+            TurnOff("name");
+        }
+        key ("job") {
+            ["My cyclopean people say I am a hero. Many of you humans say I am a monster. No doubt, the truth is somewhere in between."];
+            TurnOn(<< "hero", "monster" >>);
+        }
+        key ("hero") {
+            ["One hundred and eighty-nine years ago I slew the seven Gazer Princes when they used their magic to steal the eye from the leader of our tribe, but such things are now ancient history and are no longer of any consequence."];
+            TurnOff("hero");
+            TurnOn(<< "tribe", "eye", "ancient history" >>);
+        }
+        key ("monster") {
+            ["On numerous occasions I have caused the unpleasant end of human interlopers who mistakenly believed our race was fit for nothing save to be plundered. But I have no quarrel with thee." He pauses to scrutinize you. "For the moment."];
+            TurnOff("monster");
+            TurnOn("thee");
+        }
+        key ("thee") {
+            ["Thou dost know my name, but I still do not know the name of thee. I like to know to whom I am speaking. What is thy name?"];
+            v3 = ~AskList(<< v1, v0 >>);
+            if (v3 = v1) {
+                ["I have heard of thee, Avatar. Thou hast come into conflict against our kind before, I know. But I have also heard the tales of thine heroic and spiritual quests and I believe thee to be a just and noble man. Thou mayest call me friend."];
+                flag(726) = true;
+            }
+            if (v3 = v0) {
+                ["A pleasure to meet thee, <v0>."];
+                flag(725) = true;
+            }
+            TurnOff("thee");
+        }
+        key ("tribe") {
+            ["Those of my tribe are a quiet people. They farm the rocky soil, but are also very good tool makers. I was sent to find them a new homeland."];
+            TurnOff("tribe");
+            TurnOn("homeland");
+        }
+        key ("eye") {
+            ["The eye of a cyclops is considered quite a delicacy to some of the less genteel races of Britannia. Twice have foul creatures tried to take mine, and twice have I dined on their hearts."];
+            TurnOff("eye");
+        }
+        key ("ancient history") {
+            ["Then they called me 'Wonder Boy'. For nearly a hundred years that was the nickname by which I was known. I was most grateful when they stopped doing that!"];
+            TurnOff("ancient history");
+            TurnOn("Wonder Boy");
+        }
+        key ("Wonder Boy") {
+            [Iskander squints his eye at you. "Do not start that again!"];
+            TurnOff("Wonder Boy");
+        }
+        key ("homeland") {
+            ["My village lies a great many days' journey away. The people there desire a place where they can live in peace with their surroundings. I have not found such a place yet, but I will search everywhere until I do."];
+            TurnOff("homeland");
+            TurnOn(<< "peace", "everywhere" >>);
+        }
+        key ("peace") {
+            ["While I am two hundred and six, not long in years for one of my race, I already have the heart of an old man. A hero's adventures have no more attraction for me. I long to settle down with my people and spend my days tending the fields or in my workshop building things."];
+            TurnOff("peace");
+        }
+        key ("everywhere") {
+            ["My searches have brought me to this dreadful place. I incorrectly surmised that since magic does not work it would be relatively safe. It is here that I have been perplexed by a terrible riddle."];
+            TurnOff("everywhere");
+            TurnOn(<< "magic", "riddle" >>);
+        }
+        key ("riddle") {
+            ["Standing at the doorway of one room in this place, I saw an enormous image of a tetrahedron. As I tried to near it a wave of amnesia passed over me. Once more I was standing in the doorway. I could remember nothing more."];
+            TurnOff("riddle");
+            TurnOn(<< "tetrahedron", "amnesia" >>);
+        }
+        key ("tetrahedron") {
+            ["I believe that is word you humans use to describe a polyhedron with four faces."];
+            TurnOff("tetrahedron");
+        }
+        key ("amnesia") {
+            ["This same wave of amnesia struck me every time I tried to approach the tetrahedron. I do not know what sort of foul magic this is."];
+            TurnOff("amnesia");
+            TurnOn("foul magic");
+        }
+        key ("foul magic") {
+            if $TetraGone {
+                ["Now that thou hast destroyed the mysterious tetrahedron I will complete mine exploration of this place. I have a feeling that the homeland I seek is very far away but one never knows where the next clue will be that shall lead me to it."];
+            } else {
+                if flag(726) {
+                    ["Perhaps thou shalt be able to solve this mystery. I have been unable to as of yet. But I shall remain here until its secret is revealed."];
+                }
+                if flag(725) {
+                    ["I warn thee that this place is not safe. It holds unknown perils. Perhaps thou wouldst do better to leave this place."];
+                }
+            }
+            TurnOff("foul magic");
+        }
+        key ("magic") {
+            if not $TetraGone {
+                ["Surely, thou dost know that magic no longer functions as it once did. There are those who say that the age of magic is over. If that is so, then I fear that there may be no place left in this world for my people."];
+            } else {
+                ["Of course, now that thou hast destroyed the tetrahedron all magic has been restored. I congratulate thee for thine heroic deed!"];
+            }
+            TurnOff("magic");
+        }
+        key ("Eiko and Amanda") {
+            ["Yes, I have heard those names before. Those are the names of two warriors who have been after me for revenge. They say I killed their father and I must admit to thee that it is true. I did kill their father."];
+            TurnOff("Eiko and Amanda");
+            TurnOn(<< "revenge", "killed their father" >>);
+        }
+        key ("revenge") {
+            ["I know that Eiko and Amanda have been after me for some time looking for vengeance. I say let them come. I will not stand still for them nor shall I run from them. When they find me they are welcome to try and take their justice from me. If they win then it was meant to be. If they do not I will have no regrets."];
+            TurnOff("revenge");
+        }
+        key ("killed their father") {
+            ["Their father's name was Kalideth. He suffered from the mage madness. His attack on me was unprovoked. For some reason he blamed the failure of magic upon my people. His own magics were still quite potent and I barely survived the encounter. I killed Kalideth in self-defense, but I did not want to kill him. I wish there to still be some magic left in this world and I mourned his passing as much as anyone."];
+            v4 = true;
+            TurnOff("killed their father");
+        }
+        key ("bye") {
+            break;
+        }
+    }
+    clear_answers;
+    if flag(726) {
+        ["Farewell, Avatar."*];
+        terminate;
+    }
+    if flag(725) {
+        ["Farewell, <v0>."*];
+    } else {
+        ["Farewell."*];
+    }
+}

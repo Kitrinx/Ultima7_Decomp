@@ -1,0 +1,266 @@
+Routine PartyRemarkEgg_i accepts a0 #locals(5) #uses(~IsInInv, ~PartySpeaker_i, ~IsNPCNear) {
+    if (event = _Trigger) {
+        v0 = "";
+        v1 = ~GetQuality(item);
+        v2 = item;
+        v3 = 0;
+        if (v1 = 0) {
+            v0 = "@Welcome, Avatar.@";
+            v3 = 0;
+        }
+        if (v1 = 1) {
+            if flag(343) {
+                v0 = "Perhaps thou shouldst use the crystal ball.";
+                v2 = 65179;
+                v3 = 1;
+            } else {
+                terminate;
+            }
+        }
+        if (v1 = 2) {
+            v0 = "Are we there yet?";
+            v2 = 65534;
+            v3 = 0;
+        }
+        if (v1 = 3) {
+            v0 = "I could use a drink.";
+            v2 = 65532;
+            v3 = 0;
+        }
+        if (v1 = 4) {
+            v0 = "I am too old for this.";
+            v2 = 65535;
+            v3 = 0;
+        }
+        if (v1 = 5) {
+            v0 = "I heard something!";
+            v2 = 65179;
+            v3 = 0;
+        }
+        if (v1 = 6) {
+            v0 = "Oh no! Not more rain!";
+            v2 = 65535;
+            v3 = 0;
+        }
+        if (v1 = 7) {
+            v0 = "We could use swamp boots!";
+            v2 = 65535;
+            v3 = 0;
+        }
+        if (v1 = 8) {
+            v0 = "When can we rest?";
+            v2 = 65534;
+            v3 = 0;
+        }
+        if (v1 = 9) {
+            v0 = "This is Dungeon Destard.";
+            v2 = 65533;
+            v3 = 0;
+        }
+        if (v1 = 10) {
+            v0 = "This is Dungeon Despise.";
+            v2 = 65533;
+            v3 = 0;
+        }
+        if (v1 = 11) {
+            v0 = "This is Dungeon Deceit.";
+            v2 = 65533;
+            v3 = 0;
+        }
+        if (v1 = 12) {
+            v0 = "This is Bee Cave.";
+            v2 = 65533;
+            v3 = 0;
+        }
+        if (v1 = 13) {
+            v0 = "This is the Minoc Mine.";
+            v2 = 65533;
+            v3 = 0;
+        }
+        if (v1 = 14) {
+            v0 = "This is the Vesper Mine.";
+            v2 = 65533;
+            v3 = 0;
+        }
+        if (v1 = 15) {
+            v0 = "This looks interesting.";
+            v2 = 65533;
+            v3 = 0;
+        }
+        if (v1 = 16) {
+            v0 = "This place is creepy.";
+            v2 = 65179;
+            v3 = 0;
+        }
+        if (v1 = 17) {
+            v0 = "Wow...!";
+            v2 = 65179;
+            v3 = 0;
+        }
+        if (v1 = 18) {
+            v0 = "Let's sing a sea shanty!";
+            v2 = 65535;
+            v3 = 0;
+        }
+        if (v1 = 19) {
+            v0 = "Let us win some gold!";
+            v2 = 65532;
+            v3 = 0;
+        }
+        if (v1 = 20) {
+            v0 = "Avatar, they are doing a play about thee!";
+            v2 = 65535;
+            v3 = 1;
+        }
+        if (v1 = 21) {
+            v0 = "Britain sure is big!";
+            v2 = 65534;
+            v3 = 0;
+        }
+        if (v1 = 22) {
+            v0 = "Be most careful. Who knows what may be lurking amongst the trees...";
+            v2 = 65179;
+            v3 = 1;
+        }
+        if (v1 = 23) {
+            v0 = "Brushed up on thy Gargish?";
+            v2 = 65179;
+            v3 = 0;
+        }
+        if (v1 = 24) {
+            v0 = "Real fighters live here!";
+            v2 = 65532;
+            v3 = 0;
+        }
+        if (v1 = 25) {
+            v0 = "Thy old relics are here!";
+            v2 = 65535;
+            v3 = 0;
+        }
+        if (v1 = 26) {
+            v0 = "That bread smells good...";
+            v2 = 65534;
+            v3 = 0;
+        }
+        if (v1 = 27) {
+            v0 = "That food smells good...";
+            v2 = 65534;
+            v3 = 0;
+        }
+        if (v1 = 28) {
+            v0 = "That fruit looks good...";
+            v2 = 65534;
+            v3 = 0;
+        }
+        if (v1 = 29) {
+            v0 = "I am getting sleepy...";
+            v2 = 65534;
+            v3 = 0;
+        }
+        if (v1 = 30) {
+            v0 = "The Shrine of Compassion!";
+            v2 = 65533;
+            v3 = 0;
+        }
+        if (v1 = 31) {
+            v0 = "The Shrine of Honesty!";
+            v2 = 65533;
+            v3 = 0;
+        }
+        if (v1 = 32) {
+            v0 = "The Shrine of Justice!";
+            v2 = 65533;
+            v3 = 0;
+        }
+        if (v1 = 33) {
+            v0 = "The Shrine of Spirituality!";
+            v2 = 65533;
+            v3 = 0;
+        }
+        if (v1 = 34) {
+            v0 = "The Shrine of Honor!";
+            v2 = 65533;
+            v3 = 0;
+        }
+        if (v1 = 35) {
+            v0 = "The Shrine of Valor!";
+            v2 = 65533;
+            v3 = 0;
+        }
+        if (v1 = 36) {
+            v0 = "The Shrine of Sacrifice!";
+            v2 = 65533;
+            v3 = 0;
+        }
+        if (v1 = 37) {
+            v0 = "The Shrine of Humility!";
+            v2 = 65533;
+            v3 = 0;
+        }
+        if (v1 = 38) {
+            v0 = "Watch for bridge trolls.";
+            v2 = 65179;
+            v3 = 0;
+        }
+        if (v1 = 39) {
+            v0 = "Ah, home sweet home.";
+            v2 = 65535;
+            v3 = 0;
+        }
+        if (v1 = 40) {
+            v0 = "The noise! Agh! It hurts!";
+            v2 = 65179;
+            v3 = 0;
+        }
+        if (v1 = 41) {
+            if (not ~IsInInv(0, 65177, _Prism_981, 1, _Party) and $SphereGone) {
+                v0 = "You left the small sphere!";
+                v2 = 65179;
+                v3 = 1;
+            } else {
+                terminate;
+            }
+        }
+        if (v1 = 42) {
+            if (not ~IsInInv(1, 65177, _Prism_981, 1, _Party) and $CubeGone) {
+                v0 = "You left the small cube!";
+                v2 = 65179;
+                v3 = 1;
+            } else {
+                terminate;
+            }
+        }
+        if (v1 = 43) {
+            if (not ~IsInInv(2, 65177, _Prism_981, 1, _Party) and $TetraGone) {
+                v0 = "You left the small tetrahedron!";
+                v2 = 65179;
+                v3 = 1;
+            } else {
+                terminate;
+            }
+        }
+        if (v2 = 65179) {
+            v2 = ~PartySpeaker_i();
+            if (v2 = 65180) {
+                terminate;
+            }
+        }
+        if (v3 = 0) {
+            v0 = (("@" + v0) + "@");
+            v4 = ~IsNPCNear(v2);
+            if v4 {
+                Item_bark(v0, v2);
+            }
+        }
+        if (v3 = 1) {
+            v4 = ~IsNPCNear(v2);
+            if v4 {
+                SetSpeaker(0, v2);
+                append v0;
+                append "";
+                say;
+                CloseSpeaker(v2);
+            }
+        }
+    }
+}

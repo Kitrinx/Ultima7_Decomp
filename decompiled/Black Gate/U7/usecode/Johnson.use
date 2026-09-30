@@ -1,0 +1,105 @@
+Routine Johnson accepts a0 #locals(5) #uses(~IsNearEachOther_i, ~AskYesNo, ~AskList, ~OpenTrinsicGate_i) {
+    if (event = _Bark) {
+        terminate;
+    }
+    SetSpeaker(0, _Johnson);
+    v0 = ~GetTime();
+    if (v0 = 7) {
+        v1 = ~IsNearEachOther_i(_Klog, _Johnson);
+        if v1 {
+            ["I will speak with thee after the Fellowship meeting."*];
+        } else {
+            ["I must get to the Fellowship meeting! I am late! May we speak tomorrow?"*];
+        }
+        terminate;
+    }
+    TurnOn(<< "name", "job", "bye" >>);
+    if $SEARCHED_STABLES {
+        TurnOn("password");
+    }
+    if $FOUND_BUCKET_KEY {
+        TurnOn("murder");
+    }
+    if $FOUND_MEDALLION {
+        TurnOn(<< "Fellowship", "Klog", "Hook" >>);
+    }
+    if $LEARNED_ABOUT_CROWN_JEWEL {
+        TurnOn("Crown Jewel");
+    }
+    if not $MetJohnson {
+        [You see an alert and no-nonsense guard.];
+        $MetJohnson = true;
+    } else {
+        ["What is it?" Johnson asks, sternly.];
+    }
+    converse {
+        key ("name") {
+            ["Johnson."];
+            TurnOff("name");
+        }
+        key ("job") {
+            ["I have the morning watch guarding the dock. I authorize the comings and goings of every ship."];
+            TurnOn("ship");
+        }
+        key ("murder") {
+            ["I did hear of this. When I arrived at my post at sunrise, I found Gilberto lying felled on the ground. If thou art asking if I saw anything -- I did not. No one hath passed by me since I arrived at the dock."];
+            TurnOff("murder");
+        }
+        key ("Crown Jewel") {
+            ["The boat left just after sunrise. It did sail to Britain, I believe. Thou canst ask Gargan the Shipwright about that."];
+            TurnOff("Crown Jewel");
+        }
+        key ("Fellowship") {
+            ["Yes, I am a member. Wouldst thou like to join?"];
+            v2 = ~AskYesNo();
+            if v2 {
+                ["Then thou shouldst go to see Batlin in Britain."];
+            } else {
+                ["'Tis thy loss."];
+            }
+            TurnOff("Fellowship");
+        }
+        key ("Klog") {
+            ["Good man. He is our branch leader here in Trinsic."];
+            TurnOff("Klog");
+        }
+        key ("ship") {
+            ["If thou dost want a ship, thou must get a deed from the shipwright. Thou must also have the password to leave town."];
+            TurnOn(<< "password", "deed" >>);
+            TurnOff("ship");
+        }
+        key ("password") {
+            ["What is it?"];
+            v3 = << "Uhh, I don't know", "Long live the king", "Please" >>;
+            if $SEARCHED_STABLES {
+                v3 = (v3 & "Blackbird");
+            }
+            v2 = ~AskList(v3);
+            if (v2 = "Blackbird") {
+                v4 = ~OpenTrinsicGate_i();
+                if v4 {
+                    ["Very well, thou mayest pass."*];
+                } else {
+                    ["Thou mayest not pass."*];
+                }
+                terminate;
+            } else {
+                ["Thou dost not know the password. I am sorry. The Mayor may give thee the proper password."];
+                $PASSWORD_ATTEMPTED = true;
+            }
+        }
+        key ("Hook") {
+            ["A man with a hook? No, I saw no one all night or all morning."];
+            TurnOff("Hook");
+        }
+        key ("deed") {
+            ["Thou canst purchase that from Gargan the Shipwright."];
+            TurnOff("deed");
+        }
+        key ("bye") {
+            break;
+        }
+    }
+    clear_answers;
+    ["Good day."*];
+}

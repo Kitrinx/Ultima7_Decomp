@@ -1,0 +1,159 @@
+Routine Statue accepts a0 #locals(7) #uses(~AskYesNo) {
+    if (event = _Action) {
+        if flag(791) {
+            terminate;
+        }
+        v0 = ~GetFrame(item);
+        if (v0 = 16) {
+            SetSpeaker(0, _Epimetrius);
+            if flag(780) {
+                ["Our gratitude is thine, Avatar. Thou hast saved Britannia from what might have become a second Age of Darkness. Again, thou dost prove thy worthiness to be the instrument of Lord British."];
+                terminate;
+            }
+            if flag(792) {
+                ["Salutations, Avatar. I can assist thee no more, but remember my words: the Psyche returns to the Core..."*];
+                terminate;
+            }
+            if not flag(790) {
+                [Suddenly, your mind is filled with the crystal-clear resonance of an authoritative voice.~"Greeting to thee. I am the keeper of Truth. Dost thou seek the wisdom and boon of Truth?"];
+                flag(790) = true;
+            } else {
+                [The Shrine of Truth speaks. "Greetings, seeker. Once again I ask thee, Dost thou seek my enlightenment?"];
+            }
+            if ~AskYesNo() {
+                ["Very well. Prepare thyself." The voice falls silent.*];
+                v1 = ~PostAction(<< _aWAIT_i, 1, _aUSABLE_i, #IsleOfFireTeleportEgg_i >>, item);
+            } else {
+                ["I wish thee well, then."*];
+                terminate;
+            }
+        }
+        if (v0 = 14) {
+            SetSpeaker(1, _Epimetrius);
+            if flag(780) {
+                ["Thy Love for life is boundless. Thine heart-felt actions are a shining example to all of Britannia."*];
+                terminate;
+            }
+            if flag(807) {
+                ["Welcome, Avatar. I can help thee no further, save to offer the advice I gave before: A great evil stirs in Britannia..."*];
+                terminate;
+            }
+            if not flag(794) {
+                [An unearthly beautiful voice sighs gently into your conciousness. "Greetings, Avatar. I represent the embodiment of Love. If thou dost seek enlightenment , thou must take the Test of\x09Love. Its path lies through the glowing, blue portal to the south."*];
+                flag(794) = true;
+            } else {
+                ["I welcome thee again, seeker. I cannot aid thee until thy successful completion of the Test of Love."*];
+            }
+            terminate;
+        }
+        if (v0 = 15) {
+            SetSpeaker(2, _Epimetrius);
+            if flag(780) {
+                ["Thine onus is abated and Britannia is free of Exodus' grasp once more. Thy deeds will long be rembered as the most courageous in the history of this land."*];
+                terminate;
+            }
+            if flag(833) {
+                ["Hail, mighty Avatar! Thou must not fail in thy quest to find the Talisman of Infinity. Remember: the scroll that will unlock its secret lies within this castle."*];
+                terminate;
+            }
+            if not flag(809) {
+                [A strong, vibrant voice rings out in your mind. "Greetings seeker! I am the Keeper of Courage. If thou hast the will to seek my reward, thou must enter the portal to the south."*];
+                flag(809) = true;
+            } else {
+                ["Again I say to thee, my path lies through the portal to the south. Enter if thou hast the Courage, seeker..."*];
+            }
+            terminate;
+        }
+    }
+    if (event = _Combat) {
+        v0 = ~GetFrame(item);
+        if (v0 = 16) {
+            SetSpeaker(0, _Epimetrius);
+            ["Thou hast mastered the Test of Truth, and so a boon of great intellect and magical ability will be bestowed upon thee. Use -- and respect -- thy powers well, Avatar."];
+        }
+        if (v0 = 14) {
+            SetSpeaker(1, _Epimetrius);
+            ["My heart is gladdened to learn that Love is a Principle thou dost hold dear, evident by thy successful completion of the Test of Love. Now, then, shall a blessing of quickness and skill be thine."];
+        }
+        if (v0 = 15) {
+            SetSpeaker(2, _Epimetrius);
+            ["Well done, mighty warrior! The unsurpassed Courage which flows through thy veins could be none other than that of the Avatar. Thou hast proven thyself worthy of the reward of Courage with Valor, Sacrifice, Honor, and Spirituality... Receive it now\x09in Humility."*];
+        }
+        CloseSpeaker(_Epimetrius);
+        v2 = ~PostAction(<< _aWAIT_i, 2, _aBEND_FRAME_i, _aWAIT_i, 2, _aKNEEL_FRAME_i, _aWAIT_i, 10, _aBEND_FRAME_i, _aWAIT_i, 2, _aSTAND_FRAME_i >>, ~NPCToItem_i(_Avatar));
+        v1 = ~PostAction(<< _aWAIT_i, 8, _aUSABLE_i, #Statue >>, item);
+    }
+    if (event = _Posted_i) {
+        v0 = ~GetFrame(item);
+        if (v0 = 16) {
+            if not flag(792) {
+                v3 = ~GetCoord(~NPCToItem_i(_Avatar));
+                createSprite(65535, 0, 0, 0, (v3::2 - 1), (v3::1 - 1), 7);
+                Sfx(67);
+                v4 = ~GetNPCStat_i(_Int, ~NPCToItem_i(_Avatar));
+                v4 = (v4 & ~GetNPCStat_i(_MaxMagic, ~NPCToItem_i(_Avatar)));
+                v4 = (v4 & ~GetNPCStat_i(_Mag, ~NPCToItem_i(_Avatar)));
+                if not (v4::1 >= 30) {
+                    v5 = ~ChangeNPCStat_i((30 - v4::1), _Int, ~NPCToItem_i(_Avatar));
+                }
+                if not (v4::2 >= 30) {
+                    v5 = ~ChangeNPCStat_i((30 - v4::2), _MaxMagic, ~NPCToItem_i(_Avatar));
+                    v5 = ~ChangeNPCStat_i((30 - v4::3), _Mag, ~NPCToItem_i(_Avatar));
+                }
+                flag(792) = true;
+                v6 = ~PostAction(<< _aWAIT_i, 15, _aUSABLE_i, #Statue >>, item);
+            } else {
+                SetSpeaker(0, _Epimetrius);
+                ["Thou hast now experienced the full meaning of the Principle of Truth. The value of such is beyond measure, for truth shall guide thee throughout thy life's endeavors."];
+                [The statue's voice takes on a warning tone. "Know this Truth: the Psyche returns to the Core..." With that said, the statue becomes quiet once more.*];
+                flag(791) = false;
+                terminate;
+            }
+        }
+        if (v0 = 14) {
+            if not flag(807) {
+                v3 = ~GetCoord(~NPCToItem_i(_Avatar));
+                createSprite(65535, 0, 0, 0, (v3::2 - 1), (v3::1 - 1), 7);
+                Sfx(67);
+                v4 = ~GetNPCStat_i(_Dex, ~NPCToItem_i(_Avatar));
+                v4 = (v4 & ~GetNPCStat_i(_Cbt, ~NPCToItem_i(_Avatar)));
+                if not (v4::1 >= 30) {
+                    v5 = ~ChangeNPCStat_i((30 - v4::1), _Dex, ~NPCToItem_i(_Avatar));
+                }
+                if not (v4::2 >= 30) {
+                    v5 = ~ChangeNPCStat_i((30 - v4::2), _Cbt, ~NPCToItem_i(_Avatar));
+                }
+                flag(807) = true;
+                v6 = ~PostAction(<< _aWAIT_i, 15, _aUSABLE_i, #Statue >>, item);
+            } else {
+                SetSpeaker(1, _Epimetrius);
+                ["Now hast thou earnestly experienced all that is Love. 'Tis a benefit never to be taken lightly, for Love is a formidible motivator. Remember always the lessons in Compassion, Sacrifice, and Justice thou hast mastered."];
+                [The voice of the Keeper of Love fills with compassion as she speaks. "Do have a care, Avatar. For a great evil stirs within Britannia, I know not the source."*];
+                flag(791) = false;
+                terminate;
+            }
+        }
+        if (v0 = 15) {
+            if not flag(833) {
+                v3 = ~GetCoord(~NPCToItem_i(_Avatar));
+                createSprite(65535, 0, 0, 0, (v3::2 - 1), (v3::1 - 1), 7);
+                Sfx(67);
+                v4 = ~GetNPCStat_i(_Str, ~NPCToItem_i(_Avatar));
+                v4 = (v4 & ~GetNPCStat_i(_Hits, ~NPCToItem_i(_Avatar)));
+                if not (v4::1 >= 30) {
+                    v5 = ~ChangeNPCStat_i((30 - v4::1), _Str, ~NPCToItem_i(_Avatar));
+                }
+                if not (v4::2 >= 30) {
+                    v5 = ~ChangeNPCStat_i((30 - v4::2), _Hits, ~NPCToItem_i(_Avatar));
+                }
+                flag(833) = true;
+                v6 = ~PostAction(<< _aWAIT_i, 15, _aUSABLE_i, #Statue >>, item);
+            } else {
+                SetSpeaker(2, _Epimetrius);
+                [Urgency breaks into the voice of the statue. "I lay upon thee a geas, and as thou art the Avatar, thou art bound to respond. Thy quest is to seek the Talisman of Infinity. Within this castle there lies a scroll which can tell thee of its use. Go now, for time grows short.*];
+                flag(791) = false;
+                terminate;
+            }
+        }
+    }
+}

@@ -1,0 +1,23 @@
+Routine FlyingCarpet accepts a0 #locals(2) #uses(~IsPartySeated_i, LaunchCarpet_i, ~LoadBarge_i, MemberSays_i) {
+    v0 = ~GetBarge_i(item);
+    if ((event = _Action) and not (v0 = 0)) {
+        if not ~GetItemFlag_i(_OnMovingBarge_i, item) {
+            if ~IsPartySeated_i() {
+                LaunchCarpet_i(v0);
+            } else {
+                if ~LoadBarge_i(item) {
+                    closeAllGumps();
+                }
+            }
+        } else {
+            if ~GetItemFlag_i(_OkayToLand_i, v0) {
+                ClearItemFlag_i(_OnMovingBarge_i, item);
+                ClearItemFlag_i(_ActiveBarge_i, item);
+                v1 = ~PostAction(<< _aGO_DOWN_i, _aBREAK, _aLOOP_i, 65534, 10 >>, v0);
+                SetMusic(0, 255);
+            } else {
+                MemberSays_i("@I do not believe that we can land here safely.@");
+            }
+        }
+    }
+}

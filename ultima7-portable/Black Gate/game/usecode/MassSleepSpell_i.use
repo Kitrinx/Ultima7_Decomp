@@ -1,0 +1,24 @@
+Routine MassSleepSpell_i accepts a0 #locals(8) #uses(~IsMagicOK_i) {
+    if (event = _Action) {
+        Kernel_resetRef(item);
+        v0 = ~GetCoord(item);
+        Item_bark("@Vas Zu@", item);
+        if ~IsMagicOK_i() {
+            createSprite(65535, 0, 0, 0, (v0::2 - 2), (v0::1 - 2), 7);
+            v1 = ~PostAction(<< _aSFX_i, 65, _aSTAND_FRAME_i, _aRAISE1_FRAME_i, _aUP_FRAME_i, _aTHRUST1_FRAME_i, _aTHRUST2_FRAME_i, _aUSABLE_i, #MassSleepSpell_i >>, item);
+        } else {
+            v1 = ~PostAction(<< _aSTAND_FRAME_i, _aRAISE1_FRAME_i, _aUP_FRAME_i, _aTHRUST1_FRAME_i, _aTHRUST2_FRAME_i, _aUSABLE_i, #FizzleSpell_i >>, item);
+        }
+    }
+    if (event = _Posted_i) {
+        v2 = 25;
+        v3 = ~FindNearby_i(4, v2, 65535, item);
+        v4 = ~GetParty();
+        Foreach v7 in v3 {
+            if not (v7 in v4) {
+                Kernel_resetRef(v7);
+                SetItemFlag_i(_Asleep, v7);
+            }
+        }
+    }
+}

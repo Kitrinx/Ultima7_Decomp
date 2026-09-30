@@ -1,0 +1,221 @@
+Routine Feridwyn accepts a0 #locals(8) #uses(~LordOrLady, ~IsInInv, ~IsNPCNear, ~AskYesNo, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Feridwyn);
+        v0 = ~LordOrLady();
+        v1 = ~IsMedallionOn_i();
+        v2 = false;
+        v3 = ~IsInInv(1, 65177, _Prism_981, 1, _Party);
+        if ($PAWS_FRAME_READY and not $FeridwynAccusedTobias) {
+            if not $StolenVenom {
+                ["Avatar! Didst thou know that the merchant Morfin had a quantity of silver serpent venom stolen? This theft has caused the community no small amount of distress."];
+            } else {
+                ["Avatar! Oh Avatar! I have news!"];
+            }
+            ["Garritt, my son, told me that Tobias was in possession of some silver snake venom. I went to investigate and found Tobias with it!"*];
+            v4 = ~IsNPCNear(_Merrick);
+            if v4 {
+                SetSpeaker(0, _Merrick);
+                ["That is correct! I am a witness that what Feridwyn has said is the truth!"*];
+                CloseSpeaker(_Merrick);
+                SetSpeaker(0, _Feridwyn);
+            }
+            ["I have often said that Tobias was no good. Now here is proof. He is the thief that has been praying upon one of our honest merchants! And to think I let him come into contact with my son! I hope he shall be dealt with in a manner appropriate to one who is leading youth astray from the way of The Fellowship.];
+            ["I suggest that thou go and speak with his mother at once! Camille should keep a tighter rein on her offspring!"*];
+            $FeridwynAccusedTobias = true;
+            $TOBIAS_FRAMED = true;
+            SetWorkType(_Talk, ~NPCToItem_i(_Camille));
+            SetWorkType(_Loiter, ~NPCToItem_i(_Feridwyn));
+            terminate;
+        }
+        TurnOn(<< "name", "job", "bye" >>);
+        if $HEARD_ELIZABETH_ABRAHAM {
+            TurnOn("Elizabeth and Abraham");
+        }
+        v5 = ~IsInInv(1, 65177, _Venom, 1, _Party);
+        if v5 {
+            v2 = true;
+            TurnOn(<< "found venom", "case solved" >>);
+        }
+        if $VENOM_CASE_SOLVED {
+            TurnOn(<< "found venom", "Garritt caught", "take action", "Tobias", "case solved" >>);
+        }
+        if not $MET_FERIDWYN {
+            [You see a small man with twisted, sloped posture. He looks you up and down before deciding he will speak to you.];
+            ["I had gotten word that thou wert coming to our town. I have been expecting thee. I must admit, though, that I find it difficult to believe that thou art truly the Avatar."];
+            $MET_FERIDWYN = true;
+        } else {
+            ["Thou dost wish to speak with me again, Avatar?" says Feridwyn.];
+        }
+        converse {
+            key ("name") {
+                ["My name is Feridwyn."];
+                TurnOff("name");
+            }
+            key ("job") {
+                ["I run the Fellowship shelter with my wife Brita and my son Garritt here in Paws."];
+                TurnOn(<< "Fellowship", "shelter", "Brita", "Garritt", "Paws" >>);
+            }
+            key ("Fellowship") {
+                if not (v1 and not $JoinFellow) {
+                    ["Wouldst thou like to join?"];
+                    v6 = ~AskYesNo();
+                    if v6 {
+                        ["Then thou must see Batlin of Britain. He is the founder of The Fellowship."];
+                    } else {
+                        ["Thou dost not yet comprehend how much thy life could be improved through the guidance of The Fellowship."];
+                    }
+                } else {
+                    ["Gentle Avatar, it is good of thee to come to our humble town. Thou canst well see that The Fellowship has much work to do if it is to alleviate the suffering of the unfortunate of Britannia."];
+                }
+                TurnOff("Fellowship");
+            }
+            key ("shelter") {
+                ["This is the only place in all of Britannia designed for the aid and care of the poor. It is hard work, but then one strives to be worthy of that which we wish to receive."];
+                TurnOff("shelter");
+            }
+            key ("Brita") {
+                if not $MetBrita {
+                    ["A wonderful woman. Thou shouldst meet her."];
+                    v7 = ~IsNPCNear(_Brita);
+                    if v7 {
+                        SetSpeaker(0, _Brita);
+                        ["Mine husband is such a flatterer. The truth is that our work for The Fellowship has brought us closer together."*];
+                        CloseSpeaker(_Brita);
+                        SetSpeaker(0, _Feridwyn);
+                    }
+                } else {
+                    ["As thou dost already know my wife Brita, I am certain thou wilt agree that thou couldst not find a more dedicated practitioner of The Fellowship's teachings."];
+                }
+                TurnOff("Brita");
+            }
+            key ("Garritt") {
+                ["Thankfully, we have been able to raise our son properly by emphasizing the teachings of The Fellowship. Garritt shall not be trapped in the poverty of his surroundings. He shall be intellectually, spiritually, and morally superior. He's talented, too!"];
+                TurnOff("Garritt");
+                TurnOn("talented");
+            }
+            key ("talented") {
+                ["He plays the whistle panpipes extremely well for a lad his age! Brita and I are very proud. He could probably attend The Music Hall in Britain when he is older!"];
+                TurnOff("talented");
+            }
+            key ("Paws") {
+                ["As this is a small town with few privileges and little privacy, our family has come to know everyone in Paws quite well. Is there someone thou dost wish to hear about? I am well acquainted with these people."];
+                TurnOff("Paws");
+                TurnOn(<< "merchants", "farmers", "shelter residents", "beggars" >>);
+            }
+            key ("merchants") {
+                ["They would be Morfin, Andrew, Thurston, and Beverlea."];
+                TurnOn(<< "Morfin", "Andrew", "Thurston", "Beverlea" >>);
+                TurnOff("merchants");
+            }
+            key ("Beverlea") {
+                ["She is a nearly blind elderly woman who runs the antique shoppe on the east side of the river."];
+                TurnOff("Beverlea");
+            }
+            key ("farmers") {
+                ["That would be Camille and her son Tobias."];
+                TurnOn(<< "Camille", "Tobias" >>);
+                TurnOff("farmers");
+            }
+            key ("beggars") {
+                ["Oh. Them. Komor and Fenn." Feridwyn rolls his eyes.];
+                TurnOn(<< "Komor", "Fenn" >>);
+                TurnOff("beggars");
+            }
+            key ("shelter residents") {
+                ["Our residents include Alina and her child, and Merrick."];
+                TurnOn(<< "Alina", "Merrick" >>);
+                TurnOff("shelter residents");
+            }
+            key ("Alina") {
+                ["Her husband is currently in Britain somewhere. I do not know the details. She has a small child."];
+                TurnOff("Alina");
+            }
+            key ("Elizabeth and Abraham") {
+                if not $EA_LEFT_JHELOM {
+                    ["I am so sorry! Thou hast just missed them! Elizabeth and Abraham were here delivering funds, but they have gone now to Jhelom. There is currently no Fellowship branch there, so they are taking the Triad of Inner Strength to lands west!"];
+                    $EA_LEFT_PAWS_FOR_JHELOM = true;
+                } else {
+                    ["I have not seen Elizabeth and Abraham for many days now."];
+                }
+                TurnOff("Elizabeth and Abraham");
+            }
+            key ("Thurston") {
+                ["Thurston owns the mill. He could do better if he ran his business with more of an eye toward profit."];
+                TurnOff("Thurston");
+            }
+            key ("Camille") {
+                ["She's a sad woman -- a widow -- who is living in the past. 'Tis a pity, really. Fortunately her husband left her the farm which does happen to turn a profit."];
+                TurnOff("Camille");
+            }
+            key ("Merrick") {
+                ["A splendid example of The Fellowship turning someone's life around. Presently he resides in our shelter."];
+                TurnOff("Merrick");
+            }
+            key ("Morfin") {
+                ["Morfin is a clever and industrious member of The Fellowship. He runs the local slaughterhouse and is also a snake venom merchant."];
+                TurnOn("snake venom");
+                TurnOff("Morfin");
+            }
+            key ("Andrew") {
+                ["Andrew is such a happy young man. He doth not notice the myriad of personal problems that he is afflicted with."];
+                TurnOff("Andrew");
+            }
+            key ("Tobias") {
+                if not $VENOM_CASE_SOLVED {
+                    ["A local rascal. I normally would not allow Garritt to associate with such a troublemaker, but The Fellowship has taught me to be a tolerant parent. Besides, associating with my son might do the lad some good. Who knows?"];
+                } else {
+                    ["No matter that Tobias did not personally steal the venom himself. He caused the theft by means of his corrupting influence on my son. While his actions are just short of criminal, I still blame Tobias."];
+                }
+                TurnOff("Tobias");
+            }
+            key ("Fenn") {
+                ["Fenn is a beggar who refuses all aid from The Fellowship. A pathetic case. Not even his former friend Merrick can reach him any more."];
+                TurnOff("Fenn");
+            }
+            key ("Komor") {
+                ["Komor is the most hateful man I have ever met. He is a bundle of bitterness. In all the time I have known him, Komor has never spoken a word to me that was not at best a thinly veiled insult."];
+                TurnOff("Komor");
+            }
+            key ("case solved") {
+                if ($VENOM_CASE_SOLVED or v2) {
+                    ["Thankfully we can now put this business of snake venom thefts behind us, thanks to thy thorough efforts. I shall deal with my son. Let us speak of this no more."];
+                } else {
+                    ["Thank goodness Garritt, my sharp eyed boy, got to the bottom of this business of the snake venom thefts. Frankly, I had my suspicions about Tobias myself."];
+                }
+                TurnOff("case solved");
+            }
+            key ("snake venom") {
+                ["Morfin, the local merchant, informs me that a quantity of silver serpent venom was stolen from him. The thief is still at large, so be wary! Of course, I do not know why anyone would want the vile substance. It is surely not good for one's health."];
+                $StolenVenom = true;
+                TurnOff("snake venom");
+            }
+            key ("take action") {
+                ["I promise thee, I shall apply the necessary discipline to my son to insure that this bad habit he has picked up from the local riffraff will not trouble this community again."];
+                TurnOff("take action");
+            }
+            key ("found venom") {
+                if not $VENOM_CASE_SOLVED {
+                    ["Thou didst find the venom vial in Garritt's belongings? I am amazed! I am astonished! I am-- sorry."];
+                } else {
+                    ["Thou art a resourceful person. Unfortunately, thy discovery has upset me a great deal."];
+                }
+                TurnOff("found venom");
+            }
+            key ("Garritt caught") {
+                ["Thou dost say my son has admitted to stealing the venom?! I do not know what to say. My thanks, Avatar, for uncovering the truth."];
+                TurnOff("Garritt caught");
+            }
+            key ("bye") {
+                ["Mayest thou walk with the Fellowship."*];
+                terminate;
+            }
+        }
+        clear_answers;
+        if v3 {
+            [You realize that the Cube did not bring out anything that Feridwyn did not actually believe himself. He is one of the innocent followers of The Guardian.];
+        }
+    }
+    if (event = _Bark) {
+        BarkAboutWork_i(_Feridwyn);
+    }
+}

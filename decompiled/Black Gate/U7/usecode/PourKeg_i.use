@@ -1,0 +1,33 @@
+Routine PourKeg_i accepts a0 #locals(9) #uses(MemberBarks_i) {
+    v0 = ~Item_create(_Blood);
+    if v0 {
+        SetItemFlag_i(_IsTemporary_i, v0);
+        SetFrame(~rndRange(15, 12), v0);
+        v1 = ~GetCoord(item);
+        v2 = ~FindNearby_i(0, 2, _Bucket, item);
+        Foreach v5 in v2 {
+            v6 = ~GetCoord(v5);
+            if ((v6::1 = (v1::1 - 1)) and ((v6::2 = (v1::2 + 1)) and (v6::3 = v1::3))) && (~GetFrame(v5) = 0) {
+                SetFrame(4, v5);
+                Kernel_resetRef(item);
+                v7 = ~PostInFuture(16, << _aUSABLE_i, #PourKeg_i >>, item);
+                return;
+            }
+        }
+        v1::1 = (v1::1 - ~rndRange(3, 1));
+        v1::2 = (v1::2 + ~rndRange(2, 1));
+        v7 = ~PopToMap(v1);
+        v8 = ~rndRange(2, 1);
+        if (v8 = 1) {
+            MemberBarks_i("@Turn it off!@");
+        }
+        if (v8 = 2) {
+            MemberBarks_i("@Thou art wasting it!@");
+        }
+        if ~IsNPCNear_i(_Dupre) {
+            Item_bark("@That is perfectly good beer!@", _Dupre);
+        }
+        Kernel_resetRef(item);
+        v7 = ~PostInFuture(16, << _aUSABLE_i, #PourKeg_i >>, item);
+    }
+}

@@ -1,0 +1,144 @@
+Routine Gordon accepts a0 #locals(11) #uses(~LordOrLady, ~IsNearEachOther_i, ~AskYesNo, DescribeFellowship_i, ExplainPhilosophy_i, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Gordon);
+        v0 = ~LordOrLady();
+        v1 = ~IsMedallionOn_i();
+        v2 = ~GetTime();
+        v3 = ~GetWorkType(~NPCToItem_i(_Gordon));
+        if (v2 = 7) {
+            v4 = ~IsNearEachOther_i(_Batlin, _Gordon);
+            if v4 {
+                [Gordon is too involved in listening to the Fellowship meeting to hear you.*];
+                terminate;
+            } else {
+                if $BATLIN_MISSING {
+                    ["Where oh where is Batlin? He is late for the meeting!"];
+                    goto label_9;
+                } else {
+                    ["Oh, my! I must leave immediately! I am late for the Fellowship meeting!"*];
+                    terminate;
+                }
+            }
+        }
+        label_9:
+        TurnOn(<< "name", "job", "bye" >>);
+        if not $MetGordon {
+            [You see a friendly face looking back at you.];
+            $MetGordon = true;
+        } else {
+            ["How art thou this fine day, <v0>?" asks Gordon.];
+        }
+        converse {
+            key ("name") {
+                ["My name is Gordon."];
+                TurnOff("name");
+            }
+            key ("job") {
+                ["I sell fish and chips from my wagon."];
+                TurnOn(<< "fish and chips", "wagon" >>);
+            }
+            key ("fish and chips") {
+                if not (v3 = 7) {
+                    ["Come back later when I am open for business."*];
+                    terminate;
+                } else {
+                    ["I have the best fish and chips thou shalt taste in all of Britannia. My price is only 8 gold coins per serving. Wouldst thou like to have some?"];
+                    v5 = ~AskYesNo();
+                    if v5 {
+                        v6 = ~TakeFromParty_i(true, _All, _All, _Gold_Coin, 8);
+                        if v6 {
+                            v7 = ~GiveToParty_i(true, 30, _All, _Food_Item, 1);
+                            if v7 {
+                                [He hands you a plate.];
+                                ["They are indeed the best fish and chips in all of Britannia."];
+                            } else {
+                                ["Thou art carrying too many things to take thy fish and chips from me!"];
+                            }
+                        } else {
+                            ["Thou dost not have enough gold to get any fish and chips. Sorry!"];
+                        }
+                    } else {
+                        ["Come back again when thou art hungry and I am sure thou shalt change thy mind."];
+                    }
+                }
+                TurnOff("fish and chips");
+            }
+            key ("wagon") {
+                ["I just painted my wagon recently. It receives more attention. Business is much better now. I am saving my money to travel to Buccaneer's Den."];
+                TurnOff("wagon");
+                TurnOn(<< "business", "Buccaneer's Den" >>);
+            }
+            key ("business") {
+                ["Ever since I became a member of The Fellowship, business has been increasing steadily. I have refined and improved the recipe for my fish batter and it has since become a favorite meal of nearly everyone in Britain. I have even served my fish and chips to Lord British himself."];
+                TurnOn(<< "Fellowship", "Lord British" >>);
+                TurnOff("business");
+            }
+            key ("Lord British") {
+                ["Thou dost know-- the bloke who wears a crown and acts like a king."];
+                TurnOff("Lord British");
+            }
+            key ("Fellowship") {
+                if v1 {
+                    ["I am glad to see that thou art a member. Will I see thee at the next meeting?"];
+                    v8 = ~AskYesNo();
+                    if v8 {
+                        ["Then I shall see thee at nine o'clock sharp!"];
+                    } else {
+                        ["Thou shouldst apply thyself more stringently to the ways of The Fellowship! Our meeting is at nine o'clock. I can see thou dost certainly need to attend."];
+                    }
+                } else {
+                    DescribeFellowship_i();
+                }
+                TurnOff("Fellowship");
+            }
+            key ("philosophy") {
+                ExplainPhilosophy_i();
+                TurnOff("philosophy");
+            }
+            key ("Buccaneer's Den") {
+                ["I wish to win some money at Buccaneer's Den. It is a pirate resort and they have a fabulous House of Games there."];
+                TurnOn(<< "pirate resort", "House of Games" >>);
+                TurnOff("Buccaneer's Den");
+            }
+            key ("pirate resort") {
+                ["As I am certain thou knowest, Buccaneer's Den was once a den of thieves and villains. As such, it held a romantic appeal for those who longed for a taste of such an adventurous existence. I confess, I am one of those people. When thou dost spend thy life selling fish from a wagon, thou art in need of excitement. The pirates eventually realized just how much they are secretly envied, and so they have turned their island into a place of thrilling amusements."];
+                TurnOff("pirate resort");
+            }
+            key ("House of Games") {
+                ["It is said they have several games of chance there! Gold can be won wagering on the outcome of a race of fine stallions."];
+                TurnOff("House of Games");
+            }
+            key ("Fellowship") {
+                ["I saw thee receive thy medallion. I can certainly say the Fellowship has done wonders for my life and I know it will be the same for thee as well." He gives thee a knowing grin.];
+                TurnOff("Fellowship");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["Have a pleasant day, <v0>." *];
+    }
+    if (event = _Bark) {
+        v2 = ~GetTime();
+        v3 = ~GetWorkType(~NPCToItem_i(_Gordon));
+        v9 = ~rndRange(4, 1);
+        if (v3 = 7) {
+            if (v9 = 1) {
+                v10 = "@Fish 'n' chips!@";
+            }
+            if (v9 = 2) {
+                v10 = "@Hot fish 'n' chips!@";
+            }
+            if (v9 = 3) {
+                v10 = "@Fish 'n' chippies!@";
+            }
+            if (v9 = 4) {
+                v10 = "@Fish 'n' chips here!@";
+            }
+            Item_bark(v10, _Gordon);
+        } else {
+            BarkAboutWork_i(_Gordon);
+        }
+    }
+}

@@ -1,0 +1,15 @@
+Routine ArriveAtForge_i accepts a0 #locals(5) #uses(~AvatarStatue_i) {
+    FadePalette_i(1, 1, 12);
+    v0 = ~GetCoord(item);
+    createSprite(65535, 0, 0, 0, (v0::2 - 2), (v0::1 - 2), 13);
+    v1 = ~GetCoord(~NPCToItem_i(_Avatar));
+    createSprite(65535, 0, 0, 0, (v1::2 - 2), (v1::1 - 2), 7);
+    Sfx(68);
+    v2 = ~PostAction(<< _aFACE_i, _South, _aUP_FRAME_i, _aWAIT_i, 3, _aOUT_FRAME_i, _aWAIT_i, 2, _aSTAND_FRAME_i, _aWAIT_i, 8, _aUSABLE_i, #WarnOfForgeSpell_i >>, item);
+    v3 = ~AvatarStatue_i();
+    if ~AvatarSex() {
+        v4 = ~PostAction(<< _aFRAME, 20 >>, v3);
+    } else {
+        v4 = ~PostAction(<< _aFRAME, 18 >>, v3);
+    }
+}

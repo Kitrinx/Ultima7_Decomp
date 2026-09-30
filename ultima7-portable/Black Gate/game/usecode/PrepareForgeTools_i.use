@@ -1,0 +1,77 @@
+Routine PrepareForgeTools_i accepts a0 #locals(23) {
+    v0 = ~FindNearby_i(16, 10, _Egg, item);
+    v1 = false;
+    v2 = false;
+    v3 = false;
+    v4 = false;
+    Foreach v7 in v0 {
+        v8 = ~GetQuality(v7);
+        v9 = ~GetFrame(v7);
+        v10 = ~GetCoord(v7);
+        if (v9 = 6) {
+            if (v8 = 3) {
+                v11 = ~FindNearest_i(1, _Desk_Item, v7);
+                v12 = ~GetFrame(v11);
+                if v11 && (v12 = 16) {
+                    v1 = v11;
+                    v2 = v10;
+                }
+            }
+            if (v8 = 7) {
+                v11 = ~FindNearest_i(1, _Plant_999, v7);
+                v12 = ~GetFrame(v11);
+                if v11 && (v12 = 1) {
+                    v3 = v11;
+                    v4 = v10;
+                }
+            }
+        }
+    }
+    if v1 {
+        if v3 {
+            SetSpeaker(1, _Wilbur);
+            [Amidst muttered curses detailing the uselessness of ether and bothersome inter-dimensional beings, Erethian intones the magical words,];
+            ["An Vas Ailem!   Kal Bet Ailem!"*];
+            CloseSpeaker(_Wilbur);
+            v13 = ~PostAction(<< _aUP_FRAME_i, _aWAIT_i, 4, _aOUT_FRAME_i, _aWAIT_i, 3, _aSTAND_FRAME_i, _aWAIT_i, 3, _aUSABLE_i, #ConjureForgeTools_i >>, item);
+            Item_destroy(v1);
+            Item_destroy(v3);
+            createSprite(65535, 0, 0, 0, (v2::2 - 2), (v2::1 - 2), 5);
+            createSprite(65535, 0, 0, 0, (v4::2 - 2), (v4::1 - 1), 4);
+            Sfx(8);
+        }
+    } else {
+        v14 = false;
+        v0 = ~FindNearby_i(16, 10, _Egg, item);
+        Foreach v7 in v0 {
+            v8 = ~GetQuality(v7);
+            v9 = ~GetFrame(v7);
+            v10 = ~GetCoord(v7);
+            if (v9 = 6) && (v8 = 10) {
+                v17 = ~FindNearby_i(0, 1, _Chest, v7);
+                if v17 {
+                    Foreach v20 in v17 {
+                        v21 = ~GetCoord(v20);
+                        if (v21 = v10) {
+                            v14 = v20;
+                        }
+                    }
+                }
+            }
+        }
+        SetSpeaker(1, _Wilbur);
+        [Little beads of sweat appear on the elderly mage's furrowed brow. "That was a bit harder than I'd expected." He pauses to mop his forehead with the tip of his sleeve, "I had to redirect a small underground river for the well to tap. Now, then. Thou shalt have need of some few tools to make use of this equipment, shan't thee?" His rhetorical question goes unanswered\x09as he once again prepares to unleash his will upon the world.];
+        if v14 {
+            v22 = ~GetQuality(v14);
+            if (v22 = 100) {
+                [He stops himself for a moment and says, "If perchance thou hadst some item or other laying upon the floor here, thou'lt find it within yonder chest." He motions to the chest sitting on the floor, then continues with his spell.*];
+            }
+        }
+        CloseSpeaker(_Wilbur);
+        if $TetraGone {
+            v13 = ~PostAction(<< _aWAIT_i, 2, _aOUT_FRAME_i, _aWAIT_i, 2, _aSTAND_FRAME_i, _aWAIT_i, 2, _aUSABLE_i, #ConjureForgeTools_i >>, item);
+        } else {
+            v13 = ~PostAction(<< _aWAIT_i, 2, _aBEND_FRAME_i, _aWAIT_i, 2, _aKNEEL_FRAME_i, _aWAIT_i, 3, _aBEND_FRAME_i, _aWAIT_i, 2, _aSTAND_FRAME_i, _aWAIT_i, 3, _aOUT_FRAME_i, _aWAIT_i, 4, _aUSABLE_i, #BotchForgeTools_i >>, item);
+        }
+    }
+}

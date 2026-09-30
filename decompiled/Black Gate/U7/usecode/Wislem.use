@@ -1,0 +1,59 @@
+Routine Wislem accepts a0 #locals(1) #uses(~AskYesNo) {
+    if (event = _Bark) {
+        terminate;
+    }
+    if (event = _Action) {
+        SetSpeaker(0, _Wislem);
+        TurnOn(<< "name", "job", "bye" >>);
+        if not $MetWislem {
+            [You see an impressive winged gargoyle with a stately demeanor.];
+            $MetWislem = true;
+        } else {
+            ["To greet thee again," Wislem says.];
+        }
+        converse {
+            key ("name") {
+                ["To be known as Wislem."];
+                TurnOff("name");
+                TurnOn("Wislem");
+            }
+            key ("Wislem") {
+                [To be the word for `wise man.'"];
+                TurnOff("Wislem");
+            }
+            key ("job") {
+                ["To be advisor to Lord British, and act as representative for my race here in Britain. To be honored to be in long line of advisors to the king."];
+                TurnOn("advisor");
+            }
+            key ("advisor") {
+                ["To make sure the gargoyle race is heard in the castle. To have been a long road to acceptance and integration into Britannian society."];
+                TurnOn(<< "integration", "society" >>);
+                TurnOff("advisor");
+            }
+            key ("integration") {
+                ["To tell you that, not long after your last visit, the gargoyles settled upon Terfin, an island to the southeast. To have moved, little by little, onto the mainland."];
+                TurnOff("integration");
+            }
+            key ("society") {
+                ["To be accepted in most places. To feel sad, however, that there are still towns that do not accept us. But our Lord and King, Draxinusom, is still alive and is doing a magnificent job. To know and help all gargoyles who are alive."];
+                TurnOn("Inamo");
+                TurnOff("society");
+            }
+            key ("Inamo") {
+                [Wislem listens to your story about the murders in Trinsic. "To be sad to hear this. To suggest that you visit Lord Draxinusom in Terfin and tell him about Inamo. He will know who Inamo's parent gargoyle is. To recommend you relay this news as soon as possible.~~"To go soon and tell Draxinusom about Inamo?"];
+                v0 = ~AskYesNo();
+                if v0 {
+                    ["To know you are reliable."];
+                } else {
+                    ["To be concerned that Inamo's parent shall never know what happened." He appears saddened.];
+                }
+                TurnOff("Inamo");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["To bid farewell."*];
+    }
+}

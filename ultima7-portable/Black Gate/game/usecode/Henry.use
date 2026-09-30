@@ -1,0 +1,122 @@
+Routine Henry accepts a0 #locals(5) #uses(~LordOrLady, ~IsNPCNear, ~AskYesNo, GivePartyExp_i, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Henry);
+        v0 = ~LordOrLady();
+        TurnOn(<< "name", "job", "bye" >>);
+        if flag(384) {
+            TurnOn("strangers");
+        }
+        if (flag(383) and not flag(461)) {
+            TurnOn("found");
+        }
+        if not $MetHenry {
+            [You see a scruffy young man who is obviously suffering from a broken heart.];
+            $MetHenry = true;
+        } else {
+            [Henry greets you. "It is good to speak with thee again, <v0>!"];
+        }
+        converse {
+            key ("name") {
+                ["My name is Henry, <v0>."];
+                TurnOff("name");
+            }
+            key ("job") {
+                if not (flag(381) or flag(461)) {
+                    ["Job?! Who can work when he has a broken heart?!"];
+                    TurnOn("broken heart");
+                } else {
+                    ["Although I am called a peddler, I have the greatest selection of items to be found in New Magincia."];
+                    TurnOn("New Magincia");
+                }
+            }
+            key ("New Magincia") {
+                ["I have lived here all of my life and have never known anyplace else. It is a basically a very nice place where people still adhere to the old ways and values. The rest of the world must think it has passed us by, but it is they who have lost what once was."];
+                TurnOff("New Magincia");
+            }
+            key ("broken heart") {
+                ["I have been rejected by the woman I love."];
+                TurnOn("woman");
+                TurnOff("broken heart");
+            }
+            key ("woman") {
+                [His eyes light up. "Her name is Constance, she is the most beautiful woman in the world, and for a time we were in love." His face falls, and he sighs deeply. "But that was before I made a terrible mistake..."];
+                TurnOn(<< "Constance", "mistake" >>);
+                TurnOff("woman");
+            }
+            key ("Constance") {
+                ["She is the waterbearer of the town. She carries water from the well of Humility to all the homes in town."];
+                TurnOff("Constance");
+            }
+            key ("mistake") {
+                ["I promised to give her a very old and valuable locket as a token of mine affection. My childhood friend, Katrina, had given the locket to me."];
+                TurnOff("mistake");
+                TurnOn(<< "locket", "Katrina" >>);
+            }
+            key ("locket") {
+                ["Before I could give her the locket, I lost it. I have searched everywhere but I cannot find it. Now, Constance thinks I am a cad and has forsaken me."];
+                TurnOff("locket");
+                TurnOn("lost");
+            }
+            key ("Katrina") {
+                ["Katrina is a shepherd here on New Magincia. She has been a friend of mine since I was a boy."];
+                v1 = ~IsNPCNear(_Katrina);
+                if v1 {
+                    SetSpeaker(0, _Katrina);
+                    ["We have had some good memories, have we not, Henry?"];
+                    SetSpeaker(0, _Henry);
+                    ["Oh that we have! But thou wouldst not be my sweetheart, so we resigned ourselves to being 'just friends' a long time ago, is that not true?"];
+                    SetSpeaker(0, _Katrina);
+                    ["Whatever thou dost say, dear Henry."];
+                    CloseSpeaker(_Katrina);
+                    SetSpeaker(0, _Henry);
+                }
+                TurnOff("Katrina");
+            }
+            key ("lost") {
+                ["I noticed I had lost the locket right after I spoke with those three strangers yesterday. Wouldst thou help me find it?"];
+                v2 = ~AskYesNo();
+                if v2 {
+                    ["Oh, thank thee, <v0>! If not for thee, I would be lost."];
+                    flag(381) = true;
+                } else {
+                    ["Oh, well... I know thou art busy on thine own quest. I thank thee for listening to my tale, <v0>."];
+                }
+                TurnOff("lost");
+            }
+            key ("strangers") {
+                ["There are three other strangers in New Magincia. They arrived a few days before thee. Their ship was sunk and they barely made it here with their lives."];
+                TurnOff("strangers");
+                flag(384) = true;
+            }
+            key ("found") {
+                ["Thou hast found the locket!"];
+                v3 = ~TakeFromParty_i(true, 2, _All, _Amulet, 1);
+                if v3 {
+                    GivePartyExp_i(50);
+                    [You hand the locket to Henry. "Now I may give it to Constance and keep my promise to her! I cannot thank thee enough, Avatar!"];
+                    flag(461) = true;
+                    v4 = ~IsNPCNear(_Katrina);
+                    if v4 {
+                        SetSpeaker(0, _Katrina);
+                        ["I am glad that this situation has concluded in thy favor, dear Henry."];
+                        SetSpeaker(0, _Henry);
+                        ["My thanks to thee, Katrina."];
+                        CloseSpeaker(_Katrina);
+                        SetSpeaker(0, _Henry);
+                    }
+                } else {
+                    [He looks distraught when you make no move to give it to him. "Where is it?! I need it if I am to prove myself to the woman I love!"];
+                }
+                TurnOff("found");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["Travel safely and be well."*];
+    }
+    if (event = _Bark) {
+        BarkAboutWork_i(_Henry);
+    }
+}

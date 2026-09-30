@@ -1,0 +1,23 @@
+#ifndef UCCOMM5_H
+#define UCCOMM5_H
+
+extern int16_t RemoteViewActive;
+
+struct Value;
+
+void UC_AttackObject(Value *args, Value *ret);
+void UC_FlashMouse(Value *args, Value *);
+void UC_FireProjectile(Value *args, Value *);
+void UC_AdvanceTime(Value *args, Value *);
+void UC_NapTime(Value *args, Value *);
+void UC_StartSpeech(Value *args, Value *ret);
+void UC_CallGuards(Value *, Value *);
+void UC_AttackAvatar(Value *, Value *);
+void UC_FadePalette(Value *args, Value *);
+void UC_InCombat(Value *, Value *ret);
+void UC_StartBlockingSpeech(Value *args, Value *ret);
+void UC_Summon(Value *args, Value *);
+
+extern char UsecodeSpeechFileName[];
+
+#endif

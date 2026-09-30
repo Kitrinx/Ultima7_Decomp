@@ -1,0 +1,11 @@
+Routine SleepingPowder accepts a0 #locals(1) #uses(MemberBarks_i, ConsumeOne_i) {
+    if (event = _Action) {
+        v0 = ~GetTarget();
+        if ~Item_isNpc(v0) {
+            SetItemFlag_i(_Asleep, v0);
+        } else {
+            MemberBarks_i("@Do not waste that!@");
+        }
+        ConsumeOne_i(item);
+    }
+}

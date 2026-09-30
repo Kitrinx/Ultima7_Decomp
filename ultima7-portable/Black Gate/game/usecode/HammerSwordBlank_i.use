@@ -1,0 +1,40 @@
+Routine HammerSwordBlank_i accepts a0 #locals(4) {
+    if (event = _Posted_i) {
+        v0 = ~FindNearest_i(2, _Sword_Blank, ~NPCToItem_i(_Avatar));
+        v1 = ~GetCoord(v0);
+        v2 = ~PostAction(<< _aSFX_i, 45 >>, item);
+        v2 = ~PostAction(<< _aNO_HALT_i, _aWAIT_i, 1, _aUSABLE_i, #PostForgeUsable_i >>, item);
+    }
+    if (event = _Action) {
+        v3 = ~Random(100);
+        if not flag(813) {
+            if (v3 > 66) {
+                flag(813) = true;
+                SetSpeaker(~AvatarSex(), _Avatar);
+                [After a short while you notice that the edge has definitely improved.];
+                CloseSpeaker(_Avatar);
+            }
+        } else {
+            if not flag(814) {
+                if (v3 > 66) {
+                    flag(814) = true;
+                    SetSpeaker(~AvatarSex(), _Avatar);
+                    [You feel that you've done the best job that you can, but the sword doesn't feel quite right. It's much too heavy and cumbersome to wield as a weapon.];
+                    flag(823) = true;
+                    CloseSpeaker(_Avatar);
+                } else {
+                    if (v3 < 20) {
+                        flag(813) = false;
+                        SetSpeaker(~AvatarSex(), _Avatar);
+                        [That last blow was perhaps a bit too hard, It'll take a while to hammer out the flaws.];
+                        CloseSpeaker(_Avatar);
+                    }
+                }
+            } else {
+                SetSpeaker(~AvatarSex(), _Avatar);
+                [The blade has been worked as well as it can be. It will take some form of magic to make this sword blank into a usable weapon.];
+                CloseSpeaker(_Avatar);
+            }
+        }
+    }
+}

@@ -1,0 +1,79 @@
+Routine EndRatRace_i accepts a0 #locals(24) #uses(~AbsValue_i, Bark_i) {
+    if (~GetWorkType(_Smithy) = _Hound) {
+        SetWorkType(_Stand, _Smithy);
+    }
+    if not ~IsNPCNear_i(_Smithy) {
+        v0 = ~FindNearby_i(0, 50, _The_Rat_Race_Game_764, _Avatar);
+        Foreach v3 in v0 {
+            SetFrame(0, v3);
+            Kernel_resetRef(v3);
+        }
+        return;
+    }
+    v4 = ~FindNearby_i(0, 7, _Gold_Coin, item);
+    v5 = ~GetCoord(item);
+    v6 = 0;
+    v7 = ~GetAllInRegion(_The_Rat_Race_Game_763);
+    Foreach v10 in v7 {
+        if ((~GetFrame(v10) = 1) or (~GetFrame(v10) = 2)) {
+            v6 = v10;
+        }
+    }
+    v0 = ~GetAllInRegion(_The_Rat_Race_Game_763);
+    v11 = ~GetCoord(v6::1);
+    if $JoinFellow {
+        v12 = 6;
+    } else {
+        v12 = 3;
+    }
+    v13 = ~PostAction(<< _aFRAME, 1, _aSFX_i, 73, _aFRAME, 2, _aSFX_i, 74, _aFRAME, 1, _aSFX_i, 73 >>, v6);
+    if (flag(34) = false) {
+        flag(34) = true;
+        Foreach v16 in v4 {
+            v17 = ~GetCoord(v16);
+            if ((v17::1 <= v11::1) and ((v17::1 >= (v11::1 - 5)) and ((v17::2 <= (v11::2 + 8)) and (v17::2 >= (v11::2 - 8))))) {
+                if (v17::2 = v5::2) {
+                    v18 = ~GetQuantity(644, v16);
+                    v18 = (v18 * v12);
+                    While (v18 > 100) {
+                        v19 = ~Item_create(_Gold_Coin);
+                        if v19 {
+                            v13 = ~SetQuantity(100, v19);
+                            v13 = ~PopToMap(v17);
+                        }
+                        v18 = (v18 - 100);
+                    }
+                    v19 = ~Item_create(_Gold_Coin);
+                    if v19 {
+                        v13 = ~SetQuantity(v18, v19);
+                        v13 = ~PopToMap(v17);
+                    }
+                    SetItemFlag_i(_OkayToTake_i, v16);
+                    v20 = ~AbsValue_i(((v11::2 - v5::2) - 4));
+                    v21 = (("@A winnah in lane " + v20) + "!@");
+                    Bark_i(1, v21, _Smithy);
+                }
+                Item_destroy(v16);
+            }
+        }
+    } else {
+        if not flag(35) {
+            flag(35) = true;
+        } else {
+            if not flag(36) {
+                flag(36) = true;
+            } else {
+                if (not flag(37) and flag(36)) {
+                    flag(34) = false;
+                    flag(35) = false;
+                    flag(36) = false;
+                    flag(37) = false;
+                    v0 = ~GetAllInRegion(_The_Rat_Race_Game_764);
+                    Foreach v3 in v0 {
+                        SetFrame(0, v3);
+                    }
+                }
+            }
+        }
+    }
+}

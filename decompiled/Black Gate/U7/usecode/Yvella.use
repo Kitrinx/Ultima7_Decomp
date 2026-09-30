@@ -1,0 +1,147 @@
+Routine Yvella accepts a0 #locals(12) #uses(~AvatarName, ~LordOrLady, ~AskList, ~AskYesNo, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Yvella);
+        v0 = ~AvatarName();
+        v1 = ~LordOrLady();
+        v2 = false;
+        v3 = ~IsDead(~NPCToItem_i(_Cador));
+        v4 = "the Avatar";
+        TurnOn(<< "name", "job", "Fellowship", "bye" >>);
+        if (flag(638) and not flag(645)) {
+            TurnOn("Catherine at noon");
+        }
+        if $MetYvella {
+            v5 = v0;
+        }
+        if flag(647) {
+            v5 = v1;
+        }
+        if not flag(657) {
+            [The matronly woman you see has a look of concern on her face.~~"Good day, <v1>. I am Yvella." She curtseys. "Might I know thy name?"];
+            v6 = ~AskList(<< v0, v4 >>);
+            if (v6 = v0) {
+                ["Pleased to meet thee, <v0>."];
+                $MetYvella = true;
+                v5 = v0;
+            }
+            if (v6 = v4) {
+                ["Now, now, <v1>, thou shouldst not lie like that."];
+                flag(647) = true;
+                v5 = v1;
+            }
+            flag(657) = true;
+        } else {
+            ["Good day, <v5>."];
+        }
+        converse {
+            key ("name") {
+                ["I am Yvella, <v1>."];
+                TurnOff("name");
+            }
+            key ("job") {
+                ["I take care of my daughter, Catherine, while Cador is at work."];
+                if not v2 {
+                    TurnOn("Cador");
+                }
+                TurnOn("Catherine");
+            }
+            key ("Fellowship") {
+                ["Thou hast not heard of The Fellowship? It is a wonderful organization. They hold parades and festivals and have even built shelters for homeless folk throughout Britannia. Mine husband learned of them some time ago, and we have been happy members ever since."];
+                if not v2 {
+                    TurnOn("husband");
+                }
+                TurnOff("Fellowship");
+            }
+            key ("husband", "Cador") {
+                if v3 {
+                    ["Cador was mine husband. He was the overseer at the Britannian Mining Company here in Vesper. I cannot believe he is gone," she sobs.~~ "I told him again and again that tavern was a bad place to spend the evening. And now, he is dead, leaving me and Catherine without a husband and a father!"];
+                } else {
+                    ["Cador is mine husband. He is the overseer at the Britannian Mining Company here in Vesper."];
+                    v7 = ~GetTime();
+                    if ((v7 = 6) or (v7 = 7)) {
+                        ["He is often at the tavern at this time. I do wish he would not go there every night with that... that...\x09woman!"];
+                        TurnOn("woman");
+                    }
+                }
+                TurnOff(<< "Cador", "husband" >>);
+                TurnOn("Vesper");
+                v2 = true;
+            }
+            key ("woman") {
+                ["Her name is Mara. She is a fellow miner. She is very nice, but also very beautiful. I do not like mine husband spending all that time with her."];
+                TurnOff("woman");
+            }
+            key ("Vesper") {
+                ["Well, it would be a lovely town if it were not for those... those... gargoyles.  They are disgusting beings. I think Auston should have them run out of town."];
+                TurnOn(<< "Auston", "gargoyles" >>);
+                TurnOff("Vesper");
+            }
+            key ("Auston") {
+                ["He is our mayor. Eldroth recommended that we elect him, so, of course, we did. However, between the two of us, I think we ought to have someone new if Auston does not do something quickly. As a matter of fact, thou shouldst run for mayor, <v1>. What dost thou think? Wouldst thou like to run for mayor?"];
+                v8 = ~AskYesNo();
+                if v8 {
+                    ["I agree, thou ought to consider it."];
+                } else {
+                    ["That is too bad. I believe thou wouldst be perfect for the office."];
+                }
+                TurnOn("Eldroth");
+                TurnOff("Auston");
+            }
+            key ("Eldroth") {
+                ["He is our town advisor. Very wise man that Eldroth. He also sells provisions."];
+                TurnOff("Eldroth");
+            }
+            key ("gargoyles") {
+                ["Perfectly wretched beasts. Thank goodness most of them stay on their side of the oasis. I do not know how Cador stands working with them. Well, for him, that is. There is only one who still works there."];
+                v9 = ~GiveToParty_i(true, _All, 2, _Scroll, 1);
+                if v9 {
+                    ["Here," she says fumbling through her robes. Finally, she finds a piece of parchment and hands it to you.];
+                }
+                TurnOff("gargoyles");
+            }
+            key ("Catherine") {
+                ["I worry about her. Every day at noon, she seems to disappear for a few hours. She has these foolish notions that gargoyles are friendly and honorable. I am afraid she may be visiting the other side of the oasis. Oh, I do hope not."];
+                flag(638) = true;
+                TurnOff("Catherine");
+            }
+            key ("Catherine at noon") {
+                ["Thou knowest where my daughter doth go at noon?"];
+                v10 = ~AskYesNo();
+                if v10 {
+                    ["Wilt thou tell me?"];
+                    v11 = ~AskYesNo();
+                    if v11 {
+                        if flag(637) {
+                            [After you tell her, she responds, "I knew it! That girl must be taught some sense. Associating with those vile creatures. Imagine!" She shakes her head.];
+                            if v3 {
+                                ["If only her father were here today, he would show that loathsome creature his place!"];
+                            } else {
+                                ["Just wait until I tell her father about this! He and Mara will certainly take care of the situation.!"];
+                                RemoveNPC_i(_Forlem);
+                            }
+                            ["I thank thee, <v5>. I will put a stop to this right away!"*];
+                            flag(645) = true;
+                            terminate;
+                        } else {
+                            [After you tell her, she responds, "I doubt that is true, <v1>, but I will look into the matter. I thank thee for thy concern."];
+                        }
+                    } else {
+                        ["Get thee away and cease taunting me! Thou art cruel, <v5>!"*];
+                        terminate;
+                    }
+                    TurnOff("Catherine at noon");
+                } else {
+                    ["Oh, well. I thank thee for thy concern."];
+                }
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["Pleasant journey, <v1>."*];
+    }
+    if (event = _Bark) {
+        BarkAboutWork_i(_Yvella);
+    }
+}

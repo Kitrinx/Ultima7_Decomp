@@ -1,0 +1,240 @@
+Routine Sentri accepts a0 #locals(15) #uses(~AvatarName, ~AskList, ~AskYesNo, SentriTrains_i, ~IsNPCNear, ~IsInInv, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Sentri);
+        v0 = ~GetTime();
+        v1 = ~AvatarSex();
+        v2 = ~GetParty();
+        v3 = ~NPCToItem_i(_Sentri);
+        v4 = ~AvatarName();
+        v5 = ~GetWorkType(~NPCToItem_i(_Sentri));
+        TurnOn(<< "name", "job", "bye" >>);
+        if (v3 in v2) {
+            TurnOn("leave");
+        }
+        if not $MetSentri {
+            [You see a dashing, slender man, stylishly dressed, with a lot of flair.];
+            $MetSentri = true;
+        } else {
+            ["How may I help thee, <v4>?" Sentri asks.];
+        }
+        converse {
+            key ("name") {
+                ["Thou dost not remember me? I am Sentri! We have gone adventuring together in the past!"];
+                TurnOff("name");
+            }
+            key ("job") {
+                ["When I am not adventuring with old friends, I am a trainer in Britain. I specialize in combat involving swordsmanship. I am quite good at that, as thou dost remember."];
+                v2 = ~GetParty();
+                if not (v3 in v2) {
+                    ["But I would drop everything to join thy group if thou art not too encumbered."];
+                    TurnOn("join");
+                }
+                TurnOn(<< "Britain", "swordsmanship", "train", "friends" >>);
+            }
+            key ("friends") {
+                ["I do not see our old friends Iolo, Shamino, or Dupre much."];
+                TurnOff("friends");
+                TurnOn(<< "Iolo", "Shamino", "Dupre" >>);
+            }
+            key ("swordsmanship") {
+                [Sentri draws his sword so quickly it is like a flash of lightning. He does a few fancy moves, slashing the air with the blade. "No foe shall stand after I am finished with him!"];
+                TurnOff("swordsmanship");
+            }
+            key ("join") {
+                v6 = 0;
+                v2 = ~GetParty();
+                Foreach v9 in v2 {
+                    v6 = (v6 + 1);
+                }
+                if (v6 < 6) {
+                    [Sentri bows. "I am very pleased to join thy group."];
+                    flag(219) = true;
+                    JoinParty(_Sentri);
+                    TurnOn("leave");
+                } else {
+                    ["I like small crowds, Avatar. Thou art travelling with a group too large for my tastes. If thou shouldst lose someone along the way, return and I shall be happy to join thee."];
+                }
+                TurnOff("join");
+            }
+            key ("leave") {
+                ["Dost thou want me to wait here or go home?"];
+                ClearKeys();
+                v10 = ~AskList(<< "wait here", "go home" >>);
+                if (v10 = "wait here") {
+                    ["Very good. I shall wait here until thou dost return."*];
+                    flag(219) = false;
+                    LeaveParty(_Sentri);
+                    SetWorkType(_Wait, ~NPCToItem_i(_Sentri));
+                    terminate;
+                } else {
+                    ["Farewell, <v4>. If thou dost need my services again, I shall be only too happy to comply."*];
+                    flag(219) = false;
+                    LeaveParty(_Sentri);
+                    SetWorkType(_Loiter, ~NPCToItem_i(_Sentri));
+                    terminate;
+                }
+            }
+            key ("Britain") {
+                ["I am becoming weary of the place. It is having growth pains of which the bourgeoisie are unaware. All is not as serene as the noblemen present it."];
+                TurnOff("Britain");
+                TurnOn("not serene");
+            }
+            key ("not serene") {
+                ["Well, for example, try going to one of the smaller towns, say, Paws. It is a poor man's place. It reeks, too. And 'tis only just beyond the Britain town limits. More money should be put into improving the land as a whole, not just in building new buildings in the capitol city. I do not know what Lord British is thinking!"];
+                TurnOff("not serene");
+                TurnOn("Lord British");
+            }
+            key ("train") {
+                if not flag(219) {
+                    v5 = ~GetWorkType(~NPCToItem_i(_Sentri));
+                    if ((v5 = 27) or ((v5 = 11) or (v5 = 15))) {
+                        ["My fee is 30 gold for a training session. Is this all right?"];
+                        if ~AskYesNo() {
+                            SentriTrains_i(30, 1);
+                        } else {
+                            ["Then I shall rob someone else!" Sentri laughs aloud.];
+                        }
+                    } else {
+                        ["I am afraid I must adhere to my policy of training only during my business hours. This applies to -all- of my friends."];
+                        TurnOff("train");
+                    }
+                } else {
+                    ["Since I am a member of thy group, I shall train thee for free!"];
+                    SentriTrains_i(0, 1);
+                }
+            }
+            key ("Iolo") {
+                v11 = ~IsNPCNear(_Iolo);
+                if v11 {
+                    ["How art thou, friend? Thou dost look like thou couldst use a little training thyself!"*];
+                    SetSpeaker(0, _Iolo);
+                    ["What is this? Everyone doth make fun of my physique!"*];
+                    CloseSpeaker(_Iolo);
+                    SetSpeaker(0, _Sentri);
+                    ["I am not making fun, Iolo. I am serious!" Sentri laughs.];
+                } else {
+                    ["I miss that fellow!"];
+                }
+                TurnOff("Iolo");
+            }
+            key ("Shamino") {
+                v12 = ~IsNPCNear(_Shamino);
+                if v12 {
+                    ["Say, Shamino, art thou still spending thy time dressing in women's clothes?"*];
+                    SetSpeaker(0, _Shamino);
+                    ["-What-?!?!"*];
+                    SetSpeaker(0, _Sentri);
+                    ["Or art thou wasting away thy life in a healer's den, now that thou art in thy middle ages?"*];
+                    SetSpeaker(0, _Shamino);
+                    ["Careful, friend. Those are fighting words!"*];
+                    SetSpeaker(0, _Sentri);
+                    [Sentri punches Shamino good-naturedly. "And that is all they are, my dear friend. Words! 'Tis good to see thee!"];
+                    CloseSpeaker(_Shamino);
+                    SetSpeaker(0, _Sentri);
+                } else {
+                    ["'Twould be good to share a joke or two with him!"];
+                }
+                TurnOff("Shamino");
+            }
+            key ("Dupre") {
+                v13 = ~IsNPCNear(_Dupre);
+                if v13 {
+                    ["Ah, my good friend Dupre! Hast thou some good ale on thee?"*];
+                    SetSpeaker(0, _Dupre);
+                    v14 = ~IsInInv(3, 65177, _Bottle, 1, _Dupre);
+                    if v14 {
+                        ["Art thou joking? I -always- have ale!"*];
+                        SetSpeaker(0, _Sentri);
+                        ["Then we should have some before someone else does!"];
+                        SetSpeaker(0, _Dupre);
+                        ["'Twould be a pleasure. However, I must be prudent and save the ale for when we need it."*];
+                        SetSpeaker(0, _Sentri);
+                        [Sentri feels of Dupre's head. "Art thou feeling all right, Dupre? Or has knighthood done something to thy brain?"];
+                        CloseSpeaker(_Dupre);
+                        SetSpeaker(0, _Sentri);
+                    } else {
+                        ["No, but I would be glad to stop in a pub and share a few pints with thee!"*];
+                        SetSpeaker(0, _Sentri);
+                        ["Mmmm! Sounds good to me! Next time we pass a place, let us stop!"];
+                        CloseSpeaker(_Dupre);
+                        SetSpeaker(0, _Sentri);
+                    }
+                } else {
+                    ["I want to see that no-good trouble-maker! He is a knight now, I hear! Sir Dupre indeed!"];
+                }
+                TurnOff("Dupre");
+            }
+            key ("Lord British") {
+                ["I never see him much. He stays in that castle of his all the time. He never gets out. No wonder he hasn't a clue what is going on in this country."];
+                TurnOff("Lord British");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["Until later."*];
+    }
+    if (event = _Bark) {
+        BarkAboutWork_i(_Sentri);
+    }
+}
+
+Routine SentriTrains_i accepts a0, a1 #locals(13) #uses(~GetStudentExcept_i, ~CanTrain, ~GetStat, DexTrain) {
+    v2 = ~GetStudentExcept_i(~NPCToItem_i(_Sentri));
+    if ((v2 = 65528) or ((v2 = 65531) or (v2 = 65527))) {
+        v3 = true;
+    } else {
+        v3 = false;
+    }
+    if (v2 = 0) {
+    } else {
+        v4 = 1;
+        v5 = ~CanTrain(v4, v2, v0, v1);
+        if (v5 = 0) {
+            ["I am sorry, but thou dost not have enough practical experience to train at this time. Return another day after thou hast slain a few more creatures."];
+        } else {
+            if (v5 = 1) {
+                v6 = ~CountItem(_All, _All, _Gold_Coin, _Party);
+                if (v6 < v0) {
+                    ["I regret that thou dost not seem to have enough gold to train here. Mayhaps at another time, when thy fortunes are more prosperous."];
+                    goto label_20;
+                }
+            }
+            if (v5 = 2) {
+                ["Thou art already as proficient as I! I am afraid that thou cannot be trained further by me!"];
+            } else {
+                v7 = ~TakeFromParty_i(true, _All, _All, _Gold_Coin, v0);
+                v8 = ~GetNPCName_i(v2);
+                if (v2 = 65180) {
+                    v8 = "you";
+                    v9 = "are";
+                    v10 = "have";
+                    v11 = "you";
+                    v12 = "your";
+                    v13 = "manage";
+                } else {
+                    if v3 {
+                        v8 = "she";
+                        v11 = "her";
+                        v12 = "her";
+                    } else {
+                        v8 = "he";
+                        v11 = "him";
+                        v12 = "his";
+                    }
+                    v9 = "is";
+                    v10 = "has";
+                    v13 = "manages";
+                }
+                ["On guard!" Sentri cries as he draws his sword. ^<v8> <v9> forced to respond with the most easily readied weapon <v8> <v10>. Without a word, Sentri advances upon <v11>, swinging his blade in a seemingly wild, yet entirely controlled manner. ^<v8> <v9> forced to block his blows to the best of <v12> ability. Luckily, Sentri stops just short of striking <v11>, which he is often able to do. Slowly but surely, over the course of the training session, <v12> blocking improves and <v8> <v13> to get in a few thrusts of <v12> own. ^<v12> agility improves, and the improvement is tangibly perceptible.];
+                ["I enjoyed that!" Sentri exclaims after it is all over.*];
+                v14 = ~GetStat(_Dex, v2);
+                if (v14 < 30) {
+                    DexTrain(1, v2);
+                }
+            }
+        }
+    }
+    label_20:
+}

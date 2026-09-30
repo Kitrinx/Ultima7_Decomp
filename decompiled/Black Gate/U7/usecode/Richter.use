@@ -1,0 +1,254 @@
+Routine Richter accepts a0 #locals(10) #uses(~LordOrLady, ~AvatarName, ~AskList, RichterSellsArmour_i, DescribeFellowship_i, ExplainPhilosophy_i, RichterSellsWeapons_i, ~AskYesNo, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Richter);
+        v0 = ~LordOrLady();
+        v1 = ~AvatarName();
+        v2 = "the Avatar";
+        v3 = ~GetWorkType(~NPCToItem_i(_Richter));
+        TurnOn(<< "name", "job", "Fellowship", "bye" >>);
+        if $MET_SIR_RICHTER {
+            v4 = v1;
+        }
+        if flag(615) {
+            v4 = v0;
+        }
+        if not flag(621) {
+            [You see a dashing young man, who turns to greet you.~~"I am Richter, a knight of the Hold. Who wouldst thou be?"];
+            v5 = ~AskList(<< v1, v2 >>);
+            if (v5 = v1) {
+                ["I am happy to meet thee, <v1>."];
+                v4 = v1;
+                $MET_SIR_RICHTER = true;
+            } else {
+                ["I see," he eyes you suspiciously. "Thou art back for more, then? Thou'lt not trick me again, I warn thee."];
+                v4 = v0;
+                flag(615) = true;
+                TurnOn("more");
+            }
+            flag(621) = true;
+        } else {
+            ["Hello, <v4>," says Richter.];
+        }
+        if ($STARTED_HOLD_INVESTIGATION and not $FINISHED_HOLD_INVESTIGATION) {
+            TurnOn("statue");
+        }
+        if (flag(607) and not flag(613)) && flag(635) && not flag(633) {
+            TurnOn("gargoyle blood");
+        }
+        converse {
+            key ("name") {
+                ["As I have told thee, I am called Richter."];
+                flag(635) = true;
+                TurnOff("name");
+                if (flag(607) and not flag(613)) && not flag(633) {
+                    TurnOn("gargoyle blood");
+                }
+            }
+            key ("more") {
+                [He clears his throat and examines you more closely.~~"Ah, thou shouldst not mind my mumblings, <v4>."];
+                TurnOn("I mind");
+                TurnOff("more");
+            }
+            key ("job") {
+                ["I am the armourer of the Hold."];
+                TurnOn(<< "armour", "weapons", "Hold" >>);
+            }
+            key ("Hold") {
+                ["Yes, thou art in Serpent's Hold, home to many noble and valiant knights."];
+                TurnOff("Hold");
+                TurnOn("knights");
+            }
+            key ("knights") {
+                ["Lord John-Paul is charged with overseeing the Hold, though Sir Horffe is actually the captain of the guard. The rest of us, of course, are here to serve Lord British and the needs of Britannia."];
+                TurnOff("knights");
+                TurnOn(<< "John-Paul", "Horffe", "needs" >>);
+            }
+            key ("gargoyle blood") {
+                ["I should have known 'twould be Horffe." His eyes narrow. "He has continually demonstrated an overall lack of morals and sense of unity. I will speak with John-Paul about this."];
+                v6 = true;
+                TurnOff("gargoyle blood");
+            }
+            key ("John-Paul") {
+                ["I trust his ability as I trust no other. I cannot tell thee how proud I was when he chose me to be his second in command!"];
+                TurnOff("John-Paul");
+            }
+            key ("Horffe") {
+                [He appears thoughtful. "I know the others trust him, and I, myself, do not doubt his fighting skills. But I cannot escape this feeling that he needs more moral discipline. I feel obligated to watch him at times."];
+                TurnOff("Horffe");
+                TurnOn(<< "others", "watch" >>);
+            }
+            key ("watch") {
+                ["I am not certain what it is that I am watching for. However, I expect him to fall into ways either aggressive or thieving. He simply does not seem to truly believe in the unity of the Hold."];
+                TurnOff("watch");
+            }
+            key ("others") {
+                ["Well, it is obvious that John-Paul respects his abilities. Lady Tory has told me that she can sense his honesty, but I am not without skepticism."];
+                TurnOff("others");
+                TurnOn(<< "Tory", "sense" >>);
+            }
+            key ("sense") {
+                ["Lady Tory has the uncanny ability to empathize with others. She can determine another's intentions and emotions by doing nothing more than passing a simple greeting."];
+                TurnOff("sense");
+            }
+            key ("Tory") {
+                ["She is the Hold advisor, often giving guidance to the knights." His expression becomes wistful. "She is also quite, quite beautiful."];
+                TurnOff("Tory");
+            }
+            key ("needs") {
+                ["Well, obviously there is many a vile beast looking to terrorize the countryside on the mainland. 'Tis our duty to protect the common man. In addition, we are here to provide examples of proper behavior to the general populace."];
+                TurnOff("needs");
+            }
+            key ("I mind") {
+                [Looking down, he shifts his weight from foot to foot for a moment. Glancing back up, eyes narrowed, he says, ~~"Not long ago a man entered mine armoury who claimed to be the Avatar, just as thou dost claim. When I turned to reach for a weapon he had requested, he purloined several items and ran away.~~"I assume," he says carefully, "thou art not that rogue."];
+                TurnOff("I mind");
+            }
+            key ("armour") {
+                if ((v3 = 7) or (v3 = 13)) {
+                    RichterSellsArmour_i();
+                } else {
+                    ["I am sorry. A better time to discuss this would be when my shop is open."];
+                }
+                TurnOff("armour");
+            }
+            key ("Fellowship") {
+                v7 = ~IsMedallionOn_i();
+                if v7 {
+                    ["Why, yes, I see thou art a member too."];
+                } else {
+                    DescribeFellowship_i();
+                }
+                TurnOff("Fellowship");
+                TurnOn("philosophy");
+            }
+            key ("philosophy") {
+                ExplainPhilosophy_i();
+                TurnOff("philosophy");
+            }
+            key ("weapons") {
+                if ((v3 = 7) or (v3 = 13)) {
+                    RichterSellsWeapons_i();
+                } else {
+                    ["I am sorry. A better time to discuss this would be when my shop is open."];
+                }
+                TurnOff("weapons");
+            }
+            key ("statue") {
+                [A look of disgust appears on his face.~~"Obviously, someone who doth not seek unity did this! He is not worthy of reward!"~~After a moment, he calms down.];
+                if not flag(601) {
+                    ["Art thou investigating this crime against mankind?"];
+                    v8 = ~AskYesNo();
+                    if v8 {
+                        ["Then let me give thee these." He holds up some stone chips. "They were found at the base of the statue. Thou wilt notice that they are stained red in some places. I believe it to be blood."];
+                        v9 = ~GiveToParty_i(false, 4, _All, _Stone_Chips, 1);
+                        if v9 {
+                            flag(601) = true;
+                        } else {
+                            ["Mayhap when thou hast more room I can give them to thee."];
+                        }
+                    } else {
+                        ["I see."];
+                    }
+                }
+                TurnOff("statue");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["Pleasant journeys. Remember, trust thy brother."*];
+    }
+    if (event = _Bark) {
+        BarkAboutWork_i(_Richter);
+    }
+}
+
+Usable RichterSellsWeapons_i #locals(14) #uses(~LordOrLady, ~AskOrdList, ~PriceString_i, ~AskYesNo, ~SellItem_i) {
+    v0 = ~LordOrLady();
+    PushKeys();
+    v1 = true;
+    v2 = << "nothing", "dagger", "spear", "morning star", "mace", "sword", "two-handed sword", "halberd" >>;
+    v3 = << 0, 594, 592, 596, 659, 599, 602, 603 >>;
+    v4 = << 0, 12, 25, 25, 20, 65, 175, 200 >>;
+    v5 = "a ";
+    v6 = 0;
+    v7 = "";
+    v8 = 1;
+    v9 = 65177;
+    ["What weapon wouldst thou like to buy?"];
+    While v1 {
+        v10 = ~AskOrdList(v2);
+        if (v10 = 1) {
+            ["I completely understand, <v0>. Ever since the Britannian Tax Council set such outrageous taxes, prices have risen throughout the land."];
+            v1 = false;
+        } else {
+            v11 = ~PriceString_i(v7, v4::v10, v6, v2::v10, v5);
+            v12 = 0;
+            ["^<v11>." Is this price acceptable to thee?];
+            v13 = ~AskYesNo();
+            if v13 {
+                v12 = ~SellItem_i(true, 1, 0, v4::v10, v8, v9, v3::v10);
+            }
+            if (v12 = 1) {
+                ["Done!"];
+            } else {
+                if (v12 = 2) {
+                    ["I am sorry, <v0>, but not even I could carry that much!"];
+                } else {
+                    if (v12 = 3) {
+                        ["Thou hast not enough gold for that!"];
+                    } else {
+                    }
+                }
+            }
+            ["Dost thou want for anything else?"];
+            v1 = ~AskYesNo();
+        }
+    }
+    PopKeys();
+}
+
+Usable RichterSellsArmour_i #locals(14) #uses(~LordOrLady, ~AskOrdList, ~PriceString_i, ~AskYesNo, ~SellItem_i) {
+    v0 = ~LordOrLady();
+    PushKeys();
+    v1 = true;
+    v2 = << "nothing", "greaves", "gauntlets", "buckler", "curved heater", "spiked shield", "great helm", "plate leggings", "gorget" >>;
+    v3 = << 0, 353, 580, 543, 545, 578, 541, 576, 586 >>;
+    v4 = << 0, 40, 18, 18, 35, 22, 150, 160, 175, 30 >>;
+    v5 = << "", "", "", "a ", "a ", "a ", "a ", "", "a " >>;
+    v6 = << 0, 1, 1, 0, 0, 0, 0, 1, 0 >>;
+    v7 = << "", " per pair", " per pair", "", "", "", "", " per pair", "" >>;
+    v8 = 65177;
+    v9 = 1;
+    ["What form of protection wouldst thou like to buy?"];
+    While v1 {
+        v10 = ~AskOrdList(v2);
+        if (v10 = 1) {
+            ["Very well."];
+            v1 = false;
+        } else {
+            v11 = ~PriceString_i(v7::v10, v4::v10, v6::v10, v2::v10, v5::v10);
+            v12 = 0;
+            ["^<v11> Art thou still interested?"];
+            v13 = ~AskYesNo();
+            if v13 {
+                v12 = ~SellItem_i(true, 1, 0, v4::v10, v9, v8, v3::v10);
+            }
+            if (v12 = 1) {
+                ["Deal!"];
+            } else {
+                if (v12 = 2) {
+                    ["I am sorry, <v0>, not even I could carry that much!"];
+                } else {
+                    if (v12 = 3) {
+                        ["Thou hast not enough gold for that!"];
+                    } else {
+                    }
+                }
+            }
+            ["Dost thou want for anything else?"];
+            v1 = ~AskYesNo();
+        }
+    }
+    PopKeys();
+}

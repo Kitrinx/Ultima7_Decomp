@@ -1,0 +1,171 @@
+Routine Gaye accepts a0 #locals(12) #uses(~LordOrLady, ~IsNearEachOther_i, ~AskYesNo, GayeSellsClothes_i, DescribeFellowship_i, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Gaye);
+        v0 = ~LordOrLady();
+        v1 = ~IsMedallionOn_i();
+        v2 = ~GetTime();
+        v3 = ~GetWorkType(~NPCToItem_i(_Gaye));
+        if (v2 = 7) {
+            v4 = ~IsNearEachOther_i(_Batlin, _Gaye);
+            if v4 {
+                [Gaye is watching the Fellowship meeting. She turns to you brusquely and puts a finger to her lips, gesturing for you to be silent.*];
+                terminate;
+            } else {
+                if $BATLIN_MISSING {
+                    ["I cannot imagine where Batlin is. I am worried about him..."];
+                    goto label_9;
+                } else {
+                    ["I cannot speak now! I am on my way to the Fellowship meeting at the Hall!"*];
+                    terminate;
+                }
+            }
+        }
+        label_9:
+        TurnOn(<< "name", "job", "bye" >>);
+        if $MetWilly {
+            TurnOn("Willy");
+        }
+        if not $MetGaye {
+            [You see a woman who oozes partially sincere friendliness.];
+            $MetGaye = true;
+        } else {
+            ["Hello again, and what may I do for thee today?" asks Gaye.];
+        }
+        converse {
+            key ("name") {
+                ["My name is Gaye."];
+                TurnOff("name");
+            }
+            key ("job") {
+                ["I oversee the clothier's here in Britain when I am not pursuing the teachings of The Fellowship."];
+                TurnOn(<< "clothiers", "buy", "Fellowship" >>);
+            }
+            key ("clothiers") {
+                ["At our clothier's shop we have the finest silks and garments to buy that thou hast ever seen, imported from every corner of Britannia to cater to all tastes."];
+                TurnOff("clothiers");
+            }
+            key ("buy") {
+                if not (v3 = 19) {
+                    ["I am so sorry, the clothier's shop is closed. Please return during our regular business hours. We are open from nine until six every day."];
+                } else {
+                    if flag(103) {
+                        ["Do not tell me! Raymundo sent thee to get an Avatar costume! They cost thirty gold coins. Dost thou want one?"];
+                        v5 = ~AskYesNo();
+                        if v5 {
+                            [She looks you up and down. "Yes, I think we might be able to find something for thee."~~After several minutes of rummaging through the store, Gaye returns. "Here it is! Not many left-- we have had a run on them recently!"];
+                            v6 = ~CountItem(_All, _All, _Gold_Coin, _Party);
+                            if (v6 < 30) {
+                                ["Um. Perhaps thou couldst return when thou dost have enough gold." She lays the costume down and smiles.];
+                            } else {
+                                v7 = ~GiveToParty_i(false, _All, _All, _Avatar_Costume, 1);
+                                if not v7 {
+                                    ["Oh. Thou canst not carry this with what thou art already carrying. Mayhaps thou couldst dispose of something and return for the costume."];
+                                } else {
+                                    ["It is, indeed, a pleasure to do business with thee, O great Avatar!" She grins and hands you the costume.];
+                                    v8 = ~TakeFromParty_i(true, _All, _All, _Gold_Coin, 30);
+                                    flag(104) = true;
+                                }
+                            }
+                        } else {
+                            ["'Tis strange! I thought for certain that thou wert the theatrical type!"];
+                            GayeSellsClothes_i();
+                        }
+                    } else {
+                        ["Wouldst thou like to buy some clothing today?"];
+                        v9 = ~AskYesNo();
+                        if v9 {
+                            ["We have many nice clothes to choose from."];
+                            GayeSellsClothes_i();
+                        } else {
+                            ["Thou mayest look around for thyself. If thou dost change thy mind be sure to let me know."];
+                        }
+                    }
+                }
+                TurnOff("buy");
+            }
+            key ("Fellowship") {
+                if not v1 {
+                    DescribeFellowship_i();
+                }
+                ["Thou wouldst want to attend the Fellowship meeting tonight at nine o'clock. It is always a moving experience to hear the words of Batlin, our founder."];
+                TurnOff("Fellowship");
+                TurnOff("philosophy");
+            }
+            key ("Willy") {
+                ["Yes, he is a very amusing fellow. I am quite taken with him and I do see him against my better judgment. He does not seem like the type to join The Fellowship, though. Since The Fellowship is my whole life, I do not know if there is a place in it for him. I have not made up my mind about that yet."];
+                TurnOff("Willy");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["Good day, <v0>."*];
+    }
+    if (event = _Bark) {
+        v2 = ~GetTime();
+        v3 = ~GetWorkType(~NPCToItem_i(_Gaye));
+        v10 = ~rndRange(4, 1);
+        if (v3 = 19) {
+            if (v10 = 1) {
+                v11 = "@Clothing? Boots?@";
+            }
+            if (v10 = 2) {
+                v11 = "@Swamp boots?@";
+            }
+            if (v10 = 3) {
+                v11 = "@Tunic? Dress?@";
+            }
+            if (v10 = 4) {
+                v11 = "@Fine clothes here!@";
+            }
+            Item_bark(v11, _Gaye);
+        } else {
+            BarkAboutWork_i(_Gaye);
+        }
+    }
+}
+
+Usable GayeSellsClothes_i #locals(13) #uses(~AskOrdList, ~PriceString_i, ~AskYesNo, ~SellItem_i) {
+    PushKeys();
+    v0 = true;
+    v1 = << "nothing", "shoes", "kidney belt", "leather boots", "tunic", "dress", "pants", "swamp boots" >>;
+    v2 = << 0, 585, 584, 587, 249, 249, 738, 588 >>;
+    v3 = << 65177, 65177, 65177, 65177, 0, 1, 0, 65177 >>;
+    v4 = << 0, 20, 20, 40, 30, 30, 30, 50 >>;
+    v5 = << "", "", "a ", "", "a ", "a ", "", "" >>;
+    v6 = << 0, 1, 0, 1, 0, 0, 1, 1 >>;
+    v7 = << "", " for one pair", "", " for one pair", "", "", " for one pair", " for one pair" >>;
+    v8 = 1;
+    ["What wouldst thou like to buy?"];
+    While v0 {
+        v9 = ~AskOrdList(v1);
+        if (v9 = 1) {
+            ["Fine."];
+            v0 = false;
+        } else {
+            v10 = ~PriceString_i(v7::v9, v4::v9, v6::v9, v1::v9, v5::v9);
+            ["^<v10> Is that acceptable?"];
+            v11 = 0;
+            v12 = ~AskYesNo();
+            if v12 {
+                v11 = ~SellItem_i(true, 1, 0, v4::v9, v8, v3::v9, v2::v9);
+            }
+            if (v11 = 1) {
+                ["Done!"];
+            } else {
+                if (v11 = 2) {
+                    ["Thou cannot possibly carry that much!"];
+                } else {
+                    if (v11 = 3) {
+                        ["Thou dost not have enough gold for that!"];
+                    } else {
+                    }
+                }
+            }
+            ["Wouldst thou like something else?"];
+            v0 = ~AskYesNo();
+        }
+    }
+    PopKeys();
+}

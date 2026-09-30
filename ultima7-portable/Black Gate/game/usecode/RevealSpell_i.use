@@ -1,0 +1,41 @@
+Routine RevealSpell_i accepts a0 #locals(16) #uses(~IsMagicOK_i) {
+    if (event = _Action) {
+        Kernel_resetRef(item);
+        v0 = ~GetCoord(_Avatar);
+        v1 = << >>;
+        Item_bark("@Wis Quas@", item);
+        if ~IsMagicOK_i() {
+            v2 = ~PostAction(<< _aSFX_i, 67, _aRAISE1_FRAME_i, _aEXTEND1_FRAME_i, _aTHRUST1_FRAME_i >>, item);
+            v3 = ~GetCoord(item);
+            v4 = << 65521, 65521, 65521, 65531, 65531, 65531, 5, 5, 5, 15, 15, 15 >>;
+            v5 = << 65529, 2, 11, 65529, 2, 11, 65529, 2, 11, 65529, 2, 11 >>;
+            v6 = 7;
+            v7 = 0;
+            While (v7 <> 12) {
+                v7 = (v7 + 1);
+                v8 = (v0::1 + v4::v7);
+                v9 = (v0::2 + v5::v7);
+                v3 = << v8, v9, 0 >>;
+                v10 = ~FindNearby_i(32, v6, _All, v3);
+                Foreach v13 in v10 {
+                    if (~GetItemFlag_i(_Invisible, v13) and not (v13 in v1)) {
+                        v1 = (v1 & v13);
+                    }
+                }
+            }
+            if v1 {
+                Foreach v13 in v1 {
+                    v2 = ~PostInFuture(5, << _aNO_HALT_i, _aUSABLE_i, #RevealSpell_i >>, v13);
+                    CreateSpriteOn_i(65535, 0, 0, 0, 65535, 65535, 13, v13);
+                }
+            } else {
+                CreateSpriteOn_i(65535, 0, 0, 0, 65535, 65535, 13, item);
+            }
+        } else {
+            v2 = ~PostAction(<< _aRAISE1_FRAME_i, _aEXTEND1_FRAME_i, _aTHRUST1_FRAME_i, _aUSABLE_i, #FizzleSpell_i >>, item);
+        }
+    }
+    if (event = _Posted_i) {
+        ClearItemFlag_i(_Invisible, item);
+    }
+}

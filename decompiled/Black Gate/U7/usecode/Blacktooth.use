@@ -1,0 +1,143 @@
+Routine Blacktooth accepts a0 #locals(12) #uses(~AvatarName, ~AskList, ~IsNPCNear, GivePartyExp_i, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Blacktooth);
+        v0 = ~AvatarName();
+        v1 = ~IsMedallionOn_i();
+        v2 = "Avatar";
+        v3 = ~NPCToItem_i(_Blacktooth);
+        if $MetBlacktooth {
+            v4 = v0;
+        }
+        if flag(676) {
+            v4 = v2;
+        }
+        TurnOn(<< "name", "job", "bye" >>);
+        if flag(677) && flag(679) {
+            TurnOn("Mole says...");
+        }
+        if not flag(687) {
+            [This tall, middle-aged pirate looks at you with suspicion.~~"Before I will look twice at thee, I must know who thou art." His voice is menacing.];
+            v5 = ~AskList(<< v0, v2 >>);
+            if (v5 = v0) {
+                [The pirate chews on something in his mouth before replying. "Hi," he finally says.];
+                $MetBlacktooth = true;
+                v4 = v0;
+            }
+            if (v5 = v2) {
+                [The pirate looks as if you have just insulted his mother.~~"I... do... not... like... Avatars!!"~~The pirate spits on the ground. "But thou dost not look as much like fishbait as the last Avatar I spoke with. All right. I will speak with thee."];
+                flag(676) = true;
+                v4 = v2;
+            }
+            flag(687) = true;
+        } else {
+            if (flag(678) or not flag(677)) {
+                ["What dost thou want?" Blacktooth asks in a threatening voice. "Oh, 'tis thee, <v4>."];
+            } else {
+                ["I thought thou didst not want to be my friend!" Blacktooth grumbles.];
+            }
+        }
+        converse {
+            key ("name") {
+                ["I am Blacktooth. See?" The pirate smiles, revealing his teeth.];
+                TurnOff("name");
+            }
+            key ("job") {
+                ["Making fishbait out of Avatars!" He laughs aloud. "I have had all I can stand of puny weaklings running around claiming they are an Avatar! I am seeking a particular Avatar that was here last week. A particular Avatar that is a Fellowship member!"];
+                TurnOn(<< "Avatar", "Fellowship" >>);
+            }
+            key ("Avatar") {
+                ["He was through here a week ago. Tried to filch some gold off of me! Imagine! The nerve of that bastard! He was gone before I had realized what he had done."];
+                TurnOff("Avatar");
+                TurnOn("filch");
+            }
+            key ("filch") {
+                ["We were playing cards in the pub. Damn me if he did not deal from the bottom. I can usually spot tricks like that, but he was good!"];
+                if v1 {
+                    [The pirate notices your Fellowship medallion. "I see that thou art one of them, too!"];
+                }
+                TurnOff("filch");
+            }
+            key ("Fellowship") {
+                if v1 {
+                    v6 = "@No offense to thee, but ";
+                } else {
+                    v6 = "@Between thou and me, ";
+                }
+                [<v6>I do not trust 'em. I think they are all hiding something. I think they are all tricksters. Take mine old friend Mole, for example. Well, mine old ex-friend Mole. He has changed a great deal since joining them."];
+                TurnOff("Fellowship");
+                TurnOn(<< "Mole", "changed" >>);
+            }
+            key ("Mole") {
+                ["He is another aging pirate that has retired and lives on the island. We were mates for years, but then he joined that damned Fellowship. Now he thinks his droppings do not smell foul, if thou knowest what I mean."];
+                TurnOff("Mole");
+            }
+            key ("changed") {
+                ["He has abandoned all of his pirate ways! He is a bloody saint now, and whenever he sees me he tries to convince me to join The Fellowship. I avoid him at all costs now. I cannot stand to see him this way. It burns my blood!"~~Then, in a moment of weakness, the tough pirate says in a small voice, "I miss him, too. We were best mates." You could swear there are tears in his eyes.*];
+                v7 = ~IsNPCNear(_Spark);
+                if v7 {
+                    SetSpeaker(0, _Spark);
+                    [Spark whispers, "Oh, come on, be a man!"*];
+                    CloseSpeaker(_Spark);
+                    v8 = ~IsNPCNear(_Dupre);
+                    if v8 {
+                        SetSpeaker(0, _Dupre);
+                        [Dupre turns away to suppress a smirk.*];
+                        CloseSpeaker(_Dupre);
+                    }
+                    SetSpeaker(0, _Blacktooth);
+                }
+                [You can see that the pirate is upset, so you decide to leave him alone.~~"Yeah, go away. That's right! I never can keep any friends!];
+                if flag(676) {
+                    ["That would be just like an Avatar to leave me like this!];
+                }
+                if v1 {
+                    ["Typical Fellowship member! That's right! Leave me alone! Go away!];
+                }
+                ["I shall just remain here alone and destitute! Where is my dagger? I shall slit my throat!!"];
+                TurnOff("changed");
+                flag(677) = true;
+                if flag(679) {
+                    TurnOn("Mole says...");
+                }
+            }
+            key ("Mole says...") {
+                ["He said that? Really?" Blacktooth looks as if he may cry again.~~"I must go take a look for him. I thank thee, <v4>, for considering my feelings in this matter." Blacktooth gives you a big hug, then turns away to look for Mole.*];
+                TurnOff("Mole says...");
+                flag(678) = true;
+                GivePartyExp_i(20);
+                SetWorkType(_Wander, v3);
+                terminate;
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        if (flag(678) or not flag(677)) {
+            ["Another time, then."*];
+        } else {
+            ["Yeah, goodbye! Leave! They all leave me alone eventually!"*];
+        }
+    }
+    if (event = _Bark) {
+        v9 = ~GetWorkType(~NPCToItem_i(_Blacktooth));
+        if (v9 = 11) {
+            v10 = ~rndRange(4, 1);
+            if (v10 = 1) {
+                v11 = "@Har!@";
+            }
+            if (v10 = 2) {
+                v11 = "@Avast!@";
+            }
+            if (v10 = 3) {
+                v11 = "@Blast!@";
+            }
+            if (v10 = 4) {
+                v11 = "@Damn parrot droppings...@";
+            }
+            Item_bark(v11, _Blacktooth);
+        } else {
+            BarkAboutWork_i(_Blacktooth);
+        }
+    }
+}

@@ -1,0 +1,11 @@
+Routine LitSconce accepts a0 #locals(2) #uses(~DirFrom_i) {
+    if ((event = _Action) or (event = _Posted_i)) {
+        Item_setType(_Sconce, item);
+        Kernel_resetRef(item);
+    }
+    if (event = 7) {
+        Item_setType(_Sconce, item);
+        v0 = ~DirFrom_i(item, _Avatar);
+        v1 = ~PostAction(<< _aFACE_i, v0, _aCONTINUE_i, _aTHRUST2_FRAME_i, _aSTAND_FRAME_i >>, _Avatar);
+    }
+}

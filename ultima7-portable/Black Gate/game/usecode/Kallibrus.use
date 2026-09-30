@@ -1,0 +1,111 @@
+Routine Kallibrus accepts a0 #locals(5) #uses(~IsNPCNear, ~LordOrLady, ~AskYesNo, KallibrusBarks_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Kallibrus);
+        v0 = ~IsNPCNear(_Cosmo);
+        v1 = ~IsNPCNear(_Cairbre);
+        v2 = false;
+        v3 = ~LordOrLady();
+        TurnOn(<< "name", "job", "bye" >>);
+        if not $MET_KALLIBRUS {
+            [You see a rather reserved-looking gargoyle.];
+            $MET_KALLIBRUS = true;
+        } else {
+            [Kallibrus smiles and greets you with a nod.];
+        }
+        converse {
+            key ("name") {
+                ["To be known as Kallibrus."];
+                TurnOff("name");
+                TurnOn("Kallibrus");
+            }
+            key ("Kallibrus") {
+                ["To be not my true name. To have been given this name by Cairbre, who could not pronounce my Gargish name."];
+                TurnOff("Kallibrus");
+                if not v2 {
+                    TurnOn("Cairbre");
+                }
+            }
+            key ("job") {
+                ["To work as a warrior for hire most of the time. To be between jobs now. To help friend Cosmo find unicorn."];
+                flag(736) = true;
+                TurnOff("job");
+                TurnOn(<< "Cosmo", "unicorn" >>);
+            }
+            key ("Cairbre") {
+                ["To have been partners for many, many years. To have been bonded for even longer!"];
+                if v1 {
+                    [*];
+                    SetSpeaker(0, _Cairbre);
+                    ["He, uh, means by bonded, that we are very good friends." He turns to the gargoyle.~~"I told thee to be careful how thou dost phrase things. Thou couldst start many false rumors if thou wert not more specific."~~The gargoyle nods sheepishly.*];
+                    CloseSpeaker(_Cairbre);
+                    SetSpeaker(0, _Kallibrus);
+                }
+                v2 = true;
+                TurnOff("Cairbre");
+            }
+            key ("Cosmo") {
+                ["To have known him for many years, but not as long as Cairbre. To be good friend."];
+                TurnOff("Cosmo");
+                if not v2 {
+                    TurnOn("Cairbre");
+                }
+            }
+            key ("unicorn") {
+                ["To be unsure but to think it has something to do with a woman and, to say how... sex?"];
+                TurnOff("unicorn");
+                TurnOn(<< "woman", "sex" >>);
+            }
+            key ("sex") {
+                ["To know nothing about this word. To mean something similar to reproduce?"];
+                v4 = ~AskYesNo();
+                if v4 {
+                    ["To tell you gargoyles reproduce differently than humans seem to, but to explain too poorly to be useful."];
+                } else {
+                    ["To be quite confused." He shrugs.];
+                }
+                TurnOff("sex");
+            }
+            key ("woman") {
+                ["To be related to difference in genders, I know, but to see no such thing in gargoyles. To believe there is a certain human... woman... who sent him here.~~"To have heard Cosmo say, `love,' but Cairbre claims there is no such thing. To comprehend not, but to help friends anyway."];
+                if v1 {
+                    [*];
+                    SetSpeaker(0, _Cairbre);
+                    ["That is what I like about him, <v3>, loyal to the end!" he says, patting the gargoyle on the shoulder.*];
+                    CloseSpeaker(_Cairbre);
+                    SetSpeaker(0, _Kallibrus);
+                }
+                TurnOff("woman");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["To say `til next time, <v3>," he says.*];
+    }
+    if (event = _Bark) {
+        KallibrusBarks_i();
+    }
+}
+
+Usable KallibrusBarks_i #locals(4) {
+    v0 = ~NPCToItem_i(_Kallibrus);
+    v1 = ~GetWorkType(v0);
+    v2 = "";
+    v3 = ~rndRange(4, 1);
+    if (v1 = 11) {
+        if (v3 = 1) {
+            v2 = "@To wonder about love.@";
+        }
+        if (v3 = 2) {
+            v2 = "@To have found it yet?@";
+        }
+        if (v3 = 3) {
+            v2 = "@To have no torch.@";
+        }
+        if (v3 = 4) {
+            v2 = "@To be glad to help.@";
+        }
+    }
+    Item_bark(v2, v0);
+}

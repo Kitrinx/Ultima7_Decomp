@@ -1,0 +1,142 @@
+Routine Margareta accepts a0 #locals(2) #uses(~AskYesNo, MargaretaTellsFortune_i) {
+    if (event = _Bark) {
+        terminate;
+    }
+    SetSpeaker(0, _Margareta);
+    v0 = ~IsMedallionOn_i();
+    TurnOn(<< "name", "job", "bye" >>);
+    if flag(254) {
+        TurnOn(<< "murders", "Frederico", "Tania" >>);
+    }
+    if flag(255) {
+        TurnOn("Sasha");
+    }
+    if not $MetMargareta {
+        [You see a young, bewitching gypsy woman with wise, soul-peering eyes.];
+        $MetMargareta = true;
+    } else {
+        ["Thou vishest to speak vith me again?" Margareta asks.];
+        v1 = ~AskYesNo();
+        if v1 {
+            ["Very vell."];
+        } else {
+            ["Very vell."*];
+            terminate;
+        }
+    }
+    converse {
+        key ("name") {
+            ["Margareta at thy service," she speaks slowly.];
+            TurnOff("name");
+        }
+        key ("job") {
+            [The gypsy woman smiles slightly. "To tell thy destiny."];
+            TurnOn("destiny");
+        }
+        key ("murders") {
+            ["I knew it vould happen. I varned Frederico. He vouldn't listen."];
+            TurnOff("murders");
+        }
+        key ("Frederico") {
+            ["He vas my brother-in-law. His death makes me very sad."];
+            TurnOff("Frederico");
+            TurnOn("husband");
+        }
+        key ("Tania") {
+            ["She vas Frederico's vife, but thou dost know that already, no? She vas a good voman."];
+            TurnOff("Tania");
+        }
+        key ("Sasha") {
+            [Margareta is silent a moment.~~"He has been led astray. It is unfortunate that he vill realize his mistake only as a result ov the death ov his parents."];
+            TurnOn(<< "astray", "mistake" >>);
+            TurnOff("Sasha");
+        }
+        key ("astray") {
+            ["There are many, many others like Sasha who have been led astray. For them, I see no future."];
+            TurnOff("astray");
+        }
+        key ("mistake") {
+            ["Thou dost know vhat I mean.];
+            if $JoinFellow {
+                ["Thou art a member thyself."];
+            } else {
+                ["The Fellowship."];
+            }
+            TurnOn("Fellowship");
+            TurnOff("mistake");
+        }
+        key ("Fellowship") {
+            if (v0 and not $JoinFellow) {
+                [Margareta sees your medallion and raises her eyes.];
+                ["I see thou art vearing vone ov their medallions, but thou art not truly a member, art thou? Bevare -- there are those in The Fellowship that vill see through thy deception."];
+            }
+            if $JoinFellow {
+                ["Thou vilt soon be enlightened about their true nature."];
+            } else {
+                ["Thou shalt learn more about them in due time."];
+            }
+            TurnOff("Fellowship");
+        }
+        key ("destiny") {
+            MargaretaTellsFortune_i();
+            TurnOff("destiny");
+        }
+        key ("husband") {
+            ["Jergi is mine husband, ov course. Now he has the veight ov guiding the gypsy race in these\x09troubled times."];
+            TurnOff("husband");
+        }
+        key ("bye") {
+            break;
+        }
+    }
+    clear_answers;
+    ["Fairvell. Go in peace."*];
+}
+
+Usable MargaretaTellsFortune_i #locals(3) #uses(~AskYesNo, GivePartyExp_i) {
+    v0 = ~AvatarSex();
+    ["The fortune vill cost thee 20 gold. All right?"];
+    v1 = ~AskYesNo();
+    if v1 {
+        v2 = ~TakeFromParty_i(true, _All, _All, _Gold_Coin, 20);
+        if v2 {
+            [Margareta takes your money.];
+        } else {
+            ["Thou dost not have enough gold."];
+            [Margareta turns away from you.*];
+            terminate;
+        }
+    } else {
+        ["Never mind, then."];
+        [Margareta turns away from you.*];
+        terminate;
+    }
+    SetMusic(0, 31);
+    [The gypsy woman peers into her crystal ball.];
+    if not v0 {
+        if flag(226) {
+            ["I see a voman standing by a shrine. She is in love vith thee. I do not see more on this subject.];
+        } else {
+            ["I see a voman standing by a shrine. She vill play an important role in thy life.];
+        }
+    }
+    ["Hmmm... The crystal ball is very murky...];
+    if not $JoinFellow {
+        ["I see that thou must join The Fellowship if thou vantest to learn more about them and discover their true nature.];
+    } else {
+        ["Now that thou art a Fellowship member, thou vilt learn more about them and discover their true nature in due time.];
+    }
+    ["It is not very clear... ah, yes... there is a new evil that threatens Britannia. I see that thou shalt have to reckon vith it in the future.];
+    ["The crystal ball tells me that the ether ov the vorld -- the substance that controls magic -- has been affected by this new evil presence.];
+    ["I see further that this evil presence vill gain greater power during an event in the near future. This event has something to do vith the planets. Seek out a man at the observatory in Moonglow to learn more about this. I see that he has a device which will be very useful to thee. See him soon, for this event is drawing near."];
+    ["Vhat is this? I see... I see... thou dost seek a Man vith a Hook. He is not thy true adversary, but finding him vill be necessary to complete thine ultimate quest.];
+    ["Vait! I see that thou must seek audience vith the Time Lord. He is in trouble, although I cannot see vhat that trouble is. The Time Lord knows much about this new evil, so do not fail to seek him out.];
+    ["To find the Time Lord, thou must first meet the Visps who live in the forest ov Yew. They are thy best link to him. The monks ov Empath Abbey may know how to contact the Visps.];
+    ["The ball has grown dark. I see no more."];
+    [Margareta looks up at you and says, "Thou dost face many dangers ahead. Take care."];
+    [With those words, Margareta slumps and closes her eyes to rest. She is obviously exhausted.*];
+    if not flag(256) {
+        GivePartyExp_i(50);
+    }
+    flag(256) = true;
+}

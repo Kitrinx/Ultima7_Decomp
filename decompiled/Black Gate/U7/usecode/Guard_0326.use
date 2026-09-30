@@ -1,0 +1,46 @@
+Routine Guard_0326 accepts a0 #locals(4) #uses(~AskList, ~OpenTrinsicGate_i) {
+    if (event = _Bark) {
+        terminate;
+    }
+    v0 = ~GetWorkType(~NPCToItem_i(item));
+    SetSpeaker(0, _TheJuggernaut);
+    TurnOn(<< "name", "job", "bye" >>);
+    if $SEARCHED_STABLES {
+        TurnOn("password");
+    }
+    [You see a tough-looking guard who takes his job -very- seriously.];
+    converse {
+        key ("name") {
+            ["My name is not important."];
+            TurnOff("name");
+        }
+        key ("job") {
+            ["I keep villains and knaves out of Trinsic and keep a record of all who leave. Thou must have a password to leave."];
+            TurnOn("password");
+        }
+        key ("password") {
+            ["What is the password?"];
+            v1 = << "Uhh, I don't know", "Long live the king", "Please" >>;
+            if $SEARCHED_STABLES {
+                v1 = (v1 & "Blackbird");
+            }
+            v2 = ~AskList(v1);
+            if (v2 = "Blackbird") {
+                v3 = ~OpenTrinsicGate_i();
+                v3 = true;
+                if v3 {
+                    ["Very well, thou mayest pass."*];
+                    terminate;
+                }
+            } else {
+                ["Thou dost not know the password. Sorry. The Mayor can give thee the proper password."];
+                $PASSWORD_ATTEMPTED = true;
+            }
+        }
+        key ("bye") {
+            break;
+        }
+    }
+    clear_answers;
+    ["Goodbye."*];
+}

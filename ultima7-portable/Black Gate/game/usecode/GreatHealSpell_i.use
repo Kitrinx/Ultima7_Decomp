@@ -1,0 +1,18 @@
+Routine GreatHealSpell_i accepts a0 #locals(6) #uses(~DirFromAvatar_i, ~IsMagicOK_i) {
+    if (event = _Action) {
+        v0 = ~GetTarget();
+        Kernel_resetRef(v0);
+        v1 = ~DirFromAvatar_i(v0);
+        Item_bark("@Vas Mani@", item);
+        if ~IsMagicOK_i() {
+            v2 = ~PostAction(<< _aFACE_i, v1, _aEXTEND1_FRAME_i, _aRAISE1_FRAME_i, _aTHRUST1_FRAME_i, _aSFX_i, 64 >>, item);
+            if ~Item_isNpc(v0) {
+                v3 = ~GetNPCStat_i(_Str, v0);
+                v4 = ~GetNPCStat_i(_Hits, v0);
+                v5 = ~ChangeNPCStat_i((v3 - v4), _Hits, v0);
+            }
+        } else {
+            v2 = ~PostAction(<< _aFACE_i, v1, _aEXTEND1_FRAME_i, _aRAISE1_FRAME_i, _aTHRUST1_FRAME_i, _aUSABLE_i, #FizzleSpell_i >>, item);
+        }
+    }
+}

@@ -1,0 +1,55 @@
+Routine KeepWithAvatar_i accepts a0 #locals(9) #uses(~InAvatarInv_i, ~IsInAvatarHands_i, ~IsOnAvatarBack_i) {
+    if not ~InAvatarInv_i(item) {
+        v0 = ~GetCoord(item);
+        v1 = false;
+        v2 = ~Item_push(item);
+        While not ~PopToNPC(~NPCToItem_i(_Avatar)) {
+            v2 = ~PopToMap(v0);
+            v3 = ~GetContents(_All, _All, 65535, ~NPCToItem_i(_Avatar));
+            Foreach v6 in v3 {
+                if (v1 = 0) && ~IsInAvatarHands_i(v6) {
+                    v2 = ~Item_push(v6);
+                    v7 = ~GetCoord(~NPCToItem_i(_Avatar));
+                    v2 = ~PopToMap(v7);
+                }
+                if (v1 = 1) && ~IsOnAvatarBack_i(v6) {
+                    v2 = ~Item_push(v6);
+                    v7 = ~GetCoord(~NPCToItem_i(_Avatar));
+                    v2 = ~PopToMap(v7);
+                }
+                if (v1 = 2) && (~Item_getContainer(v6) = ~NPCToItem_i(_Avatar)) {
+                    v2 = ~Item_push(v6);
+                    v7 = ~GetCoord(~NPCToItem_i(_Avatar));
+                    v2 = ~PopToMap(v7);
+                }
+            }
+            v1 = (v1 + 1);
+            v2 = ~Item_push(item);
+        }
+    }
+    v8 = ~PostAction(<< _aFINISH_i, _aNO_HALT_i, _aUSABLE_i, #KeepWithAvatar_i >>, item);
+}
+
+Function ~IsInAvatarHands_i accepts a0 #locals(2) {
+    v1 = ~Item_getType(v0);
+    v2 = ~GetFrame(v0);
+    if ~IsEquipped_i(v2, v1, 1, _Avatar) {
+        return 1;
+    }
+    if ~IsEquipped_i(v2, v1, 2, _Avatar) {
+        return 1;
+    }
+    if ~IsEquipped_i(v2, v1, 20, _Avatar) {
+        return 1;
+    }
+    return 0;
+}
+
+Function ~IsOnAvatarBack_i accepts a0 #locals(2) {
+    v1 = ~Item_getType(v0);
+    v2 = ~GetFrame(v0);
+    if ~IsEquipped_i(v2, v1, 0, _Avatar) {
+        return 1;
+    }
+    return 0;
+}

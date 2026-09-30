@@ -1,0 +1,90 @@
+Routine KillTarget_i accepts a0 #locals(25) #uses(RemoveAll_i) {
+    v0 = ~Item_getType(item);
+    if (v0 = 466) {
+        v1 = ~GetCoord(~NPCToItem_i(_Avatar));
+        createSprite(65535, 0, 0, 0, v1::2, v1::1, 17);
+        Sfx(62);
+        v2 = ~FindNearby_i(8, 80, 65535, ~NPCToItem_i(_Avatar));
+        Foreach v5 in v2 {
+            v6 = ~Item_getType(v5);
+            if not ((v6 = 721) or (v6 = 989)) && (~Npc_getAlignment(v5) = _Neutral) {
+                Npc_setAlignment(_Evil, v5);
+                SetWorkType(_Combat_0, v5);
+            }
+        }
+        v7 = ~GetCoord(item);
+        v8 = ~Item_create(_Body_414);
+        SetFullFrame_i(~GetFullFrame_i(item), v8);
+        SetFrame(30, v8);
+        RemoveNPC_i(_LordBritish);
+        v9 = ~PopToMap(v7);
+        v10 = ~Item_create(_Scroll);
+        SetFrame(0, v10);
+        v9 = ~SetQuality(43, v10);
+        v9 = ~PopToNPC(v8);
+        v11 = ~PostAction(<< _aWAIT_i, 5, _aFRAME, 31, _aWAIT_i, 2, _aFRAME, 12 >>, v8);
+    } else {
+        v12 = ~Npc_getAlignment(item);
+        Sfx(4);
+        if not ~GetItemFlag_i(_IsTemporary_i, item) {
+            KillNPC_i(item);
+            RemoveNPC_i(item);
+            v2 = ~FindNearby_i(8, 80, 65535, ~NPCToItem_i(_Avatar));
+            Foreach v5 in v2 {
+                v6 = ~Item_getType(v5);
+                if not ((v6 = 721) or (v6 = 989)) && (~Npc_getAlignment(v5) = v12) {
+                    Npc_setAlignment(_Evil, v5);
+                    SetWorkType(_Combat_0, v5);
+                }
+            }
+        } else {
+            v15 = ~GetContents(4, _All, _Scroll, item);
+            if v15 {
+                v16 = ~GetQuality(v15);
+                v17 = false;
+                if (v16 = 240) {
+                    flag(750) = true;
+                    v18 = ~GetCoord(item);
+                    v17 = ~Item_create(_Body_762);
+                    SetFullFrame_i(~GetFullFrame_i(item), v17);
+                    SetFrame(22, v17);
+                    RemoveAll_i(item);
+                    v9 = ~PopToMap(v18);
+                }
+                if (v16 = 241) {
+                    flag(751) = true;
+                    v18 = ~GetCoord(item);
+                    v17 = ~Item_create(_Body_778);
+                    SetFullFrame_i(~GetFullFrame_i(item), v17);
+                    SetFrame(7, v17);
+                    RemoveAll_i(item);
+                    v9 = ~PopToMap(v18);
+                }
+                v19 = ~Item_create(_Scroll);
+                SetItemFlag_i(_IsTemporary_i, v19);
+                v9 = ~SetQuality(v16, v19);
+                SetFrame(4, v19);
+                v9 = ~PopToNPC(v17);
+                v20 = ~PostInFuture(1, << _aFINISH_i, _aNO_HALT_i, _aUSABLE_i, #WatchForDeath_i >>, v19);
+                v2 = ~FindNearby_i(8, 80, 65535, ~NPCToItem_i(_Avatar));
+                Foreach v5 in v2 {
+                    v6 = ~Item_getType(v5);
+                    if not ((v6 = 721) or (v6 = 989)) && (~Npc_getAlignment(v5) = v12) {
+                        Npc_setAlignment(_Evil, v5);
+                        SetWorkType(_Combat_0, v5);
+                    }
+                }
+            } else {
+                KillNPC_i(item);
+                v2 = ~FindNearby_i(8, 80, 65535, ~NPCToItem_i(_Avatar));
+                Foreach v5 in v2 {
+                    v6 = ~Item_getType(v5);
+                    if not ((v6 = 721) or (v6 = 989)) && (~Npc_getAlignment(v5) = v12) {
+                        Npc_setAlignment(_Evil, v5);
+                        SetWorkType(_Combat_0, v5);
+                    }
+                }
+            }
+        }
+    }
+}

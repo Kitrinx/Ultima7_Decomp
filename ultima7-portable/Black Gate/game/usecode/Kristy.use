@@ -1,0 +1,82 @@
+Routine Kristy accepts a0 #locals(4) #uses(~IsNPCNear) {
+    if (event = _Action) {
+        SetSpeaker(0, _Kristy);
+        v0 = ~IsNPCNear(_Nanna);
+        TurnOn(<< "name", "job", "bye" >>);
+        if not $MetKristy {
+            [This is a cute toddler holding a baby doll.];
+            $MetKristy = true;
+        } else {
+            ["Hi!" Kristy exclaims.];
+        }
+        converse {
+            key ("name") {
+                ["Kwisty."];
+                if v0 {
+                    SetSpeaker(0, _Nanna);
+                    ["Kristy, like Nicholas, is one of our orphans. She was found in an abandoned home in Paws by one of the Great Council members."];
+                    CloseSpeaker(_Nanna);
+                    SetSpeaker(0, _Kristy);
+                }
+                TurnOff("name");
+            }
+            key ("job") {
+                v1 = ~GetWorkType(_Kristy);
+                if (v1 = 25) {
+                    ["Tag! Playing tag!"];
+                    [The toddler runs off in search of a nursery-mate.*];
+                    terminate;
+                } else {
+                    [Kristy looks confused. "Sing. Horsey. Rosa. Winner."];
+                    TurnOn(<< "sing", "horsey", "Rosa", "winner" >>);
+                }
+            }
+            key ("sing") {
+                [Kristy is more than happy to do so. "A-B-C-D-E-F-G! H-I-K-M-M-M-O-P! Q-T-W-Y-X-Z!" She is proud of her song, although she didn't get it quite right.];
+                TurnOff("sing");
+            }
+            key ("horsey") {
+                ["I love horsey!" She rocks hard on the rocking horse.];
+                TurnOff("horsey");
+            }
+            key ("Rosa") {
+                [Kristy hugs her baby doll tight. "Rosa!"];
+                TurnOff("Rosa");
+            }
+            key ("winner") {
+                ["I am winner!" she proclaims loudly.];
+                if v0 {
+                    SetSpeaker(0, _Nanna);
+                    ["She keeps saying that. I am not sure what it means. Something to do with a competition."];
+                    CloseSpeaker(_Nanna);
+                    SetSpeaker(0, _Kristy);
+                }
+                TurnOff("winner");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["Bye bye!"*];
+    }
+    if (event = _Bark) {
+        v1 = ~GetWorkType(~NPCToItem_i(_Kristy));
+        if (v1 = 25) {
+            v2 = ~rndRange(4, 1);
+            if (v2 = 1) {
+                v3 = "@Tag! Thou art it!@";
+            }
+            if (v2 = 2) {
+                v3 = "@Cannot catch me!@";
+            }
+            if (v2 = 3) {
+                v3 = "@Nyah nyah! Thou art it!@";
+            }
+            if (v2 = 4) {
+                v3 = "@Catch me if thou can!@";
+            }
+            Item_bark(v3, _Kristy);
+        }
+    }
+}

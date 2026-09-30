@@ -1,0 +1,155 @@
+Routine Penni accepts a0 #locals(8) #uses(~AvatarName, ~LordOrLady, ~AskYesNo, PenniTrains_i, ~IsNPCNear, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Penni);
+        v0 = ~AvatarName();
+        v1 = ~LordOrLady();
+        v2 = false;
+        v3 = false;
+        v4 = ~GetWorkType(~NPCToItem_i(_Penni));
+        TurnOn(<< "name", "job", "bye" >>);
+        if not $MetPenni {
+            [The woman you see in front of you has a concerned expression on her face, as if her thoughts were far away.];
+            $MetPenni = true;
+        } else {
+            ["Hail, <v0>. Might I assist thee?" asks Penni.];
+            if flag(478) {
+                TurnOn("Addom");
+            }
+        }
+        converse {
+            key ("name") {
+                ["My name is Penni, <v1>."];
+                TurnOff("name");
+                if (flag(478) and not v3) {
+                    TurnOn("Addom");
+                }
+            }
+            key ("job") {
+                ["I have no occupation, <v1>. At least not one I would call work. I do, however, teach skills in close quarter combat.~~She thinks for a moment. "I suppose a better way to answer thy question would have been to say `Yes, I do have a job.' I'm a trainer. But," she smiles, "I enjoy it too much to call it work."];
+                TurnOn(<< "enjoy", "train" >>);
+                if $MetBradman && not v2 {
+                    TurnOn("Bradman");
+                    v2 = true;
+                }
+            }
+            key ("enjoy") {
+                ["I have loved close-quarter fighting since I was old enough to grasp my first spear. That's why I moved to Yew."];
+                TurnOff("enjoy");
+                TurnOn(<< "spear", "Yew" >>);
+            }
+            key ("spear") {
+                ["It is my choice in arms. The spear combines the best of both range and power. It is the perfect hunting weapon."];
+                TurnOff("spear");
+            }
+            key ("Yew") {
+                ["I moved here to hunt, of course. The forest is full of game. I would not think of living anywhere else!"];
+                TurnOff("Yew");
+            }
+            key ("train") {
+                if (v4 = 7) {
+                    ["Art thou interested in training? My price is 35 gold for each training session."];
+                    if ~AskYesNo() {
+                        PenniTrains_i(35, << 0, 4 >>);
+                    } else {
+                        ["Perhaps next time."];
+                    }
+                } else {
+                    ["I am sorry, <v1>, but I am not training at this moment. Perhaps if thou wert to return between 9 in the morning and 6 in the evening, I will be able to help thee."];
+                }
+            }
+            key ("Bradman") {
+                ["Yes," she nods her head, grinning, "I know Bradman. We go hunting together. Of course, he rarely catches anything with that toothpick shooter of his."];
+                v5 = ~IsNPCNear(_Iolo);
+                if v5 {
+                    SetSpeaker(0, _Iolo);
+                    ["I resent that, my friend. Bows and crossbows can be wielded with deadly effect."];
+                    SetSpeaker(0, _Penni);
+                    [She smiles, nodding to Iolo. "Perhaps thou art correct, friend archer, but I prefer more physical challenges."];
+                    CloseSpeaker(_Iolo);
+                } else {
+                    ["Although I consider him a true friend and an honorable companion, I wonder about his physical prowess."];
+                }
+                TurnOff("Bradman");
+            }
+            key ("Addom") {
+                ["Addom is mine husband. But how did...?" She appears confused, but suddenly directs her gaze at you. "Hast thou seen him?"];
+                v6 = ~AskYesNo();
+                if v6 {
+                    ["Is he in good health?"];
+                    v7 = ~AskYesNo();
+                    if v7 {
+                        ["Thank goodness!" she sighs in relief.];
+                    } else {
+                        ["I knew he should not have left this time! I hate it when he leaves!" She chokes back her tears.*];
+                        terminate;
+                    }
+                } else {
+                    ["I do hate it so when he travels so far away for such a long time. I can only hope he returns to mine arms quickly!" She peers off in the distance, as if searching for Addom.];
+                }
+                TurnOff("Addom");
+                v3 = true;
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["Good journeying, <v1>."*];
+    }
+    if (event = _Bark) {
+        BarkAboutWork_i(_Penni);
+    }
+}
+
+Routine PenniTrains_i accepts a0, a1 #locals(11) #uses(~GetStudent, ~CanTrain, ~GetStat, StrTrain, CombatTrain_i) {
+    v2 = ~GetStudent();
+    v3 = ~GetNPCName_i(v2);
+    if (v2 = 0) {
+    } else {
+        v4 = 2;
+        v5 = ~CanTrain(v4, v2, v0, v1);
+        if (v5 = 0) {
+            ["I am sorry, but thou hast overextended thy muscles. If thou couldst return at a later date, I would be quite willing to train thee."];
+        } else {
+            if (v5 = 1) {
+                v6 = ~CountItem(_All, _All, _Gold_Coin, _Party);
+                [You gather your gold and count it, finding that you have <v6> gold altogether.];
+                if (v6 < v0) {
+                    ["I regret that thou dost not seem to have the right amount of gold to train here. Mayhaps, at another time, when thy purses are more full..."];
+                    goto label_22;
+                }
+            }
+            if (v5 = 2) {
+                [She seems amazed.~~"Thou art already stronger than I! I am sorry, but I cannot help thee grow any further."];
+            } else {
+                v7 = ~TakeFromParty_i(true, _All, _All, _Gold_Coin, v0);
+                [You pay <v0> gold, and the training session begins.];
+                if (v2 = 65180) {
+                    v8 = "You";
+                } else {
+                    v8 = v3;
+                }
+                if (v2 = 65180) {
+                    v9 = "you";
+                } else {
+                    v9 = v3;
+                }
+                if (v2 = 65180) {
+                    v10 = "";
+                } else {
+                    v10 = "s";
+                }
+                [<v8> and Penni work out and spar for some time. After stretching, <v9> feel<v10> a little stronger and a bit more skilled in combat.];
+                v11 = ~GetStat(_Str, v2);
+                if (v11 < 30) {
+                    StrTrain(1, v2);
+                }
+                v12 = ~GetStat(_Cbt, v2);
+                if (v12 < 30) {
+                    CombatTrain_i(1, v2);
+                }
+            }
+        }
+    }
+    label_22:
+}

@@ -1,0 +1,727 @@
+Routine ArcadionUsable_i accepts a0 #locals(30) #uses(ArcadionFades_i, ~BlueGem_i, ~AskYesNo, PostForgeUsable_i, ~IsHoldingBladeAndGem_i, ArcadionRestoresMagic_i, ~AvatarName, ~IsUndeadType_i, ~IsWorthyVictim_i, ~IsBodyType_i, ~InIsleOfFire_i, StartFireTrail_i, ~DirFromAvatar_i) {
+    if not flag(815) {
+        SetSpeaker(0, _Fransisco);
+        v0 = false;
+        v1 = ~FindNearby_i(8, 10, _Mage_154, item);
+        Foreach v4 in v1 {
+            if ~GetContents(4, 240, _Scroll, v4) {
+                v0 = v4;
+            }
+        }
+        if v0 {
+            ["Yes, Master. How may I serve thee?" The dark form in the mirror bows deeply.];
+            SetSpeaker(1, _Wilbur);
+            v5 = "Erethian";
+            if not flag(784) {
+                v5 = "the mage";
+            }
+            [Suprised, <v5> looks around and says, "I don't recall summoning thee. Nevermind, I have no need of thee at the current time. Begone!" The old man waves his hand, negligently.];
+            SetSpeaker(0, _Fransisco);
+            [Through a tightly clenched smile, the figure replies, "Very well..." And after a significant pause, "Master."*];
+            ArcadionFades_i();
+        } else {
+            if flag(818) {
+                if flag(819) {
+                    [Arcadion appears truly astonished, "For what dost thou wait?! I beg of thee! Release me!"];
+                    ArcadionFades_i();
+                } else {
+                    v6 = ~FindNearby_i(0, 15, _Gem, item);
+                    v7 = false;
+                    if v6 {
+                        v7 = ~BlueGem_i(v6);
+                        if v7 {
+                            ["There is a gem nearby that can free me! It is a small blue stone. Take it, quickly, and use it to free me of this accursed mirror!" The large daemon seethes with pent up frustration.*];
+                            flag(819) = true;
+                            ArcadionFades_i();
+                        } else {
+                            ["Can I be of some small assistance in thy quest to release me. If so, thou hast but to ask." Arcadion's smile stretches from ear to ear.];
+                            TurnOn(<< "name", "job", "release", "bye" >>);
+                        }
+                    } else {
+                        if ~CountItem(12, _All, _Gem, _Party) {
+                            ["Thou hast within thy possessions a small blue gem. It can be used to free me! Crack this accursed mirror with it! I'll enter it as I am freed!"\x09Arcadion looks prepared to burst from the mirror.*];
+                            flag(819) = true;
+                            ArcadionFades_i();
+                        } else {
+                            ["Can I be of some small assistance in thy quest to release me. If so, thou hast but to ask." Arcadion's smile stretches from ear to ear.];
+                            TurnOn(<< "name", "job", "release", "bye" >>);
+                        }
+                    }
+                }
+            } else {
+                if flag(817) {
+                    ["Run along now little mortal. Do not pester thy betters with the idle rantings of thy tongue." He appears at first nonchallant, then his expression becomes intense, "That is unless thou hast reconsidered my offer... Hast thou?"];
+                    if ~AskYesNo() {
+                        [A wicked look of triumph flickers across Arcadion's face to be quickly replaced by a ludicrous semblance of gratitude, "Thou art truly courageous to vow to release\x09me. My eternal thanks are thine." An oily grin coats the daemon's face, "Thou hast made quite a powerful ally this day, mortal." His eyes blink in what is possibly meant to be a charming manner.];
+                        flag(818) = true;
+                        TurnOn(<< "name", "job", "daemon", "release", "bye" >>);
+                    } else {
+                        ["Ah, I see. Still content to run about with the other sheep." He waves you off and dims from sight.*];
+                        ArcadionFades_i();
+                    }
+                } else {
+                    if not flag(787) {
+                        ["Yes, Master. How may I serve thee..." The wavering visage in the mirror hesitates for a moment, "Thou art not my master."];
+                        [He then continues with a small bow, "Greetings Britannian. What dost thou wish of the great daemon, Arcadion?"];
+                        flag(787) = true;
+                        TurnOn(<< "name", "job", "daemon", "bye" >>);
+                    } else {
+                        ["Greetings once again Britannian. What dost thou wish of me." The daemon is the soul of congeniality.];
+                        TurnOn(<< "name", "job", "daemon", "bye" >>);
+                    }
+                }
+            }
+        }
+        v8 = false;
+        converse {
+            key ("name") {
+                [The big daemon smiles ingratiatingly, showing inch long pointed\x09teeth. "As I have said, I am the daemon Arcadion."];
+                if flag(818) {
+                    [His somewhat polished veneer seems to be unravelling at the edges in his anticipation of freedom.];
+                }
+                if not v8 {
+                    TurnOn("daemon");
+                }
+                TurnOff("name");
+            }
+            key ("job") {
+                if not flag(818) {
+                    [Arcadion attempts to smile, but failing miserably, he gives you a grimace that could turn a dragon to stone. "I am currently in the service of one mage, Erethian by name." He states, rather formally. You get the distinct impression that\x09Arcadion would just as soon\x09rip Erethian limb from limb as serve him.];
+                    TurnOn(<< "Erethian", "serve" >>);
+                } else {
+                    ["Well, if thou keepest thy promise to release me, I'll be free of that\x09lice-ridden, flea-bitten, old mage."];
+                    TurnOn("release");
+                }
+                TurnOff("job");
+            }
+            key ("Erethian") {
+                ["He is my master..." The daemon's smile contorts into a scarcely hidden scowl of hatred. "Until other... arrangements can be made." Arcadion's toothsome smile appears on his shadowy features.];
+                if not v8 {
+                    TurnOn("daemon");
+                }
+                TurnOff("Erethian");
+            }
+            key ("daemon") {
+                ["That is how thy people address those of my race." You can't tell from Arcadion's tone of voice whether or not he minds that fact.];
+                TurnOff("daemon");
+                v8 = true;
+            }
+            key ("serve") {
+                [The large daemon's eyes close as he appears to be restraining the force of horrific emotions,];
+                ["I have served that blind,\x09old fool for over two hundred years!" Arcadion pauses, regaining his composure. A thought visibly crosses his\x09darkened face, "Perhaps thou mightest assist me to free myself of this unwanted bondage. I could prove an invaluable\x09ally." The daemon pauses to let his offer sink in, then, "Well, mortal. Wilt thou help me?"];
+                if ~AskYesNo() {
+                    [A wicked look of triumph flickers across Arcadion's face to be quickly replaced by a ludicrous semblance of gratitude, "Thou art truly courageous to vow to release me. My gratitude hath no bounds." An oily grin coats the daemon's face, "Thou hast made quite a powerful ally this day, mortal." His eyes blink in what is possibly meant to be a charming manner.];
+                    flag(818) = true;
+                    TurnOff("serve");
+                    if not v8 {
+                        TurnOn("daemon");
+                    }
+                    TurnOn("release");
+                } else {
+                    flag(817) = true;
+                    SetSpeaker(1, _Fransisco);
+                    [Arcadion looks as if he's about to force his way through the mirror, then once again masters his incredible rage.];
+                    SetSpeaker(0, _Fransisco);
+                    [He folds massive arms across a broad chest and slowly restores his gruesome smile, "I can respect thy cowardice in this situation. After all, Erethian is\x09a powerful mage, not the sort that a sheep like thyself should be trifling with." His contemtuous sneer begins to fade as the daemon takes his leave.*];
+                    ArcadionFades_i();
+                }
+            }
+            key ("release") {
+                ["I'll need a special gem in which to house my essence when thou crackest this prison of a mirror." His eyes are alight with the possibility of his impending freedom.];
+                TurnOn("gem");
+                TurnOff("release");
+            }
+            key ("gem") {
+                v6 = ~FindNearby_i(0, 15, _Gem, item);
+                v7 = false;
+                if v6 {
+                    v7 = ~BlueGem_i(v6);
+                    if v7 {
+                        ["I can sense that the gem is near! Take it! Take it, quickly and use it to free me of this accursed mirror!" Arcadion is almost drooling in anticipation.*];
+                        flag(819) = true;
+                    } else {
+                        ["There was one on this island, that much I know. Find it. Bring it to me and together, we shall break this mirror which binds me to that blasted mage.*];
+                    }
+                } else {
+                    if ~CountItem(12, _All, _Gem, _Party) {
+                        ["Thou hast the gem! I feel it! Use it now to crack the mirror! I'll enter it as I'm freed!" The daemon hardly restains his enthusiasm.*];
+                        flag(819) = true;
+                    } else {
+                        ["There was one on this island, that much I know. Find it. Bring it to me and together, we shall break this mirror which binds me to that blasted mage.*];
+                    }
+                }
+                ArcadionFades_i();
+            }
+            key ("bye") {
+                if flag(818) {
+                    [Arcadion winks in a very undaemonlike manner, "Farewell, brave mortal. Thy courage is unsurpassed among humans."*];
+                } else {
+                    [The smiling daemon bows again, "Fare thee well, Britannian. Until we meet again." The daemon begins to fade even as his last words are spoken.*];
+                }
+                ArcadionFades_i();
+            }
+        }
+        clear_answers;
+        return;
+    } else {
+        if not flag(816) {
+            if (event = _Action) {
+                closeAllGumps();
+                PostForgeUsable_i(item);
+            }
+            if not (event = _Posted_i) {
+                return;
+            }
+            SetSpeaker(0, _Hook);
+            v9 = false;
+            if not flag(787) {
+                [The little gem pulses with energy, "Now all Britannia shall feel my wrath. I'll make them all pay for every decade I spent within that accursed mirror!" The gem glows brighter, and you expect the world to come apart at the seams... then, nothing. "NO!" The daemon's primal scream sounds a bit crystalline through the medium of the gem. "This cannot be! That old fool was right. I'm still trapped!" The daemon's anguished voice falls silent.];
+                flag(787) = true;
+                TurnOn(<< "name", "job", "wrath", "trapped", "bye" >>);
+                if flag(824) {
+                    TurnOn("black sword");
+                }
+            } else {
+                [The gem sparkles up at you, "Yes, master. How may I serve thee?" Arcadion's voice is subdued.];
+                TurnOn(<< "name", "job", "master", "bye" >>);
+                if flag(824) {
+                    TurnOn("black sword");
+                }
+                if flag(820) {
+                    TurnOn("power");
+                }
+            }
+            converse {
+                key ("black sword") {
+                    ["If thou dost wish me to bond the gem to the sword, thou hast but to command me, master."];
+                    TurnOn("bond");
+                    TurnOff("black sword");
+                }
+                key ("bond") {
+                    if ~IsHoldingBladeAndGem_i() {
+                        v10 = ~GetContents(15, _All, _Sword_Blank, ~NPCToItem_i(_Avatar));
+                        v11 = ~GetContents(13, _All, _Gem, ~NPCToItem_i(_Avatar));
+                        Item_destroy(v10);
+                        Item_destroy(v11);
+                        v12 = ~Item_create(_The_Black_Sword);
+                        SetFrame(0, v12);
+                        ["It will be done!"];
+                        [As the gem touches the crosspiece of the sword, the sound of tearing metal screeches through the air. The blade shifts and shimmers almost as if alive.];
+                        if ~PopToNPC(~NPCToItem_i(_Avatar)) {
+                            [Slowly, the sword settles into its original shape, except for the blue gem glowing in the hilt.];
+                        } else {
+                            [There is a flash of what can only be described as black light and the sword is wrenched out of your grasp and falls to the ground.];
+                            v13 = ~GetCoord(~NPCToItem_i(_Avatar));
+                            v14 = ~PopToMap(v13);
+                        }
+                        flag(816) = true;
+                        flag(787) = false;
+                        v15 = ~PostAction(<< _aFINISH_i, _aNO_HALT_i, _aUSABLE_i, #KeepWithAvatar_i, _aUSABLE_i, #ArcadionUsable_i >>, v12);
+                        terminate;
+                    } else {
+                        ["The sword and gem must be in thy hands for the bonding to be accomplished."];
+                    }
+                    TurnOff("bond");
+                }
+                key ("name") {
+                    ["My name is still Arcadion, although my prison has changed."];
+                    TurnOff("name");
+                }
+                key ("job") {
+                    ["I am now thy servant.\x09What is thy bidding, master?"];
+                    if not v9 {
+                        TurnOn("master");
+                    }
+                    TurnOff("job");
+                }
+                key ("wrath") {
+                    [Arcadion sounds a bit pensive as he replies, "Forgive my momentary indiscretion, master. My bitter emotions overcame my reasoning for a brief time. I shall not let it happen again."];
+                    if not v9 {
+                        TurnOn("master");
+                    }
+                    TurnOff("wrath");
+                }
+                key ("trapped") {
+                    v5 = false;
+                    if not flag(784) {
+                        v5 = "the mage Erethian";
+                    } else {
+                        v5 = "Erethian";
+                    }
+                    ["It would seem that <v5> was correct in his assumption that should I enter this gem, my power would not be set free to use as I wish, instead it is at the beck and call of the one who possesses the gem."];
+                    flag(820) = true;
+                    TurnOn("power");
+                    TurnOff("trapped");
+                }
+                key ("power") {
+                    if not flag(819) {
+                        [You hear a faint sigh, then, "Wouldst thou care to partake of my power?"];
+                        if ~AskYesNo() {
+                            [Arcadion sounds disappointed, "It is as I knew it would be. I am forever meant to be the slave of weak-willed mortals. Very well then, prepare thyself to recieve a portion of my vast eneregy.];
+                            flag(819) = true;
+                            ArcadionRestoresMagic_i(false);
+                            if not v9 {
+                                TurnOn("master");
+                            }
+                        } else {
+                            if not flag(821) {
+                                ["Perhaps I misjudged thee, master." He pauses for a thoughtful moment, "Mayhap in time thou canst call me friend as well as ally."];
+                                flag(821) = true;
+                                if not v9 {
+                                    TurnOn("master");
+                                }
+                            } else {
+                                if not v9 {
+                                    TurnOn("master");
+                                }
+                            }
+                        }
+                    } else {
+                        ["Thou hast need of my energies again?" Arcadion asks a little petulantly.];
+                        if ~AskYesNo() {
+                            ["Very well, prepare thyself." The gem glows.];
+                            ArcadionRestoresMagic_i(false);
+                            if not v9 {
+                                TurnOn("master");
+                            }
+                        } else {
+                            if not flag(821) {
+                                ["What dost thou seek of me..." A pause, "Master?"];
+                                flag(821) = true;
+                                if not v9 {
+                                    TurnOn("master");
+                                }
+                            } else {
+                                ["Dost thou seek to torment me with useless questions, or may I be of some service..." A long pause, "Master."];
+                                if not v9 {
+                                    TurnOn("master");
+                                }
+                            }
+                        }
+                    }
+                    TurnOff("power");
+                }
+                key ("master") {
+                    [The daemon pauses for a moment, "Thou hast imprisoned my physical form, I am therefore bound to thy will by powers far older than thou or I wield. What wouldst thou have of me?"];
+                    TurnOn("bound");
+                    v9 = true;
+                    TurnOff("master");
+                }
+                key ("bound") {
+                    ["Long ago, even by my accounting of time, my people were defeated by a powerful race of beings in an attempt to conquer this realm. This race lived here long before the coming of thy sovereign, Lord British. My poeple were defeated and they expected death, but these great and powerful beings were not destroyers. However, they also did not wish futher disruption by my kind. So they weaved enchantments beyond the ken of my race, binding us to the inhabitants of this realm. Thine own people merely use the existing enchantments to keep us enslaved, sometimes without an incling of how this was achieved."];
+                    TurnOff("bound");
+                }
+                key ("bye") {
+                    ["Farewell my master." The gem seems to dim a little.*];
+                    terminate;
+                }
+            }
+            clear_answers;
+        } else {
+            if (event = _Action) {
+                closeAllGumps();
+                PostForgeUsable_i(item);
+            }
+            if (event = _Posted_i) {
+                if not flag(787) {
+                    if not flag(835) {
+                        v16 = ~PostAction(<< _aFACE_i, _South, _aTHRUST2_FRAME_i, _aWAIT_i, 1, _aEXTEND2_FRAME_i, _aWAIT_i, 1, _aRAISE2_FRAME_i, _aWAIT_i, 1 >>, ~NPCToItem_i(_Avatar));
+                        v15 = ~PostAction(<< _aWAIT_i, 7, _aUSABLE_i, #ArcadionUsable_i >>, item);
+                        flag(835) = true;
+                        return;
+                    }
+                    if not flag(836) {
+                        v13 = ~GetCoord(_Avatar);
+                        createSprite(3, 0, 0, 0, v13::2, v13::1, 17);
+                        createSprite(65535, 0, 0, 0, v13::2, v13::1, 17);
+                        Sfx(62);
+                        v15 = ~PostAction(<< _aWAIT_i, 3, _aUSABLE_i, #ArcadionUsable_i >>, item);
+                        flag(836) = true;
+                        return;
+                    }
+                    SetSpeaker(0, _Korryn);
+                    [The sword glimmers darkly as you speak to it. "Greetings, my master. And how can thy humble servant aid thee?" The daemon's voice has regained much of its oddly disturbing humor.];
+                    flag(787) = true;
+                } else {
+                    SetSpeaker(0, _Korryn);
+                    ["Yes, master. What dost thou seek of thy servant?" Arcadion asks you in a deep, harmonic voice.];
+                }
+                TurnOn(<< "name", "job", "bye", "powers" >>);
+                if (flag(782) and not flag(780)) {
+                    TurnOn("help");
+                }
+                v17 = false;
+                v18 = false;
+                v19 = false;
+                v20 = false;
+                v21 = false;
+                converse {
+                    key ("name") {
+                        [The daemon sword's tone is rather ominous as he says, "I am, and ever shall be, thy servant Arcadion."];
+                        TurnOff("name");
+                    }
+                    key ("job") {
+                        ["I am the Shade Blade. My destiny is to serve thee until we are..." The sword pauses, "parted."];
+                        TurnOff("job");
+                    }
+                    key ("powers") {
+                        if not ~IsEquipped_i(_All, _The_Black_Sword, 1, ~NPCToItem_i(_Avatar)) {
+                            ["I needs must be in thy hand, master, if thou wishest to use my powers."];
+                        } else {
+                            ["Which of my powers dost thou seek to use?"];
+                            PushKeys();
+                            TurnOn(<< "Magic", "Fire", "Death", "Return", "none" >>);
+                        }
+                    }
+                    key ("help") {
+                        [Arcadion's voice is smug as he replies to your request for assistance. "Yes, I can help thee if thou wishest to exile what remains of Exodus to the Void. Firstly, thou shalt have need of the lenses of which the doddering, old fool spoke. Next thou needs must have the three Talismans of Principle. And finally, make sure that there are lit torches upon the walls to either side of the pedestal upon which the Dark Core rests.];
+                        TurnOn(<< "lenses", "talismans" >>);
+                        TurnOff("help");
+                    }
+                    key ("lenses") {
+                        ["The concave and convex lenses which thou used to place the Codex of Infinite Wisdom within the Void, I believe now sit forgotten in the Museum of Britannia. They must be placed between the Dark Core and the torches on either side of the pedestal"];
+                        TurnOff("lenses");
+                    }
+                    key ("talismans") {
+                        ["The Talismans of Principle must be placed upon the Dark Core like wedges in a pie."];
+                        TurnOff("talismans");
+                    }
+                    key ("none") {
+                        ["As thou wish, master. I but seek to serve thee."];
+                        PopKeys();
+                    }
+                    key ("Magic") {
+                        v22 = ~GetTime();
+                        if ((v22 = 7) or ((v22 = 0) or (v22 = 1))) {
+                            ArcadionRestoresMagic_i(true);
+                        } else {
+                            [The blade croons quietly, "Alas, master. My energies seem a trifle low. Perhaps if thou were to find some creature to slay, my power would be sufficient. After all, I have needs just as thou dost."];
+                        }
+                    }
+                    key ("Death") {
+                        ["Where is the corpse of which thou dost speak?" The dark sword begins to vibrate in your hand.*];
+                        CloseSpeaker(_Korryn);
+                        v17 = ~GetTarget();
+                        v23 = ~Item_getType(v17);
+                        v24 = ~GetCoord(v17);
+                        SetSpeaker(0, _Korryn);
+                        if ~Item_isNpc(v17) {
+                            if ((v23 = 721) or (v23 = 989)) {
+                                [The daemon speaks with a sanctimonious tone. "I could not in honor take the life of my most wondrous master."];
+                                goto label_232;
+                            }
+                            if (v23 = 466) {
+                                if (~GetDist(v17, ~NPCToItem_i(_Avatar)) < 5) {
+                                    ["Yes! I have long sought the end of Lord British, my traitorous master."];
+                                    v25 = ~AvatarName();
+                                    SetSpeaker(0, _LordBritish);
+                                    ["<v25>, for what reason art thou brandishing that black sword in my presence?"];
+                                    CloseSpeaker(_Korryn);
+                                    SetSpeaker(0, _Avatar);
+                                    [The daemon responds, using your mouth. "This blade is thy doom,..." You spit the words, "Lord British!"];
+                                    SetSpeaker(0, _LordBritish);
+                                    [Lord British looks truly taken aback, his eyes narrow calculatingly. "What foul treachery is this?"];
+                                    SetSpeaker(0, _Avatar);
+                                    [You find yourself unable to respond, and your muscles are clenching as if to lash out with the wicked blade in your hand.];
+                                    SetSpeaker(0, _LordBritish);
+                                    ["Perhaps when thou art sitting in a dungeon, thy tongue will loosen.];
+                                    ["Guards!"*];
+                                    v20 = true;
+                                    goto label_246;
+                                } else {
+                                    [The Shade Blade lets out a harsh whisper. "Move a little closer to him, and I'll perform this task for thee, master."];
+                                    goto label_232;
+                                }
+                            }
+                            if ((v23 = 482) or (v23 = 403)) {
+                                ["Alas master, this one is protected by a power greater than mine. His destiny lies elsewhere."];
+                                goto label_232;
+                            }
+                            if ~IsUndeadType_i(v23) {
+                                [The sword recoils in something akin to horror. "That creature is beyond even my power. I suggest that thou hackest it to bits, if possible, then burn the pieces." Arcadion offers helpfully.];
+                                goto label_232;
+                            }
+                            if (v23 = 504) {
+                                if (~GetDist(v17, ~NPCToItem_i(_Avatar)) < 5) {
+                                    if ~GetContents(4, 241, _Scroll, v17) {
+                                        ["Ah, Dracothraxus. We meet once again. 'Tis a pity thou shan't survive our meeting this time. Perhaps if thou hadst given the gem to me when first I asked, none of this unpleasantness would be necessary."];
+                                        SetSpeaker(0, 65243);
+                                        [The dragon responds with great resignation. "My will is not mine own in this matter, Arcadion. Mayhap thou art finding too, that thy will is not thine own."];
+                                        CloseSpeaker(65243);
+                                        SetSpeaker(0, _Korryn);
+                                        [The daemon, possibly stung by the dragon's repartee, falls silent and goes to its bloody work.*];
+                                        v21 = true;
+                                        goto label_246;
+                                    } else {
+                                        goto label_212;
+                                    }
+                                } else {
+                                    [The Shade Blade croons sofltly. "Move a little closer to the dragon, and I'll end its life for thee, master."];
+                                    goto label_232;
+                                }
+                            }
+                            if (v23 = 154) {
+                                if (~GetDist(v17, ~NPCToItem_i(_Avatar)) < 5) {
+                                    if ~GetContents(4, 240, _Scroll, v17) {
+                                        ["I owe thee quite a favor for this, master. I thank thee for allowing me this, my revenge!"*];
+                                        v21 = true;
+                                        goto label_246;
+                                    } else {
+                                        goto label_212;
+                                    }
+                                } else {
+                                    ["Move closer to him, and I'll see that his life plagues thee no more." The\x09dark sword sounds almost gleeful at this prospect.];
+                                    goto label_232;
+                                }
+                            }
+                            if (v23 = 1015) {
+                                ["This creature is not strictly speaking,... living. Thy best course of action would be to smash it to pieces" You hear a smile in Arcadion's voice.];
+                                goto label_232;
+                            }
+                            label_212:
+                            if ~IsWorthyVictim_i(v23) {
+                                if (~GetDist(v17, ~NPCToItem_i(_Avatar)) < 5) {
+                                    ["Very well, master. If thou cannot dispatch this foe thyself, I shall do it for thee."];
+                                    v21 = true;
+                                    goto label_246;
+                                } else {
+                                    ["I must get closer to this one in order to enjoy its essence." The blade hums eagerly as it tugs in the direction of your selected target.];
+                                    goto label_232;
+                                }
+                            } else {
+                                [The daemon sword abruptly ceases its vibration. "This being is hardly worth a death the likes of which I would visit upon it. Call upon me again when thou art faced with a more worthy opponent."];
+                                goto label_232;
+                            }
+                        }
+                        if ~IsBodyType_i(v23) {
+                            ["Perhaps thou misunderstands my meaning. I do not raise the dead... I slay the living." The last is spoken in a sibilant whisper.];
+                        } else {
+                            if not v23 {
+                                ["Thou wouldst have me destroy the very world around thee. Not a very bright idea for such a virtuous one as thou art thought to be." A strangely metallic chuckle escapes from the sword.];
+                            } else {
+                                switch v23 {
+                                    case 155 {
+                                        [The sword recoils in something akin to horror. "That one is beyond even my power."];
+                                    }
+                                    case 796, 447 {
+                                        [The daemon sword abruptly ceases its vibration. "This being is hardly worth a death the likes of which I would visit upon it. Call upon me again when thou art faced with a more worthy opponent."];
+                                    }
+                                    case 707 {
+                                        ["Thou shall not be rid of me quite so easily, my master. However, I do not begrudge thine attempt. Quite to the contrary. I respect thy resourcefulness."];
+                                    }
+                                    case 990 {
+                                        ["Would that I had such power. That artifact would allow me to return to my home plane if only I could unlock its secrets."];
+                                    }
+                                    default {
+                                        ["Hast thou such a grudge against this inanimate object that thou wouldst see it perish forever?" His voice is laden with undisguised sarcasm. "I cannot take life from that which is already lifeless."];
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    label_232:
+                    key ("Return") {
+                        if not ~InIsleOfFire_i() {
+                            ["Ah... home again. I never tire of rocky little islands. Dost thou truly wish to go to the forsaken Isle of Fire?"];
+                            if ~AskYesNo() {
+                                ["I see. Very well, master. But let us not forget this little favor..." The gem in the hilt of the sword glows brightly then everything dims.*];
+                                v19 = true;
+                                goto label_246;
+                            } else {
+                                ["It is good. Sense returns to the Virtuous Wonder. Thou art truly without peer in the arena of thought, master."];
+                            }
+                        } else {
+                            ["Forgive me, master, but are we not already on or near the Isle of Fire? Though, why one would wish to remain here on this forsaken piece of rock, I have no\x09idea."];
+                        }
+                    }
+                    key ("Fire") {
+                        ["And what, pray tell, is the intended target of thy immense and most puissant wrath, O' Master of Infinite Destruction?"];
+                        CloseSpeaker(_Korryn);
+                        v18 = true;
+                        goto label_246;
+                    }
+                    key ("bye") {
+                        ["Forgive me master, but I shan't be leaving. However, thou mayest cease thy speaking... if thou dost wish it."*];
+                        goto label_246;
+                    }
+                }
+                clear_answers;
+                label_246:
+                if v18 {
+                    StartFireTrail_i(item);
+                }
+                if v19 {
+                    v26 = ~PostAction(<< _aWAIT_i, 1, _aUSABLE_i, #IsleOfFireTeleportEgg_i >>, item);
+                }
+                if v20 {
+                    v27 = ~DirFromAvatar_i(v17);
+                    v16 = ~PostAction(<< _aFACE_i, v27, _aREADY_FRAME_i, _aWAIT_i, 2, _aRAISE2_FRAME_i, _aWAIT_i, 2, _aEXTEND2_FRAME_i, _aWAIT_i, 1, _aTHRUST2_FRAME_i, _aWAIT_i, 2, _aSTAND_FRAME_i >>, ~NPCToItem_i(_Avatar));
+                    if not ~GetItemFlag_i(_Asleep, v17) {
+                        v28 = ((v27 + 4) modulo 8);
+                        v29 = ~PostAction(<< _aFACE_i, v28, _aWAIT_i, 3, _aREADY_FRAME_i, _aWAIT_i, 7, _aUSABLE_i, #KillTarget_i >>, v17);
+                    } else {
+                        v29 = ~PostAction(<< _aWAIT_i, 12, _aUSABLE_i, #KillTarget_i >>, v17);
+                    }
+                }
+                if v21 {
+                    v27 = ~DirFromAvatar_i(v17);
+                    v16 = ~PostAction(<< _aFACE_i, v27, _aREADY_FRAME_i, _aWAIT_i, 1, _aRAISE2_FRAME_i, _aWAIT_i, 1, _aEXTEND2_FRAME_i, _aWAIT_i, 1, _aTHRUST2_FRAME_i, _aWAIT_i, 2, _aSTAND_FRAME_i >>, ~NPCToItem_i(_Avatar));
+                    if not ~GetItemFlag_i(_Asleep, v17) {
+                        v28 = ((v27 + 4) modulo 8);
+                        v29 = ~PostAction(<< _aFACE_i, v28, _aWAIT_i, 2, _aREADY_FRAME_i, _aWAIT_i, 4, _aBEND_FRAME_i, _aWAIT_i, 1, _aKNEEL_FRAME_i, _aWAIT_i, 1, _aUSABLE_i, #KillTarget_i >>, v17);
+                    } else {
+                        v29 = ~PostAction(<< _aWAIT_i, 12, _aUSABLE_i, #KillTarget_i >>, v17);
+                    }
+                }
+            }
+        }
+    }
+}
+
+Usable ArcadionFades_i #locals(1) {
+    CloseSpeaker(_Fransisco);
+    v0 = ~PostAction(<< _aFRAME, 8, _aSFX_i, 67, _aCONTINUE_i, _aPREV_FRAME, _aWAIT_i, 4, _aLOOP_i, 65533, 4 >>, item);
+    terminate;
+}
+
+Function ~BlueGem_i accepts a0 #locals(4) {
+    Foreach v3 in v0 {
+        v4 = ~GetFrame(v3);
+        if (v4 = 12) {
+            return v3;
+        }
+    }
+    return 0;
+}
+
+Routine ArcadionRestoresMagic_i accepts a0 #locals(4) {
+    v1 = ~GetNPCStat_i(_Mag, ~NPCToItem_i(_Avatar));
+    v2 = ~GetNPCStat_i(_MaxMagic, ~NPCToItem_i(_Avatar));
+    if not v0 {
+        v3 = "the gem";
+    } else {
+        v3 = "the blade";
+    }
+    if (v1 = v2) {
+        ["Thy power needs no replenishing, master." The daemon sounds a bit put out.];
+    } else {
+        v4 = ~ChangeNPCStat_i(v2, _Mag, ~NPCToItem_i(_Avatar));
+        if v4 {
+            [Energy courses from <v3> into you, restoring your magical reserves, "It is done, master."];
+        } else {
+            ["I fear something is amiss, master." The daemon sounds almost worried.];
+        }
+    }
+}
+
+Function ~IsHoldingBladeAndGem_i #locals(0) {
+    if not ~IsEquipped_i(15, _Sword_Blank, 1, ~NPCToItem_i(_Avatar)) && not ~IsEquipped_i(15, _Sword_Blank, 2, ~NPCToItem_i(_Avatar)) {
+        return 0;
+    }
+    if not ~IsEquipped_i(13, _Gem, 1, ~NPCToItem_i(_Avatar)) && not ~IsEquipped_i(13, _Gem, 2, ~NPCToItem_i(_Avatar)) {
+        return 0;
+    }
+    return 1;
+}
+
+Function ~IsBodyType_i accepts a0 #locals(0) {
+    if (v0 = 400) {
+        return 1;
+    }
+    if (v0 = 414) {
+        return 1;
+    }
+    if (v0 = 892) {
+        return 1;
+    }
+    if (v0 = 762) {
+        return 1;
+    }
+    if (v0 = 778) {
+        return 1;
+    }
+    if (v0 = 507) {
+        return 1;
+    }
+    return 0;
+}
+
+Function ~IsWorthyVictim_i accepts a0 #locals(0) {
+    if (v0 = 504) {
+        return 1;
+    }
+    if (v0 = 505) {
+        return 1;
+    }
+    if (v0 = 230) {
+        return 1;
+    }
+    if (v0 = 381) {
+        return 1;
+    }
+    if (v0 = 375) {
+        return 1;
+    }
+    if (v0 = 382) {
+        return 1;
+    }
+    if (v0 = 534) {
+        return 1;
+    }
+    if (v0 = 501) {
+        return 1;
+    }
+    if (v0 = 380) {
+        return 1;
+    }
+    if (v0 = 480) {
+        return 1;
+    }
+    if (v0 = 465) {
+        return 1;
+    }
+    if (v0 = 487) {
+        return 1;
+    }
+    if (v0 = 488) {
+        return 1;
+    }
+    if (v0 = 489) {
+        return 1;
+    }
+    if (v0 = 506) {
+        return 1;
+    }
+    if (v0 = 445) {
+        return 1;
+    }
+    if (v0 = 446) {
+        return 1;
+    }
+    if (v0 = 154) {
+        return 1;
+    }
+    return 0;
+}
+
+Function ~IsUndeadType_i accepts a0 #locals(0) {
+    if (v0 = 519) {
+        return 1;
+    }
+    if (v0 = 354) {
+        return 1;
+    }
+    if (v0 = 528) {
+        return 1;
+    }
+    if (v0 = 337) {
+        return 1;
+    }
+    if (v0 = 317) {
+        return 1;
+    }
+    if (v0 = 299) {
+        return 1;
+    }
+    return 0;
+}

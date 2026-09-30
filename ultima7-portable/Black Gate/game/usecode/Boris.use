@@ -1,0 +1,277 @@
+Routine Boris accepts a0 #locals(16) #uses(~LordOrLady, ~AskYesNo, ~IsNPCNear, BorisSellsFood_i, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Boris);
+        v0 = ~LordOrLady();
+        v1 = ~GetTime();
+        v2 = ~GetWorkType(~NPCToItem_i(_Boris));
+        TurnOn(<< "name", "job", "bye" >>);
+        if flag(384) {
+            TurnOn("strangers");
+        }
+        if flag(381) {
+            TurnOn("locket");
+        }
+        if flag(405) {
+            ["Art thou ready to pay thy bill?"];
+            if ~AskYesNo() {
+                goto label_14;
+            } else {
+                ["Goodbye, then!"*];
+                terminate;
+            }
+        }
+        if not $MetBoris {
+            [You see a leering, ill-postured man who chortles to himself.];
+            $MetBoris = true;
+            if (v2 = 23) {
+                v3 = ~IsNPCNear(_Dupre);
+                if v3 {
+                    ["Well if it isn't Dupre! -Sir- Dupre now, is it?"];
+                    SetSpeaker(0, _Dupre);
+                    ["That it is, Boris."];
+                    SetSpeaker(0, _Boris);
+                    ["Hmmm-- it seems to me thou dost have a tab still going here? Yes?"];
+                    SetSpeaker(0, _Dupre);
+                    ["Oh? Do I?"];
+                    SetSpeaker(0, _Boris);
+                    ["Yes indeed! Let me see... I believe the total that thou dost owe is 74 gold pieces. I am afraid that thou must pay up before I can speak with thee or anyone else with thee."];
+                    SetSpeaker(0, _Dupre);
+                    [Dupre looks embarrassed. He turns to you. "My friend, wilt thou help me out?"];
+                    if ~AskYesNo() {
+                        label_14:
+                        v4 = ~CountItem(_All, _All, _Gold_Coin, _Party);
+                        if (v4 >= 74) {
+                            v5 = ~TakeFromParty_i(true, _All, _All, _Gold_Coin, 74);
+                            if v5 {
+                                SetSpeaker(0, _Dupre);
+                                ["I thank thee, Avatar."];
+                                [You hand the gold over to Boris.];
+                                flag(405) = false;
+                                SetSpeaker(0, _Boris);
+                                ["'Tis a pleasure to do business with thee, Sir Dupre! And welcome to my pub!"];
+                                CloseSpeaker(_Dupre);
+                                SetSpeaker(0, _Boris);
+                            } else {
+                                ["Hmmm, where did our gold go?"*];
+                                flag(405) = true;
+                                terminate;
+                            }
+                        } else {
+                            ["I am afraid are pockets are too empty!"*];
+                            flag(405) = true;
+                            terminate;
+                        }
+                    } else {
+                        SetSpeaker(0, _Boris);
+                        ["Well, I wilt not be serving thee or speaking to thee until thy bill is paid!"*];
+                        flag(405) = true;
+                        terminate;
+                    }
+                }
+            }
+        } else {
+            ["Hello again," says Boris.];
+        }
+        converse {
+            key ("name") {
+                ["Call me Boris."];
+                TurnOff("name");
+            }
+            key ("job") {
+                ["I run The Modest Damsel, here in New Magincia."];
+                TurnOn(<< "Modest Damsel", "New Magincia" >>);
+            }
+            key ("Modest Damsel") {
+                if (v2 = 23) {
+                    ["It is a little inn and tavern. I am the owner, along with my wife, Magenta. Wouldst thou like something to eat or drink, or perhaps a room?"];
+                    TurnOn(<< "Magenta", "eat or drink", "room" >>);
+                } else {
+                    ["The Modest Damsel is now closed for business. But do please return during business hours."];
+                }
+                TurnOff("Modest Damsel");
+            }
+            key ("Magenta") {
+                ["She became the mayor of New Magincia after the death of the old mayor, her father, several years ago. She has done such a good job that no one has opposed her for the position yet."];
+                TurnOff("Magenta");
+            }
+            key ("eat or drink") {
+                ["I am certain thou wilt enjoy our food and drink."];
+                BorisSellsFood_i();
+            }
+            key ("room") {
+                ["Why dost thou not stay the night? For but 3 gold thou canst let one of our rooms. Dost thou wish to stay the night?"];
+                if ~AskYesNo() {
+                    v6 = ~GetParty();
+                    v7 = 0;
+                    Foreach v10 in v6 {
+                        v7 = (v7 + 1);
+                    }
+                    v11 = (v7 * 3);
+                    v12 = ~CountItem(_All, _All, _Gold_Coin, _Party);
+                    if (v12 >= v11) {
+                        v13 = ~GiveToParty_i(true, _All, 255, _Key, 1);
+                        if v13 {
+                            ["Here is thy room key. 'Twill only work in this inn."];
+                            v14 = ~TakeFromParty_i(true, _All, _All, _Gold_Coin, v11);
+                        } else {
+                            ["Sorry, <v0>, thou must remove some of thy load before I can give thee the room key."];
+                        }
+                    } else {
+                        ["Thou hast not enough gold for my rooms."];
+                    }
+                } else {
+                    ["Some other evening, perhaps."];
+                }
+                TurnOff("room");
+            }
+            key ("New Magincia") {
+                ["In all of Britannia thou shalt not find a place that changes so little. Even the people always seem the same."];
+                TurnOn("people");
+                TurnOff("New Magincia");
+            }
+            key ("people") {
+                ["There are merchants and laborers, as well as a few new folks."];
+                TurnOn(<< "merchants", "laborers", "new folks" >>);
+                TurnOff("people");
+            }
+            key ("merchants") {
+                ["They would be Russell, the shipwright; Henry, the peddler; and Sam, the flower man."];
+                TurnOn(<< "Russell", "Henry", "Sam" >>);
+                TurnOff("merchants");
+            }
+            key ("laborers") {
+                ["They would be Katrina, the shepherd, and Constance, the water carrier."];
+                TurnOn(<< "Katrina", "Constance" >>);
+                TurnOff("laborers");
+            }
+            key ("new folks") {
+                ["Except for the three strangers, the only relatively new person on the island is Alagner, the sage."];
+                TurnOn(<< "Alagner", "strangers" >>);
+                TurnOff("new folks");
+            }
+            key ("Alagner") {
+                ["Alagner is not from New Magincia, of course, but has settled here after studying the world, for he well knows the value of our peace and solitude."];
+                TurnOff("Alagner");
+            }
+            key ("Russell") {
+                ["A brilliant artist and craftsman, Russell cares little for wealth or notoriety. He is content simply building his fine ships and watching them sail."];
+                TurnOff("Russell");
+            }
+            key ("Katrina") {
+                ["Katrina has come to the aid of the people of this town on more than one occasion. She gets an interesting smile on her face whenever thy name is mentioned."];
+                v15 = ~IsNPCNear(_Katrina);
+                if v15 {
+                    SetSpeaker(0, _Katrina);
+                    ["That is because the Avatar is one my dearest friends."];
+                    SetSpeaker(0, _Boris);
+                    ["Am I not one of thy dearest friends, Katrina?"];
+                    SetSpeaker(0, _Katrina);
+                    ["Thou art a flirt, Boris! Dost Magenta know how thou dost want to be dearest friends with the other women living on the island?"];
+                    SetSpeaker(0, _Boris);
+                    ["Thou dost torture me, Katrina!" He laughs.];
+                    CloseSpeaker(_Katrina);
+                    SetSpeaker(0, _Boris);
+                }
+                TurnOff("Katrina");
+            }
+            key ("Henry") {
+                ["Henry's parents were so poor it is a wonder he did not starve to death. I think Constance kept him going. He has loved her since they were children."];
+                TurnOff("Henry");
+            }
+            key ("Constance") {
+                ["Constance is an orphan who was raised mostly by Katrina. Her innocence is surpassed only by her beauty. She is loved by all." Boris stares off into space for a few seconds before coming to his senses.];
+                TurnOff("Constance");
+            }
+            key ("Sam") {
+                [Boris laughs. "Thou wouldst have to meet Sam for thyself. He is an incredible person who is perfecting the art of enjoying life."];
+                TurnOff("Sam");
+            }
+            key ("strangers") {
+                ["A shipwreck has brought three strangers to our island. Rumor has it one of them is a monied gentleman from Buccaneer's Den, and the other two are his hired swords. They were in here drinking one night. They are not the sort of crowd I would wish to serve at mine establishment."];
+                flag(384) = true;
+                TurnOff("strangers");
+            }
+            key ("locket") {
+                if flag(383) {
+                    ["I do not wish to hear of that locket ever again! Do not speak to me of it!"];
+                    terminate;
+                }
+                if not flag(389) {
+                    ["I am quite certain I have never seen such a locket. I shall be happy to keep mine eyes open, though."];
+                    flag(387) = true;
+                } else {
+                    if not flag(382) {
+                        [You tell Boris what you had heard from the pirate, Battles. He breaks out into a cold sweat. "Thou hast seen through my deception. I shall hand it over to thee." He opens a secret panel from behind the bar and looks inside. When he looks back to you his face has lost all color. "The locket is gone! I swear to thee, I know not where it is!"];
+                        flag(382) = true;
+                    } else {
+                        ["I still have not been able to find the locket!" Boris looks as if he is about to tear his hair out, "But I will keep looking until I find it!"];
+                    }
+                }
+                TurnOff("locket");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["Good journey!"*];
+    }
+    if (event = _Bark) {
+        BarkAboutWork_i(_Boris);
+    }
+}
+
+Usable BorisSellsFood_i #locals(14) #uses(~LordOrLady, ~AskOrdList, ~PriceString_i, ~AskYesNo, ~SellItem_i) {
+    v0 = ~LordOrLady();
+    PushKeys();
+    v1 = true;
+    v2 = << "nothing", "jerky", "mead", "fish", "ale", "wine" >>;
+    v3 = << 0, 377, 616, 377, 616, 616 >>;
+    v4 = << 65177, 15, 0, 12, 3, 5 >>;
+    v5 = << 0, 12, 5, 5, 2, 1 >>;
+    v6 = "";
+    v7 = 0;
+    v8 = << "", " for ten pieces", " for a bottle", " for one", " for a bottle", " for a bottle" >>;
+    v9 = << 0, 10, 1, 1, 1, 1 >>;
+    ["What dost thou want for thy refreshment?"];
+    While v1 {
+        v10 = ~AskOrdList(v2);
+        if (v10 = 1) {
+            ["Fine."];
+            v1 = false;
+        } else {
+            v11 = ~PriceString_i(v8::v10, v5::v10, v7, v2::v10, v6);
+            v12 = 0;
+            ["^<v11> Art thou still interested?"];
+            v13 = ~AskYesNo();
+            if v13 {
+                if (v3::v10 = 377) {
+                    v11 = "How many ";
+                    if (v9::v10 > 1) {
+                        v11 = (v11 + "packets ");
+                    }
+                    v11 = (v11 + "wouldst thou like?");
+                    ["^<v11>"];
+                    v12 = ~SellItem_i(true, 1, 20, v5::v10, v9::v10, v4::v10, v3::v10);
+                } else {
+                    v12 = ~SellItem_i(true, 1, 0, v5::v10, v9::v10, v4::v10, v3::v10);
+                }
+            }
+            if (v12 = 1) {
+                ["It is thine!"];
+            } else {
+                if (v12 = 2) {
+                    ["Thou cannot possibly carry that much!"];
+                } else {
+                    if (v12 = 3) {
+                        ["Thou dost not have enough gold, <v0>."];
+                    } else {
+                    }
+                }
+            }
+            ["Wouldst thou care for something else?"];
+            v1 = ~AskYesNo();
+        }
+    }
+    PopKeys();
+}

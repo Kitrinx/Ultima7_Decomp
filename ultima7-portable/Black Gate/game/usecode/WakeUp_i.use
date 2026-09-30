@@ -1,0 +1,21 @@
+Routine WakeUp_i accepts a0 #locals(6) #uses(~PartySpeaker_i, SetWorkTypeUnlessWaiting_i, RollUpBedroll_i) {
+    if (event = _Posted_i) {
+        v0 = ~PartySpeaker_i();
+        if not (v0 = 65180) {
+            SetSpeaker(0, v0);
+            v1 = ~GetNPCName_i(_Avatar);
+            ["Arise, <v1>. Time to continue the quest."];
+            CloseSpeaker(v0);
+        }
+        v2 = ~GetParty();
+        Foreach v5 in v2 {
+            SetWorkTypeUnlessWaiting_i(_FollowAvt, v5);
+        }
+        SetItemFlag_i(_Asleep, _Avatar);
+        ClearItemFlag_i(_Asleep, _Avatar);
+        if ((~Item_getType(item) = _Bed_1011) and (~GetFrame(item) = 17)) {
+            event = 1;
+            RollUpBedroll_i(item);
+        }
+    }
+}

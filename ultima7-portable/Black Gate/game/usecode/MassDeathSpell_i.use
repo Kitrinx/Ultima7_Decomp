@@ -1,0 +1,43 @@
+Routine MassDeathSpell_i accepts a0 #locals(14) #uses(~IsMagicOK_i, DoDamage_i) {
+    if (event = _Action) {
+        Kernel_resetRef(item);
+        Item_bark("@Vas Corp@", item);
+        if ~IsMagicOK_i() {
+            v0 = ~GetCoord(item);
+            createSprite(65535, 0, 0, 0, (v0::2 - 2), (v0::1 - 2), 7);
+            v1 = ~PostAction(<< _aSFX_i, 65, _aKNEEL_FRAME_i, _aSTAND_FRAME_i, _aUP_FRAME_i, _aOUT_FRAME_i, _aSFX_i, 67 >>, item);
+            v2 = 25;
+            v3 = ~FindNearby_i(4, v2, 65535, item);
+            v4 = ~GetParty_i();
+            v4 = (v4 & ~NPCToItem_i(_LordBritish));
+            v4 = (v4 & ~NPCToItem_i(_Batlin));
+            v5 = false;
+            Foreach v8 in v3 {
+                if not (v8 in v4) {
+                    v2 = ~GetDist(v8, item);
+                    v2 = ((v2 / 3) + 5);
+                    Kernel_resetRef(v8);
+                    v1 = ~PostInFuture(v2, << _aNO_HALT_i, _aUSABLE_i, #MassDeathSpell_i >>, v8);
+                    v5 = true;
+                }
+            }
+            if (v5 = true) {
+                v4 = ~GetParty();
+                Foreach v11 in v4 {
+                    v12 = ~GetNPCStat_i(_Hits, v11);
+                    DoDamage_i((v12 - 2), v11);
+                }
+            }
+        } else {
+            v1 = ~PostAction(<< _aKNEEL_FRAME_i, _aSTAND_FRAME_i, _aUP_FRAME_i, _aOUT_FRAME_i, _aUSABLE_i, #FizzleSpell_i >>, item);
+        }
+    }
+    if (event = _Posted_i) {
+        v13 = ~GetItemFlag_i(_CantDie_i, item);
+        if (v13 = false) {
+            v12 = ~GetNPCStat_i(_Hits, item);
+            DoDamage_i((v12 - 2), item);
+            DoDamage_i(50, item);
+        }
+    }
+}

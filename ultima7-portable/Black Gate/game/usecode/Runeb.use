@@ -1,0 +1,76 @@
+Routine Runeb accepts a0 #locals(4) #uses(~IsNearEachOther_i, GivePartyExp_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Runeb);
+        v0 = ~GetTime();
+        v1 = ~NPCToItem_i(_Runeb);
+        if (v0 = 7) {
+            v2 = ~IsNearEachOther_i(_Quan, _Runeb);
+            if v2 {
+                [The gargoyle turns to you, frowning. He moves his massive hand to his mouth and use one finger to cross his lips. The Fellowship meeting is in progress.*];
+            } else {
+                [The gargoyle, obviously in a hurry, ignores you.*];
+            }
+            terminate;
+        }
+        TurnOn(<< "name", "job", "Fellowship", "bye" >>);
+        if not $MetRuneb {
+            [The gargoyle gives you a menacing glare. Judging by his size, he would make a formidable foe.];
+            $MetRuneb = true;
+        } else {
+            ["To ask what you need?" says Runeb.];
+        }
+        if flag(597) {
+            if flag(575) {
+                TurnOn("altar destruction");
+            }
+            if flag(576) {
+                TurnOn("frame Quan");
+            }
+        }
+        converse {
+            key ("name") {
+                ["To be Runeb."];
+                flag(597) = true;
+                TurnOn("Runeb");
+                TurnOff("name");
+                if flag(575) {
+                    TurnOn("altar destruction");
+                }
+                if flag(576) {
+                    TurnOn("frame Quan");
+                }
+            }
+            key ("job") {
+                ["To be Fellowship clerk."];
+            }
+            key ("Runeb") {
+                ["To mean `busy one,'" he says sarcastically.];
+                TurnOff("Runeb");
+            }
+            key ("Fellowship") {
+                v3 = ~IsMedallionOn_i();
+                if v3 {
+                    ["To have a branch here. To meet at usual time each night."];
+                } else {
+                    ["To have more important things to do now. To ask me later, human."];
+                }
+                TurnOff("Fellowship");
+            }
+            key ("frame Quan", "altar destruction") {
+                GivePartyExp_i(100);
+                ["To be sorry you know that. To need now to kill Sarpling." He grins at you.~~"To need now to kill you!"*];
+                SetWorkType(_Combat_0, v1);
+                Npc_setAlignment(_Evil, v1);
+                terminate;
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        [He waits for you to leave before he returns to what he was doing.*];
+    }
+    if (event = _Bark) {
+        terminate;
+    }
+}

@@ -1,0 +1,11 @@
+Routine GangPlank_030D accepts a0 #locals(0) #uses(MemberSays_i, ~SwingPlank_i) {
+    if (event = _Action) {
+        if ~GetItemFlag_i(_OnMovingBarge_i, item) {
+            MemberSays_i("@The sails must be furled before the planks can be lowered.@");
+        } else {
+            if not ~SwingPlank_i(item) {
+                MemberSays_i("@I think the gangplank is blocked.@");
+            }
+        }
+    }
+}

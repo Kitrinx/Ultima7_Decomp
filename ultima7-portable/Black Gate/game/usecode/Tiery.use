@@ -1,0 +1,75 @@
+Routine Tiery accepts a0 #locals(2) #uses(~AvatarName, ~LordOrLady, ~AskYesNo) {
+    if (event = _Action) {
+        SetSpeaker(0, _Tiery);
+        v0 = ~AvatarName();
+        v1 = ~LordOrLady();
+        TurnOn(<< "name", "job", "bye" >>);
+        if not $MetTiery {
+            [You see an unkempt, yet dapper man talking to himself.];
+            $MetTiery = true;
+        } else {
+            ["Eh, wot's that? Oh, it's you, <v1>."];
+        }
+        converse {
+            key ("name") {
+                ["M'name's Tiery, <v1>."];
+                TurnOff("name");
+            }
+            key ("job") {
+                ["Eh, 'ow's that? Oh, m'job. Why, Oi take good care o' me buddies in the graveyard 'ere in Empath Abbey, Oi do."];
+                TurnOn(<< "Empath Abbey", "buddies" >>);
+            }
+            key ("Empath Abbey") {
+                ["What do ye mean did Oi 'umpeth Abby. 'Course Oi didn't. Oi never went anywhere near Abby. 'Oo told ye that?"];
+                TurnOn("'Umpeth Abby");
+                TurnOff("Empath Abbey");
+            }
+            key ("'Umpeth Abby") {
+                ["Empath Abbey? Why, this 'ere's Empath Abbey, <v1>. Oi don't mean to pry, but if ye knowest not where ye be, why 'ave ye come 'ere?" He shakes his head. "It's just as Oi was tellin' Darek the other day, `If ye never want to be lost,' Oi said, `don't ever go nowheres.'"];
+                TurnOff("'Umpeth Abby");
+            }
+            key ("buddies") {
+                ["What wrong with the bodies? Oi don' do nothing more than bury 'em! A fellow could get in lots o' trouble spreading rumors like that."];
+                TurnOn(<< "bury", "bodies" >>);
+                TurnOff("buddies");
+            }
+            key ("bury") {
+                ["Barry? Oh, 'im. Oi don't know what ye's talkin' about. Oi never met Barry's woife! 'Twas just a lie they's spreadin' about me."];
+                TurnOff("bury");
+                TurnOn("Barry");
+            }
+            key ("Barry") {
+                ["Oi already told ye that's m'job."];
+                TurnOff("Barry");
+            }
+            key ("bodies") {
+                ["That's right. M'buddies! Oi bury 'em. It's m'job." He squints at you. "Unless, <v1>, yer askin' about the people 'ere?"];
+                TurnOn("people");
+                TurnOff("bodies");
+            }
+            key ("people") {
+                ["No! Of course Oi don't use peep holes. What sort o' question is that to ask a fellow, <v1>?"];
+                TurnOn("peep hole");
+                TurnOff("people");
+            }
+            key ("peep hole") {
+                ["Well, Oi only know a few people 'ere, but Oi'll try an' 'elp as best as Oi am able. 'Oo do ye want to know about? My two best friends are Garth an' Darek, but Oi often talk to Nina an' Bart when Oi get the chance.~~];
+                ["Recently, that Perrin fellow from across the way 'as been spendin' some toime with me. 'E's a real nice chap. A l'ttle brainy, perhaps, <v1>, but Oi like 'im just the same. Anyone else ye'd like to know about?"];
+                if ~AskYesNo() {
+                    ["Well, that Perrin fellow'd be a better one to ask than Oi'd be, <v1>. 'E knows a lot, that one does."];
+                } else {
+                    ["All right then, glad Oi could introduce ye to a few o' my friends."];
+                }
+                TurnOff("peep hole");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["G'day, <v1>. 'Ave a pleasant journey. Oi'll tell Malc 'allo for ye."*];
+    }
+    if (event = _Bark) {
+        terminate;
+    }
+}

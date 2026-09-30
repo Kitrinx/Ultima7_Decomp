@@ -1,0 +1,159 @@
+Routine Leigh accepts a0 #locals(3) #uses(~LordOrLady, LeighHeals_i, ~IsInInv, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Leigh);
+        v0 = ~LordOrLady();
+        v1 = ~GetWorkType(~NPCToItem_i(_Leigh));
+        TurnOn(<< "name", "job", "bye" >>);
+        if flag(601) && flag(634) {
+            TurnOn("examine chips");
+        }
+        if not $MET_LADY_LEIGH {
+            [This attractive woman gives you an approving look.];
+            $MET_LADY_LEIGH = true;
+        } else {
+            ["Greetings, <v0>." Leigh smiles at you.];
+        }
+        converse {
+            key ("name") {
+                [She blushes. "I am Lady Leigh."];
+                TurnOff("name");
+            }
+            key ("job") {
+                ["I am the Healer of Serpent's Hold."];
+                TurnOn(<< "Serpent's Hold", "heal" >>);
+                flag(634) = true;
+                if flag(601) {
+                    TurnOn("examine chips");
+                }
+            }
+            key ("heal") {
+                if (v1 = 7) {
+                    LeighHeals_i(385, 8, 25);
+                } else {
+                    ["I am sorry, but I have too many other patients to help thee now. Perhaps when I next open my shop."];
+                }
+                TurnOff("heal");
+            }
+            key ("Serpent's Hold") {
+                ["Lord Jean-Paul is in charge of keeping the order here, but Sir Denton would be an even better source of information about Serpent's Hold."];
+                TurnOn(<< "John-Paul", "Denton" >>);
+                TurnOff("Serpent's Hold");
+            }
+            key ("John-Paul") {
+                ["He is an easy man to find, for Sir Horffe hardly ever leaves his side. Watch for the tall, muscular gargoyle."];
+                if not $STARTED_HOLD_INVESTIGATION {
+                    ["In fact," she says, looking off in the distance, "I believe he may have a desire to speak with thee. Perhaps thou shouldst truly seek him out."];
+                }
+                ["If thou hast business about the town, and are not able to locate John-Paul, thou mightest wish to speak with Sir Richter."];
+                TurnOff("John-Paul");
+                TurnOn(<< "Horffe", "Richter" >>);
+            }
+            key ("Horffe") {
+                ["He was found at a very young age, apparently abandoned by his father. Two people took and raised him as their own. As thou couldst see simply by meeting him, he is a very noble person and a stout warrior."];
+                TurnOff("Horffe");
+            }
+            key ("Richter") {
+                ["He is the armourer. His shop is in the back of the Hold."];
+                TurnOff("Richter");
+            }
+            key ("Denton") {
+                ["He is the tavern keeper at the Hallowed Dock, just inside the Hold's doors. He is wonderful at remembering and discussing important facts."];
+                TurnOff("Denton");
+            }
+            key ("examine chips") {
+                v2 = ~IsInInv(4, 65177, _Stone_Chips, 1, _Party);
+                if v2 {
+                    if flag(616) {
+                        [She looks at you, puzzled. "Did I not do that already?"];
+                    } else {
+                        [She takes the stone chips from you and examines them. Using several vials of strange and unusual mixtures, she analyzes the blood. Finally, after a few silent minutes, she looks up, grinning.~~"I have determined the nature of the blood. It is definitely not human. In fact," she looks back down at the sample and raises one eyebrow, "it is gargoyle blood."];
+                        TurnOn("gargoyle blood");
+                        flag(607) = true;
+                    }
+                } else {
+                    ["I am afraid that I must be able to see them to examine them."];
+                }
+                TurnOff("examine chips");
+            }
+            key ("gargoyle blood") {
+                [She appears thoughtful.~~"What is odd, <v0>, is that there is only one gargoyle in Serpent's Hold. But I cannot imagine Sir Horffe would have had anything to do with this wanton destruction."];
+                TurnOff("gargoyle blood");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["Farewell, <v0>."*];
+    }
+    if (event = _Bark) {
+        BarkAboutWork_i(_Leigh);
+    }
+}
+
+Routine LeighHeals_i accepts a0, a1, a2 #locals(10) #uses(~AskYesNo, ~AskList, ~AskParty2_i, SellHealing_i, SellCure_i, SellResurrection_i) {
+    ["I am qualified to heal, cure poison, and resurrect. Art thou interested in one of these services?"];
+    PushKeys();
+    v3 = ~AskYesNo();
+    if v3 {
+        ["Which of my services dost thou have need of?"];
+        v4 = << "heal", "cure poison", "resurrect" >>;
+        v5 = ~AskList(v4);
+        if ((v5 = "heal") or (v5 = "cure poison")) {
+            if (v5 = "heal") {
+                v6 = "healed";
+                v7 = v2;
+            }
+            if (v5 = "cure poison") {
+                v6 = "cured of poison";
+                v7 = v1;
+            }
+            ["Who dost thou wish to have <v6>?"];
+            v8 = ~AskParty2_i();
+            if (v8 = 0) {
+                ["Excellent, thou art uninjured!"];
+                goto label_27;
+            }
+        }
+        if (v5 = "resurrect") {
+            v9 = ~AvatarItem_i();
+            v10 = ~FindNearest_i(25, _Body_400, v9);
+            if (v10 = 0) {
+                v10 = ~FindNearest_i(25, _Body_414, v9);
+                if (v10 = 0) {
+                    ["There seems to be no one who needs such assistance. Perhaps, if I have overlooked anyone, thou couldst set him or her before me."*];
+                    goto label_27;
+                }
+            }
+            v7 = v0;
+            ["Indeed, this individual needs restoration!"];
+        }
+        ["My price is <v7> gold. Art thou interested?"];
+        v11 = ~AskYesNo();
+        if v11 {
+            v12 = ~CountItem(_All, _All, _Gold_Coin, _Party);
+            if (v12 >= v7) {
+                if (v5 = "heal") {
+                    SellHealing_i(v7, v8);
+                } else {
+                    if (v5 = "cure poison") {
+                        SellCure_i(v7, v8);
+                    } else {
+                        if (v5 = "resurrect") {
+                            SellResurrection_i(v7, v10);
+                        } else {
+                        }
+                    }
+                }
+            } else {
+                ["Thou dost not have enough gold! Mayhaps thou couldst return when thou hast more."];
+            }
+        } else {
+            ["Then thou must go elsewhere."];
+        }
+    } else {
+        ["If thou needest my services later, I will be here."];
+    }
+    label_27:
+    PopKeys();
+}

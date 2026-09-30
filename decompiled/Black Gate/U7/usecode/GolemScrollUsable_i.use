@@ -1,0 +1,77 @@
+Routine GolemScrollUsable_i accepts a0 #locals(21) #uses(MemberBarks_i, ~GolemsInPentacle_i, RemoveAll_i, MemberSays_i) {
+    if (event = _Action) {
+        closeAllGumps();
+        v0 = ~FindNearby_i(8, 40, _Golem, item);
+        v1 = false;
+        v2 = false;
+        Foreach v5 in v0 {
+            if ~GetContents(4, 243, _Scroll, v5) {
+                v1 = v5;
+            }
+            if ~GetContents(4, 244, _Scroll, v5) {
+                v2 = v5;
+            }
+        }
+        if (flag(795) and not flag(796)) {
+            MemberBarks_i("@All the golems are alive now.@");
+            [*];
+            terminate;
+        }
+        v6 = false;
+        v7 = ~GolemsInPentacle_i();
+        if not v7 {
+            MemberBarks_i(<< "@The golem must be centered", "in the pentacle of stones.@" >>);
+        } else {
+            v0 = ~FindNearby_i(0, 10, _Rock_331, << 2487, 1736, 0 >>);
+            v8 = 0;
+            Foreach v11 in v0 {
+                v12 = ~GetFrame(v11);
+                if ((v12 >= 0) and ((v12 <= 10) and ~FindNearby_i(176, 2, _Blood, v11))) {
+                    v8 = (v8 + 1);
+                }
+            }
+            if (v8 >= 5) {
+                v6 = true;
+            }
+            if not v6 {
+                if ((v8 > 0) and (v8 < 5)) {
+                    v13 = " rock is";
+                    if (v8 > 1) {
+                        v13 = " rocks are";
+                    }
+                    v14 = ((("@Only " + v8) + v13) + " covered.@");
+                    MemberBarks_i(v14);
+                } else {
+                    MemberBarks_i("@Blood must cover the rocks.@");
+                }
+            }
+        }
+        playSFX(item, 14);
+        ShowBook_i(item);
+        [     Vas Flam Uus~~];
+        [This scroll will permit thee to perform the ritual necessary to either create, or reconstruct, stone creatures and instill within them the power of thought. First, gather the materials discussed in the previous chapters. After thou hast performed said task, thou shouldst refer back to this scroll and begin...];
+        if (v6 and v7) {
+            v15 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #ReviveGolem_i, _aNOP_i >>, _Avatar);
+        }
+    }
+    if (event = _Posted_i) {
+        flag(796) = true;
+        v16 = ~GetCoord(item);
+        RemoveAll_i(item);
+        v17 = ~Item_create(_Body_414);
+        SetFrame(5, v17);
+        v18 = ~PopToMap(v16);
+        v19 = ~Item_create(_Scroll);
+        v18 = ~SetQuality(244, v19);
+        SetFrame(4, v19);
+        v18 = ~PopToNPC(v17);
+        v20 = ~Item_create(_Small_Rock);
+        SetFrame(10, v20);
+        v16::1 = (v16::1 + 4);
+        v16::2 = (v16::2 - 1);
+        v16::3 = (v16::3 + 2);
+        v18 = ~PopToMap(v16);
+        MemberSays_i("@He gave up his heart... so that Adjhar may live!* Well, not to be morbid, but I suppose the incantation should work now.@");
+        Kernel_resetRef(_Avatar);
+    }
+}

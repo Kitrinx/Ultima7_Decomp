@@ -1,0 +1,187 @@
+Routine Inmanilem accepts a0 #locals(2) #uses(InmanilemHeals_i, GargBarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Inmanilem);
+        v0 = 65354;
+        TurnOn(<< "name", "job", "bye" >>);
+        if not $MetInmanilem {
+            [You are greeted by a friendly gargoyle.];
+            $MetInmanilem = true;
+        } else {
+            ["To see you are doing well, human," says Inmanilem.];
+        }
+        converse {
+            key ("name") {
+                ["To be called Inmanilem, human. To wish information about Terfin?"];
+                TurnOff("name");
+                TurnOn(<< "information", "Inmanilem" >>);
+            }
+            key ("Inmanilem") {
+                ["To be Gargoyle for `make healed one.'"];
+                TurnOff("Inmanilem");
+            }
+            key ("job") {
+                ["To be the healer."];
+                TurnOn("heal");
+                if flag(580) {
+                    TurnOn("conflicts");
+                }
+            }
+            key ("heal") {
+                v1 = ~GetTime();
+                if ((v1 = 2) or ((v1 = 3) or ((v1 = 4) or (v1 = 5)))) {
+                    InmanilemHeals_i(430, 10, 25);
+                } else {
+                    ["To feel sorry, but to be busy with other things now. To ask you to come back when I have the time to heal you."];
+                }
+                TurnOff("Heal");
+            }
+            key ("information") {
+                ["To tell you to seek out Draxinusom, human, or Forbrak. To have much information about Terfin."];
+                TurnOff("information");
+                TurnOn(<< "Draxinusom", "Forbrak", "Terfin" >>);
+            }
+            key ("Forbrak") {
+                ["To be the tavernkeeper. To be very strong of body, and of mind."];
+                TurnOff("Forbrak");
+            }
+            key ("Terfin") {
+                ["To be the city of gargoyles. To be the one of two towns where many gargoyles live. To like it here," he adds, smiling.];
+                TurnOff("Terfin");
+                TurnOn("one?");
+            }
+            key ("one?") {
+                ["To tell you the other is called Vesper. To be in the desert in northeastern Britannia. To have also humans living there, unlike here."];
+                TurnOff("one?");
+            }
+            key ("Draxinusom") {
+                ["To be our leader. To live near the Hall of Knowledge."];
+                TurnOff("Draxinusom");
+                TurnOn("Hall");
+            }
+            key ("Hall") {
+                ["To be where the three altars of singularity are kept."];
+                TurnOff("Hall");
+                TurnOn("altars");
+            }
+            key ("altars") {
+                ["To be Passion, Control, and Diligence. To be the values that most gargoyles hold as the key of our existence."];
+                TurnOff("altars");
+                TurnOn(<< "most gargoyles", "key" >>);
+            }
+            key ("key") {
+                [He nods his head emphatically. "To be quite similar to the human concept of virtues."];
+                TurnOff("key");
+            }
+            key ("most gargoyles") {
+                ["There is a rival now -- The Fellowship. To know not if it is good or bad, but to know I do not follow it!"];
+                TurnOff("most gargoyles");
+            }
+            key ("conflicts") {
+                ["To know only of one dissatisfied gargoyle. To have always been problem, but now acting hostile and aggressive. To be named Silamo, the gardener.~~"To recommend you talk to Silamo."];
+                TurnOff("conflicts");
+                flag(573) = true;
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["To wish you good health, human."*];
+    }
+    if (event = _Bark) {
+        GargBarkAboutWork_i(_Inmanilem);
+    }
+}
+
+Routine InmanilemHeals_i accepts a0, a1, a2 #locals(16) #uses(~AskYesNo, ~AskList, ~AskParty2_i, ~GetStat, SetStat) {
+    ["To be able to heal, cure poison, and resurrect. To be interested in one of these services?"];
+    PushKeys();
+    v3 = ~AskYesNo();
+    if v3 {
+        ["To need which of my services?"];
+        v4 = << "heal", "cure poison", "resurrect" >>;
+        v5 = ~AskList(v4);
+        if ((v5 = "heal") or (v5 = "cure poison")) {
+            if (v5 = "heal") {
+                v6 = "healed";
+                v7 = v2;
+            }
+            if (v5 = "cure poison") {
+                v6 = "cured of poison";
+                v7 = v1;
+            }
+            ["To want to <v6> whom?"];
+            v8 = ~AskParty2_i();
+            if (v8 = 0) {
+                ["To have no need for my healing."];
+                goto label_38;
+            }
+        }
+        if (v5 = "resurrect") {
+            v9 = ~AvatarItem_i();
+            v10 = ~FindNearest_i(25, _Body_400, v9);
+            if (v10 = 0) {
+                v10 = ~FindNearest_i(25, _Body_414, v9);
+                if (v10 = 0) {
+                    ["To not see anyone who is in need of resurrection. To have to see the body to save the spirit. To lay your companion on the ground so that I may return them to this world."*];
+                    goto label_38;
+                }
+            }
+            ["To be sorely wounded. To attempt to restore them to this world."];
+            v7 = v0;
+        }
+        ["To charge <v7> gold. To still want my services?"];
+        v11 = ~AskYesNo();
+        if v11 {
+            v12 = ~CountItem(_All, _All, _Gold_Coin, _Party);
+            if (v12 >= v7) {
+                if (v5 = "heal") {
+                    v13 = ~GetStat(_Str, v8);
+                    v14 = ~GetStat(_Hits, v8);
+                    if (v13 > v14) {
+                        v15 = (v13 - v14);
+                        SetStat(v15, _Hits, v8);
+                        v16 = ~TakeFromParty_i(true, _All, _All, _Gold_Coin, v7);
+                        ["To have healed the wounds."];
+                    } else {
+                        if (v8 = 65180) {
+                            ["To seem quite healthy!"];
+                        } else {
+                            ["To be already healthy!"];
+                        }
+                    }
+                } else {
+                    if (v5 = "cure poison") {
+                        v17 = ~NPCToItem_i(v8);
+                        if ~GetItemFlag_i(_Poisoned, v17) {
+                            ClearItemFlag_i(_Poisoned, v17);
+                            v16 = ~TakeFromParty_i(true, _All, _All, _Gold_Coin, v7);
+                            ["To have healed the wounds."];
+                        } else {
+                            ["To not need curing!"];
+                        }
+                    } else {
+                        if (v5 = "resurrect") {
+                            v18 = ~Resurrect_i(v10);
+                            if (v18 = 0) {
+                                ["To not be able to save them. To give them a proper burial    for you."];
+                            } else {
+                                ["To breathe again. To be alive!"];
+                                v16 = ~TakeFromParty_i(true, _All, _All, _Gold_Coin, v7);
+                            }
+                        } else {
+                        }
+                    }
+                }
+            } else {
+                ["To have not that much gold! To perhaps return with more and purchase the service then."];
+            }
+        } else {
+            ["Sorry. To look elsewhere for that service then."];
+        }
+    } else {
+        ["To be here later if you need me."];
+    }
+    label_38:
+    PopKeys();
+}

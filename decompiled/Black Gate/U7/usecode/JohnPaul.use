@@ -1,0 +1,179 @@
+Routine JohnPaul accepts a0 #locals(7) #uses(~AvatarName, ~LordOrLady, ~IsNPCNear, ~AskYesNo, GivePartyExp_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _JohnPaul);
+        v0 = ~AvatarName();
+        v1 = ~LordOrLady();
+        v2 = ~IsNPCNear(_Horffe);
+        v3 = false;
+        TurnOn(<< "name", "job", "bye" >>);
+        if not $MET_LORD_JOHNPAUL {
+            [The very serious man breaks into a half-smile as he greets you.];
+            v4 = ~GetDist(_Horffe, _JohnPaul);
+            if (v4 < 10) {
+                if $MET_SIR_HORFFE {
+                    [Horffe is standing at attention just behind him.];
+                } else {
+                    [Standing at attention just behind him is a wingled gargoyle.];
+                }
+            }
+            $MET_LORD_JOHNPAUL = true;
+        } else {
+            ["Good day to thee," says Lord John-Paul.];
+        }
+        if (flag(607) and not flag(613)) && not $FINISHED_HOLD_INVESTIGATION {
+            TurnOn("Sir Horffe responsible");
+        }
+        if (flag(605) and not $FINISHED_HOLD_INVESTIGATION) {
+            TurnOn("Sir Pendaran responsible");
+            TurnOff("Sir Horffe responsible");
+        }
+        converse {
+            key ("name") {
+                ["I am Lord John-Paul of Serpent's Hold. Thou art <v0>, the Avatar, correct?"];
+                v5 = ~AskYesNo();
+                if v5 {
+                    if ($STARTED_HOLD_INVESTIGATION and not flag(608)) {
+                        ["I remember thee."];
+                    } else {
+                        ["Excellent."];
+                        if not flag(611) {
+                            ["I have something that might interest thee."];
+                        }
+                        TurnOn("I am interested");
+                    }
+                } else {
+                    [He looks surprised. "Forgive me, <v1>, I could have sworn... Ah, well, no matter."];
+                }
+                TurnOff("name");
+                TurnOn("Serpent's Hold");
+            }
+            key ("job") {
+                ["I am charged with overseeing the Hold."];
+                TurnOn("overseeing");
+            }
+            key ("overseeing") {
+                ["It is not a difficult job. Sir Richter and Sir Horffe insure that things run smoothly as often as possible."];
+                TurnOff("overseeing");
+                TurnOn(<< "Sir Richter", "Sir Horffe" >>);
+            }
+            key ("Sir Richter") {
+                ["He is in charge of the Hold when I am otherwise occupied. He has seemed somewhat changed of late, but I trust him nonetheless."];
+                TurnOff("Sir Richter");
+                TurnOn("changed");
+            }
+            key ("changed") {
+                ["It began when he joined The Fellowship. He became more... what is the word... orderly."~~He smiles. "I suppose there is a regimented structure within The Fellowship that has done him good, no?"];
+                TurnOff("changed");
+                TurnOn(<< "orderly", "Fellowship" >>);
+            }
+            key ("Fellowship") {
+                ["I'm afraid I know so little about them. They seem to help many people. However, I have noticed Sir Horffe has become rather apprehensive since Richter joined."];
+                v3 = true;
+                TurnOff("Fellowship");
+            }
+            key ("orderly") {
+                ["It is difficult to explain. He seems more disciplined," he gives a short laugh, "which, of course, is rather fitting for the Hold."];
+                TurnOff("orderly");
+            }
+            key ("Sir Horffe") {
+                ["He is the captain of the guards. I would have no other for his position. He is the most honorable warrior I have ever met."];
+                if v2 {
+                    SetSpeaker(0, _Horffe);
+                    ["To thank you, Sir!"];
+                    CloseSpeaker(_Horffe);
+                    SetSpeaker(0, _JohnPaul);
+                }
+                if v3 {
+                    ["He seems to have taken a dislike for The Fellowship, however. I have noticed he is reluctant to mention this around Sir Richter." He shrugs.];
+                }
+                TurnOff("Sir Horffe");
+            }
+            key ("Serpent's Hold") {
+                ["It has changed little since thy last visit, <v0>. Of course, all of the people are new."];
+                TurnOn("people");
+                TurnOff("Serpent's Hold");
+            }
+            key ("people") {
+                ["I am afraid I must attend to other business shortly, and cannot show thee around. But I recommend that thou visitest the Hallowed Dock. Many of the Hold's knights frequent there in the evening."];
+                TurnOff("people");
+            }
+            key ("I am interested") {
+                if not flag(608) {
+                    [He smiles gratefully at you and begins pacing.~~ "Very recently, a terrible crime was committed. It seems the statue of Lord British, the one in the Hold commons, was defaced by an unknown vandal.~~ "Perhaps," he looks at you hopefully, "thou couldst help track down the villain?"];
+                    flag(611) = true;
+                    v6 = ~AskYesNo();
+                    if v6 {
+                        ["Very good. The best way to begin is by speaking with Sir Denton, the tavernkeeper at the Hallowed Dock. His ability to solve puzzles and problems is remarkable. When thou hast solved this little mystery, please inform me of thy findings."];
+                    } else {
+                        ["Of course. I understand. Thou dost have much more important matters to resolve. I will call for an official from Yew to handle this issue."];
+                        flag(608) = true;
+                    }
+                    $STARTED_HOLD_INVESTIGATION = true;
+                } else {
+                    ["Oh, yes, I forgot. I am terribly sorry to have disturbed thee twice with this matter. Please excuse my forgetfulness, <v0>. The matter is being handled."];
+                    TurnOn("handled?");
+                }
+                TurnOff("I am interested");
+            }
+            key ("handled?") {
+                ["I have sent for a judge from the High Court in Yew. I realize thou dost not have the time for such petty matters."];
+                TurnOn("I have the time");
+                TurnOff("handled?");
+            }
+            key ("I have the time") {
+                ["Yes, yes, thou art very kind, but I am sure there are much more important matters thou must attend to. I thank thee none the less."];
+                TurnOff("I have the time");
+                TurnOn("-I- -want- -to- -do- -it-!");
+            }
+            key ("-I- -want- -to- -do- -it-!") {
+                ["Oh, I see. Well, in that case. The best way to begin is by speaking with Sir Denton, the tavernkeeper at the Hallowed Dock. His ability to solve puzzles and problems is remarkable. Please come to me with thy findings after thou hast solved this little mystery."];
+                TurnOff("-I- -want- -to- -do- -it-!");
+            }
+            key ("Sir Pendaran responsible") {
+                [He appears puzzled.~~"I see. And how didst thou reach this conclusion?"];
+                TurnOn("Lady Jehanne");
+                TurnOff("Sir Pendaran responsible");
+            }
+            key ("Lady Jehanne") {
+                GivePartyExp_i(100);
+                [He smiles and extends his hand.~~"Excellent job, <v0>. I cannot adequately express my gratitude. I will see that Sir Pendaran is properly reprimanded. I thank thee, <v0>."];
+                if flag(610) {
+                    ["Now I must apologize to Sir Horffe!"];
+                    if v2 {
+                        [*];
+                        SetSpeaker(0, _Horffe);
+                        ["To have no need! To be happy the true vandal is discovered."*];
+                        CloseSpeaker(_Horffe);
+                        SetSpeaker(0, _JohnPaul);
+                    }
+                }
+                $FINISHED_HOLD_INVESTIGATION = true;
+                TurnOff("Lady Jehanne");
+            }
+            key ("Sir Horffe responsible") {
+                [He appears surprised.~~"I see. And how didst thou reach this conclusion?"];
+                TurnOn("gargoyle blood on fragments");
+                TurnOff("Sir Horffe responsible");
+            }
+            key ("gargoyle blood on fragments") {
+                ["Very well." He is obviously troubled.];
+                if v2 {
+                    [He turns to reprimand the gargoyle at his side.*];
+                    terminate;
+                } else {
+                    ["I will take care of this immediately!"];
+                }
+                flag(610) = true;
+                TurnOff("gargoyle blood on fragment");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["Carry on, <v0>."*];
+    }
+    if (event = _Bark) {
+        terminate;
+    }
+}

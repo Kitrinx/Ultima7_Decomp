@@ -1,0 +1,138 @@
+Routine Clint accepts a0 #locals(12) #uses(~LordOrLady, ~AskYesNo, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Clint);
+        v0 = ~GetTime();
+        v1 = ~GetWorkType(~NPCToItem_i(_Clint));
+        v2 = ~LordOrLady();
+        v3 = ~IsMedallionOn_i();
+        TurnOn(<< "name", "job", "bye" >>);
+        if (flag(74) or $LEARNED_ABOUT_CROWN_JEWEL) {
+            TurnOn("Crown Jewel");
+        }
+        if not $MetClint {
+            [Before you stands an old sailing man whose determined face appears to have weathered many a storm.];
+            $MetClint = true;
+        } else {
+            ["And what be thy business with me this time, <v2>?" says Clint.];
+        }
+        converse {
+            key ("name") {
+                ["I be Clint."];
+                TurnOff("name");
+            }
+            key ("job") {
+                ["In my youth I was a sailor who sailed across the sea in tall ships. Now I must content myself solely with selling ships and sextants to others."];
+                TurnOn(<< "sailor", "buy" >>);
+            }
+            key ("sailor") {
+                ["Of course this was in the day when it took mighty men to be a sailor. Nowadays those who set out to sea would not have lasted a day. But I suppose it is the nature of the universe that everything slowly becomes more tame."];
+                TurnOff("sailor");
+                TurnOn("tame");
+            }
+            key ("tame") {
+                ["Soon all the monsters will die off and the whole world will join together in trust and worthiness and unity like all those Fellowship people say. Bah! The world was a better place when everybody fought everybody else, I say."];
+                TurnOff("tame");
+                TurnOn("Fellowship");
+            }
+            key ("Fellowship") {
+                if v3 {
+                    ["No offense intended, of course. I did not realize that thou art a member." Clint reacts as if he has just touched a leper.];
+                    TurnOff("Fellowship");
+                } else {
+                    ["It is always the best thing to make thine own way in the world and not listen to what thou art told to believe. Thou hast better remember that!"];
+                    TurnOff("Fellowship");
+                }
+            }
+            key ("buy") {
+                if (v1 = 7) {
+                    ["If thou art in need of a ship I hold the deed to a fine one. Thou wilt also need a sextant to help steer her true."];
+                    TurnOn(<< "buy ship deed", "buy sextant" >>);
+                } else {
+                    ["My business is now closed. Return another time and I will be happy to serve thee, <v2>."];
+                }
+                TurnOff("buy");
+            }
+            key ("buy ship deed") {
+                if flag(210) {
+                    ["I do believe I sold thee the deed to 'The Beast'! What happened to it? Hast thou lost the ship? If so, then thou must find another shipwright!"];
+                } else {
+                    ["The deed to the ship 'The Beast' costs eight hundred gold pieces. Dost thou wish to purchase her?"];
+                    v4 = ~AskYesNo();
+                    if v4 {
+                        v5 = ~TakeFromParty_i(true, _All, _All, _Gold_Coin, 800);
+                        if v5 {
+                            v6 = ~GiveToParty_i(false, _All, 15, _Scroll, 1);
+                            if v6 {
+                                ["Here is thy deed, <v2>."];
+                                flag(210) = true;
+                            } else {
+                                ["I would give thee thy deed but thou art carrying too much to take it from me!"];
+                            }
+                        } else {
+                            ["Thou dost not have enough gold to buy a ship!"];
+                        }
+                    } else {
+                        ["If thou dost need a ship be sure to come back here."];
+                    }
+                }
+                TurnOff("buy ship deed");
+            }
+            key ("buy sextant") {
+                ["A sextant costs one hundred gold pieces. Does thou wish to buy one?"];
+                v7 = ~AskYesNo();
+                if v7 {
+                    v8 = ~TakeFromParty_i(true, _All, _All, _Gold_Coin, 100);
+                    if v8 {
+                        v9 = ~GiveToParty_i(false, _All, _All, _Sextant, 1);
+                        if v9 {
+                            ["Here is thy sextant. She shall steer thee true, to be sure."];
+                        } else {
+                            ["I would give thee thy sextant, but thou art carrying too much to take it from me."];
+                        }
+                    } else {
+                        ["Thou dost not have enough money to buy a sextant!"];
+                    }
+                } else {
+                    ["If thou shouldst ever need a sextant be sure to come back."];
+                }
+                TurnOff("buy sextant");
+            }
+            key ("Crown Jewel") {
+                if not flag(134) {
+                    ["The Crown Jewel came to Britain? Not anytime recently. Most certainly not. I remember the Crown Jewel and it has not been to Britain for a long time."];
+                    flag(134) = true;
+                } else {
+                    ["As I have told thee before, the Crown Jewel has not been here in a long time."];
+                    TurnOff("Crown Jewel");
+                }
+                TurnOff("Crown Jewel");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["May thy travels do well." *];
+    }
+    if (event = _Bark) {
+        v1 = ~GetWorkType(~NPCToItem_i(_Clint));
+        v10 = ~rndRange(4, 1);
+        if (v1 = 7) {
+            if (v10 = 1) {
+                v11 = "@Where's that spanner?@";
+            }
+            if (v10 = 2) {
+                v11 = "@Where's mine hammer?@";
+            }
+            if (v10 = 3) {
+                v11 = "@Ahh, smell that sea breeze...@";
+            }
+            if (v10 = 4) {
+                v11 = "@Need a ship or sextant?@";
+            }
+            Item_bark(v11, _Clint);
+        } else {
+            BarkAboutWork_i(_Clint);
+        }
+    }
+}

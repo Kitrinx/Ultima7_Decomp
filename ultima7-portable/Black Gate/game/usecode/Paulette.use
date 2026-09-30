@@ -1,0 +1,168 @@
+Routine Paulette accepts a0 #locals(12) #uses(~LordOrLady, ~IsNPCNear, ~AskYesNo) {
+    if (event = _Action) {
+        SetSpeaker(0, _Paulette);
+        v0 = ~LordOrLady();
+        v1 = ~AvatarSex();
+        v2 = ~GetTime();
+        v3 = ~GetWorkType(_Paulette);
+        v4 = false;
+        v5 = false;
+        TurnOn(<< "name", "job", "bye" >>);
+        if flag(380) {
+            TurnOn("Tortured One");
+        }
+        if not flag(441) {
+            [The lovely apparition goes about her tasks without offering any response.*];
+            terminate;
+        }
+        if not flag(426) && ((v2 = 0) or (v2 = 1)) {
+            if (v3 = 14) {
+                [The lovely barmaid stares off into oblivion, completely unaware of her location and position.*];
+                terminate;
+            } else {
+                if not (v3 = 11) {
+                    [The pretty barmaid looks as if she's about to fall over for a moment, then quickly rights herself. "Oh, I feel a bit... faint." She turns away, distracted.*];
+                    terminate;
+                }
+            }
+        }
+        if flag(420) {
+            ["Go away! Thou art cruel and mean-hearted." She turns away, but not before you see the tears in her eyes.*];
+            terminate;
+        }
+        v6 = ~IsNPCNear(_Rowena);
+        if v6 && not flag(446) {
+            [Paulette perks up as she sees Rowena.~~"Hello, milady. 'Tis good to see thee again. How art thou?"*];
+            SetSpeaker(0, _Rowena);
+            ["I am fine, Paulette. I thank thee for thy concern."*];
+            CloseSpeaker(_Rowena);
+            SetSpeaker(0, _Paulette);
+            ["'Tis good news indeed, milady."];
+            flag(446) = true;
+        }
+        v7 = ~IsNPCNear(_Forsythe);
+        if v7 && not flag(445) {
+            ["Hello, Mayor. It has been quite a while since we've seen thee in our tavern. There was a time, I remember, when we couldn't keep thee away."*];
+            SetSpeaker(0, _Forsythe);
+            [The mayor becomes quickly embarrassed as he tries to quiet the rather friendly Paulette.~~"I, er, used to be a wine connoisseur of sorts," he says to you.*];
+            CloseSpeaker(_Forsythe);
+            SetSpeaker(0, _Paulette);
+            ["'Tis not all thou wert a connoisseur of," adds Paulette, eyes twinkling. "I seem to remember thou had quite a taste for redheads."];
+            flag(445) = true;
+        }
+        if flag(408) {
+            TurnOn("sacrifice");
+        }
+        if not $MetPaulette {
+            if v1 {
+                [You see a pretty, ghostly girl with long black hair. "Hello, <v0>. I am called Paulette. How may I help thee?"];
+            } else {
+                [Standing before you, with a hand on her hip, is a lovely, young woman with long black hair. "Ooooh... Thou art a big one, <v0>." She traces the line of your bicep.~~"I'd wager thou couldst lift me over thine head." She smiles enticingly. However, you doubt that you could even touch her in her ghostly state.~~"Thou mayest call me Paulette, gorgeous. What can I do for thee?" She winks at you.];
+            }
+            $MetPaulette = true;
+        } else {
+            if v1 {
+                ["Yes, <v0>?", she asks sweetly.];
+            } else {
+                [Paulette turns to face you and smiles coquettishly, "I had thought that thou might return." Her eyes sparkle up at you mischievously.];
+            }
+        }
+        converse {
+            key ("name") {
+                ["Why, <v0>, hast thou forgotten already? I am Paulette."];
+                TurnOff("name");
+            }
+            key ("job") {
+                if v1 {
+                    ["Well, <v0>, before the fire," she shudders, "I used to be the barmaid here."];
+                } else {
+                    ["Well, <v0>. I used to clean tables here..." As she says this, she bends over and pretends to wipe a table clean. You notice how low the cut of her bodice really is.~~"...and serve people, like thyself. Of course, none so handsome." Her ghostly features blush prettily.~~"But that was before," she shudders, "the fire."];
+                }
+                TurnOn("buy");
+                if not v5 {
+                    TurnOn("here");
+                }
+                if not v4 {
+                    TurnOn("fire");
+                }
+            }
+            key ("buy") {
+                ["Thou dost wish to purchase something?"];
+                v8 = ~AskYesNo();
+                if v8 {
+                    ["I am sorry, <v0>," she giggles, "but all we serve here are... spirits!"*];
+                    v9 = ~IsNPCNear(_Markham);
+                    if (v9 and flag(436)) {
+                        SetSpeaker(0, _Markham);
+                        ["That's a good one, wench," laughs the portly ghost.*];
+                        CloseSpeaker(_Markham);
+                        SetSpeaker(0, _Paulette);
+                    }
+                } else {
+                    ["Very well, <v0>."];
+                }
+                TurnOff("buy");
+            }
+            key ("Tortured One") {
+                [She appears puzzled for an instant, but then she nods her head.~~"Oh, thou must be referring to Caine. He was the alchemist who was responsible for the fire."];
+                TurnOff("Tortured One");
+                if not v4 {
+                    TurnOn("fire");
+                }
+            }
+            key ("fire") {
+                ["Oh, yes. It was horrible! The tavern caught on fire. I ran to my room, hoping to escape the flames. But then I started coughing. I couldn't breathe." Her chest rises and falls quickly as if she's reliving the experience.~~"Finally, I could take it no longer." She brings the back of her hand to her forehead, dramatically. "I fainted. Then I was here again, just like thou dost see me now." Her smile is like that of a child.];
+                v4 = true;
+                TurnOff("fire");
+                TurnOn("here again");
+                if not v5 {
+                    TurnOn("tavern");
+                }
+            }
+            key ("here again") {
+                ["Yes, 'twas quite odd. When I awoke, it was as if I had never left when the fire began. In fact, were it not for the scorch marks everywhere, I would doubt the fire ever happened."];
+                TurnOff("here again");
+            }
+            key ("here", "tavern") {
+                if v1 {
+                    v10 = " coyly";
+                } else {
+                    v10 = "";
+                }
+                ["Why, 'tis called the Keg O' Spirits. That's a fine name for a tavern, dost thou not agree?" She smiles <v10>.];
+                TurnOff(<< "here", "tavern" >>);
+                v5 = true;
+            }
+            key ("sacrifice") {
+                if not flag(411) {
+                    ["Thou wantest me to... to jump in a well?" Her eyes widen with astonishment.];
+                    v11 = ~AskYesNo();
+                    if v11 {
+                        ["Well, thou canst go jump in a lake!" She crosses her arms on her buxom chest and turns away from you angrily.*];
+                        flag(411) = true;
+                        terminate;
+                    } else {
+                        [She recovers her composure, "Oh. For a moment there, I thought that thou wouldst have me be thy... sacrifice."];
+                    }
+                } else {
+                    ["Please, just leave me alone!" she looks as if she's about to cry.*];
+                    flag(420) = true;
+                    terminate;
+                }
+                TurnOff("sacrifice");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        if v1 {
+            ["Goodbye, <v0>." The pretty ghost turns away.*];
+        } else {
+            [Paulette rushes up to you as you say goodbye and gives you a little kiss on the cheek. She backs away slowly, "Farewell, handsome."*];
+        }
+    }
+    if (event = _Bark) {
+        terminate;
+    }
+}

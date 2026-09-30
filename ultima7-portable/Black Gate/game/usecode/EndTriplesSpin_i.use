@@ -1,0 +1,162 @@
+Routine EndTriplesSpin_i accepts a0 #locals(0) #uses(SettleTriples_i) {
+    if (event = _Posted_i) {
+        if (flag(31) and flag(32)) {
+            SettleTriples_i();
+            return;
+        }
+        if not flag(31) {
+            flag(31) = true;
+            return;
+        }
+        if not flag(32) {
+            flag(32) = true;
+        }
+    }
+}
+
+Function ~TriplesRoll_i #locals(12) {
+    v0 = 0;
+    v1 = 0;
+    v2 = 0;
+    v3 = 1;
+    v4 = ~GetAllInRegion(_The_Triples_Game_809);
+    v3 = << >>;
+    Foreach v7 in v4 {
+        v8 = ~GetFrame(v7);
+        v9 = ((v8 / 8) + 1);
+        v3 = (v3 & v9);
+        if (v9 = 1) {
+            v0 = (v0 + 1);
+        }
+        if (v9 = 2) {
+            v1 = (v1 + 1);
+        }
+        if (v9 = 3) {
+            v2 = (v2 + 1);
+        }
+    }
+    v10 = ((v3::1 + v3::2) + v3::3);
+    if ((v0 = 3) or ((v1 = 3) or (v2 = 3))) {
+        v11 = true;
+    } else {
+        v11 = false;
+    }
+    return << v10, v11 >>;
+}
+
+Function ~TriplesBets_i accepts a0 #locals(6) {
+    v1 = << >>;
+    v2 = ~FindNearby_i(0, 10, _Gold_Coin, v0::4);
+    Foreach v5 in v2 {
+        v6 = ~GetCoord(v5);
+        if (((v6::1 <= v0::1) and (v6::1 >= (v0::1 - 10))) and ((v6::2 <= v0::2) and (v6::2 >= (v0::2 - 5)))) {
+            v1 = (v1 & v5);
+        }
+    }
+    return v1;
+}
+
+Usable SettleTriples_i #locals(23) #uses(~TriplesBoard_i, ~TriplesRoll_i, ~TriplesBets_i, Bark_i) {
+    if (~GetWorkType(_Smithy) = _Hound) {
+        SetWorkType(_Stand, _Smithy);
+    }
+    v0 = ~TriplesBoard_i();
+    v1 = ~TriplesRoll_i();
+    v2 = v1::1;
+    v3 = v1::2;
+    v4 = ~TriplesBets_i(v0);
+    if not ~IsNPCNear_i(_Smithy) {
+        Foreach v7 in v4 {
+            SetItemFlag_i(_OkayToTake_i, v7);
+        }
+        return;
+    }
+    v8 = "@Too bad...@";
+    if (~ListSize_i(v4) = 0) {
+        Bark_i(0, v8, _Smithy);
+    }
+    if (v2 = 6) {
+        if v3 {
+            v9 = << 5, 5, 5 >>;
+            v10 = << 1, 2, 3 >>;
+            v11 = 27;
+            v8 = "@Triples! On the two!@";
+        } else {
+            v9 = << 3, 3, 3 >>;
+            v10 = << 1, 2, 3 >>;
+            v11 = 4;
+            v8 = "@Full wheel!@";
+        }
+    }
+    if (v2 = 9) {
+        v9 = << 7, 7, 7 >>;
+        v10 = << 1, 2, 3 >>;
+        v11 = 27;
+        v8 = "@Triples! On the three!@";
+    }
+    if (v2 = 3) {
+        v9 = << 1, 1, 1 >>;
+        v10 = << 1, 2, 3 >>;
+        v11 = 27;
+        v8 = "@Triples! On the one!@";
+    }
+    if v3 {
+        v9 = (v9 & << 4, 4, 4 >>);
+        v10 = (v10 & << 1, 2, 3 >>);
+    }
+    if (v2 = 4) {
+        v9 = 2;
+        v10 = 3;
+        v11 = 8;
+        v8 = "@Sum of 4!@";
+    }
+    if (v2 = 5) {
+        v9 = 2;
+        v10 = 1;
+        v11 = 4;
+        v8 = "@Sum of 5!@";
+    }
+    if (v2 = 7) {
+        v9 = 6;
+        v10 = 3;
+        v11 = 3;
+        v8 = "@Seven!@";
+    }
+    if (v2 = 8) {
+        v9 = 6;
+        v10 = 1;
+        v11 = 8;
+        v8 = "@Big eight!@";
+    }
+    if $JoinFellow {
+        v11 = (v11 * 2);
+    }
+    Foreach v7 in v4 {
+        v14 = 0;
+        v15 = false;
+        Foreach v18 in v9 {
+            v14 = (v14 + 1);
+            v19 = ~GetCoord(v7);
+            if (v19::1 = ((v0::1 - v9::v14) + 1)) && (v19::2 = ((v0::2 - v10::v14) + 1)) {
+                v20 = ~GetQuantity(9, v7);
+                v20 = (v20 * v11);
+                While (v20 > 100) {
+                    v21 = ~Item_create(_Gold_Coin);
+                    if v21 {
+                        v22 = ~SetQuantity(100, v21);
+                        v22 = ~PopToMap(v19);
+                    }
+                    v20 = (v20 - 100);
+                }
+                v21 = ~Item_create(_Gold_Coin);
+                if v21 {
+                    v22 = ~SetQuantity(v20, v21);
+                    v22 = ~PopToMap(v19);
+                }
+                v15 = true;
+            }
+        }
+        Item_destroy(v7);
+    }
+    Bark_i(0, v8, _Smithy);
+}

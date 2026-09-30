@@ -1,0 +1,283 @@
+Routine Plaque accepts a0 #locals(12) #uses(~SortByCriteria_i, ~AvatarName, MemberSays_i, ~AbsValue_i, MemberBarks_i) {
+    v0 = item;
+    v1 = ~GetQuality(v0);
+    if (event = _Trigger) {
+        if (~Item_getType(item) <> _Plaque) {
+            v0 = ~FindNearby_i(176, 5, _Plaque, v0);
+            v0 = ~SortByCriteria_i(v0, v0);
+            if not v0 {
+                terminate;
+            }
+        }
+        v1 = ~GetQuality(v0);
+        v2 = << >>;
+        if (v1 = 7) {
+            v2 = << 600, 623, 557 >>;
+        }
+        if (v1 = 8) {
+            v2 = 627;
+        }
+        if (v1 = 9) {
+            v2 = 640;
+        }
+        if (v1 = 10) {
+            v2 = 654;
+        }
+        if (v1 = 11) {
+            v2 = << 644, 645, 646 >>;
+        }
+        v3 = false;
+        Foreach v6 in v2 {
+            if ~FindNearby_i(176, 5, v6, v0) {
+                if (v1 < 11) {
+                    v1 = (v1 + 1);
+                    v7 = ~SetQuality(v1, v0);
+                    closeAllGumps();
+                    v3 = true;
+                    break;
+                } else {
+                    v8 = ~GetCoord(v0);
+                    createSprite(65535, 0, 0, 0, v8::2, v8::1, 7);
+                    Sfx(68);
+                    Item_destroy(v0);
+                    closeAllGumps();
+                    terminate;
+                }
+            }
+        }
+        if not v3 {
+            terminate;
+        }
+    }
+    if (event = _Posted_i) {
+        KillNPC_i(_LordBritish);
+        Kernel_resetRef(_LordBritish);
+        RemoveNPC_i(_LordBritish);
+        return;
+    }
+    v9 = ~AvatarName();
+    if (v1 > 65) {
+        v10 = "This is not a valid plaque ";
+    } else {
+        switch v1 {
+            case 0 {
+                v10 = << "important", "event", "to|be", "recorded", "here" >>;
+            }
+            case 1 {
+                v10 = << "tomb|of", "kronos", "forgotten", "but|not", "forgiven" >>;
+            }
+            case 2 {
+                v10 = << "royal", "(+tre" >>;
+            }
+            case 3 {
+                v10 = << "FELLOWSHIP", "HALL" >>;
+            }
+            case 4 {
+                v10 = << "TEST", "OF", "STRENGTH" >>;
+            }
+            case 5 {
+                v10 = << "MEDITATION", "RETREAT" >>;
+            }
+            case 6 {
+                v10 = << "SHRINE OF", "THE CODEX" >>;
+            }
+            case 7 {
+                v10 = << "hammer", "here", "to", "enter" >>;
+            }
+            case 8 {
+                v10 = << "pick|item", "carefully", "to|k)p", "goi*" >>;
+                MemberSays_i(<< "By Jove, I think thou art on the right track!", "The sign appears to have changed!", "Look at it now!" >>);
+            }
+            case 9 {
+                v10 = << "a|golden", "ring|of", "tru(", "faces|()" >>;
+            }
+            case 10 {
+                v10 = << "grasp", "not", "at", "(r+ds" >>;
+            }
+            case 11 {
+                v10 = << "(e", "royal|mint", "shall|not", "hold|()", "back" >>;
+            }
+            case 12 {
+                v10 = "GO THIS WAY";
+            }
+            case 13 {
+                v10 = << "DO NOT", "GO", "THIS WAY" >>;
+            }
+            case 14 {
+                v10 = << "DO NOT GO", "IN", "THE", "WOODEN DOOR" >>;
+            }
+            case 15 {
+                v10 = << "DO NOT", "GO IN", "THE", "WINDOWED", "DOOR" >>;
+            }
+            case 16 {
+                v10 = << "GO", "IN", "THE", "STEEL", "DOOR" >>;
+            }
+            case 17 {
+                v10 = << "DO NOT", "GO", "IN THE", "GREEN DOOR" >>;
+            }
+            case 18 {
+                v10 = << "ONLY", "ONE", "OF THESE", "SIGNS", "IS TRUE" >>;
+            }
+            case 19 {
+                v10 = << "AT LEAST", "TWO SIGNS", "ARE", "FALSE" >>;
+            }
+            case 20 {
+                v10 = << "NATIONAL", "BRANCH" >>;
+            }
+            case 21 {
+                v10 = << "ART THOU", "AN", "AVATAR?" >>;
+            }
+            case 22 {
+                v10 = << "RESERVE", "THY", "SEATS", "NOW!" >>;
+            }
+            case 23 {
+                v10 = << "THE BONES OF", "ZOG:", "EARLIEST", "BRITANNIAN", "FOSSIL" >>;
+            }
+            case 24 {
+                v10 = << "SWAMP BOOTS", "ONCE WORN", "BY THE", "AVATAR" >>;
+            }
+            case 25 {
+                v10 = << "MANITTZI'S", "HARPSICORD", "USED WHILE", "COMPOSING" >>;
+            }
+            case 26 {
+                v10 = << "|ANIA", "OF", "SPRING|" >>;
+            }
+            case 27 {
+                v10 = << "|marney|", "skara|braes", "fine,", "flower" >>;
+            }
+            case 28 {
+                v10 = << "(e", "wayfarers", "inn" >>;
+            }
+            case 29 {
+                v10 = << "(e", "blue", "boar" >>;
+            }
+            case 30 {
+                v10 = << "royal", "museum" >>;
+            }
+            case 31 {
+                v10 = << "(e", "music", "hall" >>;
+            }
+            case 32 {
+                v10 = << "town", "hall" >>;
+            }
+            case 33 {
+                v10 = << "royal", "mint" >>;
+            }
+            case 34 {
+                v10 = << "THE", "THRONE", "OF", "MANY", "CHANGES" >>;
+            }
+            case 35 {
+                v10 = << "THE", "THRONE", "OF", "VIRTUE" >>;
+            }
+            case 36 {
+                v10 = << "LORD", "BRITISH'S", "MUSKET" >>;
+            }
+            case 37 {
+                v10 = << "THE", "STONES", "OF", "VIRTUE" >>;
+            }
+            case 38 {
+                v10 = << "SILVER", "HORN", "ONCE USED", "BY THE", "GARGOYLES" >>;
+            }
+            case 39 {
+                v10 = << "TO SUMMON", "THE", "SILVER", "SNAKES" >>;
+            }
+            case 40 {
+                v10 = << "THE ANKH", "", "SYMBOL OF", "THE", "VIRTUES" >>;
+            }
+            case 41 {
+                v10 = << "LORD", "BRITISH" >>;
+            }
+            case 42 {
+                v10 = << "THE", "AVATAR" >>;
+            }
+            case 43 {
+                v10 = << "THE", "VORTEX", "CUBE" >>;
+            }
+            case 44 {
+                v10 = << "THE", "RUNES", "OF", "THE", "VIRTUES" >>;
+            }
+            case 45 {
+                v10 = << "(e", "game", "of", "knights", "bridge" >>;
+            }
+            case 46 {
+                v10 = << "DO NOT", "ENTER" >>;
+            }
+            case 47 {
+                v10 = << "blow", "horn", "to", "summon", "ferry" >>;
+            }
+            default {
+                if (v1 = 48) {
+                    v8 = ~GetCoord(item);
+                    v11 = ~GetCoord(_LordBritish);
+                    if ((~AbsValue_i((v8::1 - v11::1)) <= 2) and (~AbsValue_i((v8::2 - v11::2)) <= 2)) {
+                        v7 = ~PostAction(<< _aUSABLE_i, #LowerLevel_i, _aUSABLE_i, #LowerLevel_i, _aUSABLE_i, #LowerLevel_i, _aREMOVE_i >>, item);
+                        v7 = ~PostAction(<< _aWAIT_i, 3, _aSFX_i, 19, _aSTAND_FRAME_i, _aKNEEL_FRAME_i, _aSFX_i, 86, _aCONTINUE_i, _aLIE_FRAME_i, _aUSABLE_i, #Plaque >>, _LordBritish);
+                        MemberBarks_i(<< "", "@He's dead, Avatar!@", "@Yancey-Hausman will pay!@" >>);
+                        v7 = ~PostAction(<< _aNO_HALT_i, _aSPEECH_i, 26 >>, _Avatar);
+                        return;
+                    } else {
+                        v10 = << "THE", "THRONE", "ROOM", "OF", "LORD", "BRITISH" >>;
+                        goto label_163;
+                    }
+                }
+                switch v1 {
+                    case 49 {
+                        v10 = << "SEE IF", "THOU ART", "THE NEXT", "LORD OF", "BRITANNIA" >>;
+                    }
+                    case 50 {
+                        v10 = << "in", "lovi*", "memory", "of", "mama" >>;
+                    }
+                    case 51 {
+                        v10 = << "BEWARE", "THE", "DRAGON" >>;
+                    }
+                    case 52 {
+                        v10 = << "for", "(e", "love", "of", "marney" >>;
+                    }
+                    case 53 {
+                        v10 = << "|j|r|r|t|", "a|gr+t", "man", "a|gr+t", "writer" >>;
+                    }
+                    case 54 {
+                        v10 = << "THE", "BRITANNIAN", "LENS" >>;
+                    }
+                    case 55 {
+                        v10 = << "THE", "GARGOYLE", "LENS" >>;
+                    }
+                    case 56 {
+                        v10 = << "EX", "POR" >>;
+                    }
+                    case 57 {
+                        v10 = << "(e", "te,", "of", "love" >>;
+                    }
+                    case 58 {
+                        v10 = << "(e", "te,", "of", "courage" >>;
+                    }
+                    case 59 {
+                        v10 = << "nor(", "is", "(e", "way" >>;
+                    }
+                    case 60 {
+                        v10 = << "tru(", "is", "tru(" >>;
+                    }
+                    case 61 {
+                        v10 = << "only", "app+rances", "are", "deceptive" >>;
+                    }
+                    case 62 {
+                        v10 = << "well", "done" >>;
+                    }
+                    case 63 {
+                        v10 = << "(e", "keys", "of", "tru(" >>;
+                    }
+                    case 64 {
+                        v10 = << "tru,|not", "always|(e", "obvious", "path" >>;
+                    }
+                    case 65 {
+                        v10 = << "(ou", "do,|not", "wish|to", "see|(is" >>;
+                    }
+                    default {
+                    }
+                }
+            }
+        }
+    }
+    label_163:
+    ShowSign_i(v10, 51);
+}

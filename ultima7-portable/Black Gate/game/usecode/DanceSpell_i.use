@@ -1,0 +1,31 @@
+Routine DanceSpell_i accepts a0 #locals(11) #uses(~IsMagicOK_i, ~EnemyList_i, SetWorkTypeUnlessWaiting_i, Bark_i) {
+    if (event = _Action) {
+        Kernel_resetRef(item);
+        Item_bark("@Por Xen@", item);
+        if ~IsMagicOK_i() {
+            v0 = ~PostAction(<< _aSFX_i, 67, _aRAISE1_FRAME_i, _aOUT_FRAME_i, _aTHRUST2_FRAME_i, _aUSABLE_i, #DanceSpell_i >>, item);
+            Item_bark("@Everybody DANCE now!@", item);
+        } else {
+            v0 = ~PostAction(<< _aRAISE1_FRAME_i, _aOUT_FRAME_i, _aTHRUST2_FRAME_i, _aUSABLE_i, #FizzleSpell_i >>, item);
+        }
+    }
+    if (event = _Posted_i) {
+        v1 = 25;
+        v2 = ~EnemyList_i(v1);
+        Foreach v5 in v2 {
+            v6 = ~GetNPCStat_i(_Int, v5);
+            if ((v6 > 5) and (v6 < 25)) {
+                v7 = ~GetCoord(v5);
+                createSprite(65535, 0, 0, 0, v7::2, v7::1, 16);
+                SetWorkTypeUnlessWaiting_i(_Dance, v5);
+                SetItemFlag_i(_InAction, v5);
+                v8 = << "@Dance!@", "@Yeah!@", "@Huh!@", "@Oh, yeah!@", "@I'm bad!@", "@Boogie!@", "@Yow!@" >>;
+                v9 = ~rndRange(7, 1);
+                v10 = ~rndRange(40, 10);
+                Bark_i(v10, v8::v9, v5);
+                v10 = ~rndRange(75, 50);
+                v0 = ~PostInFuture(v10, << _aNO_HALT_i, _aUSABLE_i, #StopDancing_i >>, v5);
+            }
+        }
+    }
+}

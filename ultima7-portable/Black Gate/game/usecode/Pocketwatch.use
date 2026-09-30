@@ -1,0 +1,24 @@
+Routine Pocketwatch accepts a0 #locals(4) {
+    if (event = _Action) {
+        v0 = ~GetHour();
+        v1 = "am";
+        if (v0 > 12) {
+            v0 = (v0 - 12);
+            v1 = "pm";
+        }
+        if (v0 = 0) {
+            v0 = 12;
+            v1 = "am";
+        }
+        v2 = ~GetMinute_i();
+        if (v2 <= 9) {
+            v2 = ("0" + v2);
+        }
+        v3 = ((((" " + v0) + ":") + v2) + v1);
+        if ~InGumpMode_i() {
+            BarkInGump_i(v3, item);
+        } else {
+            Item_bark(v3, item);
+        }
+    }
+}

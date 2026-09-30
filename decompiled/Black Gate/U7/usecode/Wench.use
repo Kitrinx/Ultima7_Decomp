@@ -1,0 +1,133 @@
+Routine Wench accepts a0 #locals(10) #uses(~AvatarName, ~AskYesNo, ~AskList) {
+    if (event = _Bark) {
+        terminate;
+    }
+    SetSpeaker(0, _Wench);
+    v0 = ~GetTime();
+    v1 = ~GetWorkType(~NPCToItem_i(_Wench));
+    v2 = ~AvatarName();
+    v3 = "Avatar";
+    v4 = ~AvatarSex();
+    if flag(671) {
+        v5 = v2;
+    }
+    if flag(672) {
+        v5 = v3;
+    }
+    if not (v1 = 7) {
+        [The woman looks up in surprise and says, "I am not working at the moment and I ask thee to respect my privacy. If thou dost wish to speak with me, come to The Baths in the late evening hours."*];
+        terminate;
+    }
+    TurnOn(<< "name", "job", "bye" >>);
+    v6 = ~GetClock(2);
+    v7 = ~GetClock(3);
+    v8 = ~GetClock(4);
+    if ((flag(668) and (v6 < 2)) or ((flag(670) and (v7 < 2)) or (flag(669) and (v8 < 2)))) {
+        [This attractive woman looks at you with surprise and says, "A moment! Thou didst just enjoy thyself, didst thou not? Please come back when thou art rested."*];
+        terminate;
+    } else {
+        if not flag(682) {
+            [You see a gorgeous young woman with seductive eyes.];
+            if not v4 {
+                ["Hello, handsome!];
+            } else {
+                ["Hello. Art thou sure thou dost not really want to speak with Roberto?"];
+                if ~AskYesNo() {
+                    ["Fine, sweetheart. Whatever makes thy blood boil... ];
+                } else {
+                    ["Then thou hadst best speak with Roberto! He is probably more thy type."*];
+                    terminate;
+                }
+            }
+            [Who art thou?"];
+            v9 = ~AskList(<< v2, v3 >>);
+            if (v9 = v2) {
+                if not v4 {
+                    ["Well, I am very pleased to meet thee, <v2>."];
+                } else {
+                    ["Hello, <v2>."];
+                }
+                v5 = v2;
+                flag(671) = true;
+            }
+            if (v9 = v3) {
+                ["Oh ho! A real live Avatar?];
+                if not v4 {
+                    ["Say, we should get to know one another better!"];
+                } else {
+                    ["And female, as well! And I thought I had seen it all..."];
+                }
+                v5 = v3;
+                flag(672) = true;
+            }
+            flag(682) = true;
+        } else {
+            ["Hello again, <v5>," Wench says.];
+        }
+    }
+    converse {
+        key ("name") {
+            ["Thou canst just call me... Wench."];
+            if not v4 {
+                [She blows you a kiss.];
+            }
+            TurnOff("name");
+        }
+        key ("job") {
+            [She laughs aloud. "Thou must be kidding!" She composes herself and says, "It is my duty to see that thou art comfortable whilst at The Baths."];
+            TurnOn(<< "The Baths", "comfortable" >>);
+        }
+        key ("The Baths") {
+            ["I have been working here since it opened. I love it. I am not exploited in the least. I make piles of gold and live a great life." ];
+            if not v4 {
+                [She winks at you. "I meet many nice men, too!"];
+            }
+            TurnOff("The Baths");
+        }
+        key ("comfortable") {
+            ["Well, we could have a swim in the spring pools, or thou couldst have a massage. Or we could just talk.~~"Or... thou couldst come with me into the Community Room and I'll 'show' thee my 'job'!"];
+            TurnOff("comfortable");
+            TurnOn(<< "swim", "massage", "talk", "Community Room" >>);
+        }
+        key ("Community Room") {
+            ["Thou dost want to join me in the Community Room?"];
+            if ~AskYesNo() {
+                [Wench leads you into a private room.~~"It really isn't a Community Room at all. We shall be all alone," she giggles. ~~"By the way, it is a good thing thou didst choose me. Roberto and Martine enjoy stealing gold from their customers. I may have questionable morals, but I am not a thief! Now, let us get down to business, shall we?"];
+                [A while later, after the woman has shown you more tricks than a mage on stage, you emerge from the Community Room a much happier Avatar.];
+                flag(669) = true;
+                SetClock(4);
+            } else {
+                ["'Tis not a problem, <v5>."];
+            }
+            TurnOff("Community Room");
+        }
+        key ("swim") {
+            [Wench helps you with your clothing and leads you into the warm spring water. It feels terrific, and you would prefer to go to sleep, but you know you have a quest to fulfill. After a while, Wench helps you out of the water and you dress.];
+            TurnOff("swim");
+        }
+        key ("massage") {
+            [Wench helps you with your clothing and leads you to a comfortable table. You lie on your stomach and the woman expertly kneads and rubs your aching muscles, slowly sending you into a state of total relaxation. After a while, Wench helps you up and you dress.];
+            TurnOff("massage");
+        }
+        key ("talk") {
+            [Wench shrugs. "Fine with me! What shall we talk about? I know! Want to know a secret?"];
+            if ~AskYesNo() {
+                ["Didst thou know that there are secret passages in the mountains connecting the buildings on Buccaneer's Den? 'Tis true! I am fairly sure the entrance is through the House of Games,\x09and I do know that there is a way into The Baths from the passages!"];
+            } else {
+                [Wench pouts. "Well never mind, then!"];
+            }
+            [You and Wench speak of a number of other subjects when you realize that you are spending too much time in the spa. There is a quest to fulfill!];
+            TurnOff("talk");
+        }
+        key ("bye") {
+            break;
+        }
+    }
+    clear_answers;
+    ["Oh, please come again soon, <v5>!"];
+    if not v4 {
+        [Wench blows you a kiss.*];
+    } else {
+        [Wench waves goodbye.*];
+    }
+}

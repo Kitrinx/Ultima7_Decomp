@@ -1,0 +1,24 @@
+Routine Keg accepts a0 #locals(3) #uses(MemberBarks_i, PourKeg_i) {
+    if (event = _Action) {
+        if ~Kernel_getNumProcesses(item) {
+            Kernel_resetRef(item);
+            MemberBarks_i("@It is about time!@");
+        } else {
+            PourKeg_i(item);
+        }
+    }
+    if (event = 8) {
+        v0 = ~GetCoord(item);
+        v0::1 = (v0::1 - 2);
+        v0::2 = (v0::2 + 1);
+        v1 = ~GetContents(_All, _All, _Bucket, _Avatar);
+        if v1 {
+            v2 = ~Item_push(v1);
+            if v2 {
+                SetFrame(4, v1);
+                v2 = ~PopToMap(v0);
+            }
+        }
+        v2 = ~PostAction(<< _aFACE_i, _North, _aCONTINUE_i, _aBEND_FRAME_i >>, _Avatar);
+    }
+}

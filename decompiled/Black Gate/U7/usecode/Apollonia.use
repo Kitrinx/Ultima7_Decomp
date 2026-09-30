@@ -1,0 +1,171 @@
+Routine Apollonia accepts a0 #locals(15) #uses(~AvatarName, ~LordOrLady, ~AskYesNo, ApolloniaSellsFood_i, BarkAboutWork_i) {
+    if (event = _Action) {
+        v0 = ~GetTime();
+        v1 = ~AvatarName();
+        v2 = ~LordOrLady();
+        v3 = ~GetWorkType(~NPCToItem_i(_Apollonia));
+        v4 = ~AvatarSex();
+        SetSpeaker(0, _Apollonia);
+        TurnOn(<< "name", "job", "murder", "bye" >>);
+        if (v3 = 23) {
+            TurnOn(<< "food", "drink", "room", "buy" >>);
+        }
+        if not $MetApollonia {
+            [You see a gorgeous and voluptuous woman in her thirties.];
+            $MetApollonia = true;
+        } else {
+            ["Hello again!" Apollonia says, her eyes twinkling.];
+        }
+        converse {
+            key ("name") {
+                if not v4 {
+                    v5 = "as her tongue licks her upper lip.";
+                } else {
+                    v5 = "as she sizes you up.";
+                }
+                append "\"My name is Apollonia,\" she says, ";
+                append v5;
+                append "";
+                say;
+                TurnOff("name");
+            }
+            key ("job") {
+                ["Why, I run the Honorable Hound Pub and Inn," she purrs.];
+                if (v3 = 23) {
+                    ["Wouldst thou like a room? Or wouldst thou like something to eat or drink? Just say so and I shall try and please thee with my delicacies."];
+                    if not v4 {
+                        [~~You realize she is flirting with you.];
+                        TurnOn("flirt");
+                    }
+                } else {
+                    ["I shall be happy to serve thee during business hours!"];
+                }
+                TurnOn(<< "Honorable Hound" >>);
+            }
+            key ("Honorable Hound") {
+                ["I can think of no better place in all of Trinsic to lay thine head to rest or to nibble upon treats to satisfy thine appetite."];
+                TurnOff("Honorable Hound");
+            }
+            key ("murder") {
+                [Apollonia shuts her eyes and shakes her head as if she had just bitten into a very sour lemon. "Oooh. That was so... hideous! How could anyone do something so horrible? Art thou searching for information? I do hope thou dost find the person responsible."];
+                TurnOff("murder");
+            }
+            key ("food") {
+                ["We serve the finest meat, fish, and cake. Our specialty is a Silverleaf meal. If thou wouldst like to buy something, please say so!"];
+                TurnOn("Silverleaf");
+                TurnOff("food");
+            }
+            key ("drink") {
+                ["I can offer thee mead, wine and ale."];
+                TurnOff("drink");
+            }
+            key ("room") {
+                ["Our rooms are cheap. Only 6 gold per person per night. Want a room?"];
+                if ~AskYesNo() {
+                    v6 = ~GetParty();
+                    v7 = 0;
+                    Foreach v10 in v6 {
+                        v7 = (v7 + 1);
+                    }
+                    v11 = (v7 * 6);
+                    v12 = ~CountItem(_All, _All, _Gold_Coin, _Party);
+                    if (v12 >= v11) {
+                        v13 = ~GiveToParty_i(true, _All, 255, _Key, 1);
+                        if not v13 {
+                            ["Oh dear. Thou art carrying too much to take the room key."];
+                        } else {
+                            ["Here is thy room key. It is good only until thou dost leave."];
+                            v14 = ~TakeFromParty_i(true, _All, _All, _Gold_Coin, v11);
+                        }
+                    } else {
+                        ["Thou dost not have enough gold, <v2>."];
+                    }
+                } else {
+                    ["Some other night, then."];
+                }
+                TurnOff("room");
+            }
+            key ("Silverleaf") {
+                ["Mmmm. What a delicacy! It is the most wonderful delicacy that thou shalt ever eat! It is worth every gold piece spent."];
+                TurnOff("Silverleaf");
+            }
+            key ("flirt") {
+                [Apollonia blushes and bats her eyelashes. "Oh, <v1>! I would wager that thou dost say that to all the barmaids!"];
+                TurnOff("flirt");
+            }
+            key ("buy") {
+                ApolloniaSellsFood_i();
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        if not v4 {
+            [Apollonia blows a kiss at you. "Do come again!"*];
+        } else {
+            [Apollonia waves at you. "Do come again!"*];
+        }
+    }
+    if (event = _Bark) {
+        BarkAboutWork_i(_Apollonia);
+    }
+}
+
+Usable ApolloniaSellsFood_i #locals(15) #uses(~LordOrLady, ~AskOrdList, ~PriceString_i, ~AskYesNo, ~SellItem_i) {
+    PushKeys();
+    v0 = ~LordOrLady();
+    v1 = ~AvatarSex();
+    v2 = true;
+    v3 = << "nothing", "mutton", "bread", "mead", "flounder", "Silverleaf", "cake", "wine", "ale" >>;
+    v4 = << 0, 377, 377, 616, 377, 377, 377, 616, 616 >>;
+    v5 = << 65177, 8, 0, 0, 13, 31, 4, 5, 3 >>;
+    v6 = << 0, 3, 2, 7, 3, 30, 2, 3, 2 >>;
+    v7 = "";
+    v8 = 0;
+    v9 = << "", " for one portion", " for one loaf", " for one bottle", " for one portion", " for one portion", " for one portion", " per bottle", " per bottle" >>;
+    v10 = 1;
+    ["What wouldst thou like?"];
+    While v2 {
+        v11 = ~AskOrdList(v3);
+        if (v11 = 1) {
+            ["Nothing at all? Well, alright."];
+            if not v1 {
+                [She bats her eyelashes at you and grins.];
+            }
+            v2 = false;
+        } else {
+            if (v11 = 6) && flag(299) {
+                ["I have none to sell thee, <v0>, for the logger will no longer supply it."];
+            } else {
+                v12 = ~PriceString_i(v9::v11, v6::v11, v8, v3::v11, v7);
+                v13 = 0;
+                ["^<v12> Is that price all right?"];
+                v14 = ~AskYesNo();
+                if v14 {
+                    if (v4::v11 = 377) {
+                        ["How many wouldst thou like?"];
+                        v13 = ~SellItem_i(true, 1, 20, v6::v11, v10, v5::v11, v4::v11);
+                    } else {
+                        v13 = ~SellItem_i(true, 1, 0, v6::v11, v10, v5::v11, v4::v11);
+                    }
+                }
+                if (v13 = 1) {
+                    ["'Tis thine!"];
+                } else {
+                    if (v13 = 2) {
+                        ["Thou cannot possibly carry that much, <v0>!"];
+                    } else {
+                        if (v13 = 3) {
+                            ["Hmmm. Thou dost not have enough gold!"];
+                        } else {
+                        }
+                    }
+                }
+            }
+            ["Wouldst thou like something else?"];
+            v2 = ~AskYesNo();
+        }
+    }
+    PopKeys();
+}

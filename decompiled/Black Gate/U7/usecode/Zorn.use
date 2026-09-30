@@ -1,0 +1,244 @@
+Routine Zorn accepts a0 #locals(10) #uses(~LordOrLady, ~IsInInv, ZornSellsWeapons_i, ZornSellsArmour_i, GivePartyExp_i, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Zorn);
+        v0 = ~LordOrLady();
+        v1 = ~GetTime();
+        v2 = ~GetWorkType(~NPCToItem_i(_Zorn));
+        TurnOn(<< "name", "job", "bye" >>);
+        v3 = ~IsInInv(65177, 65177, _Caddellite_Chunks, 1, _Party);
+        if v3 {
+            TurnOn("Caddellite");
+        }
+        if not $MetZorn {
+            [You see a man whose long hours of difficult, smouldering work have frozen his face into a rigid expression with eyes like hot coals.];
+            $MetZorn = true;
+        } else {
+            ["How may I serve thee?" says Zorn.];
+        }
+        converse {
+            key ("name") {
+                ["I am Zorn."];
+                TurnOff("name");
+            }
+            key ("job") {
+                if $LEARNED_ABOUT_MINOC_MURDER {
+                    ["I am the blacksmith of Minoc."];
+                    TurnOn(<< "blacksmith", "Minoc" >>);
+                } else {
+                    ["Dost thou have no respect for the dead? Indeed, trying to solicit at a terrible time like this! When people have been found murdered over at William's sawmill!"];
+                    $LEARNED_ABOUT_MINOC_MURDER = true;
+                    TurnOn("murders");
+                }
+            }
+            key ("blacksmith") {
+                ["I make weapons and armour."];
+                TurnOff("blacksmith");
+                TurnOn("weapons and armour");
+            }
+            key ("Minoc") {
+                ["Minoc is quite a city. Money changes hands here. But it does not keep people happy. They find something to squabble over. And now these terrible murders have everyone afraid."];
+                TurnOff("Minoc");
+                TurnOn(<< "squabble", "murders" >>);
+            }
+            key ("weapons and armour") {
+                if (v2 = 13) {
+                    ["All of the weapons and armour I sell are made by mine own hand. They would serve thee well."];
+                    TurnOn(<< "buy weapons", "buy armour" >>);
+                } else {
+                    ["Perhaps we could speak more of these things another time. Say, perhaps during the business hours of my shop?"];
+                }
+                TurnOff("weapons and armour");
+            }
+            key ("buy weapons") {
+                if not (v2 = 13) {
+                    ["The smithy is currently closed for outside business. Thou shalt have to return some other time."];
+                } else {
+                    ["I have an assortment of very lethal weapons to show thee."];
+                    ZornSellsWeapons_i();
+                }
+            }
+            key ("buy armour") {
+                if not (v2 = 13) {
+                    ["The smithy is currently closed for outside business. Thou shalt have to return some other time."];
+                } else {
+                    ["Thou mayest buy fine armour from me."];
+                    ZornSellsArmour_i();
+                }
+            }
+            key ("squabble") {
+                ["This noise over Owen's monument, for instance. People ought to tend to their own business and let others handle their own, foolish or not."];
+                TurnOn(<< "Owen", "monument" >>);
+                TurnOff("squabble");
+            }
+            key ("Owen") {
+                ["He is our town shipwright. He is a man who has an exceedingly high opinion of himself."];
+                TurnOff("Owen");
+            }
+            key ("monument") {
+                ["Owen is building a monument to himself. It is forty feet tall, depicting him holding up a roll of plans. Pigeons will have a place to sit, forevermore. Why argue over something as unimportant as that?"];
+                TurnOff("monument");
+            }
+            key ("murders") {
+                ["No one in this town ever really hated the gypsies, at least not that I have ever been aware of. Who could have done such a thing?"];
+                TurnOff("murders");
+            }
+            key ("Caddellite") {
+                [You present the Caddellite to Zorn. "This is amazing! Why I thought that the only place to find Caddellite was the lost island of Ambrosia. What should I make with this?"];
+                TurnOff("Caddellite");
+                TurnOn("helmet");
+            }
+            key ("helmet") {
+                [You describe the sort of helmet that you require, one that can block out the dangerous sound from the cube generator. Zorn nods. "Yes, I can make some for thee. I shall start work immediately."];
+                v4 = ~ListSize_i(~GetParty());
+                v5 = ~CountItem(_All, _All, _Caddellite_Chunks, _Party);
+                if (v5 = 0) {
+                    ["But thou dost not have any Caddellite chunks with which to make helmets!"];
+                }
+                if (v4 > v5) {
+                    ["Thou hast <v4> in thy party. I am afraid thou does not have enough Caddellite for me to make that many helmets."];
+                } else {
+                    v6 = ~TakeFromParty_i(false, _All, _All, _Caddellite_Chunks, v5);
+                    if (v5 = 1) {
+                        [Zorn takes the Caddellite from you and begins his work.];
+                    } else {
+                        ["Thou hast <v5> Caddellite chunks. That is how many helmets I can make for thee."];
+                    }
+                    [Zorn takes the Caddellite from you and begins his work. You watch in fascination as the master blacksmith softens the ore in the fire, then molds it into\x09shape. Zorn quickly takes the necessary measurements, then makes some adjustments with the hot material. Finally, it is done.];
+                    if (v5 = 1) {
+                        [Zorn dips the helmet in water to cool it.];
+                    } else {
+                        [Zorn dips the helmets in water to cool them.];
+                    }
+                    v7 = ~GiveToParty_i(false, _All, _All, _Caddellite_Helmet, v5);
+                    if v7 {
+                        flag(262) = true;
+                        GivePartyExp_i(200);
+                        ["Here, I have met thy request to thy precise specifications."];
+                        if (v5 = 1) {
+                            [He hands you the helmet.];
+                        } else {
+                            [He hands you the helmets.];
+                        }
+                    } else {
+                        ["Thou art too encumbered!"];
+                    }
+                }
+                TurnOff("helmet");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["Goodbye, <v0>."*];
+    }
+    if (event = _Bark) {
+        v2 = ~GetWorkType(~NPCToItem_i(_Zorn));
+        if (v2 = 13) {
+            v8 = ~rndRange(4, 1);
+            if (v8 = 1) {
+                v9 = "@Weapons?@";
+            }
+            if (v8 = 2) {
+                v9 = "@Armour?@";
+            }
+            if (v8 = 3) {
+                v9 = "@Helms? Shields?@";
+            }
+            if (v8 = 4) {
+                v9 = "@Need armour or weapons?@";
+            }
+            Item_bark(v9, _Zorn);
+        } else {
+            BarkAboutWork_i(_Zorn);
+        }
+    }
+}
+
+Usable ZornSellsWeapons_i #locals(13) #uses(~AskOrdList, ~PriceString_i, ~AskYesNo, ~SellItem_i) {
+    PushKeys();
+    v0 = true;
+    v1 = << "nothing", "throwing axe", "dagger", "mace", "sword", "2-handed sword", "2-handed axe" >>;
+    v2 = << 0, 593, 594, 659, 599, 602, 601 >>;
+    v3 = << 0, 20, 12, 15, 70, 125, 70 >>;
+    ["What wouldst thou like to buy?"];
+    While v0 {
+        v4 = ~AskOrdList(v1);
+        if (v4 = 1) {
+            ["Fine."];
+            v0 = false;
+        } else {
+            v5 = "a ";
+            v6 = 65177;
+            v7 = 0;
+            v8 = "";
+            v9 = 1;
+            v10 = ~PriceString_i(v8, v3::v4, v7, v1::v4, v5);
+            v11 = 0;
+            ["^<v10> Wilt thou buy it at that price?"];
+            v12 = ~AskYesNo();
+            if v12 {
+                v11 = ~SellItem_i(true, 1, 0, v3::v4, v9, v6, v2::v4);
+            }
+            if (v11 = 1) {
+                ["Done!"];
+            } else {
+                if (v11 = 2) {
+                    ["Thou cannot possibly carry that much!"];
+                } else {
+                    if (v11 = 3) {
+                        ["Thou dost not have enough gold for that!"];
+                    } else {
+                    }
+                }
+            }
+            ["Wouldst thou like something else?"];
+            v0 = ~AskYesNo();
+        }
+    }
+    PopKeys();
+}
+
+Usable ZornSellsArmour_i #locals(13) #uses(~AskOrdList, ~PriceString_i, ~AskYesNo, ~SellItem_i) {
+    PushKeys();
+    v0 = true;
+    v1 = << "nothing", "chain coif", "chain armour", "chain leggings", "gauntlets", "great helm", "plate armour", "plate leggings", "crested helm" >>;
+    v2 = << 0, 539, 571, 575, 580, 541, 573, 576, 542 >>;
+    v3 = << 0, 80, 100, 50, 20, 150, 300, 120, 60 >>;
+    v4 = 65177;
+    v5 = << "", "a ", "", "", "", "a ", "", "", "a " >>;
+    v6 = << 0, 0, 0, 1, 1, 0, 0, 1, 0 >>;
+    v7 = << "", "", "", " for a pair", " for a pair", "", "", " for a pair", "" >>;
+    v8 = 1;
+    ["What wouldst thou like to buy?"];
+    While v0 {
+        v9 = ~AskOrdList(v1);
+        if (v9 = 1) {
+            ["Fine."];
+            v0 = false;
+        } else {
+            v10 = ~PriceString_i(v7::v9, v3::v9, v6::v9, v1::v9, v5::v9);
+            v11 = 0;
+            ["^<v10> Is that acceptable?"];
+            v12 = ~AskYesNo();
+            if v12 {
+                v11 = ~SellItem_i(false, 1, 0, v3::v9, v8, v4, v2::v9);
+            }
+            if (v11 = 1) {
+                ["Done!"];
+            } else {
+                if (v11 = 2) {
+                    ["Thou cannot possibly carry that much!"];
+                } else {
+                    if (v11 = 3) {
+                        ["Thou dost not have enough gold for that!"];
+                    } else {
+                    }
+                }
+            }
+            ["Wouldst thou like something else?"];
+            v0 = ~AskYesNo();
+        }
+    }
+    PopKeys();
+}

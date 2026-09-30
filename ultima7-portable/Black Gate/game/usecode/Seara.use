@@ -1,0 +1,101 @@
+Routine Seara accepts a0 #locals(3) #uses(~LordOrLady, DescribeFellowship_i, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Seara);
+        v0 = ~LordOrLady();
+        v1 = ~IsMedallionOn_i();
+        v2 = ~GetTime();
+        TurnOn(<< "name", "job", "bye" >>);
+        if not $MET_SEARA {
+            [You see a handsome, creative-looking young man.];
+            $MET_SEARA = true;
+        } else {
+            ["Greetings, <v0>," says Seara.];
+        }
+        converse {
+            key ("name") {
+                ["I am called Seara, <v0>. A pleasure to meet thee."];
+                TurnOff("name");
+            }
+            key ("job") {
+                if $LEARNED_ABOUT_MINOC_MURDER {
+                    ["I am a member of our local Artist's Guild here in Minoc."];
+                    TurnOn(<< "Artist's Guild", "Minoc" >>);
+                } else {
+                    ["Please, <v0>, now is not the time to speak in such a casual way! Why, not far from this very spot there have been not one, but two murders committed!"];
+                    $LEARNED_ABOUT_MINOC_MURDER = true;
+                    TurnOn("murders");
+                }
+            }
+            key ("Artist's Guild") {
+                ["Yes, we have an Artist's Guild here in Minoc. I am a member. The other members are Xanthia and Gladstone. Thou canst purchase some of the finest crafts available anywhere in Britannia there. I, for example, make clocks."];
+                TurnOn(<< "Xanthia", "Gladstone", "clocks" >>);
+                TurnOff("Artist's Guild");
+            }
+            key ("Xanthia") {
+                ["Xanthia is a very talented young woman. She makes very elaborate and distinctive candelabras."];
+                TurnOff("Xanthia");
+            }
+            key ("Gladstone") {
+                ["Gladstone is a sculptor and a glassblower. He also is in charge of most of the business decisions for the Guild."];
+                TurnOff("Gladstone");
+            }
+            key ("clocks") {
+                ["I make all types of clocks and watches that tell the time reliably to the second. I would be happy to sell thee one but right now I have a two year backlog to fill."];
+                TurnOff("clocks");
+            }
+            key ("Minoc") {
+                ["Until the monument was to be built and now these murders I believed this town to be a good place to live."];
+                TurnOff("Minoc");
+                TurnOn(<< "monument", "murders" >>);
+            }
+            key ("murders") {
+                ["It is horrible. Frederico and Tania were looking for their son, Sasha. He had run away to join the Fellowship. How could this have happened to them?" Seara slowly shakes his head.];
+                TurnOff("murders");
+                TurnOn("Sasha");
+            }
+            key ("Sasha") {
+                if not flag(255) {
+                    ["I met him a few weeks ago when he came to town looking for the local Fellowship branch. I once let him stay the night at the Guild Hall. He said his father would beat him if he knew he was thinking of joining The Fellowship and I believed him. Sasha's father could be a cruel man. He is basically a good lad, just looking for the truth like a lot of us are. Unfortunately, he is looking in the wrong place."];
+                    TurnOff("Sasha");
+                    TurnOn(<< "gypsies", "Fellowship" >>);
+                    flag(255) = true;
+                } else {
+                    ["I have not seen or heard of Sasha since we last spoke of him. I do not know if he ever joined The Fellowship."];
+                    TurnOff("Sasha");
+                    TurnOn("Fellowship");
+                }
+            }
+            key ("gypsies") {
+                ["Their camp is just outside of town. There are not too many of them left. I understand that Sasha's aunt, Margareta, is an amazing fortune teller. For a few gold coins, she can tell thee many things that may be very useful to thee."];
+                TurnOff("gypsies");
+            }
+            key ("Fellowship") {
+                if v1 {
+                    ["No offense intended to thee, but I do not share thy beliefs. In fact I think few of the members of thy Fellowship are sincere in all their talk of unity, trust and worthiness. But Sasha is old enough to make up his mind for himself, though I regret not sending him home that night."];
+                } else {
+                    DescribeFellowship_i();
+                    ["No, I am not a member or anything like that, but I have heard the basic speech from Sasha so many times that I have it memorized. I never tried to dissuade him from joining The Fellowship even though I have no belief in it. I think Sasha is old enough to start making his decisions for himself. Now I truly regret not sending him home the moment I saw him."];
+                    TurnOff("philosophy");
+                }
+                TurnOff("Fellowship");
+            }
+            key ("monument") {
+                ["That shipwright Owen is a self-righteous fool. His statue will be nothing more than a monument to all the hurtful bad feelings he has caused in this town. I cannot believe that such a meaningless and obvious charade\x09could jeopardize our Guild's future."];
+                TurnOff("monument");
+                TurnOn("future");
+            }
+            key ("future") {
+                ["Thou hadst best ask Gladstone about that."];
+                TurnOff("future");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["A pleasant day to thee, <v0>. Do come see us again."*];
+    }
+    if (event = _Bark) {
+        BarkAboutWork_i(_Seara);
+    }
+}

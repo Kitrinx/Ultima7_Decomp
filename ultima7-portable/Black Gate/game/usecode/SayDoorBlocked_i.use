@@ -1,0 +1,91 @@
+Usable SayDoorBlocked_i #locals(0) #uses(MemberSays_i) {
+    MemberSays_i("@The door appears blocked.@");
+}
+
+Routine BarkLocked_i accepts a0 #locals(0) {
+    Item_bark("Locked", v0);
+}
+
+Routine BarkMagicLocked_i accepts a0 #locals(0) {
+    Item_bark("Magically Locked", v0);
+}
+
+Function ~DoorState_i accepts a0 #locals(0) {
+    return (~GetFrame(v0) modulo 4);
+}
+
+Routine SetDoorState_i accepts a0, a1 #locals(2) {
+    v2 = ~GetFrame(v1);
+    v3 = (v2 modulo 4);
+    SetFrame(((v2 - v3) + v0), v1);
+}
+
+Function ~SwingDoor_i accepts a0, a1, a2, a3, a4, a5 #locals(2) #uses(SetDoorState_i) {
+    SetDoorState_i(v3, v5);
+    Item_setType(v4, v5);
+    v6 = ~GetCoord(v5);
+    v6::1 = (v6::1 + v2);
+    v6::2 = (v6::2 + v1);
+    if ~Item_push(v5) {
+        v7 = ~PopToMap(v6);
+    }
+    return true;
+}
+
+Routine SwingPartner_i accepts a0, a1, a2, a3, a4, a5, a6, a7, a8 #locals(7) #uses(~DoorState_i, ~SwingDoor_i) {
+    v9 = ~GetCoord(v8);
+    v10 = v9::v5;
+    v11 = ~FindNearby_i(0, 7, v7, v8);
+    v12 = false;
+    Foreach v15 in v11 {
+        if ((~DoorState_i(v15) = v6) and (v9::v5 = v10)) {
+            v12 = true;
+            break;
+        }
+    }
+    if v12 {
+        v12 = ~SwingDoor_i(v0, v1, v2, v3, v4, v15);
+    }
+}
+
+Function ~SwingWallNS_i accepts a0 #locals(1) #uses(~DoorState_i, ~SwingDoor_i, SayDoorBlocked_i) {
+    v1 = ~DoorState_i(v0);
+    if (v1 = 1) {
+        if ~SwingDoor_i(7, 0, 0, 0, _Wall_845, v0) {
+            playSFX(item, 31);
+        } else {
+            SayDoorBlocked_i();
+            return false;
+        }
+    }
+    if (v1 = 0) {
+        if ~SwingDoor_i(7, 0, 0, 1, _Wall_845, v0) {
+            playSFX(item, 30);
+        } else {
+            SayDoorBlocked_i();
+            return false;
+        }
+    }
+    return true;
+}
+
+Function ~SwingWallEW_i accepts a0 #locals(1) #uses(~DoorState_i, ~SwingDoor_i, SayDoorBlocked_i) {
+    v1 = ~DoorState_i(v0);
+    if (v1 = 1) {
+        if ~SwingDoor_i(7, 0, 0, 0, _Wall_828, v0) {
+            playSFX(item, 31);
+        } else {
+            SayDoorBlocked_i();
+            return false;
+        }
+    }
+    if (v1 = 0) {
+        if ~SwingDoor_i(7, 0, 0, 1, _Wall_828, v0) {
+            playSFX(item, 30);
+        } else {
+            SayDoorBlocked_i();
+            return false;
+        }
+    }
+    return true;
+}

@@ -1,0 +1,297 @@
+Routine Phearcy accepts a0 #locals(9) #uses(~AvatarName, ~LordOrLady, ~IsNPCNear, ~IsNearEachOther_i, ~AskYesNo, PhearcySellsFood_i, PhearcySellsDrink_i, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Phearcy);
+        v0 = ~AvatarName();
+        v1 = ~LordOrLady();
+        v2 = ~IsNPCNear(_Dupre);
+        v3 = ~GetTime();
+        v4 = false;
+        if (v3 = 7) {
+            v5 = ~IsNearEachOther_i(_Rankin, _Phearcy);
+            if v5 {
+                ["Sorry, <v1>, I may talk to thee later. But now I wish to pay attention to the meeting."];
+                terminate;
+            } else {
+                ["Sorry, <v1>, I must get to the Fellowship meeting!"];
+                terminate;
+            }
+        }
+        TurnOn(<< "name", "job", "Fellowship", "bye" >>);
+        if v2 {
+            ["Why, Hello, Sir Dupre. Things fare well I trust?"];
+            SetSpeaker(0, _Dupre);
+            ["Greetings, fair Phearcy. Yes, thank thee, things are well."];
+            CloseSpeaker(_Dupre);
+            SetSpeaker(0, _Phearcy);
+        }
+        if not $MetPhearcy {
+            [You see a man who gives you a friendly smile.];
+            $MetPhearcy = true;
+        } else {
+            ["How may I help thee, <v1>?" asks Phearcy.];
+        }
+        if flag(474) && not flag(473) {
+            ["Hast thou discovered the reason for Zelda's moods?"];
+            v6 = ~AskYesNo();
+            if v6 {
+                ["Excellent. Thou canst tell me while I get thy refreshment." As he prepares your meal, you tell him what you know about Zelda and Brion.];
+                v7 = ~GiveToParty_i(true, 15, _All, _Food_Item, 5);
+                if not v7 {
+                    ["Too bad, <v1>. When thou art carrying less weighty things I shall give thee thy jerky."];
+                } else {
+                    flag(473) = true;
+                }
+                v8 = ~GiveToParty_i(true, 0, _All, _Bottle, 5);
+                if not v8 {
+                    ["And when thy load is lighter, then I can give thee thy beverages."];
+                }
+            } else {
+                ["'Tis a shame, <v1>. Perhaps thou wilt know next time."];
+            }
+        }
+        converse {
+            key ("name") {
+                ["I am Phearcy, at thy service." He gives a short bow.];
+                TurnOff("name");
+            }
+            key ("job") {
+                ["I am the bartender here in Moonglow."];
+                TurnOn(<< "Moonglow", "buy" >>);
+            }
+            key ("Fellowship") {
+                ["Oh, thou referest to this?" he asks, pointing to his medallion. "Thou hast not heard of The Fellowship? I strongly recommend that thou speakest with Rankin or Balayna at the branch office. The Fellowship has done many things for our town, if not for all of Britannia. I am a firm believer in neo-realism."];
+                TurnOn("neo-realism");
+                TurnOff("Fellowship");
+            }
+            key ("neo-realism") {
+                ["That is the fundamental principle of The Fellowship. It is composed of the triad of inner strength, which is strive for unity, trust thy brother, and... one other one.... Oh, yes, thou dost get what thou deservest, or some such."];
+                TurnOff("neo-realism");
+            }
+            key ("Moonglow") {
+                ["Thou wants to know about someone in the town? Thou hast asked the right person. I know all about the residents here in Moonglow. I would be happy to tell thee about any of the shop keepers, scholars, or farmers who live here. Or art thou interested in the trainer, healer, mage, or Fellowship leaders?];
+                TurnOff("Moonglow");
+                PushKeys();
+                TurnOn(<< "no one", "shop keeper", "scholars", "farmers", "trainer", "healer", "mage", "leaders" >>);
+            }
+            key ("scholars") {
+                ["Ah, the learned scholars. I can tell thee about Brion, Nelson, Zelda, and Jillian."];
+                PushKeys();
+                TurnOn(<< "no one", "Brion", "Nelson", "Zelda", "Jillian" >>);
+            }
+            key ("leaders") {
+                ["Dost thou want to know about the one in charge or his clerk?"];
+                PushKeys();
+                TurnOn(<< "no one", "charge", "clerk" >>);
+            }
+            key ("mage") {
+                ["Ah, yes, Mariah is very nice."];
+                if flag(473) {
+                    ["She can sell thee many spells."];
+                } else {
+                    if not v4 {
+                        ["But I am more interested in discussing Zelda."];
+                    }
+                }
+                TurnOff("mage");
+            }
+            key ("shop keeper") {
+                ["She is a tailor. Lovely woman, that Carlyn. She minds the bar when I go to the Fellowship meetings at night."];
+                if not flag(473) && not v4 {
+                    ["But I would rather discuss Zelda."];
+                }
+                TurnOff("shop keeper");
+            }
+            key ("Jillian") {
+                ["Wonderful scholar. Very nice woman. Married to Effrem."];
+                TurnOn("Effrem");
+                if not flag(473) && not v4 {
+                    ["But I am more interested in discussing Zelda."];
+                }
+                TurnOff("Jillian");
+            }
+            key ("Effrem") {
+                ["Friendly fellow -- I like him."];
+                if flag(473) {
+                    ["He stays home to care for their son."];
+                } else {
+                    if not v4 {
+                        ["But I am more interested in discussing Brion."];
+                    }
+                }
+                TurnOff("Effrem");
+            }
+            key ("trainer") {
+                ["Chad is a friendly fellow -- I like him."];
+                if not flag(473) && not v4 {
+                    ["But I would rather discuss Brion."];
+                }
+                TurnOff("trainer");
+            }
+            key ("farmers") {
+                ["Tolemac and Cubolt are brothers. With Morz's help, they run a farm."];
+                if not flag(473) && not v4 {
+                    ["But I would prefer to talk about Brion."];
+                }
+                TurnOff("farmers");
+            }
+            key ("healer") {
+                ["Friendly fellow -- I like him. His name is Elad."];
+                if flag(473) {
+                    ["Sadly, his true desire is to leave Moonglow in search of adventure. But he will not leave, for he feels too much obligation for his patients." Phearcy shrugs.~"Perhaps not without reason."];
+                } else {
+                    if not v4 {
+                        ["But Brion is more interesting to me."];
+                    }
+                }
+                TurnOff("healer");
+            }
+            key ("Nelson") {
+                ["He is Brion's twin brother."];
+                if not flag(473) && not v4 {
+                    ["Speaking of that, I would like to discuss Brion."];
+                }
+                TurnOff("Nelson");
+            }
+            key ("charge") {
+                ["Rankin is in charge of the entire local branch. If thou hast any questions about The Fellowship, he can answer them."];
+                TurnOff("charge");
+            }
+            key ("clerk") {
+                ["If thou hast any questions about The Fellowship, Balayna can answer them."];
+                TurnOff("clerk");
+            }
+            key ("Zelda", "Brion") {
+                if flag(473) {
+                    ["Well, as thou dost know, Brion is the head of Observatory, and Zelda, the advisor at the Lyceaum, is in love with him."];
+                } else {
+                    ["Ah, so thou dost wonder, too. All I know is that every time someone mentions Brion's name to Zelda, her serious expression changes to a smile.~~"I have a deal for thee. Find out what their story is, and I will give thee and thy friends a free meal and drink. Thou canst find Brion at the observatory and Zelda at the Lyceaum."];
+                    v4 = true;
+                    TurnOff(<< "Brion", "Zelda" >>);
+                }
+            }
+            key ("no one") {
+                PopKeys();
+                TurnOn("bye");
+            }
+            key ("buy") {
+                ["Food or drink, <v1>?"];
+                PushKeys();
+                TurnOn(<< "food", "drink" >>);
+                TurnOff("buy");
+            }
+            key ("food") {
+                PhearcySellsFood_i();
+                PopKeys();
+                TurnOff("food");
+            }
+            key ("drink") {
+                PhearcySellsDrink_i();
+                PopKeys();
+                TurnOff("drink");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["Remember! Tell them thou didst eat at the Friendly Knave!"*];
+    }
+    if (event = _Bark) {
+        BarkAboutWork_i(_Phearcy);
+    }
+}
+
+Usable PhearcySellsFood_i #locals(15) #uses(~LordOrLady, ~AskOrdList, ~PriceString_i, ~AskYesNo, ~SellItem_i) {
+    v0 = ~LordOrLady();
+    PushKeys();
+    v1 = true;
+    v2 = << "nothing", "mutton rations", "trout", "Silverleaf", "cake", "ham" >>;
+    v3 = << 0, 377, 377, 377, 377, 377 >>;
+    v4 = << 65177, 15, 12, 31, 5, 11 >>;
+    v5 = << 0, 12, 2, 25, 2, 10 >>;
+    v6 = << "", "", "", "", "", "" >>;
+    v7 = << 0, 1, 0, 0, 0, 0 >>;
+    v8 = << "", " for ten servings", " for one portion", " for one portion", " per piece", " for a slice" >>;
+    v9 = << 0, 10, 1, 1, 1, 1 >>;
+    ["What wouldst thou like to buy?"];
+    While v1 {
+        v10 = ~AskOrdList(v2);
+        if (v10 = 1) {
+            ["Very well, <v0>."];
+            v1 = false;
+        } else {
+            if (v10 = 4) && flag(299) {
+                ["I am truly sorry, <v0>, but I have not been able to get any of that for some time now. It seems the man who used to cut down the Silverleaf trees has stopped."];
+            } else {
+                v11 = ~PriceString_i(v8::v10, v5::v10, v7::v10, v2::v10, v6::v10);
+                v12 = 0;
+                ["^<v11>. Art thou happy with the price?"];
+                v13 = ~AskYesNo();
+                if v13 {
+                    ["How many dost thou want?"];
+                    v14 = ~SellItem_i(true, 1, 20, v5::v10, v9::v10, v4::v10, v3::v10);
+                }
+                if (v14 = 1) {
+                    ["Agreed."];
+                } else {
+                    if (v14 = 2) {
+                        ["Thou cannot carry that much!"];
+                    } else {
+                        if (v14 = 3) {
+                            ["Thou hast not the gold for that!"];
+                        } else {
+                        }
+                    }
+                }
+            }
+            ["Wouldst thou like something else?"];
+            v1 = ~AskYesNo();
+        }
+    }
+    PopKeys();
+}
+
+Usable PhearcySellsDrink_i #locals(14) #uses(~LordOrLady, ~AskOrdList, ~PriceString_i, ~AskYesNo, ~SellItem_i) {
+    v0 = ~LordOrLady();
+    PushKeys();
+    v1 = true;
+    v2 = << "nothing", "wine", "ale" >>;
+    v3 = << 0, 616, 616 >>;
+    v4 = << 65177, 5, 3 >>;
+    v5 = << 0, 4, 3 >>;
+    v6 = << "", "", "" >>;
+    v7 = << 0, 0, 0 >>;
+    v8 = << "", " per bottle", " per bottle" >>;
+    v9 = << 0, 1, 1 >>;
+    ["What wouldst thou like to buy?"];
+    While v1 {
+        v10 = ~AskOrdList(v2);
+        if (v10 = 1) {
+            ["Very well, <v0>."];
+            v1 = false;
+        } else {
+            v11 = 0;
+            v12 = ~PriceString_i(v8::v10, v5::v10, v7::v10, v2::v10, v6::v10);
+            ["^<v12>. Is that price agreeable?"];
+            v13 = ~AskYesNo();
+            if v13 {
+                v11 = ~SellItem_i(true, 1, 0, v5::v10, v9::v10, v4::v10, v3::v10);
+            }
+            if (v11 = 1) {
+                ["Agreed."];
+            } else {
+                if (v11 = 2) {
+                    ["Thou cannot carry that much!"];
+                } else {
+                    if (v11 = 3) {
+                        ["Thou hast not the gold for that!"];
+                    } else {
+                    }
+                }
+            }
+            ["Wouldst thou like something else?"];
+            v1 = ~AskYesNo();
+        }
+    }
+    PopKeys();
+}

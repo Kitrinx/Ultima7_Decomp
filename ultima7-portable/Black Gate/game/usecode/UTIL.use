@@ -1,0 +1,1116 @@
+Function ~NPCLevel_i accepts a0 #locals(3) {
+    v1 = ~NPCToItem_i(v0);
+    v2 = (~GetNPCStat_i(_Experience, v1) / 100);
+    v3 = 1;
+    While (v2 > 0) {
+        v3 = (v3 + 1);
+        v2 = (v2 / 2);
+    }
+    return v3;
+}
+
+Function ~IsNPCNear accepts a0 #locals(2) {
+    v1 = ~NPCToItem_i(v0);
+    v2 = ~IsNPCNear_i(v1);
+    if ~GetItemFlag_i(_Invisible, v1) {
+        v2 = false;
+    }
+    return v2;
+}
+
+Function ~SellItem_i accepts a0, a1, a2, a3, a4, a5, a6 #locals(12) {
+    v7 = ~CountItem(_All, _All, _Gold_Coin, _Party);
+    if (v2 = 0) {
+        v8 = 1;
+    } else {
+        v8 = ~AskBarInput(1, 1, v2, v1);
+    }
+    if (v4 > 1) {
+        v9 = (v4 * v8);
+    } else {
+        v9 = v8;
+    }
+    if (v8 = 0) {
+        v10 = 0;
+    } else {
+        if (v7 >= (v3 * v8)) {
+            v11 = ~GiveToParty_i(v0, v5, _All, v6, v9);
+            if not (v11 = 0) {
+                v10 = 1;
+                v12 = ~TakeFromParty_i(true, _All, _All, _Gold_Coin, (v3 * v8));
+                v13 = 0;
+                v14 = false;
+                Foreach v17 in v11 {
+                    v18 = ~ItemToNPC_i(v17);
+                    if not (v18 = 65180) {
+                        v13 = (v13 + 1);
+                        SetSpeaker(0, v18);
+                        v14 = true;
+                        if (v4 = 1) {
+                            ["I will carry that."];
+                        } else {
+                            if (v13 = 1) {
+                                ["I will carry some."];
+                            } else {
+                                ["I will carry some, as well."];
+                            }
+                        }
+                        CloseSpeaker(v18);
+                    }
+                }
+                if v14 {
+                    ResetSpeaker_i();
+                }
+            } else {
+                v10 = 2;
+            }
+        } else {
+            v10 = 3;
+        }
+    }
+    return v10;
+}
+
+Function ~InBox_i accepts a0, a1, a2 #locals(4) {
+    v3 = << 1, 2, 3 >>;
+    Foreach v6 in v3 {
+        if (not (v2::v6 >= v1::v6) or not (v2::v6 <= v0::v6)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+Routine StealItem_i accepts a0 #locals(0) #uses(ReactToTheft_i) {
+    if (not ~GetItemFlag_i(_OkayToTake_i, v0) and not ~GetItemFlag_i(_InDungeon_i, v0)) {
+        CallGuards_i();
+        ReactToTheft_i(v0);
+    }
+}
+
+Function ~GetPartyName #locals(0) {
+    return ~GetNPCName_i(~GetParty());
+}
+
+Function ~IsNearEachOther_i accepts a0, a1 #locals(1) {
+    v2 = ~GetDist(v0, v1);
+    if (v2 < 20) {
+        return true;
+    }
+}
+
+Routine FlashBlocked_i accepts a0 #locals(0) {
+    Sfx(76);
+    if (v0 > 6) {
+        v0 = 1;
+    }
+    FlashMouse_i(v0);
+}
+
+Routine MemberBarks_i accepts a0 #locals(1) #uses(~PartySpeaker_i, BarkIfNear_i) {
+    v1 = ~PartySpeaker_i();
+    BarkIfNear_i(v0, v1);
+    return;
+}
+
+Routine MemberSays_i accepts a0 #locals(1) #uses(~PartySpeaker_i, SayIfNear_i) {
+    v1 = ~PartySpeaker_i();
+    SayIfNear_i(v0, v1);
+}
+
+Function ~PartySpeaker_i #locals(0) #uses(~FirstNearMember_i, ~RandomNearMember_i) {
+    if (~rndRange(10, 1) < 4) {
+        return ~FirstNearMember_i();
+    } else {
+        return ~RandomNearMember_i();
+    }
+}
+
+Function ~RandomNearMember_i #locals(3) #uses(~RemoveFromList_i) {
+    v0 = ~GetParty();
+    v0 = ~RemoveFromList_i(v0, ~NPCToItem_i(_Avatar));
+    v1 = ~ListSize_i(v0);
+    if (v1 <> 0) {
+        v2 = ~ItemToNPC_i(v0::~Random(v1));
+        if ~IsNPCNear_i(v2) {
+            return v2;
+        }
+    }
+    return 65180;
+}
+
+Function ~FirstNearMember_i #locals(5) {
+    v0 = << 65535, 65533, 65532, 65531, 65529, 65528, 65527, 65534, 65526 >>;
+    v1 = ~GetParty();
+    Foreach v4 in v0 {
+        if (~NPCToItem_i(v4) in v1) && ~IsNPCNear_i(v4) {
+            return v4;
+        }
+    }
+    return 65180;
+}
+
+Routine SayIfNear_i accepts a0, a1 #locals(4) {
+    if ~IsNPCNear_i(v1) {
+        if (v1 = 65180) {
+            v2 = ~AvatarSex();
+        } else {
+            v2 = 0;
+        }
+        SetSpeaker(v2, v1);
+        if ~GetItemFlag_i(25, item) {
+            ["Oink"];
+        } else {
+            Foreach v5 in v0 {
+                append v5;
+                append "";
+                say;
+            }
+        }
+        CloseSpeaker(v1);
+    }
+}
+
+Routine BarkIfNear_i accepts a0, a1 #locals(4) #uses(Bark_i) {
+    if ~IsNPCNear_i(v1) {
+        if ~GetItemFlag_i(25, item) {
+            Item_bark("@Oink@", item);
+        } else {
+            v2 = 0;
+            Foreach v5 in v0 {
+                Bark_i(v2, v5, v1);
+                v2 = (v2 + 17);
+            }
+        }
+    }
+}
+
+Routine StartBurning_i accepts a0 #locals(1) {
+    Kernel_resetRef(v0);
+    SetLight_i(true, item);
+    SetTimePalette_i();
+    v1 = ~PostInFuture(50, << _aNO_HALT_i, _aUSABLE_i, #BurnLight_i >>, v0);
+}
+
+Function ~IsMagicOK_i #locals(0) {
+    if (~GetWeather_i() = _Sparkle) {
+        return false;
+    } else {
+        return true;
+    }
+}
+
+Function ~PopToNPCNumber_i accepts a0 #locals(0) {
+    return ~PopToNPC(~NPCToItem_i(v0));
+}
+
+Function ~AvatarName #locals(0) {
+    return ~GetNPCName_i(~AvatarItem_i());
+}
+
+Function ~LordOrLady #locals(0) {
+    if (~AvatarSex() = 0) {
+        return "milord";
+    } else {
+        return "milady";
+    }
+}
+
+Function ~AskYesNo #locals(0) {
+    PushKeys();
+    TurnOn(<< "Yes", "No" >>);
+    converse {
+        key ("Yes") {
+            PopKeys();
+            return true;
+        }
+        key ("No") {
+            PopKeys();
+            return false;
+        }
+    }
+    clear_answers;
+}
+
+Function ~AskList accepts a0 #locals(1) {
+    PushKeys();
+    TurnOn(v0);
+    v1 = ~GetInput();
+    PopKeys();
+    return v1;
+}
+
+Function ~AskOrdList accepts a0 #locals(1) {
+    PushKeys();
+    TurnOn(v0);
+    v1 = ~GetOrdInput();
+    PopKeys();
+    return v1;
+}
+
+Function ~AskParty #locals(5) #uses(~GetPartyName, ~AskOrdList) {
+    v0 = ~GetPartyName();
+    v1 = ~GetParty();
+    v2 = << 0, v1 >>;
+    v3 = ~AskOrdList(<< "Nobody", v0 >>);
+    v4 = v2::v3;
+    if (v4 = 0) {
+        return 0;
+    }
+    return ~ItemToNPC_i(v4);
+}
+
+Function ~AskParty2_i #locals(5) #uses(~AskOrdList) {
+    v0 = ~GetNPCName_i(~GetParty_i());
+    v1 = ~GetParty_i();
+    v2 = << 0, v1 >>;
+    v3 = ~AskOrdList(<< "Nobody", v0 >>);
+    v4 = v2::v3;
+    if (v4 = 0) {
+        return 0;
+    }
+    return ~ItemToNPC_i(v4);
+}
+
+Function ~GetNPCName accepts a0 #locals(0) {
+    return ~GetNPCName_i(~NPCToItem_i(v0));
+}
+
+Function ~GetStat accepts a0, a1 #locals(0) {
+    return ~GetNPCStat_i(v0, ~NPCToItem_i(v1));
+}
+
+Routine GivePartyExp_i accepts a0 #locals(5) {
+    v1 = ~GetParty();
+    Foreach v4 in v1 {
+        v5 = ~ChangeNPCStat_i(v0, _Experience, v4);
+    }
+}
+
+Routine SetStat accepts a0, a1, a2 #locals(1) {
+    v3 = ~ChangeNPCStat_i(v0, v1, ~NPCToItem_i(v2));
+}
+
+Function ~IndexInList_i accepts a0, a1 #locals(4) {
+    v2 = 0;
+    Foreach v5 in v0 {
+        v2 = (v2 + 1);
+        if (v1 = v5) {
+            return v2;
+        }
+    }
+    return 0;
+}
+
+Routine StrTrain accepts a0, a1 #locals(1) #uses(SetStat) {
+    v2 = 0;
+    While (v2 < v0) {
+        SetStat(1, _Str, v1);
+        SetStat(1, _Hits, v1);
+        SetStat(65535, _TrainingPoints, v1);
+        v2 = (v2 + 1);
+    }
+}
+
+Routine DexTrain accepts a0, a1 #locals(5) #uses(~GetStat, SetStat) {
+    v2 = 0;
+    While (v2 < v0) {
+        v3 = ~GetStat(_Dex, v1);
+        SetStat(1, _Dex, v1);
+        v4 = (v3 + 1);
+        v5 = ~GetStat(_Cbt, v1);
+        v6 = (((v4 * v5) + (v3 - 1)) / v3);
+        SetStat((v6 - v5), _Cbt, v1);
+        SetStat(65535, _TrainingPoints, v1);
+        v2 = (v2 + 1);
+    }
+}
+
+Routine IntTrain_i accepts a0, a1 #locals(2) #uses(~GetStat, SetStat) {
+    v2 = 0;
+    While (v2 < v0) {
+        v3 = ~GetStat(_Int, v1);
+        SetStat(1, _Int, v1);
+        SetStat(65535, _TrainingPoints, v1);
+        v2 = (v2 + 1);
+    }
+}
+
+Routine CombatTrain_i accepts a0, a1 #locals(4) #uses(~GetStat, SetStat) {
+    v2 = 0;
+    While (v2 < v0) {
+        v3 = ~GetStat(_Dex, v1);
+        v4 = ~GetStat(_Cbt, v1);
+        v5 = (((v4 + v3) + 1) / 2);
+        if (v5 >= v3) {
+            v5 = (v4 + 1);
+            if (v5 >= 30) {
+                v5 = 30;
+            }
+        }
+        SetStat((v5 - v4), _Cbt, v1);
+        SetStat(65535, _TrainingPoints, v1);
+        v2 = (v2 + 1);
+    }
+}
+
+Routine MagicTrain_i accepts a0, a1 #locals(4) #uses(~GetStat, SetStat) {
+    v2 = 0;
+    While (v2 < v0) {
+        v3 = ~GetStat(_Int, v1);
+        v4 = ~GetStat(_MaxMagic, v1);
+        v5 = (((v4 + v3) + 1) / 2);
+        if (v5 >= v3) {
+            v5 = (v4 + 1);
+            if (v5 >= 30) {
+                v5 = 30;
+            }
+        }
+        SetStat((v5 - v4), _MaxMagic, v1);
+        SetStat(65535, _TrainingPoints, v1);
+        v2 = (v2 + 1);
+    }
+}
+
+Usable DescribeFellowship_i #locals(2) {
+    v0 = ~IsMedallionOn_i();
+    v1 = ~rndRange(4, 1);
+    if (v1 = 1) {
+        ["The Fellowship is a society of spiritual seekers who strive to reach the highest levels of human potential and to share this philosophy freely with all people. The Fellowship was formed twenty years ago by Batlin with the full approval and support of Lord British."];
+    }
+    if (v1 = 2) {
+        ["The Fellowship is a wonderful organization that is open to all the people of Britannia. I have learned so much through studying its philosophy and it has helped me to live my life to the fullest. Through The Fellowship I am able to achieve what I have set out to do in life and I am a better person for having joined."];
+    }
+    if (v1 = 3) {
+        ["The Fellowship is the philosophical group devoted to the teachings of a truly great man named Batlin. In the absence of the Avatar, Batlin has become a sort of spiritual father for the people of Britannia. Through his speeches and writings he has changed the lives of many people, including my own."];
+    }
+    if (v1 = 4) {
+        ["The Fellowship is a group that has been gaining much popularity in recent years with the people of Britannia. While on the surface it may simply appear to be a scholarly society studying its particular philosophy, its teachings have the power to forever alter the shape of Britannian society. Its ceremonies are deeply moving experiences."];
+    }
+    TurnOn("philosophy");
+}
+
+Usable ExplainPhilosophy_i #locals(2) #uses(~AskYesNo) {
+    ["The Fellowship advances the philosophy of 'sanguine cognition', a way to apply a confident order of thought to one's life, through what is called the Triad of Inner Strength. The Triad is simply three basic principles that, when applied in unison, enable one to be more creative, satisfied, and successful in life. They are: Strive For Unity, Trust Thy Brother, and Worthiness Precedes Reward. Strive For Unity basically means that people should cooperate and work together. Trust Thy Brother implies that we are all the same and that we should not hate or fear each other. Worthiness Precedes Reward suggests that we must each strive to be worthy of that which we want out of life."];
+    v0 = ~IsMedallionOn_i();
+    if not v0 {
+        ["Dost thou want to join?"];
+        v1 = ~AskYesNo();
+        if v1 {
+            ["Then thou shouldst go immediately to see Batlin at the Fellowship Hall headquarters in Britain."];
+        } else {
+            ["Oh. Well, perhaps thou canst become enlightened another time."];
+        }
+    } else {
+        ["Oh! I just now noticed thy medallion! Thou dost already know all of this! Thou art one of us! Excuse me for going on and on about it!"];
+    }
+}
+
+Function ~PriceString_i accepts a0, a1, a2, a3, a4 #locals(1) {
+    v5 = ((v4 + v3) + " ");
+    if (v2 = 1) {
+        v5 = (v5 + "sell ");
+    } else {
+        v5 = (v5 + "sells ");
+    }
+    v5 = (((((v5 + "for ") + v1) + " gold") + v0) + ".");
+    return v5;
+}
+
+Function ~SellPriceString_i accepts a0, a1, a2, a3, a4 #locals(1) {
+    v5 = ((((((("To sell " + v4) + v3) + " for ") + v1) + " gold") + v0) + ".");
+    return v5;
+}
+
+Routine SellHealing_i accepts a0, a1 #locals(5) #uses(~GetStat, SetStat) {
+    v2 = ~GetStat(_Str, v1);
+    v3 = ~GetStat(_Hits, v1);
+    v4 = ~GetNPCName_i(v1);
+    if (v2 > v3) {
+        v5 = (v2 - v3);
+        SetStat(v5, _Hits, v1);
+        v6 = ~TakeFromParty_i(true, _All, _All, _Gold_Coin, v0);
+        ["The wounds have been healed."];
+    } else {
+        if (v1 = 65180) {
+            ["Thou seemest quite healthy!"];
+        } else {
+            ["<v4> is already healthy!"];
+        }
+    }
+}
+
+Routine SellCure_i accepts a0, a1 #locals(2) {
+    v2 = ~NPCToItem_i(v1);
+    if ~GetItemFlag_i(_Poisoned, v2) {
+        ClearItemFlag_i(_Poisoned, v2);
+        v3 = ~TakeFromParty_i(true, _All, _All, _Gold_Coin, v0);
+        ["The wounds have been healed."];
+    } else {
+        ["That individual does not need curing!"];
+    }
+}
+
+Routine SellResurrection_i accepts a0, a1 #locals(2) {
+    v2 = ~Resurrect_i(v1);
+    if v2 {
+        ["Breath doth return to the body. Thy comrade is alive!"];
+        v3 = ~TakeFromParty_i(true, _All, _All, _Gold_Coin, v0);
+    } else {
+        ["Alas, I cannot save thy friend. I will provide a proper burial. Thou must go on and continue with thine own life."];
+    }
+}
+
+Function ~GetStudent #locals(1) #uses(~AskParty) {
+    ["Which of you wishes to train?"];
+    v0 = ~AskParty();
+    return v0;
+}
+
+Function ~GetStudentExcept_i accepts a0 #locals(12) #uses(~AskYesNo, ~GetPartyName, ~AskOrdList) {
+    ["One of you wishes to train?"];
+    v1 = ~AskYesNo();
+    if v1 {
+        ["Which of you wishes to train?"];
+        v2 = ~GetPartyName();
+        v3 = ~GetParty();
+        v4 = << >>;
+        v5 = << >>;
+        Foreach v8 in v3 {
+            if (v8 <> v0) {
+                v4 = (v4 & ~GetNPCName_i(v8));
+                v5 = (v5 & v8);
+            }
+        }
+        v2 = v4;
+        v3 = v5;
+        v9 = << 0, v3 >>;
+        v10 = ~AskOrdList(<< "Nobody", v2 >>);
+        v11 = v9::v10;
+        if (v11 = 0) {
+            v12 = 0;
+        } else {
+            v12 = ~ItemToNPC_i(v11);
+        }
+    } else {
+        ["Perhaps at a later time."];
+        v12 = 0;
+    }
+    return v12;
+}
+
+Function ~CanTrain accepts a0, a1, a2, a3 #locals(7) #uses(~GetStat) {
+    v4 = false;
+    v5 = ~GetStat(_TrainingPoints, v1);
+    v6 = ~CountItem(_All, _All, _Gold_Coin, _Party);
+    if not (v6 > v2) {
+        return 1;
+    }
+    if not (v5 >= v0) {
+        return 0;
+    }
+    Foreach v9 in v3 {
+        v10 = ~GetStat(v9, v1);
+        if (v10 < 30) {
+            v4 = true;
+        }
+    }
+    if (v4 = false) {
+        return 2;
+    }
+    return 3;
+}
+
+Function ~SellSpell_i accepts a0, a1 #locals(4) #uses(~AskYesNo) {
+    v2 = ~CountItem(_All, _All, _Gold_Coin, _Party);
+    ["Agreeable?"];
+    if not ~AskYesNo() {
+        v3 = 0;
+    } else {
+        if (v2 >= v0) {
+            v4 = ~FindItem(_All, _All, _Spellbook, _Party);
+            if v4 {
+                if ~AddSpell_i(v4, 0, v1) {
+                    v3 = 1;
+                    v5 = ~TakeFromParty_i(true, _All, _All, _Gold_Coin, v0);
+                } else {
+                    v3 = 4;
+                }
+            } else {
+                v3 = 2;
+            }
+        } else {
+            v3 = 3;
+        }
+    }
+    return v3;
+}
+
+Function ~GargSellSpell_i accepts a0, a1 #locals(4) #uses(~AskYesNo) {
+    v2 = ~CountItem(_All, _All, _Gold_Coin, _Party);
+    ["To be agreeable?"];
+    if not ~AskYesNo() {
+        v3 = 0;
+    } else {
+        if (v2 >= v0) {
+            v4 = ~FindItem(_All, _All, _Spellbook, _Party);
+            if v4 {
+                if ~AddSpell_i(v4, 0, v1) {
+                    v3 = 1;
+                    v5 = ~TakeFromParty_i(true, _All, _All, _Gold_Coin, v0);
+                } else {
+                    v3 = 4;
+                }
+            } else {
+                v3 = 2;
+            }
+        } else {
+            v3 = 3;
+        }
+    }
+    return v3;
+}
+
+Routine ConsumeOne_i accepts a0 #locals(2) {
+    v1 = ~GetQuantity(_Avatar, v0);
+    if (v1 <= 1) {
+        Item_destroy(v0);
+    } else {
+        v1 = (v1 - 1);
+        v2 = ~SetQuantity(v1, v0);
+    }
+}
+
+Routine SwapWithVoid_i accepts a0 #locals(13) {
+    v1 = false;
+    v2 = ~Item_getType(v0);
+    v3 = ~GetFrame(v0);
+    v4 = ~GetQuality(v0);
+    v5 = ~GetParty();
+    Foreach v8 in v5 {
+        v9 = ~GetContents(v3, v4, v2, v8);
+        Foreach v12 in v9 {
+            if (v12 = v0) {
+                v1 = v8;
+                v13 = ~PopToNPC(v1);
+                v13 = ~Item_push(v0);
+            }
+        }
+    }
+    if (v1 = false) {
+        v1 = ~GetCoord(v0);
+        v13 = ~PopToMap(v1);
+        v13 = ~Item_push(v0);
+    }
+}
+
+Routine DrinkFromVessel_i accepts a0 #locals(7) #uses(StealItem_i, MemberSays_i, SayIfNear_i, ~AvatarName) {
+    StealItem_i(v0);
+    v1 = ~GetFrame(v0);
+    if (v1 = 0) {
+        MemberSays_i(<< "I bet that would work much better if thou wouldst put some liquid in it..." >>);
+        SayIfNear_i("Perhaps some BEER for instance.", _Dupre);
+        SayIfNear_i("Or maybe some WINE>>>", _Shamino);
+    } else {
+        SetFrame(0, v0);
+        v2 = << "water", "blood", "wine", "beer", "ale", "stuff", "stuff", "stuff", "stuff", "stuff", "last stuff" >>;
+        Sfx(90);
+        v3 = ~rndRange(10, 1);
+        v4 = v2::v1;
+        v5 = (("Gee, I bet that " + v4) + " was pretty good....");
+        if (v3 = 1) {
+            v6 = "mmmm... I bet that would sure wet a body's whistle.";
+        }
+        if (v3 = 2) {
+            v7 = ~AvatarName();
+            v5 = (((("Why dost thou not wait until dinner to drink that " + v4) + ", ") + v7) + ".");
+        }
+        MemberSays_i(v5);
+    }
+}
+
+Routine DrinkFromVessel2_i accepts a0 #locals(11) #uses(StealItem_i, MemberSays_i, SayIfNear_i, ~AvatarName) {
+    StealItem_i(v0);
+    v1 = (~GetFrame(v0) modulo 2);
+    if (v1 = 0) {
+        MemberSays_i(<< "I bet that would work much better if thou wouldst put some liquid in it..." >>);
+        SayIfNear_i("Perhaps some BEER for instance.", _Dupre);
+        SayIfNear_i("Or maybe some WINE>>>", _Shamino);
+    } else {
+        v2 = << "water", "blood", "wine", "beer", "ale", "stuff", "stuff", "stuff", "stuff", "stuff", "laststuff" >>;
+        v3 = 0;
+        v4 = ~GetQuality(item);
+        Foreach v7 in v2 {
+            v3 = (v3 + 1);
+            if (v4 = v3) {
+                v8 = (("Gee, I bet that " + v7) + " was pretty good....");
+            }
+        }
+        Sfx(90);
+        v9 = ~rndRange(10, 1);
+        if (v9 = 1) {
+            MemberSays_i("mmmm... I bet that would sure wet a body's whistle.");
+        }
+        if (v9 = 2) {
+            v10 = v2::v1;
+            v11 = ~AvatarName();
+            v8 = (((("Why dost thou not wait until dinner to drink that " + v10) + ", ") + v11) + ".");
+            MemberSays_i(v8);
+        }
+        if (v9 > 2) {
+            MemberSays_i(v8);
+        }
+    }
+}
+
+Usable WeaponUsable_i #locals(2) #uses(~AvatarName, MemberSays_i, FlashBlocked_i) {
+    v0 = ~AvatarName();
+    v1 = ~rndRange(3, 1);
+    if (v1 = 1) {
+        MemberSays_i(<< "Thou miayest have more success if thou wert to put that in", "thy hand and hit somebody with it... Somebody else that is." >>);
+    } else {
+        FlashBlocked_i(0);
+    }
+}
+
+Routine ChangeHits_i accepts a0, a1 #locals(3) {
+    if ~Item_isNpc(v1) {
+        v2 = ~GetNPCStat_i(_Str, v1);
+        v3 = ~GetNPCStat_i(_Hits, v1);
+        if ((v3 + v0) < 1) {
+            v0 = (65535 * v3);
+        } else {
+            if ((v3 + v0) > v2) {
+                v0 = (v2 - v3);
+            }
+        }
+        v4 = ~ChangeNPCStat_i(v0, _Hits, v1);
+    }
+}
+
+Function ~ListCount_i accepts a0 #locals(4) {
+    v1 = 0;
+    Foreach v4 in v0 {
+        v1 = (v1 + 1);
+    }
+    return v1;
+}
+
+Routine PlaySfx75_i accepts a0 #locals(0) {
+    Sfx(75);
+}
+
+Function ~DirFromAvatar_i accepts a0 #locals(0) {
+    return ~GetDirToward_i(v0, _Avatar);
+}
+
+Routine BarkAboutWork_i accepts a0 #locals(4) #uses(~IsAbleToTalk_i) {
+    v1 = ~NPCToItem_i(v0);
+    if not ~IsAbleToTalk_i(v1) {
+        return;
+    }
+    v2 = ~GetWorkType(v1);
+    v3 = "";
+    v4 = ~rndRange(4, 1);
+    if (v2 = 11) {
+        if (v4 = 1) {
+            v3 = "@Looks like rain...@";
+        }
+        if (v4 = 2) {
+            v3 = "@Greetings.@";
+        }
+        if (v4 = 3) {
+            v3 = "@Oh, my aching back...@";
+        }
+        if (v4 = 4) {
+            v3 = "@Ho hum...@";
+        }
+    }
+    if (v2 = 14) {
+        v3 = "@Z-z-z-z...@";
+    }
+    if (v2 = 23) {
+        if (v4 = 1) {
+            v3 = "@Try the wine.@";
+        }
+        if (v4 = 2) {
+            v3 = "@The bread is fresh.@";
+        }
+        if (v4 = 3) {
+            v3 = "@Try the mutton.@";
+        }
+        if (v4 = 4) {
+            v3 = "@I recommend the ale.@";
+        }
+    }
+    if (v2 = 28) {
+        if (v4 = 1) {
+            v3 = "@Strive For Unity.@";
+        }
+        if (v4 = 2) {
+            v3 = "@Trust Thy Brother.@";
+        }
+        if (v4 = 3) {
+            v3 = "@Worthiness Precedes Reward.@";
+        }
+        if (v4 = 4) {
+            v3 = "@Join The Fellowship!@";
+        }
+    }
+    if (v2 = 26) {
+        if (v4 = 1) {
+            v3 = "@Mmmm! Good!@";
+        }
+        if (v4 = 2) {
+            v3 = "@Tasty!@";
+        }
+        if (v4 = 3) {
+            v3 = "@This is good!@";
+        }
+        if (v4 = 4) {
+            v3 = "@Waiter! Waiter!@";
+        }
+    }
+    if (v2 = 6) {
+        if (v4 = 1) {
+            v3 = "@Whew! 'Tis hot!@";
+        }
+        if (v4 = 2) {
+            v3 = "@Ouch! Cut myself!@";
+        }
+        if (v4 = 3) {
+            v3 = "@Work...work...work...@";
+        }
+        if (v4 = 4) {
+            v3 = "@We need rain...@";
+        }
+    }
+    if (v2 = 25) {
+        if (v4 = 1) {
+            v3 = "@Tag! Thou art it!@";
+        }
+        if (v4 = 2) {
+            v3 = "@Cannot catch me!@";
+        }
+        if (v4 = 3) {
+            v3 = "@Nyah nyah! Thou art it!@";
+        }
+        if (v4 = 4) {
+            v3 = "@Catch me if thou can!@";
+        }
+    }
+    Item_bark(v3, v1);
+}
+
+Routine GargBarkAboutWork_i accepts a0 #locals(4) #uses(~IsAbleToTalk_i) {
+    v1 = ~NPCToItem_i(v0);
+    if not ~IsAbleToTalk_i(v1) {
+        return;
+    }
+    v2 = ~GetWorkType(v1);
+    v3 = "";
+    v4 = ~rndRange(4, 1);
+    if (v2 = 11) {
+        if (v4 = 1) {
+            v3 = "@To say hello!@";
+        }
+        if (v4 = 2) {
+            v3 = "@To greet you!@";
+        }
+        if (v4 = 3) {
+            v3 = "@To hope you have a nice day!@";
+        }
+        if (v4 = 4) {
+            v3 = "@To ask how you are?@";
+        }
+    }
+    if (v2 = 14) {
+        v3 = "@Z-z-z-z...@";
+    }
+    if (v2 = 23) {
+        if (v4 = 1) {
+            v3 = "@To suggest you try the wine.@";
+        }
+        if (v4 = 2) {
+            v3 = "@To offer fresh food.@";
+        }
+        if (v4 = 3) {
+            v3 = "@To recommend the mutton.@";
+        }
+        if (v4 = 4) {
+            v3 = "@To recommend the ale.@";
+        }
+    }
+    if (v2 = 28) {
+        if (v4 = 1) {
+            v3 = "@To Strive For Unity.@";
+        }
+        if (v4 = 2) {
+            v3 = "@To Trust Thy Brother.@";
+        }
+        if (v4 = 3) {
+            v3 = "@To say Worthiness Precedes Reward.@";
+        }
+        if (v4 = 4) {
+            v3 = "@To join The Fellowship!@";
+        }
+    }
+    if (v2 = 26) {
+        if (v4 = 1) {
+            v3 = "@To be very Good!@";
+        }
+        if (v4 = 2) {
+            v3 = "@To be tasty!@";
+        }
+        if (v4 = 3) {
+            v3 = "@To be delicious!@";
+        }
+        if (v4 = 4) {
+            v3 = "@To call for service!@";
+        }
+    }
+    Item_bark(v3, v1);
+}
+
+Function ~PostScriptNow_i accepts a0, a1 #locals(1) {
+    v2 = ~PostInFuture(65535, v0, v1);
+    return v2;
+}
+
+Function ~IsInInv accepts a0, a1, a2, a3, a4 #locals(1) {
+    v5 = ~CountItem(v0, v1, v2, v4);
+    if (v5 >= v3) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+Function ~AbsValue_i accepts a0 #locals(0) {
+    if (v0 < 0) {
+        v0 = (v0 * 65535);
+    }
+    return v0;
+}
+
+Routine Bark_i accepts a0, a1, a2 #locals(1) #uses(~IsAbleToTalk_i) {
+    if ~IsAbleToTalk_i(v2) {
+        v3 = ~PostInFuture(v0, << _aNO_HALT_i, _aBARK_i, v1 >>, ~NPCToItem_i(v2));
+    }
+}
+
+Function ~EnemyList_i accepts a0 #locals(6) {
+    v1 = ~FindNearby_i(8, v0, _All, item);
+    v2 = ~GetParty();
+    v3 = << >>;
+    if ~GetItemFlag_i(_InParty_i, item) {
+        Foreach v6 in v1 {
+            if not (v6 in v2) {
+                v3 = (v3 & v6);
+            }
+        }
+        return v3;
+    } else {
+        return v2;
+    }
+}
+
+Function ~NearestInList_i accepts a0, a1 #locals(4) {
+    v2 = v1::1;
+    Foreach v5 in v1 {
+        if (~GetDist(v5, v0) < ~GetDist(v2, v0)) {
+            v2 = v5;
+        }
+    }
+    return v2;
+}
+
+Routine DoDamage_i accepts a0, a1 #locals(0) {
+    ReduceHits_i(0, v0, v1);
+}
+
+Function ~IsAbleToTalk_i accepts a0 #locals(0) {
+    if ((~GetNPCStat_i(_Int, v0) >= 10) and (not ~GetItemFlag_i(_Asleep, v0) and (not ~GetItemFlag_i(_Paralyzed, v0) and (not ~GetItemFlag_i(_Dead, v0) and ((~GetNPCStat_i(_Hits, v0) > 0) and ~Item_isNpc(v0)))))) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+Function ~IsHelpless_i accepts a0 #locals(0) #uses(~InstanceOf_i) {
+    v0 = ~InstanceOf_i(v0);
+    if (~GetItemFlag_i(_Asleep, v0) or (~GetItemFlag_i(_Paralyzed, v0) or (~GetItemFlag_i(_Dead, v0) or (~GetNPCStat_i(_Hits, v0) <= 0)))) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+Function ~InstanceOf_i accepts a0 #locals(1) {
+    if ((v0 < 0) and (v0 >= 65180)) {
+        v1 = ~NPCToItem_i(v0);
+    } else {
+        v1 = v0;
+    }
+    return v1;
+}
+
+Routine RestParty_i accepts a0, a1 #locals(11) #uses(RecoverStat_i) {
+    v2 = ~GetParty_i();
+    Foreach v5 in v2 {
+        if (~GetNPCStat_i(_FoodLevel, v5) >= 10) {
+            if not (v5 = ~NPCToItem_i(_Avatar)) {
+                ClearItemFlag_i(_Asleep, v5);
+            }
+            ClearItemFlag_i(_Poisoned, v5);
+            ClearItemFlag_i(_Paralyzed, v5);
+            ClearItemFlag_i(_Cursed, v5);
+            ClearItemFlag_i(_Charmed, v5);
+            ClearItemFlag_i(_Invisible, v5);
+            ClearItemFlag_i(_Protected, v5);
+            RecoverStat_i(v1, _Str, _Hits, v5);
+            RecoverStat_i(v1, _MaxMagic, _Mag, v5);
+            v6 = ~ChangeNPCStat_i((v1 * 65535), _FoodLevel, v5);
+        }
+    }
+    v7 = ~FindNearby_i(0, 30, _Lit_Torch, v0);
+    v7 = (v7 & ~FindNearby_i(0, 30, _Lit_Light_Source, v0));
+    Foreach v10 in v7 {
+        v11 = ~GetQuality(v10);
+        if (v11 < (v1 * 30)) {
+            Kernel_resetRef(v10);
+            v12 = ~Item_getType(v10);
+            if (v12 = 338) {
+                Item_setType(_Spent_Light_Source, v10);
+            }
+            if (v12 = 701) {
+                Item_setType(_Torch, v10);
+            }
+            v6 = ~SetQuality(255, v10);
+        } else {
+            v6 = ~SetQuality((v11 - (v1 * 30)), v10);
+        }
+    }
+}
+
+Routine RecoverStat_i accepts a0, a1, a2, a3 #locals(3) {
+    v4 = ~GetNPCStat_i(v2, v3);
+    v5 = (v4 + (2 * v0));
+    if (v5 > ~GetNPCStat_i(v1, v3)) {
+        v5 = ~GetNPCStat_i(v1, v3);
+    }
+    v6 = ~ChangeNPCStat_i((v5 - v4), v2, v3);
+}
+
+Function ~RemoveFromList_i accepts a0, a1 #locals(4) {
+    v2 = << >>;
+    Foreach v5 in v0 {
+        if not (v5 = v1) {
+            v2 = (v2 & v5);
+        }
+    }
+    return v2;
+}
+
+Function ~SortByCriteria_i accepts a0, a1 #locals(4) {
+    v2 = ~ListSize_i(v1);
+    if (v2 > 1) {
+        v3 = true;
+        While v3 {
+            v3 = false;
+            v4 = 1;
+            While (v4 < v2) {
+                if (v0::v4 > v0::(v4 + 1)) {
+                    v5 = v0::v4;
+                    v0::v4 = v0::(v4 + 1);
+                    v0::(v4 + 1) = v5;
+                    v5 = v1::v4;
+                    v1::v4 = v1::(v4 + 1);
+                    v1::(v4 + 1) = v5;
+                    v3 = true;
+                }
+                v4 = (v4 + 1);
+            }
+        }
+    }
+    return v1;
+}
+
+Function ~InTrinsic_i #locals(2) #uses(~InBox_i) {
+    v0 = << 912, 2064, 0 >>;
+    v1 = << 1104, 2352, 15 >>;
+    return ~InBox_i(v1, v0, ~GetCoord(_Avatar));
+}
+
+Routine SetWorkTypeUnlessWaiting_i accepts a0, a1 #locals(1) #uses(~InstanceOf_i) {
+    v2 = ~GetParty();
+    if ((~InstanceOf_i(v1) in v2) and flag(57)) {
+        return;
+    } else {
+        SetWorkType(v0, v1);
+    }
+}
+
+Routine PlaySpeechOrText_i accepts a0 #locals(0) #uses(ShowSpeechText_i) {
+    if not ~PlaySpeech_i(v0) {
+        ShowSpeechText_i(0);
+    } else {
+        closeAllGumps();
+    }
+}
+
+Routine PlaySpeechOrTextAndWait_i accepts a0 #locals(0) #uses(ShowSpeechText_i) {
+    if not ~PlaySpeechWait_i(v0) {
+        ShowSpeechText_i(0);
+    } else {
+        closeAllGumps();
+    }
+}
+
+Routine IgniteLight_i accepts a0, a1 #locals(4) #uses(StartBurning_i) {
+    v2 = ~GetFrame(v1);
+    if not ~GetQuality(v1) {
+        v3 = ~SetQuality(~rndRange(60, 30), v1);
+    }
+    if (~Item_getType(v1) = _Torch) && (~GetQuality(v1) = 255) {
+        Item_bark("Spent", v1);
+        return;
+    }
+    v4 = ~Item_getContainer(v1);
+    if ((v4 = 0) or ~Item_isNpc(v4)) {
+        Item_setType(v0, item);
+        v5 = ~GetParty();
+        if (v4 in v5) {
+            StartBurning_i(v1);
+        }
+    } else {
+        FlashMouse_i(0);
+    }
+    SetLight_i(true, v1);
+    SetTimePalette_i();
+}
+
+Routine ShowRinging_i accepts a0 #locals(1) {
+    v1 = ~GetCoord(v0);
+    createSprite(65535, 0, 65534, 65534, v1::2, v1::1, 24);
+}
+
+Function ~InAvatarInv_i accepts a0 #locals(1) {
+    v1 = ~Item_getContainer(item);
+    While not (v1 = ~NPCToItem_i(_Avatar)) {
+        v1 = ~Item_getContainer(v1);
+        if not v1 {
+            return 0;
+        }
+    }
+    return v1;
+}
+
+Function ~OuterContainer_i accepts a0 #locals(2) {
+    v1 = ~Item_getContainer(item);
+    While v1 {
+        v2 = v1;
+        v1 = ~Item_getContainer(v1);
+    }
+    return v2;
+}

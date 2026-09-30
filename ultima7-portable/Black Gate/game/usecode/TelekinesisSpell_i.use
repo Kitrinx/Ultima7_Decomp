@@ -1,0 +1,30 @@
+Routine TelekinesisSpell_i accepts a0 #locals(6) #uses(~DirFromAvatar_i, ~IsMagicOK_i) {
+    if (event = _Action) {
+        Kernel_resetRef(item);
+        v0 = ~GetTarget();
+        if (v0::1 = 0) {
+            return;
+        }
+        v1 = ~DirFromAvatar_i(v0);
+        Item_bark("@Ort Por Ylem@", item);
+        if (~IsMagicOK_i() and (not ~Item_isNpc(v0) and (v0::1 <> 0))) {
+            v2 = ~SetAttack_i(_Telekinesis, v0, item);
+            v2 = ~PostAction(<< _aFACE_i, v1, _aSFX_i, 67, _aRAISE1_FRAME_i, _aTHRUST1_FRAME_i, _aATTACK_i >>, item);
+        } else {
+            v2 = ~PostAction(<< _aFACE_i, v1, _aRAISE1_FRAME_i, _aTHRUST1_FRAME_i, _aUSABLE_i, #FizzleSpell_i >>, item);
+        }
+    }
+    if (event = _Combat) {
+        v3 = << 261, 654, 651, 653, 329, 810, 431, 258, 434, 743, 470, 740, 873, 583, 696, 1011, 785 >>;
+        v4 = << 949, 950, 788, 787 >>;
+        v5 = ~Item_getType(item);
+        if (v5 in v4) {
+            v2 = ~PostAction(<< _aUSABLE_i, v5 >>, item);
+            return;
+        }
+        if not (v5 in v3) {
+            Telekinesis_i(v5);
+            v2 = ~PostAction(<< _aUSABLE_i, v5 >>, item);
+        }
+    }
+}

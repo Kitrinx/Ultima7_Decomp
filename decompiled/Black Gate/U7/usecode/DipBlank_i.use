@@ -1,0 +1,10 @@
+Routine DipBlank_i accepts a0 #locals(3) {
+    v0 = ~GetFrame(item);
+    v1 = ~GetContents(_All, _All, _Sword_Blank, ~NPCToItem_i(_Avatar));
+    if ((v0 = 3) or (v0 = 7)) {
+        v2 = ~PostAction(<< _aWAIT_i, 10, _aSTAND_FRAME_i >>, ~NPCToItem_i(_Avatar));
+        v2 = ~PostAction(<< _aWAIT_i, 2, _aUSABLE_i, #QuenchBlank_i >>, v1);
+    } else {
+        Item_bark("@There's not enough water.@", ~NPCToItem_i(_Avatar));
+    }
+}

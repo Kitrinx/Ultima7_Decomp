@@ -1,0 +1,91 @@
+Routine Laplem accepts a0 #locals(3) #uses(~IsInInv, ~AskYesNo, GivePartyExp_i, GargBarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Laplem);
+        TurnOn(<< "name", "job", "bye" >>);
+        if not $MET_LAPLEM {
+            [You are greeted with a smile from this gargoyle.];
+            $MET_LAPLEM = true;
+        } else {
+            ["To be pleased to again see you, human." Lap-Lem smiles.];
+        }
+        v0 = ~IsInInv(3, 65177, _Amulet, 1, _Party);
+        if (flag(641) or v0) && not flag(735) {
+            TurnOn("give amulet");
+        }
+        converse {
+            key ("name") {
+                ["To be known to you as Lap-Lem."];
+                TurnOn("Lap-Lem");
+                TurnOff("name");
+                if (flag(640) and not flag(735)) {
+                    TurnOn("Blorn");
+                }
+            }
+            key ("Lap-Lem") {
+                ["To mean `rock one.'"];
+                TurnOff("Lap-Lem");
+            }
+            key ("job") {
+                ["To be a miner. To be now the only miner of my race in this town."];
+                TurnOn(<< "only miner", "race", "town" >>);
+            }
+            key ("race") {
+                ["To know of many gargoyles who work in the other mines, but to see the Vesper mine has only humans now."];
+                TurnOff("race");
+            }
+            key ("town") {
+                ["To be called Vesper. To be the only place, other than parts of Britain, where gargoyles live with humans. To tell you that here are more conflicts." He sighs.~~"To wonder if Terfin would be a better choice to maintain a home."];
+                TurnOff("town");
+                TurnOn(<< "conflicts", "Terfin" >>);
+            }
+            key ("conflicts") {
+                ["To see the humans grow in hostility to us. Sadly, to also see many gargoyles begin to show mutual feelings. To hope the situation never becomes violent."];
+                TurnOff("conflicts");
+            }
+            key ("Terfin") {
+                ["To be the gargoyle home city. To have been constructed two hundred years ago when the codex was placed in the void and the gargoyles were without places to live. Though not prohibited, no humans reside there."];
+                TurnOff("Terfin");
+            }
+            key ("only miner") {
+                ["To tell you that there was another -- Anmanivas. To have left because of racial hatred. To sit now in tavern all day with brother, Foranamo. To feel bad for Anmanivas and brother, but to need job." He shrugs.~~ "To put up with hatred."];
+                TurnOff("only miner");
+            }
+            key ("Blorn") {
+                ["To know of incident?];
+                v1 = ~AskYesNo();
+                if not v1 {
+                    ["To be very sorry for attack, but was in defense of possession." He lowers his head as if ashamed.];
+                } else {
+                    ["To be ashamed. To want nothing more than return of my possession from human."];
+                }
+                TurnOn("possession");
+                TurnOff("Blorn");
+            }
+            key ("possession") {
+                ["To have had an amulet with sentimental value. To have been stolen by the human." He looks down at his feet. "To want it back."];
+                TurnOff("possession");
+                flag(642) = true;
+            }
+            key ("give amulet") {
+                ["To have returned with amulet?"];
+                v2 = ~TakeFromParty_i(false, 3, _All, _Amulet, 1);
+                if v2 {
+                    GivePartyExp_i(50);
+                    [He grins widely as you return the jewelry to him.~~ "To thank you, human! To be an example for your race!"];
+                    flag(735) = true;
+                } else {
+                    ["Oh. To not have amulet with you." He perks up and smiles. "To return later with amulet!"];
+                }
+                TurnOff("give amulet");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["To hope to see you again soon."*];
+    }
+    if (event = _Bark) {
+        GargBarkAboutWork_i(_Laplem);
+    }
+}

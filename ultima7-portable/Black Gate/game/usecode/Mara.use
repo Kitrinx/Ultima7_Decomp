@@ -1,0 +1,91 @@
+Routine Mara accepts a0 #locals(9) #uses(~LordOrLady, ~AvatarName, ~AskList, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Mara);
+        v0 = ~LordOrLady();
+        v1 = ~AvatarName();
+        v2 = "the Avatar";
+        v3 = ~NPCToItem_i(_Mara);
+        v4 = ~NPCToItem_i(_Cador);
+        TurnOn(<< "name", "job", "bye" >>);
+        v5 = ~GetTime();
+        v6 = ~GetWorkType(v3);
+        v7 = ~Npc_getAlignment(v3);
+        if (v7 = 2) {
+            SetWorkType(_Combat_0, v3);
+            SetWorkType(_Combat_0, v4);
+        }
+        if not $MetMara {
+            [You see a well-muscled woman who lifts her head in acknowledgement of your presence.];
+            $MetMara = true;
+        } else {
+            ["Yes, <v0>?"];
+        }
+        converse {
+            key ("name") {
+                [The woman grabs your hand and shakes vigorously. "Hello. M'name's Mara."];
+                if (v6 = 26) {
+                    ["What is thine?"];
+                    v8 = ~AskList(<< v1, v2, v0 >>);
+                    if (v8 = v2) {
+                        ["The Avatar!" she shouts angrily. "Why thou art the one responsible for bringing those wretched gargoyles into our fine land!"*];
+                        SetWorkType(_Combat_0, v3);
+                        Npc_setAlignment(_Evil, v3);
+                        SetWorkType(_Combat_0, v4);
+                        Npc_setAlignment(_Evil, v4);
+                        terminate;
+                    } else {
+                        ["'Tis good to meet thee!"];
+                    }
+                }
+                TurnOff("name");
+            }
+            key ("job") {
+                [She flexes proudly, "I am a miner in Vesper."];
+                TurnOn("Vesper");
+            }
+            key ("Vesper") {
+                ["This used to be a pleasant town," she looks around, apparently checking if anyone is near, "'til the gargoyles became so unruly. Now most of us have to spend far too much time wondering when the gargoyles will decide they want to kill us."];
+                TurnOn(<< "gargoyles", "us" >>);
+                TurnOff("Vesper");
+            }
+            key ("gargoyles") {
+                [She shrugs. "There is naught to say, except that they are a menace. This town would be a much better place without them."];
+                TurnOff("gargoyles");
+            }
+            key ("us") {
+                ["Well, I know Cador feels as I do, as does his wife. I have heard the mayor express his concern about them. I don't really know his clerk, Liana."];
+                TurnOn(<< "Cador", "wife", "mayor", "Liana" >>);
+                TurnOff("us");
+            }
+            key ("wife") {
+                ["Yvella is a lovely woman. She spends her days caring for their daughter, Catherine."];
+                TurnOff("wife");
+            }
+            key ("Liana") {
+                ["I have only seen her a few times. I do not know her well enough to say this, but I think she is angry about something, for she is always in a bad mood."];
+                TurnOff("Liana");
+            }
+            key ("Cador") {
+                ["He is in charge of managing the mines. Does a fair job, too. He usually joins me at the Gilded Lizard."];
+                TurnOn("Gilded Lizard");
+                TurnOff("Cador");
+            }
+            key ("mayor") {
+                ["His name is Auston. I like him, but I suspect that Liana is the one who truly keeps Vesper in order."];
+                TurnOff("mayor");
+            }
+            key ("Gilded Lizard") {
+                ["That is the tavern here in Vesper. Yongi's the barkeeper. He serves a passing fair tankard of ale."];
+                TurnOff("Gilded Lizard");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        [Mara shakes your hand and slaps you on the back, saying, "Fare thee well, friend!"*];
+    }
+    if (event = _Bark) {
+        BarkAboutWork_i(_Mara);
+    }
+}

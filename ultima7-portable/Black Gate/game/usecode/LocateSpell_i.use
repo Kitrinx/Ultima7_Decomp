@@ -1,0 +1,26 @@
+Routine LocateSpell_i accepts a0 #locals(6) #uses(~IsMagicOK_i, ~AbsValue_i) {
+    if (event = _Action) {
+        Item_bark("@In Wis@", item);
+        if ~IsMagicOK_i() {
+            v0 = ~PostAction(<< _aSFX_i, 67, _aKNEEL_FRAME_i, _aSTAND_FRAME_i, _aUP_FRAME_i, _aWAIT_i, 4, _aUSABLE_i, #LocateSpell_i >>, item);
+        } else {
+            v0 = ~PostAction(<< _aKNEEL_FRAME_i, _aSTAND_FRAME_i, _aUP_FRAME_i, _aUSABLE_i, #FizzleSpell_i >>, item);
+        }
+    }
+    if (event = _Posted_i) {
+        v1 = ~GetCoord(_Avatar);
+        v2 = ((v1::1 - 933) / 10);
+        v3 = ((v1::2 - 1134) / 10);
+        if (v2 < 0) {
+            v4 = ((" " + ~AbsValue_i(v2)) + " West");
+        } else {
+            v4 = ((" " + ~AbsValue_i(v2)) + " East");
+        }
+        if (v3 < 0) {
+            v5 = ((" " + ~AbsValue_i(v3)) + " North");
+        } else {
+            v5 = ((" " + ~AbsValue_i(v3)) + " South");
+        }
+        Item_bark((v5 + v4), item);
+    }
+}

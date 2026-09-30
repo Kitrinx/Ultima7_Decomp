@@ -1,0 +1,110 @@
+Routine Karl accepts a0 #locals(4) #uses(~LordOrLady, ~IsNPCNear) {
+    if (event = _Bark) {
+        terminate;
+    }
+    SetSpeaker(0, _Karl);
+    v0 = ~LordOrLady();
+    v1 = false;
+    v2 = ~IsMedallionOn_i();
+    TurnOn(<< "name", "job", "bye" >>);
+    if flag(292) && flag(248) {
+        TurnOn(<< "brother" >>);
+        v1 = true;
+    }
+    if not $Metkarl {
+        [You see a mountain man who appears to have been in the wilderness a long time. He gives you a long look, then he snorts and looks away.];
+        $Metkarl = true;
+    } else {
+        ["What dost thou want? Leave me alone!"];
+    }
+    converse {
+        key ("name") {
+            ["I am not in the habit of speakin' to strangers but seein' as how thou dost not appear to be very intelligent, I shall humor thee for now. My name is Karl, formerly of Minoc."];
+            flag(292) = true;
+            if flag(248) && not v1 {
+                TurnOn(<< "brother" >>);
+            }
+            TurnOff("name");
+            TurnOn("Minoc");
+        }
+        key ("job") {
+            ["Job?! Art thou mad, <v0>?! Firstly, if thou dost wish to offer me employment I have no interest in it. Secondly, if thou dost wish to hire my services for anything for any reason, then I reject thine offer most enthusiastically. Thirdly, if thou dost wonder what my job is, then wonder no more for I have not one.\x09Fourth and lastly, if thou dost wonder why I have no job then stop it right now because it is none of thy business!"*];
+            terminate;
+        }
+        key ("Minoc") {
+            ["Do not ask me of Minoc, the filthy little town of Fellowship fools, casual murders and monuments to incompetence. I do not even live here and I would not if thou didst pay me!"];
+            TurnOff("Minoc");
+            TurnOn(<< "murders", "monument", "Fellowship" >>);
+        }
+        key ("murders") {
+            ["Hmmph. Why should that be any concern of mine? People kill each other every day. Oh, thou art investigating the crime! Well, do not let me keep thee from it. After thou dost catch the murderer thou canst build a statue of him."];
+            TurnOff("murders");
+        }
+        key ("Fellowship") {
+            if v2 {
+                ["Gads! Thou dost want me to join! Away from me, thou dolt!"*];
+                terminate;
+            } else {
+                ["Do I look like a member of The Fellowship to thee? I do not even know what The Fellowship is! And I do not care!"*];
+                terminate;
+            }
+        }
+        key ("monument") {
+            ["Owen, the shipwright, dost deserve to have a monument built to him. It should be in the shape of a gallows and it should have him hanging from it."*];
+            terminate;
+        }
+        key ("brother") {
+            ["My brother - mine only family in the world - served aboard a ship built by Owen. The ship was one of several that sank three years ago during the first storm it ever encountered. My brother went down with it and was never seen again."];
+            TurnOff("brother");
+            TurnOn(<< "Owen", "several ships" >>);
+        }
+        key ("Owen") {
+            ["I confronted Owen with this and he denied that it had anything to do with his workmanship. I returned that night and stole the plans he had drafted, so at least no other ships would ever be built like them again. But it left me so angry at the world that I knew I could not live among people ever again. I went away to live up in the mountains. The only times I ever come back are to fetch a few supplies and maybe have a drink of Rutherford's fine ale once in a while."];
+            TurnOff("Owen");
+            TurnOn(<< "plans", "fine ale" >>);
+        }
+        key ("several ships") {
+            ["Three other ships that were built from Owen's basic designs all sunk within the first year of their launch. Over a dozen lives were lost due to that vainglorious bastard!"];
+            TurnOff("several ships");
+        }
+        key ("fine ale") {
+            ["If not for Rutherford's fine ale, there would no purpose to the existence of civilization."];
+            TurnOff("fine ale");
+        }
+        key ("plans") {
+            ["I still have those plans up in my cabin. Every once in a while I try to figure them out. I suspect no one in town, save for Owen himself, could understand them. Maybe Julia, the tinker, would be able to shed some light on them. But she would never listen to an old mountain man like me."];
+            v3 = ~IsNPCNear(_Julia);
+            if v3 {
+                SetSpeaker(0, _Julia);
+                ["Yes I would, Karl! Thou dost have too low opinion of thyself! Raise thy spirits, please!"];
+                CloseSpeaker(_Julia);
+                SetSpeaker(0, _Karl);
+            }
+            $LEARNED_ABOUT_PLANS = true;
+            TurnOff("plans");
+            TurnOn(<< "Julia", "mountain man" >>);
+        }
+        key ("mountain man") {
+            ["Far away from the mire of present day society is where I belong. In the wilderness thou canst know what is what."];
+            TurnOff("mountain man");
+        }
+        key ("Julia") {
+            ["If thou dost want to show Julia the plans, I will give them to thee. They are in my cabin southeast of the BMC office."];
+            flag(288) = true;
+            TurnOff("Julia");
+        }
+        key ("follow") {
+            ["Make up thy mind! Art thou following me or not?! If thou art following me then close thy mouth, move thy feet and let us get on."];
+            terminate;
+        }
+        key ("bye") {
+            break;
+        }
+    }
+    clear_answers;
+    if $COMPLETED_OWENS_QUEST {
+        ["I know I can be a bear to get along with sometimes. I reckon it is just my nature to be an ornery bastard. But I do appreciate what few friends I have and I know that thou hast been one to me. Take good care of thyself, Avatar."*];
+    } else {
+        ["Cease thy racket then before I lose my temper!"*];
+    }
+}

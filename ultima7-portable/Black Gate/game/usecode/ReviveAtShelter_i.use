@@ -1,0 +1,93 @@
+Routine ReviveAtShelter_i accepts a0 #locals(31) #uses(~InBox_i, ~RemoveFromList_i, ~IsHelpless_i) {
+    if (event = _Combat) {
+        FadePalette_i(0, 1, 12);
+        SetMusic(0, 255);
+        SetMusic(0, 17);
+        ResetPalette_i();
+        v0 = ~GetDeadParty_i(item);
+        Foreach v3 in v0 {
+            v4 = ~Resurrect_i(v3);
+        }
+        v4 = ~PostInFuture(5, << _aNO_HALT_i, _aUSABLE_i, #ReviveAtShelter_i >>, item);
+    }
+    if (event = _Posted_i) {
+        v5 = ~Item_getType(item);
+        v6 = ~GetCoord(item);
+        flag(57) = false;
+        if flag(87) {
+            flag(58) = ~InBox_i(<< 899, 1791, 0 >>, << 753, 1595, 0 >>, ~GetCoord(_Avatar));
+            if flag(58) {
+                v7 = ~FindNearby_i(4, 90, _All, _Avatar);
+                v7 = ~RemoveFromList_i(v7, ~NPCToItem_i(_Avatar));
+                Foreach v10 in v7 {
+                    if (~GetWorkType(v10) = _Combat_0) {
+                        v11 = ~Npc_getAlignment(v10);
+                        if ((v11 = 0) or 1) {
+                            SetWorkType(_Wander, v10);
+                        }
+                        if ((v11 = 3) or (v11 = 2)) {
+                            v12 = ~GetContents(_All, _All, _All, v10);
+                            Foreach v15 in v12 {
+                                Item_destroy(v15);
+                            }
+                            RemoveNPC_i(v10);
+                        }
+                    }
+                }
+            }
+            v16 = << 836, 1733, 1 >>;
+            SetFrame(13, _Avatar);
+            SetItemFlag_i(_Asleep, _Avatar);
+            v17 = << 65532, 0, 4, 0, 0, 4, 65532, 1, 4, 1, 65532, 65535, 4, 65535, 1, 2, 65535, 2 >>;
+            v18 = 0;
+            v19 = << byte(50), v18, byte(54), v18, byte(48), v18, byte(50), v18, byte(54), v18, byte(50), v18, byte(54), v18, byte(48), v18, byte(48) >>;
+            v20 = << 65529, 0, 8, 0, 0, 8, 65529, 8, 8, 8, 65519, 0, 65519, 8 >>;
+            v21 = << 13, v18, 13, v18, 29, v18, 29, v18, 29, v18, 13, v18, 13 >>;
+            v22 = 1;
+            v23 = ~GetParty_i();
+            Foreach v3 in v23 {
+                ClearItemFlag_i(_Poisoned, v3);
+                ClearItemFlag_i(_Paralyzed, v3);
+                ClearItemFlag_i(_Cursed, v3);
+                ClearItemFlag_i(_Charmed, v3);
+                ClearItemFlag_i(_Invisible, v3);
+                ClearItemFlag_i(_Protected, v3);
+                v4 = ~ChangeNPCStat_i((~GetNPCStat_i(_Str, v3) - ~GetNPCStat_i(_Hits, v3)), _Hits, v3);
+                v4 = ~ChangeNPCStat_i((~GetNPCStat_i(_MaxMagic, v3) - ~GetNPCStat_i(_Mag, v3)), _Mag, v3);
+                SetWorkType(_FollowAvt, v3);
+            }
+            v26 = v23;
+            if not ((~GetWorkType(_Feridwyn) = _Combat_0) or (~GetWorkType(_Brita) = _Combat_0)) {
+                if not ~IsHelpless_i(65369) {
+                    v26 = (v26 & ~NPCToItem_i(_Feridwyn));
+                    SetWorkType(_Loiter, _Feridwyn);
+                }
+                if not ~IsHelpless_i(65368) {
+                    v26 = (v26 & ~NPCToItem_i(_Brita));
+                    SetWorkType(_Loiter, _Brita);
+                }
+            }
+            Item_move(v16, _Party);
+            Foreach v3 in v26 {
+                if not (v3 = ~NPCToItem_i(_Avatar)) {
+                    Kernel_resetRef(v3);
+                    if not ~GetItemFlag_i(_Asleep, v3) {
+                        v4 = ~PostAction(<< _aSTAND_FRAME_i, _aFACE_i, v19::v22 >>, v3);
+                        v29 = << (v16::1 + v17::v22), (v16::2 + v17::(v22 + 1)), (v16::3 - 1) >>;
+                    } else {
+                        v29 = << (v16::1 + v20::v22), (v16::2 + v20::(v22 + 1)), v16::3 >>;
+                        SetFrame(v21::v22, v3);
+                        v30 = ~rndRange(20, 1);
+                        v4 = ~PostAction(<< _aWAIT_i, v30, _aUSABLE_i, #RouseSleeper_i >>, v3);
+                    }
+                    Item_move(v29, v3);
+                    v22 = (v22 + 2);
+                }
+            }
+            ClearItemFlag_i(_Dead, _Avatar);
+            v4 = ~PostAction(<< _aWAIT_i, 2, _aUSABLE_i, #GreetRevivedAvatar_i >>, _Avatar);
+        } else {
+            RestartGame_i();
+        }
+    }
+}

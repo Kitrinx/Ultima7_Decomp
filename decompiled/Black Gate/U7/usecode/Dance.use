@@ -1,0 +1,20 @@
+Routine Dance accepts a0 #locals(8) #uses(SetBusy_i, SetWorkTypeUnlessWaiting_i) {
+    if (event = _Trigger) {
+        v0 = ~GetParty();
+        v1 = ~GetQuality(item);
+        Foreach v4 in v0 {
+            v5 = ~GetNPCStat_i(_Str, v4);
+            if not ~RollToWin_i(15, v5) {
+                v6 = ~NPCToItem_i(v4);
+                SetBusy_i(v6);
+                v7 = ~PostInFuture(v1, << _aUSABLE_i, #ClearBusy_i >>, v6);
+                Kernel_resetRef(v4);
+                SetWorkTypeUnlessWaiting_i(_Dance, v4);
+                v7 = ~PostInFuture(v1, << _aNO_HALT_i, _aUSABLE_i, #Dance >>, v4);
+            }
+        }
+    }
+    if (event = _Posted_i) {
+        SetWorkTypeUnlessWaiting_i(_FollowAvt, item);
+    }
+}

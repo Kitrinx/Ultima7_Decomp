@@ -1,0 +1,31 @@
+Routine UnlockMagicSpell_i accepts a0 #locals(8) #uses(~DirFromAvatar_i, ~IsMagicOK_i) {
+    if (event = _Action) {
+        v0 = ~GetTarget();
+        v1 = ~Item_getType(v0);
+        v2 = ~DirFromAvatar_i(item);
+        Kernel_resetRef(item);
+        v3 = << 270, 376, 432, 433, 845, 828 >>;
+        v4 = << 432, 433, 270, 376 >>;
+        Item_bark("@Ex Por@", item);
+        if ~IsMagicOK_i() {
+            if not (v1 in v3) {
+                goto label_7;
+            }
+            v5 = ~GetFrame(v0);
+            if not (((v5 + 1) modulo 4) = 0) {
+                goto label_7;
+            }
+            v6 = ~PostAction(<< _aFACE_i, v2, _aEXTEND1_FRAME_i, _aRAISE1_FRAME_i, _aTHRUST1_FRAME_i, _aSFX_i, 66 >>, item);
+            v6 = ~PostInFuture(6, << _aNO_HALT_i, _aUSABLE_i, #UnlockMagicSpell_i >>, v0);
+            goto label_8;
+        }
+        label_7:
+        v6 = ~PostAction(<< _aFACE_i, v2, _aEXTEND1_FRAME_i, _aRAISE1_FRAME_i, _aTHRUST1_FRAME_i, _aUSABLE_i, #FizzleSpell_i >>, item);
+    }
+    label_8:
+    if (event = _Posted_i) {
+        v5 = ~GetFrame(item);
+        v7 = (v5 - 3);
+        SetFrame(v7, item);
+    }
+}

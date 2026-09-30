@@ -1,0 +1,22 @@
+Routine ChickenCoop accepts a0 #locals(7) {
+    if (event = _Action) {
+        v0 = ~GetQuality(item);
+        if (v0 = ~GetTime()) {
+            return;
+        }
+        v1 = ~SetQuality(~GetTime(), item);
+        if (~rndRange(4, 1) > 1) {
+            v2 = ~Item_create(_Food_Item);
+            if v2 {
+                SetItemFlag_i(_IsTemporary_i, v2);
+                ClearItemFlag_i(_OkayToTake_i, v2);
+                SetFrame(24, v2);
+                v3 = ~GetCoord(item);
+                v4 = (v3::1 - ~rndRange(1, 0));
+                v5 = (v3::2 - ~rndRange(1, 0));
+                v6 = (v3::3 + 1);
+                v1 = ~PopToMap(<< v4, v5, v6 >>);
+            }
+        }
+    }
+}

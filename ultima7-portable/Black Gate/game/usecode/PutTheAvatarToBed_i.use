@@ -1,0 +1,39 @@
+Routine PutTheAvatarToBed_i accepts a0 #locals(12) #uses(~PartySpeaker_i, ~IsBedroll_i, RollUpBedroll_i, ~RemoveFromList_i) {
+    closeAllGumps();
+    flag(744) = false;
+    v1 = ~PartySpeaker_i();
+    if ~IsAvatarInCombat() {
+        SetSpeaker(0, v1);
+        v2 = ~GetNPCName_i(v1);
+        if (v1 = 65180) {
+            ["This is no time to sleep! Look alive!"];
+        } else {
+            [<v2> glares. "This is no time to sleep! Look alive!"];
+        }
+        if ~IsBedroll_i(v0) {
+            RollUpBedroll_i(v0);
+        }
+        CloseSpeaker(v1);
+    } else {
+        v3 = ~GetFrame(v0);
+        v4 = ~Item_getType(v0);
+        if ((v3 > 3) and not ~IsBedroll_i(v0)) {
+            v5 = ~GetCoord(v0);
+            v6 = ~FindNearby_i(0, 2, v4, v0);
+            Foreach v9 in v6 {
+                if (~GetFrame(v9) <= 2) {
+                    v10 = ~GetCoord(v9);
+                    if ((v10::1 = v5::1) and ((v10::2 = v5::2) and ((v10::3 + 1) = v5::3))) {
+                        v0 = v9;
+                    }
+                }
+            }
+        }
+        if ~IsBedroll_i(item) {
+            v11 = ~PostAction(<< _aNO_HALT_i, _aMUSIC_i, 30, 0 >>, _Avatar);
+        }
+        v12 = ~RemoveFromList_i(~GetParty(), ~NPCToItem_i(_Avatar));
+        SetWorkType(_Sleep, _Avatar);
+        SleepInBed_i(v0);
+    }
+}

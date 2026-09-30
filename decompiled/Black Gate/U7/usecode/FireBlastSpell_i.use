@@ -1,0 +1,14 @@
+Routine FireBlastSpell_i accepts a0 #locals(4) #uses(~DirFromAvatar_i, ~IsMagicOK_i) {
+    if ((event = _Action) or (event = _Combat)) {
+        Kernel_resetRef(item);
+        v0 = ~GetTarget();
+        v1 = ~DirFromAvatar_i(v0);
+        Item_bark("@Vas Flam@", item);
+        if ~IsMagicOK_i() {
+            v2 = ~SetAttack_i(_Fire_Bolt, v0, item);
+            v3 = ~PostAction(<< _aFACE_i, v1, _aSFX_i, 65, _aUP_FRAME_i, _aOUT_FRAME_i, _aTHRUST2_FRAME_i, _aTHRUST2_FRAME_i, _aATTACK_i, _aSTAND_FRAME_i >>, item);
+        } else {
+            v3 = ~PostAction(<< _aFACE_i, v1, _aUP_FRAME_i, _aOUT_FRAME_i, _aTHRUST2_FRAME_i, _aUSABLE_i, #FizzleSpell_i >>, item);
+        }
+    }
+}

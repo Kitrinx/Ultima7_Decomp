@@ -1,0 +1,23 @@
+Routine Guard_03B2 accepts a0 #locals(1) {
+    v0 = ~GetWorkType(~NPCToItem_i(item));
+    if (event = _Bark) {
+        terminate;
+    }
+    SetSpeaker(0, _Bob);
+    TurnOn(<< "name", "job", "bye" >>);
+    [You see a tough-looking guard who takes his job -very- seriously.];
+    converse {
+        key ("name") {
+            ["I am a guard."];
+            TurnOff("name");
+        }
+        key ("job") {
+            [The man looks at you like you are an ignoramus. "I am a guard, idiot. Thou shouldst go about thy business."];
+        }
+        key ("bye") {
+            break;
+        }
+    }
+    clear_answers;
+    ["Goodbye."*];
+}

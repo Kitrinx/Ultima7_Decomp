@@ -1,0 +1,21 @@
+Routine SoulCage accepts a0 #locals(4) {
+    if (event = _Action) {
+        v0 = ~GetFrame(item);
+        v1 = ~GetTarget();
+        if (v0 = 0) && (~Item_getType(v1) = _Liche_519) {
+            v2 = ~FindNearest_i(1, _Bed_1011, _Horance);
+            if ((~GetFrame(v2) = 1) and ((~GetWorkType(_Horance) = _Sleep) and (~GetFrame(_Horance) = 13))) {
+                Kernel_resetRef(_Horance);
+                v3 = ~Item_push(item);
+                if v3 {
+                    v3 = ~PopToMap(~GetCoord(_Horance));
+                    SetWorkType(_Wait, _Horance);
+                    flag(431) = true;
+                }
+            }
+        }
+        if (v0 = 1) && (~Item_getType(v1) = _Well_Of_Souls) {
+            SetFrame(0, item);
+        }
+    }
+}

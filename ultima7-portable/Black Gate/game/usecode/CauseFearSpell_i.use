@@ -1,0 +1,22 @@
+Routine CauseFearSpell_i accepts a0 #locals(6) #uses(~IsMagicOK_i) {
+    if (event = _Action) {
+        Kernel_resetRef(item);
+        Item_bark("@Quas Wis@", item);
+        if ~IsMagicOK_i() {
+            v0 = ~PostAction(<< _aSFX_i, 65, _aKNEEL_FRAME_i, _aSTAND_FRAME_i, _aEXTEND1_FRAME_i, _aRAISE1_FRAME_i, _aTHRUST1_FRAME_i, _aUSABLE_i, #CauseFearSpell_i >>, item);
+        } else {
+            v0 = ~PostAction(<< _aKNEEL_FRAME_i, _aSTAND_FRAME_i, _aEXTEND1_FRAME_i, _aRAISE1_FRAME_i, _aTHRUST1_FRAME_i, _aUSABLE_i, #FizzleSpell_i >>, item);
+        }
+    }
+    if (event = _Posted_i) {
+        v1 = ~FindNearby_i(8, 25, 65535, item);
+        v2 = ~GetParty();
+        Foreach v5 in v1 {
+            if not (v5 in v2) && (~GetNPCStat_i(_Int, v5) > 5) {
+                SetWorkType(_Combat_0, v5);
+                SetAttackMode_i(_Fleeing, v5);
+                SetAttacker_i(~AvatarItem_i(), v5);
+            }
+        }
+    }
+}

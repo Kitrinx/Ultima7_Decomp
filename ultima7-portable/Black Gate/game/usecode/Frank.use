@@ -1,0 +1,110 @@
+Routine Frank accepts a0 #locals(6) #uses(~AvatarName, ~LordOrLady, ~IsNPCNear) {
+    if (event = _Action) {
+        SetSpeaker(0, _Frank);
+        v0 = ~AvatarName();
+        v1 = ~LordOrLady();
+        v2 = false;
+        TurnOn(<< "name", "job", "bye" >>);
+        if $MetFrank {
+            ["I think thou dost ask too many questions."];
+            v2 = true;
+        } else {
+            [You see a fox standing on his hind legs, staring directly at you.];
+            $MetFrank = true;
+        }
+        converse {
+            key ("name") {
+                ["My name is Frank, devout follower of honesty." He makes a slight bow.];
+                TurnOff("name");
+                if not v2 {
+                    ["And who wouldst thou be?"];
+                    TurnOn(<< "won't tell", v0 >>);
+                }
+            }
+            key (v0) {
+                ["It is good that thou didst tell me. One should always be honest in one's dealings with others. By the by, thy voice crackles too much."];
+                TurnOff(<< "won't tell", v0 >>);
+            }
+            key ("won't tell") {
+                ["I am sorry to see that thou art not trusting enough to reveal thy name." He shrugs. "By the by, thy voice crackles too much."];
+                TurnOff(<< "won't tell", v0 >>);
+            }
+            key ("job") {
+                ["I," he says, "am on a quest. A quest for honesty." He sniffs the air, and then turns to you.~~ "By the by, thou mightest have more friends if thou didst bathe a little more often."];
+                TurnOn(<< "bathed", "friends" >>);
+            }
+            key ("bathed") {
+                ["Yes, as in `take a bath.' I must inform thee that thou dost truly stink!"];
+                TurnOff("bathed");
+            }
+            key ("friends") {
+                ["Speaking of thy friends, I have heard that thy companion, Dupre, is a drunken sot."];
+                v3 = ~IsNPCNear(_Dupre);
+                if v3 {
+                    SetSpeaker(0, _Dupre);
+                    ["Hey, I don't think --"*];
+                    CloseSpeaker(_Dupre);
+                    SetSpeaker(0, _Frank);
+                }
+                ["Yes, from what I have been told, that Dupre has no will when confronted by a tankard of, well, anything.~~"As a matter of fact, thou hast fairly poor taste in companions overall."];
+                TurnOn("companions");
+                TurnOff("friends");
+            }
+            key ("companions") {
+                ["I am glad thou didst ask, <v1>. Thy friend, Iolo, charges far too much for his bows. Perhaps thou couldst have a chat with him."];
+                v4 = ~IsNPCNear(_Iolo);
+                if v4 {
+                    SetSpeaker(0, _Iolo);
+                    ["Too much? What dost thou mean, too --"*];
+                    CloseSpeaker(_Iolo);
+                    SetSpeaker(0, _Frank);
+                }
+                ["His bows and crossbows just aren't of the quality that is worth the kind of gold he charges."~~He takes a step back.~~"Gads! Thy breath could gag an ox. Thou shouldst consider taking better care of thy teeth, or thy fellows will leave thee."];
+                TurnOn("teeth");
+                TurnOff("companions");
+            }
+            key ("teeth") {
+                ["That is the reason for thine offensive mouth odor. I have not seen anything that yellow since the time thy fellow Shamino ran away from a battle in fear."];
+                v5 = ~IsNPCNear(_Shamino);
+                if v5 {
+                    SetSpeaker(0, _Shamino);
+                    ["Thou must be mad!" Shamino turns to you. "This rogue needs to be taught a lesson."*];
+                    CloseSpeaker(_Shamino);
+                    SetSpeaker(0, _Frank);
+                    ["And thy friend, Shamino, <v0>, has quite a bellicose temper."];
+                    TurnOn("bellicose");
+                }
+                ["And," he pauses, peering very closely at your face, "I never noticed how large thy nose is. 'Tis amazing thou canst find enough air to breathe."];
+                TurnOn("nose");
+                TurnOff("teeth");
+            }
+            key ("bellicose") {
+                ["Yes, bellicose, warlike, angry. If thou dost not know that, I believe thou needest to improve thy vocabulary. Thou art too unschooled."];
+                TurnOff("bellicose");
+                TurnOn("unschooled");
+            }
+            key ("unschooled") {
+                ["Trust me, <v1>, thou art too ignorant to argue with me."];
+                if v3 {
+                    SetSpeaker(0, _Dupre);
+                    ["Oh, this is too much!"*];
+                    CloseSpeaker(_Dupre);
+                    SetSpeaker(0, _Frank);
+                }
+                TurnOff("unschooled");
+            }
+            key ("nose") {
+                ["Truly quite large, and not in the least bit attractive."];
+                TurnOff("nose");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["Thou hast the manners of a pig. 'Tis not polite to break conversation so abruptly."*];
+    }
+    if (event = _Bark) {
+        terminate;
+    }
+}

@@ -1,0 +1,158 @@
+Routine Papa accepts a0 #locals(3) #uses(~IsNPCNear, ~AskYesNo) {
+    if (event = _Bark) {
+        terminate;
+    }
+    SetSpeaker(0, _Papa);
+    if flag(723) {
+        ["Go away, bee killers!"*];
+        terminate;
+    }
+    v0 = false;
+    v1 = ~IsNPCNear(_Tseramed);
+    v2 = ~IsNPCNear(_Iolo);
+    if flag(724) {
+        v0 = true;
+    }
+    TurnOn(<< "name", "job", "bye" >>);
+    if not $MET_MURRAY {
+        [You see a naked man who looks a bit wild. He is not in the least concerned that he has on no clothes.];
+        $MET_MURRAY = true;
+    } else {
+        ["Huh?" asks Papa.];
+    }
+    converse {
+        key ("name") {
+            if v0 {
+                ["I am Murray."];
+            } else {
+                ["Me Papa!" The man grins, revealing several missing teeth. He nonchalantly scratches his behind.];
+            }
+            TurnOff("name");
+            TurnOn("Where are thy clothes?");
+        }
+        key ("job") {
+            if v0 {
+                ["Hey, what job? I am having a great time here. Leave me alone!"];
+            } else {
+                [The man looks confused. "Job? Me no job. Me live. Me live here with Mama. No need job. Cave provides all."];
+            }
+            TurnOn(<< "Mama", "cave" >>);
+        }
+        key ("Where are thy clothes?") {
+            if v0 {
+                ["They make me itch so I do not wear any."];
+            } else {
+                ["Clothes?!" The man laughs heartily and slaps his belly. "No clothes, no clothes," he assures you, still chuckling.];
+            }
+            TurnOff("Where are thy clothes?");
+        }
+        key ("Mama") {
+            if v0 {
+                ["Quite a lady, is she not?" He nudges you and winks.];
+            } else {
+                ["Mmm. Mama! Me Papa. She Mama. We make zug-zug. Maybe someday make Boy or Girl!"];
+            }
+            TurnOff("Mama");
+        }
+        key ("cave") {
+            if v0 {
+                ["We love the cave. The bees do not bother us. When they sleep we get our honey. We cook mice on the campfire. They are really not bad. Thou shouldst try them!"];
+            } else {
+                ["Cave good to us. We stay away from bees. They no hurt us. We no hurt them. We take honey when they sleep. We eat the mice in cave. Cook them up on campfire. Very good!"*];
+            }
+            v2 = ~IsNPCNear(_Iolo);
+            if v2 {
+                SetSpeaker(0, _Iolo);
+                ["I may puke."*];
+                CloseSpeaker(_Iolo);
+                SetSpeaker(0, _Papa);
+            }
+            TurnOff("cave");
+            TurnOn(<< "bees", "honey", "mice" >>);
+        }
+        key ("bees") {
+            if v0 {
+                ["They won't bother thee if thou dost not bother them."];
+            } else {
+                ["They friendly if we no hurt them."];
+                if v1 {
+                    [The man sees Tseramed and frowns. He points at you accusingly. "Hunt bees?"];
+                    if ~AskYesNo() {
+                        ["Go away!" The man spits at you and turns away.*];
+                        flag(723) = true;
+                        terminate;
+                    } else {
+                        [He points at Tseramed. "Him bee hunter! Go away!" The man spits at you and turns away.*];
+                        SetSpeaker(0, _Tseramed);
+                        ["This is an act, I tell thee! These people are not savages! They are Britannians!"*];
+                        CloseSpeaker(_Tseramed);
+                        if v2 {
+                            SetSpeaker(0, _Iolo);
+                            ["He seems quite savage to me!"*];
+                            CloseSpeaker(_Iolo);
+                        }
+                    }
+                    flag(723) = true;
+                    terminate;
+                }
+            }
+            TurnOff("bees");
+            TurnOn("friendly");
+        }
+        key ("honey") {
+            [The man rubs his belly and smiles, licking his lips.~~ "Yummmmmmmmmmmmm!"];
+            TurnOff("honey");
+        }
+        key ("mice") {
+            [The man rubs his belly and makes smacking noises with his mouth.~~"Mmmmmmmmmmmmmmm!"];
+            TurnOff("mice");
+        }
+        key ("friendly") {
+            if v0 {
+                ["Sure. They know Mama and me. We are their friends."];
+            } else {
+                [The man nods. "They know Mama and me. We are bees' friends. Bees let us have honey when bees sleep. Bees no like giving honey if bees awake."];
+            }
+            TurnOff("friendly");
+            TurnOn("Mama and thee");
+        }
+        key ("Mama and thee") {
+            if v0 {
+                ["I told thee. We have been here a long time."];
+            } else {
+                ["Mama and me live in cave since babies."];
+                if v2 {
+                    SetSpeaker(0, _Iolo);
+                    ["Avatar! They must have been abandoned in here! Why, they must be brother and sister!"];
+                    CloseSpeaker(_Iolo);
+                    SetSpeaker(0, _Papa);
+                }
+                TurnOn("babies");
+            }
+            TurnOff("Mama and thee");
+        }
+        key ("babies") {
+            [The man nods. "We babies then."];
+            TurnOff("babies");
+            if flag(338) {
+                TurnOn("Art thou from Yew?");
+            }
+        }
+        key ("Art thou from Yew?") {
+            [The man's eyes widen, realizes you are serious, then rolls his eyes to the floor.~~"Damn! All right. Thou didst catch me. Thou art right. Mama and I are from Yew," the man speaks in a perfect voice booming with intelligence. He then laughs heartily. "We had thee going, though, did we not!"];
+            flag(724) = true;
+            TurnOff("Art thou from Yew?");
+            TurnOn("Yew");
+        }
+        key ("Yew") {
+            ["That's right. My real name is Murray. Mama is really Myrtle. I was a fully licensed apothecary in the town until the Britannian Tax Council came after me. They wanted the shirt off my back, so I gave it to them!];
+            ["Since then, Myrtle and I prefer to live down here with the bees. Life is so... carefree down here. We have chosen to live with nature. Now, if thou dost not mind, I shall isolate myself from thee and bid thee farewell."*];
+            terminate;
+        }
+        key ("bye") {
+            break;
+        }
+    }
+    clear_answers;
+    [Papa smiles and waves.*];
+}

@@ -1,0 +1,271 @@
+Routine Dell accepts a0 #locals(10) #uses(~LordOrLady, ~AvatarName, ~IsNearEachOther_i, ~AskList, ~IsNPCNear, DescribeFellowship_i, ExplainPhilosophy_i, DellSellsWeapons_i, DellSellsArmour_i, DellSellsProvisions_i, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Dell);
+        v0 = ~GetTime();
+        v1 = ~LordOrLady();
+        v2 = ~AvatarName();
+        v3 = ~GetWorkType(~NPCToItem_i(_Dell));
+        v4 = "Avatar";
+        if (v0 = 7) {
+            v5 = ~IsNearEachOther_i(_Klog, _Dell);
+            if v5 {
+                [Dell frowns at you for distracting him during the Fellowship meeting.*];
+            } else {
+                ["I do not have time to talk with thee! I must get to the meeting of The Fellowship! Come to my shop tomorrow!"*];
+            }
+            terminate;
+        }
+        TurnOn(<< "name", "job", "murder", "bye" >>);
+        if not flag(83) {
+            [You see a stern shopkeeper who might once have been a strong fighter.];
+            if (v3 = 7) {
+                ["Thou hast entered my shop, so thou had best buy something."];
+            }
+            ["Who might I be addressing?"];
+            v6 = ~AskList(<< v2, v4 >>);
+            if (v6 = v2) {
+                ["Hmph. My name is Dell."];
+            } else {
+                ["Oh, art thou really? I did not know there were so many of thee! Why, only last week did an 'Avatar' come through here! He took me for 20 gold, too! An expert trickster, he was!"~~Dell looks you up and down. "Avatar, indeed! I do not like Avatars. But never mind that. I am called Dell. What dost thou want?"];
+            }
+            flag(83) = true;
+        } else {
+            ["How may I help thee?" Dell asks.];
+        }
+        converse {
+            key ("name") {
+                ["My name is Dell. Did I not say that already?"];
+                TurnOff("name");
+            }
+            key ("job") {
+                [Dell looks disgruntled. "I sell weapons, armour, and provisions when I am not doing work for The Fellowship."];
+                TurnOn("buy");
+                if (v3 = 7) {
+                    ["If thou art not going to buy anything, then get thy face out of my sight!"];
+                }
+                TurnOn("Fellowship");
+            }
+            key ("murder") {
+                ["I am afraid I know nothing about it save for what is being said in the street, so do not ask me. If thou art not going to buy anything, then thou art wasting my time. Go away."];
+                TurnOff("murder");
+                v7 = ~IsNPCNear(_Iolo);
+                if v7 {
+                    SetSpeaker(0, _Iolo);
+                    [Iolo whispers to you, "Pleasant chap, is he not?"];
+                    CloseSpeaker(_Iolo);
+                    SetSpeaker(0, _Dell);
+                }
+            }
+            key ("Fellowship") {
+                DescribeFellowship_i();
+                TurnOff("Fellowship");
+            }
+            key ("philosophy") {
+                ExplainPhilosophy_i();
+                TurnOff("philosophy");
+            }
+            key ("buy") {
+                if (v3 = 7) {
+                    ["Certainly, <v1>. What type of ware wouldst thou wish to see?"];
+                    PushKeys();
+                    TurnOn(<< "nothing", "weapons", "armour", "provisions" >>);
+                } else {
+                    ["Come to my shop during business hours."];
+                }
+            }
+            key ("weapons") {
+                DellSellsWeapons_i();
+            }
+            key ("armour") {
+                DellSellsArmour_i();
+            }
+            key ("provisions") {
+                DellSellsProvisions_i();
+            }
+            key ("nothing") {
+                PopKeys();
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["Hmpf."];
+        if (v3 = 7) {
+            ["Spend more money next time thou dost come in."*];
+        }
+    }
+    if (event = _Bark) {
+        v0 = ~GetTime();
+        v3 = ~GetWorkType(~NPCToItem_i(_Dell));
+        v8 = ~rndRange(4, 1);
+        if (v3 = 7) {
+            if (v8 = 1) {
+                v9 = "@Buy something!@";
+            }
+            if (v8 = 2) {
+                v9 = "@Armour! Weapons!@";
+            }
+            if (v8 = 3) {
+                v9 = "@Swamp boots? Bedrolls?@";
+            }
+            if (v8 = 4) {
+                v9 = "@Finest goods here!@";
+            }
+            Item_bark(v9, _Dell);
+        } else {
+            BarkAboutWork_i(_Dell);
+        }
+    }
+}
+
+Usable DellSellsWeapons_i #locals(14) #uses(~AskOrdList, ~PriceString_i, ~AskYesNo, ~SellItem_i) {
+    PushKeys();
+    v0 = true;
+    v1 = << "nothing", "dagger", "mace", "sword", "2-handed hammer", "2-handed sword", "club", "sling", "bow", "arrows", "bolts" >>;
+    v2 = << 0, 594, 659, 599, 600, 602, 590, 474, 597, 722, 723 >>;
+    v3 = 65177;
+    v4 = << 0, 10, 15, 50, 60, 80, 15, 10, 30, 10, 15 >>;
+    v5 = << "", "a ", "a ", "a ", "a ", "a ", "a ", "a ", "a ", "", "" >>;
+    v6 = << 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1 >>;
+    v7 = << "", "", "", "", "", "", "", "", "", " for a dozen", " for a dozen" >>;
+    v8 = << 0, 1, 1, 1, 1, 1, 1, 1, 1, 12, 12 >>;
+    ["What wouldst thou like to buy?"];
+    While v0 {
+        v9 = ~AskOrdList(v1);
+        if (v9 = 1) {
+            ["Fine."];
+            v0 = false;
+        } else {
+            v10 = ~PriceString_i(v7::v9, v4::v9, v6::v9, v1::v9, v5::v9);
+            v11 = 0;
+            ["^<v10> Is that acceptable?"];
+            if ((v2::v9 = 722) or (v2::v9 = 723)) {
+                v12 = ~AskYesNo();
+                if v12 {
+                    ["How many sets wouldst thou like?"];
+                    v11 = ~SellItem_i(true, 1, 20, v4::v9, v8::v9, v3, v2::v9);
+                }
+            } else {
+                v13 = ~AskYesNo();
+                if v13 {
+                    v11 = ~SellItem_i(false, 1, 0, v4::v9, v8::v9, v3, v2::v9);
+                }
+            }
+            if (v11 = 1) {
+                ["Very good. At last we are getting somewhere!"];
+            } else {
+                if (v11 = 2) {
+                    ["Thou hast thine hands full, idiot!"];
+                } else {
+                    if (v11 = 3) {
+                        ["Thou hast a lot of gall attempting to buy something from my shop without enough gold in thy possession!"];
+                    } else {
+                    }
+                }
+            }
+            ["Anything else for thee today?"];
+            v0 = ~AskYesNo();
+        }
+    }
+    PopKeys();
+    PopKeys();
+}
+
+Usable DellSellsArmour_i #locals(13) #uses(~AskOrdList, ~PriceString_i, ~AskYesNo, ~SellItem_i) {
+    PushKeys();
+    v0 = true;
+    v1 = << "nothing", "leather helm", "wooden shield", "leather leggings", "chain leggings", "leather armour" >>;
+    v2 = << 0, 1004, 572, 574, 575, 569 >>;
+    v3 = 65177;
+    v4 = << 0, 25, 15, 25, 70, 40 >>;
+    v5 = << "", "a ", "a ", "", "", "" >>;
+    v6 = << 0, 0, 0, 1, 1, 0 >>;
+    v7 = << "", "", "", " for a pair", " for a pair", "" >>;
+    v8 = 1;
+    ["What wouldst thou like to buy?"];
+    While v0 {
+        v9 = ~AskOrdList(v1);
+        if (v9 = 1) {
+            ["Fine."];
+            v0 = false;
+        } else {
+            v10 = ~PriceString_i(v7::v9, v4::v9, v6::v9, v1::v9, v5::v9);
+            v11 = 0;
+            ["^<v10> Is that acceptable?"];
+            v12 = ~AskYesNo();
+            if v12 {
+                v11 = ~SellItem_i(false, 1, 0, v4::v9, v8, v3, v2::v9);
+            }
+            if (v11 = 1) {
+                ["Very good. At last we are getting somewhere!"];
+            } else {
+                if (v11 = 2) {
+                    ["Thou hast thine hands full, idiot!"];
+                } else {
+                    if (v11 = 3) {
+                        ["Thou hast a lot of gall attempting to buy something from my shop without enough gold in thy possession!"];
+                    } else {
+                    }
+                }
+            }
+            ["Anything else for thee today?"];
+            v0 = ~AskYesNo();
+        }
+    }
+    PopKeys();
+    PopKeys();
+}
+
+Usable DellSellsProvisions_i #locals(14) #uses(~AskOrdList, ~PriceString_i, ~AskYesNo, ~SellItem_i) {
+    PushKeys();
+    v0 = true;
+    v1 = << "nothing", "torch", "backpack", "lockpicks", "bucket", "swamp boots", "bedroll" >>;
+    v2 = << 0, 595, 801, 627, 810, 588, 583 >>;
+    v3 = 65177;
+    v4 = << 0, 4, 12, 8, 2, 40, 15 >>;
+    v5 = << "a ", "a ", "a ", "some ", "a ", "a pair of ", "a " >>;
+    v6 = << 0, 0, 0, 1, 0, 1, 0 >>;
+    v7 = "";
+    v8 = 1;
+    ["What wouldst thou like to buy?"];
+    While v0 {
+        v9 = ~AskOrdList(v1);
+        if (v9 = 1) {
+            ["Fine."];
+            v0 = false;
+        } else {
+            v10 = ~PriceString_i(v7, v4::v9, v6::v9, v1::v9, v5::v9);
+            v11 = 0;
+            ["^<v10> Is that acceptable?"];
+            if ((v2::v9 = 627) or (v2::v9 = 595)) {
+                v12 = ~AskYesNo();
+                if v12 {
+                    ["How many wouldst thou like?"];
+                    v11 = ~SellItem_i(true, 1, 5, v4::v9, v8, v3, v2::v9);
+                }
+            } else {
+                v13 = ~AskYesNo();
+                if v13 {
+                    v11 = ~SellItem_i(false, 1, 0, v4::v9, v8, v3, v2::v9);
+                }
+            }
+            if (v11 = 1) {
+                ["Very good. At last we are getting somewhere!"];
+            } else {
+                if (v11 = 2) {
+                    ["Thou hast thine hands full, idiot!"];
+                } else {
+                    if (v11 = 3) {
+                        ["Thou hast a lot of gall attempting to buy something from my shop without enough gold in thy possession!"];
+                    } else {
+                    }
+                }
+            }
+            ["Anything else for thee today?"];
+            v0 = ~AskYesNo();
+        }
+    }
+    PopKeys();
+    PopKeys();
+}

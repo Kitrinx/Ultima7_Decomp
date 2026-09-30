@@ -1,0 +1,315 @@
+Routine Budo accepts a0 #locals(13) #uses(~IsInInv, ~IsNPCNear, BudoSellsArmour_i, BudoSellsWeapons_i, BudoSellsProvisions_i, ~AskYesNo, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Budo);
+        v0 = ~GetTime();
+        v1 = ~GetWorkType(~NPCToItem_i(_Budo));
+        v2 = ~IsInInv(1, 65177, _Prism_981, 1, _Party);
+        TurnOn(<< "name", "job", "bye" >>);
+        if (flag(309) or flag(260)) {
+            TurnOn("Crown Jewel");
+        }
+        if not flag(690) {
+            [You see a fat, cheerful-looking merchant.];
+            if (v1 = 7) {
+                ["Hello, hello my friend! Thou dost look like thou needest to spend money!"*];
+                v3 = ~IsNPCNear(_Shamino);
+                if v3 {
+                    SetSpeaker(0, _Shamino);
+                    ["This place looks quite well-off."*];
+                    CloseSpeaker(_Shamino);
+                    v4 = ~IsNPCNear(_Iolo);
+                    if v4 {
+                        SetSpeaker(0, _Iolo);
+                        ["The entire island is very opulent. It is not the same island we once knew."*];
+                        CloseSpeaker(_Iolo);
+                    }
+                }
+                SetSpeaker(0, _Budo);
+            } else {
+                ["Hello! How art thou, my friend?"];
+            }
+            flag(690) = true;
+        } else {
+            ["How may I help thee?" Budo asks.];
+        }
+        converse {
+            key ("name") {
+                ["Budo the Fourth at thy service! 'Tis a fine day today, is it not?"];
+                TurnOff("name");
+            }
+            key ("job") {
+                if (v1 = 7) {
+                    v5 = "thou hast come to the right place!@";
+                    v6 = "";
+                    v7 = "";
+                    TurnOn(<< "weapons", "armour", "provisions", "ship deed" >>);
+                } else {
+                    v5 = "thou shouldst come to my shoppe when ";
+                    v6 = "it is open! I would be so pleased to ";
+                    v7 = "help thee then.@";
+                }
+                append "\"I am a provisioner, like my father before me, and like his father before him, and like his father before him. Budo's is an island tradition! Just as The Fellowship will be someday!~~\"If thou art interested in weapons, armour, provisions, or a ship deed, ";
+                append v5;
+                append "";
+                append v6;
+                append "";
+                append v7;
+                append "";
+                say;
+                TurnOn("Fellowship");
+            }
+            key ("armour") {
+                ["Budo's carries nothing but the finest quality armour in all Britannia. I have all the best types of equipment available."];
+                BudoSellsArmour_i();
+            }
+            key ("weapons") {
+                ["Budo's offers thee excellent weaponry with superb craftsmanship. Thou wilt not find a better buy for thy money anywhere else!"];
+                BudoSellsWeapons_i();
+            }
+            key ("provisions") {
+                ["Budo's also carries a variety of useful things for thy convenience."];
+                BudoSellsProvisions_i();
+            }
+            key ("ship deed") {
+                if flag(694) {
+                    ["But I have already sold thee the deed to 'The Lusty Wench'! She was the only ship I had at this particular time! I am sorry!"];
+                } else {
+                    ["I can sell thee the deed to my ship 'The Lusty Wench.' She is beautiful, my friend. She is guaranteed to last and is the sleekest vessel on the seas! She goes for 800 gold. Want her?"];
+                    if ~AskYesNo() {
+                        v8 = ~CountItem(_All, _All, _Gold_Coin, _Party);
+                        if (v8 >= 800) {
+                            v9 = ~GiveToParty_i(false, 2, 18, _Scroll, 1);
+                            if v9 {
+                                ["A wise move. A magnificent ship for thee!" He takes your gold.];
+                                v10 = ~TakeFromParty_i(true, _All, _All, _Gold_Coin, 800);
+                                flag(694) = true;
+                            } else {
+                                ["Thou art carrying too much, my friend! Unload thyself of some of thy belongings and I will sell thee the deed to this beautiful ship."];
+                            }
+                        } else {
+                            ["But thou dost not have enough gold! Perhaps thou shouldst visit the House of Games and increase the bulges in thy pockets!"];
+                        }
+                    } else {
+                        ["But thou wilt never see a ship like this one anywhere in the world! Too bad!"];
+                    }
+                }
+                TurnOff("ship deed");
+            }
+            key ("Fellowship") {
+                ["The Fellowship has helped me to become a very rich man! Although the business is an inherited enterprise, I owe everything to The Fellowship!"];
+                TurnOff("Fellowship");
+                TurnOn(<< "rich man", "inherited", "everything" >>);
+            }
+            key ("rich man") {
+                ["My great-grandfather started this business many, many years ago. He was moderately successful, thanks to the Thieves' Guild. But that era has passed."];
+                TurnOn("Thieves' Guild");
+                TurnOff("rich man");
+            }
+            key ("inherited") {
+                ["My great-grandfather passed the shoppe on to his son, and so forth, down to me. We are born merchants! That is why I know why thou hast come to Budo's! Thou wantest to become a part of the great Budo Legacy! Thou dost need to buy something!"];
+                TurnOff("inherited");
+            }
+            key ("everything") {
+                ["There was a period shortly after my father died, just as I had inherited the shoppe, when business was poor. There was a danger that I would not be able to keep the shoppe open. But The Fellowship convinced me that I should join them. I proved my worthiness and The Fellowship helped me financially."];
+                TurnOff("everything");
+                TurnOn("worthiness");
+            }
+            key ("worthiness") {
+                ["I do not mind telling thee. The Fellowship shares in one half of my profit."];
+                TurnOff("worthiness");
+            }
+            key ("Thieves' Guild") {
+                ["It is no more. They dwindled away during my grandfather's time. By the time The Fellowship arrived, when I was a boy, there was no trace of them except in family mementos. Even the pirates are different."];
+                TurnOff("Thieves' Guild");
+            }
+            key ("Crown Jewel") {
+                if v2 {
+                    [The cube vibrates a moment.~~"That ship sails here frequently. I know it makes regular runs to the mainland, stops here, then moves on to the Isle of the Avatar the next morning. Then it repeats the trip, going the other direction."];
+                } else {
+                    ["It stops here regularly. Don't know much more about it. The crew is very secretive." Budo looks away, obviously not wanting to talk about the ship.];
+                }
+                TurnOff("Crown Jewel");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["I hope I can help thee again some time, my friend!"*];
+    }
+    if (event = _Bark) {
+        v0 = ~GetTime();
+        v1 = ~GetWorkType(~NPCToItem_i(_Budo));
+        v11 = ~rndRange(4, 1);
+        if (v1 = 7) {
+            if (v11 = 1) {
+                v12 = "@Weapons? Armour?@";
+            }
+            if (v11 = 2) {
+                v12 = "@Provisions here!@";
+            }
+            if (v11 = 3) {
+                v12 = "@Budo's is open for business!@";
+            }
+            if (v11 = 4) {
+                v12 = "@Step right in! We're open!@";
+            }
+            Item_bark(v12, _Budo);
+        } else {
+            BarkAboutWork_i(_Budo);
+        }
+    }
+}
+
+Usable BudoSellsWeapons_i #locals(13) #uses(~AskOrdList, ~PriceString_i, ~AskYesNo, ~SellItem_i) {
+    PushKeys();
+    v0 = true;
+    v1 = << "nothing", "club", "dagger", "bow", "sword", "halberd", "arrows", "bolts" >>;
+    v2 = << 0, 590, 594, 597, 599, 603, 722, 723 >>;
+    v3 = 65177;
+    v4 = << 0, 20, 20, 40, 100, 250, 25, 30 >>;
+    v5 = << "", "a ", "a ", "a ", "a ", "a ", "", "" >>;
+    v6 = << 0, 0, 0, 0, 0, 0, 1, 1 >>;
+    v7 = << "", "", "", "", "", "", " per dozen", " per dozen" >>;
+    v8 = << 0, 1, 1, 1, 1, 1, 12, 12 >>;
+    ["What wouldst thou like to buy?"];
+    While v0 {
+        v9 = ~AskOrdList(v1);
+        if (v9 = 1) {
+            ["Tsk tsk... I am broken-hearted..."];
+            v0 = false;
+        } else {
+            v10 = ~PriceString_i(v7::v9, v4::v9, v6::v9, v1::v9, v5::v9);
+            v11 = 0;
+            ["^<v10> Art thou still interested?"];
+            v12 = ~AskYesNo();
+            if v12 {
+                if ((v2::v9 = 722) or (v2::v9 = 723)) {
+                    ["How many dozen wouldst thou like?"];
+                    v11 = ~SellItem_i(true, 1, 5, v4::v9, v8::v9, v3, v2::v9);
+                } else {
+                    v11 = ~SellItem_i(false, 1, 0, v4::v9, v8::v9, v3, v2::v9);
+                }
+            }
+            if (v11 = 1) {
+                ["Done!"];
+            } else {
+                if (v11 = 2) {
+                    ["Thou cannot possibly carry that much!"];
+                } else {
+                    if (v11 = 3) {
+                        ["Thou dost not have enough gold for that!"];
+                    } else {
+                    }
+                }
+            }
+            ["Wouldst thou like something else?"];
+            v0 = ~AskYesNo();
+        }
+    }
+    PopKeys();
+}
+
+Usable BudoSellsArmour_i #locals(13) #uses(~AskOrdList, ~PriceString_i, ~AskYesNo, ~SellItem_i) {
+    PushKeys();
+    v0 = true;
+    v1 = << "nothing", "great helm", "plate armour", "plate leggings", "gorget", "scale armour", "gauntlets" >>;
+    v2 = << 0, 541, 573, 576, 586, 570, 580 >>;
+    v3 = 65177;
+    v4 = << 0, 200, 325, 200, 40, 100, 25 >>;
+    v5 = << "", "a ", "", "", "a ", "", "" >>;
+    v6 = << 0, 0, 0, 1, 0, 0, 1 >>;
+    v7 = << "", "", "", " for a pair", "", "", " for a pair" >>;
+    v8 = 1;
+    ["What wouldst thou like to buy?"];
+    While v0 {
+        v9 = ~AskOrdList(v1);
+        if (v9 = 1) {
+            ["Tsk tsk... I am broken-hearted..."];
+            v0 = false;
+        } else {
+            v10 = ~PriceString_i(v7::v9, v4::v9, v6::v9, v1::v9, v5::v9);
+            v11 = 0;
+            ["^<v10> Is that acceptable?"];
+            v12 = ~AskYesNo();
+            if v12 {
+                v11 = ~SellItem_i(false, 1, 0, v4::v9, v8, v3, v2::v9);
+            }
+            if (v11 = 1) {
+                ["Done!"];
+            } else {
+                if (v11 = 2) {
+                    ["Thou cannot possibly carry that much!"];
+                } else {
+                    if (v11 = 3) {
+                        ["Thou dost not have enough gold for that!"];
+                    } else {
+                    }
+                }
+            }
+            ["Wouldst thou like something else?"];
+            v0 = ~AskYesNo();
+        }
+    }
+    PopKeys();
+}
+
+Usable BudoSellsProvisions_i #locals(13) #uses(~AskOrdList, ~PriceString_i, ~AskYesNo, ~SellItem_i) {
+    PushKeys();
+    v0 = true;
+    if flag(694) {
+        v1 = << "nothing", "torch", "lockpick" >>;
+        v2 = << 0, 595, 627 >>;
+        v3 = << 65177, 65177, 65177 >>;
+        v4 = << 0, 5, 1 >>;
+        v5 = << "", "a ", "a " >>;
+        v6 = 0;
+        v7 = "";
+        v8 = 1;
+    } else {
+        v1 = << "Nothing", "Torch", "Lockpick" >>;
+        v2 = << 0, 595, 627 >>;
+        v3 = << 65177, 65177, 65177 >>;
+        v4 = << 0, 5, 10 >>;
+        v5 = << "", "a ", "a " >>;
+        v6 = 0;
+        v7 = "";
+        v8 = 1;
+    }
+    ["What wouldst thou like to buy?"];
+    While v0 {
+        v9 = ~AskOrdList(v1);
+        if (v9 = 1) {
+            ["Tsk tsk... I am broken-hearted..."];
+            v0 = false;
+        } else {
+            v10 = ~PriceString_i(v7, v4::v9, v6, v1::v9, v5::v9);
+            v11 = 0;
+            ["^<v10> Art thou still interested?"];
+            v12 = ~AskYesNo();
+            if v12 {
+                if ((v2::v9 = 627) or (v2::v9 = 595)) {
+                    ["How many wouldst thou like?"];
+                    v11 = ~SellItem_i(true, 1, 5, v4::v9, v8, v3::v9, v2::v9);
+                } else {
+                    v11 = ~SellItem_i(false, 1, 0, v4::v9, v8, v3::v9, v2::v9);
+                }
+            }
+            if (v11 = 1) {
+                ["Done!"];
+            } else {
+                if (v11 = 2) {
+                    ["Thou cannot possibly carry that much!"];
+                } else {
+                    if (v11 = 3) {
+                        ["Thou dost not have enough gold for that!"];
+                    } else {
+                    }
+                }
+            }
+            ["Wouldst thou like something else?"];
+            v0 = ~AskYesNo();
+        }
+    }
+    PopKeys();
+}

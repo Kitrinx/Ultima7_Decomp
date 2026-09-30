@@ -1,0 +1,120 @@
+Routine Aurvidlem accepts a0 #locals(3) #uses(AurvidlemSellsProvisions_i, GargBarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Aurvidlem);
+        TurnOn(<< "name", "job", "bye" >>);
+        if not $MET_AURVIDLEM {
+            [The gargoyle standing before you has a sour expression on his face.];
+            $MET_AURVIDLEM = true;
+        } else {
+            ["To offer you greetings, human," says Aurvidlem.];
+        }
+        converse {
+            key ("name") {
+                ["To be called Aurvidlem. To recognize you to be the Avatar."];
+                TurnOff("name");
+            }
+            key ("job") {
+                ["To provide provisions for others in Vesper."];
+                TurnOn(<< "buy provisions", "others", "Vesper" >>);
+            }
+            key ("Vesper") {
+                ["To be a town filled with prejudice and hatred. To know the humans expect us to begin a violent confrontation.~~"To believe the humans deserve it," he shrugs, "but to hope my brethren display more control than that."];
+                TurnOff("Vesper");
+            }
+            key ("buy provisions") {
+                v0 = ~GetWorkType(~NPCToItem_i(_Aurvidlem));
+                if not (v0 = 7) {
+                    ["To be not selling at this time. To come back tomorrow to buy provisions."];
+                } else {
+                    v1 = ~CountItem(_All, _All, _Gold_Coin, _Party);
+                    AurvidlemSellsProvisions_i();
+                    v2 = ~CountItem(_All, _All, _Gold_Coin, _Party);
+                    if ((v1 - v2) > 29) {
+                        flag(639) = true;
+                    }
+                }
+                TurnOff("buy provisions");
+            }
+            key ("others") {
+                if flag(639) {
+                    ["To have only a few gargoyles living in town. To know mainly Wis-Sur, and," he gives a slight grunt, "Ansikart. Also to know of some wingless ones."];
+                    TurnOn("Ansikart");
+                } else {
+                    ["To have only a few gargoyles living in town. To know mainly Wis-Sur and Ansikart, and to know of some wingless ones."];
+                }
+                TurnOff("others");
+            }
+            key ("Ansikart") {
+                [His eyes shift quickly from left to right before finally settling on you.~~"To know since change in Wis-Sur, Ansikart gained too much respect. To be sure that I have studied more and would be a wiser and better leader here. To be dissatisfied with Ansikart as choice."];
+                TurnOn("change");
+                TurnOff("Ansikart");
+            }
+            key ("change") {
+                ["To be unsure when change happened, but has affected Wis-Sur greatly. To now see him avoid others and shut himself away. To be concerned for Wis-Sur."];
+                TurnOff("change");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["To bid you goodbye."*];
+    }
+    if (event = _Bark) {
+        GargBarkAboutWork_i(_Aurvidlem);
+    }
+}
+
+Usable AurvidlemSellsProvisions_i #locals(14) #uses(~AskOrdList, ~SellPriceString_i, ~AskYesNo, ~SellItem_i) {
+    PushKeys();
+    v0 = true;
+    v1 = << "nothing", "torch", "oil flasks", "shovel", "powder keg", "bucket", "jar", "cloth" >>;
+    v2 = << 0, 595, 782, 625, 704, 810, 824, 851 >>;
+    v3 = << 65177, 65177, 65177, 65177, 65177, 0, 0, 65177 >>;
+    v4 = << 0, 4, 60, 12, 25, 4, 2, 3 >>;
+    v5 = << "", "a ", "an ", "a ", "a ", "a ", "a ", "" >>;
+    v6 = << "", "", " for a dozen", "", "", "", "", " per bolt" >>;
+    v7 = << 0, 1, 12, 1, 1, 1, 1, 1 >>;
+    ["To purchase what item?"];
+    While v0 {
+        v8 = ~AskOrdList(v1);
+        if (v8 = 1) {
+            ["To be fine."];
+            v0 = false;
+        } else {
+            v9 = 1;
+            v10 = 1;
+            v11 = ~SellPriceString_i(v6::v8, v4::v8, v9, v1::v8, v5::v8);
+            v12 = 0;
+            ["^<v11>. To be acceptable?"];
+            v13 = ~AskYesNo();
+            if v13 {
+                if ((v2::v8 = 595) or (v2::v8 = 782)) {
+                    if (v2::v8 = 782) {
+                        ["To want to buy how many sets of twelve?"];
+                    } else {
+                        ["To want to buy how many?"];
+                    }
+                    v12 = ~SellItem_i(true, 1, 20, v4::v8, v7::v8, v3, v2::v8);
+                } else {
+                    v12 = ~SellItem_i(false, 1, 0, v4::v8, v7::v8, v3, v2::v8);
+                }
+            }
+            if (v12 = 1) {
+                ["To be done!"];
+            } else {
+                if (v12 = 2) {
+                    ["To be unable to carry that much, human."];
+                } else {
+                    if (v12 = 3) {
+                        ["To have not the right amount of gold!"];
+                    } else {
+                    }
+                }
+            }
+            ["To buy something else?"];
+            v0 = ~AskYesNo();
+        }
+    }
+    PopKeys();
+}

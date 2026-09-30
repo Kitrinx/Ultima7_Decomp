@@ -1,0 +1,192 @@
+Routine Garritt accepts a0 #locals(9) #uses(~LordOrLady, ~IsInInv, ~AskYesNo, DescribeFellowship_i, GivePartyExp_i, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Garritt);
+        v0 = ~LordOrLady();
+        v1 = ~IsMedallionOn_i();
+        TurnOn(<< "name", "job", "bye" >>);
+        if $TOBIAS_FRAMED {
+            TurnOn("Tobias");
+        }
+        v2 = ~IsInInv(1, 65177, _Venom, 1, _Party);
+        if v2 {
+            TurnOn("found venom");
+        }
+        if not $MetGarritt {
+            [You see a jovial young man who gives you a friendly greeting.];
+            $MetGarritt = true;
+        } else {
+            ["A pleasant day to thee, <v0>," says Garritt.];
+        }
+        converse {
+            key ("name") {
+                ["I am Garritt, the son of Feridwyn and Brita."];
+                TurnOn(<< "Feridwyn", "Brita" >>);
+                TurnOff("name");
+            }
+            key ("job") {
+                ["I am too young to learn a trade of mine own yet, but I do assist my parents in running the shelter. I hope to be a counselor in The Fellowship one day. Or a professional whistle panpipes player."];
+                TurnOn(<< "shelter", "Fellowship", "panpipes" >>);
+            }
+            key ("Feridwyn") {
+                ["My father works for The Fellowship helping the poor people in Paws. He tries to recruit them, but most refuse."];
+                TurnOff("Feridwyn");
+                TurnOn(<< "Paws", "recruit", "poor people" >>);
+            }
+            key ("Paws") {
+                ["Actually, I do not like this town very much. The people here are all poor and the only one mine own age is Tobias."];
+                if not $VENOM_CASE_SOLVED {
+                    ["And," he adds, "there is a thief here."];
+                }
+                TurnOff("Paws");
+                TurnOn("Tobias");
+                if not $VENOM_CASE_SOLVED {
+                    TurnOn("thief");
+                }
+            }
+            key ("panpipes") {
+                ["I have been playing panpipes since I was little. I'm pretty good now, if I say so myself! I keep the whistle by my bed and practice every night before going to sleep!"];
+                TurnOff("panpipes");
+            }
+            key ("Tobias") {
+                if $VENOM_CASE_SOLVED {
+                    ["I may not have told the truth about Tobias stealing the venom, but I know that he is up to no good. He shall come to a bad end, just thou wait and see!"];
+                } else {
+                    if not $TOBIAS_FRAMED {
+                        ["He and his mother reject The Fellowship. They are witless and stupid and I do not like them."];
+                    } else {
+                        ["I have said it a thousand times. Tobias is weak of character! He and his mother are poor because they are lazy. Now I am proven right because Tobias is a thief. A thief who has been caught!"];
+                    }
+                }
+                TurnOff("Tobias");
+            }
+            key ("recruit") {
+                ["My father was once the head recruiter in Britain until they moved him here. I once heard him talking to mother about how The Fellowship was wasting its time here."];
+                TurnOff("recruit");
+            }
+            key ("poor people") {
+                ["My father says that the poor people reject The Fellowship because the Triad of Inner Strength requires strength of character."];
+                TurnOff("poor people");
+                TurnOn("character");
+            }
+            key ("character") {
+                ["My father says the poor are weak of character and that is why they are poor. They do not have to be. They are just too lazy to work. Dost thou agree?"];
+                v3 = ~AskYesNo();
+                if v3 {
+                    ["I was not so sure, but since that is what my father says, it must be true."];
+                } else {
+                    if v1 {
+                        ["Hmpf. For a Fellowship member, thou dost lack recognition. Thou dost not understand the teachings of The Fellowship."];
+                    } else {
+                        ["Then thou must be a person of weak character, also."];
+                    }
+                }
+                TurnOff("character");
+            }
+            key ("Brita") {
+                ["Oh, she is just my mother. She does whatever my father doth tell her to do."];
+                TurnOff("Brita");
+            }
+            key ("shelter") {
+                ["Plenty of beds are available if thou wouldst like to stay in the shelter," he says with a condescending tone.];
+                TurnOff("shelter");
+            }
+            key ("Fellowship") {
+                if v1 {
+                    ["I am a member and I am proud to say I recruit for them as well."];
+                } else {
+                    ["Oh, I can tell thee all thou dost need to know about us!"];
+                    DescribeFellowship_i();
+                    TurnOn("philosophy");
+                }
+                TurnOff("Fellowship");
+            }
+            key ("philosophy") {
+                ["I am also quite knowledgeable when it comes to our philosophy. We follow the Triad of Inner Strength and do let personal failures get in our way or slow us down."];
+                ["Dost thou want to join?"];
+                v4 = ~AskYesNo();
+                if v4 {
+                    ["I got another one!" he says gleefully. "Thou must speak with my father right away!"];
+                } else {
+                    ["Contemplate it for the nonce, then."];
+                }
+                TurnOff("philosophy");
+            }
+            key ("found venom") {
+                GivePartyExp_i(150);
+                ["Thou hast found me out! Yes, it was I who planted the venom on Tobias. He did deserve it! I beg thee, please do not tell my parents!"];
+                $VENOM_CASE_SOLVED = true;
+                TurnOn(<< "planted", "parents" >>);
+                TurnOff("found venom");
+            }
+            key ("planted") {
+                ["I stole the venom from Morfin so I could put the blame on Tobias."];
+                TurnOn("Morfin");
+                TurnOff("planted");
+            }
+            key ("Morfin") {
+                ["I do not know why Morfin has it or what he does with it. I only knew that it was valuable and that it would cause everyone worry if it were stolen."];
+                [Garritt does not meet your eyes. You instinctively know he is not telling the truth and may very well be using the venom.];
+                TurnOff("Morfin");
+                TurnOn(<< "worry", "using venom?" >>);
+            }
+            key ("using venom?") {
+                [Garritt shuffles his feet and frowns. "Well... I tried it just once. I am sorry. I will never use it again."];
+                TurnOff("using venom?");
+            }
+            key ("worry") {
+                ["I thought that if Tobias were accused of stealing something that everyone would notice, his mother would join The Fellowship and force him to join, too. It would improve their lives and force them to see the truth about themselves."];
+                TurnOff("worry");
+            }
+            key ("parents") {
+                ["Wilt thou tell my parents?"];
+                v5 = ~AskYesNo();
+                if v5 {
+                    if v1 {
+                        ["But I, like thee, am a member of The Fellowship. Thou must stand in unity with me for what I tried to do!"];
+                        TurnOff("parents");
+                    } else {
+                        ["Thou art weak of character! Or otherwise thou wouldst understand what I tried to do!"];
+                    }
+                } else {
+                    ["I thank thee most enthusiastically! It will be our little secret then."];
+                    $GARRITT_PARENTS_SECRET = true;
+                }
+                TurnOff("parents");
+            }
+            key ("thief") {
+                ["There is a thief in this town! Our merchant Morfin had some valuable silver serpent venom stolen from him. The culprit is still free. So be wary!"];
+                $StolenVenom = true;
+                TurnOff("thief");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["Goodbye, then."*];
+        if $VENOM_CASE_SOLVED {
+            SetWorkType(_Loiter, ~NPCToItem_i(_Garritt));
+        }
+    }
+    if (event = _Bark) {
+        v6 = ~GetWorkType(~NPCToItem_i(_Garritt));
+        v7 = ~rndRange(4, 1);
+        if (v6 = 25) {
+            if (v7 = 1) {
+                v8 = "@Nyah nyah!@";
+            }
+            if (v7 = 2) {
+                v8 = "@Cannot catch me!@";
+            }
+            if (v7 = 3) {
+                v8 = "@Catch me if thou can!@";
+            }
+            if (v7 = 4) {
+                v8 = "@Tag! Thou art it!@";
+            }
+            Item_bark(v8, _Garritt);
+        } else {
+            BarkAboutWork_i(_Garritt);
+        }
+    }
+}

@@ -1,0 +1,173 @@
+Routine Karenna accepts a0 #locals(4) #uses(~LordOrLady, ~IsNPCNear, ~AskYesNo, KarennaTrains_i, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Karenna);
+        v0 = ~LordOrLady();
+        v1 = ~GetTime();
+        v2 = ~GetWorkType(~NPCToItem_i(_Karenna));
+        TurnOn(<< "name", "job", "bye", "murders" >>);
+        if flag(244) {
+            TurnOn("gypsies");
+        }
+        if flag(245) {
+            TurnOn("attractive");
+        }
+        if not $MetKarenna {
+            [You see a stealthy-looking woman, dressed all in green. There is a wicked grin on her face.];
+            $MetKarenna = true;
+        } else {
+            ["How good to see thee again," says Karenna.];
+        }
+        converse {
+            key ("name") {
+                ["I answer to Karenna, and to nothing else."];
+                TurnOff("name");
+            }
+            key ("job") {
+                if $LEARNED_ABOUT_MINOC_MURDER {
+                    ["I am a teacher in Minoc, along with Jakher."];
+                    TurnOn(<< "teacher", "Minoc", "Jakher" >>);
+                } else {
+                    ["An odd question to ask at such a time as this, <v0>. Dost thou know that two people lie dead in that sawmill and they are dead from the hand of perpetrator or perpetrators unknown?"];
+                    $LEARNED_ABOUT_MINOC_MURDER = true;
+                    TurnOn("murders");
+                }
+            }
+            key ("Minoc") {
+                ["Minoc was usually busy, but quiet. Then our town was bothered by this nonsense over Owen's monument, and now these murders."];
+                TurnOn(<< "monument", "murders" >>);
+                TurnOff("Minoc");
+            }
+            key ("murders") {
+                ["Shocking! Such things do not normally happen here. It well proves the value of knowing how to defend oneself."];
+                TurnOff("murders");
+            }
+            key ("Jakher") {
+                ["He is quite an able trainer in his own right. Not as skilled as myself, obviously. But I do think he is cute, though I bid thee, do not tell him that I spoke of this. It will only encourage him."];
+                v3 = ~IsNPCNear(_Jakher);
+                if v3 {
+                    SetSpeaker(0, _Jakher);
+                    ["Art thou speaking about me? Mine ears are burning!"*];
+                    SetSpeaker(0, _Karenna);
+                    ["Nothing thou shouldst be concerned about, Jakher." She winks at you.*];
+                    CloseSpeaker(_Jakher);
+                    SetSpeaker(0, _Karenna);
+                }
+                flag(246) = true;
+                TurnOff("Jakher");
+            }
+            key ("teacher") {
+                if (v2 = 27) {
+                    ["I teach that singular skill which enables one to learn all the lessons of life without losing it in the process. Combat!~~"I would charge thee 20 gold for each training session. Art thou still interested?"];
+                    if ~AskYesNo() {
+                        KarennaTrains_i(20, << 1, 4 >>);
+                    } else {
+                        ["Very well. If thou art fortunate thou wilt not have cause to regret it."];
+                        TurnOff("teacher");
+                    }
+                } else {
+                    ["Our establishment is now closed. Please come by during business hours."];
+                    TurnOff("teacher");
+                }
+            }
+            key ("monument") {
+                ["I understand it is to be thirty feet high and will display our local shipwright as he holds aloft a sextant. Thou wouldst not believe a thing as benign as this could create such trouble."];
+                TurnOff("monument");
+                TurnOn("trouble");
+            }
+            key ("trouble") {
+                ["It would seem the increase in hostilities amongst the fair citizenry over our shipwright's monument has filled much of the local populace with a burning desire to acquire combative skills. Business has never been better!"];
+                TurnOff("trouble");
+                TurnOn("hostilities");
+            }
+            key ("hostilities") {
+                ["Everyone in town is all up in arms about this and that. But surely others would know more of these local politics. I care not."];
+                TurnOff("hostilities");
+            }
+            key ("attractive") {
+                ["Jakher told thee he doth find me attractive? He denies it, of course, but I have known for years that he doth have feelings for me."];
+                v3 = ~IsNPCNear(_Jakher);
+                if v3 {
+                    SetSpeaker(0, _Jakher);
+                    ["What? What didst thou say?"*];
+                    SetSpeaker(0, _Karenna);
+                    ["Nothing, Jakher. Go away." She giggles conspiratorally at you.*];
+                    CloseSpeaker(_Jakher);
+                    SetSpeaker(0, _Karenna);
+                }
+                TurnOff("attractive");
+            }
+            key ("gypsies") {
+                ["Frederico, the leader of the Gypsies, and his wife, Tania, were good people. Why, the worst thing I ever knew either of them to do was a simple prank."];
+                TurnOff("gypsies");
+                TurnOn("prank");
+            }
+            key ("prank") {
+                ["Once Frederico threw a rock through the window of the local Fellowship branch... Oh, well, I thought it was amusing!"];
+                TurnOff("prank");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["Farewell. May all thy journeys be interesting ones."*];
+    }
+    if (event = _Bark) {
+        BarkAboutWork_i(_Karenna);
+    }
+}
+
+Routine KarennaTrains_i accepts a0, a1 #locals(12) #uses(~GetStudent, ~AvatarName, ~GetNPCName, ~CanTrain, ~GetStat, DexTrain, CombatTrain_i) {
+    v2 = ~GetStudent();
+    v3 = ~AvatarName();
+    if (v2 = 0) {
+    } else {
+        v4 = ~GetNPCName(v2);
+        if (v4 = v3) {
+            v4 = "you";
+            v5 = "you";
+            v6 = "your";
+            v7 = "find";
+        } else {
+            v7 = "finds";
+            if ((v2 = 65531) or ((v2 = 65528) or (v2 = 65527))) {
+                v5 = "she";
+                v6 = "her";
+            } else {
+                v5 = "he";
+                v6 = "his";
+            }
+        }
+        v8 = 3;
+        v9 = ~CanTrain(v8, v2, v0, v1);
+        if (v9 = 0) {
+            [Karenna looks at <v4> and gives a small laugh. "Thou art not without skill, but thou art not ready yet."];
+        } else {
+            if (v9 = 1) {
+                v10 = ~CountItem(_All, _All, _Gold_Coin, _Party);
+                [You gather your gold and count it, finding that you have <v10> gold altogether.];
+                if (v10 < v0) {
+                    [Karenna gives you a cross look. "I am not running a charity. Come back when thou dost have more money!"];
+                    goto label_18;
+                }
+            }
+            if (v9 = 2) {
+                [Karenna glares at <v4>. "Thou dost but waste my time. Thou art as swift and cunning as I, and I would wager that thou didst know it. I have not the time for such as thee."];
+            } else {
+                v11 = ~TakeFromParty_i(true, _All, _All, _Gold_Coin, v0);
+                [You pay <v0> gold, and the training session begins.];
+                [Karenna leaps like a panther around the padded mat of the training ring. Her movements are so fast, they are a blur. She attacks. At first she lands her blows at will, causing stings of pain that send <v4> reeling, but as the session progresses, <v5> <v7> <v6> reflexes have been sharpened noticeably.];
+                ["I thank thee for a fine practice session. Thou wilt be back." She grins confidently.];
+                v12 = ~GetStat(_Dex, v2);
+                v13 = ~GetStat(_Cbt, v2);
+                if (v12 < 30) {
+                    DexTrain(2, v2);
+                }
+                if (v13 < 30) {
+                    CombatTrain_i(1, v2);
+                }
+            }
+        }
+    }
+    label_18:
+}

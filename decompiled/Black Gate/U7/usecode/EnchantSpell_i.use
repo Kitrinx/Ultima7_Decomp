@@ -1,0 +1,26 @@
+Routine EnchantSpell_i accepts a0 #locals(10) #uses(~DirFromAvatar_i, ~IsMagicOK_i) {
+    v0 = << 722, 723 >>;
+    v1 = << 556, 417 >>;
+    if (event = _Action) {
+        Kernel_resetRef(item);
+        v2 = ~GetTarget();
+        v3 = ~Item_getType(v2);
+        v4 = ~DirFromAvatar_i(v2);
+        Item_bark("@Ort Ylem@", item);
+        if (~IsMagicOK_i() and (v3 in v0)) {
+            v5 = ~PostAction(<< _aFACE_i, v4, _aSFX_i, 67, _aEXTEND1_FRAME_i, _aRAISE1_FRAME_i, _aTHRUST1_FRAME_i >>, item);
+            v5 = ~PostInFuture(4, << _aNO_HALT_i, _aUSABLE_i, #EnchantSpell_i >>, v2);
+        } else {
+            v5 = ~PostAction(<< _aFACE_i, v4, _aEXTEND1_FRAME_i, _aRAISE1_FRAME_i, _aTHRUST1_FRAME_i, _aUSABLE_i, #FizzleSpell_i >>, item);
+        }
+    }
+    if (event = _Posted_i) {
+        v6 = 0;
+        Foreach v9 in v0 {
+            v6 = (v6 + 1);
+            if (v9 = ~Item_getType(item)) {
+                Item_setType(v1::v6, item);
+            }
+        }
+    }
+}

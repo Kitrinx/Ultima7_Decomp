@@ -1,0 +1,215 @@
+Routine Grayson accepts a0 #locals(7) #uses(~IsNearEachOther_i, ~LordOrLady, ~AskYesNo, GraysonSellsArmour_i, GraysonSellsWeapons_i, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Grayson);
+        v0 = ~IsMedallionOn_i();
+        v1 = ~GetTime();
+        v2 = ~GetWorkType(~NPCToItem_i(_Grayson));
+        if (v1 = 7) {
+            v3 = ~IsNearEachOther_i(_Batlin, _Grayson);
+            if v3 {
+                [Grayson shushes you, as you are disturbing the Fellowship meeting.*];
+                terminate;
+            } else {
+                if $BATLIN_MISSING {
+                    ["Now where could that Batlin be? I suppose we shall have to have the meeting without him!"];
+                    goto label_10;
+                } else {
+                    ["I must run! I must run! I must! I must! I am late for the Fellowship meeting!"*];
+                    terminate;
+                }
+            }
+        }
+        v4 = ~LordOrLady();
+        label_10:
+        TurnOn(<< "name", "job", "bye" >>);
+        if not $MetGrayson {
+            [You see a shrewd-looking man who smiles as if he has just seen his next customer.];
+            $MetGrayson = true;
+        } else {
+            ["Hello again, my good friend," says Grayson.];
+        }
+        converse {
+            key ("name") {
+                ["I am Grayson, <v4>. A humble and honest man."];
+                TurnOff("name");
+            }
+            key ("job") {
+                ["Why, here in Britain I sell the best armour and weapons that money can buy. In my spare time, I do deeds for The Fellowship."];
+                TurnOn(<< "buy", "Fellowship" >>);
+            }
+            key ("armour") {
+                [Grayson looks you up and down. "Dost thou truly believe that thou art sufficiently protected in what thou art wearing? In truth I fear for thy safety if thou shouldst become involved in combat. Are thou interested in buying something today?"];
+                if ~AskYesNo() {
+                    GraysonSellsArmour_i();
+                } else {
+                    ["Another time, then."];
+                    PopKeys();
+                }
+                TurnOff("armour");
+            }
+            key ("weapons") {
+                [After looking at you, Grayson says, "I can see that thou art in sore need of weaponry. Dost thou want to buy something today?"];
+                if ~AskYesNo() {
+                    GraysonSellsWeapons_i();
+                } else {
+                    ["Another time, then."];
+                    PopKeys();
+                }
+                TurnOff("weapons");
+            }
+            key ("buy") {
+                ["I sell a complete line of armour and weapons."];
+                if (v2 = 7) {
+                    ["Which wouldst thou care to inspect?"];
+                    PushKeys();
+                    TurnOn(<< "armour", "weapons" >>);
+                } else {
+                    ["Please come to the shop when it is open."];
+                }
+            }
+            key ("Fellowship") {
+                if v0 {
+                    ["I see that thou art a member of The Fellowship!"];
+                }
+                ["It has been very beneficial in my life. I was on the verge of going out of business before I joined and now I am more prosperous than ever before."];
+                TurnOff("Fellowship");
+                TurnOn(<< "beneficial", "out of business" >>);
+            }
+            key ("beneficial") {
+                ["I was never sufficiently forward or aggressive enough to be successful as a merchant but The Fellowship changed all that for me."];
+                TurnOff("beneficial");
+                TurnOn("changed");
+            }
+            key ("changed") {
+                ["By applying the values of the Triad of Inner Strength to my life I have accomplished what I have set out to do with my life. Mine armour and weapon shop is successful and I have a place where I belong in The Fellowship."];
+                TurnOff("changed");
+            }
+            key ("out of business") {
+                ["Thou dost see, I am convinced that my failures were all due to my bad attitude. It took the teachings of The Fellowship to change the way I used my mind and to turn me in the proper direction."];
+                TurnOff("out of business");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["Goodbye and farewell, <v4>."*];
+    }
+    if (event = _Bark) {
+        v1 = ~GetTime();
+        v2 = ~GetWorkType(~NPCToItem_i(_Grayson));
+        v5 = ~rndRange(4, 1);
+        if (v2 = 7) {
+            if (v5 = 1) {
+                v6 = "@Weapons?@";
+            }
+            if (v5 = 2) {
+                v6 = "@Armour?@";
+            }
+            if (v5 = 3) {
+                v6 = "@Something to equip thee?@";
+            }
+            if (v5 = 4) {
+                v6 = "@Need a weapon?@";
+            }
+            Item_bark(v6, _Grayson);
+        } else {
+            BarkAboutWork_i(_Grayson);
+        }
+    }
+}
+
+Usable GraysonSellsArmour_i #locals(13) #uses(~AskOrdList, ~PriceString_i, ~AskYesNo, ~SellItem_i) {
+    PushKeys();
+    v0 = true;
+    v1 = << "nothing", "crested helm", "spiked shield", "leather armour", "chain armour", "plate armour", "leather gloves" >>;
+    v2 = << 0, 542, 578, 569, 571, 573, 579 >>;
+    v3 = 65177;
+    v4 = << 0, 75, 60, 50, 150, 300, 20 >>;
+    v5 = << "", "a ", "a ", "", "", "", "" >>;
+    v6 = << 0, 0, 0, 0, 0, 0, 1 >>;
+    v7 = << "", "", "", "", "", "", " for a pair" >>;
+    v8 = 1;
+    ["What wouldst thou like to buy?"];
+    While v0 {
+        v9 = ~AskOrdList(v1);
+        if (v9 = 1) {
+            ["Fine."];
+            v0 = false;
+        } else {
+            v10 = ~PriceString_i(v7::v9, v4::v9, v6::v9, v1::v9, v5::v9);
+            v11 = 0;
+            ["^<v10> A fair price, yes?"];
+            v12 = ~AskYesNo();
+            if v12 {
+                v11 = ~SellItem_i(false, 1, 0, v4::v9, v8, v3, v2::v9);
+            }
+            if (v11 = 1) {
+                ["Done!"];
+            } else {
+                if (v11 = 2) {
+                    ["Thou cannot possibly carry that much!"];
+                } else {
+                    if (v11 = 3) {
+                        ["Thou dost not have enough gold for that!"];
+                    } else {
+                    }
+                }
+            }
+            ["Wouldst thou like something else?"];
+            v0 = ~AskYesNo();
+        }
+    }
+    PopKeys();
+    PopKeys();
+}
+
+Usable GraysonSellsWeapons_i #locals(13) #uses(~AskOrdList, ~PriceString_i, ~AskYesNo, ~SellItem_i) {
+    PushKeys();
+    v0 = true;
+    v1 = << "nothing", "sling", "dagger", "spear", "mace", "sword", "throwing axe", "2-handed axe", "2-handed sword" >>;
+    v2 = << 0, 474, 594, 592, 659, 599, 593, 601, 602 >>;
+    v3 = 65177;
+    v4 = << 0, 20, 20, 25, 20, 100, 25, 100, 250 >>;
+    v5 = << "", "a ", "a ", "a ", "a ", "a ", "a ", "a ", "a " >>;
+    v6 = << 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1 >>;
+    v7 = << "", "", "", "", "", "", "", "", "" >>;
+    v8 = << 0, 1, 1, 1, 1, 1, 1, 1, 1, 1 >>;
+    ["What wouldst thou like to buy?"];
+    While v0 {
+        v9 = ~AskOrdList(v1);
+        if (v9 = 1) {
+            ["Fine."];
+            v0 = false;
+        } else {
+            v10 = ~PriceString_i(v7::v9, v4::v9, v6::v9, v1::v9, v5::v9);
+            v11 = 0;
+            ["^<v10> A fair price, yes?"];
+            v12 = ~AskYesNo();
+            if v12 {
+                if ((v2::v9 = 722) or (v2::v9 = 723)) {
+                    ["How many dozen wouldst thou like?"];
+                    v11 = ~SellItem_i(true, 1, 5, v4::v9, v8::v9, v3, v2::v9);
+                } else {
+                    v11 = ~SellItem_i(false, 1, 0, v4::v9, v8::v9, v3, v2::v9);
+                }
+            }
+            if (v11 = 1) {
+                ["Done!"];
+            } else {
+                if (v11 = 2) {
+                    ["Thou cannot possibly carry that much!"];
+                } else {
+                    if (v11 = 3) {
+                        ["Thou dost not have enough gold for that!"];
+                    } else {
+                    }
+                }
+            }
+            ["Wouldst thou like something else?"];
+            v0 = ~AskYesNo();
+        }
+    }
+    PopKeys();
+    PopKeys();
+}

@@ -1,0 +1,14 @@
+Routine DeathVortexSpell_i accepts a0 #locals(4) #uses(~DirFromAvatar_i, ~IsMagicOK_i) {
+    if (event = _Action) {
+        v0 = ~GetTarget();
+        v1 = ~DirFromAvatar_i(v0);
+        Kernel_resetRef(item);
+        Item_bark("@Vas Corp Hur@", item);
+        if ~IsMagicOK_i() {
+            v2 = ~SetAttack_i(_Death_Vortex, v0, item);
+            v3 = ~PostAction(<< _aFACE_i, v1, _aSFX_i, 65, _aUP_FRAME_i, _aTHRUST1_FRAME_i, _aATTACK_i >>, item);
+        } else {
+            v2 = ~PostAction(<< _aFACE_i, v1, _aUP_FRAME_i, _aTHRUST1_FRAME_i, _aUSABLE_i, #FizzleSpell_i >>, item);
+        }
+    }
+}

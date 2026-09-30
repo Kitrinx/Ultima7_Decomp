@@ -1,0 +1,153 @@
+Routine Leavell accepts a0 #locals(4) #uses(~LordOrLady, ~IsNPCNear, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Leavell);
+        v0 = ~LordOrLady();
+        v1 = ~GetTime();
+        v2 = ~IsNPCNear(_Robin);
+        v3 = ~IsNPCNear(_Battles);
+        TurnOn(<< "name", "job", "bye" >>);
+        if flag(381) {
+            TurnOn("locket");
+        }
+        if not $MetLeavell {
+            [You see a young man balancing a dagger on the tip of his finger. He tries hard to ignore you.];
+            $MetLeavell = true;
+            if flag(384) {
+                TurnOn("strangers");
+            }
+        } else {
+            [Leavell balances his dagger on his fingertip. In a blur of motion, he snatches it out of the air, pointing at you. He stares you in the eye.];
+        }
+        converse {
+            key ("name") {
+                ["I am Leavell."];
+                TurnOff("name");
+            }
+            key ("job") {
+                ["Along with Battles, I am a bodyguard for Master Robin. If not for him, I would have landed in prison instead of in New Magincia."];
+                TurnOn(<< "Battles", "Robin", "prison", "New Magincia" >>);
+            }
+            key ("strangers") {
+                ["I do not know what thou art talking about."];
+                TurnOff("strangers");
+            }
+            key ("Battles") {
+                ["He has an eye like a hawk, and is quicker than a cat. 'Twould be wise of thee to pay him respect."];
+                if v3 {
+                    SetSpeaker(0, _Battles);
+                    ["Har! Har! Thou art too correct, Leavell!"];
+                    CloseSpeaker(_Battles);
+                    SetSpeaker(0, _Leavell);
+                }
+                TurnOff("Battles");
+                TurnOn(<< "eye", "quick", "respect" >>);
+            }
+            key ("eye") {
+                ["If Battles had not spotted that approaching storm we would have all been dead men for certain!"];
+                TurnOff("eye");
+                TurnOn("storm");
+            }
+            key ("storm") {
+                ["It took a terrible toll on our boat, but if truth be told I have seen far worse."];
+                TurnOff("storm");
+            }
+            key ("quick") {
+                ["I have seen Battles has reflexes faster than a snake."];
+                TurnOff("quick");
+            }
+            key ("prison") {
+                ["Yes, I have done things to be put in prison for. But I am not ashamed of my life. I do not have to be held accountable to thee about it."];
+                TurnOff("prison");
+            }
+            key ("respect") {
+                ["And while thou art about it, thou mayest show respect to me, too." Leavell says with a sneer.];
+                TurnOff("respect");
+            }
+            key ("Robin") {
+                ["He is a gambler by profession, who earns his winnings at the House of Games's tables on Buccaneer's Den."];
+                if v2 {
+                    SetSpeaker(0, _Robin);
+                    ["Soon we shall return and the money will pour like sweet wine once again, eh, Leavell?"];
+                    CloseSpeaker(_Robin);
+                    SetSpeaker(0, _Leavell);
+                }
+                TurnOn(<< "profession", "Buccaneer's Den" >>);
+                TurnOff("Robin");
+            }
+            key ("profession") {
+                ["Gambling is what Robin does for money. But he spends so much time talking about Lord British that thou wouldst think he was royalty or something!"];
+                if v2 {
+                    [Suddenly Leavell gets an embarrassed look on his face and stops talking.*];
+                    SetSpeaker(0, _Robin);
+                    ["Enough about that, Leavell!"*];
+                    CloseSpeaker(_Robin);
+                    SetSpeaker(0, _Leavell);
+                }
+                TurnOff("profession");
+            }
+            key ("Buccaneer's Den") {
+                ["We ran into some misfortune the last time we were there. The Mister at the House of Games learned\x09of Master Robin's system and caused him to lose much of his gold."];
+                TurnOn(<< "The Mister", "system" >>);
+                TurnOff("Buccaneer's Den");
+            }
+            key ("system") {
+                ["He had devised a clever method of cheating at all the various games at the House of Chance. It had earned him several times his weight in gold coins, I am certain."];
+                TurnOff("system");
+            }
+            key ("The Mister") {
+                ["When Master Robin could not pay his debts, The Mister sent his legbreaker, Sintag, and his knaves after us. We had to leave on the first ship out of Buccaneer's Den. I do not know why he is called 'The Mister'."];
+                TurnOn(<< "Sintag", "ship" >>);
+                TurnOff("The Mister");
+            }
+            key ("Sintag") {
+                ["Battles and myself are more than capable of taking care of Sintag..." *];
+                if v3 {
+                    SetSpeaker(0, _Battles);
+                    ["Yeh, thou art bloody right we coulda handled him! We'd a slit him like a sheep! Har!" *];
+                    CloseSpeaker(_Battles);
+                    SetSpeaker(0, _Leavell);
+                }
+                ["But Gordy had hired a troupe of ruffians to chase after us. 'Tis a pity. I would have liked to teach him a lesson or two. In fact, one day I think I shall."];
+                TurnOff("Sintag");
+            }
+            key ("ship") {
+                ["The ship we sailed on sank, leaving us stranded here. We were lucky to make it to New Magincia with our lives!"];
+                TurnOn(<< "sank", "stranded" >>);
+                TurnOff("ship");
+            }
+            key ("sank") {
+                ["The crew could not believe it! The vessel was almost new. It had sailed all the way from Minoc without a problem. In fact, that was the first storm that ship had ever encountered. None of the crew survived, poor buggers."];
+                TurnOff("sank");
+            }
+            key ("stranded") {
+                ["If thou wouldst have some way of getting us back to Buccaneer's Den, Master Robin would reward thee handsomely."];
+                TurnOff("stranded");
+            }
+            key ("New Magincia") {
+                ["Peasant fools and sheep. The only thing worth a second look in this whole town is Constance."];
+                TurnOn(<< "fools and sheep", "Constance" >>);
+                TurnOff("New Magincia");
+            }
+            key ("fools and sheep") {
+                ["Here, what is not one is the other. This place is so isolated that it is backward. What is worse, they prefer it this way!"];
+                TurnOff("fools and sheep");
+            }
+            key ("Constance") {
+                ["She doth put a spring in a man's step! We have our eye on her, we do!" Leavell quickly clears his throat and he looks away from you momentarily.];
+                TurnOff("Constance");
+            }
+            key ("locket") {
+                ["While I myself have seen no such locket, perhaps thou shouldst ask Master Robin about it."];
+                TurnOff("locket");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        [With that Leavell goes back to playing with his dagger.*];
+    }
+    if (event = _Bark) {
+        BarkAboutWork_i(_Leavell);
+    }
+}

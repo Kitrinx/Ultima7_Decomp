@@ -1,0 +1,27 @@
+Routine HelpSpell_i accepts a0 #locals(6) #uses(~IsMagicOK_i) {
+    if (event = _Action) {
+        Kernel_resetRef(item);
+        if ($SEARCHED_STABLES = false) {
+            goto label_8;
+        }
+        Item_bark("@Kal Lor@", item);
+        if ~IsMagicOK_i() {
+            flag(39) = true;
+            v0 = ~PostAction(<< _aSFX_i, 64, _aUP_FRAME_i, _aSTAND_FRAME_i, _aBEND_FRAME_i, _aKNEEL_FRAME_i, _aSTAND_FRAME_i, _aUP_FRAME_i, _aUSABLE_i, #HelpSpell_i >>, item);
+            v1 = ~GetParty();
+            Foreach v4 in v1 {
+                ClearItemFlag_i(_Poisoned, v4);
+                ClearItemFlag_i(_Cursed, v4);
+                ClearItemFlag_i(_Charmed, v4);
+                ClearItemFlag_i(_Paralyzed, v4);
+            }
+        } else {
+            label_8:
+            v0 = ~PostAction(<< _aUP_FRAME_i, _aSTAND_FRAME_i, _aBEND_FRAME_i, _aKNEEL_FRAME_i, _aSTAND_FRAME_i, _aUP_FRAME_i, _aUSABLE_i, #FizzleSpell_i >>, item);
+        }
+    }
+    if (event = _Posted_i) {
+        v5 = << 936, 1146, 0 >>;
+        Item_move(v5, _Party);
+    }
+}

@@ -1,0 +1,150 @@
+Routine Saralek accepts a0 #locals(4) #uses(~IsInInv, SaralekWantsHoney_i, ~AskYesNo) {
+    if (event = _Action) {
+        v0 = ~IsInInv(65177, 65177, _Honey, 1, _Party);
+        SetSpeaker(0, _Saralek);
+        if not flag(340) {
+            if not v0 {
+                [The creature ignores you.*];
+                terminate;
+            } else {
+                SaralekWantsHoney_i();
+            }
+        }
+        if not $MetSaralek {
+            if not $EMP_COMMON {
+                [The ape-like female appears nervous.];
+                $EMP_COMMON = true;
+                $MetSaralek = true;
+            } else {
+                [The female Emp appears nervous.];
+                $MetSaralek = true;
+            }
+        } else {
+            v1 = false;
+            [Saralek greets you. "Hello is said to you, human."];
+            if flag(306) {
+                TurnOn("Trellek");
+            }
+        }
+        if (flag(305) and not flag(344)) {
+            TurnOn("Salamon's permission");
+        }
+        TurnOn(<< "name", "job", "bye" >>);
+        converse {
+            key ("name") {
+                [She shies away for a moment, and then cautiously steps forward. "I am called Saralek."];
+                TurnOff("name");
+                if (flag(306) and not v1) {
+                    TurnOn("Trellek");
+                }
+            }
+            key ("job") {
+                ["`Job' is not understood. Family is what you mean?"];
+                TurnOn("family");
+            }
+            key ("family") {
+                ["Yes, I am part of a family. The Silverleaf tree is my home. I am bonded with Trellek."];
+                TurnOff("family");
+                TurnOn(<< "Silverleaf tree", "Trellek" >>);
+            }
+            key ("Trellek") {
+                ["Trellek is my husband."];
+                v1 = true;
+                if flag(306) && not flag(304) {
+                    ["Trellek has been met by you?" She smiles proudly, and takes another step forward. "What was said by him?"];
+                    TurnOn("join party");
+                }
+                TurnOff("Trellek");
+            }
+            key ("Silverleaf tree") {
+                ["There are fewer and fewer Silverleaf trees. Many are cut down often. Soon, no Silverleaf trees will be around for our homes."];
+                TurnOn("cut down");
+                TurnOff("Silverleaf tree");
+            }
+            key ("cut down") {
+                ["The trees are cut by a human with a shiny, sharp item."];
+                TurnOff("cut down");
+            }
+            key ("join party") {
+                ["To join you is his desire?"];
+                v2 = ~AskYesNo();
+                if v2 {
+                    [She thinks for a moment. "His going away is not desired by me." She turns to look directly at you. "But, joining you may be wise action." She sighs.];
+                    ["Permission from Salamon must be gained first. Then permission from me will be granted. Your return to me is necessary for that."];
+                    flag(304) = true;
+                    TurnOn("Salamon");
+                } else {
+                    ["That is good!" She seems very happy and relieved.];
+                }
+                TurnOff("join party");
+            }
+            key ("Salamon") {
+                ["She is a very wise Emp. Many humans have been met by her. Knowledge and experience are her talents."];
+                TurnOff("Salamon");
+            }
+            key ("Salamon's permission") {
+                [Her eyes begin to mist over.~~ "I am sorry. A lie was told by me. Trellek's leaving is not desired by me. Permission will not be given."~~ Her expression changes.~~ "What is the reason you asked him?"];
+                TurnOn(<< "adventure", "never mind" >>);
+                if flag(312) {
+                    TurnOn("wisps");
+                }
+                flag(344) = true;
+                TurnOff("Salamon's permission");
+            }
+            key ("adventure") {
+                ["Adventure is not Trellek's desire."];
+                TurnOff("adventure");
+            }
+            key ("never mind") {
+                [She shrugs.];
+                TurnOff("never mind");
+            }
+            key ("wisps") {
+                [She smiles excitedly.~~"Your wish is to meet wisps?"];
+                v3 = ~AskYesNo();
+                if v3 {
+                    ["An idea how you can be helped by Trellek is had by me. Wisps are contacted by Trellek's whistling. A whistle for you can be made by him, perhaps. Talking with him again should be your next action."];
+                    flag(341) = true;
+                } else {
+                    ["Oh." She appears depressed again.];
+                }
+                TurnOff(<< "adventure", "never mind", "wisps" >>);
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["Goodbye is said to you, human."*];
+    }
+    if (event = _Bark) {
+        terminate;
+    }
+}
+
+Usable SaralekWantsHoney_i #locals(2) #uses(~AskYesNo, GivePartyExp_i) {
+    SetSpeaker(0, _Saralek);
+    [The ape-like creature slowly and cautiously walks up to you. He, or she, sniffs for a moment, and then points to the honey you are carrying.];
+    TurnOn(<< "Want honey?", "Go away!" >>);
+    converse {
+        key ("Want honey?") {
+            ["Honey will be given by you to me?"];
+            v0 = ~AskYesNo();
+            if v0 {
+                v1 = ~TakeFromParty_i(true, _All, _All, _Honey, 1);
+                ["You are thanked."];
+                GivePartyExp_i(10);
+                flag(340) = true;
+            } else {
+                ["`Goodbye' is said to you."*];
+                terminate;
+            }
+            TurnOff(<< "Want honey?", "Go away!" >>);
+        }
+        key ("Go away!") {
+            [It does.*];
+            terminate;
+        }
+    }
+    clear_answers;
+}

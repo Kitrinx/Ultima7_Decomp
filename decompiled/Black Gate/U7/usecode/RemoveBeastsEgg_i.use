@@ -1,0 +1,12 @@
+Routine RemoveBeastsEgg_i accepts a0 #locals(4) #uses(RemoveAll_i) {
+    if (event = _Trigger) {
+        v0 = ~GetAllInRegion(_Drake);
+        v0 = (v0 & ~GetAllInRegion(_Sheep));
+        if v0 {
+            Foreach v3 in v0 {
+                RemoveAll_i(v3);
+            }
+            Item_destroy(item);
+        }
+    }
+}

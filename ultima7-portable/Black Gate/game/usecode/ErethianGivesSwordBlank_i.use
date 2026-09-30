@@ -1,0 +1,25 @@
+Routine ErethianGivesSwordBlank_i accepts a0 #locals(9) #uses(~AvatarStatue_i) {
+    SetSpeaker(1, _Wilbur);
+    [Erethian's face begins to take on an ashen palor, but he looks contented with a job well done. "As I have said, I myself once attempted to create an artifact of great power. I crafted the hilt from a dark substance that is immutable, save by magical means. The blade, however, is cast of an alloy of this substance and the purest metals known to Britannia. My artistic skills served me well enough to fashion the hilt but, alas, the strength was not in my arm to beat a good temper into the blade. Perhaps, thou canst finish this great artifact for me..." He pulls a poorly worked blade with a fine hilt out of thin air. "Fear not to touch the hilt when the blade is hot, for heat apparently does not travel well across the medium of the pure, black substance. I wish thee good luck."];
+    v0 = ~Item_create(_Sword_Blank);
+    SetFrame(13, v0);
+    v1 = ~PopToNPC(~NPCToItem_i(_Avatar));
+    if v1 {
+        [He hands the sword to you and wearily turns away.*];
+    } else {
+        [He places the sword upon the firepit and wearily turns away."*];
+        v2 = ~FindNearest_i(10, _Firepit, item);
+        v3 = ~GetCoord(v2);
+        v3::2 = (v3::2 - 1);
+        v3::3 = (v3::3 + 2);
+        v4 = ~PopToMap(v3);
+    }
+    CloseSpeaker(_Wilbur);
+    SetWorkType(_Patrol, item);
+    ClearItemFlag_i(_DontMove_i, ~NPCToItem_i(_Avatar));
+    v5 = ~PostAction(<< _aWAIT_i, 13 >>, item);
+    v6 = ~AvatarStatue_i();
+    v7 = ~PostInFuture(13, << _aFINISH_i, _aREMOVE_i >>, v6);
+    v8 = ~PostAction(<< _aWAIT_i, 11, _aUSABLE_i, #EndErethianScene_i >>, ~NPCToItem_i(_Avatar));
+    flag(786) = true;
+}

@@ -1,0 +1,104 @@
+Routine Cairbre accepts a0 #locals(3) #uses(~IsNPCNear, ~LordOrLady, CairbreBarks_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Cairbre);
+        v0 = ~IsNPCNear(_Cosmo);
+        v1 = ~IsNPCNear(_Kallibrus);
+        v2 = ~LordOrLady();
+        TurnOn(<< "name", "job", "bye" >>);
+        if not $MET_CAIRBRE {
+            [The warrior carries himself with confidence.];
+            $MET_CAIRBRE = true;
+        } else {
+            ["Hail, <v2>," says Cairbre.];
+        }
+        converse {
+            key ("name") {
+                ["Thou mayest call me Cairbre, <v2>."];
+                TurnOff("name");
+            }
+            key ("job") {
+                ["I am a sell-sword. But at the moment, I am trying to help my friend regain his senses."];
+                TurnOff("job");
+                TurnOn(<< "friend", "senses" >>);
+            }
+            key ("friend") {
+                ["I was not about to let Cosmo venture down here by himself. So, I offered to accompany him, as did Kallibrus."];
+                if v1 {
+                    [He points to the gargoyle.];
+                } else {
+                    TurnOn("Kallibrus");
+                }
+                TurnOff("friend");
+            }
+            key ("Kallibrus") {
+                ["He is a comrade in arms of mine, and also a friend of Cosmo's. I have yet to meet a more trustworthy companion, for he more than disproves all the rumors about gargoyles."];
+                TurnOff("Kallibrus");
+            }
+            key ("senses") {
+                ["'Tis a long story. Cosmo is looking for the unicorn that supposedly inhabits this cavern." He looks you in the eye and shrugs.~~"He is a fool."];
+                if v0 {
+                    [*];
+                    SetSpeaker(0, _Cosmo);
+                    ["I heard that, Cairbre!"*];
+                    CloseSpeaker(_Cosmo);
+                    SetSpeaker(0, _Cairbre);
+                }
+                flag(736) = true;
+                TurnOff("senses");
+                TurnOn(<< "unicorn", "fool" >>);
+            }
+            key ("unicorn") {
+                ["The unicorn is traditionally a way to prove the purity of a young maiden. However, less commonly known is that it will also reveal a young man's, uh, lack of, um, wild oats."];
+                TurnOff("unicorn");
+            }
+            key ("fool") {
+                ["Ophelia does not love him! She simply sent him on this quest to be rid of him. I doubt she expects him to find the unicorn, let alone return to her."];
+                TurnOff("fool");
+                TurnOn(<< "Ophelia", "rid" >>);
+            }
+            key ("Ophelia") {
+                ["He met her in Jhelom. She was serving in the Bunk and Stool. Apparently it was `love at first sight,' as he calls it."];
+                TurnOff("Ophelia");
+            }
+            key ("rid") {
+                ["The nature of her request is quite ironic, for I would expect that the unicorn would have shunned her quite some time ago. He is not to her tastes, I would imagine, and, were he to truly know her, she would not be to his. But, alas, love is blind, as they say."];
+                TurnOn("they");
+                TurnOff("rid");
+            }
+            key ("they") {
+                ["I do not know who `they' are, but that is what they say, is it not?"];
+                TurnOff("they");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["'Til next time, <v2>."*];
+    }
+    if (event = _Bark) {
+        CairbreBarks_i();
+    }
+}
+
+Usable CairbreBarks_i #locals(4) {
+    v0 = ~NPCToItem_i(_Cairbre);
+    v1 = ~GetWorkType(v0);
+    v2 = "";
+    v3 = ~rndRange(4, 1);
+    if (v1 = 11) {
+        if (v3 = 1) {
+            v2 = "@We'll never find it!@";
+        }
+        if (v3 = 2) {
+            v2 = "@Love. Hah!@";
+        }
+        if (v3 = 3) {
+            v2 = "@I thought thou had it!@";
+        }
+        if (v3 = 4) {
+            v2 = "@Why me?@";
+        }
+    }
+    Item_bark(v2, v0);
+}

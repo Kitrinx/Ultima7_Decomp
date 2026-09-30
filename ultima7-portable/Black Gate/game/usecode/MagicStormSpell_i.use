@@ -1,0 +1,26 @@
+Routine MagicStormSpell_i accepts a0 #locals(6) #uses(~IsMagicOK_i, ~EnemyList_i) {
+    if (event = _Action) {
+        Kernel_resetRef(item);
+        Item_bark("@Vas Oort Hur@", item);
+        if ~IsMagicOK_i() {
+            v0 = 70;
+            flag(749) = true;
+            SetWeather_i(_Rain);
+            v1 = ~PostAction(<< _aSFX_i, 65, _aUP_FRAME_i, _aOUT_FRAME_i, _aUP_FRAME_i, _aTHRUST2_FRAME_i, _aSTAND_FRAME_i >>, item);
+            v1 = ~PostInFuture(8, << _aNO_HALT_i, _aUSABLE_i, #MagicStormSpell_i >>, item);
+            v1 = ~PostInFuture(v0, << _aNO_HALT_i, _aUSABLE_i, #EndMagicStorm_i >>, item);
+        } else {
+            v1 = ~PostAction(<< _aUP_FRAME_i, _aOUT_FRAME_i, _aUP_FRAME_i, _aTHRUST2_FRAME_i, _aUSABLE_i, #FizzleSpell_i >>, item);
+        }
+    }
+    if (event = _Posted_i) && (flag(749) = true) {
+        v2 = 45;
+        v3 = ~EnemyList_i(v2);
+        v4 = v3::~rndRange(~ListSize_i(v3), 1);
+        if v4 {
+            v1 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #CallLightning_i >>, v4);
+        }
+        v5 = ~rndRange(8, 3);
+        v1 = ~PostInFuture(v5, << _aNO_HALT_i, _aUSABLE_i, #MagicStormSpell_i >>, item);
+    }
+}

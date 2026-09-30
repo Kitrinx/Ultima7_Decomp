@@ -1,0 +1,44 @@
+/* Black Gate U7.EXE, overlay segment 246 (file offsets 0x072920 to 0x072a8f, 367 bytes).
+ * Borland C++ 2.0 -mm -O -G -P -Y rebuilds it byte for byte as C++.
+ * Folder chosen by subsystem.
+ */
+
+#include "lowlevel.h"
+#include "dosio.h"
+#include "oops.h"
+#include "makemojo.h"
+#include "voolook.h"
+#include "monsters.h"
+
+char MonstersFileName[] = "monsters.dat";
+MonsterTable MonsterRecords;
+unsigned char MonsterCount = 0;
+ShapeLookup MonsterLookup;
+
+void MonsterTable::load(char *name)
+{
+	int fd;
+	MonsterRecord record;
+
+	fd = DosOpen(name);
+	if (fd == -1)
+		ReportFileNotFound(name);
+	if (DosRead(fd, 0L, 1L, &MonsterCount) != 1)
+		ReportFileNotFound(name);
+	if (!MakeMojo(MonsterCount + 1, 25L, &base, &count))
+		ReportOutOfVoodooMemory();
+	FillFarBytes(&record, 25, 0);
+	record.range = 3;
+	record.walk = 1;
+	record.strength = 10;
+	record.dexterity = 10;
+	record.intelligence = 10;
+	record.combat = 10;
+	record.alignment = 0;
+	record.category = 3;
+	CheckMojoBounds(count, 0L);
+	CopyFarToLinear(base, &record, 25L);
+	if (!ReadMojo(fd, -1L, 1L, MonsterCount, count, base, 25L))
+		ReportFileNotFound(name);
+	DosClose(fd);
+}

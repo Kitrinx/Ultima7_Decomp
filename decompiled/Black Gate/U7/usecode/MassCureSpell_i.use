@@ -1,0 +1,21 @@
+Routine MassCureSpell_i accepts a0 #locals(6) #uses(~IsMagicOK_i) {
+    if (event = _Action) {
+        Kernel_resetRef(item);
+        v0 = ~GetCoord(item);
+        createSprite(65535, 0, 0, 0, v0::2, v0::1, 7);
+        Item_bark("@Vas An Nox@", item);
+        if ~IsMagicOK_i() {
+            v1 = ~PostAction(<< _aEXTEND1_FRAME_i, _aRAISE1_FRAME_i, _aTHRUST1_FRAME_i, _aSFX_i, 64, _aUSABLE_i, #MassCureSpell_i >>, item);
+        } else {
+            v1 = ~PostAction(<< _aEXTEND1_FRAME_i, _aRAISE1_FRAME_i, _aTHRUST1_FRAME_i, _aUSABLE_i, #FizzleSpell_i >>, item);
+        }
+    }
+    if (event = _Posted_i) {
+        v2 = ~GetParty();
+        v2 = (v2 & 65180);
+        Foreach v5 in v2 {
+            ClearItemFlag_i(_Poisoned, v5);
+            ClearItemFlag_i(_Paralyzed, v5);
+        }
+    }
+}

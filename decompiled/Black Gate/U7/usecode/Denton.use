@@ -1,0 +1,251 @@
+Routine Denton accepts a0 #locals(9) #uses(~AvatarName, ~LordOrLady, ~IsNPCNear, DentonSellsFood_i, ~AskYesNo, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Denton);
+        v0 = ~AvatarName();
+        v1 = ~LordOrLady();
+        v2 = ~IsNPCNear(_Dupre);
+        TurnOn(<< "name", "job", "bye" >>);
+        if ($STARTED_HOLD_INVESTIGATION and not $FINISHED_HOLD_INVESTIGATION) {
+            if flag(629) {
+                TurnOn("help");
+            }
+            if flag(629) && flag(601) {
+                TurnOn("got fragments");
+                TurnOff("help");
+            }
+        }
+        if v2 {
+            ["Greetings to thee, Sir Dupre. Art thou back again for thy study of wines for Brommer?"];
+            SetSpeaker(0, _Dupre);
+            ["Why, ah, yes, my good friend, Denton. I am, uh, still conducting that study." He turns to you and shrugs, grinning sheepishly.];
+            CloseSpeaker(_Dupre);
+            SetSpeaker(0, _Denton);
+        }
+        if not flag(624) {
+            [The man before you seems to stare at you blankly.];
+            flag(624) = true;
+        } else {
+            ["Hello, <v1>," says Denton.];
+        }
+        converse {
+            key ("name") {
+                ["I am Sir Denton, <v1>."];
+                flag(629) = true;
+                TurnOff("name");
+                if $STARTED_HOLD_INVESTIGATION && not (flag(601) and not $FINISHED_HOLD_INVESTIGATION) {
+                    TurnOn("help");
+                }
+            }
+            key ("job") {
+                ["I am the tavernkeeper, <v1>. I sell refreshment to the citizens of Britannia, most notably, the knights in Serpent's Hold."];
+                TurnOn(<< "sell", "Serpent's Hold", "knights" >>);
+            }
+            key ("knights") {
+                ["Almost every resident here is a noble warrior. The exceptions would be Lady Jehanne, the provisioner; Lady Tory; Lady Leigh, the healer; and Menion, the trainer. I can also tell thee about all the other residents."];
+                TurnOn(<< "Lady Jehanne", "Lady Tory", "Lady Leigh", "Menion", "residents" >>);
+                TurnOff("knights");
+            }
+            key ("sell") {
+                DentonSellsFood_i();
+            }
+            key ("Serpent's Hold") {
+                ["Serpent's Hold is located at precisely 53 degrees east and 165 degrees south."];
+                TurnOff("Serpent's Hold");
+            }
+            key ("residents") {
+                ["Yes, <v1>, I can tell thee about the following people: ];
+                PushKeys();
+                TurnOn(<< "no one", "Lord John-Paul", "Sir Richter", "Sir Horffe", "Sir Jordan", "Sir Pendaran" >>);
+            }
+            key ("no one") {
+                PopKeys();
+                TurnOff("residents");
+            }
+            key ("Lord John-Paul") {
+                ["He is the Lord of Serpent's Hold. He is a capable leader and a fair man."];
+                TurnOff("Lord John-Paul");
+            }
+            key ("Lady Leigh") {
+                ["Her healing skills are said to be unparalleled."];
+                TurnOff("Lady Leigh");
+            }
+            key ("Sir Richter") {
+                ["He is second in command to Lord John-Paul. He is teaching me how to gamble well. In fact, he began increasing the lessons after joining The Fellowship."];
+                TurnOn("Fellowship");
+                TurnOff("Sir Richter");
+            }
+            key ("Sir Horffe") {
+                ["Sir Horffe is an excellent warrior. He is a gargoyle that was found by two knights when he was very young. They chose to raise him as their own child. He is very honorable."];
+                TurnOff("Sir Horffe");
+                if $MET_SIR_HORFFE {
+                    TurnOn("Gargish accent");
+                }
+            }
+            key ("Gargish accent") {
+                ["Sir Horffe has chosen to use the Gargish syntax of our language so he may better maintain his cultural ties."];
+                TurnOff("Gargish accent");
+            }
+            key ("Sir Jordan") {
+                ["Despite his blindness, Sir Jordan perceives objects around him very well. He is an excellent tinkerer, and can repair many items."];
+                TurnOff("Sir Jordan");
+            }
+            key ("Lady Tory") {
+                ["I believe she is a druid. She was showing me how to be more compassionate than I was before. She is very good at knowing what others are feeling and why they are experiencing such emotions."];
+                TurnOff("Lady Tory");
+            }
+            key ("Menion") {
+                ["He is the fighting instructor. In his spare time, he likes to make swords. Menion has been kind enough to give me one of his creations."];
+                TurnOff("Menion");
+            }
+            key ("Sir Pendaran") {
+                ["Sir Pendaran is a knight of the Hold. He is very friendly, but I have been told he can be overbearing at times."];
+                TurnOff("Sir Pendaran");
+            }
+            key ("Lady Jehanne") {
+                ["She is the lady of Sir Pendaran. She has been helping me better my sense of humor."];
+                TurnOn("humor");
+                TurnOff("Lady Jehanne");
+            }
+            key ("humor") {
+                ["My jokes are very bad. If thou wouldst like, I will tell thee one."];
+                v3 = ~AskYesNo();
+                if v3 {
+                    ["Why did the chicken cross the road?"];
+                    v4 = ~IsNPCNear(_Iolo);
+                    v5 = ~IsNPCNear(_Spark);
+                    if v5 {
+                        SetSpeaker(0, _Spark);
+                        ["To get to the other side! Oh, that joke is new," he says sarcastically."*];
+                        CloseSpeaker(_Spark);
+                    }
+                    if v4 {
+                        SetSpeaker(0, _Iolo);
+                        [Iolo whispers in your ear.~~"<v0>, we have heard that one before. 'Tis best we leave him before he indulges in another joke."];
+                        CloseSpeaker(_Iolo);
+                    }
+                    SetSpeaker(0, _Denton);
+                    PushKeys();
+                    TurnOn(<< "to get to the other side", "I don't know" >>);
+                } else {
+                    [He almost appears disappointed, but it seems more likely that it's your imagination.];
+                }
+                TurnOff("humor");
+            }
+            key ("I don't know") {
+                PopKeys();
+                TurnOff("humor");
+                [He gives a partial smile.~~"To get to the other side. Didst thou think that was funny?"];
+                v6 = ~AskYesNo();
+                if v6 {
+                    [He appears confused. "That is odd, no one else thinks that joke is humorous.~~"Perhaps I am more funny than I thought..."];
+                } else {
+                    ["No one else finds it humorous either. I will continue practicing to be funny."];
+                }
+                TurnOff("I don't know");
+                TurnOff("to get to the other side");
+            }
+            key ("to get to the other side") {
+                PopKeys();
+                TurnOff("humor");
+                ["Oh. Thou hast heard it before."];
+                TurnOff("to get to the other side");
+                TurnOff("I don't know");
+            }
+            key ("Fellowship") {
+                ["The Fellowship is a twenty-year-old organization that holds many festivals, parades, and celebrations. In addition, they maintain a shelter in the town of Paws. They have an underlying philosophy called the Triad of Inner Strength. This triad is broken into the three principles known as `strive for unity,' `trust thy brother,' and `worthiness precedes reward.'I will now explain the meaning of each principple."];
+                v5 = ~IsNPCNear(_Spark);
+                if v5 {
+                    SetSpeaker(0, _Spark);
+                    ["This Denton fellow is really long-winded."*];
+                    CloseSpeaker(_Spark);
+                    SetSpeaker(0, _Denton);
+                }
+                ["Strive for unity seems to mean that The Fellowship wants others to work together for the weal of society. Trust thy brother implies that each person should not question the actions of others. Worthiness precedes reward indicates that The Fellowship's attitude towards reward is that one must do well to be rewarded."];
+                v7 = ~IsMedallionOn_i();
+                if v7 {
+                    [He looks at your medallion.~~"Is mine information correct?"];
+                    v8 = ~AskYesNo();
+                    if v8 {
+                        ["I thank thee. I always endeavor to be correct."];
+                    } else {
+                        ["I shall attempt to become better informed."];
+                    }
+                }
+                TurnOff("Fellowship");
+            }
+            key ("help") {
+                ["Yes, <v1>, I can help thee investigate the crime. I believe the best way to begin would be by speaking with Sir Richter, since he is the one who searched the statue after the incident."];
+                TurnOff("help");
+            }
+            key ("got fragments") {
+                ["Perhaps thou shouldst have these stone chips examined by the healer, Lady Leigh."];
+                if flag(607) {
+                    TurnOn("gargoyle blood");
+                }
+                TurnOff("got fragments");
+            }
+            key ("gargoyle blood") {
+                ["That behavior does not seem typical of Sir Horffe. Thou mayest wish to report to Lord John-Paul, but I expect there is more to this. It would be a good idea to visit Lady Tory. She is very good at sensing the feelings of others, and may have learned something by observing the residents after the event."];
+                TurnOff("gargoyle blood");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["Good day, <v1>."*];
+    }
+    if (event = _Bark) {
+        BarkAboutWork_i(_Denton);
+    }
+}
+
+Usable DentonSellsFood_i #locals(14) #uses(~LordOrLady, ~AskOrdList, ~PriceString_i, ~AskYesNo, ~SellItem_i) {
+    v0 = ~LordOrLady();
+    PushKeys();
+    v1 = true;
+    v2 = << "nothing", "mutton rations", "bread", "trout", "ham", "cake", "grapes", "cheese", "mead", "wine", "ale", "milk" >>;
+    v3 = << 0, 377, 377, 377, 377, 377, 377, 377, 616, 616, 616, 616 >>;
+    v4 = << 65177, 15, 0, 12, 11, 5, 19, 26, 0, 5, 3, 7 >>;
+    v5 = << 0, 16, 6, 3, 15, 1, 3, 3, 10, 5, 2, 4 >>;
+    v6 = << 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0 >>;
+    v7 = << "", " for 10 pieces", " for one loaf", " for one portion", " for one slice", " for one piece", " for a bunch", " for a hunk", " for a bottle", " for a bottle", " for a bottle", " for a bottle" >>;
+    v8 = << 0, 10, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 >>;
+    ["What wouldst thou choose to buy, <v0>?"];
+    While v1 {
+        v9 = ~AskOrdList(v2);
+        if (v9 = 1) {
+            ["Very well, <v0>."];
+            v1 = false;
+        } else {
+            v10 = "";
+            v11 = 0;
+            v12 = ~PriceString_i(v7::v9, v5::v9, v6::v9, v2::v9, v10);
+            ["^<v12>. Dost thou find the price acceptable?"];
+            v13 = ~AskYesNo();
+            if v13 {
+                if (v3::v9 = 616) {
+                    v11 = ~SellItem_i(true, 1, 0, v5::v9, v8::v9, v4::v9, v3::v9);
+                } else {
+                    ["How many dost thou want to purchase?"];
+                    v11 = ~SellItem_i(true, 1, 20, v5::v9, v8::v9, v4::v9, v3::v9);
+                }
+            }
+            if (v11 = 1) {
+                ["Very good, <v0>."];
+            } else {
+                if (v11 = 2) {
+                    ["I believe thou cannot carry that much, <v0>."];
+                } else {
+                    if (v11 = 3) {
+                        ["It would appear thou dost not have enough gold for that!"];
+                    } else {
+                    }
+                }
+            }
+            ["Wouldst thou care to buy something else?"];
+            v1 = ~AskYesNo();
+        }
+    }
+    PopKeys();
+}

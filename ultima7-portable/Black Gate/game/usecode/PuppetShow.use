@@ -1,0 +1,17 @@
+Routine PuppetShow accepts a0 #locals(1) #uses(~AskYesNo) {
+    if (event = _Action) {
+        if ~Kernel_getNumProcesses(item) {
+            return;
+        }
+        if ~IsNPCNear_i(_Carrocio) {
+            SetSpeaker(0, _Carrocio);
+            ["Now is the time for the young and the old to dig in their pockets and give up the gold. * Dost thou wish to donate a gold piece?"];
+            if ~AskYesNo() {
+                v0 = ~TakeFromParty_i(_All, _All, _All, _Gold_Coin, 1);
+                v0 = ~PostAction(<< _aNO_HALT_i, _aFRAME, 0, _aNEXT_FRAME, _aLOOP_i, 65535, 31, byte(70), 0 >>, item);
+                v0 = ~PostAction(<< _aNO_HALT_i, _aWAIT_i, 11, _aSFX_i, 85, _aSFX_i, 83, _aSFX_i, 84, _aWAIT_i, 1, _aSFX_i, 85, _aSFX_i, 83, _aWAIT_i, 3, _aSFX_i, 83, _aWAIT_i, 2, _aSFX_i, 85 >>, item);
+            }
+            CloseSpeaker(_Carrocio);
+        }
+    }
+}

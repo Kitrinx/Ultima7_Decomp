@@ -1,0 +1,17 @@
+Routine PickUpItem_i accepts a0 #locals(3) {
+    v0 = ~Item_getContainer(item);
+    if not v0 {
+        v1 = ~GetCoord(item);
+        v2 = ~Item_push(item);
+        if not ~PopToNPC(~NPCToItem_i(_Avatar)) {
+            v2 = ~PopToMap(v1);
+            FlashMouse_i(5);
+        }
+    } else {
+        v2 = ~Item_push(item);
+        if not ~PopToNPC(~NPCToItem_i(_Avatar)) {
+            v2 = ~PopToNPC(v0);
+            FlashMouse_i(5);
+        }
+    }
+}

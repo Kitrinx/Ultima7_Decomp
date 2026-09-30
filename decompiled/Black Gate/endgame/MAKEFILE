@@ -1,0 +1,245 @@
+#	ENDGAME.EXE, the Black Gate ending
+#
+#	Borland C++ 2.0 with its MAKE and TLIB, and Turbo Assembler 2.51.  Run
+#	MAKE in this directory, the build directory; U7's tree sits beside it
+#	as ..\bg, and the modules MAINMENU or INTRO also link as ..\shared.
+#
+#		make			compiler in C:\BORLANDC
+#		make -DBC=C:\BC20	compiler elsewhere
+#
+#	The options change from file to file, as a makefile gives them.  Each
+#	module searches its own tree's headers first.  Each list of objects
+#	shares one set of options, which its name spells: EG_O1Pd is -O -1 -P
+#	-d in this directory; vi0 is -vi-, BG_ lists are U7 modules and SH_
+#	lists shared ones.
+
+.autodepend
+
+!if !$d(BC)
+BC = C:\BORLANDC
+!endif
+
+CC = $(BC)\bcc +ENDGAME.CFG
+CU7 = $(BC)\bcc +U7.CFG
+AS = tasm
+
+all: ENDGAME.CFG U7.CFG ENDGAME.EXE
+
+# The program's own modules; the compiler's headers come last.
+# One directory a line: BCC hangs on a long -I line.
+ENDGAME.CFG: MAKEFILE
+	copy &&|
+-c -mm
+-I.
+-Icommon
+-Iinclude
+-Imain
+-Imain\mem
+-Imain\xmm
+-Isound
+-Izevent
+-I..\shared
+-I..\shared\main
+-I..\shared\main\mem
+-I..\shared\zevent
+-I..\bg\common
+-I..\bg\inter
+-I..\bg\main
+-I..\bg\main\combat
+-I..\bg\main\mem
+-I..\bg\main\palette
+-I..\bg\main\schedule
+-I..\bg\main\video
+-I..\bg\main\xmm
+-I..\bg\sound
+-I..\bg\sound\drv
+-I..\bg\zevent
+-I..\bg\include
+-I$(BC)\include
+| ENDGAME.CFG
+
+# U7's modules: U7's headers first.
+U7.CFG: MAKEFILE
+	copy &&|
+-c -mm
+-I..\bg\main
+-I..\bg\common
+-I..\bg\inter
+-I..\bg\main\combat
+-I..\bg\main\mem
+-I..\bg\main\palette
+-I..\bg\main\schedule
+-I..\bg\main\video
+-I..\bg\main\xmm
+-I..\bg\sound
+-I..\bg\sound\drv
+-I..\bg\zevent
+-I..\bg\include
+-I..\shared
+-I..\shared\main
+-I..\shared\main\mem
+-I..\shared\zevent
+-I.
+-Icommon
+-Iinclude
+-Imain
+-Imain\mem
+-Imain\xmm
+-Isound
+-Izevent
+-I$(BC)\include
+| U7.CFG
+
+BG_COMMON_ASM = lstrtok.obj
+$(BG_COMMON_ASM):
+	$(AS) /mx ..\bg\common\$&.asm
+
+BG_MAIN_DOS_ASM = addrptr.obj doscreat.obj dosfile.obj dosread.obj \
+	dosseek.obj memmove.obj ptraddr.obj
+$(BG_MAIN_DOS_ASM):
+	$(AS) /mx ..\bg\main\dos\$&.asm
+
+BG_MAIN_MEM_OG = memhook.obj
+$(BG_MAIN_MEM_OG):
+	$(CU7) -O -G ..\bg\main\mem\$&.c
+
+BG_MAIN_MEM_OGP = errors.obj
+$(BG_MAIN_MEM_OGP):
+	$(CU7) -O -G -P ..\bg\main\mem\$&.c
+
+BG_MAIN_MEM_ASM = a20gate.obj
+$(BG_MAIN_MEM_ASM):
+	$(AS) /mx ..\bg\main\mem\$&.asm
+
+BG_MAIN_VIDEO_ASM = crtport.obj vretrace.obj
+$(BG_MAIN_VIDEO_ASM):
+	$(AS) /mx ..\bg\main\video\$&.asm
+
+BG_MAIN_XMM_1G = vooalloc.obj
+$(BG_MAIN_XMM_1G):
+	$(CU7) -1 -G ..\bg\main\xmm\$&.c
+
+BG_MAIN_XMM_OG = xmmcheck.obj xmminit.obj xmmstale.obj
+$(BG_MAIN_XMM_OG):
+	$(CU7) -O -G ..\bg\main\xmm\$&.c
+
+# __FILE__ gives these their bare names, so they compile in their own
+# directory, as in U7's build.
+BG_MAIN_XMM_OWN_OG = freexmm.obj xmmhand.obj
+$(BG_MAIN_XMM_OWN_OG):
+	cd ..\bg\main\xmm
+	$(BC)\bcc -c -mm -I..;..\mem;$(BC)\include -n..\..\..\endgame -O -G $&.c
+	cd ..\..\..\endgame
+
+BG_MAIN_XMM_ASM = emscheck.obj xmmblock.obj
+$(BG_MAIN_XMM_ASM):
+	$(AS) /mx ..\bg\main\xmm\$&.asm
+
+EG_1GPvi0 = chunknam.obj digital.obj display.obj doshandl.obj endgame.obj \
+	file.obj flic.obj iff.obj shapefnt.obj sounddrv.obj speech.obj \
+	textwin.obj xmidi.obj
+$(EG_1GPvi0):
+	$(CC) -1 -G -P -vi- $&.c
+
+EG_1GPvi0d = options.obj
+$(EG_1GPvi0d):
+	$(CC) -1 -G -P -vi- -d $&.c
+
+EG_O1P = biostext.obj dirdelta.obj dlist.obj ds1482.obj ds169a.obj \
+	fatal.obj fileio.obj flatflag.obj linefile.obj memfile.obj message.obj \
+	reporter.obj rowtable.obj shutdown.obj strbuf.obj strops.obj vidrest.obj
+$(EG_O1P):
+	$(CC) -O -1 -P $&.c
+
+EG_O1Pd = box.obj cache.obj cachelst.obj cachenod.obj emsmem.obj \
+	farmem.obj framebox.obj memhand.obj memrept.obj memsnap.obj memsys.obj \
+	nearmem.obj palette.obj scrview.obj view.obj
+$(EG_O1Pd):
+	$(CC) -O -1 -P -d $&.c
+
+EG_O1ZP = palstep.obj
+$(EG_O1ZP):
+	$(CC) -O -1 -Z -P $&.c
+
+EG_OGP = fatalerr.obj
+$(EG_OGP):
+	$(CC) -O -G -P $&.c
+
+EG_ASM = dacread.obj dacwrite.obj dosattr.obj emsinit.obj flicbrun.obj \
+	flicclr.obj flicdlta.obj outline.obj xmsflat.obj
+$(EG_ASM):
+	$(AS) /mx $&.asm
+
+EG_ASMm2 = emsalloc.obj emsstat.obj
+$(EG_ASMm2):
+	$(AS) /mx /m2 $&.asm
+
+# Miles' AIL driver interface, assembled with his own options.
+ail.obj: AIL.ASM AIL.INC AIL.MAC
+	$(AS) /m /w+ /ml AIL.ASM
+
+EG_COMMON_1GPvi0 = easyfile.obj strfmt.obj
+$(EG_COMMON_1GPvi0):
+	$(CC) -1 -G -P -vi- common\$&.c
+
+EG_MAIN_1 = videomd.obj
+$(EG_MAIN_1):
+	$(CC) -1 main\$&.c
+
+EG_MAIN_1GPvi0d = endstats.obj
+$(EG_MAIN_1GPvi0d):
+	$(CC) -1 -G -P -vi- -d main\$&.c
+
+EG_MAIN_DOS_ASM = doswrite.obj
+$(EG_MAIN_DOS_ASM):
+	$(AS) /mx main\dos\$&.asm
+
+EG_MAIN_MEM_O1P = memmgr.obj
+$(EG_MAIN_MEM_O1P):
+	$(CC) -O -1 -P main\mem\$&.c
+
+EG_MAIN_XMM_ASM = drawfram.obj drawxlat.obj fillrect.obj
+$(EG_MAIN_XMM_ASM):
+	$(AS) /mx main\xmm\$&.asm
+
+EG_SOUND_1GPvi0d = gsound.obj
+$(EG_SOUND_1GPvi0d):
+	$(CC) -1 -G -P -vi- -d sound\$&.c
+
+EG_ZEVENT_O1P = systimer.obj
+$(EG_ZEVENT_O1P):
+	$(CC) -O -1 -P zevent\$&.c
+
+SH_ASM = emsmap.obj flatmode.obj
+$(SH_ASM):
+	$(AS) /mx ..\shared\$&.asm
+
+SH_MAIN_XMM_ASM = clrview.obj copyview.obj framebnd.obj linear.obj
+$(SH_MAIN_XMM_ASM):
+	$(AS) /mx ..\shared\main\xmm\$&.asm
+
+# FatalError links from a library: its data follows CM.LIB's.
+fatalerr.lib: fatalerr.obj
+	$(BC)\tlib fatalerr.lib -+fatalerr.obj
+
+# MAKE limits the length of a rule line, so ENDGAME.EXE depends on a few
+# lists.
+all_bg: $(BG_COMMON_ASM) $(BG_MAIN_DOS_ASM) $(BG_MAIN_MEM_OG) $(BG_MAIN_MEM_OGP)
+
+all_bg_sub: $(BG_MAIN_MEM_ASM) $(BG_MAIN_VIDEO_ASM) $(BG_MAIN_XMM_1G) $(BG_MAIN_XMM_OG)
+
+all_bg_xmm: $(BG_MAIN_XMM_OWN_OG) $(BG_MAIN_XMM_ASM)
+
+all_eg: $(EG_1GPvi0) $(EG_1GPvi0d) $(EG_O1P) $(EG_O1Pd) $(EG_O1ZP)
+
+all_eg_asm: $(EG_ASM) $(EG_ASMm2) ail.obj
+
+all_eg_sub: $(EG_COMMON_1GPvi0) $(EG_MAIN_1) $(EG_MAIN_1GPvi0d) $(EG_MAIN_DOS_ASM)
+
+all_eg_io: $(EG_MAIN_MEM_O1P) $(EG_MAIN_XMM_ASM) $(EG_SOUND_1GPvi0d) $(EG_ZEVENT_O1P)
+
+all_sh: $(SH_ASM) $(SH_MAIN_XMM_ASM)
+
+ENDGAME.EXE: all_bg all_bg_sub all_bg_xmm all_eg all_eg_asm all_eg_sub \
+	all_eg_io all_sh fatalerr.lib ENDGAME.LNK
+	$(BC)\tlink /m /s /c /d /L$(BC)\lib @ENDGAME.LNK

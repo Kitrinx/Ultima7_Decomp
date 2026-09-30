@@ -1,0 +1,157 @@
+Routine Patterson accepts a0 #locals(4) #uses(~IsNearEachOther_i, ~IsNPCNear, GivePartyExp_i, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Patterson);
+        v0 = ~GetTime();
+        if (v0 = 7) {
+            v1 = ~IsNearEachOther_i(_Batlin, _Patterson);
+            if v1 {
+                [Patterson is concentrating on the Fellowship meeting and does not wish to speak.*];
+                terminate;
+            } else {
+                if $BATLIN_MISSING {
+                    ["I wonder where Batlin could be! 'Tis not like him to miss a meeting."];
+                    goto label_9;
+                } else {
+                    ["I cannot stop to speak right now. I am late for the Fellowship meeting!"*];
+                    terminate;
+                }
+            }
+        }
+        label_9:
+        TurnOn(<< "name", "job", "bye" >>);
+        if $HEARD_ABOUT_PATTERSONS_AFFAIR {
+            TurnOn("Candice");
+        }
+        if $LEARNED_ABOUT_BRITAIN_MURDER {
+            TurnOn("body");
+        }
+        if not $MetPatterson {
+            [You see a nobleman in his forties who looks like either a politician or a well-dressed merchant.];
+            ["Avatar! I was just alerted of thy presence in our fair city! I have been expecting thee!"];
+            $MetPatterson = true;
+        } else {
+            if ((v0 = 0) or ((v0 = 1) or (v0 = 2))) {
+                v2 = ~IsNPCNear(_Candice);
+                v3 = ~IsNPCNear(_Iolo);
+                if v2 {
+                    ["Avatar! Er, uhm, how art thee? Oh, dost thou know Candice, the curator at the Royal Museum? She is a 'brother' at The Fellowship. I was, er, just seeing her home!"];
+                    if v3 {
+                        SetSpeaker(0, _Iolo);
+                        ["Hmmm. And does thy wife know thou art seeing Candice home?"];
+                        CloseSpeaker(_Iolo);
+                    } else {
+                        [You ask if Judith knows about this.];
+                    }
+                    SetSpeaker(0, _Patterson);
+                    ["Why, she doth not need to know! It does not matter! 'Tis nothing, really!"~~The Mayor is sweating profusely. He looks at you with beady eyes. He knows he has been found out. His body slumps. He is mortified and ashamed.~~"Thou hast discovered my... our secret. Please do not tell Judith. I... will end this. I swear. Candice -- we must stop meeting. I... I'm sorry."~~You decide to leave Patterson and Candice to work out what has happened, and you hope that the Mayor has learned something about honesty.*];
+                    GivePartyExp_i(20);
+                    terminate;
+                } else {
+                    ["How may I help thee?" Patterson asks.];
+                }
+            } else {
+                ["How may I help thee?" Patterson asks.];
+            }
+        }
+        converse {
+            key ("name") {
+                ["I am Patterson. Named after my father." He holds his hand out, takes yours, and shakes it firmly. "It is such a pleasure to meet the Avatar!"];
+                TurnOff("name");
+            }
+            key ("job") {
+                ["Why, I am the Town Mayor! The Town Mayor of Britain, that is! I would have thee know that mine election was an overwhelming victory! Mine opponent never had a chance!~~ "I am also President of the Britannian Tax Council."];
+                TurnOn(<< "election", "opponent", "Tax Council" >>);
+            }
+            key ("election") {
+                ["It was held two years ago. I received 84 percent of the votes. It was an impressive victory, I must admit.~~ "Of course, when one has a group like The Fellowship behind them..."];
+                TurnOff("election");
+                TurnOn("Fellowship");
+            }
+            key ("opponent") {
+                ["He was an old farmer named Brownie. Didn't have much money to put into a campaign. Even the peasants didn't support him."];
+                TurnOff("opponent");
+                TurnOn("peasants");
+                flag(127) = true;
+            }
+            key ("Fellowship") {
+                ["My life has improved greatly since I joined. I find that mine honesty is impeccable, my leadership is unchallengeable, and my love for my wife is irreproachable.];
+                if not $JoinFellow {
+                    ["Thou shouldst consider attending one of our meetings in the evening."];
+                } else {
+                    ["I would wager that thy life has improved as well!"];
+                }
+                TurnOff("Fellowship");
+                TurnOn(<< "honesty", "wife" >>);
+            }
+            key ("peasants") {
+                ["Did I say that? I certainly did not mean it. There is no class system in Britain anymore, nor in the entire country, for that matter! What I meant is that the 'peasantry', that is, those people who are not of superior lineage -- which is the type of man Brownie is -- -they- did not support him either. They knew who would be the best leader!"];
+                TurnOff("peasants");
+                TurnOn("superior");
+            }
+            key ("superior") {
+                ["Did I say that? I do not think I really meant that the way it sounded. What I meant to say was that there are people who come from families of better standing than others. And Brownie is not one of them! But do not misunderstand me -- I still maintain that the class system in Britannia has been abolished!"];
+                TurnOff("superior");
+                if flag(130) {
+                    TurnOn("Nanna");
+                }
+            }
+            key ("Nanna") {
+                ["She said what? Well, she's wrong! And to think she is a 'brother'. One of The Fellowship! I shall have to speak to Batlin about her."~~You notice that Patterson seems ill-at-ease.];
+                TurnOff("Nanna");
+            }
+            key ("honesty") {
+                ["I am obviously the most honest person in Britain! Perhaps I should move to Moonglow! Ha!"];
+                TurnOff("honesty");
+                if flag(129) {
+                    TurnOn("Judith suspicious");
+                }
+            }
+            key ("wife") {
+                ["Her name is Judith. She's the music teacher at The Music Hall. Perhaps thou hast met her. We have a wonderful relationship."];
+                TurnOff("wife");
+            }
+            key ("Tax Council") {
+                ["The land must have some way of generating income. Taxes are the only solution. Every merchant and farmer is taxed. Anyone who works for a living is taxed."~~ "The Britannian Tax Council has its main office in the Royal Mint."];
+                TurnOff("Tax Council");
+            }
+            key ("Judith suspicious") {
+                ["Why, I do not know what she is talking about! I work late, that is all!"];
+                v3 = ~IsNPCNear(_Iolo);
+                if v3 {
+                    SetSpeaker(0, _Iolo);
+                    [Iolo whispers to you, "This man seems very defensive, dost thou not think? I say we should observe him and see where he goes after The Fellowship meeting tonight."];
+                    CloseSpeaker(_Iolo);
+                    SetSpeaker(0, _Patterson);
+                }
+                TurnOff("Judith suspicious");
+            }
+            key ("Candice") {
+                [Patterson's eyes widen and for a moment looks very nervous. But very quickly he regains his composure.~~ "Candice? Why, she is a friend! A 'brother' at The Fellowship! That is all!"];
+                TurnOff("Candice");
+            }
+            key ("body") {
+                [You relate what Lord British said about the murder in Britain a few years ago. Patterson nods.~~"I remember it well. Quite gruesome, it was. There was a man named Finster who was running for public office. He was quite outspoken in his opinions, and I suppose this got him into trouble."];
+                TurnOff("body");
+                TurnOn("opinions");
+            }
+            key ("opinions") {
+                ["He was trying to make many social changes. He wanted more power for the Great Council and the Britannian Tax Council, and he wanted to disband The Fellowship. Finster was a nobleman with too much ambition. Anyway, his beliefs must have provided him with a few enemies."];
+                TurnOff("opinions");
+                TurnOn("enemies");
+            }
+            key ("enemies") {
+                ["How should I know? Anyway, his body was found in an abandoned building which is no longer standing. It used to be a storehouse of some kind, up near the castle. It was torn down a couple of years ago. The body was mutilated beyond belief. It was as if someone tied the poor man down with stakes and cut off all of his limbs. Finster was then beheaded. It was almost... what is the word... ritualistic!~~"And that is all I remember. No one was ever arrested for the crime."];
+                GivePartyExp_i(20);
+                TurnOff("enemies");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        [Patterson nods his head at you.*];
+    }
+    if (event = _Bark) {
+        BarkAboutWork_i(_Patterson);
+    }
+}

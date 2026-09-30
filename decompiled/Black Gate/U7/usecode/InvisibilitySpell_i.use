@@ -1,0 +1,17 @@
+Routine InvisibilitySpell_i accepts a0 #locals(3) #uses(~DirFromAvatar_i, ~IsMagicOK_i) {
+    if (event = _Action) {
+        v0 = ~GetTarget();
+        Kernel_resetRef(item);
+        v1 = ~DirFromAvatar_i(v0);
+        Item_bark("@Sanct Lor@", item);
+        if ~IsMagicOK_i() {
+            v2 = ~PostAction(<< _aFACE_i, v1, _aSFX_i, 67, _aUP_FRAME_i, _aOUT_FRAME_i, _aTHRUST2_FRAME_i >>, item);
+            v2 = ~PostInFuture(4, << _aNO_HALT_i, _aUSABLE_i, #InvisibilitySpell_i >>, v0);
+        } else {
+            v2 = ~PostAction(<< _aFACE_i, v1, _aUP_FRAME_i, _aOUT_FRAME_i, _aTHRUST2_FRAME_i, _aUSABLE_i, #FizzleSpell_i >>, item);
+        }
+    }
+    if (event = _Posted_i) {
+        SetItemFlag_i(_Invisible, item);
+    }
+}

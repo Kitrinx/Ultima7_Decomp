@@ -1,0 +1,8 @@
+Routine Pot accepts a0 #locals(1) #uses(~IsAbleToTalk_i) {
+    if (event = _Action) && ~GetFrame(item) && ~IsAbleToTalk_i(_Avatar) {
+        Item_bark("ptui!", _Avatar);
+        if not ~InGumpMode_i() {
+            v0 = ~PostInFuture(3, << _aSFX_i, 24 >>, item);
+        }
+    }
+}

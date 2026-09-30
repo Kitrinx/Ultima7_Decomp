@@ -1,0 +1,21 @@
+Routine WeatherSpell_i accepts a0 #locals(4) #uses(~IsMagicOK_i) {
+    if (event = _Action) {
+        Kernel_resetRef(item);
+        Item_bark("@Rel Hur@", item);
+        if ~IsMagicOK_i() {
+            v0 = ~PostAction(<< _aRAISE1_FRAME_i, _aTHRUST1_FRAME_i, _aSFX_i, 68 >>, item);
+            v1 = << 0, 1, 2 >>;
+            if (~GetWeather_i() = _Clear) {
+                v2 = ~rndRange(3, 2);
+                v3 = v1::v2;
+                SetWeather_i(v3);
+            } else {
+                if (~GetWeather_i() <> _Sparkle) {
+                    SetWeather_i(_Clear);
+                }
+            }
+        } else {
+            v0 = ~PostAction(<< _aRAISE1_FRAME_i, _aTHRUST1_FRAME_i, _aUSABLE_i, #FizzleSpell_i >>, item);
+        }
+    }
+}

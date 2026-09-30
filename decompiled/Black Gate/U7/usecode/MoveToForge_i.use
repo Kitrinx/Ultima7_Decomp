@@ -1,0 +1,61 @@
+Routine MoveToForge_i accepts a0 #locals(17) #uses(~AvatarStatue_i) {
+    v0 = (~GetCoord(item) & (8 & 6));
+    v1 = ~FindNearby_i(16, 40, _Egg, v0);
+    v2 = (~GetCoord(item) & (9 & 6));
+    v3 = ~FindNearby_i(16, 40, _Egg, v2);
+    if (v1 and v3) {
+        v4 = ~GetCoord(v1::1);
+        v5 = ~GetCoord(v3::1);
+        v6 = ~AvatarStatue_i();
+        Item_move(v4, item);
+        Item_move(v5, ~NPCToItem_i(_Avatar));
+        if v6 {
+            Item_move(v5, v6);
+        }
+        v7 = 1;
+        v8 = ~GetParty();
+        v9 = v5;
+        Foreach v12 in v8 {
+            if (v7 = 1) {
+                v9::1 = (v5::1 - 2);
+                v9::2 = (v5::2 + 2);
+            }
+            if (v7 = 2) {
+                v9::1 = (v5::1 + 2);
+                v9::2 = (v5::2 + 2);
+            }
+            if (v7 = 3) {
+                v9::1 = (v5::1 - 4);
+                v9::2 = (v5::2 + 4);
+            }
+            if (v7 = 4) {
+                v9::1 = v5::1;
+                v9::2 = (v5::2 + 4);
+            }
+            if (v7 = 5) {
+                v9::1 = (v5::1 + 4);
+                v9::2 = (v5::2 + 4);
+            }
+            if (v7 = 6) {
+                v9::1 = (v5::1 - 2);
+                v9::2 = (v5::2 + 6);
+            }
+            if (v7 = 7) {
+                v9::1 = (v5::1 + 2);
+                v9::2 = (v5::2 + 6);
+            }
+            if not (v12 = ~NPCToItem_i(_Avatar)) {
+                Item_move(v9, v12);
+                v13 = ~PostAction(<< _aFACE_i, _North >>, v12);
+                v7 = (v7 + 1);
+            }
+        }
+        v14 = ~PostAction(<< _aFACE_i, _South, _aWAIT_i, 2, _aUSABLE_i, #ArriveAtForge_i >>, item);
+        v15 = ~PostAction(<< _aFACE_i, _North >>, ~NPCToItem_i(_Avatar));
+        if ~AvatarSex() {
+            v16 = ~PostAction(<< _aFRAME, 20 >>, v6);
+        } else {
+            v16 = ~PostAction(<< _aFRAME, 18 >>, v6);
+        }
+    }
+}

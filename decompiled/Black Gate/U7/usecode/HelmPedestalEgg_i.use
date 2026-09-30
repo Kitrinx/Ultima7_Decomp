@@ -1,0 +1,52 @@
+Routine HelmPedestalEgg_i accepts a0 #locals(15) {
+    v0 = ~FindNearby_i(0, 20, _Portcullis_Door_936, item);
+    v1 = ~FindNearby_i(0, 20, _Metal_Wall_303, item);
+    v2 = ~GetQuality(item);
+    if v2 {
+        v3 = ~FindNearest_i(0, _Magic_Helm, item);
+        v4 = ~FindNearest_i(0, _Great_Helm, item);
+        if v3 {
+            flag(830) = true;
+            Foreach v7 in v1 {
+                if (~GetQuality(v7) = 12) {
+                    v8 = ~PostAction(<< _aFRAME, 4, _aSFX_i, 33, _aPREV_FRAME, _aLOOP_i, 65535, 3, byte(85), 936 >>, v7);
+                }
+            }
+        } else {
+            flag(830) = false;
+            Foreach v7 in v0 {
+                if (~GetQuality(v7) = 12) {
+                    v8 = ~PostAction(<< _aUSABLE_i, #MetalWall_012F, _aSFX_i, 32, _aNEXT_FRAME, _aLOOP_i, 65535, 3 >>, v7);
+                }
+            }
+            if v4 {
+                Sfx(28);
+            } else {
+                Sfx(28);
+            }
+        }
+    } else {
+        v4 = ~FindNearest_i(0, _Great_Helm, item);
+        v3 = ~FindNearest_i(0, _Magic_Helm, item);
+        if v4 {
+            flag(829) = true;
+            Foreach v7 in v1 {
+                if (~GetQuality(v7) = 11) {
+                    v8 = ~PostAction(<< _aFRAME, 4, _aSFX_i, 33, _aPREV_FRAME, _aLOOP_i, 65535, 3, byte(85), 936 >>, v7);
+                }
+            }
+        } else {
+            flag(829) = false;
+            Foreach v7 in v0 {
+                if (~GetQuality(v7) = 11) {
+                    v8 = ~PostAction(<< _aUSABLE_i, #MetalWall_012F, _aSFX_i, 32, _aNEXT_FRAME, _aLOOP_i, 65535, 3 >>, v7);
+                }
+            }
+            if v3 {
+                Sfx(28);
+            } else {
+                Sfx(28);
+            }
+        }
+    }
+}

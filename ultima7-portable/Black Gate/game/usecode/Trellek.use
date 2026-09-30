@@ -1,0 +1,241 @@
+Routine Trellek accepts a0 #locals(16) #uses(~AvatarName, ~IsInInv, TrellekWantsHoney_i, ~AskList, ~AskYesNo, GivePartyExp_i) {
+    if (event = _Action) {
+        v0 = ~AvatarName();
+        v1 = "Avatar";
+        v2 = ~GetParty();
+        v3 = false;
+        v4 = ~NPCToItem_i(_Trellek);
+        v5 = ~NPCToItem_i(_Tseramed);
+        v6 = ~IsInInv(65177, 65177, _Honey, 1, _Party);
+        SetSpeaker(0, _Trellek);
+        if not flag(340) {
+            if not v6 {
+                [The creature ignores you.*];
+                terminate;
+            } else {
+                TrellekWantsHoney_i();
+            }
+        }
+        TurnOn(<< "name", "job", "bye" >>);
+        if flag(310) {
+            v7 = v0;
+        }
+        if flag(311) {
+            v7 = v1;
+        }
+        if not flag(25) {
+            if not $EMP_COMMON {
+                [The ape-like creature peers at you intently for a few minutes. Then, shrugging, it walks cautiously up to you. "I am Trellek. Your name is?"];
+                v8 = ~AskList(<< v0, v1 >>);
+                if (v8 = v0) {
+                    flag(310) = true;
+                }
+                if (v8 = v1) {
+                    flag(311) = true;
+                }
+                $EMP_COMMON = true;
+                flag(25) = true;
+            } else {
+                [The Emp peers at you intensely for a few minutes. Then, shrugging, it walks cautiously up to you. "I am Trellek. Your name is?"];
+                v8 = ~AskList(<< v0, v1 >>);
+                if (v8 = v0) {
+                    flag(310) = true;
+                    v7 = v0;
+                }
+                if (v8 = v1) {
+                    flag(311) = true;
+                    v7 = v1;
+                }
+                flag(25) = true;
+            }
+            ["You are greeted."];
+        } else {
+            ["You are greeted, <v7>."];
+        }
+        if (flag(312) and not flag(342)) {
+            if flag(344) {
+                if flag(341) {
+                    if not flag(342) {
+                        TurnOn("Saralek's idea");
+                    }
+                } else {
+                    TurnOn("No permission");
+                }
+            } else {
+                if not flag(306) {
+                    TurnOn("wisps");
+                }
+            }
+        }
+        if flag(226) {
+            TurnOn("Julius");
+        }
+        if (flag(337) and not flag(306)) {
+            TurnOn("join");
+        }
+        converse {
+            key ("name") {
+                ["My name is still Trellek."];
+                TurnOff("name");
+            }
+            key ("job") {
+                [He gives you a puzzled look.~~"The meaning of `job' is not clear to me. Is `work' the word meant by you?"];
+                v9 = ~AskYesNo();
+                if v9 {
+                    ["I am a gatherer of food."];
+                    TurnOn("gatherer");
+                } else {
+                    ["No job is had by me."];
+                }
+            }
+            key ("gatherer") {
+                ["All Emps are food-gatherers. Mainly fruits are sought by us."];
+                TurnOff("gatherer");
+                TurnOn(<< "fruits", "Emps" >>);
+            }
+            key ("fruits") {
+                ["Fruits are pleasant-tasting, like the honey you gave us!"];
+                TurnOff("fruits");
+            }
+            key ("Emps") {
+                ["I am an Emp. Saralek is an Emp. Salamon is an Emp. You," he smiles, "are a human."];
+                TurnOff("Emps");
+                TurnOn(<< "Saralek", "Salamon" >>);
+            }
+            key ("Saralek") {
+                ["Saralek is my bonded-one. `Wife' is what you would call her. My home is her home."];
+                TurnOn("home");
+                TurnOff("Saralek");
+            }
+            key ("home") {
+                ["Silverleaf trees are our homes," he nods.];
+                TurnOff("home");
+                TurnOn("Silverleaf trees");
+            }
+            key ("Silverleaf trees") {
+                ["Silverleaf trees cannot be explained by me in human terms. I am sorry. Another human should be asked by you?" he shrugs, imitating the human gesture rather well.];
+                TurnOff("Silverleaf trees");
+            }
+            key ("Salamon") {
+                ["Salamon is the wisest Emp. Humans have been met by her. -Many- things have been seen by her. She is very experienced and knowledgeable."];
+                TurnOff("Salamon");
+            }
+            key ("wisps") {
+                ["Wisps are known to me," he nods. "Wisps are found in the woods. What is your concern?"];
+                TurnOn(<< "woods", "talk to wisps" >>);
+                TurnOff("wisps");
+            }
+            key ("No permission") {
+                ["For you to talk to wisps is still your wish? Then helping you is my goal. A whistle can be made by me."];
+                TurnOff("No permission");
+                TurnOn("whistle");
+            }
+            key ("Saralek's idea") {
+                ["Correct was my bonded-one. A whistle can be made by me."];
+                TurnOn("whistle");
+                TurnOff("Saralek's idea");
+            }
+            key ("woods") {
+                ["The residence of the wisps is a stone building in a mountain in the middle of the forest."];
+                TurnOff("woods");
+            }
+            key ("whistle") {
+                ["A whistling sound is made by Emps when talking is done by us. An imitation of that sound can be created by a special whistle," he says enthusiastically.~~He begins quickly searching around for a dead, hollow, fallen tree branch. Shortly he finds one that meets his satisfaction. Apparently embarrassed, he turns his back to you, and makes motions similar to one twisting a cork from a flagon.~~After a few minutes of this, he turns around and presents the whistle to you.];
+                v10 = ~GiveToParty_i(false, 1, _All, _Whistle, 1);
+                if v10 {
+                    ["Here is your whistle."];
+                    GivePartyExp_i(50);
+                    flag(342) = true;
+                } else {
+                    ["Fewer items must be carried by you to take this whistle."];
+                }
+                TurnOff("whistle");
+            }
+            key ("talk to wisps") {
+                ["Your statement is a mystery. For me to talk to wisps is what you want?"];
+                v11 = ~AskYesNo();
+                if v11 {
+                    [He looks around, apparently surveying the area.~~ "No wisps are here for conversation."];
+                    TurnOn("go there");
+                } else {
+                    ["Your want is not conveyed to me." He shrugs.];
+                }
+                TurnOff("talk to wisps");
+            }
+            key ("Julius") {
+                SetMusic(0, 26);
+                ["Julius was a good human. His great deed was saving Emp family from big fire years ago." He stares at you directly.~~"But, his story is sad, being about his death from too much smoke in his body. His body is in the cemetery near the Abbey. He is one human that Emps call 'hero'."];
+                flag(297) = true;
+                TurnOff("Julius");
+            }
+            key ("go there", "join") {
+                ["Your wish is for me to travel with you?"];
+                v3 = ~AskYesNo();
+                if v3 {
+                    ["My wish is that also. But that is not the wish of Saralek, my wife. Permission from her must first be gained."];
+                    flag(306) = true;
+                } else {
+                    ["You are very odd, <v7>."];
+                }
+                v3 = true;
+                TurnOff(<< "go there", "join" >>);
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["Good luck is hoped for you."*];
+    }
+    if (event = _Bark) {
+        v12 = ~GetTime();
+        v13 = ~GetWorkType(~NPCToItem_i(_Trellek));
+        v14 = ~rndRange(4, 1);
+        v6 = ~IsInInv(65177, 65177, _Honey, 1, _Party);
+        if (v13 = 11) && v6 {
+            if (v14 = 1) {
+                v15 = "@You are greeted.@";
+            }
+            if (v14 = 2) {
+                v15 = "@Hello is said to you.@";
+            }
+            if (v14 = 3) {
+                v15 = "@A good day is hoped for you.@";
+            }
+            if (v14 = 4) {
+                v15 = "@The day is nice.@";
+            }
+        }
+        if (v13 = 14) {
+            v15 = "@Zzzzz...@";
+        }
+        Item_bark(v15, _Trellek);
+    }
+}
+
+Usable TrellekWantsHoney_i #locals(2) #uses(~AskYesNo, GivePartyExp_i) {
+    SetSpeaker(0, _Trellek);
+    [The ape-like creature slowly and cautiously walks up to you. He, or she, sniffs for a moment, and then points to the honey you are carrying.];
+    TurnOn(<< "Want honey?", "Go away!" >>);
+    converse {
+        key ("Want honey?") {
+            ["Honey will be given by you to me?"];
+            v0 = ~AskYesNo();
+            if v0 {
+                v1 = ~TakeFromParty_i(true, _All, _All, _Honey, 1);
+                ["You are thanked."];
+                GivePartyExp_i(10);
+                flag(340) = true;
+            } else {
+                ["`Goodbye' is said to you."*];
+                terminate;
+            }
+            TurnOff(<< "Want honey?", "Go away!" >>);
+        }
+        key ("Go away!") {
+            [It does.*];
+            terminate;
+        }
+    }
+    clear_answers;
+}

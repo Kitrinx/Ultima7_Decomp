@@ -1,0 +1,82 @@
+Routine Bennie accepts a0 #locals(11) #uses(~AvatarName, ~AskYesNo, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Bennie);
+        v0 = ~AvatarName();
+        TurnOn(<< "name", "job", "bye" >>);
+        if flag(113) {
+            TurnOn("absent-minded");
+        }
+        v1 = ~GetTime();
+        v2 = ~GetParty();
+        if not $MetBennie {
+            [You see an elderly man with good humor and a warm smile.];
+            $MetBennie = true;
+        } else {
+            ["Yes, Avatar?" Bennie asks with authority.];
+        }
+        converse {
+            key ("name") {
+                ["All my friends call me Bennie."];
+                TurnOff("name");
+            }
+            key ("job") {
+                ["I am the Head Servant at the castle. My job consists of keeping the other servants in line and serving the meals."];
+                TurnOn(<< "Head Servant", "meals" >>);
+            }
+            key ("Head Servant") {
+                ["Yes, I have been Head Servant for many years. Mine entire family works for Lord British. My son is the king's gentleman's gentleman. My daughter is the Royal Chambermaid. My wife is Head Cook. We are pleased to work for Lord British."];
+                TurnOff("Head Servant");
+            }
+            key ("meals") {
+                ["My wife, Boots, is the head cook. Her specialty is roast beef. She makes wonderful pastries, too. Enough of those will give thee a very un-Avatar-like figure!];
+                if ((v1 = 3) or (v1 = 6)) {
+                    ["Wouldst thou like to order a meal?"];
+                    v3 = ~AskYesNo();
+                    if v3 {
+                        if flag(216) {
+                            v4 = ~GetClock(1);
+                        } else {
+                            flag(216) = true;
+                            v4 = 25;
+                        }
+                        if (v4 >= 24) {
+                            ["For thee, it is free!"~~Bennie serves you and your party a delicious meal of beef and pastry.];
+                            v2 = ~GetParty();
+                            v5 = 0;
+                            Foreach v8 in v2 {
+                                v5 = (v5 + 1);
+                            }
+                            v9 = ~GiveToParty_i(true, 9, _All, _Food_Item, v5);
+                            v10 = ~GiveToParty_i(true, 6, _All, _Food_Item, v5);
+                            if (v10 or v9) {
+                                SetClock(1);
+                                ["Return tomorrow and thou canst have another free meal."];
+                            } else {
+                                ["Thou art carrying too much to take the beef and pastry!"];
+                            }
+                        } else {
+                            ["I am sorry, <v0>, but I am allowed to serve thee only once per day. Return tomorrow for a meal."];
+                        }
+                    } else {
+                        ["Oh. Well, thou must return when thou art hungry."];
+                    }
+                } else {
+                    ["Come to the dining room during breakfast or dinner and I will be most honored to serve thee!"];
+                }
+                TurnOff("meals");
+            }
+            key ("absent-minded") {
+                ["Yes, I suppose I am. I am also becoming a little hard-of-hearing. When thou hast seen as many years as I have, one's faculties are no longer perfect."];
+                TurnOff("absent-minded");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["Safe journeys, <v0>."*];
+    }
+    if (event = _Bark) {
+        BarkAboutWork_i(_Bennie);
+    }
+}

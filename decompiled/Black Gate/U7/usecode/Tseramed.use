@@ -1,0 +1,752 @@
+Routine Tseramed accepts a0 #locals(43) #uses(~AvatarName, ~LordOrLady, ~RemoveFromList_i, ~IsNPCNear, TseramedAccuses_i, TseramedGreetsInParty_i, ~IntroduceToTseramed_i, ~AskYesNo, ~AskList, TseramedAsksCombatStyle_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Tseramed);
+        v0 = ~AvatarName();
+        v1 = ~LordOrLady();
+        v2 = ~GetParty();
+        v3 = ~RemoveFromList_i(v2, ~NPCToItem_i(_Avatar));
+        v4 = ~NPCToItem_i(_Tseramed);
+        v5 = ~NPCToItem_i(_Trellek);
+        if (~AvatarSex() = 0) {
+            v6 = "Abraham";
+        } else {
+            v6 = "Elizabeth";
+        }
+        v7 = ~ListSize_i(v2);
+        v8 = "";
+        if (v7 > 1) {
+            v8 = "s";
+        }
+        v9 = 0;
+        v10 = false;
+        v11 = false;
+        v12 = false;
+        v13 = false;
+        v14 = false;
+        v15 = false;
+        v16 = false;
+        v17 = false;
+        v18 = false;
+        v19 = false;
+        v20 = false;
+        v21 = false;
+        v22 = false;
+        v23 = ~FindNearby_i(0, 13, _Slime, v4);
+        v24 = ~FindNearby_i(0, 13, _Fox, v4);
+        v25 = ~FindNearby_i(0, 13, _Harpie, v4);
+        v26 = ~FindNearby_i(0, 20, _Bee, v4);
+        v27 = false;
+        if (~IsNPCNear(229) or ~IsNPCNear(228)) {
+            v27 = true;
+        }
+        v28 = "valiant warrior";
+        if $TSERAMED_THINKS_MAGE {
+            v28 = "noble enchanter";
+        }
+        if (not flag(29) and flag(349)) {
+            TseramedAccuses_i(v6, v0);
+            terminate;
+        }
+        if (v4 in v2) {
+            TseramedGreetsInParty_i(v7, v0);
+            if v27 {
+                TurnOn("hermits");
+            }
+            if v23 {
+                TurnOn("slime");
+            }
+            if v24 {
+                TurnOn("foxes");
+            }
+            if v25 {
+                TurnOn("harpies");
+            }
+            if v26 {
+                ["We need not be concerned about these bees, so long as we have a number of my trusty arrows."];
+                TurnOn("bees");
+            }
+            TurnOn("Fellowship");
+            v19 = true;
+        } else {
+            ["Greetings, traveller<v8>."];
+        }
+        if flag(349) {
+            v28 = "lowly deceiver";
+        }
+        TurnOn(<< "name", "job", "bye" >>);
+        if (flag(29) and (v7 = 1)) {
+            flag(351) = true;
+        }
+        if (flag(354) and not (v4 in v2)) {
+            TurnOn(v6);
+        }
+        if (not flag(351) and ((v7 > 1) and flag(29))) {
+            TurnOn("introduce");
+        }
+        converse {
+            v2 = ~GetParty();
+            v29 = "";
+            key ("name") {
+                TurnOff("name");
+                if (flag(29) = true) {
+                    ["I am Tseramed the woodsman. Thou art a <v28>."];
+                } else {
+                    ["I am called Tseramed. Art thou Fellowship members? How art thou called?"];
+                    PushKeys();
+                    v9 = (v9 + 1);
+                    TurnOn(<< v0, "Fellowship" >>);
+                    if not flag(353) {
+                        TurnOn("Avatar");
+                    }
+                }
+            }
+            key ("Avatar") {
+                TurnOff("Avatar");
+                flag(353) = true;
+                ["The Avatar! This is a strange chance. Tell me Avatar, by what name art thou called?"];
+            }
+            key (v0) {
+                TurnOff(v0);
+                flag(29) = true;
+                ["Well met, <v0>"];
+                if flag(353) {
+                    [Thy demeanor is noble.];
+                }
+                if (v7 = 1) {
+                    flag(351) = true;
+                }
+                PopKeys();
+                if not flag(351) {
+                    [Perhaps thou couldst introduce me to thy companions?"];
+                    TurnOn("introduce");
+                }
+            }
+            key ("Fellowship") {
+                TurnOff("Fellowship");
+                if flag(29) {
+                    if ((v4 in v2) or flag(354)) {
+                        ["I do not trust The Fellowship, and most especially <v6>."];
+                        TurnOn(v6);
+                    } else {
+                        ["I have no love for The Fellowship. We shall speak of it when I know thee better."];
+                    }
+                } else {
+                    ["Yes. Perhaps I am addressing the illustrious <v6>?"];
+                    TurnOn(v6);
+                }
+            }
+            key (v6) {
+                TurnOff(v6);
+                if flag(29) {
+                    ["Not long ago The Fellowship began to spread its influence throughout Britannia.];
+                    ["In their early days they attracted many bright and enthusiastic young people, among them my love, Lady M.];
+                    [A woman so intelligent could not help but rise in their ranks. Her direct superior was <v6>.];
+                    [One black evening she fell gravely ill. According to friends of mine, <v6> forbade her to visit the local healer. By the time I learned of this, she had already passed away.];
+                    [She rests now forever in the Yew graveyard, may her sleep be peaceful. I searched the land for <v6>, but never found my quarry. In fact, it seems that every time I near my prey, they have already vanished! My search shall never be truly over."];
+                    TurnOff(v6);
+                    TurnOn(<< "Yew", "Lady M." >>);
+                } else {
+                    PopKeys();
+                    flag(349) = true;
+                    v30 = "";
+                    if flag(353) {
+                        v30 = "thou dost tarnish the title of Avatar!";
+                    }
+                    ["Knave, <v30> I have not forgotten thy wrong doing, nor the evil crime that followed it.];
+                    [Oh soul as black as pitch!"];
+                    TseramedAccuses_i(v6, v0);
+                    terminate;
+                }
+            }
+            key ("Lady M.") {
+                TurnOff("Lady M.");
+                ["Youth is hers forever."];
+            }
+            key ("job") {
+                if not v10 {
+                    v10 = true;
+                    if (v4 in v2) {
+                        ["I travel with thee, <v28>, to aid thee with my wood craft."];
+                        TurnOn("forest");
+                    } else {
+                        ["I am but a humble woodsman. I garner my living from the forest and find knowledge in its depths.];
+                        [I have explored all this region."];
+                        TurnOn("knowledge");
+                        TurnOn("forest");
+                    }
+                } else {
+                    ["As I said, my woodcraft encompasses all this forest, even the caves in the mountain."];
+                    TurnOn("forest");
+                    TurnOn("caves");
+                }
+            }
+            key ("introduce") {
+                v3 = ~IntroduceToTseramed_i(v3, v2);
+                TurnOff("introduce");
+            }
+            if (flag(29) and not v19) && ((v4 in v2) or (~ListSize_i(v3) = 0)) {
+                TurnOn("Fellowship");
+                v19 = true;
+            }
+            v31 = 0;
+            key ("forest") {
+                v31 = 1;
+            }
+            key ("secret places", "caves") {
+                v31 = 2;
+            }
+            key ("knowledge") {
+                v31 = 3;
+            }
+            if (v31 > 0) && (not flag(351) or not flag(29)) {
+                v32 = << "We may speak more after introductions...", "Perhaps introductions are in order first." >>;
+                v33 = v32::~rndRange(~ListSize_i(v32), 1);
+                ["<v33>"];
+                v31 = 0;
+                TurnOn("introduce");
+            }
+            if (v31 = 1) {
+                v13 = true;
+                ["The forest is a wild place, but tamed somewhat in recent years. Within, <v28>, thou mayest still find creatures spoken of only in legend."];
+                TurnOn("creatures");
+            }
+            if (v31 = 2) {
+                v12 = true;
+                ["North of my hut is a deep bore-hole into the mountains. Within live bees of a size to rival sheep, or hounds. Their wings stir up leaves as they fly, and they humm with a noise to make men flee in fear."];
+                ["Some have entered, never to return. Perhaps they are there still... Death is greedy, and holds a fate for those of like intent."];
+                TurnOn(<< "mountains", "bees", "death" >>);
+            }
+            if (v31 = 3) {
+                TurnOff("knowledge");
+                ["Many years have I dwelt by the mountains. Many spans have vanished under my roaming feet. Into the depths of the dark swamp I have gone, and to the heights of the mountains. I know the trees of the forest, and the secret places in the earth."];
+                TurnOn(<< "mountains", "swamp", "secret places" >>);
+            }
+            key ("swamp") {
+                TurnOff("swamp");
+                ["North of the mountain spur is a dense swamp. Killing slime \[lurk within, guarding a clear spring. All about the water is foul and noisome.];
+                [Into thy boots the foul concoction will seep, bringing on nausea and dizziness. The wise traveller wears swamp boots in such places.];
+                [East, North, and West that mire is drained. Through Yew and past the Abbey the westward river flows. The others both bend north into the sea."];
+                TurnOn(<< "slime", "Yew", "Abbey", "sea" >>);
+            }
+            key ("Abbey") {
+                TurnOff("Abbey");
+                ["Empath Abbey is its proper name <v1>. They practice ancient arts there, the eldest being the fermentation and distillation of spirits. Demand for their products is high in Yew."];
+                TurnOn("Yew");
+            }
+            key ("Yew") {
+                TurnOff("Yew");
+                ["Citizens of a reclusive nature feel at peace there. Within the forest lie its buildings, many so grown-over as to seem a part of the wood."];
+                ["East of my dwelling the wood is thick, but a woodcrafty traveller may find the houses there."];
+            }
+            key ("sea") {
+                TurnOff("sea");
+                ["The sea!  Its waves sooth a rough mood, but its fury is unrivaled. Ask those who live upon it! A gift it is, to live by it and reap its natural harvest. I cast in a line when I may.];
+                [Dost thou wonder what mysteries the sea must hold?"];
+                if ~AskYesNo() {
+                    ["I also wonder. But the doings of those who travel upon it are more familiar to me. I have seen pirates land upon the northern coast."];
+                    TurnOn("pirates");
+                } else {
+                    ["Perhaps thou art not as fond of the sea as I..."];
+                }
+            }
+            key ("pirates") {
+                TurnOff("pirates");
+                ["Perhaps they land to cache their booty in the forest. I have never followed them."];
+            }
+            key ("mountains") {
+                v11 = true;
+                ["Vaulting in from the coast looms a narrow spine. Dangerous and sharp rear the crags of those mountains. Caves there hold danger, and death for the unwary."];
+                TurnOn(<< "caves", "death" >>);
+            }
+            key ("death") {
+                TurnOff("death");
+                ["Death for the greedy. Death for any who steal from the dwellers in the caves."];
+                TurnOn("caves");
+            }
+            key ("creatures") {
+                TurnOff("creatures");
+                ["Aye. Such as would devour the unwary and pick bones dry. In the forest are harpies, and slime on the margins of the swamp, and bees in the caves.];
+                ["Good game live also in the forest: Foxes and the like."];
+                TurnOn(<< "slime", "foxes", "harpies", "bees" >>);
+            }
+            key ("harpies") {
+                TurnOff("harpies");
+                if v25 {
+                    ["Harpies! To battle! Let us slay them at once!"];
+                } else {
+                    ["A malformed flying horror. Thou wouldst not want to meet one."];
+                }
+            }
+            key ("slime") {
+                v14 = true;
+                ["A dangerous organism is the greenish slime. Acidic to touch, it will hurl pseudopods at its prey from three paces.];
+                ["Never sleeping, it has no mind and is composed in the main of\x09poisonous substances. It engulfs and devours hapless animals voraciously."];
+                if v23 {
+                    ["Attack it with flame! Slime has no defense against it."];
+                }
+            }
+            key ("foxes") {
+                v15 = true;
+                if ~FindNearby_i(0, 10, _Fox, v4) {
+                    v29 = "  See how lustrous is the coat of that fox.";
+                }
+                ["Cunning is the fox, and shy of humans. We shall never belong to the forest as they do.<v29>"];
+            }
+            key ("bees") {
+                v17 = true;
+                if v26 {
+                    ["Bees such as these may be tamed with my special arrows!"];
+                    TurnOn("arrows");
+                } else {
+                    ["Such bees as thou hast never seen! Large as a wolf they are, with wings stretching over a span in length.];
+                    [A creature stung by them will pass into a deep, death-like sleep."];
+                    if not (v4 in v2) {
+                        ["I have hunted them on many occasions, for I use their poison on my arrows. And I like their honey. Perhaps together we might journey into the cave for some?"];
+                        TurnOn(<< "join", "arrows" >>);
+                    }
+                }
+            }
+            key ("arrows") {
+                TurnOff("arrows");
+                ["I fashion my arrows from the stingers of giant bees. With them one may put a foe to sleep."];
+                v34 = "";
+                v35 = 0;
+                if flag(339) {
+                    v35 = ~CountItem(_All, _All, _Bee_Stinger, _Party);
+                    if (v35 > 6) {
+                        v35 = 6;
+                    }
+                    v36 = ~CountItem(_All, _All, _Tseramed_Arrow, _Party);
+                    if ((v4 in v2) and ((v36 < 6) and (v35 > 0))) {
+                        v34 = "Shall I fashion these stingers into arrows?";
+                    }
+                } else {
+                    v34 = "If thou wouldst like, I would be happy to give thee a dozen of my special arrows. Art thou interested?";
+                    v35 = 12;
+                }
+                if (v34 <> "") {
+                    append v34;
+                    append "";
+                    say;
+                    if ~AskYesNo() {
+                        v37 = ~GiveToParty_i(false, _All, _All, _Tseramed_Arrow, v35);
+                        if v37 {
+                            v38 = "";
+                            if (v35 > 1) {
+                                v38 = "s";
+                            }
+                            ["Use them with care, for even a scratch may put one to sleep!" he says, handing you <v35> arrow<v38>.];
+                            if flag(339) {
+                                v31 = ~TakeFromParty_i(true, _All, _All, _Bee_Stinger, v35);
+                            }
+                            flag(339) = true;
+                        } else {
+                            ["Perhaps when thou art carrying less I can give them to thee."];
+                        }
+                    } else {
+                        ["Very well, <v1>."];
+                    }
+                }
+            }
+            key ("join") {
+                TurnOff("join");
+                if (v7 < 8) {
+                    JoinParty(_Tseramed);
+                    ["I would be honored, <v1>."];
+                    TurnOn("Fellowship");
+                } else {
+                    ["'Twould appear, <v1>, that thou already hast more than enough travelling companions."];
+                }
+            }
+            key ("leave") {
+                v39 = true;
+                ["Dost thou want me to wait here or should I go home?"];
+                ClearKeys();
+                v40 = ~AskList(<< "wait here", "go home" >>);
+                if (v40 = "wait here") {
+                    ["Very well! I shall wait for thee!"*];
+                    LeaveParty(_Tseramed);
+                    SetWorkType(_Wait, ~NPCToItem_i(_Tseramed));
+                    terminate;
+                } else {
+                    ["Very well, <v1>. Fare thee well."*];
+                    LeaveParty(_Tseramed);
+                    SetWorkType(_Loiter, ~NPCToItem_i(_Tseramed));
+                    terminate;
+                }
+            }
+            v41 = false;
+            key ("hermits") {
+                v41 = true;
+            }
+            if ((v12 and v11) and not v18) {
+                ["Speaking of caves and mountains, there are some who dwell near, or perhaps in, the cave of bees. They are hermits."];
+                v41 = true;
+                v18 = true;
+                TurnOn("bees");
+            }
+            if v41 {
+                TurnOff("hermits");
+                if not flag(338) {
+                    ["One day I glimpsed a man and a woman deep within the cave as I was hunting. Since then I have seen them twice. I believe they are former citizens of Yew, though I do not know how they live in harmony with the bees."];
+                    if v27 {
+                        ["These are the people I saw!"];
+                    }
+                    flag(338) = true;
+                    TurnOn("bees");
+                } else {
+                    if v27 {
+                        ["These people are the hermits I spoke of before."];
+                    } else {
+                        ["Perhaps those hermits are still living in the cave."];
+                    }
+                }
+                v18 = true;
+            }
+            if ((v14 and v15) and not v16) {
+                ["This puts me in mind of a story. Wouldst thou like to hear it?"];
+                if ~AskYesNo() {
+                    ["One day while walking along the edge of the swamp I happened upon a strange sight. A fox was held at bay on a small hillock in the midst of the swamp, and all about the hillock writhed green slime.];
+                    [Slowly the slime crept up toward the fox, when suddenly the fox trotted directly across the surface of the ooze!];
+                    [Unharmed, the fox dashed off into the wood, leaving the slime writhing behind. By this I guess that the victims of slime are those caught sleeping, or unaware."];
+                } else {
+                    ["Perhaps another time."];
+                }
+                v16 = true;
+            }
+            if v14 {
+                TurnOff("slime");
+            }
+            if v15 {
+                TurnOff("foxes");
+            }
+            if v17 {
+                TurnOff("bees");
+            }
+            if v12 {
+                TurnOff("caves");
+                TurnOff("secret places");
+                TurnOff("death");
+            }
+            if v11 {
+                TurnOff("mountains");
+            }
+            if v13 {
+                TurnOff("forest");
+            }
+            if (flag(353) and ((v4 in v2) and not flag(354))) {
+                TseramedAsksCombatStyle_i(v2);
+                flag(354) = true;
+            }
+            if (v4 in v2) {
+                TurnOff("join");
+            }
+            key ("bye") {
+                if ((v4 in v2) or v39) {
+                    v22 = true;
+                }
+                if (flag(29) and not v22) {
+                    if not flag(353) {
+                        ["Thy pardon, <v1>, but thy visage brings to my mind a statue that I once saw.  'Twas a likeness of the ancient hero known as the Avatar.];
+                        [Art thou not that same honorable soul?"];
+                        if ~AskYesNo() {
+                            v42 = "That sculptor did thee justice.";
+                            if (~AvatarSex() = 1) {
+                                v42 = "Thou art more fair by far than any likeness in stone could portray.";
+                            }
+                            ["Noble hero, it is an honor to make thine aquaintance. <v42>"];
+                            flag(353) = true;
+                        } else {
+                            ["I must be mistaken. Farewell."];
+                            break;
+                        }
+                    } else {
+                        ["^<v1>, if it pleases thee, I would be honored to travel with thee. I have skill in arms, and I can offer my knowledge and wood craft to thee..."];
+                        TurnOn("join");
+                        v22 = true;
+                    }
+                } else {
+                    ["'Til next time, <v1>."*];
+                    break;
+                }
+            }
+        }
+        clear_answers;
+    }
+    if (event = _Bark) {
+        terminate;
+    }
+}
+
+Function ~RandomInsult_i accepts a0 #locals(2) {
+    v1 = << "viper", "deceiver", "wretch", "scoundrel", "snake", "toad", "coward" >>;
+    v2 = v0;
+    While (v2 = v0) {
+        v2 = v1::~rndRange(~ListSize_i(v1), 1);
+    }
+    return v2;
+}
+
+Routine TseramedAccuses_i accepts a0, a1 #locals(8) #uses(~RandomInsult_i, ~AskYesNo) {
+    PushKeys();
+    v2 = false;
+    v3 = true;
+    v4 = ~RandomInsult_i("");
+    ["<v0>! Thou <v4>!"];
+    v5 = << "blood", "head", "life" >>;
+    v6 = v5::~rndRange(~ListSize_i(v5), 1);
+    ["Shall I have my apology, or thy <v6>?"];
+    v7 = "Forgive me";
+    v8 = "Suffer my wrath";
+    TurnOn(<< v7, v8 >>);
+    converse {
+        key (v7) {
+            v4 = ~RandomInsult_i("");
+            ["Forgive thee! What might I forgive in one such as thee, <v4>?"];
+            TurnOff(v8);
+            TurnOff(v7);
+            TurnOn(<< "My lie", "My deed", "My crime" >>);
+        }
+        key (v8) {
+            break;
+        }
+        key ("My lie") {
+            TurnOff(<< "My lie", "My deed", "My crime" >>);
+            ["Of what lie speakest thou? Art thou not <v0>?"];
+            if ~AskYesNo() {
+                break;
+            }
+            v4 = ~RandomInsult_i("");
+            ["Perhaps thou art not <v0>, for I have never seen the <v4>. Confess now thy true identity!"];
+            TurnOn(v1);
+            if not flag(353) {
+                TurnOn("Avatar");
+            }
+        }
+        key ("My deed") {
+            ["Speak not of thy deed! Such deeds must deeds receive to equal their merit."];
+            break;
+        }
+        key ("My crime") {
+            ["Crime most foul, most horrible!"];
+            v3 = false;
+            break;
+        }
+        key ("Avatar") {
+            TurnOff("Avatar");
+            ["I doubt but thou deceivest me further. If true, thou dost shame the title. Admit now thy true name!"];
+            v2 = true;
+            flag(353) = true;
+        }
+        key (v1) {
+            v4 = ~RandomInsult_i("");
+            ["<v1>! Perhaps honesty shall lift thee above the <v4> <v0>..."];
+            v2 = true;
+            break;
+        }
+    }
+    clear_answers;
+    if not v2 {
+        v4 = ~RandomInsult_i("");
+        v9 = ~RandomInsult_i(v4);
+        if v3 {
+            ["^<v4>! ^<v9>! Thy soul shall wail in the catacombs of the netherworld!"];
+            SetWorkType(_Combat_0, _Tseramed);
+            Npc_setAlignment(_Evil, _Tseramed);
+        } else {
+            ["^<v4>! Fly from this place at once! I shall provide escort for thee with my bow. Return at thy peril, <v9>."];
+            SetWorkType(_Hound, _Tseramed);
+            Npc_setAlignment(_Neutral, _Tseramed);
+        }
+    } else {
+        ["I shall not take this deception lightly."];
+        flag(29) = true;
+        Npc_setAlignment(_Neutral, _Tseramed);
+    }
+    terminate;
+}
+
+Routine TseramedAsksCombatStyle_i accepts a0 #locals(8) {
+    PushKeys();
+    v1 = false;
+    v2 = false;
+    TurnOn(<< "enchantment", "valor in arms", "bye" >>);
+    ["Tell me something, if thou please. Many years have passed since I first learned my woodcraft. Such craft includes skill in arms, and I must know... Does the Avatar prefer mystical enchantment to overcome enemies, or physical strength and valor in arms?"];
+    v3 = false;
+    converse {
+        key ("enchantment") {
+            ["I have suspected it! No skill have I in such deep matters, but perchance our speech might turn to enchantment when our quest is complete."];
+            $TSERAMED_THINKS_MAGE = true;
+            goto label_29;
+        }
+        key ("valor in arms") {
+            ["I have often suspected it! I am honored to travel with thee. I shall watch thee diligently, for surely thou art the greatest fighter who ever lived."];
+            ["When our quest is complete we shall regale each other with our exploits. Tell me, dost thou prefer hand to hand combat or ranged weaponry?"];
+            TurnOff(<< "enchantment", "valor in arms" >>);
+            TurnOn(<< "hand to hand", "ranged weaponry" >>);
+            $TSERAMED_THINKS_MAGE = false;
+            v1 = false;
+        }
+        key ("hand to hand") {
+            TurnOff("hand to hand");
+            v4 = "and thou seemest man enough for such close work";
+            if (~AvatarSex() = 1) {
+                v4 = "especially in women. The women of Britannia seldom have them";
+                v2 = true;
+            }
+            ["Such weapons require strength and daring! I admire such qualities, <v4>."];
+            ["But my preferences run to the bow. An ancient weapon, and elegant, a fine bow of Yew may bring down game sooner than a sword."];
+            v3 = true;
+        }
+        key ("ranged weaponry") {
+            TurnOff("ranged weaponry");
+            ["Such is also my choice. Few are my peers in the art of archery. A keen eye and steady hand are required, and that is rare in the men of this day. Even rarer in women. Sad, that the women of Britannia should be innocent of such art!"];
+            v2 = true;
+            v3 = true;
+        }
+        if v2 {
+            v2 = false;
+            v5 = false;
+            Foreach v8 in v0 {
+                if (~GetNPCStat_i(_Sex, v8) = 1) {
+                    v5 = true;
+                    goto label_28;
+                }
+            }
+            if v5 {
+                SetSpeaker(0, v8);
+                ["Take care with thy words, master woodsman."];
+                SetSpeaker(0, _Tseramed);
+                ["I do not mean this gracious company! Surely thou art among the elite of Britannia and a rare figure of a woman."];
+                SetSpeaker(0, v8);
+                ["Thy speech does me service. Alas! Too few are the women who learn skill in arms."];
+                CloseSpeaker(v8);
+            }
+        }
+        if v3 {
+            goto label_29;
+        }
+        key ("bye") {
+            if not v1 {
+                ["Please, Avatar, I simply must know."];
+            } else {
+                terminate;
+            }
+            v1 = true;
+        }
+    }
+    label_28:
+    clear_answers;
+    label_29:
+    PopKeys();
+}
+
+Routine TseramedGreetsInParty_i accepts a0, a1 #locals(1) {
+    v2 = "thee";
+    if (v0 > 2) {
+        v2 = "the party";
+    }
+    if flag(349) {
+        ["^<v1>, I have weighed thine actions against thy former conduct. Now that I am travelling with <v2>...];
+        [I forgive thy misrepresentation at our first meeting."];
+        flag(349) = false;
+    }
+    if (~rndRange(3, 1) = 1) {
+        ["I enjoy travelling with <v2>."];
+    }
+    if ~GetItemFlag_i(_Invisible, ~NPCToItem_i(_Avatar)) {
+        ["Avatar! 'Tis strange to converse yet not see the speaker. Invisibility is queer magic."];
+    }
+    ["How may I assist <v2>, <v1>?"];
+    TurnOn(<< "bees", "leave" >>);
+}
+
+Function ~IntroduceToTseramed_i accepts a0, a1 #locals(15) #uses(~AskOrdList, ~RemoveFromList_i, ~IsNPCNear, ~GetNPCName) {
+    PushKeys();
+    v2 = "nobody";
+    v3 = << >>;
+    Foreach v6 in v0 {
+        v3 = (v3 & ~GetNPCName_i(v6));
+    }
+    v3 = (v3 & v2);
+    v7 = false;
+    v8 = ~ListSize_i(v3);
+    While (v8 > 1) {
+        v9 = ~AskOrdList(v3);
+        if (v9 = v8) {
+            break;
+        }
+        v10 = v0::v9;
+        v11 = ~ItemToNPC_i(v10);
+        v0 = ~RemoveFromList_i(v0, v10);
+        v3 = ~RemoveFromList_i(v3, v3::v9);
+        v12 = false;
+        if (v11 = 65535) {
+            ["Thy good health, sir. Many campaigns sit upon thy brow. It is an honor."];
+            SetSpeaker(0, _Iolo);
+            ["Avatar, this stranger grows upon me by the moment. Surely he would be a boon travelling companion."];
+            v13 = 0;
+            if ~IsNPCNear(_Shamino) {
+                v13 = 65533;
+            }
+            if ~IsNPCNear(_Dupre) {
+                v13 = 65532;
+            }
+            if (v13 <> 0) {
+                SetSpeaker(0, v13);
+                ["Oh, please."];
+                SetSpeaker(0, _Iolo);
+                v14 = ~GetNPCName(v13);
+                ["Hush, <v14>."];
+            }
+            SetSpeaker(0, _Tseramed);
+            v12 = true;
+            v7 = true;
+        }
+        if (v11 = 65533) {
+            ["How art thou, Shamino? Thy woodcraft is renowned in Britannia."];
+            SetSpeaker(0, _Shamino);
+            ["Renown follows those who travel with the Avatar. I thank thee."];
+            SetSpeaker(0, _Tseramed);
+            v12 = true;
+            v7 = true;
+        }
+        if (v11 = 65534) {
+            ["Greetings young man. How comes one so young into such company?"];
+            SetSpeaker(0, _Spark);
+            ["I am an orphan! My father has been most cruelly murdered, mutilated in the stables of Trinsic."];
+            SetSpeaker(0, _Tseramed);
+            ["That is a grievous tale! But surely the time for grief is past. Thou art in the company of great companions."];
+            SetSpeaker(0, _Spark);
+            ["Thou speakest rightly. I shall bring my father's murderer to justice or die in the attempt."];
+            SetSpeaker(0, _Tseramed);
+            v12 = true;
+        }
+        if not v12 {
+            v14 = ~GetNPCName(v10);
+            ["Greetings <v14>."];
+            v15 = << "Thou art looking quite well today.", "Good health to thee.", "May good fortune be thine." >>;
+            v16 = v15::~rndRange(3, 1);
+            ["<v16>"];
+            SetSpeaker(0, v11);
+            ["Glad to make thine aquaintance."];
+            SetSpeaker(0, _Tseramed);
+            v12 = true;
+        }
+        if (v7 and not flag(353)) {
+            ["But did I hear thee say 'Avatar?' Say not that thy leader is the one -true- Avatar!"];
+            SetSpeaker(0, v11);
+            ["It is indeed true."];
+            SetSpeaker(0, _Tseramed);
+            ["'Tis an honor to meet thee, Avatar."];
+            flag(353) = true;
+        }
+        CloseSpeaker(v11);
+        v8 = ~ListSize_i(v3);
+    }
+    PopKeys();
+    if (v8 = 1) {
+        flag(351) = true;
+    }
+    return v0;
+}

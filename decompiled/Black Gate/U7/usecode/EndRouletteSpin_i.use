@@ -1,0 +1,96 @@
+Routine EndRouletteSpin_i accepts a0 #locals(18) #uses(MemberBarks_i, ~IsAbleToTalk_i, BarkIfNear_i) {
+    if (event <> _Posted_i) {
+        return;
+    }
+    if (~GetWorkType(_Smithy) = _Hound) {
+        SetWorkType(_Stand, _Smithy);
+    }
+    v0 = ~FindNearby_i(0, 7, _Virtue_Roulette_Table, item);
+    v1 = ~FindNearby_i(0, 5, _Gold_Coin, v0);
+    v2 = 0;
+    v3 = 0;
+    v4 = ~GetFrame(item);
+    v5 = (v4 / 4);
+    if (v5 = 0) {
+        v2 = 65533;
+        v3 = 65535;
+        v6 = "Blue";
+    }
+    if (v5 = 1) {
+        v2 = 0;
+        v3 = 0;
+        v6 = "Black";
+    }
+    if (v5 = 2) {
+        v2 = 65535;
+        v3 = 0;
+        v6 = "White";
+    }
+    if (v5 = 3) {
+        v2 = 65534;
+        v3 = 0;
+        v6 = "Purple";
+    }
+    if (v5 = 4) {
+        v2 = 65533;
+        v3 = 0;
+        v6 = "Orange";
+    }
+    if (v5 = 5) {
+        v2 = 0;
+        v3 = 65535;
+        v6 = "Green";
+    }
+    if (v5 = 6) {
+        v2 = 65535;
+        v3 = 65535;
+        v6 = "Red";
+    }
+    if (v5 = 7) {
+        v2 = 65534;
+        v3 = 65535;
+        v6 = "Yellow";
+    }
+    v7 = false;
+    if not ~IsNPCNear_i(_Smithy) {
+        v8 = << >>;
+        v9 = "";
+    } else {
+        MemberBarks_i("@Didst thou win?@");
+    }
+    if $JoinFellow {
+        v10 = 14;
+    } else {
+        v10 = 7;
+    }
+    Foreach v13 in v1 {
+        v14 = ~GetCoord(v13);
+        v15 = ~GetCoord(v0);
+        if ((v14::1 = (v15::1 + v2)) and (v14::2 = (v15::2 + v3))) {
+            SetItemFlag_i(_OkayToTake_i, v13);
+            v16 = ~GetQuantity(0, v13);
+            v16 = (v16 * v10);
+            While (v16 > 100) {
+                v8 = ~Item_create(_Gold_Coin);
+                if v8 {
+                    v17 = ~SetQuantity(100, v8);
+                    v17 = ~PopToMap(v14);
+                }
+                v16 = (v16 - 100);
+            }
+            v8 = ~Item_create(_Gold_Coin);
+            if v8 {
+                v17 = ~SetQuantity(v16, v8);
+                v17 = ~PopToMap(v14);
+            }
+            if ~IsAbleToTalk_i(_Smithy) {
+                BarkIfNear_i((("@A winner on " + v6) + ".@"), _Smithy);
+            }
+            v7 = true;
+        }
+        Item_destroy(v13);
+    }
+    if not v7 && ~IsAbleToTalk_i(_Smithy) {
+        BarkIfNear_i((("@It is " + v6) + ".@"), _Smithy);
+    }
+}

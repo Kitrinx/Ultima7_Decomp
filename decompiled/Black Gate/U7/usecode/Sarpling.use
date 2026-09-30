@@ -1,0 +1,199 @@
+Routine Sarpling accepts a0 #locals(5) #uses(~IsNearEachOther_i, ~AskYesNo, SarplingSellsReagents_i, SarplingSellsJewelry_i, GargBarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Sarpling);
+        v0 = ~GetTime();
+        v1 = ~GetWorkType(~NPCToItem_i(_Sarpling));
+        if (v0 = 7) {
+            v2 = ~IsNearEachOther_i(_Quan, _Sarpling);
+            if v2 {
+                [The gargoyle is too involved with the Fellowship meeting to talk to you at this moment.*];
+            } else {
+                ["To be unable to talk now. To see me after the Fellowship meeting." He continues on his way.*];
+            }
+            terminate;
+        }
+        TurnOn(<< "name", "job", "Fellowship", "bye" >>);
+        if not $MetSarpling {
+            [You see a very distraught gargoyle.];
+            $MetSarpling = true;
+        } else {
+            ["To give you greetings, human."];
+        }
+        if flag(592) {
+            v3 = true;
+            if (flag(577) and not flag(576)) {
+                TurnOn("altar conflicts");
+            }
+            if flag(575) {
+                TurnOn("found note");
+                TurnOff("altar conflicts");
+            }
+        }
+        converse {
+            key ("name") {
+                ["To be able to call me Sarpling."];
+                flag(592) = true;
+                TurnOff("name");
+                if not v3 {
+                    if (flag(577) and not flag(576)) {
+                        TurnOn("altar conflicts");
+                    }
+                    if flag(575) {
+                        TurnOn("found note");
+                        TurnOff("altar conflicts");
+                    }
+                }
+            }
+            key ("job") {
+                ["To provide various magics and items in Terfin."];
+                TurnOn(<< "buy", "Terfin" >>);
+            }
+            key ("Terfin") {
+                ["To be the city in which you are located. To be the city of gargoyles."];
+                TurnOn("gargoyles");
+                TurnOff("Terfin");
+            }
+            key ("gargoyles") {
+                ["To know Quan is the Fellowship leader. To believe he gives good guidance." He appears thoughtful.~~ "To have spoken to Draxinusom?"];
+                v4 = ~AskYesNo();
+                if v4 {
+                    ["To see Forbrak or Quaeven, then. To know they see all the citizens regularly."];
+                } else {
+                    ["To see first, Draxinusom. To be leader of the city. To know many of the residents."];
+                }
+                TurnOff("gargoyles");
+            }
+            key ("Fellowship") {
+                ["To be an important part of my life. To support The Fellowship fully."];
+                TurnOff("Fellowship");
+            }
+            key ("altar conflicts") {
+                ["To know nothing about the altars. To wonder what you mean?"];
+                TurnOff("altar conflicts");
+            }
+            key ("found note") {
+                [A surprised expression, mixed with fear, covers his face.~~ "To be all Runeb's decisions! To be all Runeb's doing! To want nothing to do with the destruction of the altars, or with the assassination plot!"];
+                TurnOff("found note");
+                TurnOn("Assassination plot!");
+            }
+            key ("Assassination plot!") {
+                ["To not already know about the plot?" he wails.~~ "To have caused problems this time, Sarpling," he says to himself. "To have brought much trouble!~~ "To tell you Runeb wanted to frame Quan for the altars. To kill Quan if plan failed, and to be in control of The Fellowship in Terfin. To be Runeb's goal.~~ "To be in much danger you and me!"*];
+                flag(576) = true;
+                terminate;
+            }
+            key ("buy") {
+                TurnOff("buy");
+                if (v1 = 7) {
+                    ["To want reagents or jewelry and potions?"];
+                    TurnOn(<< "reagents", "jewelry and potions" >>);
+                } else {
+                    ["To sell you things when my shop is open."];
+                }
+            }
+            key ("reagents") {
+                SarplingSellsReagents_i();
+                TurnOff("reagents");
+            }
+            key ("jewelry and potions") {
+                SarplingSellsJewelry_i();
+                TurnOff("jewelry and potions");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["To give you farewell, human."*];
+    }
+    if (event = _Bark) {
+        GargBarkAboutWork_i(_Sarpling);
+    }
+}
+
+Usable SarplingSellsJewelry_i #locals(13) #uses(~AskOrdList, ~SellPriceString_i, ~AskYesNo, ~SellItem_i) {
+    PushKeys();
+    v0 = true;
+    v1 = << "nothing", "gold horncaps", "gold chain", "gold earring", "gold clawring", "black potion", "white potion" >>;
+    v2 = << 0, 937, 937, 937, 937, 340, 340 >>;
+    v3 = << 65177, 2, 4, 5, 6, 7, 6 >>;
+    v4 = << 0, 30, 20, 5, 10, 60, 110 >>;
+    v5 = << "", "", "a ", "a ", "a ", "a ", "a " >>;
+    v6 = << 0, 1, 0, 0, 0, 0, 0 >>;
+    v7 = << "", " per pair", "", "", "", "", "" >>;
+    v8 = 1;
+    ["To want to buy what item?"];
+    While v0 {
+        v9 = ~AskOrdList(v1);
+        if (v9 = 1) {
+            ["To be acceptable."];
+            v0 = false;
+        } else {
+            v10 = ~SellPriceString_i(v7::v9, v4::v9, v6::v9, v1::v9, v5::v9);
+            v11 = 0;
+            ["^<v10>. To be an acceptable price?"];
+            v12 = ~AskYesNo();
+            if v12 {
+                v11 = ~SellItem_i(false, 1, 0, v4::v9, v8, v3::v9, v2::v9);
+            }
+            if (v11 = 1) {
+                ["To be agreed!"];
+            } else {
+                if (v11 = 2) {
+                    ["To be unable to carry that much!" He shakes his head.];
+                } else {
+                    if (v11 = 3) {
+                        ["To have not enough gold for that!"];
+                    } else {
+                    }
+                }
+            }
+            ["To desire another item?"];
+            v0 = ~AskYesNo();
+        }
+    }
+    PopKeys();
+}
+
+Usable SarplingSellsReagents_i #locals(13) #uses(~AskOrdList, ~SellPriceString_i, ~AskYesNo, ~SellItem_i) {
+    PushKeys();
+    v0 = true;
+    v1 = << "nothing", "blood moss", "garlic", "ginseng", "sulfurous ash" >>;
+    v2 = << 0, 842, 842, 842, 842 >>;
+    v3 = << 65177, 1, 4, 5, 7 >>;
+    v4 = << 0, 2, 1, 1, 3 >>;
+    v5 = "";
+    v6 = 0;
+    v7 = << "", " per spell use", " per use", " per use", " per use" >>;
+    v8 = 1;
+    While v0 {
+        v9 = ~AskOrdList(v1);
+        if (v9 = 1) {
+            ["To be acceptable."];
+            v0 = false;
+        } else {
+            v10 = ~SellPriceString_i(v7::v9, v4::v9, v6, v1::v9, v5);
+            v11 = 0;
+            ["^<v10>. To agree to this price?'];
+            v12 = ~AskYesNo();
+            if v12 {
+                ["To want to purchase how many?"];
+                v11 = ~SellItem_i(true, 1, 20, v4::v9, v8, v3::v9, v2::v9);
+            }
+            if (v11 = 1) {
+                ["To be agreed!"];
+            } else {
+                if (v11 = 2) {
+                    ["To be unable to carry that much!" He shakes his head.];
+                } else {
+                    if (v11 = 3) {
+                        ["To have not enough gold for that!"];
+                    } else {
+                    }
+                }
+            }
+            ["To desire another item?"];
+            v0 = ~AskYesNo();
+        }
+    }
+    PopKeys();
+}

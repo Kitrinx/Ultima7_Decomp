@@ -1,0 +1,40 @@
+Routine EmptyBucket_i accepts a0 #locals(10) {
+    v0 = ~GetFrame(item);
+    v1 = 0;
+    v2 = 0;
+    if (v0 = 1) {
+        v1 = 16;
+        v2 = 19;
+    }
+    if (v0 = 2) {
+        v1 = 0;
+        v2 = 3;
+    }
+    if (v0 = 3) {
+        v1 = 20;
+        v2 = 23;
+    }
+    if ((v0 = 4) or (v0 = 5)) {
+        v1 = 12;
+        v2 = 15;
+    }
+    if (v0 = 6) {
+        return;
+    }
+    v3 = ~GetCoord(~NPCToItem_i(_Avatar));
+    v4::1 = v3::1;
+    v4::2 = (v3::2 - 1);
+    v4::3 = 0;
+    v5 = ~Item_create(_Blood);
+    SetItemFlag_i(_IsTemporary_i, v5);
+    SetFrame(~rndRange(v2, v1), v5);
+    v6 = ~PopToMap(v4);
+    v7 = ~GetQuality(item);
+    if ((v0 = 2) and v7) {
+        v7 = (v7 - 1);
+        v8 = ~SetQuality(v7, item);
+    } else {
+        v9 = ~PostAction(<< _aFRAME, 0 >>, item);
+    }
+    Sfx(40);
+}

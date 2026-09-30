@@ -1,0 +1,15 @@
+Routine WaterTrough_02CF accepts a0 #locals(3) #uses(PathToItem_i) {
+    v0 = ~GetContents(1, _All, _Bucket, ~NPCToItem_i(_Avatar));
+    if v0 {
+        v1 = << 1, 1, 65534, 65534, 0, 65535, 0, 65535 >>;
+        v2 = << 65535, 65534, 65535, 65534, 1, 1, 65532, 65532 >>;
+        PathToItem_i(7, v0, #Bucket, 0, v2, v1, item);
+    } else {
+        v0 = ~GetContents(0, _All, _Bucket, ~NPCToItem_i(_Avatar));
+        if v0 {
+            v1 = << 1, 1, 65534, 65534, 0, 65535, 0, 65535 >>;
+            v2 = << 65535, 65534, 65535, 65534, 1, 1, 65532, 65532 >>;
+            PathToItem_i(7, v0, #Bucket, 0, v2, v1, item);
+        }
+    }
+}

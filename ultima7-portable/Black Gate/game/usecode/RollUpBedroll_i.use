@@ -1,0 +1,21 @@
+Routine RollUpBedroll_i accepts a0 #locals(3) #uses(PathToItem_i) {
+    if (event = _Action) {
+        closeAllGumps();
+        v0 = << 65535, 65535, 65535, 0, 0, 0, 1, 1, 1 >>;
+        v1 = << 1, 0, 65535, 1, 0, 65535, 1, 0, 65535 >>;
+        Kernel_resetRef(_Avatar);
+        PathToItem_i(7, item, #RollUpBedroll_i, 65535, v1, v0, item);
+        SetPathFailure_i(_Posted_i, item, #RollUpBedroll_i);
+    }
+    if (event = _Posted_i) {
+        Item_setType(_Bed_Roll, item);
+        SetFrame(0, item);
+    }
+    if (event = 7) {
+        closeAllGumps();
+        v2 = ~PostAction(<< _aFACE_i, byte(48), _aBEND_FRAME_i, _aWAIT_i, 1, _aSTAND_FRAME_i >>, _Avatar);
+        if v2 {
+            v2 = ~PostAction(<< _aWAIT_i, 2, _aUSABLE_i, #RollUpBedroll_i >>, item);
+        }
+    }
+}

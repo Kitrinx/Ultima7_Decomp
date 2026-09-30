@@ -1,0 +1,228 @@
+Routine Jordan accepts a0 #locals(8) #uses(~LordOrLady, ~AvatarName, ~IsNPCNear, ~AskList, JordanSellsBows_i, JordanSellsAmmo_i, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Jordan);
+        v0 = ~LordOrLady();
+        v1 = ~AvatarName();
+        v2 = "Avatar";
+        v3 = ~IsNPCNear(_Iolo);
+        v4 = ~IsNPCNear(_Shamino);
+        TurnOn(<< "name", "job", "bye" >>);
+        if $MET_SIR_JORDAN {
+            v5 = v1;
+        }
+        if flag(603) {
+            v5 = v2;
+        }
+        if not flag(623) {
+            [You see a man who, despite being blind, quickly acknowledges you.~~"I am Jordan. Sir Jordan. And thou art?"];
+            v6 = ~AskList(<< v1, v2 >>);
+            if (v6 = v1) {
+                ["My pleasure, <v1>." He shakes your hand.];
+                $MET_SIR_JORDAN = true;
+            } else {
+                [He laughs. "Yes, but of course thou art."];
+                flag(603) = true;
+                if v3 {
+                    SetSpeaker(0, _Iolo);
+                    ["'Tis true, Sir Jordan. He is the Avatar."*];
+                    CloseSpeaker(_Iolo);
+                    SetSpeaker(0, _Jordan);
+                    [Jordan smiles. "I see. And who wouldst thou be? Shamino?"*];
+                    if v4 {
+                        SetSpeaker(0, _Iolo);
+                        ["No." He points to Shamino. "He is. I am Iolo!"*];
+                        CloseSpeaker(_Iolo);
+                        SetSpeaker(0, _Jordan);
+                    } else {
+                        SetSpeaker(0, _Iolo);
+                        ["No. I am Iolo, not Shamino!"*];
+                        CloseSpeaker(_Iolo);
+                        SetSpeaker(0, _Jordan);
+                    }
+                    ["Of course!" He says, patronizingly. "How could I not recognize the great Iolo."];
+                }
+            }
+            flag(623) = true;
+        } else {
+            ["Greetings, <v5>."];
+        }
+        if ($STARTED_HOLD_INVESTIGATION and not $FINISHED_HOLD_INVESTIGATION) {
+            TurnOn("statue");
+        }
+        TurnOn(<< "name", "job", "bye" >>);
+        if $MET_SIR_JORDAN {
+            v5 = v1;
+        }
+        if flag(603) {
+            v5 = v2;
+        }
+        converse {
+            key ("name") {
+                ["As I told thee, my name is Sir Jordan."];
+                TurnOff("name");
+            }
+            key ("job") {
+                ["I sell bows and crossbows here at Iolo's South."];
+                TurnOn(<< "Iolo's South", "sell" >>);
+            }
+            key ("Iolo's South") {
+                ["The original branch is in Britain. But I do fine business here in the Hold."];
+                TurnOff("Iolo's South");
+                TurnOn(<< "original branch", "Hold" >>);
+            }
+            key ("Hold") {
+                ["Serpent's Hold, <v0>. I have sold many quality bows to the knights here."];
+                TurnOff("Hold");
+                TurnOn("knights");
+            }
+            key ("original branch") {
+                ["The great archer himself, Iolo, started that branch more than two hundred years ago."];
+                if v3 {
+                    [*];
+                    SetSpeaker(0, _Iolo);
+                    ["I, er, thank thee for thy compliment."*];
+                    SetSpeaker(0, _Jordan);
+                    ["'Twould mean more wert thou Iolo!"*];
+                    SetSpeaker(0, _Iolo);
+                    ["Listen, here, rogue, I truly -am-..."*];
+                    SetSpeaker(0, _Jordan);
+                    ["Yes, yes, I know. Thou really -art- Iolo... And I am Lord British!"*];
+                    CloseSpeaker(_Iolo);
+                }
+                TurnOff("original branch");
+            }
+            key ("knights") {
+                ["There are many who live within the walls of the Hold. Sir Denton, the bartender at the Hallowed Dock, knows them all."];
+                TurnOff("knights");
+            }
+            key ("sell") {
+                v7 = ~GetWorkType(~NPCToItem_i(_Jordan));
+                if (v7 = 7) {
+                    ["Weapons or missiles?"];
+                    PushKeys();
+                    TurnOn(<< "weapons", "missiles" >>);
+                } else {
+                    ["I am sorry, <v0>, but I can only sell things during my shop hours -- from 6 in the morning 'til 6 at night."];
+                }
+                TurnOff("sell");
+            }
+            key ("weapons") {
+                JordanSellsBows_i();
+            }
+            key ("missiles") {
+                JordanSellsAmmo_i();
+            }
+            key ("statue") {
+                [He looks defensive. "I had nothing to do with that.~~ "But, I will tell thee that, on the night of the incident, I heard the sounds of scuffling in the commons. And, later on in the evening, I heard a woman cry out, as if in surprise!"];
+                TurnOn("woman");
+                TurnOff("statue");
+            }
+            key ("woman") {
+                ["I am not positive, <v5>, but I believe the voice was that of Lady Jehanne." He nods his head knowingly. "Someone has lost their sense of unity."];
+                TurnOff("woman");
+                flag(604) = true;
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["I hope to see thee again, <v5>."*];
+    }
+    if (event = _Bark) {
+        BarkAboutWork_i(_Jordan);
+    }
+}
+
+Usable JordanSellsAmmo_i #locals(14) #uses(~LordOrLady, ~AskOrdList, ~PriceString_i, ~AskYesNo, ~SellItem_i) {
+    v0 = ~LordOrLady();
+    PushKeys();
+    v1 = true;
+    v2 = << "nothing", "arrows", "bolts" >>;
+    v3 = << 0, 722, 723 >>;
+    v4 = 65177;
+    v5 = 20;
+    v6 = "";
+    v7 = 1;
+    v8 = " for a dozen";
+    v9 = 12;
+    ["What dost thou wish to buy?"];
+    While v1 {
+        v10 = ~AskOrdList(v2);
+        if (v10 = 1) {
+            ["All right."];
+            v1 = false;
+        } else {
+            v11 = ~PriceString_i(v8, v5, v7, v2::v10, v6);
+            v12 = 0;
+            ["^<v11> Is that agreeable?"];
+            v13 = ~AskYesNo();
+            if v13 {
+                ["How many dozen wouldst thou like?"];
+                v12 = ~SellItem_i(true, 1, 20, v5, v9, v4, v3::v10);
+            }
+            if (v12 = 1) {
+                ["Very good, <v0>."];
+            } else {
+                if (v12 = 2) {
+                    ["Thou cannot travel with that much!"];
+                } else {
+                    if (v12 = 3) {
+                        ["Thou dost not have the gold for that!"];
+                    } else {
+                    }
+                }
+            }
+            ["Wouldst thou like to buy something else?"];
+            v1 = ~AskYesNo();
+        }
+    }
+    PopKeys();
+    PopKeys();
+}
+
+Usable JordanSellsBows_i #locals(14) #uses(~LordOrLady, ~AskOrdList, ~PriceString_i, ~AskYesNo, ~SellItem_i) {
+    v0 = ~LordOrLady();
+    PushKeys();
+    v1 = true;
+    v2 = << "nothing", "bow", "crossbow", "triple crossbow", "magic bow" >>;
+    v3 = << 0, 597, 598, 647, 606 >>;
+    v4 = 65177;
+    v5 = << 0, 35, 110, 350, 400 >>;
+    v6 = "a ";
+    v7 = 0;
+    v8 = "";
+    v9 = 1;
+    ["What dost thou wish to buy?"];
+    While v1 {
+        v10 = ~AskOrdList(v2);
+        if (v10 = 1) {
+            ["All right."];
+            v1 = false;
+        } else {
+            v11 = ~PriceString_i(v8, v5::v10, v7, v2::v10, v6);
+            v12 = 0;
+            ["^<v11> Is that agreeable?"];
+            v13 = ~AskYesNo();
+            if v13 {
+                v12 = ~SellItem_i(false, 1, 0, v5::v10, v9, v4, v3::v10);
+            }
+            if (v12 = 1) {
+                ["Very good, <v0>."];
+            } else {
+                if (v12 = 2) {
+                    ["Thou cannot travel with that much!"];
+                } else {
+                    if (v12 = 3) {
+                        ["Thou dost not have the gold for that!"];
+                    } else {
+                    }
+                }
+            }
+            ["Wouldst thou like to buy something else?"];
+            v1 = ~AskYesNo();
+        }
+    }
+    PopKeys();
+    PopKeys();
+}

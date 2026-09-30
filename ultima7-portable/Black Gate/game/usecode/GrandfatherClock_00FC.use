@@ -1,0 +1,17 @@
+Routine GrandfatherClock_00FC accepts a0 #locals(3) {
+    if (event = _Action) {
+        v0 = ~GetHour();
+        if (v0 > 12) {
+            v0 = (v0 - 12);
+        }
+        if (v0 = 0) {
+            v0 = 12;
+        }
+        v1 = ~GetMinute_i();
+        if (v1 < 10) {
+            v1 = ("0" + v1);
+        }
+        v2 = (((" " + v0) + ":") + v1);
+        Item_bark(v2, item);
+    }
+}

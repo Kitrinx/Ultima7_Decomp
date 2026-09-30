@@ -1,0 +1,65 @@
+Routine Pick accepts a0 #locals(23) #uses(MemberSays_i, PathToItem_i, ~DirFromAvatar_i) {
+    if (event = _Action) {
+        if not ~IsEquipped_i(_All, _Pick, 1, _Avatar) {
+            MemberSays_i("@Thou must hold that in thine hand.@");
+            return;
+        }
+        v0 = ~GetTarget();
+        v1 = ~Item_getType(v0);
+        if (v1 = 932) {
+            if ((~GetFrame(v0) = 2) or (~GetFrame(v0) = 3)) {
+                v2 = << 2, 1, 0 >>;
+                v3 = << 2, 2, 2 >>;
+                v4 = << 65531 >>;
+                PathToItem_i(7, item, #Pick, v4, v3, v2, v0);
+                closeAllGumps();
+            } else {
+                MemberSays_i("It seems the tree will yield nothing of value.");
+            }
+        } else {
+            MemberSays_i("It seems that a pick is not needed for that.");
+        }
+    }
+    if (event = 7) {
+        v5 = ~FindNearby_i(0, 3, _Tree_932, _Avatar);
+        Foreach v8 in v5 {
+            v9 = ~GetFrame(v8);
+            if ((v9 = 2) or (v9 = 3)) {
+                v10 = ~DirFromAvatar_i(v8);
+            }
+        }
+        v11 = ~PostAction(<< _aFACE_i, v10, _aRAISE1_FRAME_i, _aWAIT_i, 2, _aTHRUST1_FRAME_i, _aWAIT_i, 2, _aRAISE1_FRAME_i, _aWAIT_i, 2, _aTHRUST1_FRAME_i, _aWAIT_i, 1, _aUSABLE_i, #Pick >>, _Avatar);
+    }
+    if (event = _Posted_i) {
+        if flag(801) {
+            v12 = ~Item_create(_Small_Rock);
+            SetFrame(10, v12);
+            v13 = ~PopToMap(<< 2426, 1561, 4 >>);
+            SetFrame(3, ~FindNearby_i(0, 3, _Tree_932, _Avatar));
+            flag(801) = false;
+        } else {
+            v14 = ~FindNearby_i(0, 3, _Tree_932, _Avatar);
+            Foreach v8 in v14 {
+                v9 = ~GetFrame(v14);
+                if ((v9 = 3) or (v9 = 2)) {
+                    v17 = 0;
+                    While (v17 < 3) {
+                        v18 = ~Item_create(_Blood);
+                        SetFrame((3 - v17), v18);
+                        v19 = ~GetCoord(v14);
+                        v19::1 = ((v19::1 + 1) + v17);
+                        v19::2 = (v19::2 + 2);
+                        v19::3 = (v19::3 - 3);
+                        v20 = ~PopToMap(v19);
+                        v17 = (v17 + 1);
+                    }
+                    v21 = ~FindNearby_i(0, 5, _Bucket, v8);
+                    if v21 {
+                        SetFrame(2, v21);
+                        v22 = ~SetQuality(4, v21);
+                    }
+                }
+            }
+        }
+    }
+}

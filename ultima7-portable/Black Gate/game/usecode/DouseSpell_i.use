@@ -1,0 +1,24 @@
+Routine DouseSpell_i accepts a0 #locals(4) #uses(~DirFromAvatar_i, ~IsMagicOK_i, FlashBlocked_i) {
+    if (event = _Action) {
+        Kernel_resetRef(item);
+        v0 = ~GetTarget();
+        v1 = ~DirFromAvatar_i(v0);
+        Item_bark("@An Flam@", item);
+        if ~IsMagicOK_i() {
+            v2 = ~SetAttack_i(_Douse, v0, item);
+            v2 = ~PostAction(<< _aFACE_i, v1, _aRAISE1_FRAME_i, _aTHRUST1_FRAME_i, _aATTACK_i >>, item);
+        } else {
+            v2 = ~PostAction(<< _aFACE_i, v1, _aRAISE1_FRAME_i, _aTHRUST1_FRAME_i, _aUSABLE_i, #FizzleSpell_i >>, item);
+        }
+    }
+    if (event = _Combat) {
+        v3 = ~Item_getType(item);
+        if (v3 in << 701, 526, 338, 435 >>) {
+            Telekinesis_i(v3);
+            v2 = ~PostAction(<< _aUSABLE_i, v3 >>, item);
+            Sfx(46);
+        } else {
+            FlashBlocked_i(60);
+        }
+    }
+}

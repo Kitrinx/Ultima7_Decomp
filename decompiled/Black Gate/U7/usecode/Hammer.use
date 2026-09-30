@@ -1,0 +1,52 @@
+Routine Hammer accepts a0 #locals(10) #uses(PostForgeUsable_i, PathToItem_i, ~DirFromAvatar_i) {
+    if (event = _Action) {
+        if not ~IsEquipped_i(_All, _Hammer, 1, _Avatar) {
+            FlashMouse_i(2);
+            return;
+        }
+        closeAllGumps();
+        PostForgeUsable_i(item);
+    }
+    if (event = _Posted_i) {
+        v0 = false;
+        v1 = ~Item_getType(item);
+        if (v1 = 991) {
+            v0 = ~FindNearest_i(1, _Sword_Blank, item);
+        }
+        if (v1 = 623) {
+            v0 = ~GetTarget();
+        }
+        if (~Item_getType(v0) = _Sword_Blank) {
+            v2 = ~FindNearest_i(3, _Anvil, v0);
+            if v2 {
+                v3 = ~GetCoord(v2);
+                v4 = ~GetCoord(v0);
+                if (v4::1 = v3::1) && (v4::2 = v3::2) && ((v4::3 - 1) = v3::3) {
+                    v5 = ~GetFrame(v0);
+                    if ((v5 >= 8) and (v5 <= 15)) {
+                        PathToItem_i(7, v2, #Hammer, 0, 2, 0, v2);
+                    }
+                }
+            }
+        }
+    }
+    if (event = 7) {
+        v6 = ~FindNearest_i(3, _Sword_Blank, ~NPCToItem_i(_Avatar));
+        v5 = ~GetFrame(v6);
+        v7 = ~NPCToItem_i(_Avatar);
+        v8 = ~DirFromAvatar_i(item);
+        if ((v5 >= 13) and (v5 <= 15)) {
+            Item_bark("@The sword is not heated.@", v7);
+            v9 = ~PostAction(<< _aFACE_i, v8 >>, v7);
+        }
+        if ((v5 = 8) or (v5 = 9)) {
+            Item_bark("@The sword is too cool.@", v7);
+            v9 = ~PostAction(<< _aFACE_i, v8 >>, v7);
+        }
+        if ((v5 >= 10) and (v5 <= 12)) {
+            v9 = ~PostAction(<< _aFACE_i, v8, _aREADY_FRAME_i, _aRAISE1_FRAME_i, _aTHRUST1_FRAME_i, _aREADY_FRAME_i, _aSTAND_FRAME_i >>, v7);
+            v2 = ~FindNearest_i(3, _Anvil, ~NPCToItem_i(_Avatar));
+            v9 = ~PostAction(<< _aWAIT_i, 4, _aUSABLE_i, #HammerSwordBlank_i >>, v2);
+        }
+    }
+}

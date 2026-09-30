@@ -1,0 +1,63 @@
+Routine Sasha accepts a0 #locals(1) #uses(~LordOrLady, DescribeFellowship_i, ExplainPhilosophy_i) {
+    if (event = _Bark) {
+        terminate;
+    }
+    SetSpeaker(0, _Sasha);
+    v0 = ~LordOrLady();
+    TurnOn(<< "name", "job", "bye" >>);
+    if not $MetSasha {
+        [You see a young gypsy lad. He is wearing a Fellowship medallion. His eyes look down and his expression is one of extreme sorrow.];
+        $MetSasha = true;
+    } else {
+        [Sasha looks up. "Good day to thee, <v0>."];
+    }
+    converse {
+        key ("name") {
+            ["My name is Sasha."];
+            TurnOff("name");
+        }
+        key ("job") {
+            ["I am too young to have a job. I am a gypsy as my parents vere gypsies. I am also a member of The Fellowship."];
+            TurnOn(<< "parents", "gypsies", "Fellowship" >>);
+        }
+        key ("parents") {
+            ["My parents - Frederico and Tania - vere murdered. I do not know vhy anyone vould vant to harm them." The words choke out of the boy. Suddenly he is overwhelmed by grief and is unable to speak further.];
+            TurnOff("parents");
+            TurnOn("murders");
+        }
+        key ("murders") {
+            ["It happened at the sawmill in Minoc."];
+            TurnOff("murders");
+        }
+        key ("Fellowship") {
+            DescribeFellowship_i();
+            ["For the past veek I have been avay from home doing vork for The Fellowship."];
+            TurnOff("Fellowship");
+        }
+        key ("philosophy") {
+            ExplainPhilosophy_i();
+            TurnOff("philosophy");
+        }
+        key ("gypsies") {
+            ["I have returned to be vith Margareta and Jergi to grieve for my parents. They did not approve of my joining The Fellowship but I know that they vere concerned out of their love for me, just as I loved them."];
+            TurnOff("gypsies");
+            TurnOn(<< "Margareta", "Jergi" >>);
+        }
+        key ("Margareta") {
+            ["She is very vise and knows many things but vhen I asked her if I should go back to The Fellowship or stay with them she did not answer me."];
+            TurnOff("Margareta");
+        }
+        key ("Jergi") {
+            ["He vas my father's brother. He is a good man and vise. Now he is the leader of our people. He vill do what is right for us."];
+            if not $MetJergi {
+                ["Perhaps thou shouldst talk vith him."];
+            }
+            TurnOff("Jergi");
+        }
+        key ("bye") {
+            break;
+        }
+    }
+    clear_answers;
+    [The lad stoically nods and turns away.*];
+}

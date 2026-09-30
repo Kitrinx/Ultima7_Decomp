@@ -1,0 +1,39 @@
+Routine CrystalBall accepts a0 #locals(2) #uses(PlaySpeechOrText_i) {
+    if (event = _Action) {
+        closeAllGumps();
+        v0 = ~GetQuality(item);
+        if ((v0 = 0) or (v0 > 7)) {
+            PlaySpeechOrText_i(25);
+            return;
+        }
+        if (v0 = 1) {
+            if flag(343) {
+                v1 = << 2690, 2416, 3 >>;
+            } else {
+                v1 = << 2690, 2464, 3 >>;
+            }
+        }
+        if (v0 = 2) {
+            v1 = << 911, 1149, 3 >>;
+        }
+        if (v0 = 3) {
+            v1 = << 2600, 2597, 3 >>;
+        }
+        if (v0 = 4) {
+            v1 = << 2807, 215, 3 >>;
+        }
+        if (v0 = 5) {
+            v1 = << 159, 1344, 3 >>;
+        }
+        if (v0 = 6) {
+            v1 = << 1545, 1907, 3 >>;
+        }
+        if (v0 = 7) {
+            v1 = << 2344, 1431, 3 >>;
+        }
+        if (v0 = 255) {
+            return;
+        }
+        ShowArea_i(v1);
+    }
+}

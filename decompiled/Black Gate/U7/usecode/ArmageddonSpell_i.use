@@ -1,0 +1,21 @@
+Routine ArmageddonSpell_i accepts a0 #locals(2) #uses(~IsMagicOK_i) {
+    if (event = _Action) {
+        Kernel_resetRef(item);
+        Item_bark("@Vas Kal An Mani@", item);
+        if ~IsMagicOK_i() {
+            v0 = ~GetCoord(item);
+            createSprite(65535, 0, 0, 0, (v0::2 - 2), (v0::1 - 2), 7);
+            SetWeather_i(_Rain);
+            Kernel_resetRef(item);
+            v1 = ~PostAction(<< _aSFX_i, 65, _aKNEEL_FRAME_i, _aKNEEL_FRAME_i, _aKNEEL_FRAME_i, _aSTAND_FRAME_i, _aUP_FRAME_i, _aOUT_FRAME_i, _aSFX_i, 67, _aUP_FRAME_i, _aTHRUST1_FRAME_i, _aBEND_FRAME_i, _aSTAND_FRAME_i, _aUSABLE_i, #ArmageddonSpell_i >>, item);
+        } else {
+            v1 = ~PostAction(<< _aKNEEL_FRAME_i, _aLIE_FRAME_i, _aKNEEL_FRAME_i, _aSTAND_FRAME_i, _aUP_FRAME_i, _aOUT_FRAME_i, _aUP_FRAME_i, _aTHRUST1_FRAME_i, _aBEND_FRAME_i, _aSTAND_FRAME_i, _aUSABLE_i, #FizzleSpell_i >>, item);
+        }
+    }
+    if (event = _Posted_i) {
+        Item_bark("@In Corp Hur Tym@", item);
+        Earthquake_i(40);
+        Armageddon_i();
+        $CAST_ARMAGEDDON = true;
+    }
+}

@@ -1,0 +1,259 @@
+Routine Reyna accepts a0 #locals(25) #uses(~LordOrLady, ~IsInInv, GivePartyExp_i, ReynaHeals_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Reyna);
+        v0 = ~LordOrLady();
+        v1 = ~GetTime();
+        v2 = 65428;
+        v3 = false;
+        v4 = false;
+        v5 = ~IsInInv(4, 65177, _Plant_999, 1, _Party);
+        TurnOn(<< "name", "job", "bye" >>);
+        if not $MetReyna {
+            [The woman greets you with shining eyes.];
+            $MetReyna = true;
+        } else {
+            ["Hello, <v0>," says Reyna.];
+        }
+        v6 = ~FindNearest_i(65535, _Tombstone, _Avatar);
+        if v6 && not flag(296) {
+            TurnOn("cemetery");
+        }
+        if v5 && flag(296) {
+            TurnOn("brought flowers");
+        }
+        if flag(355) {
+            TurnOn("heal");
+            v4 = true;
+        }
+        converse {
+            key ("name") {
+                ["I am Reyna," she says, brushing the hair out of her face.];
+                TurnOff("name");
+            }
+            key ("job") {
+                ["I am a healer. I have chosen to set up shop here near the forest."];
+                flag(355) = true;
+                if not v4 {
+                    TurnOn("heal");
+                }
+                TurnOn("forest");
+                if flag(315) {
+                    TurnOn("animals");
+                }
+            }
+            key ("forest") {
+                ["I wanted to live and work here because the land is very beautiful. I have found many things to do and see. Unfortunately, the forest is so spread out that I have yet to meet many of the others who live in this area. I do know that the Abbey is just across the way from mine house.~~"And somewhere nearby is a scholar." She appears thoughtful for a moment. "Also, I believe there is a prison just east of the Abbey.];
+                TurnOff("forest");
+                TurnOn(<< "Abbey", "scholar", "prison" >>);
+            }
+            key ("prison") {
+                ["I've never actually seen it," she laughs, "but rumor has it that the cells are located right next to the court, for quick, easy imprisonment after the trial."];
+                TurnOff("prison");
+            }
+            key ("scholar") {
+                ["From Aimi I have heard that he is brilliant, and... also a bit overzealous to instruct those interested in increasing their knowledge."];
+                if not v3 {
+                    TurnOn("Aimi");
+                }
+                TurnOff("scholar");
+            }
+            key ("Aimi") {
+                v3 = true;
+                if flag(346) {
+                    ["She is the monk who tends the garden at the Abbey."];
+                } else {
+                    ["She is one of the monks who lives at the Abbey. At this time, she is the only other person I have actually met here in the forest."];
+                }
+                TurnOff("Aimi");
+            }
+            key ("Abbey") {
+                ["That is how this area -- Empath Abbey -- got its name, from the monks who live at the abbey of the Brotherhood of the Rose. They are said to make delicious wine. One of the monks cares for a beautiful garden in her spare time. In fact, I often buy flowers from her.~~ But," she grins, "as for the other monks, all that I\x09ever see them do is make wine and wander the countryside."];
+                flag(346) = true;
+                TurnOff("Abbey");
+                TurnOn(<< "flowers", "others" >>);
+            }
+            key ("others") {
+                ["Aimi is the only one I have met, but I know there are one or two others who make wine there."];
+                if not v3 {
+                    TurnOn("Aimi");
+                }
+                TurnOff("others");
+            }
+            key ("flowers") {
+                ["Yes, I get them for my mother."];
+                if not flag(296) {
+                    TurnOn("mother");
+                }
+                TurnOff("flowers");
+            }
+            key ("cemetery", "mother") {
+                flag(296) = true;
+                if v6 {
+                    v7 = "";
+                    v8 = ~FindNearby_i(0, 10, _Plant_999, _Reyna);
+                    Foreach v11 in v8 {
+                        if (~GetFrame(v11) = 4) {
+                            v7 = "I realize there are already \x0D\n\x09\x09\x09\x09\x09\x09very beautiful flowers here, \x0D\n\x09\x09\x09\x09\x09\x09but there can never be enough \x0D\n\x09\x09\x09\x09\x09\x09to demonstrate how much she is \x0D\n\x09\x09\x09\x09\x09\x09missed. ";
+                        }
+                    }
+                }
+                [She looks down at her feet, and then back up at you. It is obvious she is fighting an urge to cry.~~ "Several months ago, my mother passed away in her home town. She was born here in the forests, and had asked to be buried here, near me. Every morning I come out here to visit her and set flowers by her grave.~~ "But," a lone tear escapes and trickles down her cheek, "I am the only member of our family who lives nearby. No one else is able to visit or leave flowers very often.~~"Her grave looks so bare sometimes." She looks off into the horizon and sighs. "<v7>It would be nice\x09if there were some way to have more flowers brought to her."~~She quickly turns and looks at you.~~"I am terribly sorry for rambling on like that. Please excuse me, <v0>."];
+                TurnOff(<< "mother", "cemetery" >>);
+                if v5 {
+                    TurnOn("have flowers");
+                }
+            }
+            key ("have flowers", "brought flowers") {
+                [Her eyes light up as she sees the bouquet of flowers.~~ "They are lovely! Thou art too kind, <v0>, to bring flowers for my mother! I cannot wait to set them by her grave."];
+                v12 = ~TakeFromParty_i(true, 4, _All, _Plant_999, 1);
+                v13 = ~rndRange(6, 1);
+                if ((v13 = 1) or (v13 = 2)) {
+                    v14 = 9;
+                }
+                if ((v13 = 3) or ((v13 = 4) or (v13 = 5))) {
+                    v14 = 19;
+                }
+                if (v13 = 6) {
+                    v14 = 90;
+                }
+                GivePartyExp_i(v14);
+                flag(313) = true;
+                TurnOff(<< "have flowers", "brought flowers" >>);
+            }
+            key ("heal") {
+                if ((v1 = 3) or ((v1 = 4) or (v1 = 5))) {
+                    flag(314) = true;
+                }
+                if flag(314) {
+                    if flag(313) {
+                        v15 = true;
+                        ["For thy kindly gift of flowers, I will aid thee for half price." She smiles at you.];
+                        ReynaHeals_i(200, 5, 15);
+                    } else {
+                        ReynaHeals_i(400, 10, 30);
+                    }
+                } else {
+                    ["I am sorry, <v0>, but, unless this is an emergency, I would prefer to wait until my shop is open."];
+                    TurnOn("emergency");
+                }
+            }
+            key ("emergency") {
+                v16 = ~GetParty();
+                v17 = 0;
+                v18 = false;
+                Foreach v21 in v16 {
+                    v17 = (v17 + 1);
+                    v22 = ~GetItemFlag_i(_Poisoned, v21);
+                    if v22 {
+                        v18 = true;
+                    }
+                    v23 = ~GetNPCStat_i(_Hits, v21);
+                    if (v23 < 10) {
+                        v18 = true;
+                    }
+                }
+                if (v17 > 1) {
+                    v24 = " and your companions";
+                } else {
+                    v24 = "";
+                }
+                [She quickly examines you<v24>.];
+                if (v18 = true) {
+                    flag(314) = true;
+                    ["Thou art correct, <v0>. This is a true emergency!"];
+                    TurnOn("heal");
+                } else {
+                    ["I am sorry, but thy wounds are not mortal. Perhaps thou canst visit me when my shop is open."];
+                }
+                TurnOff("emergency");
+            }
+            key ("animals") {
+                [She smiles shyly.~~"I very much love animals. When I was very young, I found an ailing dove that I was unable to nurse back to health. Since that time, I began to study the healing arts, so that I would be able to help other animals who might need healing.~~ "Of course," she laughs, "now that I have the skills, I use them to help people, too."];
+                TurnOff("animals");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["Goodbye, <v0>.];
+        if flag(313) {
+            ["I thank thee for the bouquet!];
+            if v15 {
+                flag(313) = false;
+            }
+        }
+        ["May health always follow thee!"*];
+        flag(314) = false;
+    }
+    if (event = _Bark) {
+        terminate;
+    }
+}
+
+Routine ReynaHeals_i accepts a0, a1, a2 #locals(11) #uses(~LordOrLady, ~AskYesNo, ~AskList, ~AskParty2_i, SellHealing_i, SellCure_i, SellResurrection_i) {
+    v3 = ~LordOrLady();
+    ["Dost thou want mine aid?"];
+    PushKeys();
+    v4 = ~AskYesNo();
+    if v4 {
+        ["What is thy need?"];
+        v5 = << "healing", "curing", "resurrection" >>;
+        v6 = ~AskList(v5);
+        if ((v6 = "healing") or (v6 = "curing")) {
+            if (v6 = "healing") {
+                v7 = "healed";
+                v8 = v2;
+            }
+            if (v6 = "curing") {
+                v7 = "cured";
+                v8 = v1;
+            }
+            ["Who needs to be <v7>?"];
+            v9 = ~AskParty2_i();
+            if (v9 = 0) {
+                ["None of you seem to require mine aid."~~She appears pleased.];
+                goto label_26;
+            }
+        }
+        if (v6 = "resurrection") {
+            v10 = ~AvatarItem_i();
+            v11 = ~FindNearest_i(25, _Body_400, v10);
+            v8 = v0;
+            if (v11 = 0) {
+                v11 = ~FindNearest_i(25, _Body_414, v10);
+                if (v11 = 0) {
+                    ["I am sorry, but thou hast not presented anyone to me who requires mine assistance. If there is someone who truly needs my skills, I must have a closer look."];
+                    goto label_26;
+                }
+            }
+        }
+        ["I must charge thee <v8> gold. Is this price agreeable?"];
+        v12 = ~AskYesNo();
+        if v12 {
+            v13 = ~CountItem(_All, _All, _Gold_Coin, _Party);
+            if (v13 >= v8) {
+                if (v6 = "healing") {
+                    SellHealing_i(v8, v9);
+                } else {
+                    if (v6 = "curing") {
+                        SellCure_i(v8, v9);
+                    } else {
+                        if (v6 = "resurrection") {
+                            SellResurrection_i(v8, v11);
+                        } else {
+                        }
+                    }
+                }
+            } else {
+                ["I am sorry, <v3>, but thou dost not have enough gold. Perhaps, I will be able to aid thee next time."];
+            }
+        } else {
+            ["Then I cannot help thee, <v3>. I am truly sorry, but my fees are set."];
+        }
+    } else {
+        ["I am glad of that, <v3>. I am happy to help those in need, but I would be far happier if there were never a need!"];
+    }
+    label_26:
+    PopKeys();
+}

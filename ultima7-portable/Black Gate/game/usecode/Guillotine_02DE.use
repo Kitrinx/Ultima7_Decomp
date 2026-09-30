@@ -1,0 +1,21 @@
+Routine Guillotine_02DE accepts a0 #locals(2) {
+    if (event = _Action) && not ~Kernel_getNumProcesses(item) {
+        if (~GetFrame(item) < 5) {
+            SetFrame(0, item);
+            v0 = ~PostAction(<< _aSFX_i, 35, _aNEXT_FRAME, _aLOOP_i, 65533, 4 >>, item);
+        } else {
+            playSFX(item, 35);
+            v1 = ~GetFrame(item);
+            if (v1 < 11) {
+                v0 = ~PostAction(<< _aSFX_i, 34, _aNEXT_FRAME, _aLOOP_i, 65533, 1, byte(88), 35 >>, item);
+            }
+            if (v1 = 11) {
+                v0 = ~PostAction(<< _aSFX_i, 35, _aFRAME, 12, _aSFX_i, 35, _aFRAME, 0 >>, item);
+            }
+            if (v1 = 12) {
+                playSFX(item, 35);
+                SetFrame(0, item);
+            }
+        }
+    }
+}

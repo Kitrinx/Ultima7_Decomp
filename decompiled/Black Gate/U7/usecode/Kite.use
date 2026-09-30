@@ -1,0 +1,33 @@
+Routine Kite accepts a0 #locals(6) #uses(PathToItem_i, MemberBarks_i) {
+    if ~Kernel_getNumProcesses(item) {
+        return;
+    }
+    if (event = _Action) {
+        v0 = ~Item_getContainer(item);
+        if v0 {
+            v1 = ~GetCoord(_Avatar);
+            v1::1 = (v1::1 + 1);
+            v2 = ~Item_push(item);
+            if v2 {
+                v2 = ~PopToMap(v1);
+            } else {
+                return;
+            }
+        }
+        if ~InGumpMode_i() {
+            closeAllGumps();
+        }
+        v3 = 65535;
+        v4 = 65535;
+        v5 = 65534;
+        PathToItem_i(7, item, #Kite, v5, v4, v3, item);
+    }
+    if (event = 7) {
+        if not ~IsAvatarInside_i() {
+            v2 = ~PostAction(<< _aFRAME, 0, _aNEXT_FRAME_MAX_i, _aLOOP_i, 65535, 14, byte(39), 5, byte(80), byte(11), 65535, 3, byte(39), 2, byte(77), byte(11), 65533, 3, byte(79), byte(11), 65535, 14, byte(70), 0 >>, item);
+            v2 = ~PostAction(<< _aBEND_FRAME_i, _aSTAND_FRAME_i, _aFACE_i, _West, _aRAISE1_FRAME_i, _aWAIT_i, 2, _aSTAND_FRAME_i, _aWAIT_i, 2, _aLOOP_i, 65530, 7 >>, _Avatar);
+        } else {
+            MemberBarks_i("@Try it outside!@");
+        }
+    }
+}

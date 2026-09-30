@@ -1,0 +1,105 @@
+Routine Cador accepts a0 #locals(9) #uses(~LordOrLady, ~AvatarName, ~AskList) {
+    if (event = _Action) {
+        SetSpeaker(0, _Cador);
+        v0 = ~LordOrLady();
+        v1 = ~AvatarName();
+        v2 = "the Avatar";
+        v3 = ~GetTime();
+        v4 = ~NPCToItem_i(_Cador);
+        v5 = ~NPCToItem_i(_Mara);
+        v6 = ~GetWorkType(v4);
+        v7 = ~Npc_getAlignment(v4);
+        TurnOn(<< "name", "job", "bye", "Fellowship" >>);
+        if (v7 = 2) {
+            SetWorkType(_Combat_0, v4);
+            SetWorkType(_Combat_0, v5);
+        }
+        if flag(644) {
+            TurnOn("Elizabeth and Abraham");
+        }
+        if not $MetCador {
+            [You see a broad-shouldered man with a solemn look about him.];
+            $MetCador = true;
+        } else {
+            ["Yes, <v0>?" says Cador.];
+        }
+        converse {
+            key ("name") {
+                [The man shakes your hand. "I am Cador."];
+                if (v6 = 26) {
+                    ["And thy name is?"];
+                    v8 = ~AskList(<< v1, v2, v0 >>);
+                    if (v8 = v2) {
+                        ["What? Dost thou mean to tell me that thou art the one who brought those gargoyles to our precious land?" He turns quite angry.~~"Daemon lover!"*];
+                        SetWorkType(_Combat_0, v4);
+                        Npc_setAlignment(_Evil, v4);
+                        SetWorkType(_Combat_0, v5);
+                        Npc_setAlignment(_Evil, v5);
+                        terminate;
+                    } else {
+                        ["I am happy to make thine acquaintance, <v0>."];
+                    }
+                }
+                TurnOff("name");
+            }
+            key ("job") {
+                ["I oversee the local branch of the Britannian Mining Company in Vesper. We mine many different minerals."];
+                TurnOn(<< "Vesper", "We", "minerals" >>);
+            }
+            key ("minerals") {
+                ["Gold and lead."];
+                TurnOff("minerals");
+            }
+            key ("Vesper") {
+                ["That is the name of our town. Liana at town hall can give thee any more information that thou mightest need, but I have lived here with my family since the branch opened."];
+                TurnOn(<< "Liana", "family" >>);
+                TurnOff("Vesper");
+            }
+            key ("Fellowship") {
+                ["It is a wonderful organization. They perform many works of charity and special events -- parades and such."  He points to his medallion. "As thou canst see, I am a member. I fully believe in the triad of inner strength."];
+                if flag(644) {
+                    ["As a matter of fact, two Fellowship officials were just here. They said it was important to see how a town's economy worked before starting a branch in that town. Dost thou realize what that means?" He smiles proudly. "They are going to build a Fellowship branch here in Vesper."];
+                }
+                TurnOn("triad");
+                TurnOff("Fellowship");
+            }
+            key ("triad") {
+                ["Those are The Fellowship's three basic principles: Strive for Unity, Trust thy Brother, and Worthiness Precedes Reward."];
+                TurnOff("triad");
+            }
+            key ("Elizabeth and Abraham") {
+                ["They were the two Fellowship officials that were here! They only stayed for a minute or two. I have no idea where they are now."];
+                TurnOff("Elizabeth and Abraham");
+            }
+            key ("We") {
+                ["I work with Mara and a gargoyle named Lap-Lem."];
+                TurnOn(<< "Mara", "Lap-Lem" >>);
+                TurnOff("We");
+            }
+            key ("Mara") {
+                ["She is a fantastic worker. Better than most men I have mined with."];
+                TurnOff("Mara");
+            }
+            key ("Lap-Lem") {
+                ["Well, for a gargoyle, he is not too lazy. He works much harder than that other one who left, Anmanivas. But I would fain let him go if we did not need the extra hand."];
+                TurnOff("Lap-Lem");
+            }
+            key ("Liana") {
+                ["She keeps the records at town hall."];
+                TurnOff("Liana");
+            }
+            key ("family") {
+                ["Yes, my wife, Yvella, and my daughter, Catherine."];
+                TurnOff("family");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["It has been a pleasure, <v0>."*];
+    }
+    if (event = _Bark) {
+        terminate;
+    }
+}

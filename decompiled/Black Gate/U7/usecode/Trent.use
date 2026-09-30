@@ -1,0 +1,227 @@
+Routine Trent accepts a0 #locals(6) #uses(~IsInInv, ~LordOrLady, TrentEmbracesRowena_i, TrentBuildsCage_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Trent);
+        v0 = ~IsInInv(65177, 0, _Wedding_Ring, 1, _Party);
+        v1 = ~LordOrLady();
+        v2 = ~FindNearest_i(65535, _Soul_Cage, _Trent);
+        v3 = false;
+        if flag(462) {
+            [Trent glares, giving his eyes an intensity that leaves no doubt in your mind about his attitude. "If I thought that thou wert going to run off at a moment's notice I'd not have asked thee to help me free my love.~~"Now please, take the cage and go to\x09Mordra. She will instruct thee in its use." His manner smoothes, "I have placed mine only chance at reunion with Rowena in thy capable hands."*];
+            flag(462) = false;
+            terminate;
+        }
+        if (flag(463) and not flag(424)) {
+            ["Please, do not disturb me whilst I build this cage, for my thoughts are on nothing but the destruction of that foul Horance!" He continues the construction of the Soul Cage.*];
+            terminate;
+        }
+        if not flag(438) {
+            if v2 {
+                [The large, angry-looking ghost ignores your presence and continues to hammer on a strange iron cage.*];
+            } else {
+                [The large, angry-looking ghost ignores your presence, while obviously searching for some item.*];
+            }
+            terminate;
+        }
+        if v0 {
+            TurnOn("ring");
+        }
+        if flag(408) {
+            TurnOn("sacrifice");
+        }
+        if flag(422) {
+            SetSpeaker(1, _Trent);
+            TrentEmbracesRowena_i();
+        }
+        if flag(421) {
+            SetSpeaker(1, _Trent);
+            flag(449) = false;
+            TrentBuildsCage_i();
+        }
+        if not $MetTrent {
+            [You see in the fire of the ghostly forge a large, heavily-muscled ghost with a full beard and mustache. He does not notice your approach.];
+            $MetTrent = true;
+        } else {
+            if v2 {
+                [Trent continues his work on the strangely-shaped iron cage.];
+                TurnOn("iron cage");
+            } else {
+                [Trent seems to be searching for something.];
+                TurnOn("something");
+            }
+        }
+        TurnOn(<< "name", "job", "bye" >>);
+        converse {
+            key ("name") {
+                [A deep furrow, accentuated by thick eyebrows, creases the ghost's weary brow. He doesn't look away from his work. "I am Trent. Now, please, leave me to my work."];
+                if v2 {
+                    [He continues hammering on a strangely-shaped iron cage.];
+                    if not v3 {
+                        TurnOn("iron cage");
+                    }
+                }
+                TurnOff("name");
+            }
+            key ("something") {
+                ["I cannot find the iron cage!" he shouts. "Some fool must have taken it! When I find out who did it and where it is, that fool will sorely regret having removed it from my shop!"*];
+                terminate;
+            }
+            key ("job") {
+                ["Art thou blind! Canst thou not see that I am a smith?" He doesn't seem the sort for idle conversation.];
+                TurnOff("job");
+            }
+            key ("iron cage") {
+                [Anger radiates from the large ghost in almost tangible waves. He looks up from the cage and you see that the light of fire isn't coming from the forge, it's coming from his eyes. "I build this cage to destroy that bastard, Horance, who took my wife from me."~~For a moment, you think he is going to strike out at you, then he unclenches his fists with a heavy sigh and returns to his work.];
+                v3 = true;
+                TurnOff("iron cage");
+                TurnOn(<< "Horance", "wife" >>);
+            }
+            key ("Horance") {
+                [His whole body tenses as you speak.~~"Horance..." The word comes out like a curse. "I will see his foul spirit burn before mine eyes. Then I will laugh as he cries out pitifully for mercy." For some reason you think that you'd rather avoid hearing that laugh.];
+                TurnOff("Horance");
+            }
+            key ("wife") {
+                [One hot tear slips from the ghost's eye and falls on a heated piece of the iron cage. It sizzles, and then is gone.~~"Rowena was my life, mine only joy in this world." His voice is almost tender, but then he returns to his guttural tones. "He killed her and took that joy from me. Now I am only a hollow shell of a man, burning with hatred."];
+                TurnOff("wife");
+                TurnOn(<< "Rowena", "killed" >>);
+            }
+            key ("killed") {
+                ["In an attempt to steal her away from my side, the evil fiend sent his undead minions to bring her to the dark tower. The mindless creatures slew her as she struggled." The ghost turns to you in anguish, "I could do nought to save her... the sheer numbers of skeletal warriors bore me to the ground as she was bereft of life."~~Insane determination flickers in the big ghost's eyes, "For this I will never forgive and never forget.];
+                TurnOff("killed");
+            }
+            key ("Rowena") {
+                [He holds up one hand as you say the name of his late wife. "Please, do not say that name. It takes from me\x09a little of mine Hatred, which is all I have now. Wouldst thou rob me of the one thing that keeps me alive?" It would seem that he is unaware of the fact that he is, indeed, no longer alive. An odd expression crosses his face.~~"I gave her a music box for our wedding, and now it is all I have left to remember her by." His tone changes.~~"Do thou see what thou hast done?! I cannot work when I think of her!" He returns to his work with renewed passion.];
+                v4 = ~FindNearest_i(65535, _Music_Box, _Avatar);
+                if v4 {
+                    [You notice the music box he spoke of sitting nearby.];
+                }
+                TurnOff("Rowena");
+            }
+            key ("ring") {
+                v5 = ~TakeFromParty_i(false, _All, 0, _Wedding_Ring, 1);
+                [You hold out the ring to Trent. At first he ignores you. Then, recognizing the ring, he takes it from you and holds it before him. Something in him snaps and his huge frame slumps forward.~~You let the ghost cry for a while, and when he finishes, you see a remarkable change in his appearance.];
+                CloseSpeaker(_Trent);
+                SetSpeaker(1, _Trent);
+                [The flames that once burned in his eyes are now gone, replaced by a deep shade of blue. He looks like a new man, or rather, ghost as it were.~ "Forgive my behavior, <v1>. I know not what came over me. I remember flames, but they burned no hotter than mine own Hatred." He looks pained at the memory.~~ "Thou hast seen her? Thou hast seen Rowena? And she still cares for me. Well, all the more reason to finish this Soul Cage. We must free her from Horance's vile sorcery."];
+                flag(421) = true;
+                TurnOff(<< "iron cage", "name", "job", "Horance", "wife", "Rowena", "killed", "ring", "bye" >>);
+                flag(449) = true;
+                TrentBuildsCage_i();
+            }
+            key ("bye") {
+                [If he heard you, he ignores the fact as you take your leave. You truly feel pity for this deeply wounded spirit.*];
+                terminate;
+            }
+        }
+        clear_answers;
+    }
+    if (event = _Bark) {
+        terminate;
+    }
+}
+
+Usable TrentBuildsCage_i #locals(6) #uses(~LordOrLady, ~AskYesNo, ~IsInInv, FinishSoulCage_i) {
+    v0 = ~FindNearest_i(65535, _Soul_Cage, _Trent);
+    v1 = ~LordOrLady();
+    if not flag(449) {
+        if flag(424) {
+            [Trent paces around the burned-out remains of his shop. When he sees you return, he rushes forward, looking for his love, Rowena.];
+            v2 = ~GetParty();
+            if (~NPCToItem_i(_Rowena) in v2) {
+                [The starcrossed lovers rush into each other's ghostly embrace. For a time it's hard to see where one spirit begins and the other ends. You barely make out the image of Trent replacing Rowena's ring on her finger.~~Then the two slowly turn to face you. "Thou hast done so much for us, I hope that in helping us, thou hast been assisted in thine own quest." Trent bows to you then turns to regard his lovely wife.*];
+                LeaveParty(_Rowena);
+                SetWorkType(_Wait, ~NPCToItem_i(_Rowena));
+                flag(422) = true;
+                terminate;
+            } else {
+                ["How can I help thee, <v1>? Is there something I have forgotten?" He looks at you, perplexed.];
+            }
+        } else {
+            if v0 {
+                [The large ghost continues to work, but now he whistles a sweet, sad tune as he hammers on the iron bars of the cage.];
+            } else {
+                ["Why, where has the cage gone to? 'Twas here just a moment ago, I am certain. I cannot progress until I can find the cage!"*];
+                terminate;
+            }
+        }
+    }
+    TurnOn(<< "What next?", "bye" >>);
+    if flag(449) {
+        TurnOn(<< "Soul Cage", "free" >>);
+    }
+    converse {
+        key ("Soul Cage") {
+            ["This is a special cage, made to fit the shape of a man. Mistress Mordra says that it will contain the Liche, Horance, once it has been lowered into his Well of Souls." His voice seems much softer than before.];
+            TurnOff("Soul Cage");
+        }
+        key ("free") {
+            ["Yes, thou wilt help me free her, wilt thou not?" A tinge of the edge comes back to his voice.];
+            v3 = ~AskYesNo();
+            if v3 {
+                [His grip on the haft of his hammer relaxes and he smiles with gratitude.~~"Thou cannot know how much this means to me. I thank thee."];
+            } else {
+                [His grip on the haft of his hammer tightens. "See to it thou\x09art quick about thy departure! If thou dost, I will assume thou hast changed thy mind!"*];
+                terminate;
+            }
+            TurnOff("free");
+        }
+        key ("What next?") {
+            v4 = ~IsInInv(65177, 65177, _Iron_Bars, 1, _Party);
+            if flag(424) {
+                ["Why, I beg thee to please help in the return my lovely Rowena to me," he pleads.];
+            } else {
+                if not v4 {
+                    ["I will need a bar of iron to complete the cage. Several can be found in the town cemetery."];
+                    TurnOff("What next?");
+                } else {
+                    ["Ah, I'll need the iron bar that thou dost carry." He holds out his hand and takes the iron bar from you.];
+                    v5 = ~TakeFromParty_i(false, _All, _All, _Iron_Bars, 1);
+                    ["With this, I will finish it shortly. Wait here whilst I tend to the cage."];
+                    ["Take the cage to Mistress Mordra and she will tell thee more about it and its use."];
+                    flag(463) = true;
+                    FinishSoulCage_i(item);
+                    terminate;
+                }
+            }
+        }
+        key ("sacrifice") {
+            ["I cannot even consider that until I am reunited with my love." He seems very adamant about this.];
+            TurnOff("sacrifice");
+        }
+        key ("bye") {
+            ["Please, hurry. Every second my love must endure Horance's foul presence is like a knife in my side." He begins to pace about his shop.*];
+            terminate;
+        }
+    }
+    clear_answers;
+}
+
+Usable TrentEmbracesRowena_i #locals(2) #uses(~LordOrLady, ~IsNPCNear) {
+    v0 = ~LordOrLady();
+    v1 = ~IsNPCNear(_Rowena);
+    if v1 {
+        [The couple haven't released their embrace since they were first reunited as far as you can tell, and they show no sign of doing so any time in the near future.];
+        TurnOn("bye");
+        converse {
+            key ("sacrifice") {
+                if not flag(414) {
+                    SetSpeaker(1, _Rowena);
+                    ["No, <v0>. Wouldst thou take my beloved from me so shortly after our reunion? Another will have to perform this terrible task." Rowena holds on tightly to her husband.];
+                    flag(414) = true;
+                    CloseSpeaker(_Rowena);
+                    SetSpeaker(1, _Trent);
+                } else {
+                    ["I cannot leave my lady like this. Surely thou dost understand, <v0>."];
+                }
+                TurnOff("sacrifice");
+            }
+            key ("bye") {
+                [The couple continue staring into one another's eyes as if to make up for all of the years they lost.*];
+                terminate;
+            }
+        }
+        clear_answers;
+    } else {
+        ["Why, I must again find my darling Rowena! Where could she have gone to?*];
+        terminate;
+    }
+}

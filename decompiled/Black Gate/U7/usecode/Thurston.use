@@ -1,0 +1,148 @@
+Routine Thurston accepts a0 #locals(10) #uses(~LordOrLady, ~AskYesNo, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Thurston);
+        v0 = ~LordOrLady();
+        v1 = ~GetTime();
+        v2 = ~GetWorkType(~NPCToItem_i(_Thurston));
+        v3 = ~IsMedallionOn_i();
+        TurnOn(<< "name", "job", "bye" >>);
+        if ($StolenVenom and not $VENOM_CASE_SOLVED) {
+            TurnOn("thief");
+        }
+        if $CAMILLE_GAVE_WHEAT && not $THURSTON_PAID_DELIVERY {
+            TurnOn("delivery");
+        }
+        if $POLLY_TOLD_ABOUT_THURSTON {
+            TurnOn("Polly");
+        }
+        if not $MetThurston {
+            [You see a man covered in the sweat of a hard day's work.];
+            $MetThurston = true;
+        } else {
+            ["Greetings, <v0>," says Thurston.];
+        }
+        converse {
+            key ("name") {
+                ["I am Thurston."];
+                TurnOff("name");
+            }
+            key ("job") {
+                ["I operate the mill here in Paws."];
+                TurnOn(<< "mill", "Paws" >>);
+            }
+            key ("mill") {
+                ["The local economy depends upon the mill for flour. So I ensure that the mill runs. Sometimes, I feel that keeping the wheels turning is the only reason to live."];
+                TurnOn(<< "flour", "reason to live" >>);
+                TurnOff("mill");
+            }
+            key ("flour") {
+                if (v2 = 7) {
+                    ["A sack will cost thee 12 gold. Art thou interested in purchasing some?"];
+                    if ~AskYesNo() {
+                        loop {
+                            v4 = ~CountItem(_All, _All, _Gold_Coin, _Party);
+                        } while (v4 >= 12) {
+                            v5 = ~GiveToParty_i(true, 14, _All, _Kitchen_Items, 1);
+                            if v5 {
+                                v6 = ~TakeFromParty_i(true, _All, _All, _Gold_Coin, 12);
+                                if v6 {
+                                    ["Here it is," he says, handing you the sack. "Wouldst thou wish another?"*];
+                                    v7 = ~AskYesNo();
+                                    if v7 {
+                                        continue;
+                                    } else {
+                                        goto label_72;
+                                    }
+                                }
+                            } else {
+                                ["Thou hast not the room for this sack."];
+                            }
+                            goto label_32;
+                        }
+                        ["Thou hast not the gold for this, <v0>. Perhaps some other time."];
+                        label_32:
+                    } else {
+                        ["Perhaps next time, <v0>."];
+                    }
+                } else {
+                    ["The mill is closed at present. If thou wouldst please return when it is open again I would gladly sell thee all the flour thou canst carry."];
+                }
+                TurnOff("flour");
+            }
+            key ("Paws") {
+                ["In case thou hadst not noticed, the people who live here are not so well off as their cousins who live in Britain. In fact, we have even had a theft recently."];
+                TurnOff("Paws");
+                if not $VENOM_CASE_SOLVED {
+                    TurnOn("theft");
+                }
+            }
+            key ("theft", "thief") {
+                ["Indeed, thou shouldst be wary, <v0>. There is a thief in this town! Morfin, a merchant, had several vials of valuable silver snake venom stolen."];
+                $StolenVenom = true;
+                TurnOff(<< "theft", "thief" >>);
+                TurnOn("snake venom");
+            }
+            key ("snake venom") {
+                ["It is procured from the Silver Serpent. I believe Gargoyles used it habitually in the old days. I am not so sure what it might do to a human. Perhaps Morfin can tell thee more."];
+                TurnOff("snake venom");
+            }
+            key ("delivery") {
+                if $THURSTON_PAID_DELIVERY {
+                    ["I have paid thee once for thy delivery. I shall not do so again."];
+                } else {
+                    v8 = ~TakeFromParty_i(true, _All, _All, _Sack_Of_Wheat, 1);
+                    if v8 {
+                        [You give the sack over to Thurston. He opens it and reaches inside. His hand comes back out filled with wheat. He sifts through it with his fingers. "I know Camille is oft quite busy running her farm. Thanks to thee for making the delivery."];
+                        v9 = ~GiveToParty_i(true, _All, _All, _Gold_Coin, 10);
+                        if v9 {
+                            ["This should compensate thee for thy trouble." He hands you ten gold pieces.];
+                            $THURSTON_PAID_DELIVERY = true;
+                        }
+                    } else {
+                        ["'Tis a puzzlement! Camille promised to make a delivery of wheat to me sometime today and it is late. I wonder where it could be."];
+                    }
+                }
+                TurnOff("delivery");
+            }
+            key ("reason to live") {
+                ["I have no wife or family. I have thought about joining The Fellowship, but I refuse. I have nothing but my work, and a drink at the Salty Dog now and then."];
+                TurnOff("reason to live");
+                TurnOn(<< "Fellowship", "Salty Dog" >>);
+            }
+            key ("Fellowship") {
+                ["I know they do good work here in town, but there is just something about them that makes me uncomfortable."];
+                if v3 {
+                    [He notices your Fellowship medallion and hurriedly clears his throat. "No offense intended, <v0>."];
+                }
+                TurnOff("Fellowship");
+            }
+            key ("Salty Dog") {
+                if not $ThurstonLovesPolly {
+                    ["In truth, I go there more to be near Polly, the innkeeper, than for the wine. But she is always busy tending bar and has no time for me, I am sure."];
+                    $ThurstonLovesPolly = true;
+                } else {
+                    ["I should go to the Salty Dog and see Polly." Thurston stares off into space for a few moments, his eyes are big and he has a moony expression on his face. Suddenly, he snaps back to reality. "Excuse me, thou wert saying something?"];
+                }
+                TurnOff("Salty Dog");
+            }
+            key ("Polly") {
+                if not $THURSTON_COURTING_POLLY {
+                    [You relate to Thurston what Polly had said about him. He looks at you with joyous surprise. "Did Polly really say these things?! It is ridiculous that she believes I am too good for her!" Suddenly he forgets his work and starts hurrying around in excitement. "For years I have loved this woman from afar. I will begin courting her immediately!"];
+                    $THURSTON_COURTING_POLLY = true;
+                } else {
+                    ["I want to thank thee for telling me the truth about Polly's feelings about me. I can be such a stick in the mud running this bloody mill all of the time that I would never have noticed it if she were wearing a sign on her back! This is just what I needed to help me start enjoying my life!"];
+                }
+                TurnOff("Polly");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        label_72:
+        clear_answers;
+        ["Good day to thee, <v0>."*];
+    }
+    if (event = _Bark) {
+        BarkAboutWork_i(_Thurston);
+    }
+}

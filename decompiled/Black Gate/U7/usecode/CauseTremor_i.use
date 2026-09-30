@@ -1,0 +1,57 @@
+Usable CauseTremor_i #locals(11) {
+    Kernel_resetRef(item);
+    v0 = ~FindNearby_i(8, 40, _All, item);
+    v1 = 6;
+    if not ~GetItemFlag_i(_OnMovingBarge_i, _Avatar) {
+        Foreach v4 in v0 {
+            v5 = 0;
+            v6 = "";
+            While (v5 < v1) {
+                v7 = ~rndRange(8, 0);
+                if (v7 = 0) {
+                    v8 = << byte(109), byte(108), byte(97) >>;
+                    v6 = << v6, v8 >>;
+                }
+                if (v7 = 1) {
+                    v8 = << byte(109), byte(97), byte(97) >>;
+                    v6 = << v6, v8 >>;
+                }
+                if (v7 = 2) {
+                    v8 = << byte(108), byte(110), byte(97) >>;
+                    v6 = << v6, v8 >>;
+                }
+                if (v7 = 3) {
+                    v8 = << byte(97), byte(97), byte(97) >>;
+                    v6 = << v6, v8 >>;
+                }
+                if (v7 = 4) {
+                    v8 = << byte(109), byte(100), byte(97) >>;
+                    v6 = << v6, v8 >>;
+                }
+                if (v7 = 5) {
+                    v8 = << byte(100), byte(109), byte(97) >>;
+                    v6 = << v6, v8 >>;
+                }
+                if (v7 = 6) {
+                    v9 = (byte(48) + (~rndRange(3, 0) * 2));
+                    v8 = << byte(89), v9, byte(108), byte(97) >>;
+                    v6 = << v6, v8 >>;
+                }
+                if (v7 = 7) {
+                    v9 = (byte(48) + (~rndRange(3, 0) * 2));
+                    v8 = << byte(89), v9, byte(109), byte(97) >>;
+                    v6 = << v6, v8 >>;
+                }
+                if (v7 = 8) {
+                    v9 = (byte(48) + (~rndRange(3, 0) * 2));
+                    v8 = << byte(89), v9, byte(100), byte(97) >>;
+                    v6 = << v6, v8 >>;
+                }
+                v5 = (v5 + 1);
+            }
+            Kernel_resetRef(v4);
+            v10 = ~PostAction(v6, v4);
+        }
+    }
+    Earthquake_i((v1 * 3));
+}

@@ -1,0 +1,485 @@
+Routine LordBritish accepts a0 #locals(18) #uses(~AvatarName, ~IsNPCNear, ~AskYesNo, GivePartyExp_i, LordBritishHeals_i, LordBritishGivesShip_i, BarkAboutWork_i, ~DirFromAvatar_i) {
+    v0 = false;
+    if (event = _Action) {
+        label_1:
+        v1 = ~AvatarName();
+        if $CAST_ARMAGEDDON {
+            SetSpeaker(0, _LordBritish);
+            ["Fool!! What possessed thee to cast that damned Armageddon Spell? I knew it was dangerous! Thou didst know it was dangerous!! Now look at us! We are all alone on the entire planet! Britannia is ruined! What kind of Avatar art thou!?! Now, with no Moongates working, we are both forced to spend eternity in this blasted wasteland!~~"Of course, it could be viewed as a clever solution to all of our problems. After all, not even this so-called Guardian would want Britannia now!"*];
+            terminate;
+        }
+        if flag(780) {
+            if not $LB_REWARDED_FOR_FV {
+                v0 = true;
+                SetSpeaker(0, _LordBritish);
+                ["I felt the passing of the remains of Exodus from this realm. It has lifted a great weight from my shoulders. And so Avatar, I cannot let this accomplishment go unrewarded. Please kneel, my friend." Lord British holds out his hands as you obey his command.];
+                goto label_149;
+            }
+        } else {
+            if not flag(766) {
+                TurnOn("rumble");
+            }
+        }
+        v2 = ~GetParty();
+        v3 = ~IsNPCNear(_Iolo);
+        v4 = ~IsNPCNear(_Dupre);
+        v5 = ~IsNPCNear(_Shamino);
+        SetSpeaker(0, _LordBritish);
+        v6 = false;
+        v7 = false;
+        v8 = false;
+        TurnOn(<< "name", "job", "bye", "Fellowship" >>);
+        if not $GOT_ORB {
+            TurnOn("Orb of the Moons");
+        }
+        if ($AGREED_TO_FREE_WESTON and not $WESTON_PARDONED) {
+            TurnOn("Weston");
+        }
+        if $ASKED_LB_ABOUT_HEAL {
+            TurnOn("heal");
+        }
+        if flag(295) {
+            TurnOn("The Guardian");
+        }
+        if $ASKED_LB_ABOUT_GUARDIAN {
+            TurnOff("The Guardian");
+        }
+        if not $MET_LORD_BRITISH {
+            [You see your old friend Lord British, looking a bit older than when you last saw him. His eyes gleam at the sight of you.~~"Welcome, my friend," he says, embracing you. "Please. Tell me what brings thee to Britannia! Or, more importantly, what 'brought' thee here?"];
+            $MET_LORD_BRITISH = true;
+            TurnOn(<< "red Moongate", "Orb of the Moons" >>);
+        } else {
+            ["Yes, <v1>?" Lord British asks.];
+        }
+        converse {
+            key ("name") {
+                [Lord British laughs. "What, art thou joking, Avatar? Dost thou not recognize thine old friend?"];
+                TurnOff("name");
+            }
+            key ("job") {
+                [Lord British rolls his eyes. "Must we go through this formality?" He laughs, shaking his head.];
+                ["Very well. As thou well knowest, I am sovereign of Britannia and have been for some time now. Even though I come from thine homeland, I have chosen to live my life here."];
+                TurnOn(<< "Britannia", "homeland" >>);
+            }
+            key ("homeland") {
+                ["I know that it has been many a year since I visited our Earth, but surely thou dost remember that the two of us hail from the same time and place? And, as brothers in origin, thou shouldst also remember that thou canst ask me for aid at any time thou mightest require it."];
+                TurnOff("homeland");
+                TurnOn("aid");
+            }
+            key ("aid") {
+                ["Do not forget, Avatar, that I have the power to heal thee. That is one bit of magic that still seems to work for me. And I could probably provide thee with some equipment and a spellbook."];
+                TurnOn(<< "equipment", "spellbook" >>);
+                if not $ASKED_LB_ABOUT_HEAL {
+                    TurnOn("heal");
+                }
+                $ASKED_LB_ABOUT_HEAL = true;
+                TurnOff("aid");
+            }
+            key ("Britannia") {
+                ["The state of the land could not be more prosperous. Dost thou realize that thou hast been away for 200 Britannian years?" Lord British wags a finger at you.~~ "I am certain that thy friends have rued thine absence. 'Tis a shame thou didst stay away so long! But... I am so very happy to see thee. Britannia is prosperous and abundant. Look around thee. Explore the newly refurbished castle. Travel the land. Peace is prominent in all quarters.~~"Yes, Britannia has never been better. Well, almost never."];
+                TurnOff("Britannia");
+                TurnOn(<< "friends", "castle", "almost never" >>);
+                if not $ASKED_LB_ABOUT_MAGIC {
+                    TurnOn("magic");
+                }
+            }
+            key ("almost never") {
+                ["Well, 'things' are indeed fine. It is the 'people' I am concerned about.~~"There is something wrong in Britannia, but I do not know what it is. Something is hanging over the heads of the Britannian people. They are unhappy. One can see it in their eyes. There is nothing that is unifying the population, since there has been peace for so long.~~"Perhaps thou couldst determine what is happening. I implore thee to go out amongst the people. Watch them in their daily tasks. Speak with them. Work with them. Break bread with them. Perhaps they need someone like the Avatar to take an interest in their lives."];
+                TurnOff("almost never");
+            }
+            key ("red Moongate") {
+                [You relate the story of how a red Moongate appeared behind your house and mysteriously took you to Trinsic.~~Lord British's brow creases as you speak. Finally he says, "I did not send the red Moongate to fetch thee. Someone or something must have activated that Moongate. And that is strange indeed, because we have been having a bit of trouble with Moongates as of late. In fact, we have been having trouble with magic in general!"];
+                TurnOff("red Moongate");
+                if not v7 {
+                    TurnOn("Moongates");
+                }
+                if not v8 {
+                    TurnOn("magic");
+                }
+            }
+            key ("Orb of the Moons") {
+                ["Mine has not worked since the troubles with magic began. In fact, none of the Moongates have been working reliably for quite a while!];
+                ["Didst thou bring thine Orb of the Moons?"];
+                if ~AskYesNo() {
+                    ["Really? Where is it? Thou dost not have it on thee! ];
+                } else {
+                    ["I see. ];
+                }
+                ["Hmmm. Thou might be stranded in Britannia. Here. Why not try mine? I shall let thee borrow it. Perhaps it will work for thee. Be careful, though. The Moongates have become dangerous."];
+                v9 = ~GiveToParty_i(false, _All, _All, _Orb_Of_The_Moons, 1);
+                if v9 {
+                    [Lord British hands you his Orb of the Moons.];
+                    $GOT_ORB = true;
+                } else {
+                    ["Thine hands are too full to take the Orb!"];
+                }
+                TurnOff("Orb of the Moons");
+                if not v7 {
+                    TurnOn("Moongates");
+                }
+                if not v8 {
+                    TurnOn("magic");
+                }
+            }
+            key ("castle") {
+                ["Yes, it has been redecorated since thy last visit. The architects and workers did a splendid job."~~The ruler leans toward you with a sour look on his face.~~ "The only mar in the entire complex is that damn nursery!"];
+                TurnOff("castle");
+                TurnOn("nursery");
+            }
+            key ("nursery") {
+                ["I will not go near the place! Kings and dirty diapers do not mix. The Great Council talked me into implementing the nursery after several of my staff started having families. Although it was probably a necessity, I shall pretend it does not exist!"];
+                TurnOff("nursery");
+            }
+            key ("Trinsic") {
+                ["I have not been down there in many years. Has something happened there?"];
+                TurnOff("Trinsic");
+                PushKeys();
+                TurnOn(<< "a murder", "nothing much" >>);
+            }
+            key ("nothing much") {
+                ["Indeed. Then it seems that Trinsic has not changed much since I saw it last." His eyes twinkle.];
+                PopKeys();
+                TurnOff("nothing much");
+            }
+            key ("a murder") {
+                ["Murder? In Trinsic?" The ruler looks concerned.~~"I have heard nothing about it. Art thou investigating it?"];
+                v10 = ~AskYesNo();
+                if v10 {
+                    ["Very good. It pleases me that thou art concerned about my people."];
+                } else {
+                    ["Ah, but perhaps thou shouldst!"];
+                }
+                [The king pauses a moment. "Now that thou dost mention it, I have had reports of other similar murders in the past few months. In fact, there was one here in Britain three or four years ago. The body was mutilated in a ritualistic fashion. Apparently there is a maddened killer on the loose. But I have no doubt that someone such as thee, Avatar, can find him!"];
+                TurnOff("a murder");
+                PopKeys();
+                TurnOn(<< "ritualistic", "killer" >>);
+            }
+            key ("ritualistic") {
+                ["I do not recall many details. Thou shouldst ask Patterson, the town mayor, about it. He may remember more."];
+                TurnOff("ritualistic");
+                $LEARNED_ABOUT_BRITAIN_MURDER = true;
+            }
+            key ("killer") {
+                ["That is, of course, only an assumption on my part. But that is all we have had to work with. Unless thou hast already uncovered some useful information?"];
+                TurnOff("killer");
+                if $FOUND_SCROLL {
+                    TurnOn("Hook");
+                }
+                if $LEARNED_ABOUT_CROWN_JEWEL {
+                    TurnOn("Crown Jewel");
+                }
+            }
+            key ("Fellowship") {
+                ["They are an extremely useful and productive group of citizens. Thou shouldst most certainly visit the Fellowship Headquarters here in Britain and speak with Batlin. The Fellowship has done many good deeds throughout Britannia, including feeding the poor, educating and helping those in need, and promoting general good will and peace."];
+                TurnOff("Fellowship");
+                TurnOn(<< "Batlin", "Headquarters" >>);
+            }
+            key ("Headquarters") {
+                ["Yes, it is not far from the castle, to the southwest. It is just south of the theatre."];
+                TurnOff("Headquarters");
+            }
+            key ("Batlin") {
+                ["He is a druid who began The Fellowship about twenty years ago. He is highly intelligent, and is a warm and gentle human being."];
+                TurnOff("Batlin");
+            }
+            key ("Hook") {
+                ["A man with a hook?" The king rubs his chin.~~"No, I do not recall ever meeting a man with a hook."];
+                TurnOff("Hook");
+            }
+            key ("Crown Jewel") {
+                ["I am afraid I cannot possibly know of every ship that comes through our ports. Thou shouldst check with Clint the Shipwright if thou hast not done so."];
+                TurnOff("Crown Jewel");
+            }
+            key ("friends") {
+                ["Thou must mean Iolo, Shamino, and Dupre, of course."];
+                TurnOff("friends");
+                TurnOn(<< "Iolo", "Shamino", "Dupre" >>);
+            }
+            key ("Iolo") {
+                ["I have seen our friend rarely over the years. I understand he has been spending most of his time in Trinsic."];
+                if v3 {
+                    ["Hello, Iolo! How art thou?"*];
+                    SetSpeaker(0, _Iolo);
+                    ["I am well, my liege! 'Tis good to see thee!"*];
+                    CloseSpeaker(_Iolo);
+                    SetSpeaker(0, _LordBritish);
+                }
+                TurnOff("Iolo");
+                TurnOn("Trinsic");
+            }
+            key ("Shamino") {
+                ["That rascal does not come around very often, though I understand he spends most of his time in Britain these days!"];
+                if v5 {
+                    ["What dost thou have to say for thyself, Shamino?"*];
+                    SetSpeaker(0, _Shamino);
+                    ["Mine apologies, milord," Shamino says.*];
+                    SetSpeaker(0, _LordBritish);
+                    ["What's this I hear of a woman? An actress? Hmmmm?"*];
+                    SetSpeaker(0, _Shamino);
+                    [Shamino blushes and shuffles his feet.*];
+                    SetSpeaker(0, _LordBritish);
+                    ["I suspected as much!" the ruler says, laughing.];
+                    CloseSpeaker(_Shamino);
+                    SetSpeaker(0, _LordBritish);
+                }
+                TurnOff("Shamino");
+            }
+            key ("Dupre") {
+                ["I have not seen that one since I knighted him. Typical -- I do the man a favor and he disappears! I heard he might be in Jhelom."];
+                if v4 {
+                    ["Where hast thou been, Sir Dupre?"*];
+                    SetSpeaker(0, _Dupre);
+                    ["Oh, here and there, milord," the fighter replies.*];
+                    SetSpeaker(0, _LordBritish);
+                    ["I have very few friends from our homeland here in Britannia. Thou must make a point to visit more often! Especially since thou art a knight!"*];
+                    SetSpeaker(0, _Dupre);
+                    ["If thou dost wish it, milord," Dupre says, bowing.*];
+                    CloseSpeaker(_Dupre);
+                    SetSpeaker(0, _LordBritish);
+                }
+                TurnOff("Dupre");
+                TurnOn("Jhelom");
+            }
+            key ("Jhelom") {
+                ["A rather violent place, by all accounts. I have not had the pleasure of a visit in quite a while."];
+                TurnOff("Jhelom");
+            }
+            key ("magic") {
+                ["Something is awry. Magic has not been working for the longest time. I even have trouble creating food with magic! It must be something to do with the magical ether.~~"There are those who say that magic is dying, what with the trouble with the Moongates and the situation with Nystul. I am beginning to suspect that they might be right!"];
+                [Lord British studies you a moment.];
+                ["Perhaps magic will work much better for thee. Thou hast not been in Britannia long. It is possible that whatever has affected magic has not made its mark upon thee yet. Please try it. A spellbook is stored with the rest of thine equipment."];
+                $ASKED_LB_ABOUT_MAGIC = true;
+                TurnOff("magic");
+                TurnOn(<< "Nystul", "spellbook", "equipment" >>);
+                v8 = true;
+                if not v7 {
+                    TurnOn("Moongates");
+                }
+            }
+            key ("Nystul") {
+                if not $TetraGone {
+                    if not $MetNystul {
+                        ["Er... try talking to him."];
+                    } else {
+                        [The king lowers his voice.~~"He is acting oddly, isn't he? Something has happened to his mind. He doesn't seem to be able to concentrate on magic anymore."];
+                    }
+                } else {
+                    ["He is beginning to act much more normally."];
+                }
+                TurnOff("Nystul");
+            }
+            key ("Moongates") {
+                ["The Moongates are not functioning! We cannot use them as we have in the past. Not only are they dysfunctional, they are, in fact, dangerous! One of my trusted sages used mine own Orb of the Moons to travel to the Shrine of Humility, and his body did shatter upon entering the gate! If only that mage in Cove hadn't gone mad!"];
+                TurnOff("Moongates");
+                TurnOn(<< "mad mage", "Cove" >>);
+                v7 = true;
+            }
+            key ("mad mage") {
+                [The ruler leans forward and speaks quietly.~~"There is a mad mage in Cove by the name of Rudyom. Dost thou remember him? Rudyom was working with a magical substance called 'blackrock'. Before he went mad, he claimed that this mineral could solve the problems of the Moongates. I suggest that thou shouldst go to Cove and find him. Try to learn what it was he was doing with this blackrock material. It could be our only hope."];
+                $LEARNED_ABOUT_BLACKROCK = true;
+                GivePartyExp_i(20);
+                TurnOff("mad mage");
+                TurnOn("Rudyom");
+            }
+            key ("Rudyom") {
+                ["He was a brilliant and respected mage. But something happened to him in recent years. He seemed to go completely senile."];
+                if $MetNystul {
+                    [Suddenly, something jars Lord British's memory. "I wonder if there is a connection with what happened to Rudyom and what has befallen Nystul!"];
+                }
+                TurnOff("Rudyom");
+            }
+            key ("Cove") {
+                ["Surely thou dost remember Cove. It is a very pleasant town to the east of Britain. Quite relaxing."];
+                TurnOff("Cove");
+            }
+            key ("The Guardian") {
+                ["I do not know of a 'Guardian'. Art thou sure he really exists? Thou shouldst investigate further."];
+                $ASKED_LB_ABOUT_GUARDIAN = true;
+                TurnOff("The Guardian");
+            }
+            key ("spellbook") {
+                ["Yes, I have a spellbook stored away with the rest of the equipment."];
+                TurnOff("spellbook");
+            }
+            key ("equipment") {
+                ["Thou art welcome to any of mine equipment. I keep it in a locked storeroom here in the castle. Thou wilt find the key in my study."];
+                TurnOff("equipment");
+                TurnOn(<< "storeroom", "study" >>);
+            }
+            key ("storeroom") {
+                ["I am sure thou canst find it."~~The ruler smiles slyly. "Consider it something of a game!"];
+                TurnOff("storeroom");
+            }
+            key ("study") {
+                ["'Tis in the western end of the castle."];
+                TurnOff("study");
+            }
+            key ("heal") {
+                LordBritishHeals_i(0, 0, 0);
+                v6 = true;
+            }
+            key ("Weston") {
+                [Lord British listens to your story about Weston. He looks concerned.~~"I do not recall this case. Let me check... Hmmm..." He quickly scans a large scroll.~~"Imprisoned for the theft of one apple from the Royal Orchards... Ludicrous! Someone must have usurped mine authority. Thou mayest consider this man pardoned. An investigation will commence immediately into the circumstances surrounding his arrest, and into this fellow, Figg. My thanks to thee, Avatar."];
+                $WESTON_PARDONED = true;
+                GivePartyExp_i(20);
+                RemoveNPC_i(_Weston);
+                TurnOff("Weston");
+            }
+            key ("rumble") {
+                [Lord British looks at you gravely, "The foundation of Britannia was shaken with the rising of an island. This event was no random disaster, it was one of sorcerous intent."];
+                TurnOn("island");
+                TurnOff("rumble");
+            }
+            key ("island") {
+                ["Yes, <v1>. I felt a great disturbance in the ether when this island arose from the sea. The island is none other than the Isle of Fire where thou defeated the Hellspawn Exodus."];
+                TurnOn(<< "Isle of Fire", "Exodus" >>);
+                TurnOff("island");
+            }
+            key ("Isle of Fire") {
+                ["<v1>, thou shouldst know that when I created the shrines of the Virtues, I also set upon this island three great shrines, dedicated to the Priciples of Truth, Love, and Courage.];
+                [They reside within the walls of the Castle of Fire. I never revealed this to thee before as I thought them forever lost when the Isle of Fire mysteriously sank beneath the waves.];
+                [The shrines are meant for the use of an Avatar only, and therefore a talisman will be necessary to use one.];
+                [The talismans are guarded by tests that thou shouldst have no problem passing if thou wishest to seek thier counsel."];
+                LordBritishGivesShip_i();
+                TurnOff("Isle of Fire");
+            }
+            key ("Exodus") {
+                ["Thy battle with that strange mixture of machine and spirit is now legendary. Do be careful if thou art going to the isle, for the remains of that being now reside in one of the chambers of the Castle of Fire."];
+                TurnOff("Exodus");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["Goodbye, <v1>. Do come back soon."*];
+    }
+    if (event = _Bark) {
+        BarkAboutWork_i(_LordBritish);
+    }
+    label_149:
+    if (v0 = true) {
+        v11 = ~DirFromAvatar_i(item);
+        v12 = ((v11 + 4) modulo 8);
+        v13 = ~PostAction(<< _aFACE_i, v12, _aWAIT_i, 1, _aWAIT_i, 2, _aWAIT_i, 3, _aUSABLE_i, #LordBritish, _aWAIT_i, 3, _aWAIT_i, 2, _aWAIT_i, 11, _aUSABLE_i, #LordBritish >>, item);
+        v14 = ~PostAction(<< _aFACE_i, v11, _aWAIT_i, 1, _aBEND_FRAME_i, _aWAIT_i, 1, _aKNEEL_FRAME_i, _aWAIT_i, 6, _aBEND_FRAME_i, _aWAIT_i, 1, _aSTAND_FRAME_i >>, ~NPCToItem_i(_Avatar));
+    }
+    if (event = _Posted_i) {
+        if $CAST_ARMAGEDDON {
+            event = 1;
+            goto label_1;
+            terminate;
+        }
+        if not $LB_REWARDED_FOR_FV {
+            $LB_REWARDED_FOR_FV = true;
+            v15 = ~GetCoord(~NPCToItem_i(_Avatar));
+            createSprite(65535, 0, 0, 0, (v15::2 - 1), (v15::1 - 1), 7);
+            Sfx(67);
+            v16 = ~GetNPCStat_i(_Str, ~NPCToItem_i(_Avatar));
+            v16 = (v16 & ~GetNPCStat_i(_Hits, ~NPCToItem_i(_Avatar)));
+            if not (v16::1 >= 60) {
+                v17 = ~ChangeNPCStat_i((60 - v16::1), _Str, ~NPCToItem_i(_Avatar));
+            }
+            if not (v16::2 >= 60) {
+                v17 = ~ChangeNPCStat_i((60 - v16::2), _Hits, ~NPCToItem_i(_Avatar));
+            }
+        } else {
+            SetSpeaker(0, _LordBritish);
+            v1 = ~AvatarName();
+            ["I congratulate and thank thee, <v1>. Thy deeds continue to speak well of thee."];
+            terminate;
+        }
+    }
+}
+
+Routine LordBritishHeals_i accepts a0, a1, a2 #locals(9) #uses(~AskYesNo, ~AskList, ~AskParty2_i, ~AvatarName, SellHealing_i, SellCure_i, SellResurrection_i) {
+    ["I can still heal, cure poison, and sometimes resurrect. Art thou in need of one of these?"];
+    PushKeys();
+    v3 = ~AskYesNo();
+    if v3 {
+        ["Of which service dost thou have need?"];
+        v4 = << "heal", "cure poison", "resurrect" >>;
+        v5 = ~AskList(v4);
+        if ((v5 = "heal") or (v5 = "cure poison")) {
+            if (v5 = "heal") {
+                v6 = "healed";
+                v7 = v2;
+            }
+            if (v5 = "cure poison") {
+                v6 = "cured of poison";
+                v7 = v1;
+            }
+            ["Who dost thou wish to be <v6>?"];
+            v8 = ~AskParty2_i();
+            if (v8 = 0) {
+                ["'Tis good to hear that thou art well. Do not hesitate to come and see me if thou dost need healing of any kind."];
+                goto label_22;
+            }
+        }
+        if (v5 = "resurrect") {
+            v9 = ~AvatarName();
+            v10 = ~AvatarItem_i();
+            v11 = ~FindNearest_i(25, _Body_400, v10);
+            if (v11 = 0) {
+                v11 = ~FindNearest_i(25, _Body_414, v10);
+            }
+            if (v11 = 0) {
+                ["I do apologize, <v9>, but I do not see anyone who must be resurrected. I must be able to see the body. If thou art carrying thine unlucky companion, please lay them on the ground."];
+                goto label_22;
+            }
+        }
+        ["Indeed, this person is badly wounded. I will attempt to return them to health."];
+        v7 = v0;
+    }
+    ["Of course, it will never cost thee anything to use mine healing services."];
+    if (v5 = "heal") {
+        SellHealing_i(v7, v8);
+        ["Done!"];
+    } else {
+        if (v5 = "cure poison") {
+            SellCure_i(v7, v8);
+            ["Done!"];
+        } else {
+            if (v5 = "resurrect") {
+                SellResurrection_i(v7, v11);
+                ["Done!"];
+                goto label_22;
+            } else {
+                ["If thou hast need of my services later, I will be here."];
+            }
+        }
+    }
+    label_22:
+    PopKeys();
+}
+
+Usable LordBritishGivesShip_i #locals(6) {
+    ["If thou wishest to seek out this isle, thou mayest use my ship. It now sits upon the southern shore of Vesper and is called the Golden Ankh. Please, feel free to use it for as long as thou hast need of it."];
+    v0 = ~Item_create(_Scroll);
+    SetFrame(1, v0);
+    v1 = ~SetQuality(44, v0);
+    v2 = ~PopToNPC(~NPCToItem_i(_Avatar));
+    v3 = false;
+    if v2 {
+        [Lord British hands you the deed to the ship.];
+    } else {
+        v2 = ~PopToMap(~GetCoord(_Avatar));
+        [Lord British hands you the deed to the ship, but it slips from your hands and falls to the floor.];
+        v3 = true;
+    }
+    ["I have also focused a magical crystal to the entrance of the Castle of Fire which I refurbished after thy battle with Exodus. Here, take it. Perhaps it will give thee some insight. Although, be warned, it is not at all stable and might be prone to shatter the nearer thou findest thyself to the location to which it is tuned."];
+    v4 = ~Item_create(_Gem);
+    SetFrame(14, v4);
+    v5 = ~PopToNPC(~NPCToItem_i(_Avatar));
+    if v5 {
+        [Lord British gives you the crystal.];
+    } else {
+        v5 = ~PopToMap(~GetCoord(_Avatar));
+        if not v3 {
+            [Lord British gives you the crystal, but it slips from your hands and falls to the floor. Luckily, it remains intact.];
+        } else {
+            [Lord British gives you the crystal, and once again your overloaded condition makes you clumsy. Luckily, it remains intact after its little fall.];
+        }
+    }
+    flag(766) = true;
+}

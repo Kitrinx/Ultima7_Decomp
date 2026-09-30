@@ -1,0 +1,18 @@
+Routine FinishSoulCage_i accepts a0 #locals(2) {
+    flag(424) = true;
+    if (event = _Action) {
+        v0 = ~PostInFuture(20, << _aNO_HALT_i, _aFINISH_i, _aUSABLE_i, #FinishSoulCage_i >>, item);
+        v1 = ~FindNearest_i(40, _Soul_Cage, item);
+        v0 = ~PostInFuture(19, << _aFINISH_i, _aFRAME, 1 >>, v1);
+    }
+    if (event = _Posted_i) {
+        SetWorkType(_Wait, item);
+        if ~IsNPCNear_i(_Trent) {
+            SetSpeaker(1, _Trent);
+            ["There. It is done. Now take the blasted thing to Mordra. She will instruct thee in its use."];
+            terminate;
+        } else {
+            flag(462) = true;
+        }
+    }
+}

@@ -1,0 +1,128 @@
+Routine Rayburt accepts a0 #locals(2) #uses(~AskYesNo, RayburtTrains_i, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Rayburt);
+        v0 = ~GetTime();
+        v1 = ~GetWorkType(~NPCToItem_i(_Rayburt));
+        TurnOn(<< "name", "job", "bye" >>);
+        if flag(228) && flag(238) {
+            TurnOn("Pamela");
+        }
+        if not flag(233) {
+            [You startle a fighter who seems lost in thought.];
+            if (v1 = 27) {
+                [His dog seemed to be meditating as well.];
+            }
+            flag(233) = true;
+        } else {
+            ["Hello again," Rayburt says.];
+        }
+        converse {
+            key ("name") {
+                ["I am Rayburt."];
+                if (v1 = 27) {
+                    [He turns to the dog. "And this is Regal."];
+                    TurnOn("Regal");
+                }
+                TurnOff("name");
+                if flag(228) {
+                    TurnOn("Pamela");
+                }
+                flag(238) = true;
+            }
+            key ("job") {
+                ["I am a trainer. I specialize in a style of combat that relies on concentration and meditation. It shall boost thy dexterity and intelligence, as well as thy combat skill."];
+                TurnOn(<< "meditation", "train" >>);
+            }
+            key ("Regal") {
+                ["He is an exceptionally smart animal. He understands the meditative way of life."~~Rayburt throws the dog a cookie, which is snarfed up in the blink of an eye. "He is cute, too," Rayburt says with complete seriousness.];
+                TurnOff("Regal");
+            }
+            key ("Pamela") {
+                [You see a hint of a smile on Rayburt's face. "She and I are one person."];
+                TurnOff("Pamela");
+            }
+            key ("meditation") {
+                ["Most of all combat occurs in the mind before the first blow is ever struck. The key to victory is to first win the inner battle in the mind. Winning that inner battle is what I help my students to learn."];
+                TurnOff("meditation");
+            }
+            key ("train") {
+                if (v1 = 27) {
+                    ["I charge 60 gold for a session, but thou wilt benefit greatly. Is this agreeable?"];
+                    if ~AskYesNo() {
+                        RayburtTrains_i(60, << 1, 2, 4 >>);
+                    } else {
+                        ["It is not the first time I have been accused of being too expensive."];
+                    }
+                } else {
+                    ["Please come to my studio during business hours if thou wishest to train."];
+                    TurnOff("train");
+                }
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        [Rayburt bows.*];
+        flag(238) = true;
+    }
+    if (event = _Bark) {
+        BarkAboutWork_i(_Rayburt);
+    }
+}
+
+Routine RayburtTrains_i accepts a0, a1 #locals(12) #uses(~GetStudent, ~GetNPCName, ~AvatarName, ~CanTrain, ~GetStat, DexTrain, IntTrain_i, CombatTrain_i) {
+    v2 = ~GetStudent();
+    v3 = ~GetNPCName(v2);
+    v4 = "feels";
+    v5 = ~AvatarName();
+    if (v3 = v5) {
+        v3 = "you";
+        v6 = "you";
+        v4 = "feel";
+    } else {
+        if ((v2 = 65528) or ((v2 = 65531) or (v2 = 65527))) {
+            v6 = "her";
+        } else {
+            v6 = "him";
+        }
+    }
+    if (v2 = 0) {
+    } else {
+        v7 = 3;
+        v8 = ~CanTrain(v7, v2, v0, v1);
+        if (v8 = 0) {
+            ["I am sorry, but thou dost not have enough experience to train at this time. Return at a later date and I would be most happy to lead a session."];
+        } else {
+            if (v8 = 1) {
+                v9 = ~CountItem(_All, _All, _Gold_Coin, _Party);
+                if (v9 < v0) {
+                    ["It seems that thou hast not enough gold. Do return when thou art a bit wealthier."];
+                    goto label_20;
+                }
+            }
+            if (v8 = 2) {
+                ["I am amazed! Thou art already as experienced as I! Thou cannot be trained further by me."];
+            } else {
+                v10 = ~TakeFromParty_i(true, _All, _All, _Gold_Coin, v0);
+                [Rayburt takes your money. "The session shall begin."];
+                [Rayburt first instructs <v3> to lie on the floor and relax. He teaches <v6> breathing exercises and techniques with which to cleanse the mind of all thoughts.];
+                [After a while, he asks <v6> to stand up and illustrates balance and control, relating it to meditation and concentration.];
+                [Finally, he demonstrates several good moves involving hand-to-hand combat, and combat using a sword. By the end of the hour, <v3> <v4> much more knowledgeable and proficient in this unusual form of fighting.*];
+                v11 = ~GetStat(_Dex, v2);
+                v12 = ~GetStat(_Int, v2);
+                v13 = ~GetStat(_Cbt, v2);
+                if (v11 < 30) {
+                    DexTrain(1, v2);
+                }
+                if (v12 < 30) {
+                    IntTrain_i(1, v2);
+                }
+                if (v13 < 30) {
+                    CombatTrain_i(1, v2);
+                }
+            }
+        }
+    }
+    label_20:
+}

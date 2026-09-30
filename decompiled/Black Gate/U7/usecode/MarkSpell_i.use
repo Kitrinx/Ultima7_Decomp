@@ -1,0 +1,22 @@
+Routine MarkSpell_i accepts a0 #locals(3) #uses(~IsMagicOK_i) {
+    if (event = _Action) {
+        Kernel_resetRef(item);
+        v0 = ~GetTarget();
+        if not (~Item_getType(v0) = _Virtue_Stone) {
+            goto label_7;
+        }
+        if ~GetBarge_i(_Avatar) {
+            goto label_7;
+        }
+        Item_bark("@Kal Por Ylem@", item);
+        if (~IsMagicOK_i() and not flag(57)) {
+            v1 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #MarkVirtueStone_i >>, v0);
+            v2 = ~PostAction(<< _aSFX_i, 67, _aUP_FRAME_i, _aOUT_FRAME_i, _aTHRUST2_FRAME_i >>, item);
+            v1 = ~GetCoord(item);
+            createSprite(65535, 0, 0, 0, v1::2, v1::1, 13);
+        } else {
+            label_7:
+            v2 = ~PostAction(<< _aUP_FRAME_i, _aOUT_FRAME_i, _aTHRUST2_FRAME_i, _aUSABLE_i, #FizzleSpell_i >>, item);
+        }
+    }
+}

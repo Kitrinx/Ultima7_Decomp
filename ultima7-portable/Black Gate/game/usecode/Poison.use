@@ -1,0 +1,11 @@
+Routine Poison accepts a0 #locals(4) {
+    if (event = _Trigger) {
+        Sfx(28);
+        v0 = ~GetParty();
+        Foreach v3 in v0 {
+            if not ~RollToWin_i(~GetQuality(item), ~GetNPCStat_i(_Str, v3)) {
+                SetItemFlag_i(_Poisoned, ~NPCToItem_i(v3));
+            }
+        }
+    }
+}

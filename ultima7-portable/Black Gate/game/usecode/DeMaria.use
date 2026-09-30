@@ -1,0 +1,97 @@
+Routine DeMaria accepts a0 #locals(3) #uses(~AskYesNo, TellNastassiaTale_i, ~IsNPCNear, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _DeMaria);
+        TurnOn(<< "name", "job", "bye" >>);
+        if flag(227) {
+            TurnOn("Nastassia");
+        }
+        if flag(228) && flag(242) {
+            TurnOn("Zinaida");
+        }
+        if not $MetDe_Maria {
+            [This flamboyant bard exudes a festive aura.];
+            ["I have sung about thee in many a song! And here thou art in the flesh! I recognized thee immediately." The man bows. "Welcome, Avatar!"];
+            $MetDe_Maria = true;
+        } else {
+            ["Greetings again, Avatar!" De Maria bows.];
+        }
+        converse {
+            key ("name") {
+                ["I am De Maria, the Bard."];
+                TurnOff("name");
+                if flag(228) {
+                    TurnOn("Zinaida");
+                }
+                flag(242) = true;
+            }
+            key ("job") {
+                ["I spin tales and sing songs!"];
+                if not flag(227) {
+                    ["I also know a good deal about the folks in Cove."];
+                    TurnOn(<< "tale", "song", "folks" >>);
+                }
+            }
+            key ("folks", "song", "tale") {
+                ["What if I combine all three? Shall I sing a song which is a tale about the people of Cove?"];
+                v0 = ~AskYesNo();
+                if v0 {
+                    ["Very well, then!"];
+                    PushKeys();
+                    TellNastassiaTale_i();
+                    PopKeys();
+                } else {
+                    ["'Tis thy choice... and thy mistake!"];
+                }
+                TurnOff(<< "tale", "song", "folks" >>);
+            }
+            key ("Nastassia") {
+                ["Ah, dear Nastassia. Wouldst thou like to hear her tale?"];
+                v1 = ~AskYesNo();
+                if v1 {
+                    ["Very well, then!"];
+                    PushKeys();
+                    TellNastassiaTale_i();
+                    PopKeys();
+                    TurnOff("Nastassia");
+                } else {
+                    ["Oh. I thought thou wert curious. Never mind then."];
+                    TurnOff("Nastassia");
+                }
+            }
+            key ("Zinaida") {
+                ["My love! My flower! Mine angel! The provider of the sweetest nectar my mouth has ever known! She is the light of my day! The notes of my songs! The flesh of my..."~~];
+                v2 = ~IsNPCNear(_Zinaida);
+                if v2 {
+                    SetSpeaker(0, _Zinaida);
+                    ["Enough, my love. I think the Avatar dost know thy meaning!"*];
+                    CloseSpeaker(_Zinaida);
+                    SetSpeaker(0, _DeMaria);
+                }
+                [De Maria stops his reverie, sighs, and smiles at you. "Thou dost apprehend my meaning..."];
+                TurnOff("Zinaida");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["Do take care of thyself!"*];
+    }
+    if (event = _Bark) {
+        BarkAboutWork_i(_DeMaria);
+    }
+}
+
+Usable TellNastassiaTale_i #locals(0) {
+    ["I shall tell thee the story of the only unhappy person in Cove -- Nastassia. She is the only person in town without a lover. Not that she does not have suitors -- she is quite beautiful! All she thinks about is the Shrine of Compassion, which is where thou wouldst probably find her at this moment."~~De Maria strums his lute and sings:~~];
+    ["There once was a maid Ariana~ Who held the shrine so dear.~ She asked that her offspring do likewise~ And keep it so year after year.];
+    ["Her son Mikhail became mayor~ With a goal to keep in fashion~ The towne's old, belov'd reputation~ As the city of love and passion!];
+    ["Mikhail's oldest child was Magda;~ She built Lovers' Walk, a fine park,~ Where Cove's lovers, both young and old,~ Could court outdoors in the dark!];
+    [Ah, but the clouds of misfortune do hide~ Where the sun's brightness seemeth most fair.~ And poor Nadia, Magda's daughter,~ Of misfortune had more than her share!];
+    ["It began when Nadia did wed one day~ To Julius, a not-so-wealthy young lad.~ He left her with child and went far away.~ As for Nadia's poor heart, 'twas sad.];
+    ["One day from Yew the fateful news came~ That Julius by a beast was killed;~ The child came early, 'twas a difficult birth;~ And Nadia's soul became chilled.];
+    ["With dagger in hand and child in arm~ To the Shrine did Nadia run.~ She plunged the dagger into her own breast;~ Never again would she see the sun.];
+    ["Nastassia grew up an orphan, you see,~ Unloved and unwanted by all;~ Today she walks cloaked in solitude~ Awaiting her destiny's call.];
+    ["And that is poor Nastassia's tale. Perhaps thou canst cheer her. Find her, I beseech thee!"*];
+    flag(224) = true;
+}

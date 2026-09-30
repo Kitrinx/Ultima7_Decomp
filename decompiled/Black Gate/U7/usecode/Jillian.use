@@ -1,0 +1,104 @@
+Routine Jillian accepts a0 #locals(3) #uses(~AvatarName, ~LordOrLady, ~AskYesNo, JillianTrains_i, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Jillian);
+        v0 = ~AvatarName();
+        v1 = ~LordOrLady();
+        v2 = ~GetTime();
+        TurnOn(<< "name", "job", "bye" >>);
+        if not $MetJillian {
+            [You see a young woman with an intellectual bearing.];
+            $MetJillian = true;
+        } else {
+            ["Greetings, <v0>. As usual, I have much to do. However, I can spare a moment for thee if necessary."];
+        }
+        converse {
+            key ("name") {
+                ["I am Jillian, <v1>."];
+                TurnOff("name");
+            }
+            key ("job") {
+                ["I am a scholar, <v1>. I also tutor and train those who seek knowledge here in Moonglow."];
+                TurnOn(<< "Moonglow", "tutor" >>);
+                if flag(502) {
+                    TurnOn("North East sea");
+                }
+            }
+            key ("Moonglow") {
+                ["The town occupies almost the entire island of the same name. The island is located due east and a few degrees south of the city of Britain."];
+                TurnOff("Moonglow");
+            }
+            key ("North East sea") {
+                ["Long ago there was a small continent -- an island really -- called Ambrosia. However, meteorites struck it, destroying its primary city. The island was located in the North East sea. I suppose the ruins still lie far beneath the rubble."];
+                TurnOff("North East sea");
+            }
+            key ("tutor") {
+                v2 = ~GetTime();
+                if ((v2 >= 3) or (v2 <= 6)) {
+                    ["My price is 35 gold for each training session. Art thou willing to pay that?"];
+                    if ~AskYesNo() {
+                        JillianTrains_i(35, << 6, 2 >>);
+                    } else {
+                        ["Then I really should return to my studies."];
+                    }
+                } else {
+                    ["A better time to train thee would be when I am in my study."];
+                }
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["Fare thee well, <v0>," she says, returning to her previous activity.*];
+    }
+    if (event = _Bark) {
+        BarkAboutWork_i(_Jillian);
+    }
+}
+
+Routine JillianTrains_i accepts a0, a1 #locals(11) #uses(~GetStudent, ~CanTrain, ~GetStat, MagicTrain_i, IntTrain_i) {
+    v2 = ~GetStudent();
+    v3 = ~GetNPCName_i(v2);
+    if (v2 = 0) {
+    } else {
+        v4 = 2;
+        v5 = ~CanTrain(v4, v2, v0, v1);
+        if (v5 = 0) {
+            ["I am sorry, but it appears thou dost not have enough knowledge of elementary studies to train at this time. If thou couldst return at a future date, I could instruct thee then."];
+        } else {
+            if (v5 = 1) {
+                v6 = ~CountItem(_All, _All, _Gold_Coin, _Party);
+                [You gather your gold and count it, finding that you have <v6> gold altogether.];
+                if (v6 < v0) {
+                    ["I am sorry, but thou dost not seem to have enough gold to train now."];
+                    goto label_16;
+                }
+            }
+            if (v5 = 2) {
+                [After giving a few test questions, she exclaims, "Thou art easily as well educated as I! There is nothing I have that could help thee."];
+            } else {
+                v7 = ~TakeFromParty_i(true, _All, _All, _Gold_Coin, v0);
+                [You pay <v0> gold, and the training session begins.];
+                if (v2 = 65180) {
+                    v8 = "You";
+                    v9 = "you";
+                    v10 = "";
+                } else {
+                    v8 = v3;
+                    v9 = v3;
+                    v10 = "s";
+                }
+                [<v8> and Jillian study for some time. In addition, she teaches a little on the theory of magic. Afterwards, <v9> notice<v10> an increase in knowledge and magical understanding.];
+                v11 = ~GetStat(_MaxMagic, v2);
+                if (v11 < 30) {
+                    MagicTrain_i(1, v2);
+                }
+                v12 = ~GetStat(_Int, v2);
+                if (v12 < 30) {
+                    IntTrain_i(1, v2);
+                }
+            }
+        }
+    }
+    label_16:
+}

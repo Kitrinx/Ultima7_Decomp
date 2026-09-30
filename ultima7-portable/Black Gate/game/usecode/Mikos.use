@@ -1,0 +1,69 @@
+Routine Mikos accepts a0 #locals(3) #uses(~IsNearEachOther_i, ~LordOrLady) {
+    if (event = _Bark) {
+        terminate;
+    }
+    SetSpeaker(0, _Mikos);
+    v0 = ~GetTime();
+    if (v0 = 7) {
+        v1 = ~IsNearEachOther_i(_Elynor, _Mikos);
+        if v1 {
+            [Mikos is lost in meditation at the Fellowship meeting and does not hear you.*];
+            terminate;
+        } else {
+            ["I must run to the Fellowship meeting! I shall speak with thee another time!"*];
+            terminate;
+        }
+    }
+    v2 = ~LordOrLady();
+    TurnOn(<< "name", "job", "bye" >>);
+    if flag(263) {
+        TurnOn("silver fluid");
+    }
+    if not $MetMikos {
+        [A sneering man watches as you approach. His eyes shift back and forth suspiciously.];
+        $MetMikos = true;
+    } else {
+        [Mikos heaves his shoulders and sighs. "What dost thou want this time?"];
+    }
+    converse {
+        key ("name") {
+            ["I am Mikos."];
+            TurnOff("name");
+        }
+        key ("job") {
+            ["I am the foreman of the Minoc mine."];
+            TurnOn(<< "Minoc", "mine" >>);
+        }
+        key ("Minoc") {
+            [He spits on the ground. "A pox on them! Down here I am safe from all of their arguing. Next, they will be killing each other."];
+            TurnOff("Minoc");
+        }
+        key ("mine") {
+            ["This mine is run by the Britannian Mining Company. It is inside what was once the dungeon Covetous. They mine for iron ore, lead and other minerals with highly trained miners and special mining machinery."];
+            TurnOff("mine");
+            TurnOn(<< "miners", "machinery" >>);
+        }
+        key ("miners") {
+            ["Currently most of the miners are away as the machines are being repaired. Right now we have two engineers, Owings and Malloy, down in a branch of the main tunnel. Do not disturb them, for they are involved in a special project. We also have a gargoyle, Fodus, who is helping to maintain a semblance of the mine's usual operations."];
+            TurnOff("miners");
+            TurnOn("Owings and Malloy");
+        }
+        key ("machinery") {
+            ["This place is full of machinery that is very dangerous if thou dost not know what thou art doing. Thou dost not wish to see what one of those digging contraptions can do to a man if he gets too close!"];
+            TurnOff("machinery");
+        }
+        key ("Owings and Malloy") {
+            [Mikos shakes his head slowly. "I am not sure where the Britannian Mining Company found them."];
+            TurnOff("Owings and Malloy");
+        }
+        key ("silver fluid") {
+            [You repeat the words to Mikos that you heard Fodus say. Mikos gives you a shocked look. "I have no idea what he is talking about, but I would say it is typical for a gargoyle. Just trying to shirk of his duty. Say, thou hadst better leave this place if thou ist spending all thy time disrupting the work of the mine!"*];
+            terminate;
+        }
+        key ("bye") {
+            break;
+        }
+    }
+    clear_answers;
+    ["Do not wander around down here, <v2>. Thou shouldst leave right away."*];
+}

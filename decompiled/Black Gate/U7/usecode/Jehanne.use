@@ -1,0 +1,213 @@
+Routine Jehanne accepts a0 #locals(13) #uses(~AvatarName, ~LordOrLady, ~AskYesNo, JehanneSellsProvisions_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Jehanne);
+        v0 = ~AvatarName();
+        v1 = ~LordOrLady();
+        v2 = false;
+        TurnOn(<< "name", "job", "bye" >>);
+        if not $MET_LADY_JEHANNE {
+            [The woman greets you with a curtsey.];
+            $MET_LADY_JEHANNE = true;
+        } else {
+            ["Good day, <v1>," says Lady Jehanne.];
+        }
+        if flag(636) && (flag(604) and not flag(605)) {
+            TurnOn("commons");
+            v2 = true;
+        }
+        converse {
+            key ("name") {
+                ["I am the Lady Jehanne, <v1>."];
+                flag(636) = true;
+                TurnOff("name");
+                if (flag(604) and not flag(605)) && not v2 {
+                    TurnOn("commons");
+                }
+            }
+            key ("job") {
+                ["I am the provisioner of Serpent's Hold."];
+                if not flag(628) {
+                    ["And," she adds, "I also have a ship for sale shouldst thou be interested in that."];
+                    TurnOn("ship");
+                }
+                TurnOn(<< "Serpent's Hold", "provisions" >>);
+            }
+            key ("ship") {
+                ["Well, it was once the magnificent `Constellation.' However, 'twas destroyed by the ship's captain, himself, to prevent it from falling into the hands of attacking pirates. What little remained was rebuilt into an even finer ship, `The Dragon's Breath?' Art thou interested in purchasing it for 600 gold?"];
+                v3 = ~AskYesNo();
+                if v3 {
+                    v4 = ~CountItem(_All, _All, _Gold_Coin, _Party);
+                    if (v4 >= 600) {
+                        v5 = ~GiveToParty_i(false, _All, 19, _Scroll, 1);
+                        if v5 {
+                            ["Here is thy deed."];
+                            v6 = ~TakeFromParty_i(true, _All, _All, _Gold_Coin, 600);
+                            flag(628) = true;
+                        } else {
+                            ["Sadly, <v1>, thou hast not the room for this deed."];
+                        }
+                    } else {
+                        ["I understand, <v1>, thou hast not the funds at this time."];
+                    }
+                } else {
+                    ["Perhaps sometime in the future, <v1>."];
+                }
+                TurnOff("ship");
+            }
+            key ("Serpent's Hold") {
+                ["Most of us here are knights, noble warriors sworn to protect Britannia and Lord British. Mine own lord," she beams with pride, "is such a knight -- Sir Pendaran."];
+                TurnOff("Serpent's Hold");
+                TurnOn(<< "Sir Pendaran", "knights" >>);
+            }
+            key ("Sir Pendaran") {
+                ["We met three years ago. He's quite brave and strong. I just love to watch him fight." She smiles.~~"I am not really sure he will mix well with the rest of The Fellowship, though."];
+                TurnOff("Sir Pendaran");
+                TurnOn(<< "fight", "Fellowship" >>);
+            }
+            key ("fight") {
+                ["He and Menion used to spar together, after their exercises. 'Twas a beautiful... sight, <v1>," she says, blushing.];
+                TurnOff("fight");
+                TurnOn("used to");
+            }
+            key ("used to") {
+                ["At the time, Pendaran was the only man who could keep up with Menion. Now that Menion has begun instructing others, he no longer has the time to practice with my Lord."];
+                TurnOff("used to");
+            }
+            key ("Fellowship") {
+                v7 = ~IsMedallionOn_i();
+                if v7 {
+                    ["Well, er, I mean, he would not have mixed well -before- he joined, that is," she stammers.];
+                } else {
+                    ["It's nothing really. He was just a little bit more... individualistic before he joined. I do not think there's anything wrong with The Fellowship, necessarily; but I did not expect it to be something that would capture Pendaran's interest."];
+                }
+                TurnOff("Fellowship");
+            }
+            key ("knights") {
+                [With but a few exceptions, myself included, all of the warriors here in the Hold are knights. Thou mayest wish to speak with Lord John-Paul. He is in charge of Serpent's Hold and might be better able to show thee around.];
+                TurnOff("knights");
+            }
+            key ("provisions") {
+                v8 = ~GetWorkType(~NPCToItem_i(_Jehanne));
+                if (v8 = 7) {
+                    ["Thou wishest to buy something?"];
+                    v9 = ~AskYesNo();
+                    if v9 {
+                        JehanneSellsProvisions_i();
+                    } else {
+                        ["Well, perhaps next time, <v1>."];
+                    }
+                } else {
+                    ["A better time to buy would be when my shop is open."];
+                }
+                TurnOff("provisions");
+            }
+            key ("commons") {
+                [For an instant, you see indecisiveness in her expression, then she suddenly gives in, her words coming out in a torrent of information.~~"I am afraid to speak, but knowing thou wouldst see through any facade, I can no longer silence the truth. My Lord, Sir Pendaran, has not been the same gentle soul since he joined the Fellowship.~~"'Twas not too long ago that my Pendaran was a noble knight, one a lady could be proud of. But now," she shakes her head, "in protest of a wrong he perceives in Britannia's government, he has defaced the statue of our beloved Lord British." She begins to sob.~~"And, he has battled and wounded a fellow knight who chanced upon him during his hour of misdeed. He came to me," she tries to choke back her tears, "with another's blood on his sword!"~~After a few moments of your comforting, she regains her composure.~~"Please do not be too harsh with him," she begs.];
+                flag(605) = true;
+                TurnOff("commons");
+                TurnOn("another");
+            }
+            key ("another") {
+                ["I know not who, <v1>, and Pendaran would not say!"];
+                TurnOff("another");
+            }
+            key ("bye") {
+                ["May fortune follow thee, <v1>."*];
+                terminate;
+            }
+        }
+        clear_answers;
+    }
+    if (event = _Bark) {
+        v10 = ~GetTime();
+        v8 = ~GetWorkType(~NPCToItem_i(_Jehanne));
+        v11 = ~rndRange(4, 1);
+        if (v8 = 7) {
+            if (v11 = 1) {
+                v12 = "@Provisions!@";
+            }
+            if (v11 = 2) {
+                v12 = "@Buy in advance!@";
+            }
+            if (v11 = 3) {
+                v12 = "@Best provisions in town!@";
+            }
+            if (v11 = 4) {
+                v12 = "@Be equipped!@";
+            }
+        }
+        if (v8 = 26) {
+            if (v11 = 1) {
+                v12 = "@Wondrous fine food!@";
+            }
+            if (v11 = 2) {
+                v12 = "@Fine drink!@";
+            }
+            if (v11 = 3) {
+                v12 = "@Mmmmm...@";
+            }
+            if (v11 = 4) {
+                v12 = "@I am full.@";
+            }
+        }
+        Item_bark(v12, _Jehanne);
+    }
+}
+
+Usable JehanneSellsProvisions_i #locals(15) #uses(~LordOrLady, ~AskOrdList, ~PriceString_i, ~AskYesNo, ~SellItem_i) {
+    v0 = ~LordOrLady();
+    PushKeys();
+    v1 = true;
+    v2 = << "nothing", "torch", "oil flasks", "backpack", "lockpick", "powder keg", "jug", "cannon balls" >>;
+    v3 = << 0, 595, 782, 801, 627, 704, 6, 703 >>;
+    v4 = << 0, 4, 60, 13, 10, 30, 3, 10 >>;
+    v5 = << "", "a ", "", "a ", "a ", "a ", "a ", "" >>;
+    v6 = << 0, 0, 1, 0, 0, 0, 0, 1 >>;
+    v7 = << "", "", " for a dozen", "", "", "", "", " each" >>;
+    v8 = 65177;
+    v9 = 1;
+    ["What dost thou want to buy?"];
+    While v1 {
+        v10 = ~AskOrdList(v2);
+        if (v10 = 1) {
+            ["Fine, <v0>."];
+            v1 = false;
+        } else {
+            v11 = ~PriceString_i(v7::v10, v4::v10, v6::v10, v2::v10, v5::v10);
+            v12 = 0;
+            if ((v3::v10 = 782) or ((v3::v10 = 595) or (v3::v10 = 627))) {
+                ["^<v11> Dost thou agree?"];
+                v13 = ~AskYesNo();
+                if v13 {
+                    if (v3::v10 = 782) {
+                        ["How many sets of twelve wouldst thou like?"];
+                    } else {
+                        ["How many wouldst thou like?"];
+                    }
+                    v12 = ~SellItem_i(true, 1, 20, v4::v10, v9, v8, v3::v10);
+                }
+            } else {
+                ["^<v11>. Is that acceptable?"];
+                v14 = ~AskYesNo();
+                if v14 {
+                    v12 = ~SellItem_i(true, 1, 0, v4::v10, v9, v8, v3::v10);
+                }
+            }
+            if (v12 = 1) {
+                ["Very good, <v0>."];
+            } else {
+                if (v12 = 2) {
+                    ["But, <v0>, thou cannot possibly carry that much!"];
+                } else {
+                    if (v12 = 3) {
+                        ["I am sorry, but thou hast not enough gold for that!"];
+                    } else {
+                    }
+                }
+            }
+            ["Wouldst thou care to purchase something else?"];
+            v1 = ~AskYesNo();
+        }
+    }
+    PopKeys();
+}

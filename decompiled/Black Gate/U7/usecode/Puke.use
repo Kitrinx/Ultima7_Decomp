@@ -1,0 +1,39 @@
+Routine Puke accepts a0 #locals(13) #uses(SetBusy_i, ~IsAbleToTalk_i, BarkIfNear_i) {
+    if (event = _Trigger) {
+        v0 = ~GetParty();
+        Foreach v3 in v0 {
+            if not ~RollToWin_i(~GetQuality(item), ~GetNPCStat_i(_Str, v3)) {
+                v4 = ~NPCToItem_i(v3);
+                Kernel_resetRef(v4);
+                SetBusy_i(v4);
+                v5 = ~PostInFuture(25, << _aNO_HALT_i, _aUSABLE_i, #ClearBusy_i >>, v4);
+                v5 = ~PostAction(<< _aNO_HALT_i, _aWAIT_i, 5, _aBEND_FRAME_i, _aWAIT_i, 4, _aKNEEL_FRAME_i, _aWAIT_i, 4, _aLIE_FRAME_i, _aWAIT_i, 4, _aSTAND_FRAME_i >>, v4);
+                if ~IsAbleToTalk_i(v4) {
+                    BarkIfNear_i(<< "@Ohh!@", "@Eeehhh!@", "@Oh no!@", "@Yuk!@" >>, v4);
+                }
+                v5 = ~PostInFuture(17, << _aNO_HALT_i, _aUSABLE_i, #Puke >>, v4);
+            }
+        }
+    }
+    if (event = _Posted_i) {
+        v6 = 0;
+        v7 = 0;
+        While (v6 < 16) {
+            v8 = ~rndRange(3, 0);
+            if (v7 = 0) {
+                v7 = (v6 + v8);
+            } else {
+                v7 = (v7 & (v6 + v8));
+            }
+            v6 = (v6 + 4);
+        }
+        Foreach v11 in v7 {
+            v5 = ~Item_create(_Blood);
+            if v5 {
+                SetItemFlag_i(_IsTemporary_i, v5);
+                v12 = ~PopToMap(~GetCoord(item));
+                SetFrame(v11, v5);
+            }
+        }
+    }
+}

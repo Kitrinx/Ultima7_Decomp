@@ -1,0 +1,21 @@
+Routine BurnLight_i accepts a0 #locals(4) {
+    v0 = (~GetQuality(item) - 1);
+    v1 = ~SetQuality(v0, item);
+    if (v0 = 0) {
+        Kernel_resetRef(item);
+        v2 = ~Item_getType(item);
+        if (v2 = 338) {
+            Item_setType(_Spent_Light_Source, item);
+        }
+        if (v2 = 701) {
+            Item_setType(_Torch, item);
+            v1 = ~SetQuality(255, item);
+        }
+        if (v2 = 435) {
+            Item_setType(_Spent_Sconce, item);
+        }
+        Sfx(106);
+    } else {
+        v3 = ~PostInFuture(50, << _aUSABLE_i, #BurnLight_i >>, item);
+    }
+}

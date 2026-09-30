@@ -1,0 +1,14 @@
+Routine LitLightSource accepts a0 #locals(2) #uses(~DirFrom_i, StartBurning_i) {
+    if ((event = _Action) or (event = _Posted_i)) {
+        Item_setType(_Light_Source, item);
+        Kernel_resetRef(item);
+    }
+    if (event = 7) {
+        Item_setType(_Light_Source, item);
+        v0 = ~DirFrom_i(item, _Avatar);
+        v1 = ~PostAction(<< _aFACE_i, v0, _aCONTINUE_i, _aTHRUST2_FRAME_i, _aSTAND_FRAME_i >>, _Avatar);
+    }
+    if (event = _Equip) {
+        StartBurning_i(item);
+    }
+}

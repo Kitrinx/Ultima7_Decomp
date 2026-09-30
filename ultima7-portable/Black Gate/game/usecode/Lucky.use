@@ -1,0 +1,130 @@
+Routine Lucky accepts a0 #locals(4) #uses(~AskYesNo, LuckyTrains_i, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Lucky);
+        v0 = ~GetTime();
+        v1 = ~GetWorkType(~NPCToItem_i(_Lucky));
+        TurnOn(<< "name", "job", "bye" >>);
+        if not $MetLucky {
+            [You see a man whose sinewy body is like steel. The glint in his eye tells you that he is no fool.];
+            $MetLucky = true;
+        } else {
+            ["What dost thou want with Lucky?" the pirate asks.];
+        }
+        converse {
+            key ("name") {
+                ["I am Lucky... in all things."];
+                TurnOff("name");
+            }
+            key ("job") {
+                ["I make my living off the world! It gives... and I take!" The pirate laughs boisterously. "I am a worldly gentleman, friends -- that is my 'job'! Oh, and I train initiates for a bit of pocket change."];
+                TurnOn(<< "world", "train" >>);
+            }
+            key ("world") {
+                ["The ways of the world, is what I mean. I am a man of the road; I am a seasoned traveller. I travel through the world as a hundred different men."];
+                TurnOn(<< "traveller", "different" >>);
+                TurnOff("world");
+            }
+            key ("traveller") {
+                ["In truth there are few places where I have not been and little that I have not done."];
+                TurnOff("traveller");
+            }
+            key ("different") {
+                ["Thou canst be a different person just by assumption. 'Tis an attitude. I am an expert in the art of charismatic communication for the purposes of deception. It gives one many skills. For example, I can walk into any shop and make a purchase. But I will walk away with much more than I bought, for I know how to fool the shopkeeper. Little things like that."];
+                TurnOff("different");
+            }
+            key ("train") {
+                if (v1 = 7) {
+                    ["I charge 35 gold for a training session. Doth this meet with thine approval?"];
+                    if ~AskYesNo() {
+                        LuckyTrains_i(35, 2);
+                    } else {
+                        [Lucky shrugs. "Thou wilt not find another trainer on the island!"];
+                        TurnOff("train");
+                    }
+                } else {
+                    ["I shall be happy to show thee my ways of the world during normal business hours at my residence -- afternoons and evenings."];
+                    TurnOff("train");
+                }
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["Be careful, my friend."*];
+    }
+    if (event = _Bark) {
+        v1 = ~GetWorkType(~NPCToItem_i(_Lucky));
+        if (v1 = 11) {
+            v2 = ~rndRange(4, 1);
+            if (v2 = 1) {
+                v3 = "@Har!@";
+            }
+            if (v2 = 2) {
+                v3 = "@Avast!@";
+            }
+            if (v2 = 3) {
+                v3 = "@Blast!@";
+            }
+            if (v2 = 4) {
+                v3 = "@Damn parrot droppings...@";
+            }
+            Item_bark(v3, _Lucky);
+        } else {
+            BarkAboutWork_i(_Lucky);
+        }
+    }
+}
+
+Routine LuckyTrains_i accepts a0, a1 #locals(10) #uses(~GetStudent, ~CanTrain, ~IsInInv, ~GetStat, IntTrain_i) {
+    v2 = ~GetStudent();
+    if (v2 = 0) {
+    } else {
+        v3 = 1;
+        v4 = ~CanTrain(v3, v2, v0, v1);
+        if (v4 = 0) {
+            ["Ah! But thou hast not the practical experience to train with me at this time! Go and experience life and return later."];
+        } else {
+            if (v4 = 1) {
+                v5 = ~CountItem(_All, _All, _Gold_Coin, _Party);
+                [You gather your gold and count it, finding that you have <v5> gold altogether.];
+                if (v5 < v0) {
+                    ["Hmm. Thou art a little short on gold. Perhaps thou couldst visit the House of Games, win some booty, then return!"];
+                    goto label_16;
+                }
+            }
+            if (v4 = 2) {
+                ["Thou art already as talented as I! Thou hast no need of my services!"];
+            } else {
+                v6 = ~TakeFromParty_i(true, _All, _All, _Gold_Coin, v0);
+                [You pay <v0> gold, and the training session begins.];
+                [Lucky produces a deck of cards, three sea shells and a rock, and a pair of dice. In turn, the pirate takes each item and begins to show various methods of utilizing them. He shows how to deal cards from the bottom of the deck, and how to do a false shuffle. With the shells and rock, he shows lightning-fast maneuvers which hide the rock under one of the shells, the one it couldn't possibly be under. Finally, he shows how to use saliva to weight the dice so that they always turn up lucky.];
+                if (v2 = 65180) {
+                    v7 = ~IsInInv(0, 65177, _Amulet, 1, _Party);
+                    if v7 {
+                        v8 = "happily hands you back your Ankh, which had ";
+                        v9 = "managed to slip from around your neck during ";
+                        v10 = "the session.";
+                    } else {
+                        v8 = "happily holds out his hand to shake yours, ";
+                        v9 = "but pulls it away quickly when you proceed ";
+                        v10 = "to do so.";
+                    }
+                    append "When the training session is over, Lucky ";
+                    append v8;
+                    append "";
+                    append v9;
+                    append " ";
+                    append v10;
+                    append "";
+                    say;
+                }
+                v11 = ~GetStat(_Int, v2);
+                if (v11 < 30) {
+                    IntTrain_i(1, v2);
+                }
+            }
+        }
+    }
+    label_16:
+}

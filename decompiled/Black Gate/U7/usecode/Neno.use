@@ -1,0 +1,59 @@
+Routine Neno accepts a0 #locals(2) #uses(~IsNPCNear, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Neno);
+        v0 = ~GetTime();
+        if (v0 = 7) {
+            v1 = ~IsNPCNear(_Coop);
+            if v1 {
+                [Neno is busy performing with The Avatars and cannot speak at the moment.*];
+                terminate;
+            } else {
+                ["I must get to my performance at The Blue Boar! The Avatars are playing tonight!"*];
+                terminate;
+            }
+        }
+        TurnOn(<< "name", "job", "bye" >>);
+        if not $MetNeno {
+            [You see a handsome and flamboyant musician.];
+            $MetNeno = true;
+        } else {
+            ["Hello," Neno says.];
+        }
+        converse {
+            key ("name") {
+                [The musician nods at you. "I am Neno."];
+                TurnOff("name");
+            }
+            key ("job") {
+                ["I am studying to be the greatest bard that Britannia has ever known. I probably already -am- the greatest bard Britannia has ever known." You note that Neno is not at all modest.];
+                TurnOn(<< "bard", "studying" >>);
+            }
+            key ("bard") {
+                ["It is a great honor to be a bard. Thou art someone who gives pleasure to other people, while at the same time fulfilling a creative urge within thyself. It is truly magical. I know this from mine experience playing with The Avatars."];
+                TurnOff("bard");
+                TurnOn("The Avatars");
+            }
+            key ("studying") {
+                ["The Music Hall provides a great environment for study. Judith is a wonderful teacher, and the opportunities here are of the highest quality. One day I shall travel the world and entertain the common folk and nobles alike."];
+                TurnOff("studying");
+                TurnOn("entertain");
+            }
+            key ("entertain") {
+                ["It is my dream to be famous throughout the land. I shall tour the country every year, and play in the largest pubs in every town." He winks at you. "I shall be assured of wooing the women, dost thou not think?"];
+                TurnOff("entertain");
+            }
+            key ("The Avatars") {
+                ["'Tis a singing group I play with. We play at The Blue Boar every evening. Please, come listen to us." Neno leans in to whisper, "But I plan to begin performing alone very soon. I am obviously the most talented member of the quartet."];
+                TurnOff("The Avatars");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["Farewell! Thou must watch the postings for our performance dates!"*];
+    }
+    if (event = _Bark) {
+        BarkAboutWork_i(_Neno);
+    }
+}

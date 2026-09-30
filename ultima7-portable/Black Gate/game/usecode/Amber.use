@@ -1,0 +1,99 @@
+Routine Amber accepts a0 #locals(5) #uses(~IsNPCNear, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Amber);
+        v0 = ~GetTime();
+        TurnOn(<< "name", "job", "bye" >>);
+        v1 = ~IsNPCNear(_Shamino);
+        if (flag(107) or v1) {
+            TurnOn("Shamino");
+        }
+        if not $MetAmber {
+            [This lovely actress is dressed in a mouse costume.];
+            $MetAmber = true;
+        } else {
+            ["Hello, there!" Amber says.];
+        }
+        converse {
+            key ("name") {
+                ["I am Amber."];
+                TurnOff("name");
+            }
+            key ("job") {
+                ["I am an actress at the Royal Theatre. I am playing the role of Sherry the Mouse in the new play."];
+                TurnOn(<< "Royal Theatre", "Sherry", "play" >>);
+            }
+            key ("Royal Theatre") {
+                ["'Tis a lovely space in which to perform. I have dedicated my life to acting, thou knowest."];
+                TurnOff("Royal Theatre");
+                TurnOn(<< "space", "dedicated" >>);
+            }
+            key ("space") {
+                ["Raymundo himself had a hand in the design of the theatre."];
+                TurnOff("space");
+            }
+            key ("dedicated") {
+                ["Actually, this will be my debut theatrical performance. I have been working as a barmaid waiting for my first chance to be in the theatre."];
+                TurnOff("dedicated");
+            }
+            key ("play") {
+                ["Between thee and me, methinks the play stinks." She winks at you.];
+                TurnOff("play");
+            }
+            key ("Sherry") {
+                ["Canst thou imagine such drivel? I do not believe there ever was a Sherry the Mouse. Who ever heard of a mouse that could talk! Especially these lines! I would rather play a queen. Much more fitting for me, I would say."];
+                TurnOff("Sherry");
+                TurnOn(<< "lines", "queen" >>);
+            }
+            key ("lines") {
+                ["I have to memorize this preposterous children's story called 'Hubert's Hair-Raising Adventure'.];
+                TurnOff("lines");
+            }
+            key ("queen") {
+                ["I asked Raymundo about this and he threw a tantrum. He said that it would not be historically accurate. Ha! As if that were something of any significance!"];
+                TurnOff("queen");
+            }
+            key ("Shamino") {
+                v1 = ~IsNPCNear(_Shamino);
+                if v1 {
+                    ["Poo Poo Head!" she cries. She then rushes to him and kisses him full on the mouth. Shamino turns red and shuffles his feet.*];
+                    SetSpeaker(0, _Shamino);
+                    ["Not in front of the Avatar, Poo!"*];
+                    CloseSpeaker(_Shamino);
+                    SetSpeaker(0, _Amber);
+                    ["To blazes with the Avatar!" She kisses him again. "The Avatar is the last one who will convince thee to settle down."];
+                } else {
+                    ["Dost thou know my beau? He is probably drowning his sorrows at the Blue Boar. The lazy knave! I will not let him go about adventuring. It is time for him to settle down. Thou canst tell him I said so!"];
+                }
+                flag(109) = true;
+                flag(110) = true;
+                TurnOff("Shamino");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["Adieu!"*];
+    }
+    if (event = _Bark) {
+        v2 = ~GetWorkType(~NPCToItem_i(_Amber));
+        v3 = ~rndRange(4, 1);
+        if (v2 = 29) {
+            if (v3 = 1) {
+                v4 = "@Hubert the Lion was...@";
+            }
+            if (v3 = 2) {
+                v4 = "@Why do I say that?@";
+            }
+            if (v3 = 3) {
+                v4 = "@My costume is too big.@";
+            }
+            if (v3 = 4) {
+                v4 = "@I -hate- my lines!@";
+            }
+            Item_bark(v4, _Amber);
+        } else {
+            BarkAboutWork_i(_Amber);
+        }
+    }
+}

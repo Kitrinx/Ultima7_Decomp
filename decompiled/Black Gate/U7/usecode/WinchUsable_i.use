@@ -1,0 +1,27 @@
+Routine WinchUsable_i accepts a0, a1 #locals(7) #uses(PathToItem_i, ~ToggleDrawbridges_i, OpenGateWithWinch_i) {
+    if (v0 = 1) {
+        if ~Kernel_getNumProcesses(v1) {
+            return;
+        }
+        PathToItem_i(7, v1, #TurnWinch_i, 65535, 65534, 65534, v1);
+    }
+    if (v0 = 2) {
+        v2 = ~GetQuality(item);
+        v3 = ~FindNearby_i(0, 15, _Drawbridge, item);
+        v4 = ~FindNearby_i(0, 15, _Closed_Drawbridge, item);
+        v3 = (v3 & v4);
+        v4 = << >>;
+        Foreach v7 in v3 {
+            if (~GetQuality(v7) = v2) {
+                v4 = (v4 & v7);
+            }
+        }
+        if ~ToggleDrawbridges_i(v4) {
+            v8 = ~PostAction(<< _aFRAME, 1, _aNEXT_FRAME, _aLOOP_i, 65535, 4 >>, item);
+            return;
+        }
+        if $SEARCHED_STABLES {
+            OpenGateWithWinch_i(false, item);
+        }
+    }
+}

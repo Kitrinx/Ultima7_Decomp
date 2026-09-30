@@ -1,0 +1,25 @@
+Routine GremlinStealsFood_i accepts a0 #locals(3) {
+    v0 = ~FindNearby_i(0, 3, _Gremlin, item);
+    v1 = ~GetContents(_All, _All, _Food_Item, item);
+    if v1 {
+        v2 = ~Item_push(v1::1);
+        if (v2 and v0) {
+            v2 = ~PopToNPC(v0::1);
+        }
+        if ((~rndRange(2, 1) = 1) and (v1::2 <> 0)) {
+            v2 = ~Item_push(v1::2);
+            if (v2 and v0) {
+                v2 = ~PopToNPC(v0::1);
+            }
+        }
+    }
+    if (v0 and (~rndRange(2, 1) = 1)) {
+        v1 = ~FindNearby_i(0, 10, _Food_Item, v0::1);
+        if v1 {
+            v2 = ~Item_push(v1::1);
+            if v2 {
+                v2 = ~PopToNPC(v1::1);
+            }
+        }
+    }
+}

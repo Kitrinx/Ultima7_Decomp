@@ -1,0 +1,91 @@
+Routine Nicholas accepts a0 #locals(4) #uses(~IsNPCNear) {
+    if (event = _Action) {
+        SetSpeaker(0, _Nicholas);
+        v0 = ~IsNPCNear(_Nanna);
+        TurnOn(<< "name", "job", "bye" >>);
+        if not $MetNicholas {
+            [You see a child that has recently grown into toddlerhood.];
+            $MetNicholas = true;
+        } else {
+            ["Whee! Yoooo!" intones Nicholas.];
+        }
+        converse {
+            key ("name") {
+                if v0 {
+                    SetSpeaker(0, _Nanna);
+                    ["His name is Nicholas."];
+                    CloseSpeaker(_Nanna);
+                    SetSpeaker(0, _Nicholas);
+                } else {
+                    ["Nick-las".];
+                }
+                TurnOff("name");
+            }
+            key ("job") {
+                v1 = ~GetWorkType(_Nicholas);
+                if (v1 = 25) {
+                    [The toddler is obviously deeply engaged in a game of tag and will not stop to speak.*];
+                    terminate;
+                } else {
+                    if v0 {
+                        SetSpeaker(0, _Nanna);
+                        ["Why, his job is to wet his diaper! Is that not right, Nicholas?" Nanna says in baby-talk.];
+                        SetSpeaker(0, _Nicholas);
+                        ["Whee! Dia-per!"];
+                        SetSpeaker(0, _Nanna);
+                        ["Nicholas is one of our orphans. He was left in front of the castle one morning. 'Tis a sad state of affairs when this kind of thing happens."];
+                        CloseSpeaker(_Nanna);
+                        SetSpeaker(0, _Nicholas);
+                    } else {
+                        ["Whee! Dia-per!"];
+                    }
+                    TurnOn(<< "wet", "diaper" >>);
+                }
+            }
+            key ("wet") {
+                [You notice that Nicholas' diaper is wet.];
+                if v0 {
+                    SetSpeaker(0, _Nanna);
+                    ["Oh, my. He's wet, is he not? Couldst thou be a dear and change him for me? I would appreciate it!"];
+                    CloseSpeaker(_Nanna);
+                }
+                ["Yeeee! Dia-per! Geeee!" Nicholas says happily.];
+                TurnOff("wet");
+            }
+            key ("diaper") {
+                if v0 {
+                    SetSpeaker(0, _Nanna);
+                    ["The diapers are there on that table. If thou wouldst just use one\x09on Nicholas...."];
+                    CloseSpeaker(_Nanna);
+                } else {
+                    [Nicholas points to the diapers on the table.];
+                }
+                TurnOff("diaper");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["Bye bye!"*];
+    }
+    if (event = _Bark) {
+        v1 = ~GetWorkType(~NPCToItem_i(_Nicholas));
+        if (v1 = 25) {
+            v2 = ~rndRange(4, 1);
+            if (v2 = 1) {
+                v3 = "@Tag! Thou it!@";
+            }
+            if (v2 = 2) {
+                v3 = "@Catch me! Catch me!@";
+            }
+            if (v2 = 3) {
+                v3 = "@Nyah nyah!@";
+            }
+            if (v2 = 4) {
+                v3 = "@Tag! Whee!@";
+            }
+            Item_bark(v3, _Nicholas);
+        }
+    }
+}

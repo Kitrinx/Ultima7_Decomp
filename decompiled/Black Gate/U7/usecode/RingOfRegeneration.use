@@ -1,0 +1,30 @@
+Routine RingOfRegeneration accepts a0 #locals(4) {
+    if (event = _Equip) {
+        v0 = ~Item_getContainer(item);
+        if (v0 and ~Item_isNpc(v0)) {
+            Kernel_resetRef(item);
+            v1 = ~PostInFuture(100, << _aUSABLE_i, #RingOfRegeneration >>, item);
+        } else {
+            FlashMouse_i(0);
+        }
+    }
+    if (event = _Unequip) {
+        Kernel_resetRef(item);
+    }
+    if (event = _Posted_i) {
+        Kernel_resetRef(item);
+        v0 = ~Item_getContainer(item);
+        if (v0 and ~Item_isNpc(v0)) {
+            v2 = ~GetNPCStat_i(_Str, v0);
+            v3 = ~GetNPCStat_i(_Hits, v0);
+            if (v3 < v2) {
+                v1 = ~ChangeNPCStat_i(1, _Hits, v0);
+                if (~rndRange(100, 1) = 1) {
+                    Item_destroy(item);
+                    return;
+                }
+            }
+            v1 = ~PostInFuture(100, << _aUSABLE_i, #RingOfRegeneration >>, item);
+        }
+    }
+}

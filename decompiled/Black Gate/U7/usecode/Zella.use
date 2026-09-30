@@ -1,0 +1,131 @@
+Routine Zella accepts a0 #locals(2) #uses(~AskYesNo, ZellaTrains_i, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Zella);
+        v0 = ~GetTime();
+        v1 = ~GetWorkType(~NPCToItem_i(_Zella));
+        TurnOn(<< "name", "job", "bye" >>);
+        if not $MetZella {
+            [You see a lean, young fighter with a rather dashing flair.];
+            $MetZella = true;
+        } else {
+            ["Hello again!" Zella says.];
+        }
+        converse {
+            key ("name") {
+                ["My name is Zella."];
+                TurnOff("name");
+            }
+            key ("job") {
+                ["I am a trainer. I specialize in hand-to-hand combat. After all, a fighter never knows when he might encounter an adversary and suddenly realize he is unarmed. I call it 'boxing'. Boxing is not only a method of fighting -- it is an art."];
+                TurnOn(<< "combat", "train" >>);
+            }
+            key ("combat") {
+                ["The field of battle contains many arenas. Almost any situation could arise. Every fighter should be knowledgeable and adept at many forms of combat. I have mine own theory of fighting."];
+                TurnOff("combat");
+                TurnOn(<< "arenas", "theory" >>);
+            }
+            key ("arenas") {
+                ["All the various arenas of combat, all the various styles one may learn in fighting with various weapons, are not fighting in its purest form. To truly be a great fighter one must go to the source of all fighting knowledge."];
+                TurnOff("arenas");
+            }
+            key ("theory") {
+                ["Just as a castle is built from the foundation up, so must a fighter. One cannot simply begin by learning to fight with weapons. Weapons are merely an extension of a person's extremities. A true fighter learns by using those extremities first."];
+                TurnOff("theory");
+                TurnOn(<< "fighter", "extremities" >>);
+            }
+            key ("fighter") {
+                ["Make no mistake. Fighters are made, not born. All the natural talent in the world will avail thee naught if one does not have the heart and the will to win. Part of that will is the courage to seek out thine own limitations and strive to better them."];
+                TurnOff("fighter");
+            }
+            key ("extremities") {
+                ["Thine arms. Thy legs. Thy fists. This is what makes 'boxing'."];
+                TurnOff("extremities");
+            }
+            key ("train") {
+                if (v1 = 29) {
+                    ["My price for training is 45 gold. Is this all right?"];
+                    if ~AskYesNo() {
+                        ZellaTrains_i(45, << 1, 4 >>);
+                    } else {
+                        ["Then mayest thou find more inexpensive training elsewhere."];
+                    }
+                } else {
+                    ["Be so kind as to return during normal training hours, wouldst thou?"];
+                    TurnOff("train");
+                }
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["Good day to thee."*];
+    }
+    if (event = _Bark) {
+        BarkAboutWork_i(_Zella);
+    }
+}
+
+Routine ZellaTrains_i accepts a0, a1 #locals(17) #uses(~GetStudent, ~CanTrain, ~GetStat, DexTrain, CombatTrain_i) {
+    v2 = ~GetStudent();
+    v3 = ~GetNPCName_i(v2);
+    v4 = ~AvatarSex();
+    if (v2 = 65180) {
+        v3 = "you";
+        v5 = "You";
+        v6 = "mimic";
+        v7 = "develop";
+        v8 = "you";
+        v9 = "you";
+        v10 = "feel";
+        v11 = "have";
+        v12 = "learn";
+    } else {
+        if v4 {
+            v5 = "She";
+            v9 = "she";
+        } else {
+            v5 = "He";
+            v9 = "he";
+        }
+        v6 = "mimics";
+        v7 = "develops";
+        v8 = "them";
+        v10 = "feels";
+        v11 = "has";
+        v12 = "learns";
+    }
+    if (v2 = 0) {
+    } else {
+        v13 = 2;
+        v14 = ~CanTrain(v13, v2, v0, v1);
+        if (v14 = 0) {
+            ["It appears that thou dost not have enough practical experience to train at this time. If thou couldst return later after thou hast gained more experience, I can help thee."];
+        } else {
+            if (v14 = 1) {
+                v15 = ~CountItem(_All, _All, _Gold_Coin, _Party);
+                [You gather your gold and count it, finding that you have <v15> gold altogether.];
+                if (v15 < v0) {
+                    ["It appears that thou dost not seem to have enough gold to train here. If thou couldst return later after thy pockets are filled..."];
+                    goto label_19;
+                }
+            }
+            if (v14 = 2) {
+                ["It appears that thou art already as proficient as I! I am afraid that thou cannot be trained further here."];
+            } else {
+                [You pay <v0> gold.];
+                v16 = ~TakeFromParty_i(true, _All, _All, _Gold_Coin, v0);
+                [Zella begins the session by showing <v3> the proper stance when 'boxing'.~~"'Tis all contingent on balance. Use thy weight to control thy movement. Step lightly. 'Tis almost like a dance." Zella shows <v3> some steps, sparring into the air. <v5> <v6> him and slowly <v7> a feel for the technique. After a while it becomes second nature. The two of <v8> take jabs at each other, and <v3> <v12> proper defensive maneuvers. When the session is over, <v9> <v10> <v9> <v11> a better grip on the concept of 'boxing'.];
+                v17 = ~GetStat(_Dex, v2);
+                v18 = ~GetStat(_Cbt, v2);
+                if (v17 < 30) {
+                    DexTrain(1, v2);
+                }
+                if (v18 < 30) {
+                    CombatTrain_i(1, v2);
+                }
+            }
+        }
+    }
+    label_19:
+}

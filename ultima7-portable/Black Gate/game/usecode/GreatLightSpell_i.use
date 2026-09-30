@@ -1,0 +1,14 @@
+Routine GreatLightSpell_i accepts a0 #locals(1) #uses(~IsMagicOK_i) {
+    if (event = _Action) {
+        Kernel_resetRef(item);
+        Item_bark("@Vas Lor@", item);
+        if ~IsMagicOK_i() {
+            v0 = ~PostAction(<< _aNO_HALT_i, _aSFX_i, 68, _aRAISE1_FRAME_i, _aTHRUST1_FRAME_i, _aUSABLE_i, #GreatLightSpell_i >>, item);
+        } else {
+            v0 = ~PostAction(<< _aRAISE1_FRAME_i, _aTHRUST1_FRAME_i, _aUSABLE_i, #FizzleSpell_i >>, item);
+        }
+    }
+    if (event = _Posted_i) {
+        StartLight_i(5000);
+    }
+}

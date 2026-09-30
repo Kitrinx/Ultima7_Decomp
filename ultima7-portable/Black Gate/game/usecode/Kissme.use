@@ -1,0 +1,177 @@
+Routine Kissme accepts a0 #locals(10) #uses(~IsNPCNear, ~LordOrLady, ~AskYesNo) {
+    if (event = _Action) {
+        SetSpeaker(0, _Kissme);
+        v0 = ~IsNPCNear(_Iolo);
+        v1 = ~IsNPCNear(_Spark);
+        v2 = ~IsNPCNear(_Dupre);
+        v3 = ~IsNPCNear(_Shamino);
+        v4 = ~LordOrLady();
+        v5 = ~GetWorkType(~NPCToItem_i(_Kissme));
+        v6 = ~AvatarSex();
+        TurnOn(<< "name", "job", "bye" >>);
+        if not $MET_KISSME {
+            [This spritely fairy flutters around you, sprinkling some kind of sparkling dust on your head as she giggles.~~ "I love thee! Yes, I do! I love thee!"];
+            $MET_KISSME = true;
+        } else {
+            ["Yes, my love?" Kissme asks.];
+        }
+        converse {
+            key ("name") {
+                ["Kissme! Kissme!" She giggles.];
+                if v0 {
+                    SetSpeaker(0, _Iolo);
+                    ["Don't do it, <v4>! Who knows what evil this strange creature might possess!" He inspects the sprite more closely. "Mayhaps I should try it first to be sure it is safe..."*];
+                    CloseSpeaker(_Iolo);
+                }
+                if v1 {
+                    SetSpeaker(0, _Spark);
+                    ["Hey, -I'll- kiss her! She doesn't scare me!"*];
+                    CloseSpeaker(_Spark);
+                }
+                if v3 {
+                    SetSpeaker(0, _Shamino);
+                    ["She -doth- look rather inviting, doth she not?"*];
+                    CloseSpeaker(_Shamino);
+                }
+                if v2 {
+                    SetSpeaker(0, _Dupre);
+                    ["My liege has asked thee thy -name-, foul creature!"*];
+                    CloseSpeaker(_Dupre);
+                }
+                SetSpeaker(0, _Kissme);
+                ["But that -is- my name! Kissme! Kissme! It is true!"];
+                TurnOff("name");
+            }
+            key ("job") {
+                ["My purpose is to spread love dust all around and welcome thee to Ambrosia! I love thee! Yes, I do!"];
+                if v3 {
+                    [She flutters over Shamino's head.~~"I love -thee-, as well!"*];
+                    SetSpeaker(0, _Shamino);
+                    ["If only thou wert a little larger..."*];
+                    CloseSpeaker(_Shamino);
+                    SetSpeaker(0, _Kissme);
+                }
+                if v1 {
+                    [Then she flies around Spark.~~"Oooh, and I love -thee-, too!"*];
+                    SetSpeaker(0, _Spark);
+                    [Spark blushes. "Aww, cut it out!"*];
+                    CloseSpeaker(_Spark);
+                    SetSpeaker(0, _Kissme);
+                }
+                if v2 {
+                    [Kissme then flies near Dupre.~~"Handsome man! Handsome man! I love thee! It's true! It's true!"*];
+                    SetSpeaker(0, _Dupre);
+                    [Dupre swats at the fairy. "Away with thee! Thou dost not love me! Thou dost not even -know- me!"*];
+                    CloseSpeaker(_Dupre);
+                    SetSpeaker(0, _Kissme);
+                }
+                if v0 {
+                    [Kissme glides over to Iolo and plants a big kiss on his cheek.~~"Yes! I love thee! Yes, I do!"*];
+                    SetSpeaker(0, _Iolo);
+                    [Iolo makes a sour face and wipes his cheek.~~ "Avatar, that was the sloppiest, wettest, most... -disgusting- kiss I have ever felt!"*];
+                    CloseSpeaker(_Iolo);
+                    SetSpeaker(0, _Kissme);
+                }
+                TurnOn(<< "Ambrosia", "love dust" >>);
+            }
+            key ("Ambrosia") {
+                ["That is where thou art! It is true! Oh, yes! Ambrosia!"];
+                if v0 {
+                    SetSpeaker(0, _Iolo);
+                    ["Ambrosia! Then it really does exist!"*];
+                    CloseSpeaker(_Iolo);
+                    SetSpeaker(0, _Kissme);
+                }
+                ["Ambrosia, the lost isle of Britannia! Thou art really here!"];
+                TurnOff("Ambrosia");
+                TurnOn("lost isle");
+            }
+            key ("love dust") {
+                ["It does nothing that I know of! But it's pretty!" Kissme giggles like a child. "It's how I show thee I love thee! It's true!"];
+                TurnOff("love dust");
+            }
+            key ("lost isle") {
+                ["Ambrosia was hit by stones from the sky hundreds of years ago! Oh, yes indeed! The entire island was battered to bits! It is true!"];
+                TurnOff("lost isle");
+                TurnOn(<< "stones", "years ago" >>);
+            }
+            key ("stones") {
+                ["I believe it is called Caddellite. Yes, I believe it's true!~~"And I -do- love thee, it is so true!"];
+                TurnOff("stones");
+                TurnOn("Caddellite");
+            }
+            key ("Caddellite") {
+                ["Most of it is collected in the pit where the hydra sits. Thou shalt have to ask the hydra about it. It is true!"];
+                TurnOff("Caddellite");
+                TurnOn("hydra");
+            }
+            key ("hydra") {
+                ["The hydra is made up of three brothers -- all dragons! It is true! Thou shalt be careful not to make them angry, for they have a temper! Oh, yes indeed, they do! They are very protective of their Caddellite, so speak to them about it first!"];
+                TurnOff("hydra");
+            }
+            key ("years ago") {
+                ["Ambrosia was once very beautiful! Yes, it was! All of mine ancestors lived here then! Love dust was all around, and every day was like a jewel! Yes, it's true! Yes, thou wilt!~~"Oh, I must kiss thee again!"];
+                if v6 {
+                    ["It does not matter whether thou art male or female! No, it does not! I shall kiss thee anyway!"];
+                }
+                TurnOff("years ago");
+                TurnOn("kiss");
+            }
+            key ("kiss") {
+                if v0 {
+                    SetSpeaker(0, _Iolo);
+                    ["No! Don't do it, <v4>."*];
+                    CloseSpeaker(_Iolo);
+                }
+                if v1 {
+                    SetSpeaker(0, _Spark);
+                    ["Sheesh, here we go again!"*];
+                    CloseSpeaker(_Spark);
+                }
+                if v3 {
+                    SetSpeaker(0, _Shamino);
+                    ["Hey, I think she's cute!"*];
+                    CloseSpeaker(_Shamino);
+                }
+                if v2 {
+                    SetSpeaker(0, _Dupre);
+                    ["If thou wouldst do it, <v4>, do it quickly. We have not time to waste with such foolishness." Dupre looks distinctly disgusted with the whole affair.*];
+                    CloseSpeaker(_Dupre);
+                }
+                SetSpeaker(0, _Kissme);
+                [Do you allow Kissme to kiss you?];
+                if ~AskYesNo() {
+                    [Kissme places the wettest, sloppiest, oozingest, and mushiest smack you have ever felt on your mouth. ~~"Oh, yes! That was fun! I love thee! Yes, it's true!"];
+                } else {
+                    ["I love thee anyway! It is true!" Kissme giggles and sprinkles more love dust in your hair.];
+                }
+                TurnOff("kiss");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["Goodbye, my love! Oh yes! I love thee! It is true!"*];
+    }
+    if (event = _Bark) {
+        v7 = ~GetTime();
+        v5 = ~GetWorkType(~NPCToItem_i(_Kissme));
+        v8 = ~rndRange(4, 1);
+        if (v5 = 4) {
+            if (v8 = 1) {
+                v9 = "@I love thee!@";
+            }
+            if (v8 = 2) {
+                v9 = "@I want to kiss thee!@";
+            }
+            if (v8 = 3) {
+                v9 = "@I love thee, yes, I do!@";
+            }
+            if (v8 = 4) {
+                v9 = "@Thou art my love!@";
+            }
+            Item_bark(v9, _Kissme);
+        }
+    }
+}

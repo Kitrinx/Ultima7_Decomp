@@ -1,0 +1,19 @@
+Usable PetrifyAvatar_i #locals(3) {
+    SetItemFlag_i(_DontMove_i, ~NPCToItem_i(_Avatar));
+    v0 = ~Item_create(_Statue_854);
+    if not ~AvatarSex() {
+        if (~GetFrame(~NPCToItem_i(_Avatar)) < 16) {
+            SetFrame(18, v0);
+        } else {
+            SetFrame(19, v0);
+        }
+    } else {
+        if (~GetFrame(~NPCToItem_i(_Avatar)) < 16) {
+            SetFrame(20, v0);
+        } else {
+            SetFrame(21, v0);
+        }
+    }
+    v1 = ~GetCoord(~NPCToItem_i(_Avatar));
+    v2 = ~PopToMap(v1);
+}

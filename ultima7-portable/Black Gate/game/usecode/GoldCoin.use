@@ -1,0 +1,23 @@
+Routine GoldCoin accepts a0 #locals(1) #uses(~IsAbleToTalk_i, ~IsNPCNear, Bark_i) {
+    if (event = _Action) {
+        closeAllGumps();
+        playSFX(item, 23);
+        if not (~IsAbleToTalk_i(_Avatar) or not ~IsAbleToTalk_i(_Iolo)) {
+            return;
+        }
+        if ~IsNPCNear(_Iolo) {
+            Bark_i(0, "@Call it.@", _Avatar);
+            v0 = ~rndRange(2, 1);
+            if (v0 = 1) {
+                Bark_i(16, "@Tails.@", _Iolo);
+                Bark_i(32, "@It is heads.@", _Avatar);
+            } else {
+                Bark_i(16, "@Heads.@", _Iolo);
+                Bark_i(32, "@It is tails.@", _Avatar);
+            }
+            if (~rndRange(3, 1) = 1) {
+                Bark_i(48, "@Again!@", _Iolo);
+            }
+        }
+    }
+}

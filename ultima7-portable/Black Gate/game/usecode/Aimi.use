@@ -1,0 +1,108 @@
+Routine Aimi accepts a0 #locals(9) #uses(~LordOrLady, ~AskYesNo, ~IsInInv, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Aimi);
+        v0 = ~LordOrLady();
+        v1 = false;
+        TurnOn(<< "name", "job", "bye" >>);
+        if (flag(346) and flag(347)) {
+            TurnOn("garden");
+        }
+        if not $MetAimi {
+            [The monk pulls back her cowl far enough for you to see her face.];
+            $MetAimi = true;
+        } else {
+            ["Greetings, <v0>. I hope thy days are full of beauty."];
+        }
+        converse {
+            key ("name") {
+                ["Thou mayest call me Aimi, <v0>."];
+                flag(347) = true;
+                if (flag(346) and not v1) {
+                    TurnOn("garden");
+                }
+                TurnOff("name");
+            }
+            key ("job") {
+                ["As a monk, I am not sure how to answer thy question. I often help to make wine. However, <v0>, in my spare time I paint or tend my garden here at the Abbey."];
+                TurnOn(<< "paint", "garden", "Abbey" >>);
+                if $MetKreg {
+                    TurnOn("Kreg");
+                }
+            }
+            key ("Abbey") {
+                ["I have spent little time with others in the area. Thou mayest wish to speak with Taylor, for he knows much more about the people, animals, and sights in this area than I do."];
+                TurnOn("Taylor");
+                TurnOff("Abbey");
+            }
+            key ("Taylor") {
+                ["He is a fellow monk. He spends his time studying the plants, animals, and geography of Britannia."];
+                TurnOff("Taylor");
+            }
+            key ("paint") {
+                ["Yes," she blushes, "I have long admired those who are able to express themselves visually. Sadly," she says, laughing, "I am not very good. However, I also collect art. In fact, I have an original Sterling hanging in my room. Perhaps thou couldst see it sometime."];
+                TurnOff("paint");
+            }
+            key ("garden") {
+                v1 = true;
+                ["My garden? I have been tending it for years now. I am a firm believer in the value of aesthetics, so I plant only flowers. Sometimes I sell them in bouquets when people want them, but I do that very rarely."];
+                TurnOn(<< "aesthetics", "buy" >>);
+                TurnOff("garden");
+            }
+            key ("aesthetics") {
+                ["It refers to the practice or study of all things beautiful."];
+                TurnOff("aesthetics");
+            }
+            key ("buy") {
+                ["Thou wishest to buy a bouquet?"];
+                v2 = ~AskYesNo();
+                if v2 {
+                    ["Dost thou have anyone to give these flowers to?"];
+                    v3 = ~AskYesNo();
+                    if v3 {
+                        if (flag(296) and not flag(348)) {
+                            [You tell her about the passing away of Reyna's mother.~"Ah, yes. I had heard of Reyna's loss. That is a noble reason. Please take these flowers and give them to her."];
+                            v4 = ~GiveToParty_i(true, 4, _All, _Plant_999, 1);
+                            flag(348) = true;
+                        } else {
+                            ["Good. 'Tis always best to have someone to receive flowers. The flowers will cost 10 gold. Dost thou still want them?"];
+                            v5 = ~AskYesNo();
+                            if v5 {
+                                v6 = ~IsInInv(65177, 65177, _Gold_Coin, 10, _Party);
+                                v7 = ~GiveToParty_i(true, 4, _All, _Plant_999, 1);
+                                if v6 {
+                                    if v7 {
+                                        v8 = ~TakeFromParty_i(true, _All, _All, _Gold_Coin, 10);
+                                        ["I think thou wilt find these to be exceptionally beautiful."];
+                                    } else {
+                                        ["It appears thou dost not have room for my flowers. A pity."];
+                                    }
+                                } else {
+                                    ["I am sorry, <v0>. Thou dost not have the gold."];
+                                }
+                            } else {
+                                ["I understand, <v0>. Free flowers are indeed the best. And wild flowers are quite free. For now, <v0>, do no more than promise me thou wilt take the time to enjoy my garden."];
+                            }
+                        }
+                    } else {
+                        ["That is indeed unfortunate, <v0>. 'Tis always best to have someone to receive flowers."];
+                    }
+                } else {
+                    ["Perhaps next time, thou mightest be interested. For now, <v0>, do no more than promise me thou wilt take the time to enjoy my garden."];
+                }
+                TurnOff("buy");
+            }
+            key ("Kreg") {
+                ["I am afraid I do not know of such a person."];
+                TurnOff("Kreg");
+            }
+            key ("bye") {
+                ["Fare thee well, <v0>. May the sweet scent of beauty never pass thee by."*];
+                terminate;
+            }
+        }
+        clear_answers;
+    }
+    if (event = _Bark) {
+        BarkAboutWork_i(_Aimi);
+    }
+}

@@ -1,0 +1,287 @@
+Routine Nicodemus accepts a0 #locals(12) #uses(~AvatarName, ~AskYesNo, NicodemusSellsSpells_i, NicodemusSellsReagents_i, GivePartyExp_i) {
+    if (event = _Bark) {
+        terminate;
+    }
+    SetSpeaker(0, _Nicodemus);
+    v0 = ~AvatarName();
+    TurnOn(<< "name", "job", "bye" >>);
+    v1 = ~GetParty();
+    v2 = ~CountItem(0, _All, _Hourglass, _Party);
+    if flag(466) {
+        TurnOn(<< "hourglass", "Time Lord" >>);
+    }
+    if (v2 or $GotHourglass) {
+        TurnOn("enchant");
+    }
+    if not $MetNicodemus {
+        [Your old friend Nicodemus has a far away look in his eyes.];
+        $MetNicodemus = true;
+    } else {
+        if not $TetraGone {
+            ["Who art thou?" Nicodemus asks. "Oh, I remember. Remember demember! Ha ha ha!"];
+        } else {
+            ["Hello again, <v0>," says Nicodemus.];
+        }
+    }
+    converse {
+        key ("name") {
+            if not $TetraGone {
+                ["That is a very good question. Some days I can actually remember. Let's see... today... Yes! I am Nicodemus! Nicodomus! Nicodimus! Nico-nico-kukodamus! Ha ha ha!"];
+            } else {
+                ["Thou art addressing Nicodemus."];
+            }
+            TurnOff("name");
+        }
+        key ("job") {
+            if not $TetraGone {
+                ["To go absolutely mad! For that is indeed what is happening! My magic no longer works! Every time I attempt to change something into a drake, it only becomes a newt! Oh, newty-wewty scooty-booty!" He speaks to an imaginary creature beside him. "Who asked thee? Away with thee!" He turns to you. "Sorry. That bloody newt keeps trying to undermine my conversation. Anyway... I suppose I can sell thee some reagents, potions, or spells. I must make a living somecow. I mean somehow! That was Some Cow! Ha ha ha!"];
+                TurnOn(<< "magic", "potions" >>);
+            } else {
+                ["Why, to perform magic! It seems that the disturbance in the ether has been repaired! I can also sell thee some reagents or spells."];
+            }
+            TurnOn(<< "spells", "reagents" >>);
+        }
+        key ("magic") {
+            if not $TetraGone {
+                ["Magic? What magic!? All the magic in the world has gone completely topsy-turvy! Oh, blurpsy-flurpsy! Ha ha ha! Those are silly words, are they not? 'Tis a pity they are not magical! Ha ha ha!"];
+            } else {
+                ["The ether is repaired. The mages of the world are indebted to thee."];
+            }
+            TurnOff("magic");
+        }
+        key ("spells") {
+            ["Dost thou wish to buy some spells?"];
+            v3 = ~AskYesNo();
+            if v3 {
+                NicodemusSellsSpells_i();
+            } else {
+                ["Never mind, then!"];
+            }
+        }
+        key ("reagents") {
+            ["Dost thou wish to buy some reagents?"];
+            v4 = ~AskYesNo();
+            if v4 {
+                NicodemusSellsReagents_i();
+            } else {
+                ["Never mind, then!"];
+            }
+        }
+        key ("potions") {
+            if not $TetraGone {
+                ["Potions? What makes thee think I have potions? Art thou sure thou dost not want Lotions? I certainly have lotions! Otions, slotions, motions, votions! Ha ha ha! Wait! Oh, yes! I do have potions! I told thee so, didn't I! Let us see... I have this black potion here. I am not sure what it does exactly, but I am quite sure it turns one invisible.];
+            } else {
+                ["Yes, I have potions. Well, I have this black one. It is an invisibility potion.];
+            }
+            ["Dost thou want it for, say, 75 gold?"];
+            v5 = ~AskYesNo();
+            if v5 {
+                v6 = ~CountItem(_All, _All, _Gold_Coin, _Party);
+                if (v6 >= 75) {
+                    v7 = ~GiveToParty_i(true, 7, _All, _Potion, 1);
+                    if v7 {
+                        ["Here is the potion."];
+                        v8 = ~TakeFromParty_i(true, _All, _All, _Gold_Coin, 75);
+                    } else {
+                        ["Thou dost not have enough room to carry the potion!"];
+                    }
+                } else {
+                    ["Art thou trying to cheat me? Thou dost not have enough gold!"];
+                }
+            } else {
+                ["Then why didst thou mention it? Leave me alone!"];
+            }
+            TurnOff("potions");
+        }
+        key ("Time Lord") {
+            if not $TetraGone {
+                ["Timey Limey Lord? Hmmm. I don't know him. Wait! Yes I do. Does he have a big black mustache and three pairs of pants? No! I know who he is. He's the fellow who came to fix my sundial the other day, right?"];
+                v9 = ~AskYesNo();
+                if v9 {
+                    ["I thought so! Tell him that bloody thing still doesn't work! It gives me three shadows! Dadows badows whoopeee! Ha ha ha!"];
+                } else {
+                    ["He's not? Hmmm. Then he must be the man I am not thinking of!"];
+                }
+                ["Wait! I remember! He is my Knight's Bridge opponent! We play on my Knight's Bridge court just north of mine house."];
+            } else {
+                ["I have not spoken to the Time Lord in months! How is the old codger? Give him my regards. Tell him I miss our Knight's Bridge games!"];
+            }
+            TurnOff("Time Lord");
+            TurnOn("Knight's Bridge");
+        }
+        key ("Knight's Bridge") {
+            ["'Tis a life-size board game. I have a book around here somewhere which contains the rules."];
+            TurnOff("Knight's Bridge");
+        }
+        key ("hourglass") {
+            if flag(301) {
+                ["Yes, I just enchanted it."];
+            } else {
+                if not ($GotHourglass or v2) {
+                    if not $TetraGone {
+                        ["This Time Lord told thee what? An hourglass! I have no blinking hourglass! Glassy wassy hoursplassy! Ha ha ha! Wait! An enchanted hourglass? That does ring a bell. Clang Clang Clang! Ha ha ha! Wait! I remember. I had an hourglass. I sold it. To a gypsy. Or was it an antique dealer? I think I might have sold it to a gypsy antique dealer in Britain. Or Paws. Somewhere on that side of the land. But if my memory serves me correctly, that hourglass used up its enchantment, which is why I sold it. I suppose if the ether is repaired, I could possibly re-enchant it. Bring it to me and we'll see what we can do. I know! We can play a rousing game of chess! But only if I can deal at all times. I do not trust thee."];
+                    } else {
+                        ["Mine old hourglass! Of course I remember it! I believe I sold it to an antique dealer in Paws. I might be able to re-enchant it if thou wouldst bring it to me."];
+                    }
+                } else {
+                    if not $TetraGone {
+                        ["What's this? An hourglass of some kind? Wait! It looks vaguely familiar! Thief!! This is mine hourglass! I have been looking for it for years! Where didst thou get it, scoundrel? I shall turn thee into a duck!"~~Nicodemus intones some spell and points at you, but nothing happens.~~"Zounds! Thou art no more a quacker than I am. Nothing works anymore. Quacker slacker wacker flacker! Ha ha ha!"];
+                    } else {
+                        ["Mine old hourglass! I suppose I could revitalize the enchantment upon it."];
+                    }
+                }
+            }
+            TurnOff("hourglass");
+        }
+        key ("enchant") {
+            if not $TetraGone {
+                ["Enchant? Thou dost want me to enchant this wretched thing? Thou must have the brain of a toad! Toady woady bloady coady! Ha ha ha!~~"Do me a favor, Mister Avatar. Repair the blinking ether, wilt thou? Do that and I can enchant thy glourblass. I mean floursass. I mean hourglass. Tell that to thy 'Time Lord'. Thou canst also tell him he needs a bath."];
+            } else {
+                ["I would be most happy to enchant the hourglass. After freeing the ether, I am most indebted to thee. Let me see it..."];
+                if v2 {
+                    [Nicodemus takes the hourglass and studies it a moment. He sets it on a table and closes his eyes, concentrating. He intones a few words, throws some reagents into the air, and passes his hand over the artifact.~~"That should do it." He hands the hourglass back to you.];
+                    v10 = ~TakeFromParty_i(false, 0, _All, _Hourglass, 1);
+                    v11 = ~GiveToParty_i(false, 1, _All, _Hourglass, 1);
+                    flag(301) = true;
+                    GivePartyExp_i(100);
+                } else {
+                    ["Where is it? Thou dost not have the hourglass!"];
+                }
+            }
+            TurnOff("enchant");
+        }
+        key ("bye") {
+            break;
+        }
+    }
+    clear_answers;
+    if not $TetraGone {
+        ["Bye bye booby booby bye bye! Ha ha ha!"*];
+    } else {
+        ["Goodbye, <v0>."*];
+    }
+}
+
+Usable NicodemusSellsSpells_i #locals(10) #uses(~AskOrdList, ~SellSpell_i, ~AskYesNo) {
+    PushKeys();
+    v0 = true;
+    v1 = << 25, 45, 65, 85, 115, 135, 155, 185 >>;
+    While v0 {
+        ["In which circle dost thou wish to study?"];
+        v2 = ~AskOrdList(<< "none", "First", "Second", "Third", "Fourth", "Fifth", "Sixth", "Seventh", "Eighth" >>);
+        v2 = (v2 - 1);
+        if (v2 = 0) {
+            break;
+        }
+        switch v2 {
+            case 1 {
+                v3 = << "nothing", "Cure", "Detect Trap", "Great Ignite", "Locate" >>;
+                v4 = << 0, 9, 10, 12, 14 >>;
+            }
+            case 2 {
+                v3 = << "nothing", "Destroy Trap", "Enchant", "Protection", "Wizard Eye" >>;
+                v4 = << 0, 16, 17, 21, 23 >>;
+            }
+            case 3 {
+                v3 = << "nothing", "Swarm", "Paralyze", "Peer", "Poison" >>;
+                v4 = << 0, 26, 28, 29, 30 >>;
+            }
+            case 4 {
+                v3 = << "nothing", "Mark", "Recall", "Seance", "Unlock Magic" >>;
+                v4 = << 0, 34, 36, 38, 39 >>;
+            }
+            case 5 {
+                v3 = << "nothing", "Dispel Field", "Explosion", "Invisibility", "Mass Sleep" >>;
+                v4 = << 0, 42, 43, 45, 47 >>;
+            }
+            case 6 {
+                v3 = << "nothing", "Fire Ring", "Magic Storm", "Poison Field", "Tremor" >>;
+                v4 = << 0, 50, 52, 53, 55 >>;
+            }
+            case 7 {
+                v3 = << "nothing", "Death Bolt", "Delayed Blast", "Energy Field", "Energy Mist" >>;
+                v4 = << 0, 57, 58, 59, 60 >>;
+            }
+            default {
+                v3 = << "nothing", "Death Vortex", "Mass Death", "Summon", "Swordstrike" >>;
+                v4 = << 0, 65, 66, 69, 70 >>;
+            }
+        }
+        ["What spell wouldst thou like to buy?"];
+        v5 = ~AskOrdList(v3);
+        if (v5 = 1) {
+            ["Fine."];
+            break;
+        }
+        v6 = v4::v5;
+        v7 = v1::v2;
+        v8 = v3::v5;
+        ["The <v8> spell will cost <v7> gold."];
+        v9 = ~SellSpell_i(v7, v6);
+        if (v9 = 1) {
+            ["Done!"];
+        } else {
+            if (v9 = 2) {
+                ["Thou dost not have a spellbook."];
+                v0 = false;
+                break;
+            }
+            if (v9 = 3) {
+                ["Thou dost not have enough gold for that!"];
+            } else {
+                if (v9 = 4) {
+                    ["Thou dost already have that spell!"];
+                } else {
+                }
+            }
+        }
+        ["Wouldst thou like another spell?"];
+        v0 = ~AskYesNo();
+    }
+    PopKeys();
+}
+
+Usable NicodemusSellsReagents_i #locals(13) #uses(~AskOrdList, ~PriceString_i, ~AskYesNo, ~SellItem_i) {
+    PushKeys();
+    v0 = true;
+    v1 = << "nothing", "Garlic", "Blood Moss", "Spider Silk", "Mandrake Root", "Nightshade" >>;
+    v2 = << 0, 842, 842, 842, 842, 842 >>;
+    v3 = << 65177, 4, 1, 6, 3, 2 >>;
+    v4 = << 0, 2, 3, 3, 5, 5 >>;
+    ["What wouldst thou like to buy?"];
+    While v0 {
+        v5 = ~AskOrdList(v1);
+        if (v5 = 1) {
+            ["Fine."];
+            v0 = false;
+        } else {
+            v6 = "";
+            v7 = 0;
+            v8 = "";
+            v9 = 1;
+            v10 = ~PriceString_i(v8, v4::v5, v7, v1::v5, v6);
+            v11 = 0;
+            ["^<v10> Okey-dokey?"];
+            v12 = ~AskYesNo();
+            if v12 {
+                ["How many wouldst thou like?"];
+                v11 = ~SellItem_i(true, 1, 20, v4::v5, v9, v3::v5, v2::v5);
+            }
+            if (v11 = 1) {
+                ["Done!"];
+            } else {
+                if (v11 = 2) {
+                    ["Thou cannot possibly carry that much!"];
+                } else {
+                    if (v11 = 3) {
+                        ["Thou dost not have enough gold for that!"];
+                    } else {
+                    }
+                }
+            }
+            ["Wouldst thou like something else?"];
+            v0 = ~AskYesNo();
+        }
+    }
+    PopKeys();
+}

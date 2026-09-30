@@ -1,0 +1,149 @@
+Routine Syria accepts a0 #locals(7) #uses(~LordOrLady, ~IsNPCNear, GivePartyExp_i, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Syria);
+        v0 = ~LordOrLady();
+        v1 = ~GetTime();
+        v2 = ~NPCToItem_i(_Syria);
+        v3 = ~NPCToItem_i(_Vokes);
+        v4 = ~NPCToItem_i(_Timmons);
+        v5 = ~IsNPCNear(_Vokes);
+        TurnOn(<< "name", "job", "bye" >>);
+        if flag(360) && not (v1 = 4) && not flag(362) {
+            TurnOn("return flag");
+        }
+        if (v1 = 4) {
+            if flag(360) && not flag(362) {
+                ["I see that coward Sprellic has given thee the flag so that it may be returned to us. Thou hadst better hand it over."];
+                v6 = ~TakeFromParty_i(_All, _All, _All, _Banner, 1);
+                if v6 {
+                    [She takes the banner from you.];
+                    ["This matter is now settled. But tell that worm Sprellic from me that he had better keep his hands off of other people's property in the future."*];
+                    flag(362) = true;
+                    flag(356) = true;
+                    GivePartyExp_i(100);
+                    terminate;
+                } else {
+                    ["It has come to our attention that thou hast been given our honor flag. Apparently Sprellic gave it to thee to return to us. If thou dost wish to keep it then our quarrel is now with thee."*];
+                    GivePartyExp_i(100);
+                    Npc_setAlignment(_Chaotic, v2);
+                    Npc_setAlignment(_Chaotic, v4);
+                    Npc_setAlignment(_Chaotic, v3);
+                    SetWorkType(_Combat_0, v2);
+                    SetWorkType(_Combat_0, v4);
+                    SetWorkType(_Combat_0, v3);
+                    terminate;
+                }
+            }
+            if (flag(368) and not flag(360)) {
+                ["Thou mayest fight for Sprellic, but I fight for honor!"*];
+                GivePartyExp_i(100);
+                Npc_setAlignment(_Chaotic, v2);
+                Npc_setAlignment(_Chaotic, v4);
+                Npc_setAlignment(_Chaotic, v3);
+                SetWorkType(_Combat_0, v2);
+                SetWorkType(_Combat_0, v4);
+                SetWorkType(_Combat_0, v3);
+                terminate;
+            }
+        }
+        if not $MetSyria {
+            [Standing before you is a statuesque fighting woman with eyes that radiate a familiarity with danger.];
+            $MetSyria = true;
+        } else {
+            ["It seems we meet again," says Syria.];
+        }
+        converse {
+            key ("name") {
+                ["I am Syria, a fighter from the south."];
+                TurnOff("name");
+            }
+            key ("job") {
+                ["Currently I am resting from my last voyage as a mercenary. I am\x09studying in Jhelom with the fighting trainer De Snel\x09at the Library of Scars."];
+                TurnOn(<< "Jhelom", "De Snel", "Library of Scars" >>);
+            }
+            key ("Jhelom") {
+                ["This is a city of fighters and duels. If thou dost not like it the way it is, then leave. Duels are fought here for many reasons. I have mine own reasons for fighting them."];
+                TurnOn("duels");
+                TurnOff("Jhelom");
+            }
+            key ("duels") {
+                if not flag(356) {
+                    ["There is no question that Sprellic is the one who took the honor flag of our school. If he does not wish to fight the duels then he has only to return it."];
+                    TurnOn(<< "Sprellic", "return" >>);
+                } else {
+                    ["A pity we could not teach that little fool a lesson. Still, we have regained our honor and that is enough. For now."];
+                    TurnOn("Sprellic");
+                }
+                TurnOff("duels");
+            }
+            key ("return") {
+                ["Since Sprellic has not done this, it proves that he is sincere in the grievous insult that he has made against us."*];
+                if v5 {
+                    SetSpeaker(0, _Vokes);
+                    ["And I shall grievously insult him-- through his heart!"*];
+                    CloseSpeaker(_Vokes);
+                    SetSpeaker(0, _Syria);
+                }
+                TurnOff("return");
+            }
+            key ("Sprellic") {
+                if not flag(356) {
+                    ["I was on guard when Sprellic took our club's honor flag. I saw him take it but I lost him in the shadows of the night. My punishment was ten lashes for allowing the thief to escape. I mean to repay him for that."];
+                } else {
+                    ["A pity we could not teach that little fool a lesson. Perhaps we have anyway. For his sake, he had better have learned it well."];
+                }
+                TurnOff("Sprellic");
+            }
+            key ("Library of Scars") {
+                ["The Library of Scars is the greatest guild of fighters in Britannia."*];
+                if v5 {
+                    SetSpeaker(0, _Vokes);
+                    ["Here! Here!"*];
+                    CloseSpeaker(_Vokes);
+                    SetSpeaker(0, _Syria);
+                }
+                TurnOff("Library of Scars");
+            }
+            key ("De Snel") {
+                ["Master De Snel teaches a style of pure fighting which takes thee beyond all previous disciplines that thou mayest have learned. He is a great man."];
+                TurnOff("De Snel");
+            }
+            key ("return flag") {
+                ["I understand that coward Sprellic has given thee the flag so that it may be returned to us. Thou hadst better hand it over."];
+                v6 = ~TakeFromParty_i(_All, _All, _All, _Banner, 1);
+                if v6 {
+                    [She takes the banner from you.];
+                    ["This matter is now settled. But tell that worm Sprellic from me that he had better keep his hands off of other people's property in the future."];
+                    flag(362) = true;
+                    flag(356) = true;
+                    GivePartyExp_i(100);
+                    terminate;
+                } else {
+                    ["It has come to our attention that thou hast been given our honor flag. Apparently Sprellic gave it to thee to return to us. If thou dost wish to keep it then our quarrel is now with thee."];
+                    if not (v1 = 4) {
+                        ["Meet us at the dueling area at next noon!"*];
+                    } else {
+                        ["Prepare to die!"*];
+                        GivePartyExp_i(100);
+                        Npc_setAlignment(_Chaotic, v2);
+                        Npc_setAlignment(_Chaotic, v4);
+                        Npc_setAlignment(_Chaotic, v3);
+                        SetWorkType(_Combat_0, v2);
+                        SetWorkType(_Combat_0, v4);
+                        SetWorkType(_Combat_0, v3);
+                    }
+                    terminate;
+                }
+                TurnOff("return flag");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["We do not appreciate people who interfere in our private matters. We shall be watching thee."*];
+    }
+    if (event = _Bark) {
+        BarkAboutWork_i(_Syria);
+    }
+}

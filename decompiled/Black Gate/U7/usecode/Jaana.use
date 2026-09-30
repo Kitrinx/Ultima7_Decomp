@@ -1,0 +1,302 @@
+Routine Jaana accepts a0 #locals(15) #uses(~LordOrLady, ~AvatarName, JaanaHeals_i, ~AskList, ~IsNPCNear, ~AskYesNo, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Jaana);
+        v0 = ~LordOrLady();
+        v1 = ~NPCToItem_i(_Jaana);
+        v2 = ~AvatarName();
+        TurnOn(<< "name", "job", "bye" >>);
+        if (v1 in ~GetParty()) {
+            TurnOn("leave");
+        }
+        if not ((v1 in ~GetParty()) and $MetJaana) {
+            TurnOn("join");
+        }
+        if flag(228) && flag(239) {
+            TurnOn("Lord Heather");
+        }
+        if flag(40) {
+            TurnOn("heal");
+        }
+        if not $MetJaana {
+            [You are surprised to see your old companion Jaana, looking only slightly aged since your last visit.];
+            $MetJaana = true;
+        } else {
+            ["Yes, <v2>?" Jaana asks.];
+        }
+        converse {
+            key ("name") {
+                ["Why, I am Jaana. Thou shouldst remember me!"];
+                TurnOff("name");
+                if flag(228) {
+                    TurnOn("Lord Heather");
+                }
+                flag(239) = true;
+            }
+            key ("job") {
+                ["I have been the Cove Healer for some time now, and can provide thee with mine healing services. Since magic is not reliable, I have been yearning to join a party of adventurers, such as mine old friends. I miss the old life!"];
+                TurnOn(<< "heal", "friends", "magic" >>);
+                flag(40) = true;
+                if not (v1 in ~GetParty()) {
+                    TurnOn("join");
+                }
+            }
+            key ("heal") {
+                if (v1 in ~GetParty()) {
+                    if flag(41) {
+                        v3 = ~GetClock(10);
+                    } else {
+                        v3 = 5;
+                    }
+                    if (v3 < 4) {
+                        ["I am sorry, I must wait a while before I can heal again."];
+                    } else {
+                        JaanaHeals_i(0, 0, 0);
+                    }
+                } else {
+                    JaanaHeals_i(400, 15, 30);
+                }
+            }
+            key ("friends") {
+                ["Our old friends -- Iolo, Shamino, and Dupre. The men who conquer evil in the name of Lord British!"];
+                TurnOff("friends");
+                TurnOn(<< "Iolo", "Shamino", "Dupre", "Lord British" >>);
+            }
+            key ("join") {
+                v4 = 0;
+                v5 = ~GetParty();
+                Foreach v8 in v5 {
+                    v4 = (v4 + 1);
+                }
+                if (v4 < 8) {
+                    ["I would be honored to join thee, <v0>!"];
+                    JoinParty(_Jaana);
+                    TurnOn("leave");
+                    TurnOff("join");
+                } else {
+                    ["I do believe thou dost have too many members travelling in thy group. I shall wait until someone leaves and thou dost ask me again."];
+                }
+            }
+            key ("leave") {
+                ["Dost thou want me to wait here or should I go home?"];
+                ClearKeys();
+                v9 = ~AskList(<< "wait here", "go home" >>);
+                if (v9 = "wait here") {
+                    ["Very well. I shall wait until thou dost return."*];
+                    LeaveParty(_Jaana);
+                    SetWorkType(_Wait, ~NPCToItem_i(_Jaana));
+                    terminate;
+                } else {
+                    ["I shall obey thy wish. I would be happy to re-join if thou shouldst ask. Goodbye."*];
+                    LeaveParty(_Jaana);
+                    SetWorkType(_Loiter, ~NPCToItem_i(_Jaana));
+                    terminate;
+                }
+            }
+            key ("magic") {
+                if not $TetraGone {
+                    ["My magic has been affected by something in the air, but I have found that my senses are still with me. Hast thou noticed that the mages in the land are afflicted in the head? It is most disconcerting. Nevertheless, I can manage to cast a spell or two most of the time."];
+                } else {
+                    ["I feel that the ether is flowing smoothly now. Magic is alive again!"];
+                }
+                TurnOff("magic");
+            }
+            key ("Lord Heather") {
+                [Jaana blushes. "Yes, I have been seeing our Town Mayor for some time now."];
+                TurnOff("Lord Heather");
+                v10 = ~IsNPCNear(_LordHeather);
+                if v10 {
+                    SetSpeaker(0, _LordHeather);
+                    ["I see that thou art leaving Cove for a while, my dear?"*];
+                    SetSpeaker(0, _Jaana);
+                    ["Yes, milord. But I shall return. I promise thee."*];
+                    SetSpeaker(0, _LordHeather);
+                    ["I shall try not to worry about thee, but it will be difficult."*];
+                    SetSpeaker(0, _Jaana);
+                    ["Do not worry. I shall be safe with the Avatar."*];
+                    SetSpeaker(0, _LordHeather);
+                    ["I do hope so." The Mayor embraces Jaana.*];
+                    CloseSpeaker(_LordHeather);
+                    SetSpeaker(0, _Jaana);
+                }
+            }
+            key ("Iolo") {
+                v11 = ~IsNPCNear(_Iolo);
+                if not v11 {
+                    ["Where is he? 'Twould be good to see him!"];
+                } else {
+                    ["He looks the same to me! Perhaps he has a little more waistline than before... but that is to be expected if one stays away from adventuring for too long!"*];
+                    SetSpeaker(0, _Iolo);
+                    ["What dost thou mean? 'Little more waistline' indeed!"*];
+                    CloseSpeaker(_Iolo);
+                    SetSpeaker(0, _Jaana);
+                    ["No offense intended, Iolo!"];
+                }
+                TurnOff("Iolo");
+            }
+            key ("Shamino") {
+                v12 = ~IsNPCNear(_Shamino);
+                if not v12 {
+                    ["Oh, I would love to see him. I wonder where he might be."];
+                } else {
+                    ["Shamino, thou dost not look like a 'kid' anymore! What didst happen? Didst thou reach the venerable age of thirty?"*];
+                    SetSpeaker(0, _Shamino);
+                    ["Hmph. I am still a kid at heart."*];
+                    CloseSpeaker(_Shamino);
+                    SetSpeaker(0, _Jaana);
+                    ["That is a relief." She grins cheekily.];
+                }
+                TurnOff("Shamino");
+            }
+            key ("Dupre") {
+                v13 = ~IsNPCNear(_Dupre);
+                if not v13 {
+                    ["I miss having a drink or two with that rogue! Let's go find that knight!"];
+                } else {
+                    ["For someone recently knighted, he has retained his good looks and boyish charm, hasn't he?"*];
+                    SetSpeaker(0, _Dupre);
+                    ["Thou dost mean 'mannish' charm, dost thou not?"*];
+                    SetSpeaker(0, _Jaana);
+                    ["Oh, pardon -me-, sir. Thine immaturity confused me for a moment."*];
+                    SetSpeaker(0, _Dupre);
+                    ["Art thou going to let her get away with that, <v2>?"];
+                    v14 = ~AskYesNo();
+                    if v14 {
+                        [Dupre is speechless and turns away in a huff.*];
+                        CloseSpeaker(_Dupre);
+                    } else {
+                        ["Good!" Jaana winks at you from behind his back.*];
+                        CloseSpeaker(_Dupre);
+                    }
+                }
+                TurnOff("Dupre");
+                SetSpeaker(0, _Jaana);
+            }
+            key ("Lord British") {
+                ["I have not seen our liege in many years."];
+                TurnOff("Lord British");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["Goodbye, <v0>."*];
+    }
+    if (event = _Bark) {
+        BarkAboutWork_i(_Jaana);
+    }
+}
+
+Routine JaanaHeals_i accepts a0, a1, a2 #locals(21) #uses(~AskYesNo, ~AskList, ~AskOrdList, SellHealing_i, SellCure_i, SellResurrection_i) {
+    v3 = ~NPCToItem_i(_Jaana);
+    v4 = ~GetParty();
+    ["I am able to heal, cure poison, and resurrect. Art thou interested in one of these services?"];
+    PushKeys();
+    v5 = ~AskYesNo();
+    if v5 {
+        ["Which of my services dost thou have need of?"];
+        v6 = << "heal", "cure poison", "resurrect" >>;
+        v7 = ~AskList(v6);
+        if ((v7 = "heal") or (v7 = "cure poison")) {
+            if (v7 = "heal") {
+                v8 = "healed";
+                v9 = v2;
+            }
+            if (v7 = "cure poison") {
+                v8 = "cured of poison";
+                v9 = v1;
+            }
+            ["Who dost thou wish to be <v8>?"];
+            v10 = ~GetNPCName_i(~GetParty_i());
+            v11 = ~GetParty_i();
+            v12 = << >>;
+            v13 = << >>;
+            Foreach v16 in v11 {
+                if (v16 <> ~NPCToItem_i(_Jaana)) {
+                    v12 = (v12 & ~GetNPCName_i(v16));
+                    v13 = (v13 & v16);
+                }
+            }
+            v17 = << 0, v13 >>;
+            v18 = ~AskOrdList(<< "Nobody", v12 >>);
+            v19 = v17::v18;
+            if (v19 = 0) {
+                v20 = 0;
+            } else {
+                v20 = ~ItemToNPC_i(v19);
+            }
+            if (v20 = 0) {
+                ["Avatar! Thou dost tell me to prepare to heal and then thou dost tell me 'Nobody'! Is this thine idea of a joke? Healing is a serious business!"];
+                goto label_46;
+            }
+        }
+        if (v7 = "resurrect") {
+            v21 = ~AvatarItem_i();
+            v22 = ~FindNearest_i(25, _Body_400, v21);
+            if (v22 = 0) {
+                v22 = ~FindNearest_i(25, _Body_414, v21);
+                if (v22 = 0) {
+                    ["I do believe I am going blind. I do not see anyone who is in need of resurrection. Art thou fooling me again, or art thou hiding the injured one? I must be able to see the person to help them. If thou art carrying thy friend in thy pack, pray lay them on the ground so that I may perform my duties as thou hast requested."];
+                    terminate;
+                }
+            }
+            ["Indeed, thy friend is grievously wounded. Make room here, and I will heal them to the best of mine abilities."];
+            if (v3 in v4) {
+                v0 = 0;
+            } else {
+                v0 = 400;
+            }
+            v9 = v0;
+        }
+        if (v3 in v4) {
+            ["Since I am travelling in thy group, I shall waive my fee."];
+            if (v7 = "heal") {
+                SellHealing_i(v9, v20);
+                flag(41) = true;
+                SetClock(10);
+                goto label_44;
+            }
+            if (v7 = "cure poison") {
+                SellCure_i(v9, v20);
+                flag(41) = true;
+                SetClock(10);
+                goto label_44;
+            }
+            if (v7 = "resurrect") {
+                SellResurrection_i(v9, v22);
+                flag(41) = true;
+                SetClock(10);
+                goto label_44;
+            }
+        } else {
+            ["My price is <v9> gold. Is this price agreeable?"];
+            v5 = ~AskYesNo();
+            if v5 {
+                v23 = ~CountItem(_All, _All, _Gold_Coin, _Party);
+                if (v23 >= v9) {
+                    if (v7 = "heal") {
+                        SellHealing_i(v9, v20);
+                        goto label_44;
+                    }
+                    if (v7 = "cure poison") {
+                        SellCure_i(v9, v20);
+                        goto label_44;
+                    }
+                    if (v7 = "resurrect") {
+                        SellResurrection_i(v9, v22);
+                        goto label_44;
+                    }
+                } else {
+                    ["Thou dost not have that much gold! Mayhaps thou couldst return with more and purchase the service then."];
+                }
+            } else {
+                ["Then thou must look elsewhere for that service."];
+            }
+        }
+        label_44:
+    } else {
+        ["If thou hast need of my services later, I will be here."];
+    }
+    label_46:
+    PopKeys();
+}

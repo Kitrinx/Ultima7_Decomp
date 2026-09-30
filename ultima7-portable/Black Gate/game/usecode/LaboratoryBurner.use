@@ -1,0 +1,63 @@
+Routine LaboratoryBurner accepts a0 #locals(22) #uses(~RemoveFromList2_i) {
+    if (event = _Action) {
+        if (~GetFrame(item) = 0) {
+            v0 = ~GetCoord(item);
+            v1 = ~FindNearby_i(0, 5, _Potion, item);
+            v2 = 0;
+            v3 = 0;
+            v4 = 0;
+            v5 = << 2, 7, 8 >>;
+            Foreach v8 in v1 {
+                v9 = ~GetCoord(v8);
+                v10 = ~GetFrame(v8);
+                if ((v9::1 = (v0::1 - 3)) and ((v9::2 = v0::2) and ((v9::3 = v0::3) and (v10 in v5)))) {
+                    v5 = ~RemoveFromList2_i(v5, v10);
+                    v2 = v8;
+                }
+                if ((v9::1 = (v0::1 - 2)) and ((v9::2 = (v0::2 + 2)) and ((v9::3 = v0::3) and (v10 in v5)))) {
+                    v5 = ~RemoveFromList2_i(v5, v10);
+                    v3 = v8;
+                }
+                if ((v9::1 = v0::1) and ((v9::2 = (v0::2 + 3)) and ((v9::3 = v0::3) and (v10 in v5)))) {
+                    v5 = ~RemoveFromList2_i(v5, v10);
+                    v4 = v8;
+                }
+            }
+            if (v2 and (v3 and v4)) {
+                v11 = ~FindNearby_i(0, 5, _Vial, item);
+                Foreach v14 in v11 {
+                    v15 = ~GetCoord(v14);
+                    if ((v15::1 = (v0::1 + 2)) and ((v15::2 = (v0::2 - 2)) and (v15::3 = v0::3))) {
+                        v16 = ~FindNearby_i(0, 5, _Alchemist_Device, item);
+                        Foreach v19 in v16 {
+                            v20 = ~GetCoord(v19);
+                            if ((v20::1 = (v0::1 + 1)) and ((v20::2 = (v0::2 + 2)) and (v20::3 = (v0::3 + 2)))) {
+                                v21 = ~PostAction(<< _aNEXT_FRAME, _aSFX_i, 67, _aWAIT_i, 10, _aPREV_FRAME >>, item);
+                                v21 = ~PostInFuture(2, << _aNO_HALT_i, _aUSABLE_i, #ChangeToEmptyVial_i >>, v2);
+                                v21 = ~PostInFuture(4, << _aNO_HALT_i, _aUSABLE_i, #ChangeToEmptyVial_i >>, v3);
+                                v21 = ~PostInFuture(6, << _aNO_HALT_i, _aUSABLE_i, #ChangeToEmptyVial_i >>, v4);
+                                v21 = ~PostAction(<< _aNEXT_FRAME, _aLOOP_i, 65535, 4 >>, v14);
+                                v21 = ~PostAction(<< _aNEXT_FRAME, _aLOOP_i, 65535, 3, byte(70), 0 >>, v19);
+                                flag(464) = true;
+                                terminate;
+                            }
+                        }
+                    }
+                }
+            }
+            v21 = ~PostAction(<< _aNEXT_FRAME, _aSFX_i, 69, _aWAIT_i, 10, _aPREV_FRAME >>, item);
+        } else {
+            SetFrame(0, item);
+        }
+    }
+}
+
+Function ~RemoveFromList2_i accepts a0, a1 #locals(4) {
+    v2 = << >>;
+    Foreach v5 in v0 {
+        if not (v5 = v1) {
+            v2 = (v2 & v5);
+        }
+    }
+    return v2;
+}

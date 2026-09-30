@@ -1,0 +1,154 @@
+Routine Zelda accepts a0 #locals(9) #uses(~AvatarName, ~LordOrLady, ~AskYesNo, GivePartyExp_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Zelda);
+        v0 = ~AvatarName();
+        v1 = ~LordOrLady();
+        v2 = false;
+        TurnOn(<< "name", "job", "bye" >>);
+        v3 = ~AvatarSex();
+        if not $MetZelda {
+            [You see a woman who meets your gaze with an icy stare.];
+            $MetZelda = true;
+        } else {
+            ["What dost thou need now?"];
+            if flag(475) {
+                TurnOn("Brion's feelings");
+            }
+            if flag(476) {
+                TurnOn("Nelson's feelings");
+            }
+        }
+        converse {
+            key ("name") {
+                ["I am Zelda."];
+                TurnOff("name");
+                if flag(475) {
+                    TurnOn("Brion's feelings");
+                }
+                if flag(476) {
+                    TurnOn("Nelson's feelings");
+                }
+            }
+            key ("job") {
+                ["I am the advisor at the Lycaeum."];
+                TurnOn(<< "Lycaeum", "advisor" >>);
+                if flag(502) {
+                    TurnOn("North East sea");
+                }
+            }
+            key ("Lycaeum") {
+                [She rolls her eyes. "The Lycaeum is the building in which thou dost stand. It is a great library designed to house a wealth of knowledge. Though the structure has changed a bit over the past two hundred years, the essence of learning has not."];
+                TurnOff("Lycaeum");
+            }
+            key ("advisor") {
+                ["Yes," she says. "My job is to manage and regulate the events in the Lycaeum. And," she adds, "provide assistance to the people here in Moonglow -- when they need it!"];
+                TurnOff("advisor");
+                TurnOn(<< "events", "townspeople" >>);
+            }
+            key ("events") {
+                ["I am in charge of maintaining the reading areas and bringing in new books. In addition, I help organize special group sessions for Jillian's tutorials and set up educational entertainment programs."];
+                TurnOff("events");
+                if not v2 {
+                    TurnOn("Jillian");
+                }
+            }
+            key ("North East sea") {
+                ["I have not the time for these petty geography questions. Check an atlas!"];
+                TurnOff("North East sea");
+            }
+            key ("townspeople") {
+                ["I have little time for this," she sighs. "I know only the Lycaeum head and his twin, Brion, at all well. The trainer also studies here in the Lycaeum." She looks up at the ceiling, as if reading from an invisible, overhead list.~~"Thou dost already know about Penumbra. Mariah is here. If thou wishest to know about a member of The Fellowship, ask the clerk there. Otherwise," she eyes you coldly, "let me return to my duties." As an afterthought, she adds, "And keep thy voice down. People are trying to read."];
+                TurnOn(<< "Mariah", "Lycaeum head", "Brion", "Penumbra" >>);
+                if not v2 {
+                    TurnOn("trainer");
+                }
+                TurnOff("townspeople");
+            }
+            key ("Mariah") {
+                ["Well, they say she used to be an adept mage, but all I see is a woman who wanders around complimenting the furniture. Thou mayest speak to her if thou wishest, but I doubt she will make sense to thee. And do not disorganize the shelves while looking for her!"];
+                TurnOff("Mariah");
+            }
+            key ("trainer", "Jillian") {
+                ["Jillian? She is very well-behaved. Also quiet and tidy. I believe she is an excellent scholar. If thou art going to seek her out, try not to overturn any shelves. Some new books have just arrived and I have not finished placing all of them."];
+                TurnOff(<< "Jillian", "trainer" >>);
+                v2 = true;
+                TurnOn("new books");
+            }
+            key ("new books") {
+                ["Yes, they arrived not long ago, including the recently rediscovered copy of DeMaria and Spector's work,`The Avatar Adventures.' If thou canst avoid creating too much of a disturbance, I recommend it to thee."];
+                TurnOff("new books");
+                TurnOn("Avatar Adventures");
+            }
+            key ("Avatar Adventures") {
+                ["If I tell thee this last thing, wilt thou depart so I may return to my job?"];
+                if v3 {
+                    v4 = "her";
+                } else {
+                    v4 = "his";
+                }
+                v5 = ~AskYesNo();
+                if v5 {
+                    ["We discovered the tome in the lower depths of the basement. We have no way to account for the accuracy of the contents, but have noticed many parallels between the events in the work and the events in Britannia's recent history.~~ "The book is a copy of the Avatar's diary, written about two hundred years ago during <v4> most recent visit to Britannia. Of course," she smiles sardonically, "it has been annotated by others.~~"It was recently published to give the general public more courage and confidence.~~"And now, goodbye."];
+                    terminate;
+                } else {
+                    ["Fine."];
+                    terminate;
+                }
+            }
+            key ("Penumbra") {
+                if v3 {
+                    v6 = "she";
+                } else {
+                    v6 = "he";
+                }
+                [She shakes her head, muttering, "Why doth <v6> waste my time in this manner?" Looking back up at you, she says, "Penumbra is the sage who put herself to sleep two centuries ago. Rumor has it that only the Avatar can awaken her."];
+                TurnOff("Penumbra");
+            }
+            key ("Lycaeum head") {
+                ["Nelson is very competent, although a little eccentric. I do wish he would refrain from showing off his collection of trinkets to everyone who enters the building. It always makes such a commotion."];
+                TurnOff("Lycaeum head");
+            }
+            key ("Brion") {
+                [Her chilly expression melts away. "Brion," she says, smiling, "is very open-minded and idealistic. He knows the heavens quite well." She looks up to emphasize `heavens.' "I find him very attractive. But, I do not know how to convey mine intentions." She turns away, shyly.~~"Unless, perchance, <v1> wilt aid me?" she asks, hopefully. "Wilt thou agree to tell him for me, <v1>?"];
+                v7 = ~AskYesNo();
+                if v7 {
+                    ["Thank thee, <v1>. Thank thee." She blushes.];
+                    v8 = ~GiveToParty_i(0, 6, _All, _Potion, 1);
+                    if v8 {
+                        ["For thy kindness, I will give thee this white potion I found once while straightening the basement."];
+                    }
+                } else {
+                    [Her cold glare returns. "Very well."*];
+                    terminate;
+                }
+                flag(474) = true;
+                TurnOff("Brion");
+            }
+            key ("Brion's feelings") {
+                [She looks down for a moment. "I thought as much." As she raises her head, tears are visible in her eyes. "I thank thee for trying."*];
+                terminate;
+            }
+            key ("Nelson's feelings") {
+                ["Nelson? I never really thought about him." She shrugs. "Hmm, I suppose he is not a bad second best. I will try," she says, smiling.];
+                flag(483) = true;
+                GivePartyExp_i(20);
+                TurnOff("Nelson's feelings");
+                if not flag(474) {
+                    TurnOn("second best?");
+                }
+            }
+            key ("second best?") {
+                ["Well, his brother, Brion, is quite attractive, I think."];
+                TurnOff("second best?");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["Good day."*];
+    }
+    if (event = _Bark) {
+        terminate;
+    }
+}

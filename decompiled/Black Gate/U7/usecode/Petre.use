@@ -1,0 +1,126 @@
+Routine Petre accepts a0 #locals(9) #uses(~LordOrLady, ~AskYesNo, BarkAboutWork_i) {
+    if (event = _Action) {
+        v0 = ~LordOrLady();
+        v1 = ~GetParty();
+        v2 = ~AvatarSex();
+        TurnOn(<< "name", "job", "bye" >>);
+        SetSpeaker(0, _Petre);
+        if not $MetIolo {
+            if v2 {
+                v3 = "woman";
+            } else {
+                v3 = "man";
+            }
+            [The peasant looks at you as if he has seen a ghost! "Iolo! This <v3> did appear from thin air! Help me!"*];
+            terminate;
+        }
+        if not $MetPetre {
+            [You see a distraught peasant. "Art thou really the Avatar?"];
+            v4 = ~AskYesNo();
+            if v4 {
+                [Petre bows before you. "^<v0>."];
+                $MetPetre = true;
+                SetWorkType(_Loiter, _Petre);
+            } else {
+                [Petre looks confused. "Thou shouldst not make fun of me!" He turns away.*];
+                $MetPetre = true;
+                terminate;
+            }
+        } else {
+            ["What is it, <v0>?" Petre asks.];
+        }
+        if $FOUND_BUCKET_KEY {
+            TurnOn(<< "murder", "footprints" >>);
+        }
+        if $FOUND_MEDALLION {
+            TurnOn(<< "Fellowship", "Klog", "Spark" >>);
+        }
+        converse {
+            if not $FOUND_BUCKET_KEY {
+                ["Look in the stables! 'Tis horrible! I will answer thy questions, but first look in the stables!"*];
+                terminate;
+            } else {
+                key ("name") {
+                    ["I am called Petre," the man sniffs.];
+                    TurnOff("name");
+                }
+                key ("job") {
+                    ["I am the stables caretaker."];
+                    TurnOn("stables");
+                }
+                key ("stables") {
+                    ["I have worked here for years. I can sell thee a nice horse and carriage if thou dost want one. The animal and the carriage are located in a small shelter just outside the north gate of the town."];
+                    if not flag(87) {
+                        ["Right now the place gives me the creeps!"~~His eyes are wild with fright.];
+                    } else {
+                        ["The Mayor did not let me clean in there until twenty-four hours after thou didst leave Trinsic. He thought we had to keep the place of the crime unsullied. Well, if thou dost ask me, I can tell thee that it still stinks like the end of the world in there!"];
+                    }
+                    TurnOff("stables");
+                    TurnOn("carriage");
+                }
+                key ("murder") {
+                    ["I discovered poor Christopher and Inamo earlier this morning. I did not touch a thing. Made me sick, it did!"];
+                    TurnOff("murder");
+                    TurnOn(<< "Christopher", "Inamo" >>);
+                }
+                key ("Christopher") {
+                    ["Nice man. He made the shoes for mine horses."];
+                    TurnOff("Christopher");
+                }
+                key ("Inamo") {
+                    ["He worked for very little money. Did basic chores around the stables and the pub. I let him sleep in the little back room. He must have been in the wrong place at the wrong time."];
+                    TurnOff("Inamo");
+                }
+                key ("carriage") {
+                    ["The horse and carriage combination sells for 60 gold. Dost thou want a title?"];
+                    v5 = ~AskYesNo();
+                    if v5 {
+                        v6 = ~CountItem(_All, _All, _Gold_Coin, _Party);
+                        if (v6 >= 60) {
+                            v7 = ~GiveToParty_i(false, _All, 28, _Scroll, 1);
+                            if v7 {
+                                ["Very good. Nothing like a little business transaction to take my mind off the ghastly scene in the stables."];
+                                v8 = ~TakeFromParty_i(true, _All, _All, _Gold_Coin, 60);
+                            } else {
+                                ["Oh, my. Thine hands are too full to take the title!"];
+                            }
+                        } else {
+                            ["Oh. Thou dost not have enough gold to buy the title."];
+                        }
+                    } else {
+                        ["Some other time, then."];
+                    }
+                    TurnOff("carriage");
+                }
+                key ("footprints") {
+                    ["They doth lead out the back way, yes? They must be the tracks of the murderer!"~~His eyes widen a bit more.~~"Or... murderers!"];
+                    TurnOff("footprints");
+                }
+                key ("Fellowship") {
+                    ["I do not want to join them, but they seem all right."];
+                    TurnOff("Fellowship");
+                }
+                key ("Klog") {
+                    ["I do not know the man too well. I have no dealings with him."];
+                    TurnOff("Klog");
+                }
+                key ("Spark") {
+                    if not (65534 in v1) {
+                        ["That be Christopher's son. Nice lad."];
+                    } else {
+                        [Petre ruffles the boy's hair.~~"This here is Christopher's son. He's a good lad, is Spark, when he's not pilfering things from honest shopkeepers."];
+                    }
+                    TurnOff("Spark");
+                }
+                key ("bye") {
+                    break;
+                }
+            }
+        }
+        clear_answers;
+        ["Goodbye," the man sniffs.*];
+    }
+    if (event = _Bark) {
+        BarkAboutWork_i(_Petre);
+    }
+}

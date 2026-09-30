@@ -1,0 +1,15 @@
+Routine MiningMachine accepts a0 #locals(5) {
+    if (event = _Action) {
+        closeAllGumps();
+        v0 = ~FindNearby_i(0, 10, _Conveyer_Belt, item);
+        v1 = ~GetQuality(item);
+        if ((v1 = 0) or (v1 > 3)) {
+            v2 = ~PostAction(<< _aFRAME, 0, _aFRAME, 1, _aSFX_i, 37, _aSFX_i, 76 >>, item);
+        } else {
+            v3 = << 914, 916, 915 >>;
+            v4 = v3::v1;
+            v2 = ~PostAction(<< _aFRAME, 0, _aNEXT_FRAME_MAX_i, _aCONTINUE_i, _aSFX_i, 8, _aLOOP2_i, 65532, 3, 4, byte(11), 65526, 7 >>, item);
+            v2 = ~PostAction(<< _aFRAME, 0, _aNEXT_FRAME, _aCONTINUE_i, _aSFX_i, 15, _aUSABLE_i, #MoveConveyor_i, _aLOOP_i, 65529, 24 >>, v0);
+        }
+    }
+}

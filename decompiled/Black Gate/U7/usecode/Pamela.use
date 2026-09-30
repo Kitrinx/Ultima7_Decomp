@@ -1,0 +1,85 @@
+Routine Pamela accepts a0 #locals(10) #uses(~AskYesNo, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Pamela);
+        TurnOn(<< "name", "job", "bye" >>);
+        v0 = ~GetWorkType(~NPCToItem_i(_Pamela));
+        if flag(228) && flag(240) {
+            TurnOn("Rayburt");
+        }
+        if not $MetPamela {
+            [You see a friendly woman in her thirties.];
+            $MetPamela = true;
+        } else {
+            ["Greetings, again!" Pamela says.];
+        }
+        converse {
+            key ("name") {
+                ["I am Pamela!"];
+                TurnOff("name");
+                if flag(228) {
+                    TurnOn("Rayburt");
+                }
+                flag(240) = true;
+            }
+            key ("job") {
+                ["I am the Innkeeper at the Out'n'Inn."];
+                if ((v0 = 16) or (v0 = 11)) {
+                    ["If thou wouldst like a room, just say so!"];
+                    TurnOn("room");
+                } else {
+                    if 26 {
+                        ["Please come by if thou wouldst like to rest thy weary feet for the night!"];
+                    }
+                }
+                TurnOn("Out'n Inn");
+            }
+            key ("room") {
+                ["The room is quite inexpensive. Only 8 gold per person. Want one?"];
+                if ~AskYesNo() {
+                    v1 = ~GetParty();
+                    v2 = 0;
+                    Foreach v5 in v1 {
+                        v2 = (v2 + 1);
+                    }
+                    v6 = (v2 * 8);
+                    v7 = ~CountItem(_All, _All, _Gold_Coin, _Party);
+                    if (v7 >= v6) {
+                        v8 = ~GiveToParty_i(true, _All, 255, _Key, 1);
+                        if not v8 {
+                            ["Thou art carrying too much to take the room key!"];
+                        } else {
+                            ["Here is thy room key. It is good only until thou leavest."];
+                            v9 = ~TakeFromParty_i(true, _All, _All, _Gold_Coin, v6);
+                        }
+                    } else {
+                        ["Thou dost not have enough gold, eh? Too bad."];
+                    }
+                } else {
+                    ["Another night, then."];
+                }
+                TurnOff("room");
+            }
+            key ("Out'n Inn") {
+                ["Well... Cove is the city of Love and Passion, didst thou not know? Thou must be careful. If thou dost stay too long in Cove, thou wilt fall in love with someone! Mark my words!"];
+                TurnOff("Out'n Inn");
+            }
+            key ("Rayburt") {
+                ["Oooh, he is such a wonderful man, dost thou not think? He is so intense and serious. Handsome, too! Oh, and\x09I like Regal as well."];
+                TurnOff("Rayburt");
+                TurnOn("Regal");
+            }
+            key ("Regal") {
+                ["As far as dogs go, he is handsome, too!"];
+                TurnOff("Regal");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["See thee soon!"*];
+    }
+    if (event = _Bark) {
+        BarkAboutWork_i(_Pamela);
+    }
+}

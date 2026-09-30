@@ -1,0 +1,102 @@
+Routine Gladstone accepts a0 #locals(3) #uses(~LordOrLady, ~AskYesNo, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Gladstone);
+        v0 = ~LordOrLady();
+        v1 = ~IsMedallionOn_i();
+        TurnOn(<< "name", "job", "bye" >>);
+        if not $MetGladstone {
+            [You see a handsome craftsman with an intense, piercing gaze.];
+            $MetGladstone = true;
+        } else {
+            [Gladstone shakes your hand and you can feel just a trace of sculptor's clay clinging to his palm. Although he hardly knows you, he treats you like an old friend.];
+        }
+        converse {
+            key ("name") {
+                ["My name is Gladstone, <v0>. At thy service."];
+                TurnOff("name");
+            }
+            key ("job") {
+                if $LEARNED_ABOUT_MINOC_MURDER {
+                    ["I am a glassblower and a sculptor. I make mostly bottles and bowls. But in my time I have constructed all manners of statuary out of glass as well."];
+                    TurnOn(<< "glass", "Artist's Guild", "Minoc" >>);
+                } else {
+                    [The man's eyes study you for a moment. "Thou dost not know what has happened? William, our local Sawyer found two gypsies murdered in his sawmill."];
+                    $LEARNED_ABOUT_MINOC_MURDER = true;
+                    TurnOn("murders");
+                }
+            }
+            key ("Minoc") {
+                ["There is active commerce here in Minoc sufficient to keep the Artist's Guild financially solvent. But in recent weeks I have come to fear we may not keep it going for very much longer. Unlike The Fellowship or Owen's monument, we do not have much political power. Now other events make our troubles seem less important."];
+                TurnOff("Minoc");
+                TurnOn(<< "Fellowship", "monument", "power", "events" >>);
+            }
+            key ("power") {
+                ["The Artist's Guild is taxed mercilessly by the Britannian Tax Council. Even in our best year it is a struggle to make ends meet. It seems that we are not considered important enough to be given an even chance."];
+                TurnOff("power");
+            }
+            key ("events") {
+                ["Surely thou hast heard about the murders of Frederico and Tania?!"];
+                TurnOff("events");
+                TurnOn("murders");
+            }
+            key ("Artist's Guild") {
+                ["The Artist's Guild is a group of local craftsmen. We sell our wares here in Minoc. While we are organized as a guild of equal members, I am tentatively the Guild head."];
+                TurnOff("Artist's Guild");
+            }
+            key ("murders") {
+                ["I shudder to think such foul deeds are so freely committed in our fair town. Art thou investigating it? I wish thee all success in tracking the culprit. I barely knew Frederico or Tania, but I did meet their son Sasha once."];
+                TurnOn("Sasha");
+                TurnOff("murders");
+            }
+            key ("Sasha") {
+                ["He befriended Seara and stayed the night with us once. He seemed like a nice young man, but misguided."];
+                TurnOff("Sasha");
+            }
+            key ("Fellowship") {
+                ["We do not get along very well with those people. I believe we have been unofficially marked as enemies of The Fellowship ever since all of the members of the Artist's Guild refused Elynor's invitation to join. They dislike us because they consider us to be indisposed toward Unity."];
+                if v1 {
+                    ["Dost thou think of us as thine enemy?"];
+                    v2 = ~AskYesNo();
+                    if v2 {
+                        ["Then get out of my sight! I do not wish to speak with thee!"];
+                        terminate;
+                    } else {
+                        ["Then I shall give thee the benefit of the doubt for now. But know that I do what I must to protect our Guild."];
+                    }
+                }
+                TurnOff("Fellowship");
+            }
+            key ("monument") {
+                if not $COMPLETED_OWENS_QUEST {
+                    ["Owen the shipwright is commissioning a statue of himself to be built in the center of town. The Artist's Guild decided to have nothing to do with this foolishness, of course. But just the word of this statue has spread and now orders are coming in from all over Britannia. Merchants want to have a ship built by the 'famous' Owen, master shipwright of Minoc."];
+                    TurnOn("statue");
+                } else {
+                    ["Oh, yes, that reminds me! I cannot speak for long, I'm afraid. There is, after all, that barren slab in the center of town with nothing for it now. The Mayor has commissioned us to create something to fill the empty space. I don't want to say anything about it other than it's going to be wonderful. It will not be ready for quite a while but once it is, I hope thou wilt be able to return to Minoc then and see it. In better times perhaps. Farewell, then."*];
+                    terminate;
+                }
+                TurnOff("monument");
+            }
+            key ("statue") {
+                ["I fear we have grievously miscalculated by thinking that if we boycotted the statue, it would not be built. It seems all the talk of it has made Owen into some sort of bizarre legend around this area, and the bloody statue hasn't even gone up yet! But that, I fear, is not the worst of the situation."];
+                TurnOff("statue");
+                TurnOn("worst");
+            }
+            key ("worst") {
+                ["Once the statue is built, orders for ship-building are bound to increase even more! It won't take long before all local commerce will become affected by it. Owen will be purchasing more of the local resources, which will cause prices to rise, especially at the sawmill, and that will surely force the Artist's Guild into bankruptcy."];
+                TurnOff("worst");
+            }
+            key ("glass") {
+                ["I regret that I do not have any of my work for sale at present. Like our other artists I have a backlog of orders that will keep me busy for the foreseeable future. But there are several examples of my work, of which I am most proud, in the Guild Hall on display. If thou art interested, please have a look at them."];
+                TurnOff("glass");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["Good journey, my friend."*];
+    }
+    if (event = _Bark) {
+        BarkAboutWork_i(_Gladstone);
+    }
+}

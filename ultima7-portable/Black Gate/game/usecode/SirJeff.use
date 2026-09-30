@@ -1,0 +1,65 @@
+Routine SirJeff accepts a0 #locals(2) #uses(~LordOrLady, ~AskYesNo) {
+    if (event = _Action) {
+        SetSpeaker(0, _SirJeff);
+        v0 = ~LordOrLady();
+        TurnOn(<< "name", "job", "bye" >>);
+        if not $MetSirJeff {
+            [The man greets you with stern, suspicious eyes.];
+            $MetSirJeff = true;
+        } else {
+            ["What is thy business, <v0>?"];
+        }
+        converse {
+            key ("name") {
+                ["I am Sir Jeff, <v0>."];
+                TurnOff("name");
+            }
+            key ("job") {
+                ["I am the High Court official at the prison here in the Abbey."];
+                TurnOn(<< "official", "Abbey" >>);
+            }
+            key ("official") {
+                ["I am the judiciary part of Britannia's government. It is my job to see that criminals are brought to justice."];
+                TurnOn("criminals");
+                TurnOff("official");
+            }
+            key ("criminals") {
+                ["We have two prisoners already, but there are many scoundrels who still roam free."];
+                TurnOn(<< "prisoners", "scoundrels" >>);
+                TurnOff("criminals");
+            }
+            key ("prisoners") {
+                ["Thou, of course, hast never met them," he says, his brow narrowing, "but we have a pirate, and," he pauses, "a troll. If thou dost wish to see them, speak with Goth, the jailer."];
+                TurnOn("Goth");
+                TurnOff("prisoners");
+            }
+            key ("scoundrels") {
+                ["See for thyself, the posted bills for known villains are in the log book in the courtroom."];
+                TurnOff("scoundrels");
+            }
+            key ("Goth") {
+                ["He has only been working here for a few weeks, but I already know he is not trustworthy. There is something obviously unscrupulous about him. He is not a friend of thine, is he?"];
+                v1 = ~AskYesNo();
+                if v1 {
+                    ["I suspected as much." He turns away from you.*];
+                    terminate;
+                } else {
+                    ["No," he says, watching you closely, "of course he is not."];
+                }
+                TurnOff("Goth");
+            }
+            key ("Abbey") {
+                ["The monks live and study there, but they do little more than winemaking. Well, I know one of them tends the garden."];
+                TurnOff("Abbey");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["Keep thine heart and mind on the straight path, <v0>."];
+    }
+    if (event = _Bark) {
+        terminate;
+    }
+}

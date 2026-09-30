@@ -1,0 +1,81 @@
+Routine Alina accepts a0 #locals(2) #uses(~LordOrLady, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Alina);
+        v0 = ~LordOrLady();
+        v1 = ~IsMedallionOn_i();
+        TurnOn(<< "name", "job", "bye" >>);
+        if not $MetAlina {
+            [You see a simple peasant woman. Her face is etched with sorrow.];
+            $MetAlina = true;
+        } else {
+            ["Good day, <v0>," says Alina.];
+        }
+        converse {
+            key ("name") {
+                ["I am Alina."];
+                TurnOff("name");
+            }
+            key ("job") {
+                ["I have none, <v0>, save for being the mother of my child. I am waiting for mine husband, Weston, to return from Britain."];
+                TurnOn(<< "child", "Weston" >>);
+            }
+            key ("child") {
+                ["Cassie is my daughter. Just a wee babe, she is mine only joy."];
+                TurnOff("child");
+            }
+            key ("Weston") {
+                if $WESTON_PARDONED {
+                    ["Good news, <v0>! Mine husband was pardoned by Lord British. He even provided Weston with short-term employment so that he may return to me with money enough in his pockets to feed us for some time!~~"Excellent news, no?"];
+                } else {
+                    ["Mine husband is imprisoned in Britain for stealing fruit from the Royal Orchards."];
+                    TurnOn("stealing");
+                }
+                TurnOff("Weston");
+            }
+            key ("stealing") {
+                ["Mine husband is no thief, <v0>. He went there to buy fruit for the child and me so that we would have enough to eat. He has been wrongfully accused, I am certain of it!"];
+                TurnOn("eat");
+                TurnOff("stealing");
+            }
+            key ("eat") {
+                ["We are very poor. My baby and I are presently living in the Fellowship shelter because we have nowhere else to go."];
+                TurnOn(<< "Fellowship", "shelter" >>);
+                TurnOff("eat");
+            }
+            key ("Fellowship") {
+                if not v1 {
+                    ["It was a member of The Fellowship that has accused mine husband. Now they wish for me to join them."];
+                    TurnOn(<< "join them", "accused" >>);
+                } else {
+                    ["Mine husband is innocent, I know it!. He intended to buy the fruit. Why must I join thy society in order for me to be taken at my word?"];
+                }
+                TurnOff("Fellowship");
+            }
+            key ("shelter") {
+                ["We are fortunate that we are able to live by The Fellowship's good graces, but I do not know how long we will be allowed to stay."];
+                TurnOn("allowed");
+                TurnOff("shelter");
+            }
+            key ("join them") {
+                ["I cannot join The Fellowship without feeling that I am betraying mine husband. How could I become one of those who have falsely accused him? Yet, if I do not, they will not allow my child and me to live here."~~She sobs and covers her face with her hands. "It is so unfair. I must choose between starvation and betrayal. If only Weston were here. I do not know what to do!"];
+                TurnOff("join them");
+            }
+            key ("accused") {
+                ["They say if I join they will attempt to free mine husband. But it was they who unjustly accused him. I cannot trust them, but I fear I may have no choice."];
+                TurnOff("accused");
+            }
+            key ("allowed") {
+                ["They tell me the shelter is only for members of The Fellowship. Unless I join soon, I shall be asked to leave. And I have nowhere else to go."];
+                TurnOff("allowed");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["Pleasant day to thee, <v0>."*];
+    }
+    if (event = _Bark) {
+        BarkAboutWork_i(_Alina);
+    }
+}

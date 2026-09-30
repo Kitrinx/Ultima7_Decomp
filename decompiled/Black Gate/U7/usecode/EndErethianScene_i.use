@@ -1,0 +1,37 @@
+Routine EndErethianScene_i accepts a0 #locals(6) #uses(~AvatarStatue_i, ~DirFromAvatar_i, PathToItem_i) {
+    if (event = 7) {
+        ClearSpeakers_i();
+        return;
+    }
+    v0 = ~AvatarStatue_i();
+    if v0 {
+        Item_destroy(v0);
+    }
+    v1 = false;
+    v2 = false;
+    v3 = ~FindNearest_i(10, _Pedestal_718, ~NPCToItem_i(_Avatar));
+    if v3 {
+        v4 = ~DirFromAvatar_i(v3);
+        if ((v4 = 0) or ((v4 = 1) or (v4 = 7))) {
+            v1 = << 0, 0, 1, 65535 >>;
+            v2 = << 65535, 1, 0, 0 >>;
+        }
+        if (v4 = 2) {
+            v1 = << 1, 0, 0, 65535 >>;
+            v2 = << 0, 1, 65535, 0 >>;
+        }
+        if ((v4 = 3) or ((v4 = 4) or (v4 = 5))) {
+            v1 = << 0, 0, 1, 65535 >>;
+            v2 = << 1, 65535, 0, 0 >>;
+        }
+        if (v4 = 6) {
+            v1 = << 65535, 0, 0, 1 >>;
+            v2 = << 0, 1, 65535, 0 >>;
+        }
+    } else {
+        v1 = << 0, 1, 0, 65535 >>;
+        v2 = << 65535, 0, 1, 0 >>;
+    }
+    v5 = ~NPCToItem_i(_Avatar);
+    PathToItem_i(7, v5, #EndErethianScene_i, 0, v2, v1, v5);
+}

@@ -1,0 +1,8 @@
+Routine DeathBoltHit_i accepts a0 #locals(2) #uses(DoDamage_i) {
+    v0 = ~GetNPCStat_i(_Int, item);
+    v1 = ~GetNPCStat_i(_Hits, item);
+    if ~RollToWin_i(16, v0) {
+        DoDamage_i((v1 - 1), item);
+        DoDamage_i(50, item);
+    }
+}

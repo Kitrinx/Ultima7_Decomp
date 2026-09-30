@@ -1,0 +1,128 @@
+Routine Miranda accepts a0 #locals(8) #uses(~AvatarName, ~IsNPCNear, ~AskYesNo, ~IsInInv, GivePartyExp_i, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Miranda);
+        v0 = ~AvatarName();
+        v1 = ~GetTime();
+        TurnOn(<< "name", "job", "bye" >>);
+        if flag(222) {
+            TurnOn("signed");
+        }
+        if not $MetMiranda {
+            [This is a lovely, earthy woman with a warm smile.];
+            ["Word has spread quickly of thine arrival, Avatar! Welcome!"];
+            $MetMiranda = true;
+        } else {
+            ["Hello, <v0>," Miranda says. "Nice to see thee again."];
+        }
+        converse {
+            key ("name") {
+                ["I am Miranda."];
+                TurnOff("name");
+            }
+            key ("job") {
+                ["I serve on the Great Council. Today we are working on a bill of law. When I am not here in the castle, I am kept busy with a young child."];
+                TurnOn(<< "Great Council", "bill", "child" >>);
+            }
+            key ("Great Council") {
+                ["The Great Council supports Lord British in the legislation of Britannia's laws. I am honored to be one of the three women serving on the Council."];
+                TurnOn("women");
+                TurnOff("Great Council");
+            }
+            key ("women") {
+                ["I am particularly concerned about women's duties and privileges and their available opportunities in the land. Our history has been kind to women in general, but there is still room for improvement."];
+                TurnOn("improvement");
+                TurnOff("women");
+            }
+            key ("improvement") {
+                ["More women could hold public office, for one thing. And I would personally like to be rid of those scantily-clad women in heroic fantasy paintings."];
+                TurnOff("improvement");
+            }
+            key ("child") {
+                [Miranda smiles. "Yes, my son's name is Max.];
+                if ((v1 = 2) or ((v1 = 3) or ((v1 = 4) or (v1 = 5)))) {
+                    ["He is probably in the Royal Nursery.];
+                } else {
+                    v2 = ~IsNPCNear(_Max);
+                    if v2 {
+                        ["He's right here! Say hello to the Avatar, Max."*];
+                        SetSpeaker(0, _Max);
+                        ["Hi. I'm a funny boy!"*];
+                        CloseSpeaker(_Max);
+                        SetSpeaker(0, _Miranda);
+                        ["He's quite precocious.];
+                    } else {
+                        ["I wonder where he could be...];
+                    }
+                }
+                ["He is quite obviously his father's son. Perhaps thou hast met him? Raymundo -- the director of the Royal Theatre. We believe Max will be quite a performer when he's older."];
+                flag(105) = true;
+                TurnOff("child");
+            }
+            key ("bill") {
+                if ((v1 = 2) or ((v1 = 3) or ((v1 = 4) or (v1 = 5)))) {
+                    ["Inwisloklem and I are drafting a bill which would make illegal any distribution of waste products in Lock Lake, near Cove. The lake is quite defiled."];
+                    TurnOn("Cove");
+                } else {
+                    ["I would like to speak with thee about the new bill we are drafting. Please come to the Council Chamber during normal working hours and we shall talk."];
+                }
+                TurnOff("bill");
+            }
+            key ("Cove") {
+                ["Art thou travelling to Cove?"];
+                v3 = ~AskYesNo();
+                if v3 {
+                    ["That is good news! Perhaps thou couldst do us a great favor. We need this bill delivered to Lord Heather in Cove. He must read it and give us his approval by signing it. I know thou hast far more important things to do than running errands, but it would be greatly appreciated. Wilt thou do it?"];
+                    v4 = ~AskYesNo();
+                    if v4 {
+                        ["Wonderful! Here is the bill. Please bring it back to me when it is signed. And we thank thee."];
+                        v5 = ~GiveToParty_i(true, _All, 4, _Scroll, 1);
+                        if v5 {
+                            flag(106) = true;
+                        } else {
+                            ["Thine hands are too full to take the bill!"];
+                        }
+                    } else {
+                        ["Oh. All right. We know that thou art very busy. We shall find another way to deliver the bill. Thank thee anyway."];
+                    }
+                } else {
+                    ["Thou wilt not be travelling to Cove at all? Well, all right then. Never mind."];
+                }
+                TurnOff("Cove");
+            }
+            key ("signed") {
+                ["Didst thou have Lord Heather sign the bill?"];
+                v6 = ~AskYesNo();
+                if v6 {
+                    ["Excellent! Let me see it."];
+                    if flag(222) {
+                        v7 = ~IsInInv(65177, 4, _Scroll, 1, _Party);
+                        if v7 {
+                            v5 = ~TakeFromParty_i(true, _All, 4, _Scroll, 1);
+                            if v5 {
+                                ["It looks in order! We thank thee, Avatar!"];
+                                GivePartyExp_i(20);
+                            } else {
+                                ["Wait, where is it? Thou dost not have it. I hope thou hast not lost it. Thou shouldst go and find it. 'Tis an important document!"];
+                            }
+                        } else {
+                            ["Wait! Where is it? Thou dost not have it. I hope thou hast not lost it. Thou shouldst go and find it. 'Tis an important document!"];
+                        }
+                    } else {
+                        ["But thou hast not had the bill signed! Please do so, as soon as possible, if thou wouldst."];
+                    }
+                } else {
+                    ["Oh. Well, the next time thou art in Cove, perhaps thou wilt find time to see him."];
+                }
+                TurnOff("signed");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["We shall see thee again soon, I hope, Avatar."*];
+    }
+    if (event = _Bark) {
+        BarkAboutWork_i(_Miranda);
+    }
+}

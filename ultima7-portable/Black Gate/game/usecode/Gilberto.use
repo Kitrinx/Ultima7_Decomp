@@ -1,0 +1,114 @@
+Routine Gilberto accepts a0 #locals(4) #uses(~AskList, ~OpenTrinsicGate_i) {
+    if (event = _Bark) {
+        terminate;
+    }
+    SetSpeaker(0, _Gilberto);
+    v0 = ~GetTime();
+    TurnOn(<< "name", "job", "murder", "bye" >>);
+    if $SEARCHED_STABLES {
+        TurnOn("password");
+    }
+    if $FOUND_MEDALLION {
+        TurnOn(<< "Fellowship", "Klog" >>);
+    }
+    if ((v0 = 7) or ((v0 = 0) or (v0 = 1))) {
+        TurnOn("ship");
+    }
+    if $FOUND_SCROLL {
+        TurnOn("Hook");
+    }
+    if not $MetGilberto {
+        [You see a grumpy fellow with a bloody bandage on his head.];
+        $MetGilberto = true;
+        SetWorkType(_MajorSit, ~NPCToItem_i(_Gilberto));
+    } else {
+        ["Dost thou need something else?" Gilberto asks. You notice his wound is healing nicely.];
+    }
+    converse {
+        key ("name") {
+            ["I am Gilberto."];
+            TurnOff("name");
+        }
+        key ("job") {
+            ["I have the night watch at the dock gate."];
+        }
+        key ("murder") {
+            ["It must have occurred shortly before I was knocked out."];
+            TurnOn("knocked");
+            TurnOff("murder");
+        }
+        key ("knocked") {
+            ["It was just about sunrise. I was looking out to the sea. All of a sudden, I felt a blow on the back of mine head."~~ He winces in pain.];
+            TurnOn(<< "blow", "pain" >>);
+            TurnOff("knocked");
+        }
+        key ("pain") {
+            [Gilberto still seems a little wobbly, but his gesture indicates that he does not desire your aid.~"My skull is still ringing, but I shall be all right momentarily."];
+            TurnOff("pain");
+        }
+        key ("blow") {
+            ["The next thing I knew, I was on the ground. Johnson, the guard for the next watch, was shaking me. I had been out about ten minutes. I knew that because the sun had just peeked over the horizon. And 'The Crown Jewel' had gone and sailed!"];
+            TurnOn(<< "Johnson", "Crown Jewel" >>);
+            TurnOff("blow");
+        }
+        key ("Crown Jewel") {
+            ["Did I forget to say? That is a ship that was docked here all night. I believe it was about to sail for Britain. Thou couldst ask Gargan the Shipwright to make sure. Anyway, I did not see mine attackers," the guard grumbles.];
+            $LEARNED_ABOUT_CROWN_JEWEL = true;
+            TurnOn(<< "attackers", "Gargan" >>);
+            TurnOff("Crown Jewel");
+        }
+        key ("attackers") {
+            ["Hmmm. I wonder if they jumped onto the ship! They could be all the way to Britain by now!"];
+            TurnOff("attackers");
+        }
+        key ("Gargan") {
+            ["He is a good man but thou mayest not wish to stand too close to him. Thou mayest catch something."];
+            TurnOff("Gargan");
+        }
+        key ("ship") {
+            ["If thou dost want a ship, thou must get a deed from the shipwright. Thou must also have the password to leave town."];
+            TurnOff("ship");
+            TurnOn("password");
+        }
+        key ("password") {
+            ["What is it?"];
+            v1 = << "Uhh, I don't know", "Long live the king", "Please" >>;
+            if $SEARCHED_STABLES {
+                v1 = (v1 & "Blackbird");
+            }
+            v2 = ~AskList(v1);
+            if (v2 = "Blackbird") {
+                v3 = ~OpenTrinsicGate_i();
+                if v3 {
+                    ["All right. Thou mayest pass."*];
+                } else {
+                    ["Thou mayest not pass."*];
+                }
+                terminate;
+            } else {
+                ["Thou dost not know the password. The Mayor can give thee the proper password."];
+            }
+        }
+        key ("Johnson") {
+            ["He takes the morning watch at the dock."];
+            TurnOff("Johnson");
+        }
+        key ("Fellowship") {
+            [He shrugs.~~"Thou art asking the wrong man. I suppose they are all right. I have never had trouble with them."];
+            TurnOff("Fellowship");
+        }
+        key ("Hook") {
+            [The guard thinks a moment.~~"No. I cannot say that I saw a man with a hook."];
+            TurnOff("Hook");
+        }
+        key ("Klog") {
+            ["I have not had many dealings with him."];
+            TurnOff("Klog");
+        }
+        key ("bye") {
+            break;
+        }
+    }
+    clear_answers;
+    ["Goodbye. Watch thy back."*];
+}

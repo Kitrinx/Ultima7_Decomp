@@ -1,0 +1,126 @@
+Routine ArrestAvatar_i accepts a0 #locals(26) #uses(~InTrinsic_i, ~InBox_i, ~AskYesNo, ~OfferBribe_i, SetWorkTypeUnlessWaiting_i, ~DoorState_i, ~SwingWallNS_i, ConfiscateBelongings_i) {
+    if (event = _Action) {
+        v0 = ~Item_getType(item);
+        v1 = << 379, 273 >>;
+        v2 = << 440, 307 >>;
+        v3 = ~GetCoord(_Avatar);
+        if ~InTrinsic_i() {
+            SetSpeaker(0, _TheJuggernaut);
+            [You see an irate guard.~~Years of indoctrination have instilled in him an overly developed sense of discipline~~and a zealous devotion to the maintainance of order. All of this zeal is now directed against you.~~ "Such behavior will never be tolerated inside the sanctuary of Trinsic's walls.~~Thy red cloak and blonde curls show only that thou art a vile imposter and not a true Avatar.~~To the Death!"];
+            CloseSpeaker(_TheJuggernaut);
+            TurnTownHostile_i();
+            return;
+        }
+        if ~InBox_i(v2, v1, v3) {
+            SetSpeaker(0, _Bob);
+            [The guard glares at you. "Unrepentant scoundrel!"];
+            CloseSpeaker(_Bob);
+            TurnTownHostile_i();
+            return;
+        }
+        SetSpeaker(0, _Bob);
+        v4 = ~CountItem(_All, _All, _Gold_Coin, _Party);
+        if ((~rndRange(2, 1) = 1) and v4) {
+            [You see an angry guard. "Cease and desist immediately!.~~Dost thou wish to avoid the unpleasantries of a lengthy trial?"];
+            v5 = ~AskYesNo();
+            if v5 {
+                ["What is your liberty worth?"];
+                if ~OfferBribe_i(v4) {
+                    goto label_11;
+                } else {
+                    [The guard looks unimpressed by your paltry offer. "How about a bit more? Our jail is populated by some unsavory characters."];
+                    if ~OfferBribe_i(v4) {
+                        label_11:
+                        if ~AvatarSex() {
+                            v6 = "woman";
+                        } else {
+                            v6 = "man";
+                        }
+                        v7 = << 394, 720, 806, 946 >>;
+                        v8 = << >>;
+                        Foreach v11 in v7 {
+                            v8 = (v8 & ~FindNearby_i(0, 30, v11, item));
+                        }
+                        Foreach v14 in v8 {
+                            SetWorkType(_Wander, v14);
+                        }
+                        v15 = ~FindNearby_i(8, 30, _All, item);
+                        Foreach v18 in v15 {
+                            if (~GetWorkType(v18) = _Combat_0) {
+                                SetWorkType(_Wander, v18);
+                            }
+                        }
+                        [The guard winks. "I am pleased to see that thou art a thinking <v6>. I will take care of this disturbance."];
+                        SetMusic(item, 255);
+                        terminate;
+                    } else {
+                        goto label_33;
+                    }
+                }
+            } else {
+                goto label_33;
+            }
+        }
+        [You see an angry guard. "Cease and desist immediately!.~~Wilt thou come quietly?"];
+        if ~AskYesNo() {
+            ["Very well. Thou shalt remain in prison until we see fit to release thee."];
+            CloseSpeaker(_Bob);
+            Kernel_resetRef(_Avatar);
+            v19 = ~PostInFuture(2, << _aUSABLE_i, #ArrestAvatar_i, _aLIE_FRAME_i, _aWAIT_i, 5 >>, _Avatar);
+            terminate;
+        } else {
+            label_33:
+            ["An unfortunate decision, my friend."];
+            TurnTownHostile_i();
+            return;
+        }
+    }
+    if (event = _Posted_i) {
+        v20 = ~GetParty();
+        Foreach v23 in v20 {
+            SetWorkTypeUnlessWaiting_i(_FollowAvt, v23);
+            SetFrame(0, v23);
+        }
+        v24 = << 420, 295, 0 >>;
+        FadePalette_i(0, 1, 12);
+        SetMusic(item, 255);
+        Item_move(v24, _Party);
+        v25 = ~FindNearby_i(0, 10, _Wall_828, _Avatar);
+        if (v25 and (~DoorState_i(v25) = 1)) {
+            v19 = ~SwingWallNS_i(v25);
+        }
+        ConfiscateBelongings_i();
+        v19 = ~PostAction(<< _aWAIT_i, 1, _aUSABLE_i, #CloseJailDoor_i >>, _Avatar);
+    }
+}
+
+Usable ConfiscateBelongings_i #locals(14) {
+    v0 = 1;
+    v1 = << 403, 403, 403, 403, 411, 411, 411, 411 >>;
+    v2 = << 306, 309, 315, 318, 306, 309, 315, 318 >>;
+    v3 = << 2, 2, 2, 2, 0, 0, 0, 0 >>;
+    v4 = ~GetParty();
+    Foreach v7 in v4 {
+        v8 = v1::v0;
+        v8 = (v8 & v2::v0);
+        v8 = (v8 & v3::v0);
+        v0 = (v0 + 1);
+        v9 = ~GetContents(_All, _All, _All, v7);
+        Foreach v12 in v9 {
+            v13 = ~Item_push(v12);
+            if v13 {
+                v13 = ~PopToMap(v8);
+            }
+        }
+    }
+}
+
+Function ~OfferBribe_i accepts a0 #locals(2) {
+    v1 = ~AskBarInput((v0 / 2), 1, v0, 0);
+    if ((v1 >= 50) and (v1 >= (v0 / 2))) {
+        v2 = ~TakeFromParty_i(true, _All, _All, _Gold_Coin, v1);
+        return true;
+    } else {
+        return false;
+    }
+}

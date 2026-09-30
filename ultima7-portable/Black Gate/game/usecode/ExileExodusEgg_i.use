@@ -1,0 +1,254 @@
+Routine ExileExodusEgg_i accepts a0 #locals(49) #uses(PetrifyAvatar_i, ~AvatarStatue_i, MemberSays_i, RemoveAll_i) {
+    if (event = _Trigger) {
+        v0 = ~GetQuality(item);
+        if (v0 = 0) {
+            v1 = ~FindNearest_i(10, _Mirror_848, item);
+            v2 = ~GetFrame(v1);
+            if not (v2 = 9) {
+                SetFrame(3, v1);
+            }
+        }
+        if (v0 = 1) {
+            v3 = ~FindNearby_i(0, 1, _Lens, item);
+            if v3 {
+                flag(831) = true;
+            } else {
+                flag(831) = false;
+            }
+            if (flag(831) and flag(828)) {
+                goto label_20;
+            }
+        }
+        if (v0 = 2) {
+            v3 = ~FindNearby_i(0, 1, _Lens, item);
+            if v3 {
+                flag(828) = true;
+            } else {
+                flag(828) = false;
+            }
+            if (flag(828) and flag(831)) {
+                goto label_20;
+            }
+        }
+        if (v0 = 4) && (flag(828) and flag(831)) {
+        } else {
+            return;
+        }
+        label_20:
+        v4 = ~FindNearest_i(10, _The_Dark_Core, item);
+        if v4 {
+            v5 = ~GetCoord(v4);
+            v6 = ~FindNearby_i(0, 1, _Amulet, v4);
+            v7 = false;
+            Foreach v10 in v6 {
+                v11 = ~GetFrame(v10);
+                v12 = ~GetCoord(v10);
+                if (v11 = 8) && (v12::1 = (v5::1 - 1)) && (v12::2 = v5::2) && (v12::3 = 4) {
+                    v7 = (v7 + 1);
+                }
+                if (v11 = 9) && (v12::1 = v5::1) && (v12::2 = (v5::2 - 1)) && (v12::3 = 4) {
+                    v7 = (v7 + 1);
+                }
+                if (v11 = 10) && (v12::1 = v5::1) && (v12::2 = v5::2) && (v12::3 = 4) {
+                    v7 = (v7 + 1);
+                }
+            }
+            if (v7 = 3) {
+                v13 = false;
+                v14 = ~FindNearby_i(0, 40, _Lit_Sconce, ~NPCToItem_i(_Avatar));
+                Foreach v17 in v14 {
+                    v18 = ~GetCoord(v17);
+                    if ((v18::1 = 2208) or (v18::1 = 2221)) && (v18::2 = 1514) && (v18::3 = 1) {
+                        v13 = (v13 + 1);
+                    }
+                }
+                if (v13 = 2) {
+                    PetrifyAvatar_i();
+                    v19 = ~GetCoord(~NPCToItem_i(_Avatar));
+                    if (v19::2 > v5::2) {
+                        if ~AvatarSex() {
+                            SetFrame(20, ~AvatarStatue_i());
+                        } else {
+                            SetFrame(18, ~AvatarStatue_i());
+                        }
+                    } else {
+                        if ~AvatarSex() {
+                            SetFrame(21, ~AvatarStatue_i());
+                        } else {
+                            SetFrame(19, ~AvatarStatue_i());
+                        }
+                    }
+                    v20 = ~Item_create(_Amulet);
+                    SetFrame(7, v20);
+                    SetFrame(1, v4);
+                    v5::1 = (v5::1 - 1);
+                    v5::2 = (v5::2 - 1);
+                    v5::3 = (v5::3 + 2);
+                    v21 = ~PopToMap(v5);
+                    createSprite(65535, 0, 0, 0, (v5::2 - 2), (v5::1 - 2), 7);
+                    Sfx(68);
+                    v22 = ~PostAction(<< _aFRAME, 5, _aNEXT_FRAME, _aLOOP_i, 65535, 24, byte(70), 31, byte(1), byte(85), 1784 >>, v4);
+                }
+            }
+        }
+    }
+    if (event = _Posted_i) {
+        if flag(780) {
+            if not flag(750) {
+                MemberSays_i("@'Tis sad that Erethian's lust for power has brought him to this evil pass.@");
+                MemberSays_i("@Perhaps, at last, he is at rest.@");
+            }
+            if not ~IsDead(_LordBritish) {
+                MemberSays_i("@I am sure that Lord British even now awaits news of Exodus' exile.@");
+            }
+            MemberSays_i("@It is time to leave this barren island behind.@");
+            terminate;
+        }
+        v5 = ~GetCoord(item);
+        v19 = ~GetCoord(~NPCToItem_i(_Avatar));
+        if (flag(831) and flag(828)) {
+            if not flag(750) {
+                v23 = false;
+                v24 = false;
+                v25 = ~FindNearby_i(8, 80, _Mage_154, item);
+                Foreach v28 in v25 {
+                    if ~GetContents(4, 240, _Scroll, v28) {
+                        if not (~GetDist(item, v28) < 8) {
+                            v29 = ~GetCoord(v28);
+                            createSprite(65535, 0, 0, 0, (v29::2 - 1), (v29::1 - 1), 13);
+                            RemoveAll_i(v28);
+                        } else {
+                            v23 = v28;
+                        }
+                    }
+                }
+                if not v23 {
+                    v23 = ~Item_create(_Mage_154);
+                    SetItemFlag_i(_IsTemporary_i, v23);
+                    v30 = ~GetCoord(~NPCToItem_i(_Avatar));
+                    v31 = ~GetCoord(item);
+                    v29 = << 2216, 0, 0 >>;
+                    if (v30::2 > v31::2) {
+                        SetFrame(19, v23);
+                        v29::2 = 1510;
+                    } else {
+                        SetFrame(3, v23);
+                        v29::2 = 1518;
+                    }
+                    v21 = ~PopToMap(v29);
+                    createSprite(65535, 0, 0, 0, (v29::2 - 1), (v29::1 - 1), 13);
+                }
+                v29 = ~GetCoord(v23);
+                v31 = ~GetCoord(item);
+                v32 = 4;
+                if (v29::2 > v31::2) {
+                    v32 = 0;
+                }
+                v22 = ~PostAction(<< _aFACE_i, v32, _aWAIT_i, 5, _aOUT_FRAME_i >>, v23);
+            }
+            Earthquake_i(1);
+            createSprite(65535, 0, 0, 0, v19::2, v19::1, 17);
+            Sfx(62);
+            flag(828) = false;
+            v33 = ~PostInFuture(7, << _aUSABLE_i, #ExileExodusEgg_i >>, item);
+            terminate;
+        }
+        if flag(831) {
+            if not flag(750) {
+                SetSpeaker(1, _Wilbur);
+                ["No! Thou must not do this!" Erethian's voice is full of anguish. He raises his arms and begins a powerful spell.];
+                ["Vas Ort Rel Tym..."];
+                [He stops mid-spell and begins another, pointing towards the Talisman of Infinity.];
+                ["Vas An Ort Ailem!"];
+                [You immediately recognize the resonance of a spell gone awry, and apparently so does Erethian. A look of horror comes to his wrinkled features which appear to become more lined by the second.*];
+                v28 = ~FindNearest_i(10, _Mage_154, item);
+                v22 = ~PostAction(<< _aWAIT_i, 2, _aBEND_FRAME_i, _aWAIT_i, 2, _aKNEEL_FRAME_i >>, v28);
+            }
+            Earthquake_i(1);
+            v34 = ~FindNearby_i(16, 10, _Egg, item);
+            Foreach v37 in v34 {
+                if ((~GetFrame(v37) = 7) and (~GetQuality(v37) = 1)) {
+                    v38 = ~GetCoord(v37);
+                    createSprite(3, 0, 0, 0, v38::2, v38::1, 17);
+                }
+            }
+            createSprite(65535, 0, 0, 0, (v5::2 - 2), (v5::1 - 2), 17);
+            flag(831) = false;
+            flag(828) = true;
+            v33 = ~PostInFuture(7, << _aUSABLE_i, #ExileExodusEgg_i >>, item);
+            terminate;
+        }
+        if flag(828) {
+            if not flag(750) {
+                v28 = ~FindNearest_i(10, _Mage_154, item);
+                v39 = ~GetFullFrame_i(v28);
+                v40 = ~GetCoord(v28);
+                RemoveAll_i(v28);
+                v41 = ~Item_create(_Skeleton);
+                SetItemFlag_i(_IsTemporary_i, v41);
+                SetFullFrame_i(v39, v41);
+                v21 = ~PopToMap(v40);
+            }
+            Earthquake_i(1);
+            v34 = ~FindNearby_i(16, 10, _Egg, item);
+            Foreach v37 in v34 {
+                if ((~GetFrame(v37) = 7) and (~GetQuality(v37) = 2)) {
+                    v38 = ~GetCoord(v37);
+                    createSprite(3, 0, 0, 0, v38::2, v38::1, 17);
+                }
+            }
+            createSprite(65535, 0, 0, 0, v19::2, v19::1, 17);
+            Sfx(9);
+            flag(831) = false;
+            flag(828) = false;
+            v33 = ~PostInFuture(5, << _aUSABLE_i, #ExileExodusEgg_i >>, item);
+            terminate;
+        }
+        if not flag(750) {
+            v28 = ~FindNearest_i(10, _Skeleton, item);
+            v39 = ~GetFrame(v28);
+            v40 = ~GetCoord(v28);
+            RemoveAll_i(v28);
+            v41 = ~Item_create(_Body_892);
+            SetItemFlag_i(_IsTemporary_i, v41);
+            if (v39 = 12) {
+                SetFrame(14, v41);
+            }
+            if (v39 = 28) {
+                SetFrame(22, v41);
+            }
+            v21 = ~PopToMap(v40);
+            flag(750) = true;
+            SetMusic(0, 17);
+        }
+        createSprite(65535, 0, 0, 0, (v5::2 - 2), (v5::1 - 2), 17);
+        createSprite(65535, 0, 0, 0, (v5::2 - 2), (v5::1 - 2), 8);
+        Sfx(9);
+        v6 = ~FindNearby_i(0, 1, _Amulet, item);
+        Foreach v10 in v6 {
+            v11 = ~GetFrame(v10);
+            if (v11 = 7) {
+                Item_destroy(v10);
+            }
+            if (v11 = 8) {
+                Item_destroy(v10);
+            }
+            if (v11 = 9) {
+                Item_destroy(v10);
+            }
+            if (v11 = 10) {
+                Item_destroy(v10);
+            }
+        }
+        ClearItemFlag_i(_DontMove_i, ~NPCToItem_i(_Avatar));
+        v46 = ~AvatarStatue_i();
+        v47 = ~PostInFuture(14, << _aFINISH_i, _aREMOVE_i >>, v46);
+        v22 = ~PostAction(<< _aWAIT_i, 12, _aUSABLE_i, #EndErethianScene_i >>, ~NPCToItem_i(_Avatar));
+        v48 = ~FindNearest_i(10, _Lens, item);
+        if v48 {
+            v22 = ~PostAction(<< _aWAIT_i, 16, _aUSABLE_i, #ExileExodusEgg_i >>, v48);
+        }
+        Item_destroy(item);
+        flag(780) = true;
+    }
+}

@@ -1,0 +1,120 @@
+Routine Zinaida accepts a0 #locals(1) #uses(ZinaidaSellsFood_i, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Zinaida);
+        TurnOn(<< "name", "job", "bye" >>);
+        v0 = ~GetWorkType(~NPCToItem_i(_Zinaida));
+        if flag(228) && flag(241) {
+            TurnOn("De Maria");
+        }
+        if not $Metzinaida {
+            [This beautiful, earthy woman in her forties gives you a friendly smile.];
+            $Metzinaida = true;
+        } else {
+            ["Hello," Zinaida says.];
+        }
+        converse {
+            key ("name") {
+                ["I am Zinaida," she says with a curtsey.];
+                TurnOff("name");
+                if flag(228) {
+                    TurnOn("De Maria");
+                }
+                flag(241) = true;
+            }
+            key ("job") {
+                ["I am the owner and manager of The Emerald."];
+                if (v0 = 23) {
+                    ["If I can help thee with food or drink, please say so. I have never had a dissatisfied customer."];
+                    TurnOn(<< "drink", "food", "buy" >>);
+                } else {
+                    ["Please come to the pub when it is open and I shall be happy to serve thee!"];
+                }
+            }
+            key ("food") {
+                ["The Emerald is pleased to serve thee the finest cuisine this side of Britain. Thou mightest wish to try the special -- Silverleaf."];
+                TurnOn("Silverleaf");
+            }
+            key ("Silverleaf") {
+                [She winks at you. "Some say it is a powerful aphrodisiac... It is delicious, regardless. It comes from the root of an exotic tree growing somewhere in Britannia."];
+                TurnOff("Silverleaf");
+            }
+            key ("drink") {
+                ["The Emerald serves only the best wine and ale. I cannot recommend the water, however. Thanks to Lock Lake."];
+                TurnOn("Lock Lake");
+            }
+            key ("buy") {
+                ZinaidaSellsFood_i();
+            }
+            key ("De Maria") {
+                ["He is the light of my life. A finer man does not exist." She beams.];
+                TurnOff("De Maria");
+            }
+            key ("Lock Lake") {
+                ["The stench has made our water taste terrible. That mining company must cease pouring their sewage into what was once a fine lake!"];
+                TurnOff("Lock Lake");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["Come again soon!"*];
+    }
+    if (event = _Bark) {
+        BarkAboutWork_i(_Zinaida);
+    }
+}
+
+Usable ZinaidaSellsFood_i #locals(14) #uses(~LordOrLady, ~AskOrdList, ~PriceString_i, ~AskYesNo, ~SellItem_i) {
+    v0 = ~LordOrLady();
+    PushKeys();
+    v1 = true;
+    v2 = << "nothing", "mutton", "bread", "mead", "trout", "Silverleaf", "cake", "wine", "ale" >>;
+    v3 = << 0, 377, 377, 616, 377, 377, 377, 616, 616 >>;
+    v4 = << 65177, 8, 1, 0, 12, 31, 5, 5, 3 >>;
+    v5 = << 0, 3, 2, 7, 3, 30, 2, 3, 2 >>;
+    v6 = "";
+    v7 = 0;
+    v8 = << "", " for one portion", " for one loaf", " for one bottle", " for one portion", " for one portion", " for one slice", " for one bottle", " for one bottle" >>;
+    v9 = 1;
+    ["What wouldst thou like?"];
+    While v1 {
+        v10 = ~AskOrdList(v2);
+        if (v10 = 1) {
+            ["Fine."];
+            v1 = false;
+        } else {
+            if (v10 = 6) && flag(299) {
+                ["I regret to tell thee that this fine establishment will no longer be able to provide our fine customers with Silverleaf. The person who provides me with the delicate meal is no longer able to procure it. I am dreadfully sorry, <v0>."];
+            } else {
+                v11 = ~PriceString_i(v8::v10, v5::v10, v7, v2::v10, v6);
+                v12 = 0;
+                ["^<v11> That is a fair price, is it not?"];
+                v13 = ~AskYesNo();
+                if v13 {
+                    if (v3::v10 = 377) {
+                        ["How many wouldst thou like?"];
+                        v12 = ~SellItem_i(true, 1, 20, v5::v10, v9, v4::v10, v3::v10);
+                    } else {
+                        v12 = ~SellItem_i(true, 1, 0, v5::v10, v9, v4::v10, v3::v10);
+                    }
+                }
+                if (v12 = 1) {
+                    ["Done!"];
+                } else {
+                    if (v12 = 2) {
+                        ["Thou cannot possibly carry that much!"];
+                    } else {
+                        if (v12 = 3) {
+                            ["Thou dost not have enough gold for that!"];
+                        } else {
+                        }
+                    }
+                }
+            }
+            ["Wouldst thou like something else?"];
+            v1 = ~AskYesNo();
+        }
+    }
+    PopKeys();
+}

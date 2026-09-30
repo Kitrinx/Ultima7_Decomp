@@ -1,0 +1,44 @@
+Routine AlagnerMurderEgg_i accepts a0 #locals(17) #uses(ClearMurderScene_i) {
+    if (event = _Trigger) {
+        if (flag(343) and not flag(404)) {
+            RemoveNPC_i(_Alagner);
+            v0 = ~FindNearby_i(0, 15, _Victim, item);
+            v1 = ~FindNearby_i(0, 15, _Lit_Light_Source, item);
+            v2 = ~FindNearby_i(0, 15, _Bucket, item);
+            v3 = ~FindNearby_i(176, 15, _Blood, item);
+            v4 = << v0, v1, v2, v3 >>;
+            Foreach v7 in v4 {
+                v8 = ~Item_getType(v7);
+                v9 = ~GetCoord(v7);
+                if (v9::3 = 6) {
+                    if ((v8 = 867) or (v8 = 912)) {
+                        v10 = << v9::1, v9::2, 1 >>;
+                    } else {
+                        v10 = << v9::1, v9::2, 0 >>;
+                    }
+                    v11 = ~Item_push(v7);
+                    if v11 {
+                        v11 = ~PopToMap(v10);
+                    }
+                }
+            }
+            v12 = ~FindNearby_i(0, 40, _Body_400, item);
+            v12 = (v12 & ~FindNearby_i(0, 40, _Body_414, item));
+            Foreach v15 in v12 {
+                if ((~GetQuality(v15) = 1) and (~GetQuantity(1, v15) = 118)) {
+                    Item_destroy(v15);
+                }
+            }
+            flag(404) = true;
+            SetClock(6);
+        } else {
+            if flag(343) {
+                v16 = ~GetClock(6);
+                if (v16 >= 24) {
+                    ClearMurderScene_i();
+                    Item_destroy(item);
+                }
+            }
+        }
+    }
+}

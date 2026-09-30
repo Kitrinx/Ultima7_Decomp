@@ -1,0 +1,13 @@
+Routine SailFerry_i accepts a0 #locals(2) {
+    SetItemFlag_i(_ActiveBarge_i, item);
+    if not ~Kernel_getNumProcesses(item) {
+        if flag(407) {
+            v0 = << byte(44), byte(50), byte(33), byte(11), 65534, 11, byte(85), 1591 >>;
+            flag(407) = false;
+        } else {
+            v0 = << byte(44), byte(54), byte(33), byte(11), 65534, 11, byte(85), 1591 >>;
+            flag(407) = true;
+        }
+        v1 = ~PostAction(v0, item);
+    }
+}

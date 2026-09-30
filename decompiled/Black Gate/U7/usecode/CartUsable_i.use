@@ -1,0 +1,65 @@
+Routine CartUsable_i accepts a0 #locals(4) #uses(BarkIfNear_i, ~IsPartySeated_i, ~LoadBarge_i, MemberSays_i) {
+    v1 = ~GetBarge_i(v0);
+    if v1 {
+        if ~GetItemFlag_i(_OnMovingBarge_i, v0) {
+            ClearItemFlag_i(_OnMovingBarge_i, v0);
+            ClearItemFlag_i(_ActiveBarge_i, v0);
+            BarkIfNear_i("@Whoa!@", _Avatar);
+        } else {
+            v2 = ~FindNearby_i(0, 16, _Draft_Horse, v0);
+            if v2 {
+                v3 = ~CountItem(_All, ~GetQuality(v2), _Scroll, _Party);
+                if v3 {
+                    if ~IsPartySeated_i() {
+                        SetItemFlag_i(_OnMovingBarge_i, v0);
+                        SetItemFlag_i(_ActiveBarge_i, v1);
+                        BarkIfNear_i("@Giddy-up!@", _Avatar);
+                    } else {
+                        v4 = ~LoadBarge_i(v0);
+                    }
+                } else {
+                    if (~ListSize_i(~GetParty()) = 1) {
+                        MemberSays_i("@The title for this cart must first be purchased.@");
+                    } else {
+                        MemberSays_i("@We must first purchase the title for this cart.@");
+                    }
+                }
+            }
+        }
+    }
+}
+
+Routine SeatParty_i accepts a0, a1 #locals(18) {
+    v2 = << >>;
+    v3 = ~FindNearby_i(0, 15, v0, _Avatar);
+    Foreach v6 in v3 {
+        v7 = 0;
+        v8 = 9999;
+        Foreach v11 in v3 {
+            v7 = (v7 + 1);
+            if ((v11 <> 0) and (v11 <> v1)) {
+                v12 = ~GetDist(v11, v1);
+                if (v12 < v8) {
+                    v8 = v12;
+                    v13 = v7;
+                }
+            }
+        }
+        v2 = (v2 & v3::v13);
+        v3::v13 = 0;
+    }
+    SitDown_i(v1, _Avatar);
+    v14 = ~ListSize_i(v2);
+    v15 = ~GetParty();
+    v7 = 2;
+    Foreach v18 in v15 {
+        if ((v7 - 1) > v14) {
+            break;
+        }
+        if not (~GetWorkType(v18) = _MajorSit) {
+            v19 = (v7 - 1);
+            SitDown_i(v2::v19, v18);
+        }
+        v7 = (v7 + 1);
+    }
+}

@@ -1,0 +1,40 @@
+Routine CheaterVerdictEgg_i accepts a0 #locals(6) {
+    if (event = _Trigger) {
+        v0 = ~Item_push(_LordBritish);
+        if v0 {
+            v1 = ~GetCoord(_Avatar);
+            v1::2 = (v1::2 - 4);
+            v0 = ~PopToMap(v1);
+            SetFrame(16, _LordBritish);
+        }
+        v0 = ~PostInFuture(1, << _aNO_HALT_i, _aUSABLE_i, #CheaterVerdictEgg_i >>, _Avatar);
+        v0 = ~ChangeNPCStat_i(0, _Int, _Avatar);
+        v0 = ~ChangeNPCStat_i(0, _Dex, _Avatar);
+        v0 = ~ChangeNPCStat_i(15, _Str, _Avatar);
+        v0 = ~ChangeNPCStat_i(15, _Hits, _Avatar);
+        v0 = ~ChangeNPCStat_i(0, _Cbt, _Avatar);
+        v0 = ~ChangeNPCStat_i(0, _Mag, _Avatar);
+        v0 = ~ChangeNPCStat_i(0, _MaxMagic, _Avatar);
+        v0 = ~ChangeNPCStat_i(0, _TrainingPoints, _Avatar);
+        v0 = ~ChangeNPCStat_i(0, _Experience, _Avatar);
+    }
+    if (event = _Posted_i) {
+        SetSpeaker(0, _LordBritish);
+        [Busted, you thieving scoundrel bastard! Perhaps the only thing more ridiculous than your pathetic attempt to destroy the black gate without paying proper dues is your inevitably embarassing explanation\x09to the friend to whom you are, no doubt, showing this!];
+        [For the atrocious crime of cheating against the virtues of Britannia, I find you guilty.*];
+        Sfx(15);
+        [Judgement rendered.* Sentence selected:* Death.*];
+        v0 = ~PostAction(21, byte(86));
+        v2 = ~GetParty();
+        Foreach v5 in v2 {
+            SetItemFlag_i(_Paralyzed, v5);
+        }
+        SetWeather_i(_Rain);
+        Armageddon_i();
+        $CAST_ARMAGEDDON = true;
+        Npc_setAlignment(_Evil, _LordBritish);
+        SetAttackMode_i(_Nearest, _LordBritish);
+        SetWorkType(_Combat_0, _LordBritish);
+        SetItemFlag_i(25, item);
+    }
+}

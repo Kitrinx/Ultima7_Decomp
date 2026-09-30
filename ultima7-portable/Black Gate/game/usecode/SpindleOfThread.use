@@ -1,0 +1,31 @@
+Routine SpindleOfThread accepts a0 #locals(5) #uses(WeaveCloth_i, PathToItem_i) {
+    if (event = _Action) {
+        v0 = ~Item_getContainer(item);
+        if (v0 = ~NPCToItem_i(_Avatar)) {
+            event = 7;
+            WeaveCloth_i(item);
+            return;
+        } else {
+            if v0 {
+                v1 = ~Item_push(item);
+                if v1 {
+                    v1 = ~PopToNPC(_Avatar);
+                    if not v1 {
+                        v1 = ~PopToNPC(v0);
+                        FlashMouse_i(4);
+                        terminate;
+                    }
+                    event = 7;
+                    WeaveCloth_i(item);
+                    return;
+                } else {
+                    return;
+                }
+            }
+        }
+        v2 = 65535;
+        v3 = 65535;
+        v4 = 65535;
+        PathToItem_i(7, item, #WeaveCloth_i, v4, v3, v2, item);
+    }
+}

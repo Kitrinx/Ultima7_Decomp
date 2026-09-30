@@ -1,0 +1,107 @@
+Routine Liana accepts a0 #locals(6) #uses(~AvatarName, ~LordOrLady) {
+    if (event = _Action) {
+        SetSpeaker(0, _Liana);
+        v0 = ~AvatarName();
+        v1 = ~LordOrLady();
+        v2 = false;
+        TurnOn(<< "name", "job", "bye" >>);
+        if not $MetLiana {
+            [You see a short woman with a distracted look on her face.];
+            $MetLiana = true;
+        } else {
+            ["What is thy concern?"];
+        }
+        converse {
+            key ("name") {
+                [Breaking from her work, the woman turns to look at you long enough to respond, "My name is Liana."];
+                TurnOff("name");
+            }
+            key ("job") {
+                ["I am the Mayor's clerk. I am responsible for keeping track of official records and documents in Vesper."];
+                TurnOn(<< "Vesper", "mayor" >>);
+            }
+            key ("Vesper") {
+                ["I like the town, but 'tis so far from Britain that it attracts some truly... unusual people."];
+                TurnOn(<< "people", "unusual" >>);
+                TurnOff("Vesper");
+            }
+            key ("mayor") {
+                ["I respect Auston in an unofficial capacity. But," she adds, raising her eyebrows, "as a mayor, he is far too spineless. He is afraid of taking sides on any issue. I do not think he should have volunteered for the election."];
+                TurnOff("mayor");
+            }
+            key ("unusual") {
+                ["Well, there are a couple of strange ones: Mara and Yongi. And there is Blorn -- he is a mean one, and... well... of course, there is Eldroth. And," she says with a shudder, "the gargoyles."];
+                TurnOn(<< "Mara", "Yongi", "Blorn", "Eldroth", "gargoyles" >>);
+                TurnOff("unusual");
+            }
+            key ("Mara") {
+                v3 = ~IsDead(~NPCToItem_i(_Mara));
+                if v3 {
+                    ["I feel bad about the things I said now that she is gone. Too bad she was killed in that bar fight."];
+                } else {
+                    ["Mara? She needs to learn how to act like a woman. Her manly attitude doth not fool anyone."];
+                }
+                TurnOff("Mara");
+            }
+            key ("Yongi") {
+                ["Yongi is nothing more than a drunk. The only reason he opened a tavern was to have an excuse to purchase large amounts of alcohol at wholesale prices. And do not\x09ask him about the gargoyles unless thou dost want him to talk thine ear off. He hates them almost as much as Blorn does!"];
+                TurnOff("Yongi");
+            }
+            key ("Eldroth") {
+                ["He is nice, I suppose, but he is also a doddering old fool. I do not think he hath had a brain for more than a decade."];
+                TurnOff("Eldroth");
+            }
+            key ("Blorn") {
+                ["There is a troublemaker and thief if I have ever seen one. He needs to think about leaving town -- quickly, if he knows what is best for him. There is one thing I like about him, though -- he hates the gargoyles more than anyone!"];
+                TurnOn("gargoyles");
+                TurnOff("Blorn");
+            }
+            key ("gargoyles") {
+                ["Now there is a disgusting creature for thee. I think they were better named back when we called them daemons!"];
+                if not v2 {
+                    v4 = ~GiveToParty_i(true, _All, 2, _Scroll, 1);
+                    if v4 {
+                        ["In fact..." She hands you a piece of paper.];
+                        v2 = true;
+                    }
+                }
+                TurnOff("gargoyles");
+            }
+            key ("people") {
+                ["Well, there are Cador, Yvella, and Zaksam -- those are the\x09normal ones."];
+                TurnOn(<< "Cador", "Yvella", "Zaksam" >>);
+                TurnOff("people");
+            }
+            key ("Zaksam") {
+                ["He is the trainer. Quite a good fighter from what I hear."];
+                TurnOff("Zaksam");
+            }
+            key ("Cador") {
+                v5 = ~IsDead(~NPCToItem_i(_Cador));
+                if v5 {
+                    ["'Tis too bad he is dead. I have heard many compliment his abilities as a leader at the mines."];
+                    TurnOn("dead");
+                } else {
+                    ["Cador is the head of the Britannian Mining Company branch here in Vesper."];
+                    TurnOff("Cador");
+                }
+            }
+            key ("dead") {
+                ["He was killed in a brutal slaughter in Yongi's tavern. No one really knows what happened, but I suppose that is how many people meet their death when drinking." She shrugs.];
+                TurnOff("dead");
+            }
+            key ("Yvella") {
+                ["She is Cador's wife."];
+                TurnOff("Yvella");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        [She nods at you as she returns to her business.*];
+    }
+    if (event = _Bark) {
+        terminate;
+    }
+}

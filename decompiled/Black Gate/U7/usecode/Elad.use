@@ -1,0 +1,157 @@
+Routine Elad accepts a0 #locals(3) #uses(~AvatarName, ~LordOrLady, EladHeals_i, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Elad);
+        v0 = ~AvatarName();
+        v1 = ~LordOrLady();
+        TurnOn(<< "name", "job", "bye" >>);
+        if not $MET_ELAD {
+            [The man looks at you through smiling eyes.];
+        } else {
+            [Elad bows in your direction.~"My pleasure to see thee again."];
+        }
+        converse {
+            key ("name") {
+                ["Elad is my name, <v1>."];
+                TurnOff("name");
+            }
+            key ("job") {
+                ["I am the healer of the residents of this community."];
+                TurnOn(<< "residents", "heal", "community" >>);
+            }
+            key ("community") {
+                ["Moonglow is mine home. I have lived in this town for mine entire life. But I am weary of my life here. 'Tis time, I think, to move on. If only I did not have such strong ties here."~He sighs sadly.];
+                if not flag(493) {
+                    ["There is a traveller visiting from Yew. He has seen many exciting things in Britannia. I enjoy listening to his many tales of adventure."];
+                    TurnOn("traveller");
+                }
+                TurnOn("ties");
+                TurnOff("community");
+            }
+            key ("traveller") {
+                ["His name is Addom. While he is in town, I am letting him stay in one of my beds."];
+                TurnOff("traveller");
+            }
+            key ("heal") {
+                ["Yes, I sell mine healing services to those who need them."];
+                TurnOn("services");
+                TurnOff("heal");
+            }
+            key ("services") {
+                v2 = ~GetTime();
+                if ((v2 = 2) or ((v2 = 3) or ((v2 = 4) or (v2 = 6)))) {
+                    EladHeals_i(425, 10, 25);
+                } else {
+                    ["Perhaps thou couldst come for healing when I am working in my shop."];
+                }
+                TurnOff("services");
+            }
+            key ("ties") {
+                ["My patients here in Moonglow. Who will help them if not I?"];
+                TurnOff("ties");
+            }
+            key ("residents") {
+                ["There are many people in Moonglow. My father once told me that the town was much smaller during his time. In fact, he said that Moonglow used to be separate from the Lycaeum!~~"But, I digress. Thou didst ask about the people. I know most of the residents here. Dost thou want to know about the Lycaeum, the observatory, The Fellowship, the farmers, the trainer, or the tavern?"];
+                TurnOn(<< "Lycaeum", "observatory", "Fellowship", "farmers", "trainer", "tavern" >>);
+                TurnOff("residents");
+            }
+            key ("Lycaeum") {
+                ["The Lycaeum is run by a kind man named Nelson. His advisor is Zelda. Do not break any rules in her presence or thou wilt receive a sharp reprimand!~"Jillian also studies there. She can teach thee many things. And do not worry about Mariah. She is harmless if thou wilt but leave her be."];
+                TurnOff("Lycaeum");
+            }
+            key ("observatory") {
+                ["The head there is Brion. He is the twin of the head of the Lycaeum. I like him, although he and his brother are both a little eccentric."];
+                TurnOff("observatory");
+            }
+            key ("Fellowship") {
+                ["I know these people least of all. The branch opened here about five years ago under the direction of a man named Rankin. A few months ago, a clerk joined him. Her name is Balayna."];
+                TurnOff("Fellowship");
+            }
+            key ("farmers") {
+                ["Cubolt owns the farm. He manages it with his younger brother Tolemac and their friend Morz. I am not positive, but I believe Tolemac recently joined The Fellowship."];
+                TurnOff("farmers");
+            }
+            key ("tavern") {
+                ["Phearcy tends the bar there. He is another good person with whom thou shouldst speak about the townspeople. However, he enjoys gossip, and may be a bit single-minded."];
+                TurnOff("tavern");
+            }
+            key ("trainer") {
+                ["The trainer is named Chad. I believe he specializes in swift, skillful fighting, with knives and swords and such. See him if thou wishest to improve thy skills."];
+                TurnOff("trainer");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["Leaving so soon, <v1>? Very well, may thy journeys be filled with prosperity."~He sighs. Suddenly, his face brightens.~ "Wait! Perhaps I could join thee?"~He quickly stands up, smiling. Then, just as suddenly, his smile fades.~"No. I cannot. I have far too many things to do, too many people to care for. Perhaps in the future?"~He forces a smile.~"I hope when we meet next time, <v1>, I will have the opportunity to join thee. Pleasant journey, my friend."*];
+    }
+    if (event = _Bark) {
+        BarkAboutWork_i(_Elad);
+    }
+}
+
+Routine EladHeals_i accepts a0, a1, a2 #locals(10) #uses(~AskYesNo, ~AskList, ~AskParty, SellHealing_i, SellCure_i, SellResurrection_i) {
+    ["Art thou in need of healing, curing, or resurrection?"];
+    PushKeys();
+    v3 = ~AskYesNo();
+    if v3 {
+        ["Which of my services dost thou have need of?"];
+        v4 = << "heal", "cure poison", "resurrect" >>;
+        v5 = ~AskList(v4);
+        if ((v5 = "heal") or (v5 = "cure poison")) {
+            if (v5 = "heal") {
+                v6 = "healed";
+                v7 = v2;
+            }
+            if (v5 = "cure poison") {
+                v6 = "cured of poison";
+                v7 = v1;
+            }
+            ["Whom dost thou wish to have <v6>?"];
+            v8 = ~AskParty();
+            if (v8 = 0) {
+                ["Though I want thy business, I am pleased to see my services are not needed!"];
+                goto label_28;
+            }
+        }
+        if (v5 = "resurrect") {
+            v9 = ~AvatarItem_i();
+            v10 = ~FindNearest_i(25, _Body_400, v9);
+            if (v10 = 0) {
+                v10 = ~FindNearest_i(25, _Body_414, v9);
+            }
+            if (v10 = 0) {
+                ["Well, I do not seem to see anyone who needs mine assistance. Unless thou art carrying someone in thy packs...." He laughs.*];
+                goto label_28;
+            }
+            v7 = v0;
+        }
+        ["My price is <v7> gold. Dost thou agree?"];
+        v11 = ~AskYesNo();
+        if v11 {
+            v12 = ~CountItem(_All, _All, _Gold_Coin, _Party);
+            if (v12 >= v7) {
+                if (v5 = "heal") {
+                    SellHealing_i(v7, v8);
+                } else {
+                    if (v5 = "cure poison") {
+                        SellCure_i(v7, v8);
+                    } else {
+                        if (v5 = "resurrect") {
+                            SellResurrection_i(v7, v10);
+                        } else {
+                        }
+                    }
+                }
+            } else {
+                ["Thou dost not have that much gold! Mayhaps thou couldst return with more and purchase the service then."];
+            }
+        } else {
+            ["Then thou must look elsewhere for that service."];
+        }
+    } else {
+        ["Very well. If thou hast need of my services later, I will be available."];
+    }
+    label_28:
+    PopKeys();
+}

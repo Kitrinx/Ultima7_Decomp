@@ -1,0 +1,464 @@
+Routine WisSur accepts a0 #locals(2) #uses(WisSurSellsSpells_i, WisSurSellsReagents_i, WisSurSellsPotions_i, ~AskList, WisSurSellsSpells_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _WisSur);
+        TurnOn(<< "name", "job", "bye" >>);
+        if $TetraGone {
+            if not $MET_WISSUR {
+                [You see a winged gargoyle with an authoritative disposition.];
+                $MET_WISSUR = true;
+            } else {
+                ["To offer welcome for you, human," says Wis-Sur.];
+            }
+        } else {
+            if not $MET_WISSUR {
+                [The winged gargoyle in front of you has a wild look about him.];
+                $MET_WISSUR = true;
+            } else {
+                ["To go away, human! To have nothing you want!" screams Wis-Sur.];
+            }
+        }
+        if $TetraGone {
+            converse {
+                key ("name") {
+                    ["To be named Wis-Sur, which means `wise sun.'"];
+                    TurnOff("name");
+                }
+                key ("job") {
+                    ["To sell magic to others."];
+                    TurnOn(<< "others", "magic" >>);
+                }
+                key ("magic") {
+                    ["To be interested in spells, reagents, or potions?"];
+                    TurnOn(<< "spells", "reagents", "potions" >>);
+                    TurnOff("magic");
+                }
+                key ("spells") {
+                    WisSurSellsSpells_i#0();
+                }
+                key ("reagents") {
+                    WisSurSellsReagents_i();
+                }
+                key ("potions") {
+                    WisSurSellsPotions_i();
+                }
+                key ("others") {
+                    ["To be familiar with only the other gargoyles in Vesper. To tell you to ask Ansikart, who knows all other gargoyles here. To tell you about one of the following?"];
+                    TurnOff("others");
+                    TurnOn(<< "Aurvidlem", "Lap-Lem", "For-Lem", "Anmanivas" >>);
+                }
+                key ("Aurvidlem") {
+                    ["To be a provisioner in Vesper."];
+                    TurnOff("Aurvidlem");
+                }
+                key ("For-Lem") {
+                    ["To perform assorted duties for town. To be a good, strong worker."];
+                    TurnOff("For-Lem");
+                }
+                key ("Lap-Lem") {
+                    ["To be a miner for the Britannian Mining Company."];
+                    TurnOff("Lap-Lem");
+                }
+                key ("Anmanivas") {
+                    ["To be a miner for the Britannian Mining Company."];
+                    TurnOff("Anmanivas");
+                }
+                key ("bye") {
+                    break;
+                }
+            }
+            clear_answers;
+            ["To say farewell, human."*];
+        } else {
+            converse {
+                key ("name") {
+                    ["To wonder why you want to know."*];
+                    terminate;
+                }
+                key ("job") {
+                    ["To sell the few items I possess."];
+                    TurnOn("sell");
+                }
+                key ("sell") {
+                    ["To want to buy something?" He looks at you carefully, as if he is unsure whether to sell to you.~~"To be possible," he says, nodding. "To ask what you need?"];
+                    v0 = << "nothing", "spells", "reagents", "potions" >>;
+                    v1 = ~AskList(v0);
+                    if (v1 = "nothing") {
+                        ["To suspect you are wasting my time!"];
+                    }
+                    if (v1 = "spells") {
+                        WisSurSellsSpells_i#4();
+                    }
+                    if (v1 = "reagents") {
+                        WisSurSellsReagents_i();
+                    }
+                    if (v1 = "potions") {
+                        WisSurSellsPotions_i();
+                    }
+                }
+                key ("bye") {
+                    ["To be good that you leave."*];
+                    terminate;
+                }
+            }
+            clear_answers;
+        }
+    }
+    if (event = _Bark) {
+        terminate;
+    }
+}
+
+Usable WisSurSellsPotions_i #locals(15) #uses(~AskOrdList, ~SellPriceString_i, ~GargoyleHaggle_i, ~AskYesNo, ~SellItem_i) {
+    PushKeys();
+    v0 = true;
+    v1 = << "nothing", "blue potion", "purple potion", "red potion", "orange potion" >>;
+    v2 = << 0, 340, 340, 340, 340 >>;
+    v3 = << 65177, 0, 5, 2, 4 >>;
+    v4 = << 0, 30, 150, 150, 10 >>;
+    v5 = << 0, 120, 600, 600, 45 >>;
+    v6 = << "", "a ", "a ", "a ", "a " >>;
+    v7 = 0;
+    v8 = "";
+    v9 = 1;
+    ["To want what item?"];
+    While v0 {
+        v10 = ~AskOrdList(v1);
+        if (v10 = 1) {
+            if $TetraGone {
+                ["To understand."];
+            } else {
+                ["To be good. To want to sell nothing to you."];
+            }
+            v0 = false;
+        } else {
+            if $TetraGone {
+                v11 = v4::v10;
+                v12 = ~SellPriceString_i(v8, v11, v7, v1::v10, v6::v10);
+                goto label_11;
+            }
+            v11 = v5::v10;
+            v11 = ~GargoyleHaggle_i(_WisSur, v11);
+            v12 = ~SellPriceString_i(v8, v11, v7, v1::v10, v6::v10);
+            if (v11 = 0) {
+            } else {
+                label_11:
+                v13 = 0;
+                ["<v12> To accept the price?"];
+                v14 = ~AskYesNo();
+                if v14 {
+                    v13 = ~SellItem_i(false, 1, 0, v11, v9, v3::v10, v2::v10);
+                }
+                if (v13 = 1) {
+                    ["To be agreed!"];
+                } else {
+                    if (v13 = 2) {
+                        ["To be unable to carry that much, human!"];
+                    } else {
+                        if (v13 = 3) {
+                            ["To have not enough gold for that!"];
+                        } else {
+                        }
+                    }
+                }
+            }
+            ["To want something else?"];
+            v0 = ~AskYesNo();
+        }
+    }
+    PopKeys();
+}
+
+Usable WisSurSellsReagents_i #locals(15) #uses(~AskOrdList, ~SellPriceString_i, ~GargoyleHaggle_i, ~AskYesNo, ~SellItem_i) {
+    PushKeys();
+    v0 = true;
+    v1 = << "nothing", "blood moss", "spider silk", "sulfurous ash", "mandrake root", "black pearl" >>;
+    v2 = << 0, 842, 842, 842, 842, 842 >>;
+    v3 = << 65177, 1, 6, 7, 3, 0 >>;
+    v4 = << 0, 4, 5, 6, 8, 8 >>;
+    v5 = << 0, 16, 20, 25, 32, 34 >>;
+    v6 = "";
+    v7 = 0;
+    v8 = "";
+    v9 = 1;
+    ["To want what item?"];
+    While v0 {
+        v10 = ~AskOrdList(v1);
+        if (v10 = 1) {
+            if $TetraGone {
+                ["To understand."];
+            } else {
+                ["To be good. To want to sell nothing to you."];
+            }
+            v0 = false;
+        } else {
+            if $TetraGone {
+                v11 = v4::v10;
+                v12 = ~SellPriceString_i(v8, v11, v7, v1::v10, v6);
+                goto label_11;
+            }
+            v11 = v5::v10;
+            v11 = ~GargoyleHaggle_i(_WisSur, v11);
+            v12 = ~SellPriceString_i(v8, v11, v7, v1::v10, v6);
+            if (v11 = 0) {
+            } else {
+                label_11:
+                v13 = 0;
+                ["<v12> To agree to the cost?"];
+                v14 = ~AskYesNo();
+                if v14 {
+                    ["To want how many?"];
+                    v13 = ~SellItem_i(true, 1, 20, v11, v9, v3::v10, v2::v10);
+                }
+                if (v13 = 1) {
+                    ["To be agreed!"];
+                } else {
+                    if (v13 = 2) {
+                        ["To be unable to carry that much, human!"];
+                    } else {
+                        if (v13 = 3) {
+                            ["To have not enough gold for that!"];
+                        } else {
+                        }
+                    }
+                }
+            }
+            ["To want something else?"];
+            v0 = ~AskYesNo();
+        }
+    }
+    PopKeys();
+}
+
+Function ~GargoyleHaggle_i #linear accepts a0, a1 #locals(12) #uses(fn_090F, fn_090A, fn_0932) {
+label_0:
+    v2 = 0;
+    v3 = v1;
+    v4 = v1;
+    v5 = true;
+    v6 = false;
+    v7 = 0;
+label_1:
+    if not v5 goto label_49;
+label_2:
+    if not v6 goto label_4;
+label_3:
+    append "\"To be my final offer -- ";
+    append v3;
+    append ".\"";
+    say;
+    goto label_5;
+label_4:
+    v8 = fn_090F(v0);
+    append "\"To want ";
+    append v3;
+    append " gold.\"";
+    say;
+label_5:
+    v9 = (v3 * 3);
+    v9 = (v9 / 2);
+    v10 = (v3 / 2);
+    v11 = (v3 / 4);
+    v12 = << v9, v3, v10, v11 >>;
+    if not v6 goto label_11;
+label_6:
+    append "\"To accept?\"";
+    say;
+    v7 = fn_090A();
+    if not v7 goto label_9;
+label_7:
+    append "\"To have a deal.\"";
+    say;
+    return v3;
+label_8:
+    goto label_10;
+label_9:
+    append "\"To wonder why you bothered me.\"";
+    say;
+    return 0;
+label_10:
+    goto label_12;
+label_11:
+    v2 = v4;
+    append "\"To have another offer?\"";
+    say;
+    v4 = intrinsic_0C(0, 1, v9, 0);
+label_12:
+    if not (v4 = 0) goto label_14;
+label_13:
+    append "\"To notice you are obviously not interested.\"";
+    say;
+    return 0;
+label_14:
+    if not (v4 >= v3) goto label_16;
+label_15:
+    append "\"To accept your offer.\"";
+    say;
+    return v4;
+label_16:
+    if not (v4 < v12::4) goto label_19;
+label_17:
+    append "\"To be happy,\" he says. \"To have wanted to keep it anyway! To tell you to leave.\"";
+    say;
+    terminate;
+label_18:
+    return 0;
+label_19:
+    v7 = intrinsic_00(100);
+    if not (v2 = 0) goto label_21;
+label_20:
+    v2 = v12::3;
+label_21:
+    if not (v4 >= v12::3) goto label_33;
+label_22:
+    if not (v7 >= 90) goto label_27;
+label_23:
+    v6 = true;
+    v13 = fn_0932(((v4 - v2) * 2));
+    v13 = intrinsic_00(v13);
+    if not ((v3 - v13) <= v4) goto label_25;
+label_24:
+    v3 = (v4 + 1);
+    goto label_26;
+label_25:
+    v3 = (v3 - v13);
+label_26:
+    goto label_47;
+label_27:
+    if not (v7 >= 30) goto label_32;
+label_28:
+    v13 = fn_0932(((v4 - v2) * 2));
+    v13 = intrinsic_00(v13);
+    if not ((v3 - v13) <= v4) goto label_30;
+label_29:
+    v3 = (v4 + 1);
+    goto label_31;
+label_30:
+    v3 = (v3 - v13);
+label_31:
+    goto label_47;
+label_32:
+    append "\"To be agreed!\"";
+    say;
+    return v4;
+label_33:
+    if not (v4 >= v12::4) goto label_47;
+label_34:
+    if not (v7 >= 40) goto label_39;
+label_35:
+    v6 = true;
+    v13 = fn_0932(((v4 - v2) * 2));
+    v13 = intrinsic_00(v13);
+    if not ((v3 - v13) <= v4) goto label_37;
+label_36:
+    v3 = (v4 + 1);
+    goto label_38;
+label_37:
+    v3 = (v3 - v13);
+label_38:
+    goto label_47;
+label_39:
+    if not (v7 >= 15) goto label_44;
+label_40:
+    v13 = fn_0932(((v4 - v2) * 2));
+    v13 = intrinsic_00(v13);
+    if not ((v3 - v13) <= v4) goto label_42;
+label_41:
+    v3 = (v4 + 1);
+    goto label_43;
+label_42:
+    v3 = (v3 - v13);
+label_43:
+    goto label_47;
+label_44:
+    if not (v7 >= 5) goto label_46;
+label_45:
+    append "\"To be foolish to accept so little!\"";
+    say;
+    return 0;
+label_46:
+    append "\"To charge more next time. To have sold to you too cheaply!\"";
+    say;
+    goto label_47;
+label_47:
+    return v3;
+label_48:
+    goto label_1;
+label_49:
+    return_zero;
+}
+
+Usable WisSurSellsSpells_i #locals(10) #uses(~AskOrdList, ~GargSellSpell_i, ~AskYesNo) {
+    PushKeys();
+    v0 = true;
+    v1 = << 30, 50, 70, 90, 120, 140 >>;
+    While v0 {
+        ["To be interested in which circle?"];
+        v2 = ~AskOrdList(<< "none", "First", "Second", "Third", "Fourth", "Fifth", "Sixth" >>);
+        v2 = (v2 - 1);
+        if (v2 = 0) {
+            if $TetraGone {
+                ["To understand."];
+            } else {
+                ["To wonder why you bother me so!"];
+            }
+            break;
+        }
+        switch v2 {
+            case 1 {
+                v3 = << "nothing", "Great Ignite", "Great Douse", "Locate", "Light" >>;
+                v4 = << 0, 12, 11, 14, 13 >>;
+            }
+            case 2 {
+                v3 = << "nothing", "Fire Blast", "Enchant", "Destroy Trap", "Great Light" >>;
+                v4 = << 0, 18, 17, 16, 19 >>;
+            }
+            case 3 {
+                v3 = << "nothing", "Paralyze", "Poison", "Curse", "Swarm" >>;
+                v4 = << 0, 28, 30, 24, 26 >>;
+            }
+            case 4 {
+                v3 = << "nothing", "Lightning", "Mass Curse", "Reveal", "Conjure" >>;
+                v4 = << 0, 33, 35, 37, 32 >>;
+            }
+            case 5 {
+                v3 = << "nothing", "Mass Sleep", "Explosion", "Dispel Field", "Fire Field" >>;
+                v4 = << 0, 47, 43, 42, 46 >>;
+            }
+            default {
+                v3 = << "nothing", "Fire Ring", "Clone", "Flame Strike", "Tremor" >>;
+                v4 = << 0, 50, 49, 51, 55 >>;
+            }
+        }
+        ["To buy which spell?"];
+        v5 = ~AskOrdList(v3);
+        if (v5 = 1) {
+            ["To be fine."];
+            break;
+        }
+        v6 = v4::v5;
+        v7 = v1::v2;
+        v8 = v3::v5;
+        ["To cost <v7> gold for <v8> spell."];
+        v9 = ~GargSellSpell_i(v7, v6);
+        if (v9 = 1) {
+            ["To agree!"];
+        } else {
+            if (v9 = 2) {
+                ["To be without a spellbook, human."];
+                v0 = false;
+                break;
+            }
+            if (v9 = 3) {
+                ["To have not have enough gold for that!"];
+            } else {
+                if (v9 = 4) {
+                    ["To see you already have that spell."];
+                } else {
+                }
+            }
+        }
+        ["To be interested in another spell?"];
+        v0 = ~AskYesNo();
+    }
+    PopKeys();
+}

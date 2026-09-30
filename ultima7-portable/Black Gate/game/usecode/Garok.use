@@ -1,0 +1,136 @@
+Routine Garok accepts a0 #locals(11) #uses(~AskYesNo, TeleportGarok_i) {
+    if (event = _Bark) {
+        terminate;
+    }
+    SetSpeaker(0, _Garok);
+    TurnOn(<< "name", "job", "bye" >>);
+    if $MET_BROTHER_WAYNE {
+        TurnOn("Brother Wayne");
+    }
+    if not $MET_GAROK_ALMAT {
+        if not $TetraGone {
+            [You see a mage with a wild look in his eyes.];
+            $MET_GAROK_ALMAT = true;
+        } else {
+            [You see a mage with a peaceful look in his eyes.];
+            $MET_GAROK_ALMAT = true;
+        }
+    } else {
+        ["Thou art talking to me?" Garok asks, suspiciously.];
+    }
+    converse {
+        key ("name") {
+            [The mage stares at you a moment. "Art thou from the Britannian Tax Council?"];
+            v0 = ~AskYesNo();
+            if v0 {
+                ["Then I am nobody!"*];
+                terminate;
+            } else {
+                if not $TetraGone {
+                    ["Good for thee. I would have had to kill thee. I am Garok Al-Mat. At least, the last time I looked in the mirror, that was who I was!"];
+                } else {
+                    ["I like thee already! I am Garok Al-Mat."];
+                }
+            }
+            TurnOff("name");
+            TurnOn("Tax Council");
+        }
+        key ("job") {
+            if not $TetraGone {
+                [Garok looks as if he might suddenly tear out his hair, but he restrains himself.~~"I am... -was-... a mage. Until it all went wrong. I am attempting to correct things."];
+                TurnOn(<< "mage", "correct" >>);
+            } else {
+                ["I am, and always have been, a mage. I was down here trying to locate what was amiss with the ethereal waves, but they seem to be all right now."];
+                TurnOn(<< "mage", "ethereal waves" >>);
+            }
+        }
+        key ("mage") {
+            if not $TetraGone {
+                [Garok suddenly hits himself on the side of the head.~~ "Get out! Damn thee! Out of there! No one invited thee into mine head! Away with thee!"~~Garok hits himself again, shakes his head like a wet dog and makes a blubbering sound with his lips.~~Garok looks at you and smiles. "That's better. Now, what was it... oh yes, I remember. Thou dost not believe I am a mage? Well, I am. I live in the mountains. But now I am lost in this wretched dungeon."];
+                TurnOn(<< "thine head", "lost" >>);
+            } else {
+                ["I usually live in the mountains, but I am lost in this dungeon."];
+                TurnOn("lost");
+            }
+            TurnOff("mage");
+        }
+        key ("ethereal waves", "correct") {
+            if not $TetraGone {
+                ["My magic is not working!];
+            } else {
+                ["My magic was not working!];
+            }
+            ["I attributed it to a disturbance in the ethereal waves! I had to find out what was happening. So here I am!"];
+            TurnOff(<< "correct", "ethereal waves" >>);
+        }
+        key ("thine head") {
+            ["There is a voice in mine head. Some demon of some sort. It is always congratulating me on things. And then other times it scolds me for things. I -know- it is not my conscience. I -know- what -he- sounds like! This is... someone else."];
+            TurnOff("thine head");
+            TurnOn("voice");
+        }
+        key ("voice") {
+            ["I started hearing it around the time my magic began to fail. I do not find it amusing."];
+            TurnOff("voice");
+        }
+        key ("lost") {
+            if not $TetraGone {
+                ["My crystal ball told me that the source of my problems was in a dungeon, but it did not say which one. This was the first dungeon I had ever explored. I have not found anything that might help me, and I cannot find my way out!"];
+            } else {
+                ["I came down here to find the source of my problems. My crystal ball told me that it was in a dungeon, but did not say which one. This is my first dungeon expedition, and now I am lost."];
+            }
+            TurnOff("lost");
+            if $SeenTetra {
+                TurnOn("wrong dungeon");
+            }
+            TurnOn("way out");
+        }
+        key ("wrong dungeon") {
+            [You explain to Garok that the Tetrahedron Generator is located in Dungeon Deceit.~~"Hmmmm. Correct idea. Wrong dungeon."];
+            TurnOff("wrong dungeon");
+        }
+        key ("way out") {
+            ["Dost thou know the way out?"];
+            v1 = ~AskYesNo();
+            if v1 {
+                [You tell Garok how to get out of the dungeon.~~"Why, it sounds so simple! My marbles must be losing me!~~ "I thank thee! Now I must be on my way. In fact, now that I know the way, I can use what little magic I have going for me to teleport. One must know the direction thou art travelling if one wishes to teleport!~~"Say, for helping me, wouldst thou like to have some useless reagents? By useless, I mean they are useless to me. They are probably perfectly good reagents. Thou art welcome to have them. Dost thou want them?"];
+                v2 = ~AskYesNo();
+                if v2 {
+                    v3 = ~GiveToParty_i(false, 0, _All, _Reagent, 6);
+                    v4 = ~GiveToParty_i(false, 1, _All, _Reagent, 4);
+                    v5 = ~GiveToParty_i(false, 4, _All, _Reagent, 8);
+                    v6 = ~GiveToParty_i(false, 5, _All, _Reagent, 8);
+                    v7 = ~GiveToParty_i(false, 3, _All, _Reagent, 6);
+                    v8 = ~GiveToParty_i(false, 2, _All, _Reagent, 7);
+                    v9 = ~GiveToParty_i(false, 6, _All, _Reagent, 6);
+                    v10 = ~GiveToParty_i(false, 7, _All, _Reagent, 8);
+                    if (v3 and (v4 and (v5 and (v6 and (v7 and (v8 and (v9 and v10))))))) {
+                        ["Good. One less thing I have to carry."];
+                    } else {
+                        ["Oh. Thou dost not have the room. Too bad."];
+                    }
+                } else {
+                    [Garok shrugs. "Suit thyself. Thanks anyway."];
+                }
+                [You watch as Garok turns, intones a spell, and vanishes.*];
+                TeleportGarok_i(item);
+                terminate;
+            } else {
+                ["Oh. Thou art as lost as I, eh? Then we shall surely die in here."];
+            }
+            TurnOff("way out");
+        }
+        key ("Tax Council") {
+            ["Grrrr! They are a thorn in my side! They have been seeking me for the past three years! I neglected to report a certain amount of income for reagent distribution, and somehow they found me out. By the way, if thou shouldst ever care to visit me in the mountains, I can sell thee reagents at reduced prices!"];
+            TurnOff("Tax Council");
+        }
+        key ("Brother Wayne") {
+            ["Yes, I remember him! He is lost, too! Dost thou know if he found his way out? Give him my best when thou dost speak to him."];
+            TurnOff("Brother Wayne");
+        }
+        key ("bye") {
+            break;
+        }
+    }
+    clear_answers;
+    ["Goodbye."*];
+}

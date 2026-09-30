@@ -1,0 +1,13 @@
+Routine PawsAccusationEgg_i accepts a0 #locals(0) #uses(SetWorkTypeUnlessWaiting_i) {
+    if (event = _Trigger) {
+        if ($MET_FERIDWYN and ($MetTobias and ($MetGarritt and ($MetCamille and $MetMorfin)))) {
+            $PAWS_FRAME_READY = true;
+        }
+        if ($PAWS_FRAME_READY and not $TOBIAS_FRAMED) {
+            SetWorkTypeUnlessWaiting_i(_Talk, ~NPCToItem_i(_Feridwyn));
+        }
+        if ($FeridwynAccusedTobias and not $CAMILLE_BEGGED_CLEAR_TOBIAS) {
+            SetWorkTypeUnlessWaiting_i(_Talk, ~NPCToItem_i(_Camille));
+        }
+    }
+}

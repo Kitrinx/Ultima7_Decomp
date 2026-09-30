@@ -1,0 +1,16 @@
+Routine CubeDamageEgg_i accepts a0 #locals(6) {
+    if (event = _Trigger) && ($CubeGone = 0) {
+        v0 = ~GetQuality(item);
+        v1 = ~GetParty();
+        Foreach v4 in v1 {
+            if not ~IsEquipped_i(_All, _Caddellite_Helmet, 9, v4) {
+                if (v0 = 30) {
+                    v5 = 30;
+                } else {
+                    v5 = ~rndRange(v0, 1);
+                }
+                ReduceHits_i(5, v5, v4);
+            }
+        }
+    }
+}

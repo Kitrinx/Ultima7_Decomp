@@ -1,0 +1,134 @@
+Routine Smith accepts a0 #locals(7) #uses(~AvatarName, ~IsNPCNear, ~AskYesNo) {
+    if (event = _Action) {
+        SetSpeaker(0, _Smith);
+        v0 = ~AvatarName();
+        v1 = ~IsNPCNear(_Iolo);
+        v2 = false;
+        TurnOn(<< "name", "job", "bye" >>);
+        if not $MetSmith {
+            [You see a horse. "What else did you expect to see?"];
+            $MetSmith = true;
+        } else {
+            ["What now, <v0>?" asks Smith.];
+        }
+        converse {
+            key ("name") {
+                ["Yes, I have a name."];
+                TurnOff("name");
+                if v1 {
+                    SetSpeaker(0, _Iolo);
+                    ["Scoundrel! When thou art asked thy name, thou shouldst respond politely and accurately! The Avatar has just asked thee for -thy- name."];
+                    SetSpeaker(0, _Smith);
+                    ["My name? You can call\x09me what you want, but I will only respond to Smith."];
+                    TurnOn("Smith");
+                    CloseSpeaker(_Iolo);
+                } else {
+                    TurnOn("-thy- name");
+                }
+            }
+            key ("-thy- name") {
+                ["My name? You can call\x09me what you want, but I will only respond to Smith."];
+                TurnOn("Smith");
+                TurnOff("-thy- name");
+            }
+            key ("job") {
+                ["Job? -Job-? I'm a horse, what kind of job could I have?" He looks off in the distance. "I can see it now: Smith -- Baker extraordinaire.~~"Actually, I have gotten quite good at interior decorating. See how I arranged my abode? You like it, don't you?"];
+                v3 = ~AskYesNo();
+                if v3 {
+                    ["Good. I will let you continue talking to me then! Which do you prefer, my living room or my bedroom?"];
+                    PushKeys();
+                    TurnOn(<< "living room", "bedroom" >>);
+                } else {
+                    ["That's funny, I feel the same way about you!"*];
+                    terminate;
+                }
+            }
+            key ("bedroom", "living room") {
+                ["You always did have bad taste!"];
+                TurnOff(<< "living room", "bedroom" >>);
+                PopKeys();
+            }
+            key ("Smith") {
+                if v2 {
+                    v4 = "still want";
+                } else {
+                    v4 = "want";
+                }
+                ["Yep, that's what I told you to call me. Oh, I get it! You <v4> something from me, don't you?];
+                v5 = ~AskYesNo();
+                if v5 {
+                    ["I thought as much. You've always been a selfish one. What do you want? Now, let's see... Money? Advice?\x09Happiness? No, you usually want a clue of some sort, don't you. Of course, you may have become altruistic over the past 200 years....~~"I know! You want to save Britannia!"];
+                    TurnOn(<< "money", "advice", "a clue", "happiness", "to save Britannia" >>);
+                } else {
+                    ["Then what are you talking to me for?"*];
+                    terminate;
+                }
+            }
+            key ("money") {
+                ["From a horse? Right! Like I've got some to give you."];
+                TurnOff(<< "money", "advice", "a clue", "happiness", "to save Britannia" >>);
+            }
+            key ("advice") {
+                ["Don't talk to horses!"*];
+                terminate;
+            }
+            key ("happiness") {
+                ["Who doesn't?"];
+                TurnOff(<< "money", "advice", "a clue", "happiness", "to save Britannia" >>);
+            }
+            key ("to save Britannia") {
+                ["You really expect me to believe that? You're just in this for the money."];
+                TurnOff(<< "money", "advice", "a clue", "happiness", "to save Britannia" >>);
+            }
+            key ("a clue") {
+                ["Now we're getting to the nitty-gritty. O.K., I'll give you a clue, but what's in it for me? Let me guess. Money? Love? No, knowing you it's probably nothing. With any luck, you'll go away and leave me alone."];
+                TurnOff(<< "money", "advice", "a clue", "happiness", "to save Britannia" >>);
+                TurnOn(<< "money", "love", "nothing", "will not make you glue" >>);
+            }
+            key ("nothing") {
+                ["I've already got that!"*];
+                terminate;
+            }
+            key ("money") {
+                ["Sure! Like I have a use for that!"*];
+                terminate;
+            }
+            key ("love") {
+                ["Sorry, I don't get into that."*];
+                terminate;
+            }
+            key ("will not make you glue") {
+                ["Threats, huh? And how do you expect me to respond to that? With courtesy and open hooves?~~ "Tell you what: you go away and leave me alone, and I'll tell you a clue. Fair?"];
+                v6 = ~AskYesNo();
+                if v6 {
+                    ["Now we're talking! Done deal. Here we go." He checks around to make sure no else is within earshot. "The gargoyles," he pauses, "are not evil.~~"And Rasputin is a mean Martian. There, that's it! Now get!"*];
+                    terminate;
+                } else {
+                    ["Fine. I'm not going to talk to you anyway!"*];
+                    terminate;
+                }
+                TurnOff("will not make you glue");
+            }
+            key ("bye") {
+                ["That's just fine. I was getting tired of you anyway."];
+                if v1 {
+                    SetSpeaker(0, _Iolo);
+                    ["Why, how dare thou speakest to the Avatar in that manner, Smith!"];
+                    SetSpeaker(0, _Smith);
+                    ["And who are you? My master?"];
+                    SetSpeaker(0, _Iolo);
+                    ["Why, as a matter of fact..."];
+                    SetSpeaker(0, _Smith);
+                    ["Sure, whatever."];
+                    CloseSpeaker(_Iolo);
+                }
+                [*];
+                terminate;
+            }
+        }
+        clear_answers;
+    }
+    if (event = _Bark) {
+        terminate;
+    }
+}

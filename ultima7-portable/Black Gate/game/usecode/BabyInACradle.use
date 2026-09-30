@@ -1,0 +1,20 @@
+Routine BabyInACradle accepts a0 #locals(4) {
+    if (event = _Action) {
+        closeAllGumps();
+        v0 = << byte(70), 0, byte(70), 1, byte(70), 2, byte(88), 17, byte(70), 2, byte(70), 1, byte(70), 0, byte(70), 3, byte(70), 4, byte(88), 17, byte(70), 4, byte(70), 3, byte(70), 0 >>;
+        v1 = ~PostAction((v0 & << byte(11), 65510, 2 >>), item);
+        if (~rndRange(10, 1) = 1) {
+            v2 = ~GetCoord(item);
+            Item_setType(_Cradle, item);
+            v3 = ~Item_create(_Baby);
+            SetItemFlag_i(_IsTemporary_i, v3);
+            SetItemFlag_i(_OkayToTake_i, v3);
+            if v3 {
+                v1 = ~PopToMap(v2);
+                if v1 {
+                    Item_bark("@Whaaahh!!@", v3);
+                }
+            }
+        }
+    }
+}

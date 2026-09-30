@@ -1,0 +1,197 @@
+Routine Lasher accepts a0 #locals(7) #uses(~LordOrLady, ~AskYesNo, ~IsNPCNear) {
+    if (event = _Bark) {
+        terminate;
+    }
+    SetSpeaker(0, _Lasher);
+    v0 = ~LordOrLady();
+    if not $MET_LASHER {
+        [You see a creature the size and shape of a horse. From its head protrudes a single straight horn. It looks at you with eyes that shine with intelligence.];
+        $MET_LASHER = true;
+    } else {
+        ["I greet thee once again, Avatar," says Lasher, the unicorn.];
+    }
+    TurnOn(<< "name", "job", "bye" >>);
+    converse {
+        key ("name") {
+            [The creature speaks. "My name is Lasher."];
+            TurnOff("name");
+        }
+        key ("job") {
+            [Lasher looks at you and blinks. "Come now, Avatar! I do not live by the rules that govern the society of Mankind. There is what I am, which is a unicorn. Then there is my purpose, which is another thing altogether."];
+            TurnOn(<< "unicorn", "purpose" >>);
+        }
+        key ("unicorn") {
+            [Lasher stares at you, stupefied. "Tell me, dost thou know what a unicorn is?"];
+            v1 = ~AskYesNo();
+            if not v1 {
+                [Lasher stares blankly at you. His mouth hangs open. "Very well. Then I shall tell thee what a unicorn is.];
+            } else {
+                [Lasher shakes his head sadly. "No, thou merely thinks thou dost know what a unicorn is, but I shall tell thee the truth.];
+            }
+            ["A unicorn is one of a family of nature spirits that were once called upon to aid a very powerful wizard many, many years ago."];
+            TurnOff("unicorn");
+            TurnOn("wizard");
+        }
+        key ("purpose") {
+            ["Oh, do not be coy with me, Avatar. Thou dost know very well the purpose of a unicorn. ~~We are foolproof virgin detectors!"];
+            TurnOff("purpose");
+            TurnOn("virgin detector");
+        }
+        key ("wizard") {
+            ["I do not remember the wizard's name, for much time has passed since then, but suffice it to say that he was a royal bastard. Anyway, for one reason or another, the chieftain of our clan, who at that time was a horse's ass named Sharp-Hoof, decided that rather than heed this wizard's rightful and properly performed ritual of calling, he was going to take the herd and chase after this bevy of really fine fillies."];
+            TurnOff("wizard");
+            TurnOn("Sharp-Hoof");
+        }
+        key ("Sharp-Hoof") {
+            ["Where was I? Oh, yes, Sharp-Hoof! The next morning, after we had had our way with these fillies, this wizard called us again. This time Sharp-Hoof realized that we had best answer, and were we sorry that we did! The wizard was horribly angry! And, well, I will just say that our agreements with such people are very, very binding."];
+            TurnOff("Sharp-Hoof");
+            TurnOn("binding");
+        }
+        key ("binding") {
+            ["Not only were we bound in service to this wizard for a thousand years, but he also placed a dreadful curse upon us."];
+            TurnOff("binding");
+            TurnOn(<< "service", "curse" >>);
+        }
+        key ("service") {
+            ["As it fell out, we did not actually have to serve the wizard for a thousand years. He reduced the time by a few weeks after placing that curse on us." Lasher snorts sarcastically, "I was heartbroken."];
+            TurnOff("service");
+        }
+        key ("curse") {
+            ["We nature spirits used to be renowned for our randiness, and this wizard had called upon us to assist him in the seduction of some maiden. When we stood him up... Well, let us just say that he was one magician who was having a problem convincing his magic wand to work. Anyway, in a pathetic attempt to bolster his diminished feelings of manhood, he ruined us with an awesomely powerful Curse of Chastity."];
+            TurnOff("curse");
+            TurnOn("Chastity");
+        }
+        key ("Chastity") {
+            ["It was a terrible curse. First, it drove us to kill all of the female members of our clan. Then it afflicted us with the particular sensitivity for which we have become known."];
+            TurnOff("Chastity");
+        }
+        key ("virgin detector") {
+            ["That is correct. So sensitive are members of my race to all forms of sexual energy that we can only tolerate physical contact with one who has not yet had any experience in that form of procreation - or recreation, if thou dost prefer."];
+            TurnOff("virgin detector");
+            TurnOn("sensitive");
+        }
+        key ("sensitive") {
+            ["Yes, I find it most unpleasant to actually come into physical contact with anyone who is not a virgin, and I will avoid doing so whenever possible."];
+            TurnOff("sensitive");
+            TurnOn(<< "avoid", "unpleasant" >>);
+        }
+        key ("avoid") {
+            ["Yes, well, I did not wish to get this personal with thee, but if thou does not mind, art thou a virgin?"];
+            v2 = ~AskYesNo();
+            if not v2 {
+                if (flag(669) or (flag(668) or flag(670))) {
+                    ["I thought as much!" Lasher starts to pace nervously. "If thou wouldst not mind standing back a bit, I would be most appreciative."];
+                } else {
+                    [Lasher slowly shakes his head. "Thou dost not have to brag in order to impress me, or fear any sort of verbal chastisements, honestly. By the way, I have an itch right betwixt my shoulder blades. Wouldst thou mind scratching it for me?" Lasher stretches out toward you. "Thank thee so much."];
+                    v3 = ~AvatarSex();
+                    v4 = ~IsNPCNear(_Iolo);
+                    v5 = ~IsNPCNear(_Shamino);
+                    v6 = ~IsNPCNear(_Dupre);
+                    if not v3 {
+                        if v4 {
+                            SetSpeaker(0, _Iolo);
+                            ["There's no shame in it, milord," says Iolo, looking very serious.*];
+                            CloseSpeaker(_Iolo);
+                            SetSpeaker(0, _Lasher);
+                        }
+                        if v5 {
+                            SetSpeaker(0, _Shamino);
+                            ["No, it is perfectly understandable. Thou hast been so busy lately," says Shamino. You sense he is struggling to maintain a straight face.*];
+                            CloseSpeaker(_Shamino);
+                            SetSpeaker(0, _Lasher);
+                        }
+                        if v6 {
+                            SetSpeaker(0, _Dupre);
+                            ["Why dost thou not go and pet the nice horsey. We would do it, but I think he prefers thee." With that, you hear an explosion of snorts and giggles.*];
+                            CloseSpeaker(_Dupre);
+                            SetSpeaker(0, _Lasher);
+                        }
+                        TurnOn("virginity");
+                    }
+                }
+            } else {
+                if (flag(669) or (flag(668) or flag(670))) {
+                    ["I beg thy pardon, but perhaps thou shouldst go to the Lycaeum and have someone look up the definition of the word 'virginity' for thee. Wouldst thou mind stepping back, please?! Thou dost make me nervous."];
+                } else {
+                    ["Yes, I could tell the answer to my question before thou didst even speak it. Art thou a virgin by choice or by circumstance?"];
+                    TurnOn(<< "choice", "circumstance" >>);
+                }
+            }
+            TurnOff("avoid");
+        }
+        key ("virginity") {
+            ["Surely, Avatar, thou knowest that thou dost magically regain thy virginity each time upon returning to Britannia! Hast thou remained a virgin since then by choice or by circumstance?"];
+            TurnOff("virginity");
+            TurnOn(<< "choice", "circumstance" >>);
+        }
+        key ("choice") {
+            ["Well, I am sure thou wilt find the right person one day."];
+            TurnOff(<< "choice", "circumstance" >>);
+        }
+        key ("circumstance") {
+            ["That is too bad, I am very sorry. I would love to be able to help thee, but that is no longer my purpose."];
+            TurnOff(<< "circumstance", "choice" >>);
+            TurnOn("help");
+        }
+        key ("help") {
+            ["Oh, I do not know. It has been so long since I was personally involved in such matters. Art thou seeking love or art thou seeking lust?"];
+            TurnOn(<< "love", "lust" >>);
+            TurnOff("help");
+        }
+        key ("love") {
+            ["Hmmm, love is usually a very elusive quarry. I suppose that thou canst try thy luck in the city of Cove. It is a city of lovers, or so I have heard."];
+            TurnOff(<< "love", "lust" >>);
+        }
+        key ("lust") {
+            ["If quenching thy lust is thine only concern, then thou shouldst find satisfaction at the Baths, in Buccaneer's Den. But be sure to take a full purse."];
+            TurnOff(<< "love", "lust" >>);
+        }
+        key ("unpleasant") {
+            ["Actually, the part of being a virgin detector that I find the most intolerable is having to perform upon demand for some clever mage or bard or hero who wants a potential wife to try to touch me."];
+            TurnOff("unpleasant");
+            TurnOn("wife");
+        }
+        key ("wife") {
+            ["It is a tragedy. The man always gets nervous, then places a condition on the marriage that his bride must be a virgin. They call me to put her to the test, and the man's bachelorhood is granted a reprieve. I have destroyed more engagements than the Bubonic Plague."];
+            TurnOff("wife");
+            if not flag(721) {
+                TurnOn("bachelorhood");
+            }
+        }
+        key ("bachelorhood") {
+            ["Just like those fools who are wandering around down here looking for me for the same reason, I would wager. Well, they can lose that notion. I like women, I truly do, and frankly, I am sick and tired of being used as the instrument of their humiliation."];
+            TurnOff("marriages");
+            if flag(736) {
+                TurnOn("male virginity test");
+            } else {
+                TurnOn("fools");
+            }
+            TurnOff("bachelorhood");
+        }
+        key ("fools") {
+            ["I am a magical creature. I can avoid them down here as long as I want. They will die of old age before they catch me. I refuse to assist them in weaseling out of some breach of promise. Thou canst tell them that if thou dost see them."];
+            flag(720) = true;
+            TurnOff("fools");
+        }
+        key ("male virginity test") {
+            ["They want the virginity test for a man who is getting married?!" Lasher lets out a long surprised laugh. "In all mine existence, I have never heard of such a thing!"];
+            TurnOff("male virginity test");
+            TurnOn("getting married");
+        }
+        key ("getting married") {
+            ["Oh, she must be quite a ravishing maiden if he is willing to risk life and limb to come down here and prove his virtue."];
+            TurnOff("getting married");
+            TurnOn("ravishing maiden");
+        }
+        key ("ravishing maiden") {
+            ["This boy must be smitten something fierce by this maid. I suppose that I should go and investigate this further. If he is as sincere about this as thou dost say, then perhaps I will help the poor lad."];
+            TurnOff("ravishing maiden");
+            flag(721) = true;
+        }
+        key ("bye") {
+            break;
+        }
+    }
+    clear_answers;
+    ["Fare thee well, Avatar."*];
+}

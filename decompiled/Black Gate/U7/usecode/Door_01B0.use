@@ -1,0 +1,28 @@
+Routine Door_01B0 accepts a0 #locals(1) #uses(~DoorState_i, ~SwingDoor_i, SwingPartner_i, SayDoorBlocked_i, BarkLocked_i, BarkMagicLocked_i) {
+    if (event <> _Action) {
+        return;
+    }
+    v0 = ~DoorState_i(item);
+    if (v0 = 1) {
+        if ~SwingDoor_i(5, 3, 0, 0, _Door_433, item) {
+            SwingPartner_i(7, 0, 0, 0, _Door_376, 1, 1, _Door_270, item);
+            playSFX(item, 31);
+        } else {
+            SayDoorBlocked_i();
+        }
+    }
+    if (v0 = 0) {
+        if ~SwingDoor_i(7, 0, 65533, 1, _Door_433, item) {
+            SwingPartner_i(7, 0, 0, 1, _Door_376, 2, 0, _Door_270, item);
+            playSFX(item, 30);
+        } else {
+            SayDoorBlocked_i();
+        }
+    }
+    if (v0 = 2) {
+        BarkLocked_i(item);
+    }
+    if (v0 = 3) {
+        BarkMagicLocked_i(item);
+    }
+}

@@ -1,0 +1,72 @@
+Routine Key accepts a0 #locals(6) #uses(ToggleDoorLock_i) {
+    if (event = _Action) {
+        v0 = ~GetTarget();
+        playSFX(item, 27);
+        v1 = ~Item_getType(v0);
+        v2 = ~GetQuality(item);
+        v3 = ~GetQuality(v0);
+        if (~Item_getType(v0::1) in << 376, 270, 432, 433 >>) && (v2 = v3) {
+            ToggleDoorLock_i(v0);
+        }
+        if (v1 = 522) && (v2 = v3) {
+            Item_bark("Unlocked", v0);
+            Item_setType(_Chest, v0);
+            if (v3 = 253) {
+                $FOUND_GOLD = true;
+            }
+        }
+        if (v1 = 800) && (v2 = v3) {
+            v4 = ~GetContents(_All, v2, _Key, v0);
+            v5 = false;
+            While v4 {
+                if (v4 = v0) {
+                    v5 = true;
+                    break;
+                }
+                v4 = ~Item_getContainer(v4);
+            }
+            if v5 {
+                Item_bark("Key inside", _Avatar);
+            } else {
+                Item_closeGump(v0);
+                Item_setType(_Locked_Chest, v0);
+                Item_bark("Locked", v0);
+            }
+        }
+    }
+}
+
+Routine ToggleDoorLock_i accepts a0 #locals(4) #uses(~DoorState_i, MemberSays_i, SetDoorState_i) {
+    v1 = ~DoorState_i(v0);
+    v2 = ~GetQuality(item);
+    v3 = 65535;
+    if (v1 = 0) {
+        if (v2 = 228) {
+            flag(737) = false;
+        }
+        if (v2 = 247) {
+            flag(738) = false;
+        }
+        v3 = 2;
+    }
+    if (v1 = 1) {
+        v4 = ("@Excuse me, the door is already open. " + "Is it not rather futile to lock it now?@");
+        MemberSays_i(v4);
+    }
+    if (v1 = 2) {
+        if (v2 = 228) {
+            flag(737) = true;
+        }
+        if (v2 = 247) {
+            flag(738) = true;
+        }
+        v3 = 0;
+    }
+    if (v1 = 3) && (~rndRange(10, 1) = 1) {
+        v4 = ("@Excuse me, the door appears magically locked. " + "Is it not rather difficult to unlock it with a key?@");
+        MemberSays_i(v4);
+    }
+    if (v3 <> 65535) {
+        SetDoorState_i(v3, v0);
+    }
+}

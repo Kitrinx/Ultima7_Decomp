@@ -1,0 +1,178 @@
+Routine Brothers accepts a0 #locals(6) {
+    if (event = _Bark) {
+        terminate;
+    }
+    SetSpeaker(0, _OneEyedMarl);
+    v0 = 0;
+    v1 = ~GetParty();
+    v2 = 0;
+    Foreach v5 in v1 {
+        v2 = (v2 + 1);
+    }
+    TurnOn(<< "name", "job", "bye" >>);
+    if not flag(711) {
+        [You see a three-headed hydra. The head on the left speaks.~~ "Wake up, there is something here."];
+        SetSpeaker(0, 65254);
+        [The head on the right looks up and at you.~~"I wonder if it is good to eat."*];
+        CloseSpeaker(65254);
+        SetSpeaker(0, 65255);
+        [The middle head wakes with a start, sees you, becomes alarmed, and begins to snort excitedly.*];
+        SetSpeaker(0, _OneEyedMarl);
+        ["Fear not, brother; we know it's there."*];
+        CloseSpeaker(65255);
+        SetSpeaker(0, 65254);
+        ["I wonder if it talks?"*];
+        CloseSpeaker(65254);
+        SetSpeaker(0, _OneEyedMarl);
+        flag(711) = true;
+    } else {
+        ["We are not talking to thee! We are trying to eat thee!"*];
+        Npc_setAlignment(_Evil, ~NPCToItem_i(_Brothers));
+        SetWorkType(_Combat_0, ~NPCToItem_i(_Brothers));
+        terminate;
+    }
+    converse {
+        key ("name") {
+            ["My name is Shandu. My brother next to me is Shanda. My brother next to him is Shando."*];
+            SetSpeaker(0, 65254);
+            ["It does not matter what our names are!"*];
+            CloseSpeaker(65254);
+            SetSpeaker(0, 65255);
+            [Shanda shakes his head and glares at you.*];
+            CloseSpeaker(65255);
+            SetSpeaker(0, _OneEyedMarl);
+            TurnOff("name");
+            TurnOn(<< "Shandu", "Shanda", "Shando" >>);
+        }
+        key ("Shandu") {
+            ["That is me."~~Shandu smiles and licks his lips.~~ "I like it when my food says my name!"];
+            TurnOff("Shandu");
+        }
+        key ("Shanda") {
+            SetSpeaker(0, 65255);
+            [Shanda rolls his eyes and exhales a puff of smoke from his nostrils.*];
+            CloseSpeaker(65255);
+            SetSpeaker(0, 65254);
+            ["Shanda says that thou shouldst refrain from saying his name. He does not like it when his food says his name."*];
+            CloseSpeaker(65254);
+            SetSpeaker(0, _OneEyedMarl);
+            TurnOff("Shanda");
+        }
+        key ("Shando") {
+            SetSpeaker(0, 65254);
+            ["That is me. I am the oldest brother."*];
+            SetSpeaker(0, _OneEyedMarl);
+            ["We are all connected, Shando! Thou cannot be older!"*];
+            SetSpeaker(0, 65254);
+            ["Mine head was the first to breathe the air."*];
+            SetSpeaker(0, _OneEyedMarl);
+            [Shandu spits.~~"What does it matter? Our food does not care which of us is the eldest!"*];
+            CloseSpeaker(65254);
+            SetSpeaker(0, _OneEyedMarl);
+            TurnOff("Shando");
+        }
+        key ("job") {
+            ["Job?"];
+            SetSpeaker(0, 65255);
+            [Shanda opens his mouth wide and emits a burst of flame.*];
+            CloseSpeaker(65255);
+            SetSpeaker(0, 65254);
+            ["He thinks that is a joke. Job! Ha! I think it is amusing, too. I have never heard my food tell jokes."*];
+            SetSpeaker(0, _OneEyedMarl);
+            ["Ah, but brothers, we -do- have a job."*];
+            SetSpeaker(0, 65254);
+            ["We do?"*];
+            SetSpeaker(0, _OneEyedMarl);
+            ["We guard the Caddellite, do we not? Our purpose in life is to guard the Caddellite!"];
+            CloseSpeaker(65254);
+            SetSpeaker(0, _OneEyedMarl);
+            TurnOn("Caddellite");
+        }
+        key ("Caddellite") {
+            if (v0 = 0) {
+                SetSpeaker(0, 65255);
+                [Shanda becomes excited and snorts as if he were saying several sentences.];
+                CloseSpeaker(65255);
+                SetSpeaker(0, _OneEyedMarl);
+                TurnOff("Caddellite");
+                TurnOn("What did he say?");
+                v0 = 1;
+            } else {
+                ["Thou dost want to know about Caddellite? Very well, I shall tell thee about Caddellite."~~The hydra shifts its weight a moment, then grins wickedly.~~"We are guarding it."];
+                TurnOff("Caddellite");
+                TurnOn("guarding");
+            }
+        }
+        key ("What did he say?") {
+            ["He wasn't talking to thee!"];
+            TurnOff("What did he say?");
+            TurnOn("Caddellite");
+        }
+        key ("guarding") {
+            SetSpeaker(0, 65254);
+            ["The creature seems to echo everything we say, Shandu."*];
+            CloseSpeaker(65254);
+            SetSpeaker(0, 65255);
+            [Shanda makes a horrid growling noise.*];
+            CloseSpeaker(65255);
+            SetSpeaker(0, _OneEyedMarl);
+            ["Shanda says he is hungry!"*];
+            SetSpeaker(0, 65254);
+            ["So am I!"*];
+            CloseSpeaker(65254);
+            SetSpeaker(0, _OneEyedMarl);
+            ["Now that thou dost mention it, I am feeling a few hunger pangs myself. If we did not have to protect the Caddellite, I would eat this creature in a single gulp!"];
+            TurnOff("guarding");
+            TurnOn(<< "echo", "protect" >>);
+        }
+        key ("echo") {
+            ["Hearing this creature repeat whatever we say is making me hungry!"*];
+            SetSpeaker(0, 65254);
+            ["It amuses me! Obviously it is a creature of severely limited intelligence!"*];
+            CloseSpeaker(65254);
+            SetSpeaker(0, 65255);
+            [Shanda lets out a low growl.*];
+            CloseSpeaker(65255);
+            SetSpeaker(0, _OneEyedMarl);
+            ["Shanda says he wants something to eat!"];
+            TurnOff("echo");
+        }
+        key ("protect") {
+            ["I suppose we must protect the Caddellite from creatures like thee who come around once every 1000 years or so wanting to take it."*];
+            SetSpeaker(0, 65255);
+            [Shanda growls louder than before, then breathes a bit of fire.*];
+            CloseSpeaker(65255);
+            SetSpeaker(0, 65254);
+            ["Creature! Thou art making Shanda angry! He thinks that thou art attempting to steal the Caddellite! Beware!"*];
+            CloseSpeaker(65254);
+            SetSpeaker(0, _OneEyedMarl);
+            TurnOff("protect");
+            TurnOn("steal");
+        }
+        key ("steal") {
+            [Shandu becomes enraged.~~"I knew it! It is trying to steal our Caddellite!"~~Shandu addresses his brothers.~~"We must not delay any longer."*];
+            SetSpeaker(0, 65255);
+            [Shanda roars angrily!*];
+            CloseSpeaker(65255);
+            SetSpeaker(0, _OneEyedMarl);
+            ["That is a good idea, my brother!"~~Shandu turns to you.~~ \["This creature vaguely resembles a troll, only it smells a little more pleasant. Dost thou think it might taste better than a troll, Shando?"*];
+            SetSpeaker(0, 65254);
+            ["We shall not know until we try!"*];
+            CloseSpeaker(65254);
+            SetSpeaker(0, 65255);
+            [Shanda nods his head furiously, licking his lips.*];
+            CloseSpeaker(65255);
+            SetSpeaker(0, _OneEyedMarl);
+            ["Very well! Let's eat it!"*];
+            Npc_setAlignment(_Evil, ~NPCToItem_i(_Brothers));
+            SetWorkType(_Combat_0, ~NPCToItem_i(_Brothers));
+            terminate;
+        }
+        key ("bye") {
+            ["Thou cannot say 'bye' to us! How rude!"];
+            TurnOff("bye");
+        }
+    }
+    clear_answers;
+    ["Leaving so soon?"*];
+}

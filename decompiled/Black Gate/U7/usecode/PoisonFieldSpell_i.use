@@ -1,0 +1,22 @@
+Routine PoisonFieldSpell_i accepts a0 #locals(9) #uses(~DirFromAvatar_i, ~IsMagicOK_i) {
+    if (event = _Action) {
+        v0 = ~GetTarget();
+        Kernel_resetRef(item);
+        v1 = ~DirFromAvatar_i(v0);
+        Item_bark("@In Nox Grav@", item);
+        if ~IsMagicOK_i() {
+            v2 = ~PostAction(<< _aFACE_i, v1, _aSFX_i, 110, _aRAISE1_FRAME_i, _aEXTEND1_FRAME_i, _aTHRUST1_FRAME_i >>, item);
+            v3 = ~Item_create(_Poison_Field);
+            if v3 {
+                v4 = (v0::2 + 1);
+                v5 = (v0::3 + 1);
+                v6 = v0::4;
+                v7 = << v4, v5, v6 >>;
+                SetItemFlag_i(_IsTemporary_i, v3);
+                v2 = ~PopToMap(v7);
+            }
+        } else {
+            v8 = ~PostAction(<< _aFACE_i, v1, _aRAISE1_FRAME_i, _aEXTEND1_FRAME_i, _aTHRUST1_FRAME_i, _aUSABLE_i, #FizzleSpell_i >>, item);
+        }
+    }
+}

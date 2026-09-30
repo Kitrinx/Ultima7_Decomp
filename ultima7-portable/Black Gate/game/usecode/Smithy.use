@@ -1,0 +1,83 @@
+Routine Smithy accepts a0 #locals(6) #uses(~LordOrLady, ~AskYesNo, ~AskList, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Smithy);
+        v0 = ~LordOrLady();
+        v1 = ~GetTime();
+        v2 = ~GetWorkType(~NPCToItem_i(_Smithy));
+        TurnOn(<< "name", "job", "bye" >>);
+        if not $MetSmithy {
+            [You see a well-dressed pirate with oil in his hair.];
+            $MetSmithy = true;
+        } else {
+            ["May I help thee?" Smithy asks.];
+        }
+        converse {
+            key ("name") {
+                ["I am Smithy."];
+                TurnOff("name");
+            }
+            key ("job") {
+                ["I run the games at the House of Games.];
+                if (v2 = 10) {
+                    ["I can explain the rules and how to play for thee. I also make sure that one does not cheat."];
+                    TurnOn(<< "games", "cheat" >>);
+                } else {
+                    ["Please do come and try thy skill when the facility is open for business."];
+                }
+            }
+            key ("cheat") {
+                ["If thou art caught cheating, thou wilt be arrested. And we do prosecute!"];
+                TurnOff("cheat");
+            }
+            key ("games") {
+                ["There are three games that thou canst play. The first is Virtue Roulette. The second is The Rat Race. The third is Triples. Wouldst thou like to hear any rules?"];
+                if ~AskYesNo() {
+                    ["For which game dost thou want to hear the rules?"];
+                    v3 = ~AskList(<< "None", "Virtue Roulette", "The Rat Race", "Triples" >>);
+                    if (v3 = "None") {
+                        ["That is all right."];
+                        break;
+                    }
+                    if (v3 = "Virtue Roulette") {
+                        ["Simply place the amount of gold coins thou dost wish to bet on one or more colors. Use the wheel and thy money will be increased if thou hast bet correctly."];
+                    }
+                    if (v3 = "The Rat Race") {
+                        ["Place thy bet on the green spot at the end of the lane which corresponds to the trough in which thy rat is running."];
+                    }
+                    if (v3 = "Triples") {
+                        ["Thou canst bet on a triple, that is, three ones, three twos, or three threes. This has the highest payback. A '1, 2, 3' pays slightly less. A sum total of '4', '5', '7', or '8' pays the least. Do not place thy money in between numbers, especially the '4' and '5'. A '6' made up of anything other than three twos loses. After placing thy bet, spin the wheel."];
+                    }
+                } else {
+                    ["Fine then. Thou art on thine own."];
+                }
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["See thee again, <v0>."*];
+    }
+    if (event = _Bark) {
+        v1 = ~GetTime();
+        v2 = ~GetWorkType(~NPCToItem_i(_Smithy));
+        v4 = ~rndRange(4, 1);
+        if (v2 = 10) {
+            if (v4 = 1) {
+                v5 = "@Place thy bets.@";
+            }
+            if (v4 = 2) {
+                v5 = "@No more bets.@";
+            }
+            if (v4 = 3) {
+                v5 = "@Winner takes all.@";
+            }
+            if (v4 = 4) {
+                v5 = "@The House wins.@";
+            }
+            Item_bark(v5, _Smithy);
+        } else {
+            BarkAboutWork_i(_Smithy);
+        }
+    }
+}

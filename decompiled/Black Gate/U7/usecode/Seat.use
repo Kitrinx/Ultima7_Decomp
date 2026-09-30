@@ -1,0 +1,94 @@
+Routine Seat accepts a0 #locals(21) #uses(~BargeType_i, Cart_028C, FlyingCarpet, ~LoadBarge_i, SeatParty_i, ~NextThrone_i) {
+    if (event = _Action) {
+        if ~GetBarge_i(item) {
+            v0 = ~BargeType_i(item);
+            if ((v0 = 652) or (v0 = 840)) {
+                if ~GetItemFlag_i(_OnMovingBarge_i, item) {
+                    if (v0 = 652) {
+                        Cart_028C(item);
+                    }
+                    if (v0 = 840) {
+                        FlyingCarpet(item);
+                    }
+                } else {
+                    v1 = ~LoadBarge_i(item);
+                }
+            }
+        } else {
+            SeatParty_i(292, item);
+            v2 = (~GetDist(_Avatar, item) + 15);
+            v1 = ~PostInFuture(v2, << _aNO_HALT_i, _aUSABLE_i, #Seat >>, item);
+        }
+    }
+    if (event = _Posted_i) {
+        v3 = ~GetCoord(_Avatar);
+        v4 = << 2791, 2517, 2615, 2517, 2727, 2277, 2615, 2469 >>;
+        v5 = << 2775, 2181 >>;
+        v6 = 0;
+        if ((v3::1 = v5::1) and ((v3::2 = v5::2) and (flag(743) = false))) {
+            flag(743) = true;
+            v5::2 = (v5::2 + 2);
+            createSprite(1, 0, 0, 0, v5::2, v5::1, 17);
+            playSFX(item, 62);
+            LightningBolt();
+            v7 = ~Item_create(_Fire_Field);
+            if v7 {
+                SetItemFlag_i(_IsTemporary_i, v7);
+                v1 = ~PopToMap(v5);
+            }
+            terminate;
+        }
+        v8 = 1;
+        do {
+            if ((v3::1 = v4::v8) and (v3::2 = v4::(v8 + 1))) {
+                v8 = ~NextThrone_i(v8);
+                v6::1 = v4::v8;
+                v6::2 = v4::(v8 + 1);
+                break;
+            }
+            v8 = ~NextThrone_i(v8);
+        } while (v8 > 1);
+        if v6 {
+            v9 = ~GetParty();
+            v10 = << >>;
+            v11 = << >>;
+            v12 = << >>;
+            v13 = ~GetCoord(_Avatar);
+            v14 = 1;
+            Foreach v17 in v9 {
+                v18 = ~GetCoord(v17);
+                v10::v14 = (v13::1 - v18::1);
+                v11::v14 = (v13::2 - v18::2);
+                v12::v14 = ~GetFullFrame_i(v17);
+                v14 = (v14 + 1);
+            }
+            Item_move(v6, _Party);
+            v13 = ~GetCoord(_Avatar);
+            v14 = 1;
+            Foreach v17 in v9 {
+                Item_move(<< (v13::1 - v10::v14), (v13::2 - v11::v14), v13::3 >>, v17);
+                SetFullFrame_i(v12::v14, v17);
+                v14 = (v14 + 1);
+            }
+        }
+    }
+}
+
+Function ~NextThrone_i accepts a0 #locals(0) {
+    if (v0 < 5) {
+        v0 = (v0 + 2);
+        return v0;
+    }
+    if (v0 = 5) {
+        if flag(743) {
+            v0 = 7;
+        } else {
+            v0 = 1;
+        }
+        return v0;
+    }
+    if (v0 > 5) {
+        v0 = 1;
+        return v0;
+    }
+}

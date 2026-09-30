@@ -1,0 +1,38 @@
+Routine BreakItem_i accepts a0 #locals(14) #uses(~RemoveFromList_i, ~SortByCriteria_i, ~AbsValue_i) {
+    v0 = ~Item_getType(item);
+    if (v0 = 518) {
+        CallGuards_i();
+        v1 = ~RemoveFromList_i(~FindNearby_i(0, 6, _Glass_Counter_Tops, item), item);
+        v2 = << >>;
+        Foreach v5 in v1 {
+            v2 = (v2 & ~GetDist(item, v5));
+        }
+        v1 = ~SortByCriteria_i(v2, v1);
+        v6 = ~GetCoord(item);
+        v7 = 1;
+        Foreach v5 in v1 {
+            v10 = ~GetCoord(v5);
+            v11 = 1;
+            While (v11 <= v7) {
+                v12 = (((v11 - 1) * 3) + 1);
+                if ((~AbsValue_i((v10::1 - v6::v12)) <= 2) and (~AbsValue_i((v10::2 - v6::(v12 + 1))) <= 2)) {
+                    Item_destroy(v5);
+                    v6 = (v6 & v10);
+                    v7 = (v7 + 1);
+                    break;
+                }
+                v11 = (v11 + 1);
+            }
+        }
+        playSFX(item, 37);
+        Item_destroy(item);
+        return;
+    }
+    if ((v0 = 848) or (v0 = 268)) {
+        if not (~GetFrame(item) = 2) {
+            v13 = ~PostAction(<< _aSFX_i, 37, _aCONTINUE_i, _aFRAME, 2 >>, item);
+        }
+        return;
+    }
+    Item_destroy(item);
+}

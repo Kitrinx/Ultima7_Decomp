@@ -1,0 +1,93 @@
+Routine Markus accepts a0 #locals(2) #uses(~AskYesNo, MarkusTrains_i, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Markus);
+        v0 = ~GetTime();
+        v1 = ~GetWorkType(~NPCToItem_i(_Markus));
+        TurnOn(<< "name", "job", "murder", "bye" >>);
+        if not $MET_MARKUS {
+            [You see a solid-looking but seemingly bored fighter.];
+            $MET_MARKUS = true;
+        } else {
+            ["Yes?" Markus asks.];
+        }
+        converse {
+            key ("name") {
+                ["I am Markus the trainer."];
+                TurnOff("name");
+            }
+            key ("job") {
+                ["I am a trainer here in Trinsic," he says gruffly. "If thou dost wish to increase thy skill in combat I can help thee."];
+                TurnOn(<< "Trinsic", "train" >>);
+            }
+            key ("murder") {
+                ["I heard about it, but I assure thee I know nothing of the details." Markus yawns.];
+                TurnOff("murder");
+            }
+            key ("Trinsic") {
+                [The fighter shrugs. "The town is all right." He sniffs.];
+                TurnOff("Trinsic");
+            }
+            key ("train") {
+                if (v1 = 7) {
+                    ["The cost to train with me is 20 gold. Too costly, right?"];
+                    if not ~AskYesNo() {
+                        MarkusTrains_i(20, 4);
+                    } else {
+                        [Markus yawns. "Very well."];
+                    }
+                } else {
+                    ["Please come to my place of business during normal daylight hours."];
+                    TurnOff("train");
+                }
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["Goodbye," the fighter bows.*];
+    }
+    if (event = _Bark) {
+        BarkAboutWork_i(_Markus);
+    }
+}
+
+Routine MarkusTrains_i accepts a0, a1 #locals(8) #uses(~GetStudent, ~CanTrain, ~GetStat, CombatTrain_i) {
+    v2 = ~GetStudent();
+    v3 = ~GetNPCName_i(v2);
+    if (v2 = 0) {
+    } else {
+        if (v2 = 65180) {
+            v4 = "you";
+        } else {
+            v4 = v3;
+        }
+        v5 = 1;
+        v6 = ~CanTrain(v5, v2, v0, v1);
+        if (v6 = 0) {
+            ["I am afraid thou dost not have enough practical experience to train at this time. If thou couldst return at a later date, I would be most happy to provide thee with my services."];
+        } else {
+            if (v6 = 1) {
+                v7 = ~CountItem(_All, _All, _Gold_Coin, _Party);
+                [You gather your gold and count it. You have <v7> altogether.];
+                if (v7 < v0) {
+                    [Markus stretches. He shrugs and says, "I regret that thou dost not have enough gold to meet my price. Perhaps later, when thou hast made thy fortune pillaging the land..."];
+                    goto label_14;
+                }
+            }
+            [You pay <v0> gold, and the training session begins.];
+            if (v6 = 2) {
+                [Markus blinks and seems to come out of his boredom. "Thou art already as proficient as I! Thou cannot be trained further here."~~Markus returns the gold.];
+            } else {
+                v8 = ~TakeFromParty_i(true, _All, _All, _Gold_Coin, v0);
+                ["Very well," Markus says, stifling a yawn. "Here we go."~~Markus wields his sword and faces <v4>. He gives <v4> a few pointers in stance and balance, then demonstrates some sample thrusts.];
+                [Before long, <v4> and the trainer are trading blows with weapons. He is obviously very good at what he does, and the experience is valuable to <v4>. When the session is over, it is felt that there has been a gain in combat ability.*];
+                v9 = ~GetStat(_Cbt, v2);
+                if (v9 < 30) {
+                    CombatTrain_i(1, v2);
+                }
+            }
+        }
+    }
+    label_14:
+}

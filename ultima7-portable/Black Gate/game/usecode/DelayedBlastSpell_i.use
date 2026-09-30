@@ -1,0 +1,35 @@
+Routine DelayedBlastSpell_i accepts a0 #locals(6) #uses(~DirFromAvatar_i, ~IsMagicOK_i) {
+    if (event = _Action) {
+        v0 = false;
+        Kernel_resetRef(item);
+        v1 = ~GetTarget();
+        v2 = ~DirFromAvatar_i(v1);
+        v3 = << v1::2, v1::3, v1::4 >>;
+        Item_bark("@Tym Vas Flam@", item);
+        if ~IsMagicOK_i() {
+            v4 = ~Item_create(_Delayed_Explosion_621);
+            if v4 {
+                SetItemFlag_i(_IsTemporary_i, v4);
+                SetItemFlag_i(_Invisible, v4);
+                v5 = ~PopToMap(v3);
+                if v5 {
+                    v5 = ~ChangeNPCStat_i(1, _Hits, v4);
+                    v5 = ~SetAttack_i(_Delayed_Explosion_621, v4, item);
+                    v5 = ~PostInFuture(12, << _aNO_HALT_i, _aATTACK_i >>, item);
+                    v5 = ~PostInFuture(14, << _aNO_HALT_i, _aREMOVE_i >>, v4);
+                    v5 = ~PostAction(<< _aFACE_i, v2, _aSFX_i, 65, _aTHRUST2_FRAME_i, _aOUT_FRAME_i, _aUP_FRAME_i >>, item);
+                    createSprite(65535, 0, 0, 0, v3::2, v3::1, 13);
+                } else {
+                    v0 = true;
+                }
+            } else {
+                v0 = true;
+            }
+        } else {
+            v0 = true;
+        }
+        if v0 {
+            v5 = ~PostAction(<< _aFACE_i, v2, _aTHRUST2_FRAME_i, _aOUT_FRAME_i, _aUP_FRAME_i, _aUSABLE_i, #FizzleSpell_i >>, v4);
+        }
+    }
+}

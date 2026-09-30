@@ -1,0 +1,237 @@
+Routine Dupre accepts a0 #locals(20) #uses(~LordOrLady, ~AvatarName, ~IsNPCNear, ~AskList, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Dupre);
+        if flag(747) {
+            if (~GetClock(11) < 1) {
+                ["I am sorry, I do not join thieves."];
+                terminate;
+            } else {
+                ["All right, I suppose thou hast learned thy lesson. I shall rejoin."];
+                JoinParty(_Dupre);
+                flag(747) = false;
+                terminate;
+            }
+        }
+        v0 = ~LordOrLady();
+        v1 = ~GetParty();
+        v2 = ~NPCToItem_i(_Dupre);
+        v3 = ~AvatarName();
+        v4 = ~IsNPCNear(_Iolo);
+        v5 = ~IsNPCNear(_Shamino);
+        v6 = ~IsNPCNear(_Spark);
+        v7 = ~IsDead(~NPCToItem_i(_Iolo));
+        v8 = ~IsDead(~NPCToItem_i(_Shamino));
+        v9 = ~IsDead(~NPCToItem_i(_Spark));
+        v10 = ~IsDead(~NPCToItem_i(_Sprellic));
+        v11 = ~IsDead(~NPCToItem_i(_Vokes));
+        v12 = ~IsDead(~NPCToItem_i(_Syria));
+        v13 = ~IsDead(~NPCToItem_i(_Timmons));
+        v14 = ~IsMedallionOn_i();
+        TurnOn(<< "name", "job", "bye" >>);
+        if (v2 in v1) {
+            TurnOn("leave");
+        }
+        if $JoinFellow {
+            TurnOn("Fellowship");
+        }
+        if v6 {
+            TurnOn("Spark");
+        }
+        if not $MetDupre {
+            [You see the familiar face of your good friend, Dupre. While somewhat older, he still seems full of his usual casual good humor.];
+            $MetDupre = true;
+        } else {
+            ["How may I assist thee, <v3>?" asks Sir Dupre.];
+        }
+        converse {
+            key ("name") {
+                ["Why, dost thou not recognize me? It is I, Lord British!" he laughs. "Dost thou not know thy friend Dupre when thou seest him, <v3>?"];
+                if v5 {
+                    SetSpeaker(0, _Shamino);
+                    ["Do not be so modest, Sir Dupre. Thou shouldst tell the Avatar that thou hast been knighted since last you met."*];
+                    CloseSpeaker(_Shamino);
+                    SetSpeaker(0, _Dupre);
+                    [Sir Dupre looks quite embarrassed. "Well, yes, I would have gotten around to that."];
+                } else {
+                    if v4 {
+                        SetSpeaker(0, _Iolo);
+                        ["Do not be so modest, Sir Dupre. Thou shouldst tell the Avatar that thou hast been knighted since last you met."*];
+                        CloseSpeaker(_Iolo);
+                        SetSpeaker(0, _Dupre);
+                        [Sir Dupre looks quite embarrassed. "Well, yes, I would have gotten around to that."];
+                    }
+                }
+                TurnOff("name");
+            }
+            key ("job") {
+                if not flag(365) {
+                    ["I have not seen our old friends in some time. Currently I am conducting a study of all of the various drinking establishments of Britannia. At present I am about halfway through. But it is nothing that could keep me from adventuring with thee, <v3>."];
+                    TurnOn(<< "friends", "Jhelom", "join" >>);
+                } else {
+                    ["My job is currently to try and keep thee and thy friends out of trouble as much as possible!" He winks and gives you a good-natured grin.];
+                    TurnOn("friends");
+                }
+            }
+            key ("friends") {
+                ["Our old friends -- Iolo and Shamino."];
+                TurnOff("friends");
+                TurnOn(<< "Iolo", "Shamino" >>);
+            }
+            key ("join") {
+                v15 = 0;
+                v1 = ~GetParty();
+                Foreach v18 in v1 {
+                    v15 = (v15 + 1);
+                }
+                if (v15 < 8) {
+                    ["It would be both an honor and a pleasure to join thee on thine adventures once again."];
+                    flag(365) = true;
+                    JoinParty(_Dupre);
+                    TurnOn("leave");
+                } else {
+                    ["Hmm. Too crowded for my liking. Come back if thou shouldst diminish thy group by a member or two."];
+                }
+                TurnOff("join");
+            }
+            key ("leave") {
+                ["Dost thou want me to wait here or dost thou truly want me to leave and go home?"];
+                ClearKeys();
+                v19 = ~AskList(<< "wait here", "go home" >>);
+                if (v19 = "wait here") {
+                    ["Very well. I shall await thy return."*];
+                    LeaveParty(_Dupre);
+                    SetWorkType(_Wait, ~NPCToItem_i(_Dupre));
+                    flag(365) = false;
+                    terminate;
+                } else {
+                    ["I shall depart thy company if that is truly thy wish. If thou shouldst ever need me again, thou hast only to ask." He turns away from you, obviously disappointed.*];
+                    LeaveParty(_Dupre);
+                    flag(365) = false;
+                    SetWorkType(_Loiter, ~NPCToItem_i(_Dupre));
+                    terminate;
+                    TurnOn("join");
+                    TurnOff("leave");
+                }
+            }
+            key ("Jhelom") {
+                ["It is something like the old times of Britannia, during the days of thy last visit, only more bloodthirsty. The local sport in Jhelom is duelling."];
+                TurnOff("Jhelom");
+                TurnOn(<< "old times", "duelling" >>);
+            }
+            key ("old times") {
+                ["These people still believe that any problem can be solved by hitting something or stabbing someone. They remind me of a more primitive but less complicated time. Perhaps that is why people live here-- to escape their modern problems."];
+                TurnOff("old times");
+            }
+            key ("duelling") {
+                if not flag(362) {
+                    if not (v11 and (v12 and v13)) {
+                        ["Right now the town is buzzing about three local fighters, all of whom have challenged another man to a duel. The challenged one's name is Sprellic."];
+                        TurnOn(<< "fighters", "Sprellic" >>);
+                    } else {
+                        ["Perhaps now that several of Jhelom's local ruffians have been well smited things in that town will calm down. Although I doubt they will for long."];
+                    }
+                } else {
+                    ["Perhaps since thou hast shown the town that disagreements can be settled without bloodshed things will calm down for a while in Jhelom. But I doubt it."];
+                }
+                TurnOff("duelling");
+            }
+            key ("Sprellic") {
+                if v10 {
+                    ["I feel a bit sorry that we never did intercede on behalf of that innkeeper fellow, Sprellic. He did need our help, desperately." Dupre eyes look a bit sad.];
+                } else {
+                    if not flag(362) {
+                        if not (v11 and (v12 and v13)) {
+                            ["I doubt he has ever held a sword in his life. When I bet I usually bet on the underdog, but not even I am so foolhardy with my money as to bet on him. The man is no fighter, he is the innkeeper!"];
+                            TurnOn(<< "foolhardy", "innkeeper" >>);
+                        } else {
+                            ["Thou didst save the life of that poor little man Sprellic. He certainly got himself in a lot of trouble." Dupre cannot keep himself from grinning. "Still, all's well that ends well."];
+                        }
+                    }
+                }
+                TurnOff("Sprellic");
+            }
+            key ("foolhardy") {
+                ["To this Sprellic fellow, foolhardy would be a compliment! He looks like he has never been in a fight in his entire life. I do not know why he would provoke someone into a duel. It is a puzzlement."];
+                TurnOff("foolhardy");
+                if flag(390) {
+                    TurnOn("misunderstanding");
+                }
+            }
+            key ("misunderstanding") {
+                [You tell Dupre what Sprellic told you. "Hmmm. I suppose I judged the man too harshly. I think thou, er, we shouldst do something about this!"];
+                TurnOff("misunderstanding");
+            }
+            key ("innkeeper") {
+                if not flag(390) {
+                    ["I know not the specifics of his story but thou mayest ask him for thyself. He went back to his house about an hour ago and has not come out. He must be having a very hard time finding something."];
+                } else {
+                    ["The poor man has been hiding in his house and will not come out."];
+                }
+                TurnOff("innkeeper");
+            }
+            key ("Iolo") {
+                if v7 {
+                    ["Terrible what happened to our poor friend Iolo. We must try and get his body to a healer while there may still be time to revive him. I do miss him so."];
+                } else {
+                    if v4 {
+                        ["<v3>, there is a strange old man following thee, and he bears a vague resemblance to Iolo! It is most odd."*];
+                        SetSpeaker(0, _Iolo);
+                        ["Thy drinking must have blurred thy vision, Sir Dupre."*];
+                        SetSpeaker(0, _Dupre);
+                        ["Then thou hadst better join me for one later. It will give thee the chance to catch up to me."];
+                        CloseSpeaker(_Iolo);
+                        SetSpeaker(0, _Dupre);
+                    } else {
+                        ["We should find that rascal Iolo and have him join us as well."];
+                    }
+                }
+                TurnOff("Iolo");
+            }
+            key ("fighters") {
+                ["Two men and a woman. Their names are Timmons, Vokes, and Syria. Respectively."];
+                TurnOff("fighters");
+            }
+            key ("Shamino") {
+                if v8 {
+                    ["A sad fate to befall our fine comrade Shamino. He will be sorely missed. We must try and get his remains to a healer. Perhaps he may still be revived."];
+                } else {
+                    if v5 {
+                        [Sir Dupre snorts, "From what I had heard Shamino was all but settled down and retired from the adventuring life."*];
+                        SetSpeaker(0, _Shamino);
+                        ["I still have a few wild oats left to sow, thank thee very much."*];
+                        SetSpeaker(0, _Dupre);
+                        ["Then it is good to see another member of our old sowing circle once again!"];
+                        CloseSpeaker(_Shamino);
+                        SetSpeaker(0, _Dupre);
+                    } else {
+                        ["Let us go and find Shamino and make this a proper reunion!"];
+                    }
+                }
+                TurnOff("Shamino");
+            }
+            key ("Fellowship") {
+                if v14 {
+                    [Sir Dupre stares at the Fellowship medallion around your neck for a long moment. "Thou must be joking," he snorts.];
+                }
+                ["I still cannot believe that thou hast joined The Fellowship. If thou didst wish to prove that thou wouldst do anything, no matter how ridiculous to fulfill thy quest, then thou hast succeeded."];
+                TurnOff("Fellowship");
+            }
+            key ("Spark") {
+                if v9 {
+                    ["Spark, the poor brave lad, is no longer with us. We should endeavor to get his body to a healer so he may be revived."];
+                } else {
+                    [Dupre points a thumb at Spark. "He is joining us, as well?" He mutters at you, "Art thou trying to make me feel old, <v3>?"];
+                }
+                TurnOff("Spark");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["I shall speak with thee later, then."*];
+    }
+    if (event = _Bark) {
+        BarkAboutWork_i(_Dupre);
+    }
+}

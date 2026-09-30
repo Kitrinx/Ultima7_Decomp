@@ -1,0 +1,139 @@
+Routine Chantu accepts a0 #locals(5) #uses(~LordOrLady, ChantuHeals_i, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Chantu);
+        v0 = ~LordOrLady();
+        v1 = ~IsMedallionOn_i();
+        TurnOn(<< "name", "job", "murder", "services", "bye" >>);
+        if $FOUND_MEDALLION {
+            TurnOn(<< "Fellowship", "Klog" >>);
+        }
+        if not $MetChantu {
+            [You see a solemn fellow in healer's robes.];
+            $MetChantu = true;
+        } else {
+            ["Hello, again," Chantu says. "How may I help thee?"];
+        }
+        converse {
+            key ("name") {
+                ["My name is Chantu," he says with a slight bow.];
+                TurnOff("name");
+            }
+            key ("job") {
+                ["I am the Trinsic healer. I can perform a heal, a poison cure, or a resurrection on any of thy friends. Or on thee, of course."];
+            }
+            key ("murder") {
+                ["'Tis a sad state for Britannia when events such as these happen. Christopher was a good man. I hope that the villain is caught."];
+                TurnOff("murder");
+            }
+            key ("services") {
+                ChantuHeals_i(400, 50, 30);
+            }
+            key ("Fellowship") {
+                [The healer frowns. "The Fellowship does not appreciate the efforts of healers in Britannia. Although they do admirable things, The Fellowship is short-sighted when evaluating the need for healers. They believe that our work can be done through their so-called 'Triad of Inner Strength'."];
+                if v1 {
+                    [Chantu notices your medallion and his eyes widen.];
+                    ["Excuse me, <v0>, I did not mean to offend thee."];
+                }
+                TurnOff("Fellowship");
+            }
+            key ("Klog") {
+                [The healer shrugs. "He does his duty as he sees fit. And I do mine."];
+                TurnOff("Klog");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["Goodbye."*];
+    }
+    if (event = _Bark) {
+        v2 = ~GetWorkType(~NPCToItem_i(_Chantu));
+        v3 = ~rndRange(4, 1);
+        if (v2 = 29) {
+            if (v3 = 1) {
+                v4 = "@Feeling better?@";
+            }
+            if (v3 = 2) {
+                v4 = "@How are we today?@";
+            }
+            if (v3 = 3) {
+                v4 = "@Thy fever has lessened.@";
+            }
+            if (v3 = 4) {
+                v4 = "@Try to sleep...@";
+            }
+            Item_bark(v4, _Chantu);
+        } else {
+            BarkAboutWork_i(_Chantu);
+        }
+    }
+}
+
+Routine ChantuHeals_i accepts a0, a1, a2 #locals(11) #uses(~LordOrLady, ~AskYesNo, ~AskList, ~AskParty2_i, SellHealing_i, SellCure_i, SellResurrection_i) {
+    v3 = ~LordOrLady();
+    ["I am able to heal, cure poison, and resurrect. Art thou in need of one of these services?"];
+    PushKeys();
+    v4 = ~AskYesNo();
+    if v4 {
+        ["Which of my services dost thou need?"];
+        v5 = << "heal", "cure poison", "resurrect" >>;
+        v6 = ~AskList(v5);
+        if ((v6 = "heal") or (v6 = "cure poison")) {
+            if (v6 = "heal") {
+                v7 = "healed";
+                v8 = v2;
+            }
+            if (v6 = "cure poison") {
+                v7 = "cured of poison";
+                v8 = v1;
+            }
+            ["Who dost thou wish to be <v7>?"];
+            v9 = ~AskParty2_i();
+            if (v9 = 0) {
+                ["So thou art healthy? 'Tis good news. If thou dost need my services in the future, do not hesitate to return."];
+                goto label_27;
+            }
+        }
+        if (v6 = "resurrect") {
+            v10 = ~AvatarItem_i();
+            v11 = ~FindNearest_i(25, _Body_400, v10);
+            if (v11 = 0) {
+                v11 = ~FindNearest_i(25, _Body_414, v10);
+                if (v11 = 0) {
+                    ["I apologize, <v3>, but I do not see anyone who is in need of resurrection. I must be able to see the body to save the spirit. If thou art carrying thy misfortunate friend, pray lay them on the ground so that I may return them to this world."];
+                    terminate;
+                }
+            }
+            ["Indeed, thy friend has departed this life. I will attempt to restore them to this world."];
+            v8 = v0;
+        }
+        ["My price is <v8> gold. Is this satisfactory?"];
+        v12 = ~AskYesNo();
+        if v12 {
+            v13 = ~CountItem(_All, _All, _Gold_Coin, _Party);
+            if (v13 >= v8) {
+                if (v6 = "heal") {
+                    SellHealing_i(v8, v9);
+                } else {
+                    if (v6 = "cure poison") {
+                        SellCure_i(v8, v9);
+                    } else {
+                        if (v6 = "resurrect") {
+                            SellResurrection_i(v8, v11);
+                        } else {
+                        }
+                    }
+                }
+            } else {
+                ["Thou dost not have any gold. I am truly sorry. I cannot help thee until thou canst provide the proper fee." Chantu bows respectfully.];
+            }
+        } else {
+            ["Then I am truly sorry. I must charge what I must charge. We do not live in prosperous times."];
+        }
+    } else {
+        ["Well, if thou dost decide that my services are needed, I am always here."];
+    }
+    label_27:
+    PopKeys();
+}

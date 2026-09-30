@@ -1,0 +1,140 @@
+Routine Komor accepts a0 #locals(9) #uses(~LordOrLady, ~IsNPCNear, ~AskYesNo, ~AskList, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Komor);
+        v0 = ~LordOrLady();
+        v1 = ~IsNPCNear(_Fenn);
+        TurnOn(<< "name", "job", "bye" >>);
+        if not $MetKomor {
+            [You see a beggar leaning on a crutch. His eyes shine like diamonds with sheer bitterness.];
+            $MetKomor = true;
+        } else {
+            ["Happy days, <v0>?" Komor asks.];
+        }
+        converse {
+            key ("name") {
+                ["My name is Komor."];
+                TurnOff("name");
+            }
+            key ("job") {
+                ["I am a dancer, <v0>." He cannot keep a straight face and almost falls off his crutches.*];
+                TurnOn("beggar");
+                v1 = ~IsNPCNear(_Fenn);
+                if v1 {
+                    SetSpeaker(0, _Fenn);
+                    ["Ha! Ha! Ha! Ha! Ha! Ha! 'Tis a ripe one, Komor!"*];
+                    CloseSpeaker(_Fenn);
+                    SetSpeaker(0, _Komor);
+                }
+            }
+            key ("beggar") {
+                ["I was not always a beggar. Like Fenn and Merrick, I used to be a farmer, too. But times got worse, and times are always bad in Paws."];
+                TurnOn(<< "Fenn", "Merrick", "Paws", "give" >>);
+                TurnOff("beggar");
+            }
+            key ("Fenn") {
+                ["Fenn and me are chums and will be to the day we die. We share in each other's vast expanses of wealth."*];
+                TurnOff("Fenn");
+                TurnOn(<< "chums", "wealth" >>);
+                v1 = ~IsNPCNear(_Fenn);
+                if v1 {
+                    SetSpeaker(0, _Fenn);
+                    ["Ha! Ha! Ha! Ha! With thy wit thou shouldst be on stage!"*];
+                    CloseSpeaker(_Fenn);
+                    SetSpeaker(0, _Komor);
+                }
+            }
+            key ("chums") {
+                ["Fenn and me have been friends since we were little tiny babes."];
+                v1 = ~IsNPCNear(_Fenn);
+                if v1 {
+                    ["I would bet thee that thou didst not think we would end up like this. Eh, Fenn?"*];
+                    SetSpeaker(0, _Fenn);
+                    ["Not in me wildest dreams, Komor.*"];
+                    CloseSpeaker(_Fenn);
+                    SetSpeaker(0, _Komor);
+                }
+                TurnOff("chums");
+            }
+            key ("wealth") {
+                ["Yea verily, Fenn and I share all that we own. Which, in its totality, is the clothes on our backs and the snot in our\x09throats!"];
+                TurnOff("wealth");
+            }
+            key ("Merrick") {
+                ["A royal rotten egg, he is. Merrick turned his back on us and now spends each night in a warm, cozy bed. Which is more than either one of us have had for some time."];
+                TurnOn(<< "turned his back", "bed" >>);
+                TurnOff("Merrick");
+            }
+            key ("Paws") {
+                ["A veritable wonderland, is it not?"];
+                TurnOff("Paws");
+            }
+            key ("turned his back") {
+                ["The only thing worse than this miserable existence is having Merrick sniff around and try to recruit us! The bloody parasite!"];
+                TurnOff("turned his back");
+            }
+            key ("bed") {
+                ["Merrick sleeps in the shelter run by The Fellowship. They feed him, too. He had to join before they would help him."];
+                TurnOn(<< "shelter", "Fellowship" >>);
+                TurnOff("bed");
+            }
+            key ("shelter") {
+                ["The shelter? 'Tis the large building filled with fawning hypocrites. Thou shouldst have little trouble finding it!"];
+                TurnOff("shelter");
+            }
+            key ("Fellowship") {
+                ["We could have joined, but they are a foul lot. Anybody acting so bloody nice must be up to no good. There are some compromises we will not make, even to survive."];
+                TurnOff("Fellowship");
+            }
+            key ("give") {
+                ["Wilt thou give me a bit of money?"];
+                if ~AskYesNo() {
+                    [How much?];
+                    PushKeys();
+                    v2 = ~AskList(<< "0", "1", "2", "3", "4", "5" >>);
+                    v3 = ~CountItem(_All, _All, _Gold_Coin, _Party);
+                    if (v3 >= v2) {
+                        v4 = ~TakeFromParty_i(true, _All, _All, _Gold_Coin, v2);
+                        if v4 {
+                            ["Thank thee, <v0>."];
+                        } else {
+                            ["I am unable to take thy money, for some strange reason."];
+                        }
+                    } else {
+                        ["Hmpf! Thou dost not have that much gold! Thou art almost as poor as I!"];
+                    }
+                    PopKeys();
+                } else {
+                    ["Fine. Go on and live thy life in peace and happiness."];
+                }
+                TurnOff("give");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["Hold thine head high, <v0>."*];
+    }
+    if (event = _Bark) {
+        v5 = ~GetTime();
+        v6 = ~GetWorkType(~NPCToItem_i(_Komor));
+        v7 = ~rndRange(4, 1);
+        if (v6 = 11) {
+            if (v7 = 1) {
+                v8 = "@Spare coin for the wretched?@";
+            }
+            if (v7 = 2) {
+                v8 = "@A modest handout, good person?@";
+            }
+            if (v7 = 3) {
+                v8 = "@Mercy may change thy luck!@";
+            }
+            if (v7 = 4) {
+                v8 = "@Any money for me, friend?@";
+            }
+            Item_bark(v8, _Komor);
+        } else {
+            BarkAboutWork_i(_Komor);
+        }
+    }
+}

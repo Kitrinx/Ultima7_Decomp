@@ -1,0 +1,83 @@
+Routine Thad accepts a0 #locals(6) #uses(~LordOrLady, ~AskYesNo) {
+    if (event = _Action) {
+        SetSpeaker(0, _Thad);
+        v0 = ~IsMedallionOn_i();
+        if v0 {
+            v1 = ~NPCToItem_i(_Thad);
+            [The man scowls at you. "Thou wearest the symbol of that most foul of groups, The Fellowship. Prepare to die!"*];
+            Npc_setAlignment(_Evil, v1);
+            SetWorkType(_Combat_0, v1);
+            terminate;
+        } else {
+            v2 = ~LordOrLady();
+            v3 = false;
+            if not $MetThad {
+                [Eyeing you carefully, the man before you takes an aggressive stance.];
+                $MetThad = true;
+            } else {
+                ["Good day, <v2>," Thad says coolly.];
+            }
+        }
+        TurnOn(<< "name", "job", "bye" >>);
+        converse {
+            key ("name") {
+                [He stares at you for a moment. "Thad is my name, <v2>."];
+                TurnOff("name");
+            }
+            key ("job") {
+                ["Job? I have not the time for a job. I am on a quest to rid this land of that which plagues it!"];
+                TurnOn(<< "quest", "plague" >>);
+            }
+            key ("quest") {
+                ["I have devoted mine entire life to this, nothing will get in my way, not even Batlin."];
+                TurnOff("quest");
+                TurnOn("Batlin");
+            }
+            key ("Batlin") {
+                ["He is the leader of the cursed organization, The Fellowship!"];
+                if not v3 {
+                    TurnOn("The Fellowship");
+                }
+                TurnOff("Batlin");
+            }
+            key ("plague") {
+                ["Surely thou hast heard of The Fellowship, a most foul and evil organization. It has even infested the lovely forest of Yew!"];
+                TurnOn("Yew");
+                if not v3 {
+                    TurnOn("The Fellowship");
+                }
+                TurnOff("plague");
+            }
+            key ("The Fellowship") {
+                ["I know little about their practices, but I do know they live outside the bounds of moral decency. They have kidnapped my beloved sister, Millie, and have cast a spell of enchantment. Now she lives as they do. I have vowed to remove this wicked spell and will slay the entire organization should that prove necessary!~~ "Thou, also, hast taken up a similar cause, I expect. Yes?"];
+                v4 = ~AskYesNo();
+                if v4 {
+                    ["Excellent." He shakes your hand. "Thou art indeed a worthy warrior, <v2>."];
+                } else {
+                    ["No?" He seems genuinely surprised. "Then perhaps thou wilt consider taking up my quest in thine own manner."];
+                    v5 = ~AskYesNo();
+                    if v5 {
+                        ["I expected as much. Thou art truly an honorable warrior."];
+                    } else {
+                        ["What manner of scoundrel art thou? Remove thyself from my presence before I decide to smite thee from thy wretched life!"*];
+                        terminate;
+                    }
+                }
+                v3 = true;
+                TurnOff("The Fellowship");
+            }
+            key ("Yew") {
+                ["I know the land, but not the people. There is nothing useful I have to tell thee." He appears thoughtful for a moment. "Perhaps I can aid thee a bit. I do know that there are two hunters who sometimes frequent this area. One, a woman, carries a spear. The other is an archer. That is all I can tell thee."];
+                TurnOff("Yew");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["May thine endeavors reach fruition, <v2>."*];
+    }
+    if (event = _Bark) {
+        terminate;
+    }
+}

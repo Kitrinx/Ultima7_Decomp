@@ -1,0 +1,110 @@
+Routine Auston accepts a0 #locals(6) #uses(~AvatarName, ~LordOrLady) {
+    if (event = _Action) {
+        SetSpeaker(0, _Auston);
+        v0 = ~AvatarName();
+        v1 = ~LordOrLady();
+        v2 = false;
+        v3 = false;
+        TurnOn(<< "name", "job", "bye" >>);
+        if flag(136) {
+            TurnOn("Elizabeth and Abraham");
+        }
+        if not $MetAuston {
+            [You see a middle-aged man with a furrowed brow, as if he is constantly worried.];
+            $MetAuston = true;
+        } else {
+            ["How may I help thee, <v1>?"];
+        }
+        converse {
+            key ("name") {
+                ["Please call me Auston."];
+                TurnOff("name");
+            }
+            key ("job") {
+                [He sighs before responding. "I am the Mayor of Vesper."];
+                TurnOn("Vesper");
+            }
+            key ("Vesper") {
+                ["It was a pleasant place in days past. But now, <v1>, the turmoil between our people and those gargoyles has caused many problems."];
+                TurnOn(<< "problems", "people" >>);
+                TurnOff("Vesper");
+            }
+            key ("problems") {
+                ["I am worried that the gargoyles may get restless and attack us. Blorn has not helped things." He points to his chest. "I am the one charged with maintaining order here. If there is not any, it will be my responsibility. I have asked Eldroth what to do in case of an uprising and I am trying to plan accordingly."];
+                TurnOn("gargoyles");
+                if not v3 {
+                    TurnOn("Eldroth");
+                }
+                if not v2 {
+                    TurnOn("Blorn");
+                }
+                TurnOff("problems");
+            }
+            key ("gargoyles") {
+                ["I don't trust them any more than thou dost, <v0>, but, officially, they are citizens, too. I am afraid they may try to forcefully gain control of the town someday."];
+                TurnOff("gargoyles");
+            }
+            key ("Liana") {
+                ["She is my clerk. She is very efficient. I couldn't govern Vesper without her."];
+                TurnOff("Liana");
+            }
+            key ("people") {
+                v4 = ~IsDead(~NPCToItem_i(_Cador));
+                if v4 {
+                    TurnOn("shame");
+                    v5 = " -- 'tis a shame about him -- ";
+                } else {
+                    v5 = " ";
+                }
+                ["I try to stay in touch with as many of the citizens as I can, but I do not know all of them that well. I know Cador<v5>has been in charge of the local branch of the Britannian Mining Company ever since it opened. He is married to Yvella. I believe they are members of that Fellowship organization.~~"Of course, there's Eldroth, and a trainer, and also, Yongi. And," he scowls as he adds the last one, "Blorn. Also, thou shouldst speak with Liana. She knows a few of the people that I do not. I am afraid that I do not know everyone as well as I should."];
+                TurnOn(<< "trainer", "Yongi", "Liana" >>);
+                if not v3 {
+                    TurnOn("Eldroth");
+                }
+                if not v2 {
+                    TurnOn("Blorn");
+                }
+                TurnOff("people");
+            }
+            key ("shame") {
+                ["I would have thought thou wouldst know." He strokes his beard.~~"Cador was slain in a fight at the Gilded Lizard. 'Twas the first act of this kind ever in Vesper. Quite odd."];
+                TurnOff("shame");
+            }
+            key ("Eldroth") {
+                ["Eldroth acts as our counselor. He has been giving advice to the people of our town for... well, longer than I can remember. He owns the provisions shop."];
+                v3 = true;
+                TurnOff("Eldroth");
+            }
+            key ("trainer") {
+                ["Zaksam is our trainer. He can teach thee how to better defend thyself. Should the gargoyles cause trouble, I am comforted that he would defend our side."];
+                TurnOff("trainer");
+            }
+            key ("Yongi") {
+                ["He serves drinks at the tavern. Many have claimed him to be the best bartender on this side of the desert. People come from all around Britannia to speak with him," he says proudly.];
+                TurnOff("Yongi");
+            }
+            key ("Blorn") {
+                ["I am not sure what to think about him. I do not know what he does for a living, but I know the gargoyles hate him more than they do the rest of us. I am frightened of what will happen, since it is obvious that he holds mutual feelings towards them."];
+                v2 = true;
+                TurnOff("Blorn");
+            }
+            key ("Elizabeth and Abraham") {
+                if not flag(495) {
+                    ["They are Fellowship members. They were just here to see about starting a branch in Vesper. I imagine we will allow it. I believe the couple have gone to Moonglow. They said they were on their way there to conduct a training session for the branch leader there. But I do know that they were going to stop at the Britannian Mining Company branch on the way out of town. I do not know why."];
+                    flag(644) = true;
+                } else {
+                    ["I have not seen that Fellowship couple for many, many days. I have no idea where they could be now."];
+                }
+                TurnOff("Elizabeth and Abraham");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["Goodbye, <v1>."*];
+    }
+    if (event = _Bark) {
+        terminate;
+    }
+}

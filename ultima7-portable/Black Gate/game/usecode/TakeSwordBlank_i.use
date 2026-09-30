@@ -1,0 +1,17 @@
+Routine TakeSwordBlank_i accepts a0 #locals(4) #uses(CoolSwordBlank_i) {
+    if (~Item_getType(item) = _Sword_Blank) {
+        v0 = ~GetCoord(item);
+        v1 = ~Item_push(item);
+        if not ~PopToNPC(~NPCToItem_i(_Avatar)) && ~PopToMap(v0) {
+            FlashMouse_i(5);
+        }
+    } else {
+        v2 = ~GetContents(_All, _All, _Sword_Blank, item);
+        v3 = ~Item_getContainer(v2);
+        v1 = ~Item_push(v2);
+        if not ~PopToNPC(~NPCToItem_i(_Avatar)) && ~PopToNPC(v3) {
+            FlashMouse_i(5);
+        }
+    }
+    CoolSwordBlank_i(item);
+}

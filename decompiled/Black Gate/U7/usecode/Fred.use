@@ -1,0 +1,144 @@
+Routine Fred accepts a0 #locals(6) #uses(~LordOrLady, ~AskYesNo, FredSellsMeat_i, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Fred);
+        v0 = ~LordOrLady();
+        v1 = ~GetTime();
+        v2 = ~GetWorkType(~NPCToItem_i(_Fred));
+        TurnOn(<< "name", "job", "bye" >>);
+        if not $MetFred {
+            [You see a friendly-looking farmer who waves at you as you approach.];
+            $MetFred = true;
+        } else {
+            ["Hello again, <v0>." says Fred.];
+        }
+        converse {
+            key ("name") {
+                ["My name is Fred."];
+                TurnOff("name");
+            }
+            key ("job") {
+                ["I sell meats here at the Farmer's Market in Britain."];
+                TurnOn(<< "meats", "Farmer's Market" >>);
+            }
+            key ("meats") {
+                ["They are the tastiest meats that thou canst buy. Do thyself a favor and try some."];
+                TurnOff("meats");
+                TurnOn("buy");
+            }
+            key ("Farmer's Market") {
+                ["Here at the Farmer's Market we sell vegetables bought from the farmers just outside of town, as well as meats from the slaughterhouse in Paws."];
+                TurnOff("Farmer's Market");
+                TurnOn(<< "slaughterhouse", "Paws" >>);
+            }
+            key ("slaughterhouse") {
+                ["It is run by a man named Morfin, a very successful merchant from Buccaneer's Den."];
+                TurnOff("slaughterhouse");
+                TurnOn(<< "Morfin", "Buccaneer's Den" >>);
+            }
+            key ("Morfin") {
+                ["Morfin is an unusual character. If I did not know any better I would say he was involved with a number of shady business activities."];
+                TurnOff("Morfin");
+            }
+            key ("Buccaneer's Den") {
+                ["Morfin left that place because he saw all of the commerce that was developing there as competition to his own business activities and moved to Paws."];
+                TurnOff("Buccaneer's Den");
+            }
+            key ("Paws") {
+                ["Paws is a good place to go to buy things for low prices. Many of the people are rather poor, I am sorry to say. There is little active commerce there, however. In Paws, one must deal with people on a more personal level."];
+                TurnOff("Paws");
+            }
+            key ("buy") {
+                if not (v2 = 7) {
+                    ["Thou must return when the Farmer's Market is open."];
+                } else {
+                    ["Wouldst thou like to buy some meats?"];
+                    v3 = ~AskYesNo();
+                    if v3 {
+                        ["We have a fine selection of meats for thee today, <v0>."];
+                        FredSellsMeat_i();
+                    } else {
+                        ["Come back when thou art hungry and we shall serve thee then."];
+                    }
+                }
+                TurnOff("buy");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["Goodbye, <v0>."*];
+    }
+    if (event = _Bark) {
+        v1 = ~GetTime();
+        v2 = ~GetWorkType(~NPCToItem_i(_Fred));
+        v4 = ~rndRange(4, 1);
+        if (v2 = 7) {
+            if (v4 = 1) {
+                v5 = "@Get thy vegetables here!@";
+            }
+            if (v4 = 2) {
+                v5 = "@Get thy meats here!@";
+            }
+            if (v4 = 3) {
+                v5 = "@Eggs for sale!@";
+            }
+            if (v4 = 4) {
+                v5 = "@Best prices in Britannia!@";
+            }
+            Item_bark(v5, _Fred);
+        } else {
+            BarkAboutWork_i(_Fred);
+        }
+    }
+}
+
+Usable FredSellsMeat_i #locals(13) #uses(~AskOrdList, ~PriceString_i, ~AskYesNo, ~SellItem_i) {
+    PushKeys();
+    v0 = true;
+    v1 = << "nothing", "mutton", "beef", "fowl", "ham", "trout", "flounder", "meat on a spit", "dried meat" >>;
+    v2 = 377;
+    v3 = << 65177, 8, 9, 10, 11, 12, 13, 14, 15 >>;
+    v4 = << 0, 3, 20, 3, 20, 5, 7, 3, 2 >>;
+    v5 = "";
+    v6 = 0;
+    v7 = << "", " for one portion", " for one portion", " for one", " for one slice", " for one", " for one", " for one portion", " for ten portions" >>;
+    v8 = << 0, 1, 1, 1, 1, 1, 1, 1, 10 >>;
+    ["What wouldst thou like to buy?"];
+    While v0 {
+        v9 = ~AskOrdList(v1);
+        if (v9 = 1) {
+            ["Fine."];
+            v0 = false;
+        } else {
+            v10 = ~PriceString_i(v7::v9, v4::v9, v6, v1::v9, v5);
+            v11 = 0;
+            ["^<v10> Does that sound like a fair price?"];
+            v12 = ~AskYesNo();
+            if v12 {
+                v10 = "How many ";
+                if (v8::v9 > 1) {
+                    v10 = (v10 + "sets ");
+                }
+                v10 = (v10 + "wouldst thou like?");
+                ["<v10>"];
+                v11 = ~SellItem_i(true, 1, 20, v4::v9, v8::v9, v3::v9, v2);
+            }
+            if (v11 = 1) {
+                ["Done!"];
+            } else {
+                if (v11 = 2) {
+                    ["Thou cannot possibly carry that much!"];
+                } else {
+                    if (v11 = 3) {
+                        ["Thou dost not have enough gold for that!"];
+                    } else {
+                    }
+                }
+            }
+            ["Wouldst thou like something else?"];
+            v0 = ~AskYesNo();
+        }
+    }
+    PopKeys();
+}

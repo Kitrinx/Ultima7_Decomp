@@ -1,0 +1,186 @@
+Routine Lucy accepts a0 #locals(8) #uses(~AvatarName, ~LordOrLady, ~AskList, ~IsNPCNear, LucySellsFood_i, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Lucy);
+        v0 = ~AvatarName();
+        v1 = "Avatar";
+        v2 = ~GetTime();
+        v3 = ~GetWorkType(~NPCToItem_i(_Lucy));
+        v4 = ~LordOrLady();
+        if $MetLucy {
+            v5 = v0;
+        }
+        if flag(132) {
+            v5 = v1;
+        }
+        TurnOn(<< "name", "job", "bye" >>);
+        if (v3 = 23) {
+            TurnOn(<< "drink", "food", "buy" >>);
+        }
+        if not flag(166) {
+            [You see an attractive woman in her fifties. She has a warm smile. "Welcome! Who art thou, stranger?"];
+            v6 = ~AskList(<< v0, v1 >>);
+            if (v6 = v0) {
+                ["Well, hello, <v0>."];
+                $MetLucy = true;
+                v5 = v0;
+            }
+            if (v6 = v1) {
+                if (v3 = 23) {
+                    ["Whoa! Hey everyone! This here is the Avatar!"];
+                    [Everyone in the Blue Boar laughs.];
+                    ["And I'd bet thou dost need a drink, right?"];
+                    flag(132) = true;
+                    v7 = ~IsNPCNear(_Dupre);
+                    if v7 {
+                        SetSpeaker(0, _Dupre);
+                        ["Damn! How did she know?"];
+                        CloseSpeaker(_Dupre);
+                        SetSpeaker(0, _Lucy);
+                    }
+                } else {
+                    ["Oh, really?" she says in mock surprise. "Why, I have always wanted to meet the Avatar!"];
+                    flag(132) = true;
+                }
+                v5 = v1;
+            }
+            flag(166) = true;
+        } else {
+            if ((v2 < 1) or (v2 > 2)) {
+                ["What will it be, <v5>?" Lucy asks.];
+            } else {
+                ["What can I do for thee, <v5>?" Lucy asks.];
+            }
+        }
+        converse {
+            key ("name") {
+                ["I'm Lucy!"];
+                TurnOff("name");
+            }
+            key ("job") {
+                ["I run The Blue Boar. Oldest tavern in Britannia."];
+                if (v3 = 23) {
+                    ["If thou dost want anything to eat or drink, just say so!"];
+                    TurnOn("Blue Boar");
+                    v7 = ~IsNPCNear(_Dupre);
+                    if v7 {
+                        [She addresses Dupre. "How about thou, handsome? Want something to eat?" She bats her eyelashes.*];
+                        SetSpeaker(0, _Dupre);
+                        ["My dear, thou wouldst make any man hungry!"*];
+                        CloseSpeaker(_Dupre);
+                        SetSpeaker(0, _Lucy);
+                        ["I like thy friends, <v5>."];
+                    }
+                } else {
+                    ["I shall be happy to serve thee something if thou dost come to the pub during open hours!"];
+                }
+            }
+            key ("Blue Boar") {
+                ["Smashing place for a revel! It hath been here for ages! I inherited it from my grandfather. I enjoy it because I love to cook. And eat." She laughs. "And drink!" She laughs again.~~"But mostly I like it because I meet so many interesting people. Just like thee, <v5>!"];
+                TurnOff("Blue Boar");
+                TurnOn(<< "revel", "people" >>);
+            }
+            key ("revel") {
+                ["Thou dost look like the kind of person who doth enjoy a fair bit of revelry!];
+                if not (v2 = 7) {
+                    ["Come back to the pub in the evening to hear our house band, The Avatars!"];
+                    TurnOn("The Avatars");
+                } else {
+                    ["Our house band The Avatars is performing in the other room!"];
+                }
+                TurnOff("revel");
+                TurnOn("revelry");
+            }
+            key ("revelry") {
+                [Lucy laughs. "Revelry! Singing! Dancing! Eating! Drinking! All in a time and place where one may stop and enjoy life! I can see it hath been too long since thou hast sampled the simple pleasures of life in Britannia!"];
+                TurnOff("revelry");
+            }
+            key ("The Avatars") {
+                ["They are a popular local singing group. I am sure thou wilt like them, <v5>!"];
+                TurnOff("The Avatars");
+            }
+            key ("people") {
+                ["Oh, I so enjoy meeting men who like to go out and 'kill' things!"];
+                TurnOff("people");
+            }
+            key ("food") {
+                ["Everything I serve is delicious. I highly recommend that thou tasteth the Silverleaf dish. Worth every gold piece spent!"];
+                TurnOff("food");
+                TurnOn("Silverleaf");
+            }
+            key ("drink") {
+                ["I serve Britain's finest ale and wine."];
+                TurnOff("drink");
+            }
+            key ("Silverleaf") {
+                ["It's made from the root of a very rare tree. Quite superb, it is!"];
+                TurnOff("Silverleaf");
+            }
+            key ("buy") {
+                LucySellsFood_i();
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["Talk to thee later!"*];
+    }
+    if (event = _Bark) {
+        BarkAboutWork_i(_Lucy);
+    }
+}
+
+Usable LucySellsFood_i #locals(15) #uses(~LordOrLady, ~AskOrdList, ~PriceString_i, ~AskYesNo, ~SellItem_i) {
+    v0 = ~LordOrLady();
+    PushKeys();
+    v1 = true;
+    v2 = << "nothing", "mutton", "beef", "mead", "trout", "ham", "Silverleaf", "bread", "cake", "ale", "wine" >>;
+    v3 = << 0, 377, 377, 616, 377, 377, 377, 377, 377, 616, 616 >>;
+    v4 = << 65177, 8, 9, 0, 12, 11, 31, 0, 4, 3, 5 >>;
+    v5 = << 0, 6, 20, 15, 5, 20, 50, 4, 3, 5, 5 >>;
+    v6 = "";
+    v7 = 0;
+    v8 = << "", " for one portion", " for a rack", " for a bottle", " for one portion", " for one slice", " for one portion", " for a loaf", " for one piece", " for a bottle", " for a bottle" >>;
+    v9 = 1;
+    v10 = 65499;
+    ["What wouldst thou like to buy?"];
+    While v1 {
+        v11 = ~AskOrdList(v2);
+        if (v11 = 1) {
+            ["Fine."];
+            v1 = false;
+        } else {
+            if (v11 = 7) && flag(299) {
+                ["Oh, I am so terribly sorry, <v0>, but there is no more. The logger in Yew refuses to chop down any more Silverleaf trees. I, personally, thinks it is a dreadful decision."];
+            } else {
+                v12 = ~PriceString_i(v8::v11, v5::v11, v7, v2::v11, v6);
+                v13 = 0;
+                ["^<v12> Dost thou still want it?"];
+                v14 = ~AskYesNo();
+                if v14 {
+                    if (v3::v11 = 377) {
+                        ["How many wouldst thou like?"];
+                        v13 = ~SellItem_i(true, 1, 20, v5::v11, v9, v4::v11, v3::v11);
+                    } else {
+                        v13 = ~SellItem_i(true, 1, 0, v5::v11, v9, v4::v11, v3::v11);
+                    }
+                }
+                if (v13 = 1) {
+                    ["Done!"];
+                } else {
+                    if (v13 = 2) {
+                        ["Thou cannot possibly carry that much!"];
+                    } else {
+                        if (v13 = 3) {
+                            ["Thou dost not have enough gold for that!"];
+                        } else {
+                        }
+                    }
+                }
+            }
+            ["Wouldst thou like something else?"];
+            v1 = ~AskYesNo();
+        }
+    }
+    PopKeys();
+}

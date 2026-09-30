@@ -1,0 +1,115 @@
+Routine Denby accepts a0 #locals(2) #uses(~AskYesNo, DenbyTrains_i, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Denby);
+        TurnOn(<< "name", "job", "bye" >>);
+        v0 = ~GetTime();
+        v1 = ~GetWorkType(~NPCToItem_i(_Denby));
+        if not $MetDenby {
+            [You see a fighter with intense eyes and a serious disposition.];
+            $MetDenby = true;
+        } else {
+            ["Yes, Avatar?" Denby asks.];
+        }
+        converse {
+            key ("name") {
+                ["I am Denby."];
+                TurnOff("name");
+            }
+            key ("job") {
+                ["I am a trainer. I specialize in a form of combat which relies on one's ability to use intelligence and physical ability to activate minor magical effects. But I am not a mage. I am a fighter."];
+                TurnOn(<< "magical effects", "fighter", "train" >>);
+            }
+            key ("magical effects") {
+                ["For example, I simply teach a combination of physical and mental exercises which increases one's intelligence. This, in turn, gives one an advantage if one desires to practice magic."];
+                if not $TetraGone {
+                    ["Thou shouldst be aware, however, that magic is not working in Britannia these days. It is a dying phenomenon. No one understands why. Nevertheless, my training should increase any magic user's primary chances for casting a spell, as well as their fighting skill."];
+                }
+                TurnOff("magical effects");
+            }
+            key ("fighter") {
+                ["Although I am a fighter, I have dedicated my life to peace. There has been too much fighting in the world as it is. Let history take care of the adversarial qualities which exist in man. I believe in using my skills as a deterrent."];
+                TurnOff("fighter");
+            }
+            key ("train") {
+                if (v1 = 7) {
+                    ["My fee for training is 75 gold. Does this meet with the approval of thy purse strings?"];
+                    if ~AskYesNo() {
+                        DenbyTrains_i(75, << 1, 2, 6 >>);
+                    } else {
+                        [Denby bows. "I am sorry my fee is too high for thee. Perhaps at another time thou wilt realize the value of my services."];
+                    }
+                } else {
+                    ["Please return during daylight hours if thou dost wish to train."];
+                    TurnOff("train");
+                }
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        [Denby puts his palms together and bows.*];
+    }
+    if (event = _Bark) {
+        BarkAboutWork_i(_Denby);
+    }
+}
+
+Routine DenbyTrains_i accepts a0, a1 #locals(15) #uses(~GetStudent, ~GetNPCName, ~AvatarName, ~CanTrain, ~GetStat, DexTrain, IntTrain_i, MagicTrain_i) {
+    v2 = ~GetStudent();
+    v3 = ~GetNPCName(v2);
+    v4 = ~AvatarName();
+    if (v3 = v4) {
+        v3 = "you";
+    }
+    if (v2 = 0) {
+    } else {
+        v5 = 3;
+        v6 = ~CanTrain(v5, v2, v0, v1);
+        if (v6 = 0) {
+            ["I am sorry, but thou dost not have enough practical experience to train at this time. If thou couldst return at a later date, I would be most happy to train thee."];
+        } else {
+            if (v6 = 1) {
+                v7 = ~CountItem(_All, _All, _Gold_Coin, _Party);
+                [You gather your gold and count it, finding that you have <v7> gold altogether.];
+                if (v7 < v0) {
+                    ["I regret that thou dost not seem to have enough gold to train here. Mayhaps at another time, when thy fortunes are more prosperous..."];
+                    goto label_20;
+                }
+            }
+            if (v6 = 2) {
+                ["Thou art already as proficient as I! I am afraid that thou cannot be trained further in this."];
+            } else {
+                v8 = ~TakeFromParty_i(true, _All, _All, _Gold_Coin, v0);
+                [You pay <v0> gold, and the training session begins.];
+                if (v3 = "you") {
+                    v9 = "complete";
+                    v10 = "feel";
+                    v11 = "your";
+                    v12 = "spend";
+                    v13 = "you";
+                } else {
+                    v9 = "completes";
+                    v10 = "feels";
+                    v11 = "their";
+                    v12 = "spends";
+                    v13 = "them";
+                }
+                [Denby hands <v3> a chart with runes printed on it. "Study these runes and memorize them," he says. After <v3> <v9> this task, <v3> <v10> that there is a bit of knowledge in <v11> mind that was not there earlier.~~"Now we shall exercise. Practice what I teach thee at least twice a day. Then thou shalt become more agile and limber." ^<v3> <v12> a while mimicking the movements which Denby shows <v13>. Finally, Denby teaches <v13> a few magic words to intone for meditational purposes. When the training session is complete, <v3> <v10> much more energized and ready for anything that might come <v11> way...*];
+                v14 = ~GetStat(_Dex, v2);
+                v15 = ~GetStat(_Int, v2);
+                v16 = ~GetStat(_MaxMagic, v2);
+                if (v14 < 30) {
+                    DexTrain(1, v2);
+                }
+                if (v15 < 30) {
+                    IntTrain_i(1, v2);
+                }
+                if (v16 < 30) {
+                    MagicTrain_i(1, v2);
+                }
+            }
+        }
+    }
+    label_20:
+}

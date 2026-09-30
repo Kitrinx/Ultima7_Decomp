@@ -1,0 +1,126 @@
+Routine Merrick accepts a0 #locals(7) #uses(~AvatarName, ~LordOrLady, ~AskList, DescribeFellowship_i, ExplainPhilosophy_i, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Merrick);
+        v0 = ~AvatarName();
+        v1 = "Avatar";
+        v2 = "None of thy concern";
+        v3 = ~LordOrLady();
+        TurnOn(<< "name", "job", "bye" >>);
+        if $StolenVenom {
+            TurnOn("thief");
+        }
+        if $VENOM_CASE_SOLVED {
+            TurnOff("thief");
+            TurnOn("theft solved");
+        }
+        if $MerrickTauntedAvatar {
+            v4 = v1;
+            if not $MERRICK_APOLOGIZED {
+                TurnOn("apology");
+            }
+        }
+        if $MERRICK_KNOWS_PLAYER_NAME {
+            v4 = v0;
+        }
+        if $MERRICK_REFUSED_NAME {
+            v4 = v3;
+        }
+        if not $MetMerrick {
+            [You see a nervous man who constantly blinks. He sees you and looks like he is in a snit. "Who art thou?"];
+            v5 = ~AskList(<< v0, v1, v2 >>);
+            if (v5 = v0) {
+                ["Very well, <v0>. What dost thou want?"];
+                v4 = v0;
+                $MERRICK_KNOWS_PLAYER_NAME = true;
+            }
+            if (v5 = v2) {
+                ["Fine!"];
+                v4 = v3;
+                $MERRICK_REFUSED_NAME = true;
+            }
+            if (v5 = v1) {
+                ["Thou art a most pathetic little worm. Really, all this Avatar nonsense is nothing more than a sad plea for attention."*];
+                $MetMerrick = true;
+                $MerrickTauntedAvatar = true;
+                terminate;
+            }
+        } else {
+            ["Oh, <v4>. It is thee!"];
+        }
+        converse {
+            key ("name") {
+                ["I am Merrick."];
+                TurnOff("name");
+            }
+            key ("job") {
+                ["I used to be a farmer here in Paws. Now I suppose I work for the Fellowship. I live in their shelter."];
+                TurnOn(<< "farmer", "Paws", "Fellowship" >>);
+            }
+            key ("apology") {
+                ["I do most humbly apologize to thee, <v4>. As I am certain thou art aware, there have been many who have claimed to be the one and only true Avatar ever since thou hast last visited us."];
+                $MERRICK_APOLOGIZED = true;
+                TurnOff("apology");
+            }
+            key ("farmer") {
+                ["I was a farmer; of course, that was before the seven year drought. Komor, Fenn and myself were reduced to paupers."];
+                TurnOff("farmer");
+                TurnOn(<< "Komor", "Fenn", "paupers" >>);
+            }
+            key ("theft solved") {
+                ["I heard that Garritt was the one who stole the venom. Hmm! And to think I live under the same roof with the hoodlum. I shall have to guard my belongings more."];
+                TurnOff("theft solved");
+            }
+            key ("Paws") {
+                ["I have lived here in Paws all my life. I will not leave it now. I shall never leave."];
+                TurnOff("Paws");
+            }
+            key ("Fellowship") {
+                v6 = ~IsMedallionOn_i();
+                if v6 {
+                    ["It is good to see that thou art one of us. Having the Avatar as a Fellowship member gives The Fellowship much prestige. Already I am certain that more people have been wanting to join because of it."];
+                } else {
+                    DescribeFellowship_i();
+                }
+                TurnOff("Fellowship");
+                TurnOn("philosophy");
+            }
+            key ("philosophy") {
+                ExplainPhilosophy_i();
+                TurnOff("philosophy");
+            }
+            key ("thief") {
+                ["I have heard that some of Morfin's venom hath been stolen. I cannot imagine who would do it, unless it was that brat that lives with the farmer widow."];
+                TurnOff("thief");
+                TurnOn(<< "brat", "widow" >>);
+            }
+            key ("brat") {
+                ["I believe his name is Tobias."];
+                TurnOff("brat");
+            }
+            key ("widow") {
+                ["I believe her name is Camille."];
+                TurnOff("widow");
+            }
+            key ("Komor") {
+                ["He once owned one of the largest farms in all of Britannia. He was born to wealthy parents. After he lost his farm he took to sleeping along the road. One night a gang of bullies wanted to steal his gold. He had none so they beat him until he was lame. He is a very bitter man. Tragic."];
+                TurnOff("Komor");
+            }
+            key ("Fenn") {
+                ["Fenn was a farm laborer, and one of Komor's most trusted friends. With the farm gone Fenn just did not have any place to go or any way to live."];
+                TurnOff("Fenn");
+            }
+            key ("paupers") {
+                ["For years Komor, Fenn and I lived off of the rubbish of others, sleeping by the side of the road. Then I found The Fellowship and my life was changed for the better. I have tried to share my newfound fortune with my friends but I fear they hate me for being more resourceful than they."];
+                TurnOff("paupers");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["Good day, <v4>."*];
+    }
+    if (event = _Bark) {
+        BarkAboutWork_i(_Merrick);
+    }
+}

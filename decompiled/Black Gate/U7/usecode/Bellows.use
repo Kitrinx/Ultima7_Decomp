@@ -1,0 +1,91 @@
+Routine Bellows accepts a0 #locals(16) #uses(PathToItem_i, ~DirFromAvatar_i, ~DirFrom_i) {
+    v0 = ~GetFrame(item);
+    if ((v0 >= 3) and (v0 <= 5)) {
+        if (event = _Action) {
+            PathToItem_i(7, item, #Bellows, 65535, 0, 1, item);
+        }
+        if (event = 7) {
+            v1 = ~PostAction(<< _aSFX_i, 47, _aCONTINUE_i, _aFRAME, 4, _aWAIT_i, 1, _aFRAME, 5, _aWAIT_i, 1, _aFRAME, 4, _aWAIT_i, 1, _aFRAME, 3 >>, item);
+            v2 = ~DirFromAvatar_i(item);
+            v1 = ~PostAction(<< _aFACE_i, v2, _aBEND_FRAME_i, _aWAIT_i, 3, _aSTAND_FRAME_i >>, ~NPCToItem_i(_Avatar));
+            v3 = ~FindNearest_i(3, _Firepit, item);
+            v4 = ~GetFrame(v3);
+            v5 = ~FindNearest_i(3, _Sword_Blank, item);
+            v6 = ~GetFrame(v5);
+            if v3 {
+                if (v4 = 4) {
+                    v1 = ~PostAction(<< _aWAIT_i, 1, _aFRAME, 5, _aWAIT_i, 15, _aFRAME, 4 >>, v3);
+                }
+                if (v4 = 5) {
+                    v1 = ~PostAction(<< _aWAIT_i, 1, _aFRAME, 6, _aWAIT_i, 15, _aFRAME, 5, _aWAIT_i, 15, _aFRAME, 4 >>, v3);
+                }
+                if (v4 = 6) {
+                    v1 = ~PostAction(<< _aWAIT_i, 1, _aFRAME, 7, _aWAIT_i, 15, _aFRAME, 6, _aWAIT_i, 15, _aFRAME, 5, _aWAIT_i, 15, _aFRAME, 4 >>, v3);
+                }
+                if (v4 = 7) {
+                    v1 = ~PostAction(<< _aWAIT_i, 1, _aFRAME, 7, _aWAIT_i, 15, _aFRAME, 6, _aWAIT_i, 15, _aFRAME, 5, _aWAIT_i, 15, _aFRAME, 4 >>, v3);
+                    if v5 {
+                        v7 = ~GetCoord(v3);
+                        v8 = ~GetCoord(v5);
+                        v9 = false;
+                        if (v8::1 = v7::1) && ((v8::2 + 1) = v7::2) && ((v8::3 - 2) = v7::3) {
+                            v9 = true;
+                        }
+                        if v9 {
+                            if (v6 <= 7) {
+                            } else {
+                                if ((v6 >= 13) and (v6 <= 15)) {
+                                    v1 = ~PostAction(<< _aWAIT_i, 2, _aFRAME, 8, _aWAIT_i, 25, _aUSABLE_i, #CoolBlank_i >>, v5);
+                                }
+                                if (v6 = 8) {
+                                    v1 = ~PostAction(<< _aWAIT_i, 2, _aFRAME, 9, _aWAIT_i, 25, _aFRAME, 8, _aWAIT_i, 25, _aUSABLE_i, #CoolBlank_i >>, v5);
+                                }
+                                if (v6 = 9) {
+                                    v1 = ~PostAction(<< _aWAIT_i, 2, _aFRAME, 10, _aWAIT_i, 25, _aFRAME, 9, _aWAIT_i, 25, _aFRAME, 8, _aWAIT_i, 25, _aUSABLE_i, #CoolBlank_i >>, v5);
+                                }
+                                if (v6 = 10) {
+                                    v1 = ~PostAction(<< _aWAIT_i, 2, _aFRAME, 11, _aWAIT_i, 25, _aFRAME, 10, _aWAIT_i, 25, _aFRAME, 9, _aWAIT_i, 25, _aFRAME, 8, _aWAIT_i, 25, _aUSABLE_i, #CoolBlank_i >>, v5);
+                                }
+                                if ((v6 = 11) or (v6 = 12)) {
+                                    v1 = ~PostAction(<< _aWAIT_i, 2, _aFRAME, 12, _aWAIT_i, 25, _aFRAME, 11, _aWAIT_i, 25, _aFRAME, 10, _aWAIT_i, 25, _aFRAME, 9, _aWAIT_i, 25, _aFRAME, 8, _aWAIT_i, 25, _aUSABLE_i, #CoolBlank_i >>, v5);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    } else {
+        if (event = _Action) {
+            Kernel_resetRef(item);
+            PathToItem_i(7, item, #Bellows, 65535, 0, 1, item);
+        }
+        if (event = 7) {
+            Kernel_resetRef(item);
+            v10 = ~PostAction(<< _aSFX_i, 47, _aCONTINUE_i, _aFRAME, 0, _aFRAME, 1, _aWAIT_i, 1, _aFRAME, 2, _aWAIT_i, 1, _aFRAME, 1, _aWAIT_i, 1, _aFRAME, 0, _aWAIT_i, 1, _aFRAME, 1, _aWAIT_i, 1, _aFRAME, 2, _aWAIT_i, 1, _aFRAME, 1, _aWAIT_i, 1, _aFRAME, 0 >>, item);
+            v2 = ~DirFrom_i(item, _Avatar);
+            Kernel_resetRef(_Avatar);
+            v10 = ~PostAction(<< _aFACE_i, v2, _aSTAND_FRAME_i, _aBEND_FRAME_i, _aWAIT_i, 3, _aSTAND_FRAME_i, _aSTAND_FRAME_i, _aBEND_FRAME_i, _aWAIT_i, 3, _aSTAND_FRAME_i >>, _Avatar);
+            v11 = ~FindNearby_i(176, 4, _Firepit, item);
+            Foreach v14 in v11 {
+                v15 = ~GetFrame(v14);
+                if (v15 = 0) {
+                    v10 = ~PostAction(<< _aNO_HALT_i, _aSFX_i, 47, _aFRAME, 0, _aFRAME, 1, _aFRAME, 2, _aFRAME, 3 >>, v14);
+                    v10 = ~PostInFuture(18, << _aFINISH_i, _aFRAME, 2, _aWAIT_i, 3, _aFRAME, 1, _aWAIT_i, 3, _aFRAME, 0 >>, v14);
+                }
+                if (v15 = 1) {
+                    v10 = ~PostAction(<< _aNO_HALT_i, _aSFX_i, 47, _aFRAME, 1, _aFRAME, 2, _aFRAME, 3 >>, v14);
+                    v10 = ~PostInFuture(17, << _aFINISH_i, _aFRAME, 2, _aWAIT_i, 3, _aFRAME, 1, _aWAIT_i, 3, _aFRAME, 0 >>, v14);
+                }
+                if (v15 = 2) {
+                    v10 = ~PostAction(<< _aNO_HALT_i, _aSFX_i, 47, _aFRAME, 2, _aFRAME, 3 >>, v14);
+                    v10 = ~PostInFuture(16, << _aFINISH_i, _aFRAME, 2, _aWAIT_i, 3, _aFRAME, 1, _aWAIT_i, 3, _aFRAME, 0 >>, v14);
+                }
+                if (v15 = 3) {
+                    v10 = ~PostAction(<< _aNO_HALT_i, _aSFX_i, 47, _aFRAME, 3 >>, v14);
+                    v10 = ~PostInFuture(15, << _aFINISH_i, _aFRAME, 2, _aWAIT_i, 3, _aFRAME, 1, _aWAIT_i, 3, _aFRAME, 0 >>, v14);
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,157 @@
+Routine Zaksam accepts a0 #locals(6) #uses(~AvatarName, ~LordOrLady, ~AskYesNo, ZaksamTrains_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Zaksam);
+        v0 = ~AvatarName();
+        v1 = ~LordOrLady();
+        v2 = ~GetWorkType(~NPCToItem_i(_Zaksam));
+        TurnOn(<< "name", "job", "bye" >>);
+        if not flag(650) {
+            [A strong, powerful man looks at you and nods acknowledgment.];
+        } else {
+            ["What can I do for thee?" asks Zaksam.];
+        }
+        converse {
+            key ("name") {
+                ["I am Zaksam," he states proudly.];
+                TurnOff("name");
+            }
+            key ("job") {
+                ["I teach others to be strong fighters. I am a trainer here in Vesper."];
+                TurnOn(<< "Vesper", "train" >>);
+            }
+            key ("Vesper") {
+                ["I have taught here for many years. I like the town, but I am not too fond of some of the residents."];
+                TurnOn(<< "town", "residents" >>);
+                TurnOff("Vesper");
+            }
+            key ("town") {
+                ["The land to the northeast is a bit dry, but the oasis and nearby shores give us plenty of water for drinking and bathing."];
+                TurnOff("town");
+            }
+            key ("residents") {
+                ["Most of us are respectable, but there are a few that I wonder about. Blorn and the mayor, for example.];
+                TurnOn(<< "mayor", "Blorn" >>);
+                TurnOff("residents");
+            }
+            key ("mayor") {
+                ["'Tis not that I do not trust him. I just wonder about his ability to run the town. His name is Auston. Talk to him and see for thyself what thou thinkest. Better yet, talk to his clerk, Liana."];
+                TurnOff("mayor");
+            }
+            key ("Blorn") {
+                ["That one I do not like a bit. I do not trust him. He reminds me of those gargoyles."];
+                TurnOn("gargoyles");
+                TurnOff("Blorn");
+            }
+            key ("gargoyles") {
+                ["What is there to say, but do not let them get too close or they will rob thee. Any day now they may try to use violence to take over the town. The mayor himself has asked that I fight if necessary. Though I have no fear of death, that is a battle I do not look forward to."];
+                TurnOff("gargoyles");
+                TurnOn(<< "rob", "violence" >>);
+            }
+            key ("rob") {
+                ["I have already heard that some of my fellow residents have had things stolen by those wretched creatures."];
+                TurnOff("rob");
+            }
+            key ("violence") {
+                ["As thou must surely know, all gargoyles are prone to senseless fits of violence. 'Twould be quite natural to expect them to use it for their own selfish gain."];
+                TurnOff("violence");
+            }
+            key ("train") {
+                if (v2 = 7) {
+                    ["I can train thee for 40 gold. Is this all right?"];
+                    if ~AskYesNo() {
+                        ZaksamTrains_i(40, << 0, 4 >>);
+                    } else {
+                        ["Perhaps next time, <v1>."];
+                    }
+                } else {
+                    ["I can train thee when I am at my training hall, <v1>. Please feel free to see me when it is open."];
+                }
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["May thy strength be thy guide."*];
+    }
+    if (event = _Bark) {
+        v2 = ~GetWorkType(~NPCToItem_i(_Zaksam));
+        v3 = ~GetTime();
+        v4 = ~rndRange(4, 1);
+        if ((v3 = 7) or ((v3 = 0) or (v3 = 1))) && (v2 = 14) {
+            v5 = "@Zzzzz . . .@";
+        }
+        if ((v3 >= 2) and (v3 <= 5)) && (v2 = 7) {
+            if (v4 = 1) {
+                v5 = "@Increase thy skill here!@";
+            }
+            if (v4 = 2) {
+                v5 = "@Increase thy strength here!@";
+            }
+            if (v4 = 3) {
+                v5 = "@Fight better, be stronger!@";
+            }
+            if (v4 = 4) {
+                v5 = "@Defend thyself against gargoyles!@";
+            }
+        }
+        if (v3 = 6) && (v2 = 26) {
+            v5 = "@Mmmmm, excellent wine!@";
+        }
+        Item_bark(v5, _Zaksam);
+    }
+}
+
+Routine ZaksamTrains_i accepts a0, a1 #locals(12) #uses(~GetStudent, ~CanTrain, ~GetStat, StrTrain, CombatTrain_i) {
+    v2 = ~GetStudent();
+    v3 = ~GetNPCName_i(v2);
+    if (v2 = 0) {
+    } else {
+        v4 = 3;
+        v5 = ~CanTrain(v4, v2, v0, v1);
+        if (v5 = 0) {
+            [After a very quick run, he turns and says, "Thou dost not yet have the stamina. If thou so wishest, I could train thee at a later date."];
+        } else {
+            if (v5 = 1) {
+                v6 = ~CountItem(_All, _All, _Gold_Coin, _Party);
+                [You gather your gold and count it, finding that you have <v6> gold altogether.];
+                if (v6 < v0) {
+                    ["It seems thou dost not have enough gold to train at this time."];
+                    goto label_22;
+                }
+            }
+            if (v5 = 2) {
+                [After a short run, he turns and says, "Thou art already as strong as I! I am afraid that there is nothing further I can show thee."];
+            } else {
+                v7 = ~TakeFromParty_i(true, _All, _All, _Gold_Coin, v0);
+                [You pay <v0> gold, and the training session begins.];
+                if (v2 = 65180) {
+                    v8 = "you feel ";
+                } else {
+                    v8 = (v3 + " feels ");
+                }
+                if (v2 = 65180) {
+                    v9 = "you have ";
+                } else {
+                    v10 = ~AvatarSex();
+                    if v10 {
+                        v11 = "she ";
+                    } else {
+                        v11 = "he ";
+                    }
+                    v9 = (v11 + "has ");
+                }
+                [After sparring for half an hour, <v8> as though <v9> learned how to better apply force when fighting.];
+                v12 = ~GetStat(_Str, v2);
+                if (v12 < 30) {
+                    StrTrain(1, v2);
+                }
+                v13 = ~GetStat(_Cbt, v2);
+                if (v13 < 30) {
+                    CombatTrain_i(2, v2);
+                }
+            }
+        }
+    }
+    label_22:
+}

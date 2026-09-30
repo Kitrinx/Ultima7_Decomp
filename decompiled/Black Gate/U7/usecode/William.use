@@ -1,0 +1,96 @@
+Routine William accepts a0 #locals(6) #uses(~IsNearEachOther_i, ~LordOrLady, ~AskYesNo, DescribeFellowship_i, ExplainPhilosophy_i, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _William);
+        v0 = ~GetWorkType(~NPCToItem_i(_William));
+        v1 = ~GetTime();
+        if (v1 = 7) {
+            if not (v0 = 16) {
+            } else {
+                v2 = ~IsNearEachOther_i(_Elynor, _William);
+                if v2 {
+                    [William does not want to avert his attention from the Fellowship meeting.*];
+                    terminate;
+                } else {
+                    ["I must not stop to speak with thee now! I am late for the Fellowship meeting at the hall!"*];
+                    terminate;
+                }
+            }
+        }
+        v3 = ~IsMedallionOn_i();
+        v4 = ~LordOrLady();
+        TurnOn(<< "name", "job", "bye" >>);
+        if not $MetWilliam {
+            [You see a man with a very worried look on his face.];
+            $MetWilliam = true;
+        } else {
+            ["Avatar! What is it? Why dost thou want to talk to me again? What is wrong now?!" says William.];
+        }
+        converse {
+            key ("name") {
+                ["I am called William, <v4>."];
+                TurnOff("name");
+            }
+            key ("job") {
+                if $LEARNED_ABOUT_MINOC_MURDER {
+                    ["I work in the sawmill here in Minoc."];
+                    TurnOn(<< "sawmill", "Minoc" >>);
+                } else {
+                    ["What a ludicrous question at a time like this! Why, I have just been given the fright of my life when I entered my sawmill and saw those two who have not only been killed quite dead, but torn apart nearly beyond recognition!"];
+                    $LEARNED_ABOUT_MINOC_MURDER = true;
+                    TurnOn("murders");
+                }
+            }
+            key ("sawmill") {
+                ["I take the logs that are made from all the trees that are cut down by the logger in Yew, and cut them into planks in the local sawmill. Then I sell the planks - mostly to Owen the shipwright, and some to the Artist's Guild as well."];
+                TurnOff("sawmill");
+            }
+            key ("Minoc") {
+                ["It was such a quiet town until these murders happened. I cannot believe it."];
+                TurnOff("Minoc");
+                TurnOn("murders");
+            }
+            key ("murders") {
+                if not flag(266) {
+                    ["I found the bodies first thing this morning when I went to open the sawmill. It took all of the discipline I have gained from the Triad of Inner Strength and the teachings of The Fellowship to keep from going mad at the sight of it. It must have happened sometime last night but I swear to thee I never heard a thing!"];
+                    flag(266) = true;
+                } else {
+                    ["I swear by The Fellowship I have already told thee all I know concerning the murders!"];
+                }
+                TurnOff("murders");
+                TurnOn("Fellowship");
+            }
+            key ("Fellowship") {
+                ["I have been a member of The Fellowship for only a short time. I have only of late begun attending Elynor's meetings. Only since they announced the monument was to be built."];
+                if v3 {
+                    ["I am so glad thou art my brother in The Fellowship; I know I may trust thee. It is all of the others in this town that I worry about."];
+                } else {
+                    ["Wouldst thou like to know more of The Fellowship?"];
+                    v5 = ~AskYesNo();
+                    if v5 {
+                        DescribeFellowship_i();
+                    } else {
+                        ["Trust me, thou canst not possibly understand how cruel and terrible life can be! Thou dost need The Fellowship! I am lucky to have found it in time to face mine own moment of truth! I hope thou dost realize that thou dost need The Fellowship before it is too late!"];
+                    }
+                }
+                TurnOff("Fellowship");
+                TurnOn("monument");
+            }
+            key ("philosophy") {
+                ExplainPhilosophy_i();
+                TurnOff("philosophy");
+            }
+            key ("monument") {
+                ["Thou dost know! The monument of Owen the shipwright standing on the bow of a tall ship. Everyone in town doth know of it!"];
+                TurnOff("monument");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        [As soon as he has dismissed you, the overwrought William hides his face in his hands.*];
+    }
+    if (event = _Bark) {
+        BarkAboutWork_i(_William);
+    }
+}

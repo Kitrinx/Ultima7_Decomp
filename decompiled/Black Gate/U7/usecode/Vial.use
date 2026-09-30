@@ -1,0 +1,27 @@
+Routine Vial accepts a0 #locals(9) #uses(HoranceAsksHelp_i) {
+    if (event = _Action) && (~GetFrame(item) = 5) {
+        v0 = ~GetTarget();
+        v1 = ~Item_getType(v0);
+        if flag(431) && ((v1 = 519) or (v1 = 747)) {
+            v2 = ~FindNearby_i(0, 40, _Soul_Cage, item);
+            if v2 {
+                v3 = ~PostAction(<< _aFRAME, 1, _aSFX_i, 45, _aWAIT_i, 2, _aSFX_i, 37, _aLOOP_i, 65532, 7, byte(88), 9, byte(45) >>, v2);
+                v4 = ~GetCoord(v2);
+                createSprite(65535, 0, 0, 0, (v4::2 - 3), (v4::1 - 2), 12);
+                Item_destroy(item);
+            }
+            v3 = ~PostAction(<< _aWAIT_i, 28, _aUSABLE_i, #Vial >>, _Avatar);
+        }
+    }
+    if (event = _Posted_i) {
+        flag(426) = true;
+        v5 = << 65393, 65392, 65396, 65391, 65390, 65389, 65395 >>;
+        Foreach v8 in v5 {
+            ClearItemFlag_i(_Asleep, v8);
+            SetWorkType(_Wait, v8);
+        }
+        SetSpeaker(1, _Horance);
+        [As the Soul Cage dissolves into dust, a great transformation comes upon the Liche. Where the evil spirit was caged you see the form of a familiar person. It's Horance! He's a ghost, but he much more resembles a man than an undead terror. ];
+        HoranceAsksHelp_i();
+    }
+}

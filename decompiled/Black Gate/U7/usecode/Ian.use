@@ -1,0 +1,107 @@
+Routine Ian accepts a0 #locals(3) #uses(~AskYesNo, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Ian);
+        v0 = ~IsMedallionOn_i();
+        TurnOn(<< "name", "job", "bye" >>);
+        if flag(579) {
+            TurnOn("Elizabeth and Abraham");
+        }
+        if not $MET_IAN {
+            [You see a young, tan, muscular, handsome man who exudes much verve and geniality.];
+            $MET_IAN = true;
+        } else {
+            ["Yes?" Ian asks.];
+        }
+        converse {
+            key ("name") {
+                ["I am Ian."];
+                TurnOff("name");
+            }
+            key ("job") {
+                ["I am the director of this Meditation Retreat for Fellowship members."];
+                TurnOn(<< "director", "Meditation Retreat" >>);
+            }
+            key ("director") {
+                ["I manage the various activities and lead the initiates in their exercises in meditation."];
+                TurnOff("director");
+                TurnOn(<< "activities", "exercises" >>);
+            }
+            key ("activities") {
+                ["The activities of the retreat consist of philosophical training and studies."];
+                TurnOff("activities");
+            }
+            key ("exercises") {
+                ["The members must all grow to hear and understand the voice which guides them down the path of Inner Strength. The exercises in meditation accelerate this process."];
+                TurnOff("exercises");
+                TurnOn("voice");
+            }
+            key ("voice") {
+                ["It is that voice which one hears inside. We all have the capability of hearing it. Some are able to hear it quite easily and do not have to attend sessions here at the Meditation Retreat. Others, however, find it more difficult to hear the voice. Then they require study at the Retreat."];
+                TurnOff("voice");
+            }
+            key ("Meditation Retreat") {
+                ["It was set up by The Fellowship so that new members can attend and learn more about our group, get in touch with themselves, and help them to become better brothers in The Fellowship. Most of the work is done inside the barrier."];
+                TurnOff("Meditation Retreat");
+                TurnOn(<< "in touch", "barrier" >>);
+            }
+            key ("in touch") {
+                ["Most of the people who come to The Fellowship are wrestling with the failures in their lives. They are essentially\x09afraid of themselves. Here at the Meditation Retreat people learn to believe in themselves. And they build up that belief by learning how to best apply the philosophy of The\x09Fellowship to their lives."];
+                TurnOff("in touch");
+            }
+            key ("barrier") {
+                ["It was set up to keep out those who are not members. Inside the barrier, Fellowship members find it much easier to hear their inner voice. Each member is given a key which they may use at any time."];
+                TurnOff("barrier");
+                TurnOn("key");
+            }
+            key ("key") {
+                if (v0 and not $JoinFellow) {
+                    ["Ah, but thou art not a true Fellowship member! Thou art wearing a medallion falsely. I cannot let thee inside. Goodbye."*];
+                    terminate;
+                }
+                if $JoinFellow {
+                    ["Oh, wouldst thou like to meditate with us, fellow brother?"];
+                    if ~AskYesNo() {
+                        v1 = ~GiveToParty_i(false, 7, 249, _Key, 1);
+                        if v1 {
+                            ["Then here is thy key. Be happy! Oh, one more thing. There is a rule which must be followed."];
+                            SetWorkType(_Loiter, ~NPCToItem_i(_Ian));
+                            TurnOn("rule");
+                        }
+                    } else {
+                        ["Oh. Then I cannot give thee a key."];
+                    }
+                } else {
+                    ["Art thou a Fellowship member?"];
+                    if ~AskYesNo() {
+                        v2 = "@I do not believe thee. Thou ";
+                    } else {
+                        v2 = "@Then thou ";
+                    }
+                    [<v2>must go to Britain and speak with Batlin at our headquarters there. Only he can properly initiate thee into The Fellowship."];
+                }
+                TurnOff("key");
+            }
+            key ("rule") {
+                ["Do not venture into the cave which thou wilt find inside the barrier. The cave is off-limits to attendees."];
+                TurnOff("rule");
+            }
+            key ("Elizabeth and Abraham") {
+                if not flag(680) {
+                    ["Alas, thou hast just missed them. My good friends Elizabeth and Abraham were here delivering funds. I believe they have gone from here to Buccaneer's Den."];
+                    flag(612) = true;
+                } else {
+                    ["I have not seen them in quite some time."];
+                }
+                TurnOff("Elizabeth and Abraham");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["Goodbye."*];
+    }
+    if (event = _Bark) {
+        BarkAboutWork_i(_Ian);
+    }
+}

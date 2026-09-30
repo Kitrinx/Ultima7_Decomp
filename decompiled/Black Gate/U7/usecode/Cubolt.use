@@ -1,0 +1,79 @@
+Routine Cubolt accepts a0 #locals(4) #uses(~AvatarName, ~LordOrLady, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Cubolt);
+        v0 = ~AvatarName();
+        v1 = ~LordOrLady();
+        v2 = false;
+        TurnOn(<< "name", "job", "bye" >>);
+        v3 = ~IsMedallionOn_i();
+        if v3 {
+            ["<v1>? Thou, too, hast joined the evil organization? But how is this possible? Canst thou not see their tenets vie with the very virtues themselves? Dost thou not feel more like a sheep than a man? I am truly sorry, for if one of Britannia's greatest heroes has fallen in with such filth, then there is no hope for our great land!" He turns away in disgust.*];
+            terminate;
+        }
+        if not $MET_CUBOLT {
+            [You see a man with an unhappy look upon his face.];
+            $MET_CUBOLT = true;
+        } else {
+            [Cubolt looks up. "Yes, <v1>?"];
+        }
+        converse {
+            key ("name") {
+                ["I am Cubolt of Moonglow."];
+                TurnOn("Moonglow");
+                TurnOff("name");
+            }
+            key ("job") {
+                ["I am a farmer, <v1>. I manage my farm with the help of Tolemac, my brother, and Morz, our family friend."];
+                TurnOn(<< "Tolemac", "Morz" >>);
+            }
+            key ("Moonglow") {
+                ["The city occupies the entire island now, including the Lycaeum. Most of the residents still live south, though. We are due east of Britain proper."];
+                TurnOn("residents");
+                TurnOff("Moonglow");
+            }
+            key ("Morz") {
+                ["My brother and I have known Morz for most of our lives. He is very friendly when he is not too busy worrying about his stutter. Unfortunately, he listens to Tolemac too often."];
+                TurnOn("stutter");
+                TurnOff("Morz");
+            }
+            key ("stutter") {
+                [Cubolt looks down at the ground, shaking his head sadly. "He started when he was five years old. He and my brother were wrestling in the back of a wagon driven by his parents. They hit a bump and he fell out -- and landed on his head. Ever since, he hath had his stutter." He looks back up at you. "The odd thing is, neither he nor Tolemac remember the accident. Or at least, Tolemac doth not. I cannot convince Morz to talk about it."];
+                TurnOff("stutter");
+            }
+            key ("residents") {
+                ["Zelda, the clerk at the Lycaeum, would be the best person to talk to about Moonglow's residents. Or the bartender, though I do not know his name. I know that the Observatory head and the Lycaeum head are twins, but I have never met either of them. I do know that thou dost not want to talk to Rankin or Balayna at The Fellowship. They are ill news to our once-pleasant city."];
+                if not v2 {
+                    TurnOn("Fellowship");
+                }
+                TurnOff("residents");
+            }
+            key ("Tolemac") {
+                ["He is my younger brother. Need I say more? I am a little concerned about him though. I am used to his rebellious behavior, but recently he has joined The Fellowship. That frightens me. They frighten me. I have tried to get him to come to his senses, but he is too busy enjoying making me worry to listen. Also, he is trying to get Morz to join. I wish I could get him to reconsider."];
+                if not v2 {
+                    TurnOn("Fellowship");
+                }
+                TurnOn("reconsider");
+                TurnOff("Tolemac");
+            }
+            key ("Fellowship") {
+                [He spits on the ground. "A bane to Britannia is what The Fellowship is. They have some odd philosophy that teaches thee to forget who thou art and follow them. The process is dehumanizing, and I think it meshes poorly with the eight virtues. Not only that, but their leader here in Moonglow has persuaded Tolemac to join."];
+                v2 = true;
+                TurnOff("Fellowship");
+            }
+            key ("reconsider") {
+                ["Unfortunately, Tolemac will not listen to me. However," he begins to smile hopefully, "he just might listen to thee, <v1>. Perhaps thou couldst talk him into reconverting. I would very much appreciate that! Perhaps," he adds, "thou couldst also ask Morz not to join."];
+                flag(470) = true;
+                flag(471) = true;
+                TurnOff("reconsider");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["Take care, <v1>."*];
+    }
+    if (event = _Bark) {
+        BarkAboutWork_i(_Cubolt);
+    }
+}

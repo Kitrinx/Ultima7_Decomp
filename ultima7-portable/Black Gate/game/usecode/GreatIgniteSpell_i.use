@@ -1,0 +1,22 @@
+Routine GreatIgniteSpell_i accepts a0 #locals(12) #uses(~IsMagicOK_i) {
+    if (event = _Action) {
+        Kernel_resetRef(item);
+        Item_bark("@Vas In Flam@", item);
+        if ~IsMagicOK_i() {
+            v0 = ~PostAction(<< _aRAISE1_FRAME_i, _aEXTEND1_FRAME_i, _aTHRUST1_FRAME_i >>, item);
+            v1 = 25;
+            v2 = << 595, 889, 336, 481 >>;
+            Foreach v5 in v2 {
+                v6 = ~FindNearby_i(0, v1, v5, item);
+                Foreach v9 in v6 {
+                    v10 = ~Item_getType(v9);
+                    v11 = ((~GetDist(v9, item) / 3) + 2);
+                    Telekinesis_i(v10);
+                    v0 = ~PostInFuture(v11, << _aNO_HALT_i, _aUSABLE_i, v10 >>, v9);
+                }
+            }
+        } else {
+            v0 = ~PostAction(<< _aRAISE1_FRAME_i, _aEXTEND1_FRAME_i, _aTHRUST1_FRAME_i, _aUSABLE_i, #FizzleSpell_i >>, item);
+        }
+    }
+}

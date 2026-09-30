@@ -1,0 +1,196 @@
+Routine Klog accepts a0 #locals(4) #uses(~AvatarName, ~IsInInv, KlogHoldsMeeting_i, DescribeFellowship_i, ExplainPhilosophy_i, BarkAboutWork_i) {
+    if (event = _Action) {
+        v0 = ~AvatarName();
+        v1 = ~GetTime();
+        v2 = false;
+        v3 = ~IsInInv(1, 65177, _Prism_981, 1, _Party);
+        if (v1 = 7) {
+            KlogHoldsMeeting_i();
+        }
+        TurnOn(<< "name", "job", "murder", "bye" >>);
+        if $FOUND_MEDALLION {
+            TurnOn(<< "argument", "test" >>);
+            v2 = true;
+        }
+        if $FOUND_SCROLL {
+            TurnOn("Hook");
+        }
+        if $FOUND_GOLD {
+            TurnOn(<< "gold", "medallion", "scroll" >>);
+        }
+        if $LEARNED_ABOUT_CROWN_JEWEL {
+            TurnOn("Crown Jewel");
+        }
+        SetSpeaker(0, _Klog);
+        if not $MetKlog {
+            [This man exudes kindness and geniality. "Ah, Avatar! I recognized thee at once! Word has moved through town quickly. I had heard thou wert here."];
+            $MetKlog = true;
+        } else {
+            ["Hello again, <v0>," Klog asks. "How may I help thee?"];
+        }
+        converse {
+            key ("name") {
+                ["My name is Klog."];
+                TurnOff("name");
+            }
+            key ("job") {
+                ["I am the Trinsic branch leader for The Fellowship. I work here with my wife Ellen."];
+                TurnOn(<< "Fellowship", "Ellen" >>);
+            }
+            key ("murder") {
+                if v3 {
+                    [The Cube vibrates. "Hook did a splendid job, did he not? Too bad\x09I missed it. Had to keep up appearances and remain at home.\x09Had to have an alibi."];
+                } else {
+                    ["Well," the man says, reflecting, "I was home all night, and my wife Ellen will certainly verify that. But, as we say in The Fellowship, 'Worthiness Precedes Reward'. Christopher must have done something bad. And the poor gargoyle Inamo! 'Tis a pity."];
+                }
+                TurnOff("murder");
+                TurnOn(<< "Christopher", "Inamo" >>);
+            }
+            key ("Fellowship") {
+                if not $JoinFellow {
+                    ["The Fellowship meets here at the branch office in Trinsic every night at nine. Thou art welcome to attend.];
+                    DescribeFellowship_i();
+                    TurnOn("philosophy");
+                } else {
+                    ["Why, thou shouldst know all about our little family by now!"];
+                }
+                TurnOff("Fellowship");
+            }
+            key ("Ellen") {
+                ["She is my wife and bookkeeper for our branch."];
+                TurnOff("Ellen");
+            }
+            key ("philosophy") {
+                ExplainPhilosophy_i();
+                TurnOff("philosophy");
+            }
+            key ("Christopher") {
+                ["Christopher was a valued member of The Fellowship for some time. Unfortunately, we got into a petty argument last week."];
+                TurnOff("Christopher");
+                if not v2 {
+                    TurnOn("argument");
+                }
+            }
+            key ("Inamo") {
+                ["I did not know the gargoyle. It sounds as if he was in the wrong place at the wrong time. 'Tis a pity."];
+                TurnOff("Inamo");
+            }
+            key ("argument") {
+                ["Last week Christopher stated that he wanted to leave The Fellowship! Canst thou imagine? Well, we simply attempted to speak with him and alter his decision. The man verbally assaulted me and my companions with no provocation!"];
+                TurnOff("argument");
+                TurnOn("companions");
+            }
+            key ("test") {
+                ["Batlin in Britain will be happy to administer our test to thee. Thou shouldst certainly take it. Who knows? Thou mayest find something within thee that needs improving."];
+                TurnOff("test");
+            }
+            key ("companions") {
+                ["They have gone to Fellowship Headquarters in Britain. They were here delivering Fellowship funds. Their names are Elizabeth and Abraham."];
+                flag(65) = true;
+                TurnOff("companions");
+            }
+            key ("gold") {
+                if v3 {
+                    [The Cube vibrates. "That was payment for delivery of the plans for the Black Gate pedestals."];
+                    TurnOn("Black Gate");
+                } else {
+                    ["I do not know what thou art talking about."];
+                }
+                TurnOff("gold");
+            }
+            key ("Black Gate") {
+                ["All I know is that it is being built on the Isle of the Avatar."];
+                TurnOff("Black Gate");
+            }
+            key ("medallion") {
+                ["Christopher had expressed interest in leaving The Fellowship. Perhaps he had stored it for safekeeping."];
+                TurnOff("medallion");
+            }
+            key ("scroll") {
+                if v3 {
+                    [The Cube vibrates. "Christopher received his reward prior to showing his worthiness. He reneged on delivery of\x09the plans for the pedestal. It was merely a warning."];
+                } else {
+                    ["I do not know anything about that."];
+                }
+                TurnOff("scroll");
+            }
+            key ("Crown Jewel") {
+                if v3 {
+                    [The Cube vibrates. "That is Hook's ship."];
+                } else {
+                    ["I do not know that ship."];
+                }
+                TurnOff("Crown Jewel");
+            }
+            key ("Hook") {
+                if v3 {
+                    [The Cube vibrates. "He is the one who was assigned to kill Christopher. I do not know where he is now."];
+                } else {
+                    ["I am afraid I do not know a man of that description."];
+                }
+                TurnOff("Hook");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["If there is anything else I may help thee with, <v0>, let me know."*];
+    }
+    if (event = _Bark) {
+        BarkAboutWork_i(_Klog);
+    }
+}
+
+Usable KlogHoldsMeeting_i #locals(6) #uses(~IsNPCNear) {
+    v0 = ~IsNPCNear(_Johnson);
+    v1 = ~IsNPCNear(_Ellen);
+    v2 = ~IsNPCNear(_Dell);
+    v3 = ~IsNPCNear(_Caroline);
+    v4 = ~IsNPCNear(_Iolo);
+    v5 = ~IsNPCNear(_Spark);
+    SetSpeaker(0, _Klog);
+    [Klog is leading the town members in a Fellowship meeting.];
+    ["Thank you, Fellowship members of Trinsic, for attending our meeting this evening.~~"I am certain you are all sorely aware of the crimes that have been committed in our city. Now is a time to mourn those whom we have lost. We will always remember Christopher, our blacksmith, as a valuable citizen of our town as well as a dear friend. Inamo was an amiable and hard-working gargoyle. As their deaths show us, Britannia needs The Fellowship now more than ever.];
+    ["The Fellowship was created to advance a philosophy, a method of applying an optimistic order of thought to one's life. How dost thou follow this method? By applying the Triad of Inner Strength to thy life. The Triad is composed of three principles that, when applied in unison to thy life, can soothe the fever of a society that teaches thee to accept failure and banishes the destructive illusory thoughts and feelings from thy spirit.];
+    ["The first principle is to Strive For Unity. This means that we should reject divisiveness, put aside our differences and work together for the good of us all.];
+    ["The second principle is to Trust Thy Brother. Trust is essential, for what will you accomplish if you must be divided by constantly watching each other?];
+    ["The third and final principle is Worthiness Precedes Reward. One must strive to be worthy of the rewards each of us seeks, for if one is not worthy of reward, why should you believe they should receive it?];
+    ["We must spread the philosophy to everyone who can hear it. For who is there to lift the disunited, mistrustful, and unworthy Britannia up from its sad state but we of The Fellowship?];
+    ["And now is the time we ask each of our members to give testimonial aloud, and tell how walking with The Fellowship has affected their life."*];
+    if v1 {
+        SetSpeaker(0, _Ellen);
+        ["The Fellowship has enabled me to reach out and help people where before I have been too preoccupied."*];
+        CloseSpeaker(_Ellen);
+    }
+    if v0 {
+        SetSpeaker(0, _Johnson);
+        ["The Fellowship has made me more alert and thorough in the execution of my job as a Trinsic guard."*];
+        CloseSpeaker(_Johnson);
+    }
+    if v2 {
+        SetSpeaker(0, _Dell);
+        ["The Fellowship has made me a happier, more agreeable person."*];
+        SetSpeaker(0, _Klog);
+        ["Thank thee for sharing, brother!"*];
+        CloseSpeaker(_Dell);
+    }
+    if v3 {
+        SetSpeaker(0, _Caroline);
+        ["As a Fellowship member, I feel as if I am doing some good for Britannia."*];
+        CloseSpeaker(_Caroline);
+    }
+    if v5 {
+        SetSpeaker(0, _Spark);
+        [Spark whispers to no one in particular, "This is the most boring pile of horse manure in which I have ever had the pleasure to wallow!"*];
+        CloseSpeaker(_Spark);
+    }
+    if v4 {
+        SetSpeaker(0, _Iolo);
+        [Iolo slaps his own cheek to keep himself from dozing off. ~~"Avatar, I do believe that we have heard enough of this."*];
+        CloseSpeaker(_Iolo);
+    }
+    SetSpeaker(0, _Klog);
+    [It is apparent that the meeting will be continuing for some time... You decide you have more important matters to attend to.*];
+    terminate;
+}

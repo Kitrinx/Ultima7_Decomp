@@ -1,0 +1,28 @@
+Routine FlamingOil accepts a0 #locals(6) #uses(MemberSays_i, ConsumeOne_i) {
+    if (event = _Action) {
+        MemberSays_i("@Perhaps thou shouldst attack with it.@");
+    }
+    if (event = _Combat) {
+        v0 = ~GetTarget();
+        v1 = << v0::2, v0::3, v0::4 >>;
+        v2 = ~Item_create(_Fire_Field);
+        if v2 {
+            SetItemFlag_i(_IsTemporary_i, v2);
+            v3 = ~PopToMap(v1);
+            if v3 {
+                v3 = ~PostInFuture(100, << _aNO_HALT_i, _aREMOVE_i >>, v2);
+            }
+            if (v0::4 = 0) {
+                v4 = ~Item_create(_Dust_224);
+                if v4 {
+                    SetItemFlag_i(_IsTemporary_i, v4);
+                    v3 = ~PopToMap(v1);
+                }
+            }
+        }
+        v5 = ~FindNearby_i(0, 2, _Flaming_Oil, v0);
+        if v5 {
+            ConsumeOne_i(v5);
+        }
+    }
+}

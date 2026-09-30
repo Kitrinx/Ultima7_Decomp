@@ -1,0 +1,88 @@
+Routine Blorn accepts a0 #locals(5) #uses(~LordOrLady, ~AskYesNo) {
+    if (event = _Action) {
+        SetSpeaker(0, _Blorn);
+        v0 = ~LordOrLady();
+        TurnOn(<< "name", "job", "bye" >>);
+        if not $MetBlorn {
+            [The man before you narrows his eyes to slits as he sees you.];
+            $MetBlorn = true;
+        } else {
+            [Blorn sighs heavily. "Why dost thou bother me now?"];
+            if (flag(643) and not flag(640)) {
+                TurnOn("gargoyles");
+            }
+        }
+        if flag(641) {
+            flag(642) = false;
+            flag(665) = false;
+        }
+        if flag(642) {
+            TurnOn("return amulet");
+        } else {
+            if flag(665) {
+                TurnOn("Lap-Lem");
+            }
+        }
+        converse {
+            key ("name") {
+                ["Blorn, if thou must know."];
+                TurnOff("name");
+                if (flag(643) and not flag(640)) {
+                    TurnOn("gargoyles");
+                }
+            }
+            key ("job") {
+                ["I don't believe I wish to tell thee."];
+            }
+            key ("gargoyles") {
+                [A growl escapes his throat.~~"What about the bloody gargoyles? Don't tell me thou art a gargoyle lover."];
+                v1 = ~AskYesNo();
+                if v1 {
+                    ["Thou art disgusting, swine!" He spits on your boot.*];
+                    terminate;
+                } else {
+                    ["That is good, my friend."~~A sudden inspiration seems to flash across his face.~~"Perhaps thou canst help me. As thou undoubtedly knowest, I was set upon by a cruel gargoyle not too long ago. He nearly took my life!~~"'Twould be a great honor, <v0>, if thou wouldst agree to avenge me! Art thou willing?"];
+                    v2 = ~AskYesNo();
+                    if v2 {
+                        ["I thank thee, <v0>, thank thee. But I must warn thee, he is a very violent gargoyle. His name is Lap-Lem, which means `man slayer.' And, do not mention my name, for he hates me more than any other human and would surely attack thee without provocation if my name were to be mentioned."];
+                        flag(665) = true;
+                    } else {
+                        ["Fine, <v0>. Thou art nothing more than a coward." He shakes his head.];
+                    }
+                    flag(640) = true;
+                }
+                TurnOff("gargoyles");
+            }
+            key ("return amulet") {
+                [He glares at you for a moment, then shrugs, muttering, "It's not like he earned it honestly or anything..."];
+                v3 = ~GiveToParty_i(true, 3, _All, _Amulet, 1);
+                if v3 {
+                    ["Here! I hope it strangles him!" He thrusts the amulet into your palm. "And I hope he bloody strangles thee, too!"];
+                    flag(641) = true;
+                } else {
+                    ["Thou dost not even have room for it! Get thee away, thou son of a jackal!"*];
+                    terminate;
+                }
+                TurnOff("return amulet");
+            }
+            key ("Lap-Lem") {
+                ["Thou hast killed the jackal?"];
+                v4 = ~AskYesNo();
+                if v4 {
+                    ["Wonderful! Thou art truly a trusted friend. I thank thee for thine assistance!" He grins at you.];
+                } else {
+                    ["Well, I am sure thou wilt have time soon enough, for he will surely head this way to attack me again."];
+                }
+                TurnOff("Lap-Lem");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        [He gives a slight nod and a quiet grunt, and returns to his business.*];
+    }
+    if (event = _Bark) {
+        terminate;
+    }
+}

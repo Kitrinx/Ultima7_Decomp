@@ -1,0 +1,88 @@
+Routine Xanthia accepts a0 #locals(2) #uses(~LordOrLady, ~AskYesNo, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Xanthia);
+        v0 = ~LordOrLady();
+        if not $MetXanthia {
+            [You see a cheerful woman with bright eyes and blonde hair.];
+            $MetXanthia = true;
+        } else {
+            ["Hello again, <v0>." says Xanthia.];
+        }
+        TurnOn(<< "name", "job", "bye" >>);
+        converse {
+            key ("name") {
+                ["Hello, my name is Xanthia."];
+                TurnOff("name");
+            }
+            key ("job") {
+                if $LEARNED_ABOUT_MINOC_MURDER {
+                    ["I am a member of the Artist's Guild in Minoc. I make and sell candelabras."];
+                    TurnOn(<< "Artist's Guild", "Minoc", "candelabras" >>);
+                } else {
+                    ["If thou wouldst not mind, we can perhaps get to know each other during a more sociable occasion! Two people have been recently murdered over at William's sawmill! This is hardly the time to get to know someone!"];
+                    $LEARNED_ABOUT_MINOC_MURDER = true;
+                    TurnOn("murders");
+                }
+            }
+            key ("Artist's Guild") {
+                ["We are a guild of artists and craftspeople united for the common good and dedicated to the advancement of the arts, as well as showing other artists that it is possible to exist solely by thine own efforts without sacrificing thy creativity."];
+                TurnOff("Artist's Guild");
+            }
+            key ("candelabras") {
+                ["I make simple candelabras, but sometimes I will do commissioned work, making more specific ones. I was hired by The Fellowship to make the candelabras for all of their Fellowship halls."];
+                TurnOff("candelabras");
+                TurnOn("Fellowship");
+            }
+            key ("Fellowship") {
+                ["Elynor, the head of the local Fellowship branch, showed me a picture of the Fellowship symbol and I based the design for my candelabra on that."];
+                TurnOff("Fellowship");
+                TurnOn("Elynor");
+                if flag(290) {
+                    TurnOn("candelabra at murder site");
+                }
+            }
+            key ("Elynor") {
+                ["Yes, she's quite a recruiter. Why, she got Burnside, our Mayor, to join, as well as Gregor, the local head of the Britannian Mining Company, and Owen, our shipwright. He is soon to be famous, I am sorry to say. She has never asked me to join, thank goodness."];
+                TurnOff("Elynor");
+                TurnOn("Owen");
+            }
+            key ("candelabra at murder site") {
+                [You describe the candelabra found at the murder scene to Xanthia. Her eyes widen with recognition. "Yes, that is one of the candelabras I made. 'Twas in the sawmill at the murder site?"];
+                v1 = ~AskYesNo();
+                if v1 {
+                    [Xanthia looks shocked. "How horrible! I swear I do not know how it could have gotten there! Thou shouldst certainly ask Elynor about it!"];
+                } else {
+                    [She gives you a slightly cross look. "Well, I hope that thou didst not steal it from Elynor."];
+                }
+                flag(293) = true;
+                TurnOff("candelabra at murder site");
+            }
+            key ("Minoc") {
+                ["With the success of the mine, Minoc is a prosperous city. Not a place where one is used to having murders happen. A good place for our Artist's Guild to do well. But things have always been hard for us here. Now I fear they may get worse."];
+                TurnOff("Minoc");
+                TurnOn(<< "worse", "murders" >>);
+            }
+            key ("worse") {
+                ["That is what Gladstone says. Thou hadst better ask him about it."];
+                TurnOff("worse");
+            }
+            key ("murders") {
+                ["It is so terrible! I never knew Frederico or Tania personally, but I did meet their son, Sasha, once. He was a nice boy, if somewhat misguided. He spent the night with us once at the Artist's Guild, as a guest of Seara."];
+                flag(254) = true;
+                TurnOff("murders");
+            }
+            key ("Owen") {
+                ["They are to build a monument to Owen for some reason or another. Owen and Elynor refuse to use anyone from the Guild to help build it! Rather rude of them, dost thou not think?"];
+                TurnOff("Owen");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["Farewell, <v0>. I hope I was of some assistance to thee."*];
+    }
+    if (event = _Bark) {
+        BarkAboutWork_i(_Xanthia);
+    }
+}

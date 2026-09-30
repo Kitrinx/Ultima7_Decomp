@@ -1,0 +1,92 @@
+Routine Wayne accepts a0 #locals(1) #uses(~LordOrLady, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Wayne);
+        v0 = ~LordOrLady();
+        TurnOn(<< "name", "job", "bye" >>);
+        if not $MET_BROTHER_WAYNE {
+            [You see a monk wandering around apparently without direction.];
+            $MET_BROTHER_WAYNE = true;
+        } else {
+            ["Greetings, <v0>. May I help thee?" asks Wayne.];
+        }
+        converse {
+            key ("name") {
+                ["Thou mayest call me Brother Wayne, <v0>."];
+                TurnOff("name");
+            }
+            key ("job") {
+                ["My job? Well, I, er, do not truly have one at the moment." He looks down at his feet.];
+                TurnOff("job");
+                TurnOn("at the moment");
+            }
+            key ("at the moment") {
+                ["Yes, I am... Well, I am lost, <v0>. I am from the Abbey to the south of here... or to the north.... Mayhaps the northwest." He cradles his chin and looks up.~~"Southeast?"];
+                TurnOff("at the moment");
+                TurnOn(<< "lost", "Abbey" >>);
+            }
+            key ("lost") {
+                ["Well... I am sure it is not permanent." He blushes. "I just need to get my bearings, that's all," he says unconvincingly.];
+                TurnOff("lost");
+            }
+            key ("Abbey") {
+                ["I am a monk of the Brotherhood of the Rose. I study geography and nature with a brother named Taylor."];
+                TurnOff("Abbey");
+                TurnOn(<< "geography", "nature", "Taylor" >>);
+            }
+            key ("geography") {
+                ["Well," he shrugs, "I suppose I should have studied a little bit better." He smiles sheepishly.];
+                TurnOff("geography");
+            }
+            key ("nature") {
+                ["There are so many beautiful things to see in Britannia. Both animals and plants alike offer excitement to the observer."];
+                TurnOff("nature");
+                TurnOn(<< "animals", "plants" >>);
+            }
+            key ("Taylor") {
+                ["Well, I haven't actually seen him for some time. I assume he is still continuing his studies."];
+                TurnOff("Taylor");
+            }
+            key ("plants") {
+                ["Ah, yes, <v0>, they are quite wondrous to see. I highly recommend to thee to always observe thy surroundings. Otherwise, <v0>, thou wilt miss much in life: flowers, trees, birds... landmarks!"];
+                TurnOff("plants");
+                TurnOn(<< "flowers", "trees", "birds" >>);
+            }
+            key ("trees") {
+                ["Ah, my least favorite subject. I find the trees much less interesting than the birds."];
+                TurnOff("trees");
+            }
+            key ("birds") {
+                ["My favorite type of animal! The birds are so free, able to fly vast distances. How I wish I could roam about the open skies... most especially considering my current situation. Thou canst see so much more from the air, I am certain of it!"];
+                TurnOff("birds");
+            }
+            key ("flowers") {
+                ["Very, very lovely plants. All the colors of the rainbow, and then some. One of the monks at the Abbey had a lovely flower garden. She may still tend it for all that I know, <v0>."];
+                TurnOff("flowers");
+                if $MetAimi {
+                    TurnOn("She still does.");
+                }
+            }
+            key ("She still does.") {
+                ["Excellent, <v0>. I am glad to hear it. 'Twould be a shame were Aimi to give that up for her other... pastime."];
+                TurnOff("She still does.");
+                TurnOn("other pastime");
+            }
+            key ("other pastime") {
+                ["Aimi also paints. Or rather, makes a bold attempt. I must, of course, commend her for her efforts."];
+                TurnOff("other pastime");
+            }
+            key ("animals") {
+                ["My favorite ones are the birds, especially the Golden-Cheeked Warbler. I love to follow and watch them. They do not seem to have a very good sense of direction, however." He sighs. "But there is a great variety of species in this land."];
+                TurnOff("animals");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["May thy good fortune guide thee down the trail of life."*];
+    }
+    if (event = _Bark) {
+        BarkAboutWork_i(_Wayne);
+    }
+}

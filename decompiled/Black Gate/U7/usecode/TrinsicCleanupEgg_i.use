@@ -1,0 +1,23 @@
+Routine TrinsicCleanupEgg_i accepts a0 #locals(10) #uses(ClearMurderScene_i) {
+    if (event = _Trigger) && flag(87) {
+        ClearMurderScene_i();
+        v0 = ~FindNearby_i(176, 60, _Blood, item);
+        Foreach v3 in v0 {
+            v4 = ~Item_push(v3);
+            if v4 {
+                v4 = ~PopToMap(_Destroy);
+            }
+        }
+        v5 = ~FindNearby_i(0, 80, _Body_414, item);
+        Foreach v8 in v5 {
+            v9 = ~GetFrame(v8);
+            if (v9 > 20) {
+                v4 = ~Item_push(v8);
+                if v4 {
+                    v4 = ~PopToMap(_Destroy);
+                }
+            }
+        }
+        Item_destroy(item);
+    }
+}

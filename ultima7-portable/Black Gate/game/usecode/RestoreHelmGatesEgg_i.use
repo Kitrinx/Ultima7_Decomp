@@ -1,0 +1,77 @@
+Routine RestoreHelmGatesEgg_i accepts a0 #locals(19) {
+    v0 = ~FindNearby_i(0, 1, _Portcullis_Door_936, item);
+    v1 = ~FindNearby_i(0, 1, _Metal_Wall_303, item);
+    if (flag(829) and flag(830)) {
+        Foreach v4 in v1 {
+            v5 = ~GetCoord(v4);
+            v6 = ~GetQuality(v4);
+            Item_destroy(v4);
+            v7 = ~Item_create(_Portcullis_Door_936);
+            SetFrame(0, v7);
+            v8 = ~SetQuality(v6, v7);
+            v8 = ~PopToMap(v5);
+            return;
+        }
+    } else {
+        if flag(829) {
+            Foreach v4 in v1 {
+                v6 = ~GetQuality(v4);
+                if (v6 = 11) {
+                    v5 = ~GetCoord(v4);
+                    Item_destroy(v4);
+                    v7 = ~Item_create(_Portcullis_Door_936);
+                    SetFrame(0, v7);
+                    v8 = ~SetQuality(v6, v7);
+                    v8 = ~PopToMap(v5);
+                }
+            }
+            Foreach v4 in v0 {
+                v6 = ~GetQuality(v4);
+                if (v6 = 12) {
+                    v5 = ~GetCoord(v4);
+                    Item_destroy(v4);
+                    v7 = ~Item_create(_Metal_Wall_303);
+                    SetFrame(4, v7);
+                    v8 = ~SetQuality(v6, v7);
+                    v8 = ~PopToMap(v5);
+                    return;
+                }
+            }
+        }
+        if flag(830) {
+            Foreach v4 in v1 {
+                v6 = ~GetQuality(v4);
+                if (v6 = 12) {
+                    v5 = ~GetCoord(v4);
+                    Item_destroy(v4);
+                    v7 = ~Item_create(_Portcullis_Door_936);
+                    SetFrame(0, v7);
+                    v8 = ~SetQuality(v6, v7);
+                    v8 = ~PopToMap(v5);
+                }
+            }
+            Foreach v4 in v0 {
+                v6 = ~GetQuality(v4);
+                if (v6 = 11) {
+                    v5 = ~GetCoord(v4);
+                    Item_destroy(v4);
+                    v7 = ~Item_create(_Metal_Wall_303);
+                    SetFrame(4, v7);
+                    v8 = ~SetQuality(v6, v7);
+                    v8 = ~PopToMap(v5);
+                    return;
+                }
+            }
+        }
+        Foreach v4 in v0 {
+            v5 = ~GetCoord(v4);
+            v6 = ~GetQuality(v4);
+            Item_destroy(v4);
+            v7 = ~Item_create(_Metal_Wall_303);
+            SetFrame(4, v7);
+            v8 = ~SetQuality(v6, v7);
+            v8 = ~PopToMap(v5);
+            return;
+        }
+    }
+}

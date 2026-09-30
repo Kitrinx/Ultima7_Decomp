@@ -1,0 +1,69 @@
+Routine Iriale accepts a0 #locals(3) #uses(~AvatarName, ~AskList, ~IsNPCNear, ~AskYesNo) {
+    if (event = _Bark) {
+        terminate;
+    }
+    SetSpeaker(0, _Iriale);
+    v0 = ~AvatarName();
+    TurnOn(<< "name", "job", "bye" >>);
+    if $MET_GORN {
+        TurnOn("Gorn");
+    }
+    if not $MET_IRIALE {
+        [You see a striking woman in fighter's gear. She looks at you fiercely.];
+        ["Halt!"];
+        $MET_IRIALE = true;
+    } else {
+        ["What dost thou want?" Iriale demands.];
+    }
+    converse {
+        key ("name") {
+            ["I am called Iriale Silvermist. Who art thou?"];
+            v1 = ~AskList(<< v0, "The Avatar" >>);
+            if (v1 = v0) {
+                ["I do not know thee!"];
+            }
+            if (v1 = "The Avatar") {
+                ["I do not approve of jokes."];
+            }
+            TurnOff("name");
+        }
+        key ("job") {
+            [Iriale smiles devilishly.~~"I bar people from entering. Thou hast disobeyed the rule of the Meditation Retreat. Ian will be most displeased. Thou had best leave now."];
+            TurnOn(<< "rule", "Meditation Retreat" >>);
+        }
+        key ("rule") {
+            ["Thou dost know it. Attendees of the Retreat must stay out of this cave."];
+            TurnOff("rule");
+            v2 = ~IsNPCNear(_Iolo);
+            if v2 {
+                SetSpeaker(0, _Iolo);
+                ["Come, <v0>, we had better leave. I believe this woman is serious."];
+                CloseSpeaker(_Iolo);
+                SetSpeaker(0, _Iriale);
+            }
+        }
+        key ("Gorn") {
+            ["Is that the name of that smelly barbarian who was here? If thou dost see him on the -way out-, tell him that if he approaches me again, I shall cut off his head!"];
+            TurnOff("Gorn");
+        }
+        key ("Meditation Retreat") {
+            ["Yes, I work for the Meditation Retreat.~~"And I work for -him-. -He- does not want thee here. I give thee only one chance to turn around and leave.];
+            ["Wilt thou leave?"];
+            if ~AskYesNo() {
+                ["Do so and I shall spare thee!" She watches as you turn away.*];
+                SetWorkType(_TendShop, ~NPCToItem_i(_Iriale));
+                terminate;
+            } else {
+                [She sees your jaw set with determination and nods her head. "Then die, foolish one!"*];
+                SetWorkType(_Combat_0, ~NPCToItem_i(_Iriale));
+                terminate;
+            }
+        }
+        key ("bye") {
+            break;
+        }
+    }
+    clear_answers;
+    ["Away with thee!"*];
+    SetWorkType(_TendShop, ~NPCToItem_i(_Iriale));
+}

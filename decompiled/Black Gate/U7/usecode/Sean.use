@@ -1,0 +1,218 @@
+Routine Sean accepts a0 #locals(19) #uses(~LordOrLady, ~IsNearEachOther_i, ~AskYesNo, DescribeFellowship_i, ExplainPhilosophy_i, SeanSellsJewelry_i, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Sean);
+        v0 = ~LordOrLady();
+        v1 = ~GetTime();
+        v2 = ~GetWorkType(~NPCToItem_i(_Sean));
+        v3 = ~IsMedallionOn_i();
+        v1 = ~GetTime();
+        if (v1 = 7) {
+            v4 = ~IsNearEachOther_i(_Batlin, _Sean);
+            if v4 {
+                [Sean is deep in concentration, listening to the Fellowship meeting.*];
+                terminate;
+            } else {
+                if $BATLIN_MISSING {
+                    ["I cannot imagine where Batlin is. He never misses Fellowship meeting!"];
+                    goto label_9;
+                } else {
+                    ["I must not stop to speak now! I am late for the Fellowship meeting!"*];
+                    terminate;
+                }
+            }
+        }
+        label_9:
+        TurnOn(<< "name", "job", "bye" >>);
+        if not $MetSean {
+            [You see a man whose boyish face is set with scrutinizing eyes that look as if they have seen much.];
+            $MetSean = true;
+        } else {
+            ["And what may I do for thee, <v0>?" asks Sean.];
+        }
+        converse {
+            key ("name") {
+                ["My name is Sean."];
+                TurnOff("name");
+            }
+            key ("job") {
+                ["When not tending to Fellowship affairs, I am a jeweller here in Britain. If thou dost wish to buy something, say so!"];
+                TurnOn(<< "Fellowship", "jeweller", "Britain", "buy" >>);
+            }
+            key ("jeweller") {
+                ["It is very delicate work. It requires a special touch that only a few have. Thou must know precisely how to handle precious materials. Only the finest of craftsmen become jewellers and they receive the highest compensation."];
+                TurnOff("jeweller");
+                TurnOn(<< "precious materials", "finest craftsmen" >>);
+            }
+            key ("precious materials") {
+                ["I constantly require new materials with which to create my very special jewelry. I am always in the market to buy gems. If thou dost ever come across any, I am the man to come to if thou shouldst want to sell them and make money."];
+                TurnOff("precious materials");
+                TurnOn("gems");
+            }
+            key ("finest craftsmen") {
+                ["As I have told thee, only the finest of craftsmen become jewellers, and I am the finest of jewellers. Does that not tell thee something?" Sean sniffs. "My business makes more money than the mint!" He laughs forcibly.];
+                TurnOff("finest craftsmen");
+            }
+            key ("gems") {
+                if not (v2 = 7) {
+                    ["The jeweller's shop is currently closed for business. Come back later!"];
+                } else {
+                    ["Dost thou have a gem for sale?"];
+                    v5 = ~AskYesNo();
+                    if v5 {
+                        ["I will pay thee 30 gold coins per gem. Is that price agreeable?"];
+                        v6 = ~AskYesNo();
+                        if v6 {
+                            v7 = << 12, 13 >>;
+                            Foreach v10 in v7 {
+                                if ~CountItem(v10, _All, _Gem, _Party) {
+                                    if (v10 = 12) {
+                                        ["Dost thou think me a fool?! This little blue bauble is worthless!"];
+                                    }
+                                    if (v10 = 13) {
+                                        [Sean's face tightens. "This gem is small and dark as the heart of an unholy Liche. Away with it!"];
+                                    }
+                                    terminate;
+                                }
+                            }
+                            v11 = ~CountItem(_All, _All, _Gem, _Party);
+                            v12 = (v11 * 30);
+                            v13 = ~TakeFromParty_i(true, _All, _All, _Gem, v11);
+                            if (v11 = 0) {
+                                ["Thou dost have no gems! Thou art a liar! I will do no business with thee!"];
+                                terminate;
+                            }
+                            if (v11 = 1) {
+                                ["I see that thou has one gem."];
+                            }
+                            if (v11 > 1) {
+                                ["I see that thou hast <v11> gems."];
+                            }
+                            v14 = ~GiveToParty_i(true, _All, _All, _Gold_Coin, v12);
+                            if v14 {
+                                ["Here is thy payment."];
+                            } else {
+                                ["Thou art carrying too much to take thy payment!"];
+                                v15 = ~GiveToParty_i(true, _All, _All, _Gem, v11);
+                            }
+                        } else {
+                            ["It seems we have little left to discuss then."];
+                        }
+                    } else {
+                        ["If thou dost have no gems for sale then do not even waste my time by mentioning it!"];
+                    }
+                }
+                TurnOff("gems");
+            }
+            key ("Fellowship") {
+                if v3 {
+                    ["I see thou art a member!" Sean suddenly looks at you with a bit more respect. "I am sure The Fellowship will do thee a world of good in the future." He smiles condescendingly.];
+                } else {
+                    ["Even thou mayest join The Fellowship and I can tell thee more about it."];
+                    DescribeFellowship_i();
+                    ["I can tell thee about The Fellowship's philosophy if thou dost wish."];
+                }
+                TurnOff("Fellowship");
+                TurnOn("philosophy");
+            }
+            key ("philosophy") {
+                ["Thou art really interested in hearing more?"];
+                v16 = ~AskYesNo();
+                if v16 {
+                    ExplainPhilosophy_i();
+                } else {
+                    ["I thought I was wasting my breath on thee."];
+                }
+                TurnOff("philosophy");
+            }
+            key ("Britain") {
+                ["I moved mine entire business here to Britain to be near the main branch of The Fellowship. Thou hast no idea how much my business improved after I joined The Fellowship."];
+                TurnOff("Britain");
+                TurnOn("Fellowship");
+            }
+            key ("buy") {
+                if (v2 = 7) {
+                    ["Wouldst thou like to buy something?"];
+                    if ~AskYesNo() {
+                        SeanSellsJewelry_i();
+                    } else {
+                        ["Then please browse if thou dost like."];
+                    }
+                } else {
+                    ["Please come to the shop during normal business hours."];
+                }
+                TurnOff("buy");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["I am sure thou must be on thy way." Sean smiles.*];
+    }
+    if (event = _Bark) {
+        v1 = ~GetTime();
+        v2 = ~GetWorkType(~NPCToItem_i(_Sean));
+        v17 = ~rndRange(4, 1);
+        if (v2 = 7) {
+            if (v17 = 1) {
+                v18 = "@Fine jewelry!@";
+            }
+            if (v17 = 2) {
+                v18 = "@Need gold trinkets?@";
+            }
+            if (v17 = 3) {
+                v18 = "@Fine gems!@";
+            }
+            if (v17 = 4) {
+                v18 = "@Fine crafted jewelry!@";
+            }
+            Item_bark(v18, _Sean);
+        } else {
+            BarkAboutWork_i(_Sean);
+        }
+    }
+}
+
+Usable SeanSellsJewelry_i #locals(13) #uses(~AskOrdList, ~PriceString_i, ~AskYesNo, ~SellItem_i) {
+    PushKeys();
+    v0 = true;
+    v1 = << "nothing", "gem", "gold ring", "wedding ring", "ankh" >>;
+    v2 = << 0, 760, 640, 640, 955 >>;
+    v3 = << 65177, 65177, 0, 1, 0 >>;
+    v4 = << 0, 75, 100, 150, 200 >>;
+    v5 = "a ";
+    v6 = 0;
+    v7 = "";
+    v8 = 1;
+    ["What wouldst thou like to buy?"];
+    While v0 {
+        v9 = ~AskOrdList(v1);
+        if (v9 = 1) {
+            ["Fine."];
+            v0 = false;
+        } else {
+            v10 = ~PriceString_i(v7, v4::v9, v6, v1::v9, v5);
+            v11 = 0;
+            ["^<v10> Art thou willing to pay my price?"];
+            v12 = ~AskYesNo();
+            if v12 {
+                v11 = ~SellItem_i(false, 1, 0, v4::v9, v8, v3::v9, v2::v9);
+            }
+            if (v11 = 1) {
+                ["Done!"];
+            } else {
+                if (v11 = 2) {
+                    ["Thou cannot possibly carry that much!"];
+                } else {
+                    if (v11 = 3) {
+                        ["Thou dost not have enough gold for that!"];
+                    } else {
+                    }
+                }
+            }
+            ["Wouldst thou like something else?"];
+            v0 = ~AskYesNo();
+        }
+    }
+    PopKeys();
+}

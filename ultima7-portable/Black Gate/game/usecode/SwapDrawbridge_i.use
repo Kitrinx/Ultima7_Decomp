@@ -1,0 +1,16 @@
+Routine SwapDrawbridge_i accepts a0 #locals(5) {
+    v0 = ~Item_getType(item);
+    if (v0 = 515) {
+        v1 = 870;
+        v2 = 7;
+    } else {
+        v1 = 515;
+        v2 = 65529;
+    }
+    v3 = ~GetCoord(item);
+    v3::2 = (v3::2 + v2);
+    Item_setType(v1, item);
+    if ~Item_push(item) {
+        v4 = ~PopToMap(v3);
+    }
+}

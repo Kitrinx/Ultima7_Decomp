@@ -1,0 +1,19 @@
+Routine SnuffStuff accepts a0 #locals(9) #uses(LitLightSource, LitTorch, LitLamp) {
+    if (event = _Trigger) {
+        Sfx(28);
+        event = 1;
+        v0 = ~GetQuality(item);
+        v1 = ~FindNearby_i(0, v0, _Lit_Light_Source, item);
+        Foreach v4 in v1 {
+            LitLightSource(v4);
+        }
+        v1 = ~FindNearby_i(0, v0, _Lit_Torch, item);
+        Foreach v4 in v1 {
+            LitTorch(v4);
+        }
+        v1 = ~FindNearby_i(0, v0, _Lit_Lamp, item);
+        Foreach v4 in v1 {
+            LitLamp(v4);
+        }
+    }
+}

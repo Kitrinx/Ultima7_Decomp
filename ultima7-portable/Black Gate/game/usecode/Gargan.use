@@ -1,0 +1,191 @@
+Routine Gargan accepts a0 #locals(9) #uses(~LordOrLady, GarganCoughs_i, ~AskYesNo, ~IsNPCNear, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Gargan);
+        v0 = ~LordOrLady();
+        v1 = ~GetWorkType(~NPCToItem_i(_Gargan));
+        TurnOn(<< "name", "job", "murder", "bye" >>);
+        if $LEARNED_ABOUT_CROWN_JEWEL {
+            TurnOn("Crown Jewel");
+        }
+        if $FOUND_MEDALLION {
+            TurnOn("Fellowship");
+        }
+        if $FOUND_SCROLL {
+            TurnOn("Hook");
+        }
+        v2 = 0;
+        if not $MetGargan {
+            [You see a salty old sailor who reeks of tobacco.];
+            $MetGargan = true;
+        } else {
+            ["Yes, matey?" Gargan asks, coughing.];
+        }
+        converse {
+            key ("name") {
+                ["My name is Gargan."~He sniffs loudly.];
+                TurnOff("name");
+                v2 = (v2 + 1);
+                if (v2 = 6) {
+                    GarganCoughs_i();
+                }
+            }
+            key ("job") {
+                ["I am the Trinsic shipwright. If thou wouldst like to know about a ship or a sextant, just say so."];
+                [Gargan coughs.];
+                TurnOn(<< "ship", "sextant" >>);
+                v2 = (v2 + 1);
+                if (v2 = 6) {
+                    GarganCoughs_i();
+                }
+            }
+            key ("ship") {
+                ["Thou dost want to buy a ship?" the old man asks, smiling. (Apparently not too many folks buy ships these days.)~"My ships are sturdy and well built. They may not be built by Owen, but they are fine vessels! But thou must first purchase a deed."];
+                [Gargan wipes his runny nose on his sleeve.];
+                TurnOff("ship");
+                TurnOn(<< "Owen", "deed" >>);
+                v2 = (v2 + 1);
+                if (v2 = 6) {
+                    GarganCoughs_i();
+                }
+            }
+            key ("sextant") {
+                if not (v1 = 30) {
+                    ["Well, ye'll have to come to the shop when it is is open."];
+                } else {
+                    ["I sell sextants for 80 gold. Want one?"~Gargan clears his throat.];
+                    if ~AskYesNo() {
+                        v3 = ~CountItem(_All, _All, _Gold_Coin, _Party);
+                        if (v3 >= 80) {
+                            v4 = ~GiveToParty_i(true, _All, _All, _Sextant, 1);
+                            ["Here ye are!"];
+                            if not v4 {
+                                ["Thine arms are too full to carry the sextant!"~Gargan sneezes.];
+                            }
+                        } else {
+                            ["Thou dost not have enough gold, sailor." ~Gargan sneezes.];
+                        }
+                    } else {
+                        ["Suit thyself."~Gargan sneezes.];
+                    }
+                    TurnOff("sextant");
+                    v2 = (v2 + 1);
+                    if (v2 = 6) {
+                        GarganCoughs_i();
+                    }
+                }
+            }
+            key ("Owen") {
+                ["Thou hast not heard of Owen? Finest shipwright in the land. He lives in Minoc."~Gargan coughs.];
+                TurnOff("Owen");
+                v2 = (v2 + 1);
+                if (v2 = 6) {
+                    GarganCoughs_i();
+                }
+            }
+            key ("deed") {
+                if not (v1 = 30) {
+                    ["Well, ye'll have to come to the shop when it is open."];
+                } else {
+                    if flag(88) {
+                        ["I already sold thee the deed to 'The Scaly Eel'! It was the only ship I had!"];
+                        [Gargan coughs loudly.];
+                    } else {
+                        ["The deed I can sell thee is for the ship 'The Scaly Eel.' It goes for 600 gold. Interested?"];
+                        v5 = ~AskYesNo();
+                        if v5 {
+                            v3 = ~CountItem(_All, _All, _Gold_Coin, _Party);
+                            if (v3 >= 600) {
+                                v6 = ~GiveToParty_i(true, _All, 14, _Scroll, 1);
+                                if v6 {
+                                    ["All right, then!" the sailor replies. He hands you the deed and takes your gold.~Gargan sneezes.];
+                                    v7 = ~TakeFromParty_i(true, _All, _All, _Gold_Coin, 600);
+                                    flag(88) = true;
+                                } else {
+                                    ["Thou'rt already carrying enough to sink a galleon, <v0>! If thou wilt leave something behind, mayhaps thou wilt be able to sail, and I will be glad, indeed, to sell thee the deed."~Gargan sneezes.];
+                                }
+                            } else {
+                                ["Sorry, matey," Gargan says. "Thou dost not have enough gold!"~Gargan sneezes.];
+                            }
+                        } else {
+                            ["Some other time, then," the sailor shrugs, disappointed.~Gargan sneezes.];
+                        }
+                    }
+                    TurnOff("deed");
+                    v2 = (v2 + 1);
+                    if (v2 = 6) {
+                        GarganCoughs_i();
+                    }
+                }
+            }
+            key ("murder") {
+                ["I heard about that. Terrible thing to happen. Can't say I saw or heard anything, though."~Gargan coughs, clears his throat loudly, then spits.];
+                v8 = ~IsNPCNear(_Spark);
+                if v8 {
+                    SetSpeaker(0, _Spark);
+                    ["Ooooh, yuck!"];
+                    CloseSpeaker(_Spark);
+                    SetSpeaker(0, _Gargan);
+                }
+                TurnOff("murder");
+                v2 = (v2 + 1);
+                if (v2 = 6) {
+                    GarganCoughs_i();
+                }
+            }
+            key ("Crown Jewel") {
+                ["Yes, that ship was docked overnight." He consults his log. "She sailed for Britain at sunrise. I do not recall seeing anyone get on or off."~Gargan snorts and coughs a couple of times.];
+                TurnOff("Crown Jewel");
+                v2 = (v2 + 1);
+                if (v2 = 6) {
+                    GarganCoughs_i();
+                }
+            }
+            key ("Hook") {
+                ["Matey, I have always seen pirates and sailors with peglegs and hooks. If thou hast seen one, thou hast seen another." But the man suddenly frowns. "Hmm. Now that thou dost mention it, I -did- see a man with a hook late last night after sundown. I was leaving the shop and saw him outside. There was a wingless gargoyle with him. They were walking east."];
+                [Gargan sneezes, then coughs a couple of times.];
+                v8 = ~IsNPCNear(_Spark);
+                if v8 {
+                    SetSpeaker(0, _Spark);
+                    ["I told thee! It was him!"];
+                    CloseSpeaker(_Spark);
+                    SetSpeaker(0, _Gargan);
+                }
+                TurnOff("Hook");
+                v2 = (v2 + 1);
+                if (v2 = 6) {
+                    GarganCoughs_i();
+                }
+            }
+            key ("Fellowship") {
+                ["I am too old to pay attention to them."~Gargan wipes his runny nose on his sleeve.];
+                TurnOff("Fellowship");
+                v2 = (v2 + 1);
+                if (v2 = 6) {
+                    GarganCoughs_i();
+                }
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["May thy day have smooth sailing," the sailor starts to say, but a coughing spasm interrupts him.*];
+    }
+    if (event = _Bark) {
+        BarkAboutWork_i(_Gargan);
+    }
+}
+
+Usable GarganCoughs_i #locals(2) #uses(~IsNPCNear) {
+    v0 = ~IsNPCNear(_Iolo);
+    if v0 {
+        SetSpeaker(0, _Iolo);
+        ["Feeling all right, man?"*];
+        SetSpeaker(0, _Gargan);
+        [Gargan coughs, wheezes, and then lights his pipe. On inhaling, he has a coughing spasm until he finally catches his breath.];
+        ["Never felt better."*];
+        CloseSpeaker(_Iolo);
+        SetSpeaker(0, _Gargan);
+        v1 = 0;
+    }
+}

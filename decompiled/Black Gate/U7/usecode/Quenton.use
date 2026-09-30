@@ -1,0 +1,177 @@
+Routine Quenton accepts a0 #locals(10) #uses(~LordOrLady, ~IsNPCNear) {
+    if (event = _Action) {
+        SetSpeaker(0, _Quenton);
+        if not flag(442) {
+            [The pale ghost seems to see you but cannot speak to you for some reason. In frustration the ghost turns away.*];
+            terminate;
+        }
+        v0 = false;
+        v1 = ~LordOrLady();
+        v2 = ~IsNPCNear(_Markham);
+        if flag(452) {
+            v3 = "Markham";
+        } else {
+            v3 = "The barkeep";
+        }
+        if flag(408) {
+            TurnOn("sacrifice");
+        }
+        v4 = ~GetTime();
+        v5 = ~GetWorkType(_Quenton);
+        if not flag(426) && ((v4 = 0) or (v4 = 1)) {
+            if (v5 = 14) {
+                [As you start to speak to the pale ghost, you notice that he seems to be looking through you, as if you don't exist at all. You wave your hand in front of his face, but there is no response.*];
+                terminate;
+            } else {
+                if not (v5 = 16) {
+                    ["Please, please. I... cannot speak with thee right now. I am not sure what has come over me. Please forgive me, <v1>." The wan ghost looks more pale than usual.*];
+                    terminate;
+                }
+            }
+        }
+        v6 = ~GetParty();
+        v7 = ~NPCToItem_i(_Rowena);
+        v8 = ~NPCToItem_i(_Forsythe);
+        if ((v7 in v6) or (v8 in v6)) {
+            if (v7 in v6) {
+                SetSpeaker(0, _Rowena);
+                ["Hello, Quenton. I hope thou art doing well." Rowena gives the pale ghost a winning smile.*];
+                CloseSpeaker(_Rowena);
+                SetSpeaker(0, _Quenton);
+                ["Yes, milady. I am doing as well as can be expected. It gladdens mine heart to see that thou art once again free. Hast thou been to see Trent yet?"*];
+                SetSpeaker(0, _Rowena);
+                ["Alas, no. This kind person is taking me to him." She indicates you.*];
+                CloseSpeaker(_Rowena);
+                SetSpeaker(0, _Quenton);
+                ["These are glad tidings, for he misses thee so."*];
+            }
+            if (v8 in v6) {
+                SetSpeaker(0, _Forsythe);
+                ["Well met, Quenton." The Mayor's mustache spreads as he smiles.*];
+                CloseSpeaker(_Forsythe);
+                SetSpeaker(0, _Quenton);
+                ["Hello, Mayor. How dost thou fare, milord?"*];
+                SetSpeaker(0, _Forsythe);
+                [Forsythe seems taken aback by Quenton's sincere sounding query. "Why, I fare well, Quenton. I thank thee for thy concern."*];
+                CloseSpeaker(_Forsythe);
+                SetSpeaker(0, _Quenton);
+                [He smiles in acknowledgement of the Mayor's thanks.*];
+            }
+            v9 = true;
+        }
+        if not v9 {
+            SetSpeaker(0, _Quenton);
+        }
+        if not flag(459) {
+            [The pale-looking ghost turns in your direction and gives you a wan smile. "Hello, could it be that we have met somewhere before, <v1>?" You see recognition in his eyes, then it fades.~~"Forgive me." He shakes his head, then smiles. "I am the shade of Quenton."];
+            flag(459) = true;
+        } else {
+            [Quenton turns in your direction. "Greetings, <v1>. Come, take rest from thy travels and sit a while with me. I am but a simple shade, but I may have information useful to thee."];
+            TurnOn("information");
+        }
+        TurnOn(<< "name", "job", "shade", "bye" >>);
+        if flag(380) {
+            TurnOn("Tortured One");
+        }
+        converse {
+            key ("name") {
+                ["I am called Quenton, <v1>."];
+                TurnOff("name");
+            }
+            key ("job") {
+                [He smiles at your question, "I once roamed the sea, for days at a time, gathering mine harvest of fish."];
+            }
+            key ("information") {
+                ["I have been around for many, many years. And," he smiles, "I have seen many, many things in that time."];
+                TurnOff("information");
+            }
+            key ("Tortured One") {
+                ["Caine? He was an alchemist here on Skara Brae. Now he spends his days in eternal pain caused by his guilt from causing the fire that destroyed this town."];
+                TurnOff("Tortured One");
+            }
+            key ("shade") {
+                ["My story is a long and a sad one. I hope thou hast some time." He appears thoughtful for a moment, and then begins.~~ \["When I was a young man, I met a lovely woman by the name of Gwen. I made her my wife, and we lived for a time, happy and carefree. She brought a light into the world and we called her Marney, which means the cool breeze after a storm." He smiles to himself at some memory, then continues with a furrowed brow.];
+                ["Then, one day, my wife was taken from me. I know not where, or by whom, save that they were evil men. Soon after, my sweet Marney became sick at heart and I feared for her health. I could not take time from my fishing to care for her, but I needed gold. So I made a deal with a man who was not to be trifled with. This was mine undoing, for when I failed to repay his loan, he came to me one night and slew me. I had not a chance to fight back or call for help." He falls silent.~~"But that was long before the fire that turned this whole island into the land of the dead."];
+                TurnOff("shade");
+                TurnOn(<< "Marney", "fire" >>);
+            }
+            key ("Marney") {
+                ["After I was murdered, my good friend, Yorl, cared for her as his own. He tried his best, but her sickness only worsened. After several months she weakened, and died." He stops here, tears filling his ghostly eyes, then, angrily, he says, "And now her spirit is held by Horance the Liche. Thou must rescue her from that foul beast!" He attempts to grab you, but his hands pass through without resistance.*];
+                if v2 {
+                    if flag(436) {
+                        SetSpeaker(0, _Markham);
+                        ["Now, now, Quen. Settle down." <v3> moves closer to you and whispers, "Fergive him, <v1>.~~"He sometimes loses control like that when he talks about his daughter. Sure'n ya can understand, tho'."*];
+                        CloseSpeaker(_Markham);
+                        SetSpeaker(0, _Quenton);
+                    }
+                } else {
+                    [Quenton regains control of himself. "Forgive me, <v1>. I've no right to inflict my woes upon thee. It hurts to think of my sweet Marney in the power of that... creature."];
+                }
+                TurnOff("Marney");
+            }
+            key ("fire") {
+                ["It seems that Mistress Mordra, the town healer, thought she had a plan to stop the Liche, Horance, which she told to the Mayor. I am not sure exactly what she planned, but it involved Trent, the town smith, and Caine, the alchemist. Not long after Caine began his work, a maelstrom of fire tore over the island, destroying everything. Skara Brae burned for days."];
+                TurnOff("fire");
+                TurnOn(<< "Mistress Mordra", "Liche", "Mayor", "Trent", "Caine" >>);
+            }
+            key ("Liche") {
+                ["Once, over two centuries ago, I knew a gifted mage named Horance. His two loves in life were the study of magic, and writing lovely poetry. The people of Skara Brae felt safe in the knowledge that this sort of mage protected the town. Then he began to change.~~"First his beautiful sonnets became a rhyming doggerel. It became the only way in which he would speak. His spells, which he displayed before the townsfolk, became destructive and violent. People began to fear him. My death occurred at about this time. Not long after that, he became reclusive. He had a tower built on the northern point and never removed himself from it.~~ "Then, one night, the graves in the graveyard opened and the dead began to walk."*];
+                if v2 && flag(436) {
+                    SetSpeaker(0, _Markham);
+                    [<v3> nods his head emphatically, "'At's right, I seen it, I did."*];
+                    CloseSpeaker(_Markham);
+                    SetSpeaker(0, _Quenton);
+                }
+                ["They marched to his tower, and now they roam all over the island, performing his bidding."*];
+                if v2 && flag(436) {
+                    SetSpeaker(0, _Markham);
+                    ["It be gettin' so's a ghost cannot make an honest livin' no more. Hmph." <v3> looks a bit disgruntled.*];
+                    CloseSpeaker(_Markham);
+                    SetSpeaker(0, _Quenton);
+                }
+                TurnOff("Liche");
+            }
+            key ("Mistress Mordra") {
+                [Quenton looks hopeful, "If thou wouldst like to assist us, she is the best one to speak to. She seems to know the way to rid us of the Liche, at the least."];
+                TurnOff("Mistress Mordra");
+            }
+            key ("Mayor") {
+                ["The mayor...," Quenton selects his words carefully. "...well, he believes that discretion is the better part of Valor. So, he may be able to offer thee some aid, but thou art likely first to need convince him that thou'rt not here to hurt him."];
+                TurnOff("Mayor");
+            }
+            key ("Trent") {
+                ["Ah, the poor man knows the spirit-wrenching feeling of loss almost as well as I. His wife, Rowena, was killed by the walking dead. And Mistress Mordra claims that she saw her sitting on a throne next to the Liche's own. I believe this has driven Trent somewhat mad. He works night and day upon some oddly formed cage. Strange, though, he never seems to finish it. He doth not seem to recall that he died in the fire, either, but a great hatred for Horance still burns in his heart."];
+                TurnOff("Trent");
+            }
+            key ("Caine") {
+                [He looks as if he expected your question. "Alas, Caine, in his attempt to free us of the Liche, instead damned us to become slaves of the selfsame Liche."];
+                TurnOff("Caine");
+                TurnOn("slaves");
+            }
+            key ("slaves") {
+                ["Yes, we are his slaves. Every night at midnight, we must go to the Dark Tower and become servants of his Black Mass. I only know this because Mordra tells us it is so. I have no recollection of ever having been to the Dark Tower at all." His expression betrays his fear.];
+                TurnOff("slaves");
+            }
+            key ("sacrifice") {
+                if not flag(412) {
+                    [You explain that you need a spirit to volunteer to freely enter the Well of Souls in order to bring about its destruction. Quenton considers for a while, and then responds, "Please understand, <v1>. I truly wish that I had that kind of Courage. But I cannot risk doing anything that might destroy Marney. Remember, her spirit is kept in that well, along with all of the dead of the graveyard."];
+                    flag(412) = true;
+                } else {
+                    ["No, I am sorry. I cannot risk it." He looks very weary.];
+                }
+                TurnOff("sacrifice");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["Goodbye, <v1>."*];
+        if ~IsNPCNear(_Markham) {
+            [He turns back to his conversation with <v3>.*];
+        }
+    }
+    if (event = _Bark) {
+        terminate;
+    }
+}

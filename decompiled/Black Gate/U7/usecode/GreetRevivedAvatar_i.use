@@ -1,0 +1,103 @@
+Routine GreetRevivedAvatar_i accepts a0 #locals(11) #uses(~LordOrLady, ~AvatarName, ~IsNPCNear, TellOfRescue_i) {
+    FadePalette_i(1, 1, 36);
+    v0 = ~FindNearby_i(4, 35, _All, item);
+    Foreach v3 in v0 {
+        if ((~Npc_getAlignment(v3) = _Neutral) and (~GetWorkType(v3) = _Combat_0)) {
+            return;
+        }
+    }
+    v4 = ~LordOrLady();
+    v5 = ~AvatarName();
+    v6 = ~IsNPCNear(_Feridwyn);
+    v7 = ~IsNPCNear(_Brita);
+    v8 = ~IsNPCNear(_Iolo);
+    if ~GetItemFlag_i(_Asleep, _Iolo) {
+        v8 = 0;
+    }
+    v9 = ~IsNPCNear(_Shamino);
+    if ~GetItemFlag_i(_Asleep, _Shamino) {
+        v9 = 0;
+    }
+    v10 = ~IsNPCNear(_Dupre);
+    if ~GetItemFlag_i(_Asleep, _Dupre) {
+        v10 = 0;
+    }
+    if v6 {
+        SetSpeaker(0, _Feridwyn);
+        TellOfRescue_i();
+        CloseSpeaker(_Feridwyn);
+    } else {
+        if v7 {
+            SetSpeaker(0, _Brita);
+            TellOfRescue_i();
+            CloseSpeaker(_Brita);
+        }
+    }
+    if v8 {
+        SetSpeaker(0, _Iolo);
+        ["I am gladdened to see thee still alive, my good friend. I was sorely grieved at thine apparent demise.~~"In the midst of our battle I did lose track of thee. It is good to find thee safe.~~"If thou art feeling up to it, let us then continue our quest."*];
+        CloseSpeaker(_Iolo);
+    }
+    if v9 {
+        SetSpeaker(0, _Shamino);
+        ["Thy recovery is a miracle! 'Twould have been a severe blow for this world to lose its Avatar.~~"When at last thou wert found, thy body was being taken to this place in a wagon driven by two hooded Fellowship members.~~"Thou hast suffered through a terrible ordeal and travelled far. Perhaps thou shouldst rest..."*];
+        CloseSpeaker(_Shamino);
+    }
+    if v10 {
+        SetSpeaker(0, _Dupre);
+        ["The Fellowship members who brought thee to this place did not speak once during the entire journey.~~"But it seems they did the right thing in bringing thee here for thou hast been revived!~~"Let us all have a drink in celebration! We will be ready to leave whenever thou dost wish it."*];
+        CloseSpeaker(_Dupre);
+    }
+    flag(38) = true;
+    flag(58) = false;
+    ClearItemFlag_i(_Asleep, _Avatar);
+    SetWorkType(_FollowAvt, _Avatar);
+}
+
+Usable TellOfRescue_i #locals(1) {
+    if flag(58) {
+        v0 = "It is most fortunate that thou fell so near our shelter. Thou must have a protector watching over thee.@";
+    } else {
+        v0 = "It was Elizabeth and Abraham who found thee and delivered thee to us.";
+    }
+    ["Thank goodness thou art with us again! We were all very worried over thy condition.~~"Thou hast been unconscious for so long that we thought thou hadst lost thy life!~~<v0>*];
+    if not flag(58) {
+        if not flag(135) {
+            ["They brought thee here along their way to Britain."];
+        }
+        if (flag(135) and not $HEARD_ELIZABETH_ABRAHAM) {
+            ["They brought thee here along their way to Minoc."];
+        }
+        if ($HEARD_ELIZABETH_ABRAHAM and not $EA_LEFT_PAWS_FOR_JHELOM) {
+            ["They brought thee to us as they were on their way here to Paws, but they have since left for Jhelom."];
+            $EA_LEFT_PAWS_FOR_JHELOM = true;
+        }
+        if ($EA_LEFT_PAWS_FOR_JHELOM and not $EA_LEFT_JHELOM) {
+            ["They brought thee here along their way to Jhelom."];
+        }
+        if ($EA_LEFT_JHELOM and not flag(136)) {
+            ["They brought thee here along their way to Britain."];
+        }
+        if (flag(136) and not flag(644)) {
+            ["They brought thee here along their way to Vesper."];
+        }
+        if (flag(644) and not flag(495)) {
+            ["They brought thee here along their way to Moonglow."];
+        }
+        if (flag(495) and not flag(579)) {
+            ["They brought thee here along their way to Terfin."];
+        }
+        if (flag(579) and not flag(612)) {
+            ["They brought thee here along their way to the Fellowship meditation retreat near Serpent's Hold."];
+        }
+        if (flag(612) and not flag(680)) {
+            ["They brought thee here along their way to Buccaneer's Den."];
+        }
+        if flag(680) {
+            ["They brought thee here and then returned to Buccaneer's Den."];
+        }
+    }
+    if flag(38) {
+        ["It is truly mysterious how this continues to happen to thee!"];
+    }
+}

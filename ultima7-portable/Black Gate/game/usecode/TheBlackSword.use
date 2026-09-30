@@ -1,0 +1,9 @@
+Routine TheBlackSword accepts a0 #locals(1) #uses(ArcadionUsable_i) {
+    if (event = _Action) {
+        ArcadionUsable_i(item);
+    }
+    if (event = _Posted_i) && (~Item_getType(item) = _The_Dark_Core) {
+        FadePalette_i(0, 1, 12);
+        v0 = ~PostAction(<< _aWAIT_i, 3, _aUSABLE_i, #TheDarkCore >>, item);
+    }
+}

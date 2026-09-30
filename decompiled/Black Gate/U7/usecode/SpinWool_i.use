@@ -1,0 +1,37 @@
+Routine SpinWool_i accepts a0 #locals(10) #uses(~DirFrom_i, PathToItem_i, MemberSays_i) {
+    if (event = 7) {
+        v0 = ~Item_getContainer(item);
+        if not v0 {
+            v1 = ~DirFrom_i(item, _Avatar);
+            v2 = ~GetCoord(item);
+            v3 = ~Item_push(item);
+            if v3 {
+                v3 = ~PopToNPC(_Avatar);
+                if not v3 {
+                    v3 = ~PopToMap(v2);
+                    FlashMouse_i(4);
+                    terminate;
+                } else {
+                    v3 = ~PostAction(<< _aFACE_i, v1, _aCONTINUE_i, _aBEND_FRAME_i, _aSTAND_FRAME_i, _aUSABLE_i, #SpinWool_i >>, _Avatar);
+                }
+            } else {
+                return;
+            }
+        } else {
+            closeAllGumps();
+        }
+    }
+    if ((event = _Posted_i) or v0) {
+        v4 = ~GetTarget();
+        v5 = ~Item_getType(v4);
+        if (v5 = 651) {
+            v6 = << 1, 1 >>;
+            v7 = << 0, 0 >>;
+            v8 = 65535;
+            PathToItem_i(7, v4, #SpinningWheel, v8, v7, v6, v4);
+        } else {
+            v9 = "@Why dost thou not spin that wool into thread?@";
+            MemberSays_i(v9);
+        }
+    }
+}

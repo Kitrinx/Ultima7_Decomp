@@ -1,0 +1,157 @@
+Routine Figg accepts a0 #locals(10) #uses(~LordOrLady, ~IsNearEachOther_i, ~AskYesNo, DescribeFellowship_i, ExplainPhilosophy_i, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Figg);
+        v0 = ~GetTime();
+        v1 = ~LordOrLady();
+        v2 = ~IsMedallionOn_i();
+        v3 = ~IsNearEachOther_i(_Batlin, _Figg);
+        if (v0 = 7) {
+            if v3 {
+                [Figg is too intent on listening to the Fellowship meeting to acknowledge your attempts to converse with him.*];
+                terminate;
+            } else {
+                if $BATLIN_MISSING {
+                    ["Hast thou seen Batlin? Where is he? He needs to lead our meeting!"];
+                    goto label_9;
+                } else {
+                    ["My goodness! It is nine o'clock! Excuse me, I must get to tonight's Fellowship meeting."*];
+                    terminate;
+                }
+            }
+        }
+        label_9:
+        TurnOn(<< "name", "job", "bye" >>);
+        if $MetWeston {
+            TurnOn("Weston");
+        }
+        if flag(148) {
+            TurnOn("Fellowship");
+        }
+        if not $MetFigg {
+            [You see a man whose wrinkled face forms a caricature of grumpiness.];
+            $MetFigg = true;
+        } else {
+            ["Thou dost wish words with me, <v1>?" asks Figg.];
+        }
+        converse {
+            key ("name") {
+                ["I am Figg."];
+                TurnOff("name");
+            }
+            key ("job") {
+                ["I am the caretaker of the Royal Orchards here in Britain."];
+                TurnOn(<< "caretaker", "Royal Orchards" >>);
+            }
+            key ("caretaker") {
+                ["My responsibilities include caring for the trees, watching over the pickers at harvest time and protecting the Royal Orchard from thieves."];
+                TurnOn(<< "trees", "pickers", "thieves" >>);
+                TurnOff("caretaker");
+            }
+            key ("trees") {
+                ["Apple trees require constant care. I must make sure the trees all have enough water but not too much. I must keep all trees properly trimmed and be watchful so that the crop does not get infested by bugs or worms. I am also required to pick up all of the fallen apples, which is a job in itself."];
+                TurnOff("trees");
+            }
+            key ("pickers") {
+                ["Most of them are migrant farmers from Paws. Because they were once farmers, they are convinced they know more about the upkeep of the orchard than I! Of course that is preposterous. Also the pickers do not take orders very well."];
+                TurnOff("pickers");
+            }
+            key ("thieves") {
+                ["They would rob us down to the last twig if I gave them the chance! I should be awarded a medal from Lord British himself the way I risk my very life and limb protecting this orchard. Why, I just caught another thief recently. His name was Weston."];
+                TurnOff("thieves");
+                TurnOn("Weston");
+            }
+            key ("Royal Orchards") {
+                ["Here are grown the finest apples in all of Britannia. I would let thee sample one but it would be against the law as thou art obviously not of noble stock."];
+                TurnOff("Royal Orchards");
+            }
+            key ("Weston") {
+                ["He now resides in the prison, thanks to me! I knew what he was up to from the moment I saw him! He had the look of a hardened apple thief so I had him nicked by the town guard."];
+                TurnOn(<< "prison", "apple thief" >>);
+                if flag(148) {
+                    TurnOn("Fellowship");
+                }
+                TurnOff("Weston");
+            }
+            key ("prison") {
+                ["Yes, Weston is now living in our local prison. If thou dost not believe me, thou canst go there and see for thyself!"];
+                TurnOff("prison");
+            }
+            key ("apple thief") {
+                ["Oh, he came here with some sob story. But when one is as astute an observer of human behavior as I am, one can tell the true intent of people, which is often contrary to what they will say to thee!"];
+                TurnOff("apple thief");
+                TurnOn(<< "sob story", "observer" >>);
+            }
+            key ("sob story") {
+                ["I do not recall, exactly. Something about his impoverished wife and family starving to death in Paws or some load of rubbish."];
+                TurnOff("sob story");
+            }
+            key ("observer") {
+                ["Yes, I do consider myself to be a more than passable judge of character. And dost thou know how I became so?"];
+                v4 = ~AskYesNo();
+                if v4 {
+                    ["Oh, then art thou not the clever one!"];
+                } else {
+                    ["Then I shall tell thee! I am a member of The Fellowship!"];
+                    DescribeFellowship_i();
+                }
+                TurnOff("observer");
+            }
+            key ("philosophy") {
+                ExplainPhilosophy_i();
+                TurnOff("philosophy");
+            }
+            key ("Fellowship") {
+                ["I am a member of the Fellowship, yes. But it would be a crime for me to give apples from the Royal Orchard to The Fellowship, and it would be a violation of my sacred duty. While selling apples is also a violation, I was only trying to do this man Weston a favor. And I suppose these accusations are the thanks I get? Hmph!"];
+                if v2 {
+                    [He leans in close to you and speaks lower. "Thou art also a member of The Fellowship, after all. Am I not thy brother? Shouldst thou not trust me?" He gives you a crooked wink.];
+                    v5 = ~GiveToParty_i(true, 16, _All, _Food_Item, 1);
+                    if v5 {
+                        ["Thou seest? I am thy brother!" He hands you an apple.];
+                    } else {
+                        ["I would give thee an apple to show thee my sincerity, but it seems thou art too encumbered."];
+                    }
+                } else {
+                    ["But enough of these desperate accusations from a known criminal."];
+                    TurnOn("buy");
+                }
+                TurnOff("Fellowship");
+            }
+            key ("buy") {
+                ["I can do thee a favor as well. Wouldst thou like to buy one of these beautiful apples for the merest pittance of five gold coins?"];
+                v6 = ~AskYesNo();
+                if v6 {
+                    v7 = ~TakeFromParty_i(_All, _All, _All, _Gold_Coin, 5);
+                    if v7 {
+                        v8 = ~GiveToParty_i(true, 16, _All, _Food_Item, 1);
+                        if v8 {
+                            [Figg takes an apple from a nearby basket. After polishing it slightly on his shirt, he hands it to you.];
+                        } else {
+                            ["Thou cannot take thine apple! Thou art carrying too much!"];
+                        }
+                    } else {
+                        ["Thou dost not even have enough gold to buy one apple! Thou hast wasted the time of the King's Caretaker of the Royal Orchard. Away, peasant! Away before I call the guard!"];
+                        terminate;
+                    }
+                } else {
+                    ["Very well. But thou art passing up an opportunity that few are offered. In fact, eh, I would appreciate it if thou wouldst not mention our little chat to anyone. Agreed?"];
+                    v9 = ~AskYesNo();
+                    if v9 {
+                        ["Ah, I knew thou wert a good 'un."];
+                    } else {
+                        ["No! Well, fine, then."*];
+                        terminate;
+                    }
+                }
+                TurnOff("buy");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["I can see that thou shouldst be on thy way."*];
+    }
+    if (event = _Bark) {
+        BarkAboutWork_i(_Figg);
+    }
+}

@@ -1,0 +1,21 @@
+Routine Sundial accepts a0 #locals(2) #uses(~AvatarName, MemberSays_i) {
+    if (event = _Action) {
+        v0 = ~GetHour();
+        if ((v0 >= 6) and (v0 <= 11)) {
+            Item_bark(((" " + ~GetHour()) + " o'clock"), item);
+            return;
+        }
+        if (v0 = 12) {
+            Item_bark("Noon", item);
+            return;
+        }
+        if ((v0 >= 13) and (v0 <= 20)) {
+            v0 = (v0 - 12);
+            Item_bark(((" " + v0) + " o'clock"), item);
+            return;
+        } else {
+            v1 = ~AvatarName();
+            MemberSays_i("@^<Avatar>, I believe the key word in sundial is `sun'.@");
+        }
+    }
+}

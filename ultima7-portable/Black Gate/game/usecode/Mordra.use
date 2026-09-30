@@ -1,0 +1,431 @@
+Routine Mordra accepts a0 #locals(21) #uses(~LordOrLady, ~AvatarName, MordraGreetsRowena_i, MordraScoldsForsythe_i, SellResurrection_i, RestoreHits_i, ~AskYesNo, MordraTellsOfPeople_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Mordra);
+        v0 = ~LordOrLady();
+        v1 = ~AvatarName();
+        v2 = false;
+        v3 = false;
+        v4 = false;
+        v5 = false;
+        v6 = ~GetTime();
+        v7 = false;
+        v8 = false;
+        v9 = ~GetWorkType(_Mordra);
+        if not $MetMordra {
+            [The old, ghostly woman hums the tune to an ancient ballad and smiles up at you. This old woman brings to mind every grandmother you've ever seen.~~Apparently she is not entirely oblivious to your presence. However, when you speak to her, it seems as if your words fall on deaf ears. She looks puzzled for a moment, then moves her arms in magical passes. You recognize the words to be a variant of the Seance spell.];
+            $MetMordra = true;
+        }
+        if not flag(426) && ((v6 = 0) or (v6 = 1)) {
+            if (v9 = 14) {
+                [The old, ghostly woman looks very strange. Her eyes are open, but she doesn't seem to be awake, or at least not aware of her surroundings.*];
+                terminate;
+            } else {
+                if not (v9 = 16) {
+                    ["I am sorry, <v0>. Do not take offense, but I must rest before we speak further. I thank thee for thy patience, young one." She looks very weary as she turns away.*];
+                    terminate;
+                }
+            }
+        }
+        if not flag(464) && flag(448) {
+            TurnOn("ingredients");
+        }
+        v10 = ~GetParty();
+        if ~GetItemFlag_i(_InParty_i, ~NPCToItem_i(_Rowena)) {
+            MordraGreetsRowena_i();
+        }
+        if ~GetItemFlag_i(_InParty_i, ~NPCToItem_i(_Forsythe)) {
+            MordraScoldsForsythe_i();
+        }
+        if flag(408) {
+            TurnOn("sacrifice");
+        }
+        v11 = false;
+        v12 = false;
+        if not flag(456) {
+            ["Hello, <v0>. Thou mayest call me Mistress Mordra." She peers at you closely.~~"And thou must be <v1>, the Avatar." She looks you over thoroughly.];
+            flag(456) = true;
+        } else {
+            ["Greetings once again, <v1>."];
+            v8 = true;
+        }
+        v13 = ~AvatarItem_i();
+        v14 = ~FindNearest_i(25, _Body_400, v13);
+        if (v14 = 0) {
+            v14 = ~FindNearest_i(25, _Body_414, v13);
+        }
+        if not (v14 = 0) {
+            v15 = 0;
+            SellResurrection_i(v15, v14);
+            v2 = true;
+        }
+        v10 = ~GetParty_i();
+        Foreach v18 in v10 {
+            ClearItemFlag_i(_Poisoned, v18);
+            RestoreHits_i(v18);
+        }
+        [She lifts up her arms and in one of them you see an ankh. Words which you vaguely recognize flow from her lips and the ankh glows brightly. She stops chanting and the ankh dims. After her analysis of your condition is complete, "Ah, it is good to see that the world has been treating thee well. How may I serve thee, 'O Virtuous One?"];
+        TurnOn(<< "name", "job", "bye" >>);
+        if (flag(424) and not flag(426)) {
+            TurnOn("cage made");
+        }
+        converse {
+            key ("name") {
+                [She smiles at you. "Thou art quite forgetful, <v1>. As I have told thee, I am known as Mordra."];
+                TurnOff("name");
+            }
+            key ("job") {
+                ["I was the healer of this town before the fire erupted that shattered the lives of those here. I also dabbled in secret magical arts for a while." She winks at you slyly.];
+                TurnOn(<< "lives", "fire", "magical arts" >>);
+            }
+            key ("ingredients") {
+                ["If I tell thee, thou must be sure to get them right. Otherwise, what happened when I told that blasted mayor will happen again. And, while we here in Skara Brae have no more lives to lose, thou hast quite a valuable one! ~~"The ingredients necessary for the concoction to dissolve the liche are a potion of invisibility, a dose of a potion of curing, and one\x09vial of the essence of mandrake -- I have one set aside somewhere in mine house. Remember, only -one- vial of the mandrake!"];
+                TurnOff("ingredients");
+            }
+            key ("cage made") {
+                TurnOff("cage made");
+                ["The Soul Cage must be empowered with the might of the dead. The way to accomplish this is to go to the back of the Dark Tower, to the Well of Souls. Thou must lower the cage into the well, where the souls trapped there will lose a little of themselves to imbue it with the required power.~~"I know this sounds harsh, but it is a necessary evil if thou wouldst see them freed." She looks at you sharply.~~"The next step is to wait until midnight, then clap the cage upon the recumbent form of the Liche. This is the period of time in which he drains the spirits of the townsfolk in his Black Service."~~After a brief moment, she continues. "Finally, thou must pour a magical formula upon the Liche within the cage. This formula is the same substance that destroyed the town.~~"Do be careful when procuring it from the alchemist, Caine."];
+                TurnOn(<< "Dark Tower", "Well of Souls", "Black Service" >>);
+                if not flag(448) {
+                    TurnOn("formula");
+                }
+                v4 = true;
+            }
+            key ("formula") {
+                ["Thou must have Caine's assistance in creating the formula, but I can give thee the ingredients."];
+                flag(448) = true;
+                TurnOff("formula");
+                TurnOn("ingredients");
+            }
+            key ("Dark Tower") {
+                ["The Dark Tower lies on the northwestern point of Skara Brae. There is something odd about its construction, for I find it very hard to penetrate with my magical senses.~Within it," she says, "thou wilt find the Well of Souls."];
+                TurnOff("Dark Tower");
+                if not v7 {
+                    TurnOn("Well of Souls");
+                }
+                v19 = true;
+            }
+            key ("Well of Souls") {
+                v7 = true;
+                ["The Well of Souls is a powerful artifact, located beneath the Dark Tower, from which the Liche draws his power. The souls of the dead are incarcerated there, doomed to the torment of Horance's all-consuming appetite." An expression of pain shows in her features.];
+                TurnOff("Well of Souls");
+                v7 = true;
+            }
+            key ("Black Service") {
+                if not flag(426) {
+                    [Angrily, Mordra says, "Each night, at the stroke of midnight, the spirits of Skara Brae travel to the Dark Tower and are used to infuse Horance with power to continue his dark existence. None of the others are aware when this happens, but I feel it without being able to stop myself."];
+                    if not v19 {
+                        TurnOn("Dark Tower");
+                    }
+                } else {
+                    ["Even though the Liche is gone, we are still drawn to the place of his Black Service. He must have bound us with a geas and tied it to the power of the Well of Souls. Oh, what a crafty villain he was." Grudging respect for a skilled mage is mixed with disgust in Mordra's expression.];
+                    if not v7 {
+                        TurnOn("Well of Souls");
+                    }
+                }
+                TurnOff("Black Service");
+            }
+            key ("lives") {
+                ["Wouldst thou like to know about the townsfolk of Skara Brae?"];
+                if v8 {
+                    ["I might have some new information on my fellow townsfolk that could be of use to thee," she says, adding a smile.];
+                }
+                v20 = ~AskYesNo();
+                if v20 {
+                    MordraTellsOfPeople_i();
+                } else {
+                    ["Very well, <v0>. What wouldst thou care to know about?"];
+                }
+                TurnOff("lives");
+            }
+            key ("fire") {
+                ["'Twas the doom of this town, although I place no blame upon the alchemist, Caine. For I was the one who told him the recipe that I am sure will rid us of Horance the Liche."];
+                TurnOff("fire");
+                if not v5 {
+                    TurnOn("Caine");
+                }
+                TurnOn("recipe");
+                v11 = true;
+                v12 = true;
+            }
+            key ("recipe") {
+                ["'Twas but a simple mixture of a few ingredients. It should have worked." Her eyes narrow.~~"I expect that mayor of ours, Forsythe, fouled things up!"];
+                TurnOff("recipe");
+                if not v3 {
+                    TurnOn("mayor");
+                }
+            }
+            key ("mayor") {
+                ["That man is a bumbling idiot. It is his fault that the island was destroyed. I gave him the exact portions of the reagents to be used in the magical formula, and he paraphrased it to the alchemist, Caine. By the size of the fire, I am sure he misquoted the amount of mandrake root by\x09tenfold. Damn that foolish man!"~~Her brow creases and you\x09can see that this is a subject that she likes to avoid.];
+                v3 = true;
+                TurnOff("mayor");
+                if not v5 {
+                    TurnOn("Caine");
+                }
+            }
+            key ("Caine") {
+                ["Now those who reside here call him `the Tortured One.' That is because he is in eternal pain, caused by searing flames licking at his flesh.~~The pain is imagined, but to him, 'tis as real as thou or I... or, at least, as real as\x09thou art!"];
+                v5 = true;
+                TurnOff("Caine");
+            }
+            key ("magical arts") {
+                [Her eyes twinkle mischievously. "If I were to reveal them to thee, they wouldn't be secret any longer, now would they?"];
+                TurnOff("magical arts");
+            }
+            key ("sacrifice") {
+                if not flag(416) {
+                    [She smiles at first, then turns serious. "I have tied my spirit to powers beyond the realm of this mortal world. Were I to enter the Well of Souls, this entire island and a good bit of the mainland would be destroyed in a magical discharge. Wouldst thou lose the town of Skara Brae for all eternity?"];
+                    flag(416) = true;
+                } else {
+                    ["Thou knowest full well that I cannot. If thou wouldst\x09see mass destruction, thou shalt have to cause it thyself." She turns away quickly for a woman of her age.*];
+                    terminate;
+                }
+                TurnOff("sacrifice");
+            }
+            key ("bye") {
+                ["Goodbye, young <v1>. Take care of thyself, but should ill befall thee, I hope that thou wilt come back here and let me minister to thine ailments." She smiles kindly as you leave.*];
+                terminate;
+            }
+        }
+        clear_answers;
+    }
+    if (event = _Bark) {
+        terminate;
+    }
+}
+
+Routine RestoreHits_i accepts a0 #locals(3) #uses(~GetStat, SetStat) {
+    v1 = ~GetStat(_Str, v0);
+    v2 = ~GetStat(_Hits, v0);
+    if (v1 > v2) {
+        v3 = (v1 - v2);
+        SetStat(v3, _Hits, v0);
+    }
+}
+
+Usable MordraTellsOfPeople_i #locals(7) {
+    v0 = false;
+    v1 = false;
+    v2 = false;
+    v3 = false;
+    v4 = false;
+    v5 = false;
+    v6 = false;
+    PushKeys();
+    if flag(460) {
+        TurnOn("Forsythe");
+    }
+    if flag(451) {
+        TurnOn("Ferryman");
+    }
+    if flag(452) {
+        TurnOn("Markham");
+    }
+    if flag(459) {
+        TurnOn("Quenton");
+    }
+    if $MetTrent {
+        TurnOn("Trent");
+    }
+    if $MET_CAINE {
+        TurnOn("Caine");
+    }
+    TurnOn("no one");
+    ["Very well, then. Of whom wouldst thou speak?"];
+    converse {
+        key ("Forsythe") {
+            [She glowers at you for a moment. "I have nothing to say about -that- bumbling clod!"];
+            TurnOff("Forsythe");
+        }
+        key ("Ferryman") {
+            ["I know very little about that one. He's been here since the Liche called up the angry dead from their graves. I know one thing though: even shouldst thou defeat Horance, he will remain here under the geas he serves." She looks a little sad as she tells you this.];
+            TurnOff("Ferryman");
+            TurnOn("angry dead");
+        }
+        key ("angry dead") {
+            ["The graves of our ancestors have spilled forth the dead of Skara Brae. Their minds and hearts are rotted and they care not for the living. Hence the name `Angry Dead.'"];
+            TurnOff("angry dead");
+        }
+        key ("Markham") {
+            [She gives you a cocked smile. "That rascal opened one of the best pubs this side of Buccaneer's Den, or so he'd have thee believe. He's a bit rough around the edges, but he knows how to buy good wine, that is for sure. And his taste in bar maids isn't half bad, either," she wink. "If thou hast met Paulette, thou dost know of what I speak."];
+            TurnOff("Markham");
+            TurnOn("Paulette");
+        }
+        key ("Quenton") {
+            ["That poor man has had a life fraught with grief, the one ailment none of my magics seems to be able to do much about.~~"His wife, Gwen, was taken by a rather nasty group of men several years after the birth of their daughter, Marney. I know what happened to her, but I have spared Quenton this knowledge out of pity.~~"The men thought she was a noble lady due to her unsurpassed beauty. When they found out she was the wife of a lowly fisherman, they raped her brutally and sold her to a disreputable brothel. Fortunately she died not long after her arrival there." Mordra looks profoundly saddened.];
+            TurnOff("Quenton");
+            TurnOn("Marney");
+            v0 = true;
+        }
+        key ("Marney") {
+            ["Yes, yes, a half-told tale is no tale at all." She continues with her account of Quenton's sad life.~~"Marney took ill after her mother's abduction and lived with one foot in the grave for several years more. Finally, Quenton could take it no longer. He borrowed money from a violent man named Michael, who went by the moniker, Blade. When he could not repay the loan, Blade slew him.~~"However, this is not the end of my piteous tale, for even after his death, Quenton's shade was forced to remain in the town of Spirituality, where he had to watch his beloved Marney grow more ill and eventually die.~~"Yorl, the man who cared for Marney after her father's death, built a shrine for her earthly\x09body." She grows silent for a while, eyes downcast. ~~"It is my sincere hope that thou shalt rid us of Horance so that Quenton\x09may join his loved ones, wherever they may be."];
+            TurnOff("Marney");
+            TurnOn("Blade");
+        }
+        key ("Blade") {
+            [Her face becomes passionless for the first time since you met her.~~"The reason I know of this story is because my late brother, Rinaldo, sat on the bench at the High Court in Yew. He wrote to me about the capture of not only Blade, but also of the pirates who abducted Quenton's wife. The pirates spent the rest of their days in the lowest cells of a dungeon, and Blade met his fate upon the edge of a guillotine.~~"A fitting death, dost thou not think?"];
+            TurnOff("Blade");
+        }
+        key ("Paulette") {
+            ["She is quite a lovely girl, although a bit childlike in outlook. Her father was not of this world, I believe. He spoke with an odd inflection and his appearance was very unlike most other people of Britannia.~~"But then thou well knowest that many people of other worlds come to this land. I've even heard it rumored that Lord British himself is an outworlder. Imagine that." A sly expression crosses her face.];
+            TurnOff("Paulette");
+        }
+        key ("Trent") {
+            if flag(422) {
+                ["It is wonderful that those two have been brought back together. I only hope that Quenton will share that same fate." Her voice is full of hope.];
+                if not v0 {
+                    TurnOn("Quenton");
+                }
+            } else {
+                if flag(421) {
+                    if not flag(424) {
+                        ["Now that Trent has been brought out of himself, I believe it is time to have him construct the Soul Cage that will become the Liche's coffin." She smiles without humor.~~"Go to him and assist him if thou wishest to free this town from Horance's grasp."];
+                        if not v4 {
+                            TurnOn("Horance the Liche");
+                        }
+                    } else {
+                        if flag(426) {
+                            ["I feel as if a great weight has been lifted from me. I cannot thank thee enough for what thou hast done. However, we will not be free of the Liche's power until the Well of Souls has been destroyed."];
+                            TurnOn("Well of Souls");
+                        } else {
+                            ["Thou must use his cage well to stop the liche."];
+                        }
+                    }
+                } else {
+                    ["Alas, I fear that his mind was broken by the loss of his wife, Rowena. He cannot break out of the hatred which consumes him. One day, he will be spent and his spirit will be lost forever. Perhaps, Rowena would know of something that could help... but no, she herself is in need of assistance." Mordra shakes her head.];
+                    if not v2 {
+                        TurnOn("Rowena");
+                    }
+                }
+            }
+            TurnOff("Trent");
+            v1 = true;
+        }
+        key ("Rowena") {
+            TurnOff("Rowena");
+            if flag(422) {
+                ["It is wonderful that those two have been brought back together. I only hope that Quenton will share that same fate." Her voice is full of hope.];
+                if not v0 {
+                    TurnOn("Quenton");
+                }
+            } else {
+                if not flag(425) {
+                    ["Thou must find a way to bring her out of the Liche's ensorcelment, even if only for a brief moment. I am positive she holds the key to restoring Trent to his former self. Perhaps, if thou couldst find a personal article of hers -- something from Trent, perhaps -- and bring it to her. That might break the enchantment she is under."];
+                } else {
+                    [Mistress Mordra frowns a little. "I hope that poor girl can hold out a little longer, until she can be taken away from that horrible place."];
+                }
+            }
+            TurnOff("Rowena");
+            v2 = true;
+        }
+        key ("Caine") {
+            if not flag(448) {
+                ["He is a tortured spirit. He blames himself for the destruction of the town. In his delusion, he feels the flames of his death constantly. However, I believe his state gives him a certain purification and wisdom. It is said that he even knows the answers to life and death."~~She looks bemused. "Regardless of that fact, it is from him that thou must get the magical concoction to destroy the Liche. However, I can give thee the list of ingredients."];
+                TurnOn("ingredients");
+                flag(448) = true;
+                if not v4 {
+                    TurnOn("Horance the Liche");
+                }
+                v3 = true;
+            } else {
+                if not flag(426) {
+                    ["It is good that thou hast managed to create the magical\x09formula; now must thou use it with the Soul Cage, to destroy Horance."];
+                    if not v4 {
+                        TurnOn("Horance the Liche");
+                    }
+                } else {
+                    [Her smile widens. "Thou hast made excellent use of the formula. Now, we must find a way to destroy the Well of\x09Souls, to free Skara Brae."];
+                    if not v5 {
+                        TurnOn("Well of Souls");
+                    }
+                }
+            }
+            TurnOff("Caine");
+        }
+        key ("ingredients") {
+            ["If I tell thee, thou must be sure to get them right. Otherwise, what happened when I told that blasted mayor will happen again. And, while we here in Skara Brae have no more lives to lose, thou hast quite a valuable one! ~~"The ingredients necessary to dissolve the liche are: a potion of invisibility, a potion of curing, and one vial of the essence of mandrake -- I have one somewhere in mine house. Remember, only -one-  vial!"];
+            TurnOff("ingredients");
+        }
+        key ("Horance the Liche") {
+            ["He is the blasted liche I was trying to destroy when the fire happened. Horance the mage apparently decided one day that mortality was not something for him. So, he began to research ways to avoid death. Finally, he came upon the formula required to make himself an undead -- an immortal undead -- liche. Unfortunately, this transformation, compounded with his already obsessive behavior, changed him into the evil thing he is today!~~"And 'tis his evil, Black Service that commands us all!"];
+            TurnOff("Horance the Liche");
+            TurnOn("Black Service");
+            v4 = true;
+        }
+        key ("Dark Tower") {
+            ["The Dark Tower lies on the northwestern point of Skara Brae. There is something odd about its construction, for I find it very hard to penetrate with my magical senses.~Within it," she says, "thou wilt find the Well of Souls."];
+            TurnOff("Dark Tower");
+            if not v5 {
+                TurnOn("Well of Souls");
+            }
+            v6 = true;
+        }
+        key ("Well of Souls") {
+            v5 = true;
+            ["The Well of Souls is a powerful artifact, located at the back of the Dark Tower, from which the Liche draws his power. The souls of the dead are incarcerated there, doomed to the torment of Horance's all-consuming appetite." An expression of pain shows in her features.];
+            if not v4 {
+                TurnOn("Horance the Liche");
+            }
+            TurnOff("Well of Souls");
+            v5 = true;
+        }
+        key ("Black Service") {
+            if not flag(426) {
+                [Angrily, Mordra says, "Each night, at the stroke of midnight, the spirits of Skara Brae travel to the Dark Tower and are used to infuse Horance with power to continue his dark existence. None of the others are aware when this happens, but I feel it without being able to stop myself."];
+                if not v6 {
+                    TurnOn("Dark Tower");
+                }
+            } else {
+                ["Even though the Liche is gone, we are still drawn to the place of his Black Service. He must have bound us with a geas and tied it to the power of the Well of Souls. Oh, what a crafty villain he was." Grudging respect for a skilled mage is mixed with disgust in Mordra's expression.];
+                if not v5 {
+                    TurnOn("Well of Souls");
+                }
+            }
+            TurnOff("Black Service");
+        }
+        key ("no one") {
+            ["I see. Of what wouldst thou speak, then?"*];
+            ClearKeys();
+            PopKeys();
+            break;
+        }
+    }
+    clear_answers;
+}
+
+Usable MordraGreetsRowena_i #locals(1) #uses(~AvatarName) {
+    v0 = ~AvatarName();
+    ["Sweet Rowena, I am so happy to see thee out of that horrid tower." Mordra's eyes begin to fill with tears of joy.*];
+    SetSpeaker(1, _Rowena);
+    ["It was terrible, but the worst part was being away from mine husband. The whole time I was there with Horance, I felt like a hollow shell of a person. I must be with Trent to be whole again."*];
+    CloseSpeaker(_Rowena);
+    SetSpeaker(0, _Mordra);
+    ["Yes, thou art quite right. <v0>, she must needs be taken to her husband, swiftly. I trust that thou wilt do so." She leaves the statement hanging and says her goodbyes to Rowena.*];
+    terminate;
+}
+
+Usable MordraScoldsForsythe_i #locals(2) #uses(~LordOrLady, ~AvatarName) {
+    v0 = ~LordOrLady();
+    v1 = ~AvatarName();
+    ["Well, hello, Mayor Forsythe. Thou has finally decided to assist in the salvation of our town." She gives him a pointed look.*];
+    SetSpeaker(0, _Forsythe);
+    ["Look here, I wasn't the one who gave that fool recipe to Caine, now was I?"*];
+    CloseSpeaker(_Forsythe);
+    SetSpeaker(0, _Mordra);
+    ["That fool recipe just got rid of Horance for us." Mistress Mordra speaks through clenched teeth.*];
+    SetSpeaker(0, _Forsythe);
+    ["Hmmph. Thou hast taken thy sweet time, madam. And now I am off to jump in a well."*];
+    CloseSpeaker(_Forsythe);
+    SetSpeaker(0, _Mordra);
+    ["Ignorant fool!"*];
+    SetSpeaker(0, _Forsythe);
+    ["Old biddy!"*];
+    CloseSpeaker(_Forsythe);
+    SetSpeaker(0, _Mordra);
+    ["Thou wilt regret that, Toad." Fire flares in the depths of her eyes and electricity crackles in her hair. She lifts her arms as if to cast some dreadful spell, but Forsythe whimpers and hides behind you. She sees the look on your face and slowly lowers her arms. The flames and lightning flicker, and die.~~"Forgive my behavior, <v0>. What was that about a well." You explain that Forsythe has volunteered to sacrifice himself for the spirits of the others. She looks him in the eyes. He brushes himself off and stands up straight. "I didst not think that thou had it in thee, Mayor. I am in thy debt."*];
+    SetSpeaker(0, _Forsythe);
+    ["Yes, well. Thou art welcome, I guess." He looks as if his dignity has been somewhat replenished.*];
+    CloseSpeaker(_Forsythe);
+    SetSpeaker(0, _Mordra);
+    ["I suppose thou hadst better get thee hence, then. Fare thee well, Forsythe. 'Tis not all that bad, roaming the ether. At least not once thou becomest accustomed to it."~~She turns to you. "Goodbye, <v1>. If thou art successful, I will not see thee again. May thy fortunes be good.*"];
+    terminate;
+}

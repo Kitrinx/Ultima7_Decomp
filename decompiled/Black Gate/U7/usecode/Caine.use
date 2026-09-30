@@ -1,0 +1,185 @@
+Routine Caine accepts a0 #locals(5) #uses(~LordOrLady, ~AskYesNo, GivePartyExp_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Caine);
+        if not flag(434) {
+            [The non-corporeal man stares past you, seemingly past the confines of the building, and, perhaps, of the world. Then, he suddenly shudders, as if he is filled with pain.*];
+            terminate;
+        }
+        v0 = false;
+        v1 = false;
+        v2 = false;
+        v3 = ~LordOrLady();
+        TurnOn(<< "name", "job", "bye" >>);
+        if not $MET_CAINE {
+            [The ghostly man displays a face filled with pain.];
+            $MET_CAINE = true;
+        } else {
+            ["Greetings, <v3>." Caine breathes deeply, apparently forcing back his torment.];
+            if (flag(380) and not flag(406)) {
+                TurnOn("questions");
+                v2 = true;
+            }
+            if not flag(447) && flag(448) {
+                TurnOn("need formula");
+                v1 = true;
+            }
+        }
+        if flag(447) && not flag(464) {
+            TurnOn("instructions");
+        }
+        if flag(408) && not flag(417) {
+            TurnOn("sacrifice");
+        }
+        converse {
+            key ("name") {
+                ["I," he gasps, "am called Caine. But I have also been given an alias by my... fellow townspeople. To them, I am known as `the Tortured One.'" He moves his hands in a sweeping gesture, but seems to indicate nothing. "And thou canst see why."];
+                if (flag(380) and not flag(406)) && not v2 {
+                    TurnOn("questions");
+                }
+                TurnOff("name");
+                TurnOn("why?");
+                if not v1 && not flag(447) && flag(448) {
+                    TurnOn("need formula");
+                }
+            }
+            key ("why?") {
+                ["The flames, fool! The flames!" Again he gasps.];
+                TurnOff("why?");
+            }
+            key ("job") {
+                [He smirks at your comment.~~"Thou wishest to know my job? I will tell thee my job!" he shouts.~"To burn here in eternal flames for my crime against the fair city of Skara Brae! That," he pauses for emphasis, "is my job!"~After a moment, he calms down.~"I apologize, <v3>. I realize thy question was not intended to further torment me," he sighs, and turns his face away from you. "At one time, I was the alchemist here."];
+                TurnOn(<< "flames", "Skara Brae" >>);
+                if not v1 && not flag(447) && flag(448) {
+                    TurnOn("need formula");
+                }
+            }
+            key ("flames") {
+                [He looks down at the ground, a remorseful expression on his face.~~"The flames are my punishment. Years ago, when the evil Liche first exerted his reign of death over Skara Brae, the healer, Mordra, conceived of a plan to remove the creature most foul.~~"She designed a concoction that would destroy the magical bonds that form the Liche. The formula was presented to our mayor, who passed it on to me.~~"But," he scowls, "something went wrong when I was preparing the potion. The proportions were mixed improperly, or... I don't know!" he shouts, fists clenched.~~"All I remember is the shop exploding, and the fire! The fire! All those people dead... because of me... because of my mistake...."];
+                TurnOff("flames");
+                if not v0 {
+                    TurnOn("mayor");
+                }
+            }
+            key ("Skara Brae") {
+                ["'Twas a thriving town -- before I destroyed it!" His jaw tightens and his face clenches. "Why? Why, why, why!" He again gasps in agony, but quickly regains control.~~"There were so many innocent people," he says, staring directly at you. "I cannot believe I am responsible for all their deaths."];
+                TurnOn("people");
+                TurnOff("Skara Brae");
+            }
+            key ("sacrifice") {
+                ["I am sorry, <v3>, but I must spend my eternity here in constant memory of those whom I have destroyed."];
+                flag(417) = true;
+                TurnOff("sacrifice");
+            }
+            key ("Forsythe", "mayor") {
+                ["Forsythe is the mayor. Perhaps thou canst find him in the Town Hall, shouldst thou wish to speak with him."];
+                v0 = true;
+                TurnOff(<< "Forsythe", "mayor" >>);
+            }
+            key ("need formula") {
+                ["Thou trusts me to tell thee the formula! After what I have done to this town? Art thou mad? I hope at least, that thou hast checked with Mordra for the correct proportions, yes?"];
+                v4 = ~AskYesNo();
+                if v4 {
+                    [He shakes his head in disbelief.~~"Thou art truly insane. But," he shrugs, "thou hast nothing to lose but thine own life...."];
+                    TurnOn("instructions");
+                    flag(447) = true;
+                } else {
+                    ["That is better. Thou hadst me wondering." His tone is a mixture of both relief and disappointment.];
+                }
+                TurnOff("need formula");
+            }
+            key ("instructions") {
+                ["First thou wilt need the three potions. Then, thou must place each one just below a connecting tube -- the order matters not. Take an empty vial -- I should have one here in my lab -- and set it below the nozzle. Then, turn on the burner. After but a few minutes, the mixture will form, and the filled vial will be ready for thee."];
+                TurnOff("instructions");
+            }
+            key ("people") {
+                ["Thou wishest to know whom I killed? I can only assume that all perished in the blaze: Markham and his Barmaid, Paulette; Trent and Forsythe; and, of course, Mordra the healer."];
+                TurnOn("Trent");
+                if not v0 {
+                    TurnOn("Forsythe");
+                }
+                TurnOff("people");
+            }
+            key ("Trent") {
+                ["He is -- was -- the blacksmith. Mine one consolation lay with him, for I thought there would be at least one advantage to his death. Sadly," he inhales quickly, "even that did not occur."];
+                TurnOn(<< "blacksmith", "advantage" >>);
+                TurnOff("Trent");
+            }
+            key ("blacksmith") {
+                ["He was once a master of all things metal. Now all he does, so I am told, is work endlessly on that blasted cage!"];
+                TurnOff("blacksmith");
+                TurnOn("cage");
+            }
+            key ("cage") {
+                ["I know nothing about it other than that it was necessary to put the liche in it before my... potion could work on him."];
+                TurnOff("cage");
+            }
+            key ("advantage") {
+                ["The liche took from Trent the one most valuable thing in the blacksmith's life -- his wife, Rowena. I had hoped his death would at least extinguish his pain." He smiles sardonically.~~"Well, it did end his pain, in a manner of speaking."];
+                TurnOff("advantage");
+                TurnOn(<< "Rowena", "end" >>);
+            }
+            key ("end") {
+                ["The pain is gone, but only to be replaced by his obsessive anger. The poor fool does not even realize he is dead! He thrives on his anger."];
+                TurnOff("end");
+            }
+            key ("Rowena") {
+                ["She was all he lived for. When the liche tried to take her from him, he was consumed by the emptiness of her death. But, after his own demise," he stares directly at you, "his bitter feelings soured even further.~~"I suspect there is no reasoning with him now."];
+                TurnOff("Rowena");
+                TurnOn("reasoning");
+            }
+            key ("reasoning") {
+                ["I doubt he would believe even his own death, let alone care."];
+                TurnOff("reasoning");
+            }
+            key ("questions") {
+                if not flag(444) {
+                    [The ghost looks at you with a hint of amusement. "Thou art looking for the answers to the questions of life and death?"];
+                    if ~AskYesNo() {
+                        [The Tortured One looks hard at you. After a pause, he speaks. "I will tell thee what I know if thou dost agree to help me. Free me. Free all of us. Free us from the evil Liche."];
+                        TurnOn("Liche");
+                        TurnOff("questions");
+                    } else {
+                        ["Then I have no answers for thee."*];
+                        terminate;
+                    }
+                } else {
+                    if flag(426) {
+                        ["Thou hast freed us from the Liche. Thou art entitled to mine half of the bargain.~~"So thou dost want to know the answers to the questions of life and death?"];
+                        if ~AskYesNo() {
+                            [The Tortured One looks hard at you. Then, smiling, he shakes his head. "I have no secrets, my foolish friend. Thou art a fool. There are -no- answers. Only questions."~~He looks as if he might cry out in pain. And then Caine turns away from you. "Go away now. Leave me to mine eternity."*];
+                            flag(406) = true;
+                            GivePartyExp_i(700);
+                            terminate;
+                        } else {
+                            ["Then why hast thou wasted thy time? Go away, fool!"*];
+                            terminate;
+                        }
+                    } else {
+                        ["Thou hast not rid us of the evil Liche yet. Fulfill this quest as thou hast agreed and I shall give thee the answers thou dost seek."];
+                    }
+                }
+                TurnOff("questions");
+            }
+            key ("Liche") {
+                ["He is an evil spirit who inhabits poor dead Horance's body. He has a hold on every being in this town -- even me. He sucks the life forces -- the little that remain -- from our souls. Please, thou must free us from his power. Wilt thou try?"];
+                if ~AskYesNo() {
+                    [The Tortured One's eyes brighten somewhat, as he sees the light at the end of a long, dark tunnel. "Then thou hast given me hope. To begin, speak with Mistress Mordra. She can tell thee how to accomplish this feat."];
+                    TurnOff("Liche");
+                    flag(444) = true;
+                } else {
+                    ["Then thou shalt never know the answers to the questions of life and death. An eye for an eye, my friend."*];
+                    terminate;
+                }
+                TurnOff("Liche");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["Goodbye, <v3>." He suppresses a pained scream as you depart.*];
+    }
+    if (event = _Bark) {
+        terminate;
+    }
+}

@@ -1,0 +1,27 @@
+Routine TheTriplesGame accepts a0 #locals(12) #uses(~TriplesBoard_i, ~TriplesBets_i, Bark_i) {
+    if ((event = _Action) and not ~Kernel_getNumProcesses(item)) {
+        closeAllGumps();
+        #discard ~TriplesBets_i(#incoming(15));
+        v0 = ~TriplesBoard_i();
+        if ((~GetHour() >= 15) or (~GetHour() <= 3)) {
+            Foreach v3 in v0 {
+                ClearItemFlag_i(_OkayToTake_i, v3);
+            }
+            SetWorkType(_Hound, _Smithy);
+        }
+        v4 = ~GetAllInRegion(_The_Triples_Game_814);
+        v5 = ~GetAllInRegion(_The_Triples_Game_809);
+        v6 = ~GetAllInRegion(_The_Triples_Game_818);
+        if (~ListSize_i(v6) > 0) && (~ListSize_i(v5) = 3) && (~ListSize_i(v4) >= 1) {
+            flag(31) = false;
+            flag(32) = false;
+            flag(33) = false;
+            Bark_i(0, "@Spin baby!@", _Avatar);
+            Foreach v9 in v5 {
+                v10 = (~rndRange(2, 0) * 8);
+                Kernel_resetRef(v9);
+                v11 = ~PostAction(<< _aNEXT_FRAME, _aSFX_i, 29, _aLOOP_i, 65533, 22, byte(78), byte(88), 29, byte(11), 65533, v10, byte(85), 1547 >>, v9);
+            }
+        }
+    }
+}

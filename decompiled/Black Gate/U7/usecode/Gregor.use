@@ -1,0 +1,110 @@
+Routine Gregor accepts a0 #locals(5) #uses(~IsNearEachOther_i, ~LordOrLady, ~IsNPCNear, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Gregor);
+        v0 = ~GetTime();
+        v1 = ~GetWorkType(~NPCToItem_i(_Gregor));
+        if (v0 = 7) {
+            if not (v1 = 16) {
+            } else {
+                v2 = ~IsNearEachOther_i(_Elynor, _Gregor);
+                if v2 {
+                    [Gregor is busy concentrating on the Fellowship meeting and cannot talk now.*];
+                    terminate;
+                } else {
+                    ["No time for idle chatter! I must get to the Fellowship Meeting! I am late!"*];
+                    terminate;
+                }
+            }
+        }
+        v3 = ~LordOrLady();
+        TurnOn(<< "name", "job", "bye" >>);
+        v4 = ~IsNPCNear(_Elynor);
+        if v4 && (v0 = 0) && (v1 = 16) {
+            TurnOn("Elynor");
+        }
+        if not $MET_GREGOR {
+            [You see an old man whose domineering disposition matches the hardened physique of his aged body.];
+            $MET_GREGOR = true;
+        } else {
+            ["Art thou addressing me?" Gregor scowls.];
+        }
+        converse {
+            key ("name") {
+                ["My name is Gregor."];
+                TurnOff("name");
+            }
+            key ("job") {
+                if $LEARNED_ABOUT_MINOC_MURDER {
+                    ["I am in charge of the Minoc branch of the Britannian Mining Company."];
+                    TurnOn(<< "Minoc", "Britannian Mining Company" >>);
+                } else {
+                    ["Art thou fevered, <v3>? Dost thou not realize why we have gathered at this spot? 'Tis shameful, thine unaffected manner in the presence of such tragedy!"];
+                    $LEARNED_ABOUT_MINOC_MURDER = true;
+                    TurnOn("murders");
+                }
+            }
+            key ("Minoc") {
+                ["Our town is a major center of trade in Britannia, and it is a place of social change."];
+                TurnOff("Minoc");
+                TurnOn(<< "trade", "social change" >>);
+            }
+            key ("Britannian Mining Company") {
+                ["The Britannian Mining Company produces a wide variety of minerals that are essential to the continuation of progress in\x09Britannia."];
+                TurnOff("Britannian Mining Company");
+            }
+            key ("trade") {
+                ["Here in Minoc we have one of the largest mining operations in Britannia, a sawmill, an inn, the Artist's Guild, and a shipwright."];
+                TurnOn(<< "sawmill", "inn", "Artist's Guild", "shipwright" >>);
+                TurnOff("trade");
+            }
+            key ("social change") {
+                ["Here in Minoc we are erecting a monument to our good shipwright Owen, a master craftsman whose name will soon be known throughout Britannia. We also have a very active Fellowship branch."];
+                TurnOff("social change");
+                TurnOn(<< "monument", "Fellowship" >>);
+            }
+            key ("sawmill") {
+                ["A long-standing and profitable business. A shame it will become more renowned for the murders that were committed there than for any of the fine work it does."];
+                TurnOff("sawmill");
+            }
+            key ("inn") {
+                ["The Checquered Cork is famous for its rustic character and atmosphere. It is a fine place. Do not be put off by its apparent uncleanliness."];
+                TurnOff("inn");
+            }
+            key ("Artist's Guild") {
+                ["The Artist's Guild is a small collection of craftspeople who have huddled together to sell their little trinkets. They pride themselves on being the local dissenters of everything."];
+                TurnOff("Artist's Guild");
+            }
+            key ("shipwright") {
+                ["I may have already mentioned Owen, the shipwright. He builds the finest ships that have ever set sail."];
+                TurnOff("shipwright");
+            }
+            key ("monument") {
+                ["I helped to organize things with Mayor Burnside to get the monument built."];
+                if not $COMPLETED_OWENS_QUEST {
+                    ["It will be huge and made of the finest ore from our mine."];
+                }
+                TurnOff("monument");
+            }
+            key ("Fellowship") {
+                ["They have done immeasurable good for Minoc, helping to counter the disunity that can plague a town such as ours where so many people are fixated upon monetary gain."];
+                TurnOff("Fellowship");
+            }
+            key ("murders") {
+                ["It is terrible! The gypsies Frederico and Tania have been found murdered in William's sawmill!"];
+                TurnOff("murders");
+            }
+            key ("Elynor") {
+                ["Leave us in peace, damn thee! Elynor and I are in love and we wish to be alone together! Find thy cheap excitations elsewhere!"];
+                TurnOff("Elynor");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["Be on thy way then."*];
+    }
+    if (event = _Bark) {
+        BarkAboutWork_i(_Gregor);
+    }
+}

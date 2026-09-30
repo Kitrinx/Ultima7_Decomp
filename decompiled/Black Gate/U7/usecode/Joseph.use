@@ -1,0 +1,127 @@
+Routine Joseph accepts a0 #locals(2) #uses(~LordOrLady, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Joseph);
+        v0 = ~LordOrLady();
+        v1 = ~IsMedallionOn_i();
+        TurnOn(<< "name", "job", "bye" >>);
+        if $EA_LEFT_PAWS_FOR_JHELOM {
+            TurnOn("Elizabeth and Abraham");
+        }
+        if flag(368) {
+            TurnOn("Sprellic");
+        }
+        if not $MetJoseph {
+            [You see a man who exudes the outward mannerisms of a shrewd administrator, in contrast to his youthful appearance.];
+            $MetJoseph = true;
+        } else {
+            [Joseph nods his head respectfully to you. "How may I assist thee?"];
+        }
+        converse {
+            key ("name") {
+                ["My name is Joseph."];
+                TurnOff("name");
+            }
+            key ("job") {
+                ["Presently, I am the mayor of Jhelom."];
+                TurnOn(<< "mayor", "Jhelom" >>);
+            }
+            key ("mayor") {
+                ["I may seem a bit young for the job, but in a town such as this I am called upon to help keep order as often as administrate. I use my sword and pen in equal measure."];
+                TurnOff("mayor");
+            }
+            key ("Jhelom") {
+                ["This town is a rough place. A fine place for fighting men and women to live. Perhaps thou hast seen our local sport?"];
+                TurnOff("Jhelom");
+                TurnOn("sport");
+            }
+            key ("sport") {
+                ["Why, 'tis duelling! At twelve noon every day, the town square becomes a battlefield."];
+                TurnOn(<< "duelling", "battlefield" >>);
+                TurnOff("sport");
+            }
+            key ("duelling") {
+                ["Well, the sound is worse than the act. 'Tis actually just a form of training and exercise. The fighters practice with targets and such. That is where I can be found, keeping mine own skills sharp."];
+                TurnOff("duelling");
+            }
+            key ("battlefield") {
+                ["I am exaggerating. Many of the fighters in town gather to spar with the training dummies and practice various methods of combat. There are a few harmless matches at times. Some are a bit rough every now and then. Some folks take wagers on it and turn a profit."];
+                TurnOff("battlefield");
+                TurnOn(<< "spar", "take wagers" >>);
+            }
+            key ("spar") {
+                ["Ahem... Of course most duels are simply to the blood, not to the death. It is a practice that helps restrain the passing knaves and rogues."];
+                TurnOff("spar");
+            }
+            key ("take wagers") {
+                ["Speak to Daphne or Ophelia at the Bunk and Stool, our town pub and inn."];
+                TurnOff("take wagers");
+            }
+            key ("Fellowship") {
+                ["That is what many of the duels are fought over! Some say The Fellowship is a load of rot, some say it is the only truth. Others say it is foolishness. Of course, as Mayor I remain neutral on such matters."];
+                TurnOff("Fellowship");
+                TurnOn(<< "truth", "foolishness" >>);
+            }
+            key ("Elizabeth and Abraham") {
+                if not flag(136) {
+                    ["Elizabeth and Abraham?" Joseph scratches his head. "Oh, yes! They were the Fellowship members who were just here! They were trying to start a branch in Jhelom. I am undecided on what to tell them. We will probably have a town meeting to decide if there should be a branch here. The couple said they were returning to Britain for a few days."];
+                    $EA_LEFT_JHELOM = true;
+                } else {
+                    ["Elizabeth and Abraham?" Joseph scratches his head. "Oh, yes! They were the Fellowship members who were here -- why, it must have been last week or so. I have not seen them since."];
+                }
+                TurnOn("Fellowship");
+                TurnOff("Elizabeth and Abraham");
+            }
+            key ("truth") {
+                ["De Snel, the leader of the Library of Scars, requires that his members fight in many duels. One week they will fight for one cause and the next week for the opposite side."];
+                TurnOff("truth");
+                TurnOn(<< "De Snel", "Library of Scars" >>);
+            }
+            key ("foolishness") {
+                if v1 {
+                    [Joseph looks a little embarrassed. "I meant no insult to thee as a member of The Fellowship, <v0>."];
+                } else {
+                    ["If thou must know mine opinion," he says to you in quiet confidence, "I agree with those that say The Fellowship is a bunch of foolishness."];
+                }
+                TurnOff("foolishness");
+            }
+            key ("De Snel") {
+                ["De Snel says he only wishes the best for his school. If his fighters are ever beaten he throws them out and recruits the winner to join the Library of Scars."];
+                TurnOff("De Snel");
+            }
+            key ("Library of Scars") {
+                ["It attracts fighters from all over Britannia who want to learn from De Snel. They are an unruly bunch. Thou wouldst do best to stay clear of them."];
+                TurnOff("Library of Scars");
+            }
+            key ("Sprellic") {
+                ["Yes, I have heard of the events surrounding this fellow Sprellic and the duels against the Library of Scars, but frankly, mine official policy has been to not get involved in these sort of personal disputes."];
+                TurnOff("Sprellic");
+                TurnOn(<< "get involved", "personal dispute" >>);
+            }
+            key ("get involved") {
+                ["De Snel and I have an understanding. He works his side of the street and I work mine. It is hard enough to maintain order in this town without jeopardizing that. If I intervene De Snel will challenge me to a duel and if I am killed then his control of our town would be absolute."];
+                TurnOff("get involved");
+                TurnOn(<< "challenge", "understanding" >>);
+            }
+            key ("personal dispute") {
+                ["As Mayor and the peacekeeper I have to pick and choose my fights very carefully. There is no love lost between myself and the members of the Library of Scars, but they can legitimately claim that they have been wronged. I am required to remain impartial in this matter. As far as I can see, Sprellic brought this on himself when he took the honor flag. If thou dost wish to stop the duel, thou dost need only convince him to give it back."];
+                TurnOff("personal dispute");
+            }
+            key ("understanding") {
+                ["Believe me, we are not in each other's company so often because we are friends. We do so to maintain a careful watch on each other. Keep thy friends close, but keep thine enemies closer. Words to live by in Jhelom."];
+                TurnOff("understanding");
+            }
+            key ("challenge") {
+                ["When I say that De Snel would challenge me to a duel I do not mean to insinuate that it would in any way be a fair or honorable contest-- more like a dagger in the back from one of his bullies as I was walking down a dark alley somewhere. That it would be a duel is just the story he would tell to make mine assassination somehow honorable."];
+                TurnOff("challenge");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["Enjoy thy stay in my city. But if thou hast no stomach for fighting thou shouldst not stay long."*];
+    }
+    if (event = _Bark) {
+        BarkAboutWork_i(_Joseph);
+    }
+}

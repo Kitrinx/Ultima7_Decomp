@@ -1,0 +1,18 @@
+Routine PrismPedestalEgg_i accepts a0 #locals(9) #uses(~SortByCriteria_i, ~CheckPrisms_i) {
+    if (event = _Trigger) {
+        v0 = ~FindNearby_i(0, 1, _Prism_981, item);
+        v1 = << >>;
+        Foreach v4 in v0 {
+            v1 = (v1 & ~GetDist(item, v4));
+        }
+        v0 = ~SortByCriteria_i(v1, v0);
+        if ~CheckPrisms_i(v0::1) {
+            v5 = ~FindNearby_i(16, 20, _Egg, item);
+            Foreach v8 in v5 {
+                if (~GetQuality(v8) = 50) {
+                    Item_destroy(v8);
+                }
+            }
+        }
+    }
+}

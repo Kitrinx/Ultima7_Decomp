@@ -1,0 +1,88 @@
+Routine Jergi accepts a0 #locals(2) #uses(~LordOrLady, ~IsNPCNear) {
+    if (event = _Bark) {
+        terminate;
+    }
+    SetSpeaker(0, _Jergi);
+    v0 = ~LordOrLady();
+    TurnOn(<< "name", "job", "bye" >>);
+    v1 = ~IsNPCNear(_Margareta);
+    if v1 {
+        TurnOn("Margareta");
+    }
+    if flag(466) {
+        TurnOn("hourglass");
+    }
+    if not $MetJergi {
+        [You see a swarthy gypsy with soulful eyes, dressed in colorful clothes. He looks as if he has the weight of the world on his shoulders.];
+        $MetJergi = true;
+    } else {
+        ["Greetings vonce again," Jergi says as he bows, making a swirling gesture with his hand.];
+    }
+    converse {
+        key ("name") {
+            ["I am Jergi. Pleased to make thine acqvaintance."];
+            TurnOff("name");
+        }
+        key ("job") {
+            ["I am the King ov the Gypsies."];
+            TurnOn("gypsies");
+        }
+        key ("gypsies") {
+            ["My people have almost completely died out in this vorld. Now that I am their leader I am making their velfare my sole responsibility. Soon I vill decide if ve vill leave Minoc."];
+            TurnOff("gypsies");
+            TurnOn(<< "died out", "Minoc" >>);
+        }
+        key ("died out") {
+            ["Ve gypsies are a people who live to vander. But there are fewer and fewer places vhere ve are velcome. Ve are victimized by the ancient hatreds that have plagued our kind since the days ov ancient Sosaria."];
+            TurnOff("died out");
+        }
+        key ("Minoc") {
+            ["Our people came here because ve thought ve vould be accepted. It seemed for a very long time that ve vere. But after these savage murders it looks like it is time for us to roam vonce again."];
+            TurnOff("Minoc");
+            TurnOn(<< "accepted", "murders" >>);
+        }
+        key ("accepted") {
+            ["Ve have alvays been subject to the prejudices ov others! Ve are called thieves and vorse! But ve are a people that only vish to play our music, and dance, and live in peace. I thought the people here understood this."];
+            TurnOff("accepted");
+        }
+        key ("murders") {
+            ["Frederico vas mine only brother, and no vone loved Tania more than I did, save for Frederico himself. Vhat happened to them vas unspeakable. I vish I could tell thee more. If thou vishest thou may speak to Sasha, but only briefly. Now is the time for him to mourn."];
+            TurnOff("murders");
+            TurnOn(<< "Frederico", "Tania", "Sasha" >>);
+        }
+        key ("Frederico") {
+            ["Some thought ov my brother Frederico as a harsh man, but those ov us who knew him could see that he vas simply governed by the same prides and passions that rule all gypsies."];
+            TurnOff("Frederico");
+        }
+        key ("Tania") {
+            ["She vas the most beautiful voman I had ever seen. Both my brother and I vere in love vith her. Ve both tried to vin her heart. I failed and thought that I vould spend the rest ov my life vith no vone. It vas not until last year that my vife Margareta and I vere married and my secretly broken heart vas mended."];
+            TurnOff("Tania");
+        }
+        key ("Sasha") {
+            ["He is the son ov Frederico and Tania. He left us to learn more about The Fellowship. Ov course, he feels responsible for vhat happened..."];
+            TurnOff("Sasha");
+            TurnOn(<< "responsible", "Fellowship" >>);
+        }
+        key ("responsible") {
+            ["Ve do not blame Sasha for vhat happened. Ve vill not punish him."];
+            TurnOff("responsible");
+        }
+        key ("Fellowship") {
+            ["Sasha vill have to decide if he vants to stay vith his people or return to The Fellowship. I believe he vill make the right choice."];
+            TurnOff("Fellowship");
+        }
+        key ("Margareta") {
+            ["My vife is a vise voman who has some ov the necessary talents to see the future. Thou shouldst speak vith her."];
+            TurnOff("Margareta");
+        }
+        key ("hourglass") {
+            ["I do not know vhat thou art talking about. I know nothing of a mage named Nicodemus, nor of his hourglass. Be vary -- mages are quite mad these days!"];
+            TurnOff("hourglass");
+        }
+        key ("bye") {
+            break;
+        }
+    }
+    clear_answers;
+    ["Mayest thou have much fortune in thine endeavors."*];
+}

@@ -1,0 +1,123 @@
+Routine Perrin accepts a0 #locals(4) #uses(~AvatarName, ~LordOrLady, ~AskYesNo, PerrinTrains_i, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Perrin);
+        v0 = ~AvatarName();
+        v1 = ~LordOrLady();
+        TurnOn(<< "name", "job", "bye" >>);
+        if not flag(325) {
+            [The man before you stretches and inhales deeply.];
+        } else {
+            ["Glorious day, <v0>." Perrin grins.];
+        }
+        converse {
+            key ("name") {
+                ["Please, <v1>, call me Perrin. I reside here in Empath Abbey."];
+                TurnOff("name");
+                TurnOn("Empath Abbey");
+            }
+            key ("job") {
+                ["I am a scholar, <v1>. Dost thou want training in the realm of books?"];
+                v2 = ~AskYesNo();
+                if v2 {
+                    ["My price is 45 gold for each training session, but I will also teach thee what little I know about magic. Is this acceptable?"];
+                    v3 = ~AskYesNo();
+                    if v3 {
+                        PerrinTrains_i(45, << 2, 6 >>);
+                    } else {
+                        ["Very well, <v1>."];
+                    }
+                } else {
+                    ["Forgive me, I am a bit overzealous in my search for students. I hope thou wilt return in the future."];
+                }
+            }
+            key ("Empath Abbey") {
+                ["This is a pleasant location. I like the privacy, which gives me a chance to study when I need to. The Brotherhood is across the road, and I am near a healer. Also, I have begun a study on the effects of dealing with death for undertakers. I am using Tiery as a case study."];
+                TurnOn(<< "Brotherhood", "healer", "Tiery" >>);
+                TurnOff("Empath Abbey");
+            }
+            key ("Brotherhood") {
+                ["That is the abbey. The monks who reside there are famous for their ability to produce exquisite wine. Nearby is the Highcourt and a prison."];
+                TurnOff("Brotherhood");
+                TurnOn(<< "wine", "highcourt", "prison" >>);
+            }
+            key ("wine") {
+                ["Thou shouldst try some. The monks have been making it for more than three hundred years!"];
+                TurnOff("wine");
+            }
+            key ("highcourt") {
+                ["The official there is named Sir Jeff. From what I hear, he runs his ship very tight. I do not envy the jailer that works with him. It must be extremely difficult to be near such a strict disciplinarian all day long."];
+                TurnOff("highcourt");
+            }
+            key ("prison") {
+                ["It is located just behind the court. And," he grins, "I am proud to say that is at least one thing about which I know nothing."];
+                TurnOff("prison");
+            }
+            key ("Tiery") {
+                ["He is the undertaker who lives just north of the Brotherhood."];
+                TurnOff("Tiery");
+            }
+            key ("healer") {
+                ["I have yet to meet her, but I know she loves animals. I have seen her playing with the deer and squirrels that inhabit this region."];
+                TurnOff("healer");
+                flag(315) = true;
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["Goodbye, <v0>. Best of luck in thy journeys."*];
+    }
+    if (event = _Bark) {
+        BarkAboutWork_i(_Perrin);
+    }
+}
+
+Routine PerrinTrains_i accepts a0, a1 #locals(12) #uses(~GetStudent, ~CanTrain, ~GetStat, IntTrain_i, MagicTrain_i) {
+    v2 = ~GetStudent();
+    if (v2 = 0) {
+    } else {
+        v3 = 3;
+        v4 = ~CanTrain(v3, v2, v0, v1);
+        if (v4 = 0) {
+            [After a few moments of questioning, he says, "I am sorry, but thou dost not have a strong enough grasp of my theories for me to be able to instruct thee. Perhaps when thou hast had more time to study..."];
+        } else {
+            if (v4 = 1) {
+                v5 = ~CountItem(_All, _All, _Gold_Coin, _Party);
+                [You gather your gold and count it, finding that you have <v5> gold altogether.];
+                if (v5 < v0) {
+                    ["I must apologize, but I need my full fee to permit me to continue my research. Mayhaps, at another time, when thou hast more money, I can teach thee."];
+                    goto label_16;
+                }
+            }
+            if (v4 = 2) {
+                [After a few moments of questioning, he says, "Thou art already past my tutelage. I must humbly apologize, for there is nothing new I can teach thee."];
+            } else {
+                v6 = ~TakeFromParty_i(true, _All, _All, _Gold_Coin, v0);
+                [You pay <v0> gold, and the training session begins.];
+                v7 = ~GetNPCName_i(v2);
+                if (v2 = 65180) {
+                    v8 = "You";
+                    v9 = "you";
+                    v10 = "";
+                    v11 = "have";
+                } else {
+                    v8 = v7;
+                    v9 = v7;
+                    v10 = "s";
+                    v11 = "has";
+                }
+                [<v8> and Perrin dive excitedly into the pages of several tomes. Following an intensive study session, <v9> find<v10> the ability to comprehend and disseminate much more information than ever before. In addition, <v9> <v11> a a better grasp of the theory behind spellcasting.];
+                v12 = ~GetStat(_Int, v2);
+                if (v12 < 30) {
+                    IntTrain_i(2, v2);
+                }
+                v13 = ~GetStat(_MaxMagic, v2);
+                if (v13 < 30) {
+                    MagicTrain_i(1, v2);
+                }
+            }
+        }
+    }
+    label_16:
+}

@@ -1,0 +1,262 @@
+Routine WatchForDeath_i accepts a0 #locals(44) #uses(RemoveAll_i) {
+    v0 = ~GetQuality(item);
+    if (v0 = 240) {
+        v1 = false;
+        v2 = ~FindNearby_i(0, 80, _Body_762, ~NPCToItem_i(_Avatar));
+        Foreach v5 in v2 {
+            v6 = ~GetFrame(v5);
+            if (v6 = 22) && ~GetContents(4, 240, _Scroll, v5) {
+                v1 = v5;
+            }
+        }
+        if v1 && not flag(750) {
+            flag(750) = true;
+            v7 = ~Item_create(~Item_getType(v1));
+            SetFullFrame_i(~GetFullFrame_i(v1), v7);
+            v8 = ~PopToMap(~GetCoord(v1));
+            RemoveAll_i(v1);
+            return;
+        }
+    }
+    if (v0 = 241) {
+        v9 = false;
+        v2 = ~FindNearby_i(0, 80, _Body_778, ~NPCToItem_i(_Avatar));
+        Foreach v5 in v2 {
+            v6 = ~GetFrame(v5);
+            if (v6 = 7) && ~GetContents(4, 241, _Scroll, v5) {
+                v9 = v5;
+            }
+        }
+        if v9 {
+            v12 = ~GetCoord(v9);
+            RemoveAll_i(v9);
+            createSprite(65535, 0, 0, 0, v12::2, v12::1, 17);
+            createSprite(65535, 0, 0, 0, (v12::2 - 2), (v12::1 - 2), 4);
+            Sfx(9);
+            v13 = ~Item_create(_Dragon);
+            SetFrame(19, v13);
+            SetItemFlag_i(_IsTemporary_i, v13);
+            v8 = ~PopToMap(v12);
+            v14 = ~PostAction(<< _aFINISH_i, _aWAIT_i, 2, _aUSABLE_i, #Dragon >>, v13);
+            return;
+        }
+    }
+    if (v0 = 243) {
+        v15 = false;
+        v2 = ~FindNearby_i(0, 80, _Body_400, ~NPCToItem_i(_Avatar));
+        Foreach v5 in v2 {
+            v6 = ~GetFrame(v5);
+            if (v6 = 0) && ~GetContents(4, 243, _Scroll, v5) {
+                v15 = v5;
+            }
+        }
+        if v15 && not flag(753) {
+            flag(753) = true;
+            v18 = ~Item_create(_Body_414);
+            SetFrame(4, v18);
+            v8 = ~PopToMap(~GetCoord(v15));
+            RemoveAll_i(v15);
+            return;
+        }
+    }
+    if (v0 = 244) {
+        v19 = false;
+        v2 = ~FindNearby_i(0, 80, _Body_400, ~NPCToItem_i(_Avatar));
+        Foreach v5 in v2 {
+            v6 = ~GetFrame(v5);
+            if (v6 = 0) && ~GetContents(4, 244, _Scroll, v5) {
+                v19 = v5;
+            }
+        }
+        if v19 && not flag(754) {
+            flag(754) = true;
+            v18 = ~Item_create(_Body_414);
+            SetFrame(4, v18);
+            v8 = ~PopToMap(~GetCoord(v19));
+            RemoveAll_i(v19);
+            return;
+        }
+    }
+    if (v0 = 245) {
+        v22 = false;
+        v2 = ~FindNearby_i(0, 80, _Body_400, ~NPCToItem_i(_Avatar));
+        Foreach v5 in v2 {
+            v6 = ~GetFrame(v5);
+            if (v6 = 0) && ~GetContents(4, 245, _Scroll, v5) {
+                v22 = v5;
+            }
+        }
+        if v22 {
+            v18 = ~Item_create(_Body_414);
+            SetFrame(4, v18);
+            v8 = ~PopToMap(~GetCoord(v22));
+            flag(755) = true;
+            RemoveAll_i(v22);
+            return;
+        }
+    }
+    if (v0 = 246) {
+        v22 = false;
+        v2 = ~FindNearby_i(0, 80, _Body_400, ~NPCToItem_i(_Avatar));
+        Foreach v5 in v2 {
+            v6 = ~GetFrame(v5);
+            if (v6 = 0) && ~GetContents(4, 246, _Scroll, v5) {
+                v22 = v5;
+            }
+        }
+        if v22 {
+            v18 = ~Item_create(_Body_414);
+            SetFrame(4, v18);
+            v8 = ~PopToMap(~GetCoord(v22));
+            flag(756) = true;
+            RemoveAll_i(v22);
+            return;
+        }
+    }
+    if (v0 = 247) {
+        v22 = false;
+        v2 = ~FindNearby_i(0, 80, _Body_400, ~NPCToItem_i(_Avatar));
+        Foreach v5 in v2 {
+            v6 = ~GetFrame(v5);
+            if (v6 = 0) && ~GetContents(4, 247, _Scroll, v5) {
+                v22 = v5;
+            }
+        }
+        if v22 {
+            v18 = ~Item_create(_Body_414);
+            SetFrame(4, v18);
+            v8 = ~PopToMap(~GetCoord(v22));
+            flag(757) = true;
+            RemoveAll_i(v22);
+            return;
+        }
+    }
+    if (v0 = 248) {
+        v22 = false;
+        v2 = ~FindNearby_i(0, 80, _Body_400, ~NPCToItem_i(_Avatar));
+        Foreach v5 in v2 {
+            v6 = ~GetFrame(v5);
+            if (v6 = 0) && ~GetContents(4, 248, _Scroll, v5) {
+                v22 = v5;
+            }
+        }
+        if v22 {
+            v18 = ~Item_create(_Body_414);
+            SetFrame(4, v18);
+            v8 = ~PopToMap(~GetCoord(v22));
+            flag(758) = true;
+            RemoveAll_i(v22);
+            return;
+        }
+    }
+    if (v0 = 249) {
+        v22 = false;
+        v2 = ~FindNearby_i(0, 80, _Body_400, ~NPCToItem_i(_Avatar));
+        Foreach v5 in v2 {
+            v6 = ~GetFrame(v5);
+            if (v6 = 0) && ~GetContents(4, 249, _Scroll, v5) {
+                v22 = v5;
+            }
+        }
+        if v22 {
+            v18 = ~Item_create(_Body_414);
+            SetFrame(4, v18);
+            v8 = ~PopToMap(~GetCoord(v22));
+            flag(759) = true;
+            RemoveAll_i(v22);
+            return;
+        }
+    }
+    if (v0 = 250) {
+        v22 = false;
+        v2 = ~FindNearby_i(0, 80, _Body_400, ~NPCToItem_i(_Avatar));
+        Foreach v5 in v2 {
+            v6 = ~GetFrame(v5);
+            if (v6 = 0) && ~GetContents(4, 250, _Scroll, v5) {
+                v22 = v5;
+            }
+        }
+        if v22 {
+            v18 = ~Item_create(_Body_414);
+            SetFrame(4, v18);
+            v8 = ~PopToMap(~GetCoord(v22));
+            flag(760) = true;
+            RemoveAll_i(v22);
+            return;
+        }
+    }
+    if (v0 = 251) {
+        v22 = false;
+        v2 = ~FindNearby_i(0, 80, _Body_400, ~NPCToItem_i(_Avatar));
+        Foreach v5 in v2 {
+            v6 = ~GetFrame(v5);
+            if (v6 = 0) && ~GetContents(4, 251, _Scroll, v5) {
+                v22 = v5;
+            }
+        }
+        if v22 {
+            v18 = ~Item_create(_Body_414);
+            SetFrame(4, v18);
+            v8 = ~PopToMap(~GetCoord(v22));
+            flag(761) = true;
+            RemoveAll_i(v22);
+            return;
+        }
+    }
+    if (v0 = 252) {
+        v22 = false;
+        v2 = ~FindNearby_i(0, 80, _Body_400, ~NPCToItem_i(_Avatar));
+        Foreach v5 in v2 {
+            v6 = ~GetFrame(v5);
+            if (v6 = 0) && ~GetContents(4, 252, _Scroll, v5) {
+                v22 = v5;
+            }
+        }
+        if v22 {
+            v18 = ~Item_create(_Body_414);
+            SetFrame(4, v18);
+            v8 = ~PopToMap(~GetCoord(v22));
+            flag(762) = true;
+            RemoveAll_i(v22);
+            return;
+        }
+    }
+    if (v0 = 253) {
+        v22 = false;
+        v2 = ~FindNearby_i(0, 80, _Body_400, ~NPCToItem_i(_Avatar));
+        Foreach v5 in v2 {
+            v6 = ~GetFrame(v5);
+            if (v6 = 0) && ~GetContents(4, 253, _Scroll, v5) {
+                v22 = v5;
+            }
+        }
+        if v22 {
+            v18 = ~Item_create(_Body_414);
+            SetFrame(4, v18);
+            v8 = ~PopToMap(~GetCoord(v22));
+            flag(763) = true;
+            RemoveAll_i(v22);
+            return;
+        }
+    }
+    if (v0 = 254) {
+        v22 = false;
+        v2 = ~FindNearby_i(0, 80, _Body_400, ~NPCToItem_i(_Avatar));
+        Foreach v5 in v2 {
+            v6 = ~GetFrame(v5);
+            if (v6 = 0) && ~GetContents(4, 254, _Scroll, v5) {
+                v22 = v5;
+            }
+        }
+        if v22 {
+            v18 = ~Item_create(_Body_414);
+            SetFrame(4, v18);
+            v8 = ~PopToMap(~GetCoord(v22));
+            flag(764) = true;
+            RemoveAll_i(v22);
+            return;
+        }
+    }
+    Kernel_resetRef(item);
+    v43 = ~PostInFuture(3, << _aNO_HALT_i, _aUSABLE_i, #WatchForDeath_i >>, item);
+}

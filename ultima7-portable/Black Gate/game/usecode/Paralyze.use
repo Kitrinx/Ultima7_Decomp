@@ -1,0 +1,14 @@
+Routine Paralyze accepts a0 #locals(6) #uses(SetBusy_i) {
+    if (event = _Trigger) {
+        Sfx(28);
+        v0 = ~GetParty();
+        Foreach v3 in v0 {
+            if not ~RollToWin_i(~GetQuality(item), ~GetNPCStat_i(_Str, v3)) {
+                SetItemFlag_i(_Paralyzed, ~NPCToItem_i(v3));
+                v4 = ~NPCToItem_i(v3);
+                SetBusy_i(v4);
+                v5 = ~PostInFuture(100, << _aNO_HALT_i, _aUSABLE_i, #ClearBusy_i >>, v4);
+            }
+        }
+    }
+}

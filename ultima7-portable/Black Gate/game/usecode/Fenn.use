@@ -1,0 +1,172 @@
+Routine Fenn accepts a0 #locals(9) #uses(~LordOrLady, ~IsNPCNear, ~AskYesNo, ~AskList, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Fenn);
+        v0 = ~LordOrLady();
+        TurnOn(<< "name", "job", "bye" >>);
+        if $StolenVenom {
+            TurnOn("thief");
+        }
+        if not $MetFenn {
+            [You see a beggar. You cannot tell from the look on his face whether he is about to laugh or cry.];
+            $MetFenn = true;
+        } else {
+            ["Beg thy pardon, <v0>," Fenn says.];
+        }
+        converse {
+            key ("name") {
+                ["My name is Fenn, <v0>."];
+                TurnOff("name");
+            }
+            key ("thief") {
+                if $VENOM_CASE_SOLVED {
+                    [After you tell him about finding the venom vial, he says, "Thou didst our town a service when thou didst uncover that no good brat Garritt as the thief! Perhaps now some people will start to realize the hypocrisy of the Fellowship!"];
+                } else {
+                    if $FeridwynAccusedTobias {
+                        ["I know that boy Tobias is innocent of any wrong doing, no matter what Feridwyn and his Fellowship says."];
+                    } else {
+                        ["Be wary for there is a thief in this town! Some silver serpent venom was stolen from the merchant Morfin, who runs the slaughterhouse."];
+                        $StolenVenom = true;
+                    }
+                }
+                TurnOff("thief");
+            }
+            key ("job") {
+                [He looks away from you shamefully. "I have none, <v0>."];
+                TurnOn("none");
+            }
+            key ("none") {
+                ["I used to be a farmer in more prosperous times. I used to work with Komor and Merrick."];
+                TurnOn(<< "Komor", "Merrick", "give" >>);
+                TurnOff("none");
+            }
+            key ("Komor") {
+                ["He is my best friend and the bravest man I know."];
+                v1 = ~IsNPCNear(_Komor);
+                if v1 {
+                    [*];
+                    SetSpeaker(0, _Komor);
+                    ["Oh, please! Thou art making mine eyes leak!"*];
+                    CloseSpeaker(_Komor);
+                    SetSpeaker(0, _Fenn);
+                }
+                TurnOff("Komor");
+            }
+            key ("Merrick") {
+                ["Merrick joined The Fellowship so he could live in their shelter, the poor sod."];
+                TurnOn(<< "shelter", "Fellowship" >>);
+                TurnOff("Merrick");
+            }
+            key ("Fellowship") {
+                ["If The Fellowship truly wants to help people, why would they let us starve just because we do not want to join? They cannot answer that one!"];
+                TurnOn("starve");
+                TurnOff("Fellowship");
+            }
+            key ("shelter") {
+                ["Hmf! If thou art so unfortunate as to want to live there, thou wouldst do better on the corner with Komor and I."];
+                TurnOff("shelter");
+                TurnOn("corner");
+            }
+            key ("corner") {
+                ["Even when pockets are light, there is still some mercy left in this world. Begging for money is not a proud profession, but there are worse ones."];
+                TurnOn("worse");
+                TurnOff("corner");
+            }
+            key ("worse") {
+                ["At least we do not have to do what Merrick does. He recruits for The Fellowship."];
+                TurnOff("worse");
+            }
+            key ("starve") {
+                ["Do not worry. We shall not starve. Camille sends her son Tobias with food and clothing for us every so often."];
+                TurnOn(<< "Camille", "Tobias" >>);
+                TurnOff("starve");
+            }
+            key ("Camille") {
+                ["Camille is a good woman. She lives at the farm bordering the dairy."];
+                TurnOff("Camille");
+            }
+            key ("Tobias") {
+                ["He is a fine lad, always willing to give us a hand. Unlike that rude urchin, Garritt."];
+                if $FeridwynAccusedTobias {
+                    TurnOn("venom");
+                }
+                TurnOn("Garritt");
+                TurnOff("Tobias");
+            }
+            key ("venom") {
+                ["Tobias would not become involved with that sort of affair. I know for certain he is no thief."];
+                TurnOff("venom");
+                TurnOn("involved");
+            }
+            key ("involved") {
+                ["If thou art seeking out this venom thief, thou wouldst do well to ask Andrew about it."];
+                TurnOn("Andrew");
+                TurnOff("involved");
+            }
+            key ("Andrew") {
+                ["Andrew owns the dairy and lives across from Camille's farm and the slaughterhouse. He might have seen something."];
+                TurnOff("Andrew");
+            }
+            key ("Garritt") {
+                ["He is the son of Feridwyn and Brita, who run the shelter. Garritt crosses the road to avoid us."];
+                v1 = ~IsNPCNear(_Komor);
+                if v1 {
+                    [*];
+                    SetSpeaker(0, _Komor);
+                    ["We would not want the likes of him walking down our side of the road anyway!"*];
+                    CloseSpeaker(_Komor);
+                    SetSpeaker(0, _Fenn);
+                }
+                TurnOff("Garritt");
+            }
+            key ("give") {
+                ["Wilt thou give me a bit of money?"];
+                if ~AskYesNo() {
+                    [How much?];
+                    PushKeys();
+                    v2 = ~AskList(<< "O", "1", "2", "3", "4", "5" >>);
+                    v3 = ~CountItem(_All, _All, _Gold_Coin, _Party);
+                    if ((v3 >= v2) and (v2 <> "0")) {
+                        v4 = ~TakeFromParty_i(true, _All, _All, _Gold_Coin, v2);
+                        ["Thank thee, <v0>."];
+                    } else {
+                        ["It appears thou dost not have any money either!"];
+                    }
+                    if (v3 = 0) {
+                        ["I am truly sorry if I have bothered thee, <v0>."];
+                    }
+                    PopKeys();
+                } else {
+                    [Fenn hangs his head low.];
+                }
+                TurnOff("give");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["Good fortune to ye, <v0>."*];
+    }
+    if (event = _Bark) {
+        v5 = ~GetTime();
+        v6 = ~GetWorkType(~NPCToItem_i(_Fenn));
+        v7 = ~rndRange(4, 1);
+        if (v6 = 11) {
+            if (v7 = 1) {
+                v8 = "@A coin for some food?@";
+            }
+            if (v7 = 2) {
+                v8 = "@Please aid a poor beggar!@";
+            }
+            if (v7 = 3) {
+                v8 = "@Show some generosity!@";
+            }
+            if (v7 = 4) {
+                v8 = "@Help one less fortunate!@";
+            }
+            Item_bark(v8, _Fenn);
+        } else {
+            BarkAboutWork_i(_Fenn);
+        }
+    }
+}

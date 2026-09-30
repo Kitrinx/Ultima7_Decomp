@@ -1,0 +1,15 @@
+Routine ArriveByMoongate_i accepts a0 #locals(3) {
+    if (event = _Posted_i) {
+        v0 = ~Item_create(_Moongate_157);
+        if v0 {
+            SetFullFrame_i(32, _Avatar);
+            v1 = ~GetCoord(_Avatar);
+            v1::1 = (v1::1 + 1);
+            v1::2 = (v1::2 + 1);
+            v2 = ~PopToMap(v1);
+            if v2 {
+                v2 = ~PostAction(<< _aFRAME, 0, _aNEXT_FRAME, _aLOOP_i, 65535, 10, byte(85), 1560, byte(70), 4, byte(78), byte(11), 65535, 5, byte(70), 4, byte(80), byte(11), 65535, 3, byte(45) >>, v0);
+            }
+        }
+    }
+}

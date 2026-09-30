@@ -1,0 +1,165 @@
+Routine Vokes #linear accepts a0 #locals(7) #uses(fn_0909, fn_08F7, fn_0911, fn_092E) {
+label_0:
+    if not (event = 1) goto label_46;
+label_1:
+    intrinsic_03(0, 65411);
+    v0 = fn_0909();
+    v1 = intrinsic_3B();
+    v2 = intrinsic_1B(65411);
+    v3 = intrinsic_1B(65409);
+    v4 = intrinsic_1B(65410);
+    v5 = fn_08F7(65410);
+    v6 = fn_08F7(65409);
+    if not not flag(375) goto label_3;
+label_2:
+    append "You see a fighting man. His voice booms like thunder as he greets you. \"Hail to thee, ";
+    append v0;
+    append "!\"";
+    say;
+    flag(375) = true;
+    goto label_4;
+label_3:
+    append "\"So, once again, I am at thy service,\" bellows Vokes.";
+    say;
+label_4:
+    if not flag(360) goto label_8;
+label_5:
+    if not not flag(356) goto label_7;
+label_6:
+    append "\"If thou wouldst return the honor flag of the Library of Scars, then it is only proper that is turned back over to Syria, who was guarding it when it was stolen. Please do so.\"*";
+    say;
+    terminate;
+label_7:
+    goto label_13;
+label_8:
+    if not flag(368) goto label_13;
+label_9:
+    if not (v1 = 4) goto label_12;
+label_10:
+    append "\"So, thou wishest to fight for the cowardly Sprellic! Then I have no choice but to finish thee myself!\"*";
+    say;
+    fn_0911(100);
+    intrinsic_3D(3, v2);
+    intrinsic_3D(3, v4);
+    intrinsic_3D(3, v3);
+    intrinsic_1D(0, v2);
+    intrinsic_1D(0, v3);
+    intrinsic_1D(0, v4);
+    terminate;
+label_11:
+    goto label_13;
+label_12:
+    append "\"So, thou wishes to fight for the cowardly Sprellic! Meet us at the duelling area at next noon!\"";
+    say;
+    goto label_13;
+label_13:
+    intrinsic_05(<< "name"#0, "job"#0, "bye"#0 >>);
+label_14:
+    ask goto label_45;
+label_15:
+    answer ("name"#1) goto label_17;
+label_16:
+    append "\"My name is Vokes, ";
+    append v0;
+    append ". As big as a mountain, as strong as an ox, as fierce as... well, more fierce than anything thou hast ever fought!\"";
+    say;
+    intrinsic_06("name"#2);
+label_17:
+    answer ("job"#1) goto label_19;
+label_18:
+    append "\"Job! I am not in the habit of plowing fields or peddling vegetables, ";
+    append v0;
+    append "! I earn my gold with this sword arm,\" he says as he flexes a mighty bicep. \"Right now I am in Jhelom continuing my studies in my trade with De Snel, and when I am finished my price is going to go up!\"";
+    say;
+    intrinsic_05("Jhelom"#0);
+label_19:
+    answer ("Jhelom"#1) goto label_21;
+label_20:
+    append "\"I was born here! Is it not magnificent?! Why, in any hour of any day thou canst get into a duel with anyone for no reason at all! Now that is what I call the benefits of civilization!\"";
+    say;
+    intrinsic_05("duel"#0);
+    intrinsic_06("Jhelom"#2);
+label_21:
+    answer ("duel"#1) goto label_25;
+label_22:
+    append "\"A responsibility, yes, even a necessity. The cost of being honorable is that one must defend one's honor. There is no telling just where or when the next stain on one's honor may appear. Like this Sprellic fool, for instance. The perfect example!\"*";
+    say;
+    if not v5 goto label_24;
+label_23:
+    intrinsic_03(0, 65410);
+    append "\"I'll make a stain on his honor, that's for sure. A blood red one!\"*";
+    say;
+    intrinsic_04(65410);
+    intrinsic_03(0, 65411);
+label_24:
+    intrinsic_05("Sprellic"#0);
+    intrinsic_06("duel"#2);
+label_25:
+    answer ("Sprellic"#1) goto label_34;
+label_26:
+    if not not flag(356) goto label_32;
+label_27:
+    append "\"The bloody idiot had no idea that when he took our honor flag he would be seen doing it. Hence, he never considered the fact that he would have to fight a duel over our sullied honor. But now that the whole town is talking of the incident there is no way that we could refrain from standing up for ourselves. Especially since he has refused to return what he has taken from us.\"*";
+    say;
+    if not v6 goto label_29;
+label_28:
+    intrinsic_03(0, 65409);
+    append "\"Were he not such a cad, he would see the foolishness of his actions. 'Tis now up to us to show him!\"*";
+    say;
+    intrinsic_04(65409);
+    intrinsic_03(0, 65411);
+label_29:
+    intrinsic_05("honor flag"#0);
+    if not flag(390) goto label_31;
+label_30:
+    intrinsic_05("misunderstanding"#0);
+label_31:
+    goto label_33;
+label_32:
+    append "\"If he had not returned the honor flag to us we would have had to kill him dead as sure as I am standing here.\"";
+    say;
+label_33:
+    intrinsic_06("Sprellic"#2);
+label_34:
+    answer ("honor flag"#1) goto label_36;
+label_35:
+    append "\"There is a widely known and long-standing tradition concerning the honor flag of the Library of Scars. It is said that taking the flag from the wall is a signal meaning that the person who takes the flag can beat anyone who studies at the school in a fight. It is also a grossly insulting way of saying that thou dost think the method of fighting a school teaches is inferior, which the Library of Scars most certainly is not!\"";
+    say;
+    intrinsic_05("Library of Scars"#0);
+    intrinsic_06("honor flag"#2);
+label_36:
+    answer ("misunderstanding"#1) goto label_38;
+label_37:
+    append "\"I have heard that rot about it all being a misunderstanding. The only thing misunderstood is how bad Sprellic will look when we finish with him!\"";
+    say;
+    intrinsic_06("misunderstanding"#2);
+label_38:
+    answer ("Library of Scars"#1) goto label_40;
+label_39:
+    append "\"The Library of Scars teaches the supreme fighting style! One that enables thee to get the advantage against thine opponents and soundly defeat them through the brilliantly conceived subterfuge of Master De Snel!\"";
+    say;
+    intrinsic_05("De Snel"#0);
+    intrinsic_06("Library of Scars"#2);
+label_40:
+    answer ("De Snel"#1) goto label_42;
+label_41:
+    append "\"He is a genius. Perhaps the greatest military mind that ever lived. He told us so!\"";
+    say;
+    intrinsic_06("De Snel"#2);
+label_42:
+    answer ("bye"#1) goto label_44;
+label_43:
+    goto label_45;
+label_44:
+    goto label_14;
+label_45:
+    clear_answers;
+    append "\"If I am not killed and thou art not killed perhaps we may raise a\x09glass together some day!\"*";
+    say;
+label_46:
+    if not (event = 0) goto label_48;
+label_47:
+    fn_092E(65411);
+label_48:
+    return;
+}

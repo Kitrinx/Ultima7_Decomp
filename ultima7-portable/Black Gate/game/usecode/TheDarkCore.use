@@ -1,0 +1,19 @@
+Routine TheDarkCore accepts a0 #locals(1) {
+    if (event = _Action) {
+        if not flag(769) {
+            flag(769) = true;
+            SetSpeaker(~AvatarSex(), _Avatar);
+            [You feel as if your mind is being probed, delicately at first, then with more insistance. Images of long past memories flit before your eyes and old emotions resurface. At one point, the images pause as you remember the words Love, Sol, Moons, and Death then a strange sense of deja vu comes over you as the vision comes up to the current time. The images cease and a vast wave of power overwhelms you. A wall of darkness falls...];
+            CloseSpeaker(_Avatar);
+            v0 = ~PostAction(<< _aBEND_FRAME_i, _aWAIT_i, 1, _aKNEEL_FRAME_i, _aWAIT_i, 1, _aLIE_FRAME_i, _aWAIT_i, 1, _aLOOP_i, 65534, 5 >>, ~NPCToItem_i(_Avatar));
+            v0 = ~PostAction(<< _aWAIT_i, 5, _aUSABLE_i, #TheBlackSword >>, item);
+        } else {
+            SetSpeaker(~AvatarSex(), _Avatar);
+            [Your mind is quickly probed, then cast aside, leaving you feeling slightly ill and filled with an irrational sense of forboding.];
+        }
+    }
+    if (event = _Posted_i) {
+        FadePalette_i(1, 1, 12);
+        v0 = ~PostAction(<< _aWAIT_i, 3, _aKNEEL_FRAME_i, _aWAIT_i, 2, _aBEND_FRAME_i, _aWAIT_i, 1, _aSTAND_FRAME_i >>, ~NPCToItem_i(_Avatar));
+    }
+}

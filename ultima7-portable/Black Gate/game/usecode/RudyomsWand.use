@@ -1,0 +1,33 @@
+Routine RudyomsWand accepts a0 #locals(6) #uses(~DirFromAvatar_i) {
+    if (event = _Combat) {
+        v0 = item;
+    } else {
+        v0 = ~GetTarget();
+    }
+    if v0 {
+        closeAllGumps();
+        v1 = ~Item_getType(v0);
+        if (v1 = 914) {
+            v2 = ~DirFromAvatar_i(v0);
+            v3 = ~PostAction(<< _aWAIT_i, 5, _aREMOVE_i >>, v0);
+            v3 = ~SetAttack_i(_Powder_Keg, v0, _Avatar);
+            v3 = ~PostAction(<< _aFACE_i, v2, _aCONTINUE_i, _aTHRUST1_FRAME_i, _aSTAND_FRAME_i, _aATTACK_i >>, _Avatar);
+        }
+        if (v1 = 305) {
+            v4 = ~FindNearby_i(176, 12, _Beam_Of_Light, item);
+            v5 = ~FindNearby_i(0, 80, _Batlin_403, _Avatar);
+            if not v5 {
+                if not v4 {
+                    playEndgame(true);
+                }
+            } else {
+                SetSpeaker(0, _Batlin);
+                [The wand glows faintly. Batlin smirks. "Not yet, Avatar."];
+                CloseSpeaker(_Batlin);
+                terminate;
+            }
+        }
+        Sfx(62);
+        LightningBolt();
+    }
+}

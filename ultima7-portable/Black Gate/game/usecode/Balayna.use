@@ -1,0 +1,142 @@
+Routine Balayna accepts a0 #locals(8) #uses(~AvatarName, ~LordOrLady, ~IsNearEachOther_i, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Balayna);
+        v0 = ~AvatarName();
+        v1 = ~LordOrLady();
+        v2 = ~GetTime();
+        v3 = false;
+        TurnOn(<< "name", "job", "Fellowship", "bye" >>);
+        if (v2 = 7) {
+            v4 = ~IsNearEachOther_i(_Rankin, _Balayna);
+            if v4 {
+                [Glaring, she puts a finger over her lips, indicating that you should be silent.*];
+                terminate;
+            } else {
+                ["I cannot talk now, I must hurry to the Fellowship meeting."*];
+                terminate;
+            }
+        }
+        if not $MetBalayna {
+            [You see a woman with a very serious look about her.];
+            $MetBalayna = true;
+        } else {
+            ["How may I be of assistance, <v0>?"];
+        }
+        if flag(526) {
+            TurnOn("liqueur");
+        }
+        converse {
+            key ("name") {
+                [She gives you a suspicious look. "My name is Balayna."];
+                TurnOff("name");
+            }
+            key ("job") {
+                ["I am the clerk for the Moonglow branch of The Fellowship."];
+                TurnOn(<< "clerk", "Moonglow" >>);
+            }
+            key ("clerk") {
+                ["It is my job to keep records during the meetings, and to administrate the decisions of this branch."];
+                TurnOff("clerk");
+                TurnOn("meetings");
+            }
+            key ("liqueur") {
+                v5 = ~TakeFromParty_i(false, 30, _All, _Alchemist_Aparatus, 1);
+                if v5 {
+                    ["What's this?" she asks, taking the vial from you. She opens it up and sniffs. "Very good quality. I wonder why he..." she clutches her throat and gasps. You notice a wispy smoke rise from the top of the vial now spilling out of her hands. Choking, she falls to the ground, and dies.*];
+                    flag(525) = true;
+                    KillNPC_i(~NPCToItem_i(_Balayna));
+                    terminate;
+                } else {
+                    ["I am afraid I must first see what thou art referring to before I can answer thy question."];
+                    TurnOff("liqueur");
+                }
+            }
+            key ("meetings") {
+                v6 = ~IsMedallionOn_i();
+                if v6 {
+                    [She stares at you suspiciously.];
+                }
+                ["We have our meetings at 9 at night -- the customary time. After Rankin's lecture, we all discuss the wonderful aspects of our life that have been enhanced by The Fellowship."];
+                if not v3 {
+                    TurnOn("Rankin");
+                }
+                TurnOff("meetings");
+            }
+            key ("Moonglow") {
+                ["This seemed to be an... appropriate place to start up a branch. There are many good citizens here in Moonglow."];
+                TurnOn(<< "good", "citizens" >>);
+                TurnOff("Moonglow");
+            }
+            key ("good") {
+                [She appears surprised at the statement. "Well, I believe that many of the people are of strong mind and character. They are just the kind of people The Fellowship needs to go out and spread guidance and prosperity throughout Britannia."];
+                TurnOff("good");
+                TurnOn(<< "guidance", "prosperity" >>);
+            }
+            key ("guidance") {
+                ["Many of the people lack the discipline required to reach their highest potential."];
+                TurnOff("guidance");
+            }
+            key ("prosperity") {
+                ["The Fellowship is designed to enrich the lives of everyone who resides in this fair land."];
+                TurnOff("prosperity");
+            }
+            key ("citizens") {
+                ["I am so busy with my duties that I know very few people here. Phearcy, the bartender, is an outstanding member of the community, as is the farmer, Tolemac. Tolemac's friend, Morz, though shy, is well spoken of. Also, Morz has a brother." She glances up, thoughtfully. "Or is he Tolemac's brother?~~ "I am not positive whose brother he is, but I do know that I do not know that much about him," she sniffs.];
+                TurnOff("citizens");
+            }
+            key ("Fellowship") {
+                v7 = ~IsMedallionOn_i();
+                if v6 {
+                    ["Our Branch has been open here in Moonglow for approximately half a decade. Rankin has been here the entire time, but I started at this branch only a few months ago."];
+                    if not v3 {
+                        TurnOn("Rankin");
+                    }
+                } else {
+                    ["The Fellowship is a society of spiritual seekers who strive to reach the highest levels of human potential. We espouse neo-realism through the Triad of Inner Strength. In addition, we manage and organize many festivals and also operate a shelter for the needy.~"Rankin is the branch head here in Moonglow. He can answer thy questions."];
+                    TurnOn("Triad");
+                }
+                TurnOff("Fellowship");
+            }
+            key ("Triad") {
+                [The Triad is basically three principles that, when applied in unison, enable the individual to better reach creativity, satisfaction, and success in life."];
+                TurnOn("principles");
+                TurnOff("Triad");
+            }
+            key ("principles") {
+                ["The three principles are: Strive for Unity, Trust thy Brother -- and sister -- and Worthiness precedes Reward."];
+                TurnOn(<< "Strive", "Trust", "Worthiness" >>);
+                TurnOff("principles");
+            }
+            key ("Strive") {
+                ["Essentially, this means that cooperation among people is not only a desirable means for reaching human potential in itself, but it also facilitates the entire process."];
+                TurnOff("Strive");
+            }
+            key ("Trust") {
+                ["This tenet illustrates that, as people, we are all the same, and that neither hatred nor fear of one another is productive. In fact, it is destructive."];
+                TurnOff("Trust");
+            }
+            key ("Worthiness") {
+                ["This basically means that individuals should strive to be worthy of that which they want in life. It is often misquoted as `thou dost receive what thou dost deserve,' but that tends to have negative connotations."];
+                TurnOff("Worthiness");
+            }
+            key ("Rankin") {
+                ["He is the branch head here in Moonglow."~She glances around cautiously. "Thou art travelling through the city, correct? And eventually going to visit another city -- Britain, perhaps?" She shoots another glance, apparently checking for something. Finally, she leans forward, speaking with a whisper.~"I am unsure whether Rankin is worthy of his position. I heard him talking to the new member, Tolemac, just before Rankin persuaded him to join. He admitted to having doubts about The Fellowship. He told Tolemac that he thought, perhaps, The Fellowship encouraged its members to be nothing more than sheep, and that those really `in charge' were charlatans, in it simply for the money. What does thou think about that?" She leans back.];
+                flag(472) = true;
+                v3 = true;
+                TurnOff("Rankin");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        if flag(472) {
+            ["Goodbye, <v0>. Remember what I have told thee."*];
+        } else {
+            ["Goodbye, <v0>."*];
+        }
+    }
+    if (event = _Bark) {
+        BarkAboutWork_i(_Balayna);
+    }
+}

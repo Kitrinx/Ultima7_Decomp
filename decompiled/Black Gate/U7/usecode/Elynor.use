@@ -1,0 +1,297 @@
+Routine Elynor accepts a0 #locals(11) #uses(~IsInInv, ~LordOrLady, ElynorHoldsMeeting_i, ~IsNPCNear, ~AskYesNo, GivePartyExp_i, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Elynor);
+        v0 = ~IsMedallionOn_i();
+        v1 = ~IsInInv(1, 65177, _Prism_981, 1, _Party);
+        v2 = ~LordOrLady();
+        v3 = ~GetTime();
+        v4 = ~GetWorkType(~NPCToItem_i(_Elynor));
+        if (v3 = 7) && (v4 = 28) {
+            ["It is time for the ceremony to begin." says Elynor.];
+            ElynorHoldsMeeting_i();
+        }
+        TurnOn(<< "name", "job", "bye" >>);
+        if flag(135) {
+            TurnOn("Elizabeth and Abraham");
+        }
+        v5 = ~IsNPCNear(_Gregor);
+        if v5 && (v4 = 16) {
+            TurnOn("Gregor");
+        }
+        if flag(293) {
+            TurnOn("candelabra");
+        }
+        if not $MetElynor {
+            [You see a woman whose cultured manner is tinged with a suggestion of arrogance.];
+            $MetElynor = true;
+        } else {
+            ["Art thou speaking to me, <v2>?" Elynor asks.];
+        }
+        converse {
+            key ("name") {
+                [She straightens her shoulders and looks you in the eye.~~"I am Elynor."];
+                TurnOff("name");
+            }
+            key ("job") {
+                if $LEARNED_ABOUT_MINOC_MURDER {
+                    ["I am the head counselor of the Fellowship branch here in Minoc. We are a society of spiritual seekers, dedicated to achieving our highest potential, advancing worthiness, unity and trust in our brothers.];
+                    if not flag(150) {
+                        ["Perhaps thou wouldst wish to join our Fellowship?"];
+                        if ~AskYesNo() {
+                            ["This is indeed a great day for The Fellowship! Seek out Batlin in Britain.\x09He is our founder. Such a great honor as the acceptance of the Avatar into The Fellowship should properly\x09be reserved for him alone."];
+                        } else {
+                            ["I can see by the look in thine eyes that thou dost lack the courage to take this vital step in thy life. Perhaps one day soon thou shalt be ready."~~She looks down her nose at you. "We shall see..."];
+                        }
+                    } else {
+                        ["Ah-- but thou dost know all of this."];
+                    }
+                    if (flag(143) and not (flag(265) or (flag(258) or flag(286)))) {
+                        ["I now recall a message Batlin sent to me. I have been expecting thee. Thou has been sent to deliver our package. Thou mayest relinquish it now."];
+                        TurnOn("deliver");
+                    }
+                    if (v0 and not $JoinFellow) {
+                        [Elynor notices your medallion. "I do not think thou shouldst be wearing the medallion yet. Thou hast not been properly inducted into The Fellowship! I am afraid I must inform Batlin of thy falsehood!"];
+                    }
+                    TurnOn(<< "Minoc", "Fellowship" >>);
+                } else {
+                    ["Thou hast picked a most inappropriate time to engage in such casual conversation. Perhaps thou wouldst be interested knowing that there have been two murders discovered in this sawmill!"];
+                    $LEARNED_ABOUT_MINOC_MURDER = true;
+                    TurnOn("murders");
+                }
+            }
+            key ("Minoc") {
+                if not $COMPLETED_OWENS_QUEST {
+                    ["We should strive to put this business of the murders behind us. Minoc will soon be known throughout Britannia as a city where majestic ships are built. There\x09is even going to be a statue erected in the center of town honoring our shipwright, Owen. He is a skilled and valued member of our community and, of course, a Fellowship member."];
+                    TurnOn(<< "murders", "Owen", "Fellowship" >>);
+                } else {
+                    ["Ours is not a great city, such as Britain, but it is widely known as a center of commerce and for its mine. The slight embarrassment of the legacy of Owen will fade in time."];
+                    TurnOn("Owen");
+                }
+                TurnOff("Minoc");
+            }
+            key ("murders") {
+                ["I am saddened at the loss of life but cannot say I am surprised. Frederico and Tania were antagonistic people. The same may be said of most gypsies. I have nothing against them personally, of course."];
+                TurnOn(<< "antagonistic", "gypsies" >>);
+                TurnOff("murders");
+                if $LEARNED_ABOUT_CROWN_JEWEL {
+                    TurnOn("Crown Jewel");
+                }
+                if $FOUND_SCROLL {
+                    TurnOn("Hook");
+                }
+            }
+            key ("deliver") {
+                v6 = false;
+                v7 = ~FindItem(_All, 1, _Sealed_Box, _Party);
+                v8 = ~FindItem(_All, 1, _Unsealed_Box, _Party);
+                v9 = 0;
+                if v8 {
+                    v9 = ~FindItem(_All, 8, _Scroll, v8);
+                } else {
+                    if v7 {
+                        v9 = ~FindItem(_All, 8, _Scroll, v7);
+                    }
+                }
+                if v9 {
+                    v6 = true;
+                }
+                if (v7 or v8) {
+                    [You produce the package and hold it before Elynor. Her eyes shift from you to the package and then back to you.~~"Surely thou hast been instructed not to open\x09the package. Hast thou opened it nonetheless?"];
+                    if ~AskYesNo() {
+                        ["Thou knowest well that thou wert instructed to deliver the package unopened. As a Fellowship member, thou dost understand that we must be worthy of the rewards we seek. As thou hast violated Batlin's trust, any payment is forfeited. He will be informed of this indiscretion, and he will not be pleased."~~She takes the box from your\x09hands.];
+                        if v7 {
+                            ["Nonsense. The package is still perfectly sealed." She stares at you suspiciously.~~ "I know not why thou didst choose to claim that it was opened, but thou must learn better to trust thy brother. As the box is still intact, thou wilt receive thy reward, but thine actions will be reported. Be careful, my brother."];
+                            v10 = ~GiveToParty_i(true, _All, _All, _Gold_Coin, 50);
+                            if v10 {
+                                [She hands you 50 gold coins.];
+                                flag(265) = true;
+                                GivePartyExp_i(500);
+                                Item_destroy(v9);
+                                Item_destroy(v7);
+                            } else {
+                                ["Thou cannot carry thy reward! My, thy travels have indeed been successful. Well, then, thou must endure a further test. Return the sealed box to me when thou canst tote the extra gold, and thou wilt be paid what thou dost deserve."];
+                            }
+                        } else {
+                            if v6 {
+                                [She inspects the inside of the box.~~ "Ah, good. The contents, at least, are still intact. The guilty one was only a victim of his own curiosity, and not truly a thief."~~She looks you up and down. "It is quite possible that thou wilt still learn to be a worthy member of our illustrious Membership. We shall see."];
+                                Item_destroy(v9);
+                                flag(258) = true;
+                                GivePartyExp_i(500);
+                            } else {
+                                [She inspects the inside of the box.~~ "I see that the contents of the box are missing. Either thou art a thief, or, at the least, not very diligent in thy duty as a messenger. One way or the other, <v2>, the box hath been robbed!"~~She looks you up and down. "Batlin will be informed of this... development."];
+                                flag(286) = true;
+                                GivePartyExp_i(500);
+                            }
+                            Item_destroy(v8);
+                        }
+                    } else {
+                        if v7 {
+                            v10 = ~GiveToParty_i(true, _All, _All, _Gold_Coin, 50);
+                            if v10 {
+                                [Elynor takes the package from your hands.~~"Thou hast done very well. Now as promised, here is thy payment."];
+                                flag(265) = true;
+                                GivePartyExp_i(500);
+                                Item_destroy(v9);
+                                Item_destroy(v7);
+                            } else {
+                                ["Thou cannot carry thy reward! My, thy travels have indeed been successful. Well, then, thou must endure a further test. Return the sealed box to me when thou canst tote the extra gold, and thou wilt be paid what thou dost deserve."];
+                            }
+                        } else {
+                            [Elynor takes the package from you. Examining it, she immediately notices that it has been opened.~~"^<v2>! The box is open! Certainly, one as diligent as thee could not have been robbed?"];
+                            if v6 {
+                                [She inspects the inside of the box.~~ "Ah, good. The contents, at least, are still intact. The guilty one was only a victim of his own curiosity, and not truly a thief."~~She looks you up and down. "It is quite possible that thou wilt still learn to be a worthy member of our illustrious Membership. We shall see."~~She sniffs. "This will, of course,\x09be reported to Batlin."];
+                                Item_destroy(v9);
+                                flag(258) = true;
+                                GivePartyExp_i(500);
+                            } else {
+                                [Peering inside, she is beset by a fit of anger. "It would appear thou hast been robbed. Obviously, as thou hast failed in the responsibility entrusted to thee by Batlin, thou shalt not receive any payment."~~"Batlin will be informed of this indiscretion."];
+                                flag(286) = true;
+                                GivePartyExp_i(500);
+                            }
+                            Item_destroy(v8);
+                        }
+                    }
+                } else {
+                    ["Dost thou not have it with thee at this time? Thou wilt not be paid until thou dost deliver it unto mine own hand. I do hope thou hast secreted it in a safe place."];
+                }
+                TurnOff("deliver");
+            }
+            key ("Owen") {
+                if not $COMPLETED_OWENS_QUEST {
+                    ["He is a classic example of The Fellowship making a vast difference in a person's life. Before he joined The Fellowship, he was without confidence and ready to put aside his trade. Now he stands on the verge of being recognized as the finest at his craft in the world."];
+                } else {
+                    [Elynor rolls her eyes. "Oh, please!" she says, sounding exasperated. "I do not concern myself with ones such as him these days."];
+                }
+                TurnOff("Owen");
+            }
+            key ("antagonistic") {
+                ["Frederico and Tania treated all members of our Fellowship as if we were diseased. Frederico particularly would often bully our members. Thou dost know, it is common knowledge that we are pacifists. He had a reputation for cruelty, even among his own people. It is not surprising he came to a violent end."];
+                TurnOff("antagonistic");
+            }
+            key ("Fellowship") {
+                ["The Fellowship is highly regarded in Minoc. Why, even the Mayor himself is a member. I brought him into The Fellowship myself. He was the first new member of our local branch. Gregor, the head of The Fellowship here, directs the Britannian Mining Company. Many Fellowship members pass through Minoc."];
+                TurnOff("Fellowship");
+            }
+            key ("Elizabeth and Abraham") {
+                if not $EA_LEFT_PAWS_FOR_JHELOM {
+                    ["Thou hast just missed them! They were here collecting funds. They have moved on to Paws to visit our Shelter there."];
+                    $HEARD_ELIZABETH_ABRAHAM = true;
+                } else {
+                    ["I have not seen Elizabeth or Abraham since they were here last."];
+                }
+                TurnOff("Elizabeth and Abraham");
+            }
+            key ("Hook") {
+                if v1 {
+                    [The Cube vibrates. "Hook lives somewhere on Buccaneer's Den. I do not know where."];
+                } else {
+                    ["A man with a Hook? I am certain I would remember having seen anyone like that, and I am positive that does not match the description of any Fellowship member this branch has ever come in contact with."];
+                }
+                TurnOff("Hook");
+            }
+            key ("Crown Jewel") {
+                if v1 {
+                    [The Cube vibrates. "That is Hook's ship. I have not seen it in some time."];
+                } else {
+                    ["Many ships come and go in our busy port. I do not know of any one specific ship. Perhaps thou shouldst ask Owen."];
+                }
+                TurnOff("Crown Jewel");
+            }
+            key ("Gregor") {
+                ["Thou dost dare to spy upon Gregor and I as we share our moments together?! Dost thou have no decency?! Gregor and I have a right to privacy the same as do any lovers!"];
+                TurnOff("Gregor");
+            }
+            key ("candelabra") {
+                if v1 {
+                    [The Cube vibrates. "The candelabra was left at the murder site by mistake. Hook and Forskis are getting careless."];
+                } else {
+                    ["Yes, The Fellowship commissioned Xanthia to create a candelabra which thou dost describe. Its design incorporates our three tenets: 'U' for Unity, 'T' for Trust, and 'W' for Worthiness."];
+                    [You tell Elynor that it was found at the murder site. Elynor registers surprise.];
+                    ["I cannot imagine why it was there. Someone must be trying to implicate The Fellowship!"];
+                    [She thinks a moment.];
+                    ["If thou didst ask it of me, I would wager that Frederico and Tania were murdered by their own people, and another gypsy placed the candelabra at the site to implicate us. Those gypsies would kill their own mother if it meant gaining a bit of gold!"];
+                }
+                TurnOff("candelabra");
+            }
+            key ("gypsies") {
+                ["They have set up camp southeast of town. Near the sawmill. That is suspicious, dost thou not think?"];
+                TurnOff("gypsies");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["I have a feeling that we shall see each other again."*];
+    }
+    if (event = _Bark) {
+        BarkAboutWork_i(_Elynor);
+    }
+}
+
+Usable ElynorHoldsMeeting_i #locals(9) #uses(~IsNPCNear) {
+    [With Elynor standing before the gathered members of The Fellowship, the ceremony begins. "My brothers in The Fellowship, I greet you on this occasion and thank you for your attendance. The events which have transpired in this town threaten to drive us apart. I do not need to remind you that the first value of the Triad of Inner Strength states that we must Strive For Unity. Now is the time when all those who hate and fear us may be conspiring against us."];
+    ["There are those who fear awareness for it illuminates their own limitations. There are those who despise change for the better because they have spent their whole lives teaching themselves to love the mediocrity with which they have surrounded themselves. These are the people who perceive our Fellowship as a threat."];
+    ["And there are those who are very uncertain about the merits of our Fellowship. Those who have heard the words of those who are against us but who see with their own eyes the substantial good that The Fellowship does and the difference it makes in the lives of its members every single day. Those undecided may still be brought into our family. We must Trust Our Brothers-yet-to-be. But most importantly, we must keep our enemies from spreading their prejudices against us. To do that we must show their beliefs to be untrue."];
+    ["We must prove ourselves worthy of the trust we would have our fellow citizens\x09place in us. Once we have sufficiently displayed this worthiness, it will only be a matter of time before we receive our reward of trust. It is as inevitable as night following day. As our enemies will one day receive their own inevitable reward for which they have made themselves worthy."];
+    ["Now I would like to hear from our members who have gathered here this evening. Share with us how The Fellowship has helped thee!"];
+    v0 = ~IsNPCNear(_Gregor);
+    if v0 {
+        SetSpeaker(0, _Gregor);
+        ["The Fellowship has improved mine ability to run my business," says Gregor.*];
+        CloseSpeaker(_Gregor);
+    }
+    v1 = ~IsNPCNear(_Owen);
+    if v1 {
+        SetSpeaker(0, _Owen);
+        ["The Fellowship has taught me how to face mine own potential for greatness unquestioningly," says Owen.*];
+        SetSpeaker(0, _Elynor);
+        ["Thank thee for sharing, brother!"*];
+        CloseSpeaker(_Owen);
+    }
+    v2 = ~IsNPCNear(_Burnside);
+    if v2 {
+        SetSpeaker(0, _Burnside);
+        [You notice that Burnside has apparently nodded off. After a nudge from the person next to him, his eyes pop open. "Umm... what was that question again...?" he asks sheepishly.*];
+        CloseSpeaker(_Burnside);
+    }
+    v3 = ~IsNPCNear(_William);
+    if v3 {
+        SetSpeaker(0, _William);
+        ["The Fellowship has helped me to have more courage to deal with the unexpected terrors of life," says William.*];
+        CloseSpeaker(_William);
+    }
+    v4 = ~IsNPCNear(_Mikos);
+    if v4 {
+        SetSpeaker(0, _Mikos);
+        ["The Fellowship has helped me to have the firm hand that is necessary as the supervisor of the mine," says Mikos.*];
+        CloseSpeaker(_Mikos);
+    }
+    v5 = ~IsNPCNear(_Spark);
+    if v5 {
+        SetSpeaker(0, _Spark);
+        ["Everything about this Fellowship gives me the creeps!" says Spark.*];
+        CloseSpeaker(_Spark);
+    }
+    v6 = ~IsNPCNear(_Iolo);
+    if v6 {
+        SetSpeaker(0, _Iolo);
+        ["Elynor is certainly going out of her way to make them feel like they are persecuted," says Iolo.*];
+        CloseSpeaker(_Iolo);
+    }
+    v7 = ~IsNPCNear(_Shamino);
+    if v7 {
+        SetSpeaker(0, _Shamino);
+        ["These Fellowship members seem fixated upon their own personal gain and very little else," says Shamino.*];
+        CloseSpeaker(_Shamino);
+    }
+    v8 = ~IsNPCNear(_Dupre);
+    if v8 {
+        SetSpeaker(0, _Dupre);
+        ["Why are these people so fascinated by The Fellowship anyway? I do not understand it."*];
+        CloseSpeaker(_Dupre);
+    }
+    SetSpeaker(0, _Elynor);
+    [With that Elynor is once again the center of attention of the meeting. "Let us now begin our evening's meditations." After a few minutes of silence you begin to realize\x09that this meditation is going to continue for quite some time and that now might be a good time to leave inconspicuously.*];
+    terminate;
+}

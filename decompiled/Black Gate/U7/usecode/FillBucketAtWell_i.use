@@ -1,0 +1,11 @@
+Routine FillBucketAtWell_i accepts a0 #locals(5) {
+    v0 = ~FindNearest_i(10, _Well_740, ~NPCToItem_i(_Avatar));
+    if v0 {
+        v1 = ~GetFrame(v0);
+        v1 = (v1 - 6);
+        v2 = ~PostAction(<< _aNEXT_FRAME, _aWAIT_i, 1, _aNEXT_FRAME, _aWAIT_i, 1, _aNEXT_FRAME, _aWAIT_i, 1, _aNEXT_FRAME, _aWAIT_i, 1, _aNEXT_FRAME, _aWAIT_i, 2, _aFRAME, v1 >>, v0);
+        v3 = ~PostAction(<< _aREADY_FRAME_i, _aWAIT_i, 1, _aEXTEND1_FRAME_i, _aWAIT_i, 1, _aRAISE1_FRAME_i, _aWAIT_i, 1, _aTHRUST1_FRAME_i, _aWAIT_i, 1, _aREADY_FRAME_i, _aFACE_i, _East, _aWAIT_i, 1, _aTHRUST1_FRAME_i, _aWAIT_i, 2, _aSTAND_FRAME_i >>, ~NPCToItem_i(_Avatar));
+        v4 = ~PostAction(<< _aFRAME, 1 >>, item);
+        Sfx(40);
+    }
+}

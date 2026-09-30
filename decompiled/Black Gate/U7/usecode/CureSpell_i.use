@@ -1,0 +1,22 @@
+Routine CureSpell_i accepts a0 #locals(3) #uses(~DirFromAvatar_i, ~IsMagicOK_i) {
+    if (event = _Action) {
+        v0 = ~GetTarget();
+        Kernel_resetRef(item);
+        v1 = ~DirFromAvatar_i(v0);
+        Item_bark("@An Nox@", item);
+        if ~IsMagicOK_i() {
+            if ~Item_isNpc(v0) {
+                v2 = ~PostAction(<< _aFACE_i, v1, _aSFX_i, 64, _aEXTEND1_FRAME_i, _aRAISE1_FRAME_i, _aTHRUST1_FRAME_i >>, item);
+                v2 = ~PostInFuture(6, << _aNO_HALT_i, _aUSABLE_i, #CureSpell_i >>, v0);
+            } else {
+                v2 = ~PostAction(<< _aFACE_i, v1, _aEXTEND1_FRAME_i, _aRAISE1_FRAME_i, _aTHRUST1_FRAME_i, _aUSABLE_i, #FizzleSpell_i >>, item);
+            }
+        } else {
+            v2 = ~PostAction(<< _aFACE_i, v1, _aEXTEND1_FRAME_i, _aRAISE1_FRAME_i, _aTHRUST1_FRAME_i, _aUSABLE_i, #FizzleSpell_i >>, item);
+        }
+    }
+    if (event = _Posted_i) {
+        ClearItemFlag_i(_Poisoned, item);
+        ClearItemFlag_i(_Paralyzed, item);
+    }
+}

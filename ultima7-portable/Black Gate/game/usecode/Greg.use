@@ -1,0 +1,177 @@
+Routine Greg accepts a0 #locals(7) #uses(~LordOrLady, ~IsInInv, GregSellsProvisions_i, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Greg);
+        v0 = ~LordOrLady();
+        v1 = ~GetTime();
+        v2 = ~GetWorkType(~NPCToItem_i(_Greg));
+        v3 = ~IsMedallionOn_i();
+        TurnOn(<< "name", "job", "bye" >>);
+        if not $MetGreg {
+            [You see a gleeful-looking merchant with an enthusiastic voice and manner.];
+            $MetGreg = true;
+        } else {
+            ["Why, what can I do for thee, <v0>?" asks Greg.];
+        }
+        converse {
+            key ("name") {
+                ["Why, my name is Greg. It is good to see thee."];
+                TurnOff("name");
+            }
+            key ("job") {
+                ["Why, I run the Provisioner's Shop here in Britain. A second home to the intrepid, it is."];
+                TurnOn(<< "Provisioner's Shop", "Britain", "buy" >>);
+            }
+            key ("Provisioner's Shop") {
+                ["Why, thou dost look to be a person to whom adventure is no stranger. Whether thou art climbing a mountain, sailing the ocean, crossing a desert, exploring a dungeon or sleeping under the stars I have just what thou mayest need."];
+                TurnOff("Provisioner's Shop");
+                TurnOn("need");
+            }
+            key ("Britain") {
+                ["I have moved my store here as a service to Lord British, who uses me exclusively to outfit all of his various expeditions. It is true!"];
+                TurnOff("Britain");
+                TurnOn(<< "moved", "Lord British" >>);
+            }
+            key ("moved") {
+                ["I used to have my shop in Paws. But no one in Paws has the money to buy much of anything."];
+                TurnOff("moved");
+            }
+            key ("need") {
+                ["What every adventurer needs is good luck! There is just something about this shop, about the items bought here, something about me and my shop that is simply very lucky. I can give thee an example of what I mean."];
+                TurnOff("need");
+                TurnOn(<< "lucky", "example" >>);
+            }
+            key ("example") {
+                ["A fighting man named Gorn once bought a shovel from me and he told me that it saved his life."];
+                TurnOn(<< "Gorn", "saved his life" >>);
+                TurnOff("example");
+            }
+            key ("Gorn") {
+                ["Perhaps thou knowest of Gorn. He speaks with a most peculiar accent!"];
+                TurnOff("Gorn");
+            }
+            key ("saved his life") {
+                ["Gorn wanted to dig for some buried treasure somewhere, when he heard some noises behind him. Upon turning, he was horrified to see a swarm of undead skeletons rushing toward him! In his haste to dig up the treasure, he had unbuckled his belt and laid down his sword. The only thing in his hands was the shovel. He immediately began swinging it and ended up knocking all the skeletons to bits! He now considers it his 'lucky shovel'!"];
+                TurnOff("saved his life");
+            }
+            key ("Lord British") {
+                ["This is Lord British's favorite provisionary shop. He told me so himself. All sorts of famous adventurers pass through these doors. Why, just last week, we had the Avatar himself in this, my very own store!"];
+                v4 = ~IsInInv(65177, 65177, _Avatar_Costume, 1, _Avatar);
+                if v4 {
+                    ["Why, now that I mention it, he was dressed a lot like thou art. Yes, he was."];
+                    TurnOn("dressed like Avatar");
+                }
+                if v3 {
+                    ["Why, I seem to remember that Avatar was also wearing a Fellowship medallion like the one thou dost possess. Hmmmm. And he nearly robbed me blind. I shall have to keep a careful eye on thee, I will."];
+                    TurnOn("robbed you blind?");
+                }
+                TurnOn("another Avatar?");
+                TurnOff("Lord British");
+            }
+            key ("another Avatar?") {
+                ["Well, he said he was the Avatar. But then it is not all that unusual encountering some loon or fool who claims to be the Avatar!" He looks at you and for a moment appears a little embarrassed.];
+                TurnOff("another Avatar?");
+            }
+            key ("dressed like Avatar") {
+                ["He was dressed like the Avatar, similarly to how thou art presently attired. At first I thought it was Jesse, the actor who is playing the Avatar in the play by that director... What is his name again?~~"Oh, well. It was not him."];
+                TurnOff("dressed like Avatar");
+            }
+            key ("robbed you blind?") {
+                ["Thou wouldst think that one who appears to be like the Avatar would be worthy of trust. But, no. In this day and age there is no telling what to expect!"];
+                TurnOff("robbed you blind?");
+            }
+            key ("lucky") {
+                ["My customers are all people who go out and perform dangerous feats of bravery and derring-do. But most keep returning to buy more provisions time and again. With all the dangerous things my customers do, it is a wonder I have not lost them all and gone out of business!"];
+                TurnOff("lucky");
+            }
+            key ("buy") {
+                if not (v2 = 7) {
+                    ["I am dreadfully sorry but the Provisioner's Shop is currently closed. Do return at noon when it shall be open once again."];
+                } else {
+                    ["As I say, we have everything thou dost need to have a jolly splendid adventure!"];
+                    GregSellsProvisions_i();
+                }
+                TurnOff("buy");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["Good day to thee, <v0>."*];
+    }
+    if (event = _Bark) {
+        v1 = ~GetTime();
+        v2 = ~GetWorkType(~NPCToItem_i(_Greg));
+        v5 = ~rndRange(4, 1);
+        if (v2 = 7) {
+            if (v5 = 1) {
+                v6 = "@Provisions here!@";
+            }
+            if (v5 = 2) {
+                v6 = "@Step right in!@";
+            }
+            if (v5 = 3) {
+                v6 = "@Thou art welcome!@";
+            }
+            if (v5 = 4) {
+                v6 = "@Fine goods here!@";
+            }
+            Item_bark(v6, _Greg);
+        } else {
+            BarkAboutWork_i(_Greg);
+        }
+    }
+}
+
+Usable GregSellsProvisions_i #locals(13) #uses(~AskOrdList, ~PriceString_i, ~AskYesNo, ~SellItem_i) {
+    PushKeys();
+    v0 = true;
+    v1 = << "nothing", "torch", "oil flasks", "backpack", "bag", "shovel", "powder keg", "lockpick", "hoe", "bucket" >>;
+    v2 = << 0, 595, 782, 801, 802, 625, 704, 627, 626, 810 >>;
+    v3 = 65177;
+    v4 = << 0, 5, 72, 15, 8, 20, 35, 10, 20, 8 >>;
+    v5 = << "", "a ", "", "a ", "a ", "a ", "a ", "a ", "a ", "a " >>;
+    v6 = << 0, 0, 1, 0, 0, 0, 0, 0, 0, 0 >>;
+    v7 = << "", "", " for a dozen", "", "", "", "", "", "", "" >>;
+    v8 = << 0, 1, 12, 1, 1, 1, 1, 1, 1, 1 >>;
+    ["What wouldst thou like to buy?"];
+    While v0 {
+        v9 = ~AskOrdList(v1);
+        if (v9 = 1) {
+            ["Fine."];
+            v0 = false;
+        } else {
+            v10 = ~PriceString_i(v7::v9, v4::v9, v6::v9, v1::v9, v5::v9);
+            v11 = 0;
+            ["^<v10> That is a fair price, is it not?"];
+            v12 = ~AskYesNo();
+            if v12 {
+                if ((v2::v9 = 782) or ((v2::v9 = 595) or (v2::v9 = 627))) {
+                    if (v2::v9 = 782) {
+                        ["How many sets of twelve wouldst thou like?"];
+                    } else {
+                        ["How many wouldst thou like?"];
+                    }
+                    v11 = ~SellItem_i(true, 1, 20, v4::v9, v8::v9, v3, v2::v9);
+                } else {
+                    v11 = ~SellItem_i(false, 1, 0, v4::v9, v8::v9, v3, v2::v9);
+                }
+            }
+            if (v11 = 1) {
+                ["Done!"];
+            } else {
+                if (v11 = 2) {
+                    ["Thou cannot possibly carry that much!"];
+                } else {
+                    if (v11 = 3) {
+                        ["Thou dost not have enough gold for that!"];
+                    } else {
+                    }
+                }
+            }
+            ["Wouldst thou like something else?"];
+            v0 = ~AskYesNo();
+        }
+    }
+    PopKeys();
+}

@@ -1,0 +1,55 @@
+Routine Silamo accepts a0 #locals(0) {
+    if (event = _Action) {
+        SetSpeaker(0, _Silamo);
+        TurnOn(<< "name", "job", "bye" >>);
+        if not $MetSilamo {
+            [You see a frowning gargoyle.];
+            $MetSilamo = true;
+        } else {
+            ["To ask what you need, human," says Silamo.];
+        }
+        converse {
+            key ("name") {
+                ["To be named `Silamo.'"];
+                if flag(573) {
+                    TurnOn("wingless status");
+                }
+                TurnOff("name");
+                TurnOn("Silamo");
+            }
+            key ("Silamo") {
+                ["To know my name if I were winged." He scowls at you.];
+                TurnOff("Silamo");
+            }
+            key ("job") {
+                ["To be the gardener," he shrugs, "nothing more."~~ He does not seem to be interested in speaking with you.];
+            }
+            key ("wingless status") {
+                [He stares at you for a moment.~~"To be right, human.~~ "To feel I am treated less for an absence of wings. To see Quaeven treated better since joining The Fellowship. To be devoted to the altar of singularity. But, perhaps to change if The Fellowship cares not about wings."];
+                TurnOn(<< "treated", "Quaeven" >>);
+                TurnOff("wingless status");
+            }
+            key ("Quaeven") {
+                ["To be also without wings, but to be respected as if he were winged."];
+                TurnOff("Quaeven");
+            }
+            key ("treated") {
+                ["To see many others include him in many events from which I am excluded. To know others include him in many more decision-making councils, too."];
+                TurnOff("treated");
+                TurnOn("others");
+            }
+            key ("others") {
+                ["Gargoyles in The Fellowship."];
+                TurnOff("others");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["To get back to work."*];
+    }
+    if (event = _Bark) {
+        terminate;
+    }
+}

@@ -1,0 +1,41 @@
+Routine KitchenItems accepts a0 #locals(9) #uses(MemberSays_i, Bark_i) {
+    if (event = _Action) {
+        v0 = ~GetFrame(item);
+        if (v0 = 0) {
+            v1 = ~GetTarget();
+            v2 = ~GetCoord(v1);
+            v3 = ~Item_getType(v1);
+            v4 = 65535;
+            if (v3 = 1018) {
+                v4 = (v2::1 - ~rndRange(3, 0));
+                v5 = v2::2;
+                v6 = (v2::3 + 2);
+            }
+            if (v3 = 1003) {
+                v4 = v2::1;
+                v5 = (v2::2 - ~rndRange(2, 0));
+                v6 = (v2::3 + 2);
+            }
+            if (v4 = 65535) {
+                MemberSays_i("@Why not put the flour on the table first?@");
+            } else {
+                v7 = ~Item_create(_Dough);
+                if v7 {
+                    SetItemFlag_i(_IsTemporary_i, v7);
+                    SetFrame(0, v7);
+                    v8 = ~PopToMap(<< v4, v5, v6 >>);
+                }
+            }
+        }
+        if ((v0 = 8) or (v0 = 9)) {
+            v1 = ~GetTarget();
+            if (~Item_getType(v1) = _Dough) && (~GetFrame(v1) = 2) {
+                SetFrame(1, v1);
+            }
+            Bark_i(0, "@Hey! That really hurt!@", v1);
+        }
+        if ((v0 = 13) or (v0 = 14)) {
+            SetFrame(0, item);
+        }
+    }
+}

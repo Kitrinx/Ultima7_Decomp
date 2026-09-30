@@ -1,0 +1,17 @@
+Routine Prism accepts a0 #locals(4) #uses(~CheckPrisms_i) {
+    if (event = _Action) {
+        v0 = ~GetTarget();
+        v1 = ~Item_getType(v0);
+        v2 = ~GetCoord(v0);
+        if ((v1 = 577) and (~GetFrame(v0) = ~GetFrame(item))) {
+            v3 = ~Item_push(item);
+            if v3 {
+                v2::3 = (v2::3 + 2);
+                v3 = ~PopToMap(v2);
+            }
+        } else {
+            FlashMouse_i(0);
+        }
+        v3 = ~CheckPrisms_i(item);
+    }
+}

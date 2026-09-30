@@ -1,0 +1,28 @@
+Routine ReactToTheft_i accepts a0 #locals(0) #uses(ScoldTheft_i, ~IsAbleToTalk_i, SetWorkTypeUnlessWaiting_i) {
+    if (event = _Action) {
+        ScoldTheft_i(item);
+        if (~rndRange(8, 1) = 1) {
+            if (~GetItemFlag_i(_InParty_i, _Dupre) and ~IsAbleToTalk_i(_Dupre)) {
+                Item_bark("@I am leaving!@", _Dupre);
+                LeaveParty(_Dupre);
+                SetWorkTypeUnlessWaiting_i(_Wander, _Dupre);
+                flag(747) = true;
+                return;
+            }
+            if (~GetItemFlag_i(_InParty_i, _Shamino) and ~IsAbleToTalk_i(_Shamino)) {
+                Item_bark("@I am leaving!@", _Shamino);
+                flag(748) = true;
+                LeaveParty(_Shamino);
+                SetWorkTypeUnlessWaiting_i(_Wander, _Shamino);
+                return;
+            }
+            if (~GetItemFlag_i(_InParty_i, _Iolo) and ~IsAbleToTalk_i(_Iolo)) {
+                Item_bark("@I am leaving!@", _Iolo);
+                flag(746) = true;
+                LeaveParty(_Iolo);
+                SetWorkTypeUnlessWaiting_i(_Wander, _Iolo);
+                return;
+            }
+        }
+    }
+}

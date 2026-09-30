@@ -1,0 +1,28 @@
+Routine DeathBoltSpell_i accepts a0 #locals(6) #uses(~DirFromAvatar_i, ~IsMagicOK_i, DoDamage_i) {
+    if ((event = _Action) or ((event = _Combat) and (~ItemToNPC_i(item) = 65180))) {
+        Kernel_resetRef(item);
+        v0 = ~GetTarget();
+        v1 = ~DirFromAvatar_i(v0);
+        Item_bark("@Corp Por@", item);
+        if ~IsMagicOK_i() {
+            v2 = ~SetAttack_i(_Death_Bolt, v0, item);
+            v2 = ~PostAction(<< _aFACE_i, v1, _aUP_FRAME_i, _aSFX_i, 65, _aOUT_FRAME_i, _aUP_FRAME_i, _aTHRUST2_FRAME_i, _aATTACK_i >>, item);
+        } else {
+            v2 = ~PostAction(<< _aFACE_i, v1, _aUP_FRAME_i, _aOUT_FRAME_i, _aUP_FRAME_i, _aTHRUST2_FRAME_i, _aUSABLE_i, #FizzleSpell_i >>, item);
+        }
+    }
+    if ((event = _Combat) and (item <> 65180)) {
+        if ~Item_isNpc(item) {
+            v3 = ~GetNPCStat_i(_Int, _Avatar);
+            v4 = ~GetNPCStat_i(_Int, item);
+        } else {
+            v3 = 0;
+            v4 = 1;
+        }
+        v5 = ~GetItemFlag_i(_CantDie_i, item);
+        if ((v3 > v4) and (v5 = false)) {
+            DoDamage_i(127, item);
+            KillNPC_i(item);
+        }
+    }
+}

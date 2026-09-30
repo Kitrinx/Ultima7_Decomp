@@ -1,0 +1,52 @@
+Routine FireRingSpell_i accepts a0 #locals(14) #uses(~DirFromAvatar_i, ~IsMagicOK_i) {
+    if (event = _Action) {
+        v0 = ~GetTarget();
+        Kernel_resetRef(item);
+        v1 = ~DirFromAvatar_i(v0);
+        Item_bark("@Kal Flam Grav@", item);
+        if ~IsMagicOK_i() {
+            v2 = ~PostAction(<< _aFACE_i, v1, _aSFX_i, 65, _aEXTEND1_FRAME_i, _aTHRUST1_FRAME_i, _aRAISE1_FRAME_i >>, item);
+            v3 = << 65535, 0, 1, 2, 2, 2, 1, 0, 65535, 65534, 65534, 65534 >>;
+            v4 = << 65534, 65534, 65534, 65535, 0, 1, 2, 2, 2, 1, 0, 65535 >>;
+            v5 = 0;
+            While (v5 < 12) {
+                v5 = (v5 + 1);
+                v6 = (v0::2 + v3::v5);
+                v7 = (v0::3 + v4::v5);
+                v8 = v0::4;
+                v9 = << v6, v7, v8 >>;
+                v10 = << v6, v7, (v8 + 1) >>;
+                if not ~canExistAt(0, _Delayed_Explosion_621, v9) {
+                    v9 = v10;
+                }
+                if ~canExistAt(0, _Delayed_Explosion_621, v9) {
+                    v11 = ~Item_create(_Delayed_Explosion_621);
+                    if v11 {
+                        SetItemFlag_i(_IsTemporary_i, v11);
+                        SetItemFlag_i(_Invisible, v11);
+                        v2 = ~PopToMap(v9);
+                        v2 = ~ChangeNPCStat_i(1, _Hits, v11);
+                        v2 = ~PostInFuture(v5, << _aNO_HALT_i, _aUSABLE_i, #FireRingSpell_i >>, v11);
+                    }
+                }
+            }
+        } else {
+            v12 = ~PostAction(<< _aFACE_i, v1, _aEXTEND1_FRAME_i, _aTHRUST1_FRAME_i, _aRAISE1_FRAME_i, _aUSABLE_i, #FizzleSpell_i >>, item);
+        }
+    }
+    if (event = _Posted_i) {
+        v9 = ~GetCoord(item);
+        v2 = ~Item_push(item);
+        if v2 {
+            v2 = ~PopToMap(_Destroy);
+        }
+        v11 = ~Item_create(_Fire_Field);
+        if v11 {
+            SetItemFlag_i(_IsTemporary_i, v11);
+            v2 = ~PopToMap(v9);
+            v13 = 30;
+            v13 = (v13 + ~rndRange(5, 1));
+            v2 = ~PostInFuture(v13, << _aNO_HALT_i, _aREMOVE_i >>, v11);
+        }
+    }
+}

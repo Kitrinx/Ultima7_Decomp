@@ -1,0 +1,119 @@
+Routine Roberto accepts a0 #locals(12) #uses(~AvatarName, ~AskYesNo, ~AskList) {
+    if (event = _Bark) {
+        terminate;
+    }
+    SetSpeaker(0, _Roberto);
+    v0 = ~GetTime();
+    v1 = ~GetWorkType(~NPCToItem_i(_Roberto));
+    v2 = ~AvatarName();
+    v3 = "Avatar";
+    v4 = ~AvatarSex();
+    if flag(673) {
+        v5 = v2;
+    }
+    if flag(674) {
+        v5 = v3;
+    }
+    if not (v1 = 7) {
+        [The man looks up in surprise and says, "I am not working at the moment and I ask thee to respect my privacy. If thou dost wish to speak with me, come to The Baths in the late evening hours."*];
+        terminate;
+    }
+    TurnOn(<< "name", "job", "bye" >>);
+    v6 = ~GetClock(4);
+    v7 = ~GetClock(2);
+    v8 = ~GetClock(3);
+    if ((flag(668) and (v7 < 2)) or ((flag(669) and (v6 < 2)) or (flag(670) and (v8 < 2)))) {
+        [The man looks at you with surprise and says, "Hold, <v4>! Thou didst just enjoy thyself, didst thou not? Please come back when thou art rested!"*];
+        terminate;
+    } else {
+        if not flag(685) {
+            [You see a strikingly handsome man with eyes that pierce your soul.];
+            if v4 {
+                ["Hello, gorgeous!];
+            } else {
+                ["Hello. Uhm, art thou sure thou dost not really want to speak with Wench or Martine?"];
+                if ~AskYesNo() {
+                    ["Fine, sailor, whatever makes thy blood boil...];
+                } else {
+                    ["Then thou hadst best speak with one of them. They are probably more to thy liking!"*];
+                    terminate;
+                }
+            }
+            ["What is thy name?"];
+            v9 = ~AskList(<< v2, v3 >>);
+            if (v9 = v2) {
+                if v4 {
+                    ["Well, I am very pleased to meet thee, <v2>."];
+                } else {
+                    ["Hello, <v2>."];
+                }
+                v5 = v2;
+                flag(673) = true;
+            }
+            if (v9 = v3) {
+                [Roberto does a double-take. "The Avatar, eh? And I thought I had heard it all..."];
+                flag(674) = true;
+                v5 = v3;
+            }
+            flag(685) = true;
+        } else {
+            ["Hello again, <v5>," Roberto says.];
+        }
+    }
+    converse {
+        key ("name") {
+            ["I am known in these parts as Roberto."];
+            if v4 {
+                [Roberto takes your hand and says, "And thou art the most beautiful woman I have ever laid eyes upon!"];
+            }
+            TurnOff("name");
+        }
+        key ("job") {
+            [Roberto smiles broadly. "Thou dost not really want to know that, dost thou?" He shakes his head, suppressing a laugh. "Very well -- it is my task to see that thou art truly comfortable whilst at The Baths."];
+            TurnOn(<< "The Baths", "comfortable" >>);
+        }
+        key ("The Baths") {
+            if v4 {
+                v10 = "beautiful women ";
+            } else {
+                v10 = "handsome men ";
+            }
+            ["Nice place, is it not? I certainly enjoy working here! It brings me much wealth, and I have many opportunities to meet <v10>such as thyself!"];
+            TurnOff("The Baths");
+        }
+        key ("comfortable") {
+            ["What would suit thee? We could swim in the spring pools, or I could give thee a massage. If thou dost prefer to converse, we could simply talk. Or if thou wouldst like, we could wander into the Community Room and... communicate!"];
+            TurnOff("comfortable");
+            TurnOn(<< "swim", "massage", "talk", "Community Room" >>);
+        }
+        key ("Community Room") {
+            ["Thou dost want to join me in the Community Room?"];
+            if ~AskYesNo() {
+                [Roberto leads you into a private room.~~"It really isn't a Community Room at all. We shall be all alone!" ~~A while later, after you have received the man's full attention, you emerge from the Community Room a much happier Avatar.];
+                flag(670) = true;
+                SetClock(3);
+                v11 = ~TakeFromParty_i(true, _All, _All, _Gold_Coin, 50);
+            } else {
+                ["Do not worry about it, <v5>. We can do something else."];
+            }
+            TurnOff("Community Room");
+        }
+        key ("swim") {
+            [Roberto helps you with your clothing and leads you into the warm spring water. It feels terrific, and you feel like going to sleep, but you know you have a quest to complete. After a while, Roberto helps you out of the water and you dress.];
+            TurnOff("swim");
+        }
+        key ("massage") {
+            [Roberto helps you with your clothing and leads you to a comfortable table. You lie face down and the man expertly kneads and rubs your aching muscles, slowly sending you over the edge into a state of total relaxation. After a while, Roberto helps you up and you dress.];
+            TurnOff("massage");
+        }
+        key ("talk") {
+            [Roberto smiles. "That is all right. What shall we talk about? Adventuring? Secret passages and dungeons?"~~ Roberto leans closer and whispers, "Didst thou know that there are secret passages connecting the buildings on Buccaneer's Den? 'Tis true! I am fairly sure the entrance is through the House of Games, and I am quite sure there is a way into The Baths."~~You and Roberto speak of a number of other subjects until you realize that you are spending far too much time in the spa. There is a quest to fulfill!];
+            TurnOff("talk");
+        }
+        key ("bye") {
+            break;
+        }
+    }
+    clear_answers;
+    ["I hope to see thee again, <v5>."*];
+}

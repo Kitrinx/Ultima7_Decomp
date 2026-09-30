@@ -1,0 +1,92 @@
+Routine Nell accepts a0 #locals(5) #uses(~AvatarName, ~AskList, ~AskYesNo, BarkAboutWork_i) {
+    if (event = _Action) {
+        v0 = ~AvatarName();
+        v1 = "Avatar";
+        SetSpeaker(0, _Nell);
+        if $MetNell {
+            v2 = v0;
+        }
+        if flag(121) {
+            v2 = v1;
+        }
+        if flag(119) {
+            [Nell will not speak to you.*];
+            terminate;
+        }
+        if not flag(201) {
+            [You see a servant girl who looks at you in wonder. "Thou dost look familiar. Who art thou?"];
+            v3 = ~AskList(<< v0, v1 >>);
+            if (v3 = v0) {
+                ["Oh. Hello. I am Nell."];
+                $MetNell = true;
+            } else {
+                ["I thought so! I have seen thy portrait before. And I had heard that thou wouldst be visiting! I'm Nell."];
+                flag(121) = true;
+            }
+            if $MetNell {
+                v2 = v0;
+            }
+            if flag(121) {
+                v2 = v1;
+            }
+            flag(201) = true;
+        } else {
+            ["Hello, <v2>."];
+        }
+        TurnOn(<< "name", "job", "bye" >>);
+        converse {
+            key ("name") {
+                ["I told thee my name is Nell."];
+                TurnOff("name");
+            }
+            key ("job") {
+                ["I am a chambermaid. I am responsible for keeping the castle tidy. Just a servant girl, really."];
+                TurnOn(<< "castle", "servant" >>);
+            }
+            key ("castle") {
+                ["It is very large. Keeps me very busy. Thou wouldst not believe how dusty it gets."];
+                TurnOff("castle");
+            }
+            key ("servant") {
+                ["I suppose I'll always be a servant. My parents are servants. My brother is a servant. My fiance is a servant. My child will probably be a servant."];
+                TurnOn(<< "parents", "brother", "fiance", "child" >>);
+                TurnOff("servant");
+            }
+            key ("parents") {
+                ["They work in the castle as well. Boots is my mother. Bennie is my father. They have been here for years. I was born in this castle and played in the nursery."];
+                TurnOff("parents");
+            }
+            key ("brother") {
+                ["Thou mightest run into him. He is also a servant in the castle. Charles. Other than not being as smart as I am, he is all right. For a bumbling ass, that is!" She laughs.];
+                flag(118) = true;
+                TurnOff("brother");
+            }
+            key ("fiance") {
+                ["That would be Carrocio, that dear man who runs the Punch and Judy Show. He writes the loveliest love poetry. We are getting married as soon as Carrocio can afford a wedding ring."];
+                flag(117) = true;
+                TurnOff("fiance");
+            }
+            key ("child") {
+                [Nell looks worried. "Shhh! I do not want anyone to know. 'Tis not showing yet, is it? Carrocio and I are getting married as soon as possible. He -is- the father. I think. Then again, it could be... no, probably not him. Or could it be...? Hmmm. That would be interesting! Wait! What am I saying? The father is most definitely Carrocio! Please do not tell anyone. 'Twould be embarrassing. All right?"];
+                v4 = ~AskYesNo();
+                if v4 {
+                    ["I know I can trust thee, <v2>."];
+                } else {
+                    ["But thou wouldst ruin my reputation! Please -- a servant girl needs all the self-esteem she can get without that burden!" Nell turns away from you.*];
+                    flag(119) = true;
+                    terminate;
+                }
+                TurnOff("child");
+                flag(122) = true;
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["Goodbye, <v2>."*];
+    }
+    if (event = _Bark) {
+        BarkAboutWork_i(_Nell);
+    }
+}

@@ -1,0 +1,23 @@
+Routine ChairHaunt accepts a0 #locals(8) #uses(~SortByCriteria_i) {
+    if (event = _Trigger) {
+        Sfx(28);
+        event = 1;
+        v0 = ~FindNearby_i(0, 20, _Chair, item);
+        v1 = << >>;
+        Foreach v4 in v0 {
+            v1 = (v1 & ~GetDist(item, v4));
+        }
+        v0 = ~SortByCriteria_i(v1, v0);
+        v4 = v0::1;
+        if v4 {
+            v5 = ~GetFrame(v4);
+            v6 = (v5 modulo 4);
+            if (v6 < 3) {
+                v7 = ~PostAction(<< _aSFX_i, 83, _aNEXT_FRAME >>, v4);
+            } else {
+                v5 = (v5 - v6);
+                v7 = ~PostAction(<< _aSFX_i, 83, _aFRAME, v5 >>, v4);
+            }
+        }
+    }
+}

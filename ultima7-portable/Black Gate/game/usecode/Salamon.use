@@ -1,0 +1,183 @@
+Routine Salamon accepts a0 #locals(10) #uses(~IsInInv, SalamonWantsHoney_i, ~AskYesNo) {
+    if (event = _Action) {
+        v0 = ~IsInInv(65177, 65177, _Honey, 1, _Party);
+        SetSpeaker(0, _Salamon);
+        if not flag(340) {
+            if not v0 {
+                [The creature ignores you.*];
+                terminate;
+            } else {
+                SalamonWantsHoney_i();
+            }
+        }
+        if not $MetSalamon {
+            if not $EMP_COMMON {
+                [You see a wizened female ape-like creature.];
+                $EMP_COMMON = true;
+                $MetSalamon = true;
+            } else {
+                [You see a wizened female Emp.];
+                $MetSalamon = true;
+            }
+        } else {
+            ["You are hailed, human."];
+        }
+        if flag(299) {
+            TurnOn("Trellek");
+        }
+        TurnOn(<< "name", "job", "bye" >>);
+        converse {
+            key ("name") {
+                ["I am Salamon," she says.];
+                TurnOff("name");
+            }
+            key ("job") {
+                ["I am without job. All Emps are without jobs. Food gathering and shelter-building are Emp jobs."];
+                if not flag(305) {
+                    [She gives you a hard look.~~"There is a job for Trellek."];
+                    flag(337) = true;
+                    TurnOn("Trellek");
+                }
+                TurnOn(<< "food-gathering", "shelter-building" >>);
+            }
+            key ("shelter-building") {
+                ["Silverleaf trees are where Emp's homes can be found."];
+                TurnOff("shelter-building");
+            }
+            key ("food-gathering") {
+                ["Only fruits, vegetables, and milk-stuffs are eaten by Emps. Bread is also eaten."];
+                TurnOff("food-gathering");
+                TurnOn(<< "fruits and vegetables", "milk-stuffs", "bread", "-only-?" >>);
+            }
+            key ("milk-stuffs") {
+                ["Milk and cheese and butter are milk-stuffs."];
+                TurnOff("milk-stuffs");
+            }
+            key ("bread") {
+                ["Bread is hard to make for Emps. No stoves or ovens are owned by Emps. But bread is well liked."];
+                TurnOff("bread");
+            }
+            key ("fruits and vegetables") {
+                ["Fruits and vegetables are our favorites. Many are sweet."];
+                TurnOff("fruits and vegetables");
+                TurnOn("sweet");
+            }
+            key ("sweet") {
+                ["Sweet things are desired by Emps. Honey is sweetest! More honey is had by you?"];
+                v1 = ~AskYesNo();
+                if v1 {
+                    [Her eyes widen and her lips part around a very large and hopeful smile.~~"More honey will be given by you?"];
+                    v2 = ~AskYesNo();
+                    if v2 {
+                        v3 = ~IsInInv(65177, 65177, _Honey, 1, _Party);
+                        if v3 {
+                            ["You are thanked," she says, taking the honey.];
+                        } else {
+                            ["A mean trick was played by you," she says, frowning.];
+                            terminate;
+                        }
+                    } else {
+                        [She seems surprised, but quickly recovers.~~"Your feelings are understood by me," she sighs.];
+                    }
+                } else {
+                    [She sighs, obviously disappointed.];
+                }
+                TurnOff("sweet");
+            }
+            key ("-only-?") {
+                ["No dead animal flesh -- what is called `meat' by humans -- is eaten by an Emp."];
+                TurnOn(<< "dead animal flesh", "meat" >>);
+                TurnOff("-only-?");
+            }
+            key ("meat") {
+                ["Meat is without a good taste," she shudders. "It is not preferred!"];
+                TurnOff("meat");
+            }
+            key ("dead animal flesh") {
+                ["All violence is abhorred by Emps. No killing is desired, even for what you humans call food."];
+                TurnOff("dead animal flesh");
+            }
+            key ("Trellek") {
+                if flag(304) {
+                    if flag(299) {
+                        v4 = ~IsInInv(65177, 3, _Scroll, 1, _Party);
+                        if v4 {
+                            [She takes the document from you, smiling when she sees Ben's signature. "Trellek is permitted to join you. You are wished luck and speed."];
+                            v5 = ~TakeFromParty_i(false, _All, 3, _Scroll, 1);
+                            flag(305) = true;
+                        } else {
+                            ["The signed contract must be seen by me."];
+                        }
+                    } else {
+                        ["Permission will be given to you later. There is a task that must be performed first.~~"There is a woodcutter who lives in the western part of the forest. Silverleaf trees are being cut down by him. Emp houses are in Silverleaf trees. Contract must be signed by woodcutter to stop."];
+                        if not flag(298) {
+                            ["My condition is understood by you?" Not waiting for your response, she hands you a document.];
+                            v6 = ~GiveToParty_i(false, _All, 3, _Scroll, 1);
+                            if v6 {
+                                ["You are now in possession of the contract."];
+                                flag(298) = true;
+                            } else {
+                                ["There is not enough room in your equipment for the contract."];
+                            }
+                        }
+                    }
+                } else {
+                    ["Trellek is another Emp. He should be spoken to by you.~~"There is much damage to the forest and the Silverleaf trees. The damage is caused by your people, human. The responsibility to reverse the damage is also yours, human.~~"Trellek should be sought by you," she says emphatically. "He should be asked to join you."];
+                }
+                TurnOff("Trellek");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["My hope is for your welfare, human."*];
+    }
+    if (event = _Bark) {
+        v7 = ~GetWorkType(~NPCToItem_i(_Salamon));
+        v8 = ~rndRange(4, 1);
+        v0 = ~IsInInv(65177, 65177, _Honey, 1, _Party);
+        if (v7 = 11) && v0 {
+            if (v8 = 1) {
+                v9 = "@You are greeted.@";
+            }
+            if (v8 = 2) {
+                v9 = "@Nature is home to many.@";
+            }
+            if (v8 = 3) {
+                v9 = "@A good day is hoped for you.@";
+            }
+            if (v8 = 4) {
+                v9 = "@Nature is wise.@";
+            }
+        }
+        Item_bark(v9, _Salamon);
+    }
+}
+
+Usable SalamonWantsHoney_i #locals(2) #uses(~AskYesNo, GivePartyExp_i) {
+    SetSpeaker(0, _Salamon);
+    [The ape-like creature slowly and cautiously walks up to you. He, or she, sniffs for a moment, and then points to the honey you are carrying.];
+    TurnOn(<< "Want honey?", "Go away!" >>);
+    converse {
+        key ("Want honey?") {
+            ["Honey will be given by you to me?"];
+            v0 = ~AskYesNo();
+            if v0 {
+                v1 = ~TakeFromParty_i(true, _All, _All, _Honey, 1);
+                ["You are thanked."];
+                GivePartyExp_i(10);
+                flag(340) = true;
+            } else {
+                ["`Goodbye' is said to you."*];
+                terminate;
+            }
+            TurnOff(<< "Want honey?", "Go away!" >>);
+        }
+        key ("Go away!") {
+            [It does.*];
+            terminate;
+        }
+    }
+    clear_answers;
+}

@@ -1,0 +1,16 @@
+Routine GetMad accepts a0 #locals(5) #uses(SetWorkTypeUnlessWaiting_i) {
+    if (event = _Trigger) {
+        v0 = ~GetQuality(item);
+        if not v0 {
+            v1 = ~FindNearby_i(8, 40, _All, item);
+        } else {
+            v1 = ~FindNearby_i(8, v0, _All, item);
+        }
+        Foreach v4 in v1 {
+            if not ~GetItemFlag_i(_InParty_i, v4) {
+                SetWorkTypeUnlessWaiting_i(_Combat_0, v4);
+                ClearItemFlag_i(_Asleep, v4);
+            }
+        }
+    }
+}

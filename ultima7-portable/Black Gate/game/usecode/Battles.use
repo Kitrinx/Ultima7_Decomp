@@ -1,0 +1,117 @@
+Routine Battles accepts a0 #locals(4) #uses(~LordOrLady, ~IsNPCNear, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Battles);
+        v0 = ~LordOrLady();
+        v1 = ~GetTime();
+        v2 = ~IsNPCNear(_Robin);
+        v3 = ~IsNPCNear(_Leavell);
+        TurnOn(<< "name", "job", "bye" >>);
+        if flag(381) {
+            TurnOn("locket");
+        }
+        if not $MetBattles {
+            [The man before you examines you with shifty eyes. He has a slightly crouched posture as if constantly poised to strike out at the world around him.];
+            $MetBattles = true;
+            if flag(384) {
+                TurnOn("strangers");
+            }
+        } else {
+            ["What?" asks Battles.];
+        }
+        converse {
+            key ("name") {
+                ["Battles. M'self, I be a stranger to New Magincia."];
+                TurnOn("New Magincia");
+                TurnOff("name");
+            }
+            key ("job") {
+                ["I be hired as a bodyguard for Master Robin, as is me partner, Leavell. The pay be good."];
+                TurnOn(<< "Robin", "Leavell" >>);
+            }
+            key ("Robin") {
+                ["Robin be a high stakes gamblin' gent who makes his living inna casino at Buccaneer's Den."];
+                if v2 {
+                    SetSpeaker(0, _Robin);
+                    ["A living that would not have been anything near as profitable if not for thy good works, Battles."*];
+                    SetSpeaker(0, _Battles);
+                    ["Thank yer, Milord."*];
+                    CloseSpeaker(_Robin);
+                    SetSpeaker(0, _Battles);
+                }
+                TurnOff("Robin");
+                TurnOn(<< "gamblin' gent", "casino" >>);
+            }
+            key ("gamblin' gent") {
+                ["Gamblin' is how Robin makes his living. I do not think he has had a regular post in all of his life!"];
+                if v2 {
+                    SetSpeaker(0, _Robin);
+                    ["Why, I thank thee for the compliment, Battles!"*];
+                    CloseSpeaker(_Robin);
+                    SetSpeaker(0, _Battles);
+                }
+                TurnOff("gamblin' gent");
+            }
+            key ("casino") {
+                ["The casino in Buccaneer's Den is called the House of Games and it the most fabulous place I have ever seen in me life. I shall never forget the first time Robin took me there. He walked away with a hundred gold pieces for less than an hour's work!"];
+                TurnOff("casino");
+            }
+            key ("Leavell") {
+                ["He's a lady's man, he is. But do not be thinkin' he cannot handle hissel' inna fight. T'would be yer last mistake."];
+                if v3 {
+                    SetSpeaker(0, _Leavell);
+                    ["I can near out wrestle thee, Battles, ye old dog!"*];
+                    SetSpeaker(0, _Battles);
+                    ["Har! Har! Har! Har!"];
+                    CloseSpeaker(_Leavell);
+                    SetSpeaker(0, _Battles);
+                }
+                TurnOff("Leavell");
+                TurnOn(<< "lady's man", "fight" >>);
+            }
+            key ("lady's man") {
+                ["Why, I reckon Leavell has broken near as many hearts as I have made stop beating!"];
+                if v3 {
+                    SetSpeaker(0, _Leavell);
+                    ["So many!"*];
+                    CloseSpeaker(_Leavell);
+                    SetSpeaker(0, _Battles);
+                }
+                TurnOff("lady's man");
+            }
+            key ("fight") {
+                ["Just the practice Leavell has had in fending off jealous husbands 'twould make any man a master combatant!"];
+                TurnOff("fight");
+            }
+            key ("strangers") {
+                ["Strangers? ~~Thou must mean us!" Battles snorts loudly.];
+                TurnOff("strangers");
+            }
+            key ("New Magincia") {
+                ["We be looking to get off this boring rock, New Magincia, and back to Buccaneer's Den. If ye have a way to get us there, and away from these peasant knaves, Master Robin shall pay ye well."];
+                TurnOff("New Magincia");
+                TurnOn(<< "boring rock", "peasant knaves" >>);
+            }
+            key ("boring rock") {
+                ["Canst thou imagine spending thine entire life here with nothing happening day after day after day? 'Tis enough to drive a man mad!"];
+                TurnOff("boring rock");
+            }
+            key ("peasant knaves") {
+                ["The people here are so lacking in education that they never even heard of gamblin' before! Never heard of gamblin'? That is what life is all about!"];
+                TurnOff("peasant knaves");
+            }
+            key ("locket") {
+                ["I sar a locket jus' like the one thou be describin' in the possession o' Master Robin. The last time I sar it was... Lessee... It was right before the three of us went drinkin' at the Modest Damsel."];
+                flag(389) = true;
+                TurnOff("locket");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["Be seein' ye."*];
+    }
+    if (event = _Bark) {
+        BarkAboutWork_i(_Battles);
+    }
+}

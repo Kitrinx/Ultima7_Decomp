@@ -1,0 +1,143 @@
+Routine Camille accepts a0 #locals(10) #uses(~LordOrLady, ~AskYesNo, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Camille);
+        v0 = ~LordOrLady();
+        if ($FeridwynAccusedTobias and not $CAMILLE_BEGGED_CLEAR_TOBIAS) {
+            ["Avatar! My son Tobias has been wrongly accused! He is no thief! And I cannot believe a vial of venom was found in his possession. I truly believe it was planted there! Please -- I beg thee! Please clear my son's name. He has done no wrong!];
+            ["I know my son Tobias has suffered for not having a father. I have tried my best on mine own to raise him well, but this farm requires so much work that I fear I do not have enough time to devote to him. But I know in mine heart that my son is not a thief."*];
+            ["Might I suggest that thou speak with Morfin again. He may have recognized signs of usage of this foul substance in other members of the village."];
+            SetWorkType(_Loiter, ~NPCToItem_i(_Camille));
+            $CAMILLE_BEGGED_CLEAR_TOBIAS = true;
+            terminate;
+        }
+        TurnOn(<< "name", "job", "bye" >>);
+        if $StolenVenom {
+            TurnOn("thief");
+        }
+        if $FeridwynAccusedTobias {
+            TurnOn("Feridwyn");
+        }
+        if $VENOM_CASE_SOLVED {
+            TurnOn("Tobias cleared");
+            TurnOff(<< "Feridwyn", "thief" >>);
+        }
+        if not $MetCamille {
+            [You see a farm woman. She rubs her hands, which are covered with dirt and lines drawn by toil.];
+            ["My dreams have become reality. Thou art the Avatar, art thou not? I recognized thee immediately!"];
+            $MetCamille = true;
+        } else {
+            ["How art thou, <v0>?" Camille asks.];
+        }
+        converse {
+            key ("name") {
+                ["My name is Camille, Avatar. It is an honor to meet thee."];
+                $MetCamille = true;
+                TurnOff("name");
+            }
+            key ("job") {
+                ["I run a small farm here in Paws with my son, Tobias. I am a widow."];
+                TurnOn(<< "Paws", "Tobias" >>);
+                if not $CAMILLE_GAVE_WHEAT {
+                    TurnOn("farm");
+                }
+            }
+            key ("farm") {
+                ["I grow a few crops. Especially carrots and wheat."];
+                TurnOn(<< "carrots", "wheat" >>);
+                TurnOff("farm");
+            }
+            key ("carrots") {
+                ["I believe my carrots are especially tasty. Wouldst thou like to purchase some? They would only cost thee one gold for three."];
+                v1 = ~AskYesNo();
+                if v1 {
+                    ["How many dost thou desire?"];
+                    v2 = ~AskBarInput(3, 3, 30, 3);
+                    v3 = (v2 / 3);
+                    v4 = ~TakeFromParty_i(true, _All, _All, _Gold_Coin, v3);
+                    if v4 {
+                        v5 = ~GiveToParty_i(true, 18, _All, _Food_Item, v2);
+                        if v5 {
+                            ["I am sure thou wilt love them."];
+                        } else {
+                            ["Thou must first lighten thy load. Then I can give thee some delicious carrots."];
+                            v6 = ~GiveToParty_i(true, _All, _All, _Gold_Coin, v3);
+                        }
+                    } else {
+                        ["I am sorry, Avatar." She shakes her head sadly. "Thou dost not have the gold to be able to taste them."~~ She stares at you for a moment, obviously thoughtful. Lowering her voice, she says,~~"Go ahead, Avatar, take one."];
+                        v7 = ~GiveToParty_i(true, 18, _All, _Food_Item, 1);
+                        if v7 {
+                            [Smiling gently, she hands you a carrot.];
+                        } else {
+                            ["Thou art carrying too much..." She seems truly disappointed.];
+                        }
+                    }
+                } else {
+                    ["If that is thy wish, Avatar, but they are quite good!"];
+                }
+                TurnOff("carrot");
+            }
+            key ("wheat") {
+                ["That reminds me. This package needs to be taken to the mill today. If thou canst deliver it for me, Thurston will pay thee for it. Wilt thou?"];
+                v8 = ~AskYesNo();
+                if v8 {
+                    v9 = ~GiveToParty_i(true, _All, _All, _Sack_Of_Wheat, 1);
+                    if v9 {
+                        ["Be sure and take this to Thurston, the mill owner. He shall pay thee for thy trouble."];
+                        $CAMILLE_GAVE_WHEAT = true;
+                    } else {
+                        ["Thou art carrying too much! Go put something down and I will give it to thee then."];
+                    }
+                } else {
+                    ["I understand that thou art busy on thy quest, Avatar."];
+                }
+                TurnOff("wheat");
+            }
+            key ("Paws") {
+                ["Life is hard here in Paws. It is a town of poor people with all the ills that poverty brings. At least The Fellowship brings us some relief."];
+                TurnOn(<< "ills", "Fellowship" >>);
+                TurnOff("Paws");
+            }
+            key ("Tobias") {
+                if $FeridwynAccusedTobias {
+                    ["I know my son. I know that he is growing up unhappy. But I cannot believe that he would steal things."];
+                }
+                ["He is basically a good boy. He works hard and misses his father."];
+                TurnOff("Tobias");
+            }
+            key ("Fellowship") {
+                ["I am not sure whether I trust The Fellowship. It has undoubtedly done some good things in this world so it cannot be all bad. Or, at least, the people in it cannot be all bad."];
+                TurnOff("Fellowship");
+            }
+            key ("ills") {
+                ["Recently, our town has been plagued by a thief."];
+                TurnOn("thief");
+                TurnOff("ills");
+            }
+            key ("thief") {
+                if not $FeridwynAccusedTobias {
+                    ["Some silver serpent venom was stolen from the merchant Morfin who operates the slaughterhouse."];
+                    $StolenVenom = true;
+                } else {
+                    ["I do not care what Feridwyn says! My son is no thief!"];
+                }
+                TurnOff("thief");
+            }
+            key ("Feridwyn") {
+                ["That man Feridwyn knows that I do not trust The Fellowship, and for\x09that he considers me his personal enemy. I do not know why he would seek to attack me through my son but he must not be allowed to succeed."];
+                TurnOff("Feridwyn");
+            }
+            key ("Tobias cleared") {
+                [You tell Camille how you discovered that Garritt was really the thief and that her son Tobias has been cleared. "I want to thank thee for finding the thief in our town and clearing my son's name. It does mine heart good to see that the Avatar has returned to us once again and that thou dost care enough about the people of Britannia to help solve our local troubles here in Paws. Again Avatar, I thank thee."];
+                TurnOff("Tobias cleared");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["Pleasant journey, Avatar."*];
+    }
+    if (event = _Bark) {
+        BarkAboutWork_i(_Camille);
+    }
+}

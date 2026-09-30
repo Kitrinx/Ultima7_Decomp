@@ -1,0 +1,22 @@
+Routine AwakenAllSpell_i accepts a0 #locals(7) #uses(~IsMagicOK_i) {
+    if (event = _Action) {
+        v0 = ~GetCoord(item);
+        Kernel_resetRef(item);
+        Item_bark("@Vas An Zu@", item);
+        if ~IsMagicOK_i() {
+            createSprite(65535, 0, 0, 0, (v0::2 - 2), (v0::1 - 2), 7);
+            v1 = ~PostAction(<< _aSFX_i, 68, _aRAISE1_FRAME_i, _aTHRUST1_FRAME_i >>, item);
+            v2 = 25;
+            v3 = ~FindNearby_i(4, v2, 65535, item);
+            Foreach v6 in v3 {
+                v1 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #AwakenAllSpell_i >>, v6);
+            }
+        } else {
+            v1 = ~PostAction(<< _aRAISE1_FRAME_i, _aTHRUST1_FRAME_i, _aUSABLE_i, #FizzleSpell_i >>, item);
+        }
+    }
+    if (event = _Posted_i) {
+        Kernel_resetRef(item);
+        ClearItemFlag_i(_Asleep, item);
+    }
+}

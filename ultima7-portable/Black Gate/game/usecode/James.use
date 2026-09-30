@@ -1,0 +1,138 @@
+Routine James accepts a0 #locals(12) #uses(~LordOrLady, ~AskYesNo, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _James);
+        v0 = ~LordOrLady();
+        v1 = ~GetTime();
+        v2 = ~GetWorkType(~NPCToItem_i(_James));
+        TurnOn(<< "name", "job", "bye" >>);
+        if flag(146) {
+            TurnOn("Cynthia said");
+        }
+        if not $MetJames {
+            [You see a sour-faced innkeeper who looks at you as if all of his problems were your fault.];
+            $MetJames = true;
+        } else {
+            ["What must I do for thee now, <v0>?" asks James.];
+        }
+        converse {
+            key ("name") {
+                ["My name is James."];
+                TurnOff("name");
+            }
+            key ("job") {
+                ["I am the proprietor of the inn."];
+                TurnOn(<< "proprietor", "inn" >>);
+            }
+            key ("proprietor") {
+                ["It is just another way of saying that I am the man who is the desk clerk. Which thou mayest think is an easy job although it is not, I can assure thee."];
+                TurnOff("proprietor");
+                TurnOn(<< "desk clerk", "not easy" >>);
+            }
+            key ("inn") {
+                ["This place is called the Wayfarer's Inn. It has a long and substantial history in Britain. If thy grandparents ever came to town this is probably where they stayed."];
+                TurnOff("inn");
+            }
+            key ("desk clerk") {
+                ["Of course, being desk clerk is not all I do. I must spend all day listening to people talk about their problems as if I am supposed to solve them!"];
+                TurnOff("desk clerk");
+                TurnOn(<< "listening", "solve" >>);
+            }
+            key ("listening") {
+                ["That is correct, <v0>. So if thou dost have a problem, allow me the courtesy of not having to hear all about it. Now what was it that I was saying again?"];
+                TurnOff("listening");
+            }
+            key ("solve") {
+                ["Maybe solving people's problems is an easy task for other innkeepers, but, not only am I bad at it, I have mine own problems as well."];
+                TurnOff("solve");
+                TurnOn("problems");
+            }
+            key ("problems") {
+                ["I do not like my job! I never wanted to be an innkeeper, I just wanted to keep the place going after my father passed on. Now that I am married to Cynthia, I am more tied down than ever!"];
+                TurnOff("problems");
+                TurnOn(<< "innkeeper", "Cynthia" >>);
+            }
+            key ("innkeeper") {
+                ["Instead of being an innkeeper I always secretly wanted to be a pirate! When I was not sailing the seas I would be living in Buccaneer's Den."];
+                TurnOff("innkeeper");
+                TurnOn(<< "pirate", "Buccaneer's Den" >>);
+            }
+            key ("Buccaneer's Den") {
+                ["As I understand it they have an excellent House of Games there as well as opulent baths. Or at least so I have heard from Gordon, the man who sells fish and chips."];
+                TurnOff("Buccaneer's Den");
+            }
+            key ("Cynthia") {
+                ["Do not mistake my words, <v0>. I love Cynthia with all mine heart. But there are I times I feel I am too young to be married. Besides, I know I cannot be a good husband for her."];
+                TurnOff("Cynthia");
+                TurnOn("good husband");
+            }
+            key ("pirate") {
+                ["Thou knowest for certain that few if any people would pour their troubles out to pirates. If I were a pirate I could get this bad foot replaced with a peg, too!"];
+                TurnOff("pirate");
+            }
+            key ("good husband") {
+                ["How can I make Cynthia happy on the pittance an innkeeper makes when all day long she is counting all that money in the mint? I know I cannot."];
+                TurnOff("good husband");
+                TurnOn(<< "happy", "mint" >>);
+            }
+            key ("mint") {
+                ["I know the nature of the heart, my good friend. After being exposed to such large sums of money she shall begin to covet it. As I cannot provide it, she shall leave me to give her heart to a wealthy man. Perhaps a merchant or a nobleman. The thought of it makes my blood boil."];
+                TurnOff("mint");
+            }
+            key ("not easy") {
+                ["When one is an innkeeper one must run around all day long. If anyone wants anything thou art the one who must take care of it for them!"];
+                TurnOff("not easy");
+                TurnOn(<< "run around", "room" >>);
+            }
+            key ("run around") {
+                ["I spend so much time running around that I have gotten a bad foot."];
+                TurnOff("run around");
+            }
+            key ("happy") {
+                ["Already I can sense she is worried about our marriage. I know that there is something wrong between us."];
+                TurnOff("happy");
+            }
+            key ("room") {
+                if (v2 = 7) {
+                    ["Oh, I suppose thou wouldst like a room now! There, that is just what I mean! It is ten gold pieces per person for a night. Thou dost want a room, dost thou not?"];
+                    if ~AskYesNo() {
+                        v3 = ~GetParty();
+                        v4 = 0;
+                        Foreach v7 in v3 {
+                            v4 = (v4 + 1);
+                        }
+                        v8 = (v4 * 10);
+                        v9 = ~CountItem(_All, _All, _Gold_Coin, _Party);
+                        if (v9 >= v8) {
+                            v10 = ~GiveToParty_i(true, _All, 255, _Key, 1);
+                            if not v10 {
+                                ["Thou art carrying too much to take the room key!"];
+                            } else {
+                                ["Here is thy room key. It is only good until thou leavest the inn."];
+                                v11 = ~TakeFromParty_i(true, _All, _All, _Gold_Coin, v8);
+                            }
+                        } else {
+                            ["Thou dost not have enough gold to get a room here. Now I suppose thou shalt be telling me all about how such a sorry state befell thee. Well, I shall not listen to thee!"];
+                        }
+                    } else {
+                        [James wipes his brow. "Phew! That was a close call!"];
+                    }
+                } else {
+                    ["Please, <v0>. Do allow me some time to myself! Presently I am not doing the business of the inn and I do wish to keep it that way. Thou must attend to the inn during business hours."];
+                }
+                TurnOff("room");
+            }
+            key ("Cynthia said") {
+                [You repeat the words that Cynthia had said to you about him. A smile comes across his face. "Aww, who wants to be a pirate anyway? I would hate that!" With that he goes back to wiping the bar, but you notice that the smile is still there.];
+                TurnOff("Cynthia");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["Oh, thou shalt just come back again wanting something else from me! I just know it!"*];
+    }
+    if (event = _Bark) {
+        BarkAboutWork_i(_James);
+    }
+}

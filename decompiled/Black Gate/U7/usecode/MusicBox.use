@@ -1,0 +1,16 @@
+Routine MusicBox accepts a0 #locals(1) #uses(~IsNPCNear, Rowena) {
+    if (event = _Action) {
+        v0 = ~GetFrame(item);
+        if (v0 = 0) {
+            SetFrame(1, item);
+            SetMusic(item, 41);
+            if ~IsNPCNear(_Rowena) {
+                flag(423) = true;
+                Rowena(~NPCToItem_i(_Rowena));
+            }
+        } else {
+            SetFrame(0, item);
+            SetMusic(item, 255);
+        }
+    }
+}

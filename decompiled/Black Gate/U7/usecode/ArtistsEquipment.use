@@ -1,0 +1,48 @@
+Routine ArtistsEquipment accepts a0 #locals(6) #uses(MemberBarks_i) {
+    if (event = _Action) {
+        v0 = ~GetFrame(item);
+        if (v0 < 2) {
+            MemberBarks_i("@Finger-painting again?@");
+        } else {
+            v1 = ~GetTarget();
+            v2 = ~Item_getType(v1);
+            if (v2 = 823) {
+                if (~GetFrame(v1) < 2) {
+                    v1 = ~GetTarget();
+                    if (~Item_getType(v1) = _Easel) {
+                        v3 = (~GetFrame(v1) modulo 8);
+                        v4 = ~rndRange(10, 1);
+                        if (v4 = 1) {
+                            v5 = "@Looks great!@";
+                        }
+                        if (v4 = 2) {
+                            v5 = "@Do not quit your day job.@";
+                        }
+                        if (v4 = 3) {
+                            v5 = ("@I can barely" & "see the numbers.@");
+                        }
+                        if (v4 = 4) {
+                            v5 = "@Stay within the lines.@";
+                        }
+                        if (v4 = 5) {
+                            v5 = "@What is it?@";
+                        }
+                        MemberBarks_i(v5);
+                        if (v3 < 7) {
+                            SetFrame((~GetFrame(v1) + 1), v1);
+                        }
+                    } else {
+                        if ~Item_isNpc(v1) {
+                            MemberBarks_i("@Tattooing?@");
+                        } else {
+                            MemberBarks_i(<< "@The stain will", "never come out.@" >>);
+                        }
+                    }
+                }
+            } else {
+                MemberBarks_i("@Use pigments!@");
+                return;
+            }
+        }
+    }
+}

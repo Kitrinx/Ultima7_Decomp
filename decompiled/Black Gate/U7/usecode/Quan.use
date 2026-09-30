@@ -1,0 +1,195 @@
+Routine Quan accepts a0 #locals(5) #uses(~AvatarName, ~IsInInv, QuanPreaches_i, GargBarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Quan);
+        v0 = ~AvatarName();
+        v1 = ~GetTime();
+        v2 = ~IsInInv(1, 65177, _Prism_981, 1, _Party);
+        if (v1 = 7) {
+            [The gargoyle seems to be too busy conducting the Fellowship meeting to speak with you now.];
+            QuanPreaches_i();
+        }
+        TurnOn(<< "name", "job", "Fellowship", "bye" >>);
+        if flag(495) {
+            TurnOn("Elizabeth and Abraham");
+        }
+        if not $MetQuan {
+            [You see a winged gargoyle. Noticing you, he turns and says, "To be welcome, human. To need assistance?"];
+            $MetQuan = true;
+        } else {
+            ["To ask how I may assist, human."];
+        }
+        converse {
+            key ("name") {
+                ["To be the one named Quan."];
+                TurnOff("name");
+                TurnOn("Quan");
+            }
+            key ("Quan") {
+                ["To have no meaning in Gargish. To be a special name, specific to me," he smiles.];
+                TurnOff("Quan");
+            }
+            key ("job") {
+                ["To head The Fellowship in Terfin."];
+                TurnOn("Terfin");
+                if flag(501) {
+                    TurnOn("voice");
+                }
+            }
+            key ("voice") {
+                ["To be the inner voice of guidance that lives in all creatures. To become more distinct and frequent with stronger Fellowship ties."];
+                TurnOff("voice");
+            }
+            key ("Terfin") {
+                ["To be the only gargoyle city in Britannia. To have fewer gargoyles in the land than during your last visit to Britannia, human." He shakes his head.];
+                TurnOn(<< "fewer", "gargoyles" >>);
+                TurnOff("Terfin");
+            }
+            key ("fewer") {
+                ["To have succumbed to the effects of disease and famine that have recently struck Britannia. To tell you that gargoyles breed less frequently, and we have not had the time to make up for losses in our population.~~"To have new hope, however," he grins, "with The Fellowship."];
+                TurnOff("fewer");
+            }
+            key ("gargoyles") {
+                ["To suggest talking to Runeb, the Fellowship clerk, or Quaeven. To have jobs needing knowledge of others in Terfin." He grins apologetically.~~ "To be too busy to know all in Terfin."];
+                TurnOff("gargoyles");
+            }
+            key ("Fellowship") {
+                v3 = ~IsMedallionOn_i();
+                if v3 {
+                    if $JoinFellow {
+                        ["To hold meetings at 9 p.m., in unity with other branches, human. To be welcome at our meetings."];
+                    } else {
+                        ["To be a boon to gargoyles and humans alike. To have a philosophy to help all creatures of all races reach their highest level of potential."];
+                        TurnOn("philosophy");
+                    }
+                } else {
+                    ["To be a boon to gargoyles and humans alike. To have a philosophy to help all creatures of all races reach their highest level of potential."];
+                    TurnOn("philosophy");
+                }
+                if (flag(572) and not flag(578)) {
+                    TurnOn("altar conflicts");
+                }
+                TurnOff("Fellowship");
+            }
+            key ("Elizabeth and Abraham") {
+                if not flag(612) {
+                    ["To have just missed the human Fellowship officials who were here collecting funds. To have left for the Meditation Retreat near Serpent's Hold. To be sorry."];
+                    flag(579) = true;
+                } else {
+                    ["To have not seen human Fellowship officials in many days."];
+                }
+                TurnOff("Elizabeth and Abraham");
+            }
+            key ("philosophy") {
+                [An almost gleeful expression fills his visage.~~ "To be very similar to the altar of singularity. To have three principles called the Triad of Inner Strength. To apply three principles in unison to be more creative and happy.~~ "To see the similarity? To have control, passion, and diligence mesh into one -- singularity. To have Triad -- Strive for Unity, Trust your Brother, and Worthiness Precedes Reward -- applied in unison!"];
+                TurnOff("philosophy");
+            }
+            key ("altar conflicts") {
+                ["To understand not," he says, puzzled.];
+                if flag(595) {
+                    TurnOn("altar destruction");
+                }
+                TurnOff("altar conflicts");
+            }
+            key ("altar destruction") {
+                ["To know nothing of this! To believe it not! To be not possible.~~ "To know that all members are content with their lives, and incapable of such acts, even if the altars be outdated.~~ "To tell you to speak with members themselves to see and believe."];
+                TurnOn(<< "outdated", "members" >>);
+                TurnOff("altar destruction");
+                if flag(575) {
+                    TurnOn("Sarpling's note");
+                }
+                if flag(576) {
+                    TurnOn("Runeb assassinate");
+                }
+            }
+            key ("outdated") {
+                ["To need the Triad for proper application to the individual gargoyle -- or person!"];
+                TurnOff("outdated");
+            }
+            key ("members") {
+                ["To talk to Runeb, Sarpling, and Quaeven."];
+                TurnOn(<< "Runeb", "Sarpling", "Quaeven" >>);
+                TurnOff("members");
+            }
+            key ("Runeb") {
+                v4 = ~IsDead(~NPCToItem_i(_Runeb));
+                if v4 {
+                    ["To have been the clerk of The Fellowship here."];
+                } else {
+                    ["To be the clerk of The Fellowship here."];
+                }
+                TurnOff("Runeb");
+            }
+            key ("Sarpling") {
+                ["To sell magics and such at his shop."];
+                TurnOff("Sarpling");
+                flag(577) = true;
+            }
+            key ("Quaeven") {
+                ["To be in charge of the learning center."];
+                TurnOff("Quaeven");
+            }
+            key ("Sarpling's note") {
+                ["To be impossible for Runeb to be responsible." He smiles kindly. "To be a practical joke."];
+                TurnOff("Sarpling's note");
+                flag(578) = true;
+            }
+            key ("Runeb assassinate") {
+                ["To be too heinous a plot for Runeb." He frowns. "To be some kind of bad joke."];
+                TurnOff("Runeb assassinate");
+                flag(578) = true;
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["To hope you find unity."*];
+        if v2 {
+            [The Cube did not vibrate once while speaking with Quan. You realize he is totally innocent of the dangerous powers above him.*];
+        }
+    }
+    if (event = _Bark) {
+        GargBarkAboutWork_i(_Quan);
+    }
+}
+
+Usable QuanPreaches_i #locals(6) #uses(~IsNPCNear, ~AvatarName) {
+    v0 = ~IsNPCNear(_Runeb);
+    v1 = ~IsNPCNear(_Sarpling);
+    v2 = ~IsNPCNear(_Quaeven);
+    v3 = ~IsNPCNear(_Spark);
+    v4 = ~AvatarName();
+    [The winged gargoyle begins his sermon.];
+    if v0 {
+        [You see the gargoyle clerk taking notes in the corner.];
+    }
+    ["To talk tonight about why The Fellowship is important to your lives. To know that each of us sought The Fellowship to feel complete. To have had dreams and longings."*];
+    if v2 {
+        SetSpeaker(0, _Quaeven);
+        ["To be very true."*];
+        CloseSpeaker(_Quaeven);
+        SetSpeaker(0, _Quan);
+    }
+    ["To know that others who are not members have given up their dreams. To see that they succumb to the mediocrity of their lives to find stability."*];
+    if v3 {
+        SetSpeaker(0, _Spark);
+        ["This is truly boring. Let us get some food -- I am hungry!"*];
+        CloseSpeaker(_Spark);
+        SetSpeaker(0, _Quan);
+    }
+    ["To see them begin to produce unreal ideas and become misaligned. To stray from the true path to what they seek. To lose contact with reality." He sighs. "To find failure, not success in what they do."*];
+    if v1 {
+        SetSpeaker(0, _Sarpling);
+        ["To be very sad."*];
+        CloseSpeaker(_Sarpling);
+        SetSpeaker(0, _Quan);
+    }
+    ["To know," he smiles, "that each of the members present has faced such an awakening into the real world. To find in the order a clear path to reach what we seek!"~~ The members present all stand and shout.*];
+    v5 = ~IsNPCNear(_Iolo);
+    if v5 {
+        SetSpeaker(0, _Iolo);
+        ["'Tis time for us to depart, <v4>."*];
+        CloseSpeaker(_Iolo);
+        terminate;
+    }
+}

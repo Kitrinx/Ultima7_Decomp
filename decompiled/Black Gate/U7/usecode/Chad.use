@@ -1,0 +1,159 @@
+Routine Chad accepts a0 #locals(8) #uses(~AvatarName, ~LordOrLady, ~AskList, ~IsNPCNear, ~AskYesNo, ChadTrains_i, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Chad);
+        v0 = ~AvatarName();
+        v1 = ~LordOrLady();
+        v2 = "Avatar";
+        TurnOn(<< "name", "job", "bye" >>);
+        if $MetChad {
+            v3 = v0;
+        }
+        if flag(499) {
+            v3 = v2;
+        }
+        if flag(498) {
+            v3 = v1;
+        }
+        if not flag(515) {
+            [You see a lithe-looking fighter smile in your direction.];
+        } else {
+            [Chad smiles. "Hello, <v3>. I hope thy days are going well."];
+        }
+        converse {
+            key ("name") {
+                ["Chad, at thy service, <v1>. And what is thy name?"];
+                TurnOff("name");
+                v4 = ~AskList(<< v0, v2, v1 >>);
+                if (v4 = v0) {
+                    ["Greetings, <v0>. I am at thy service."];
+                    $MetChad = true;
+                }
+                if (v4 = v1) {
+                    ["Greetings, <v1>." He shrugs.];
+                    flag(498) = true;
+                }
+                if (v4 = v2) {
+                    ["Of course, of course," he smiles. "I should have realized that thou wert the Avatar. Why, it must have been, oh, at least, two weeks since thy last visit!" He winks.*];
+                    v5 = ~IsNPCNear(_Shamino);
+                    if v5 {
+                        SetSpeaker(0, _Shamino);
+                        ["Thou art a fool! Cannot thy feeble eyes see this is the Avatar?"*];
+                        CloseSpeaker(_Shamino);
+                        SetSpeaker(0, _Chad);
+                        ["Yes, yes! I can see that," he laughs. "Then I must be Iolo!"*];
+                        v6 = ~IsNPCNear(_Iolo);
+                        SetSpeaker(0, _Shamino);
+                        if v6 {
+                            ["No, rogue! He is Iolo!" He nods to Iolo. "Thou... art a blind idiot!"*];
+                        } else {
+                            ["No, rogue, thou art a blind idiot!"*];
+                        }
+                        CloseSpeaker(_Shamino);
+                        SetSpeaker(0, _Chad);
+                    }
+                    flag(499) = true;
+                }
+                flag(515) = true;
+                TurnOff("name");
+            }
+            key ("job") {
+                ["I teach expertise with light weapons here in Moonglow."];
+                TurnOn(<< "train", "Moonglow" >>);
+            }
+            key ("Moonglow") {
+                ["Dost thou want the location of the city or to know about the townspeople?"];
+                TurnOn(<< "location", "townspeople" >>);
+                TurnOff("Moonglow");
+            }
+            key ("location") {
+                ["Moonglow is on an island directly east of the border between Britain and Paws."];
+                TurnOff("location");
+            }
+            key ("townspeople") {
+                ["The person to ask for that information would be Phearcy, the bartender. All I know are other bar patrons: Tolemac and Morz, two farmers."];
+                TurnOff("townspeople");
+            }
+            key ("train") {
+                v7 = ~GetTime();
+                if ((v7 = 6) or (v7 = 7)) {
+                    ["Yes, I train people. But only during the day. Now, 'tis time for drink!"];
+                } else {
+                    ["Wilt thou pay the 45 gold for the training session?"];
+                    if ~AskYesNo() {
+                        ChadTrains_i(45, << 1, 4 >>);
+                    } else {
+                        ["Well, mayhap next time thou wilt be willing."];
+                    }
+                }
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["Remember, always keeps thy wits about and thy blade ready."*];
+    }
+    if (event = _Bark) {
+        BarkAboutWork_i(_Chad);
+    }
+}
+
+Routine ChadTrains_i accepts a0, a1 #locals(14) #uses(~AvatarName, ~LordOrLady, ~GetStudent, ~CanTrain, ~GetStat, CombatTrain_i, DexTrain) {
+    v2 = ~AvatarName();
+    v3 = ~LordOrLady();
+    v4 = "the Avatar";
+    if $MetChad {
+        v5 = v2;
+    }
+    if flag(499) {
+        v5 = v4;
+    }
+    if flag(498) {
+        v5 = v3;
+    }
+    v6 = ~GetStudent();
+    v7 = ~GetNPCName_i(v6);
+    if (v6 = 0) {
+    } else {
+        v8 = 3;
+        v9 = ~CanTrain(v8, v6, v0, v1);
+        if (v9 = 0) {
+            ["It seems that thou dost need a little more time to hone thy reflexes. If thou dost wish to return later, when thou hast more experience, I would be most happy to train thee."];
+        } else {
+            if (v9 = 1) {
+                v10 = ~CountItem(_All, _All, _Gold_Coin, _Party);
+                [You gather your gold and count it, finding that you have <v10> gold altogether.];
+                if (v10 < v0) {
+                    ["Thou hast not enough gold to pay me. I am sorry but I cannot train thee now."];
+                    goto label_25;
+                }
+            }
+            if (v9 = 2) {
+                ["Zounds! Thou art quick. Too quick, in fact, for me to be able to help thee become faster. I am sorry, <v5>."];
+            } else {
+                v11 = ~TakeFromParty_i(true, _All, _All, _Gold_Coin, v0);
+                [You pay <v0> gold, and the training session begins.];
+                if (v6 = 65180) {
+                    v12 = "You";
+                } else {
+                    v12 = v7;
+                }
+                if (v6 = 65180) {
+                    v13 = "you";
+                } else {
+                    v13 = v7;
+                }
+                [<v12> and Chad spar for a few minutes. He teaches <v13> several expert maneuvers that better utilize speed and agility in combat.];
+                v14 = ~GetStat(_Dex, v6);
+                if (v14 < 30) {
+                    CombatTrain_i(1, v6);
+                }
+                v15 = ~GetStat(_Cbt, v6);
+                if (v15 < 30) {
+                    DexTrain(2, v6);
+                }
+            }
+        }
+    }
+    label_25:
+}

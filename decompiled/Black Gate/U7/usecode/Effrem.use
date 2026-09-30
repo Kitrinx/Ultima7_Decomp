@@ -1,0 +1,95 @@
+Routine Effrem accepts a0 #locals(10) #uses(~AvatarName, ~LordOrLady, ~IsNPCNear, ~AskList, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Effrem);
+        v0 = ~AvatarName();
+        v1 = ~LordOrLady();
+        v2 = "the Avatar";
+        v3 = ~AvatarSex();
+        v4 = false;
+        v5 = ~IsNPCNear(_Jillian);
+        if v3 {
+            v6 = "woman";
+            v7 = "she";
+        } else {
+            v6 = "man";
+            v7 = "he";
+        }
+        if flag(500) {
+            v8 = v0;
+        } else {
+            v8 = v1;
+        }
+        TurnOn(<< "name", "job", "bye" >>);
+        if not $MetEffrem {
+            [You see a man with a sour expression on his face holding a baby boy. As he sees you, his face brightens.];
+            $MetEffrem = true;
+        } else {
+            ["Hello again, <v8>. I am here as usual, taking care of little Mikhail." Effrem grimaces.];
+        }
+        converse {
+            key ("name") {
+                ["I am Effrem, <v1>. I am but a simple resident of Moonglow.];
+                if not flag(500) {
+                    ["What is thy name?"];
+                    v9 = ~AskList(<< v0, v2, v1 >>);
+                    if (v9 = v0) {
+                        ["Hello, <v0>." He turns to the baby.~~ "Say `hello' to <v0>, Mikhail."];
+                        flag(500) = true;
+                    }
+                    if (v9 = v1) {
+                        ["Fine, <v1>, if that is the title by which thou dost wish to be called." He looks at the infant. "The <v6> is quite a snob is <v7> not, Mikhail?"];
+                    }
+                    if (v9 = v2) {
+                        ["Aha, the Avatar, thou sayest. Whatever thou thinkest...." He turns to the baby.~~"This poor person here wants to be the Avatar. Too bad there is only one Avatar, eh Mikhail?"];
+                    }
+                }
+                TurnOn(<< "Mikhail", "Moonglow" >>);
+                TurnOff("name");
+            }
+            key ("job") {
+                ["Me? I do not have a job. Not a real one like my wife has. All I do all day is watch over my little Mikhail, here." He turns to look at the baby, taking on a patronizing tone. "Yes, I take care of thee, do I not? Yes, I do. I sure do." He kisses the boy and then looks back up at you,\x09embarrassed.~~"Where was I? Oh yes. All I do is take care of the boy. What I should be doing is working, not staying at home. That should be Jillian's job. She belongs here at home, not me."];
+                if not v4 {
+                    TurnOn("Jillian");
+                }
+            }
+            key ("Mikhail") {
+                ["That is the name of my son. 'Tis a good name, yes?"];
+                TurnOff("Mikhail");
+            }
+            key ("Jillian", "wife") {
+                ["My wife? Jillian? She's the scholar. She is a very good one, too. Not that I could not have done well. I could have. Better, in fact. But it is not worth arguing about now. She has her occupation, even if I do not have one. I should have a job, though. Dost thou not agree, <v1>? This is not what a man ought to be doing. Staying at home raising the children, like this. 'Tis a disgrace!"~~He begins to stroke the infant's small tuft of hair.*];
+                if v5 {
+                    SetSpeaker(0, _Jillian);
+                    ["Now Effrem! Thou knowest perfectly well what we agreed when little Mikhail was born. Thou shouldst be ashamed, talking such nonsense."*];
+                    CloseSpeaker(_Jillian);
+                    SetSpeaker(0, _Effrem);
+                    [He raises his shoulders, making him appear quite sheepish.];
+                }
+                TurnOff(<< "wife", "Jillian" >>);
+                v4 = true;
+            }
+            key ("Moonglow") {
+                ["What about Moonglow?" He shrugs, "'Tis a fair town, but a little too crowded these days. I hear it was a much nicer place back when Moonglow was separate from the Lycaeum. Much smaller.~~"This place is too large to really get to know anyone. Not that I have had much of an opportunity, having to stay at home and take care of my son." He looks down at the boy, smiles, and tickles the baby's nose.];
+                if not v5 {
+                    ["This is not a job for a man. My wife should be home with the boy, not me. I should be out earning a living. That is what I ought to be doing!"];
+                }
+                if not v4 {
+                    TurnOn("wife");
+                }
+                TurnOff("Moonglow");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        if ~AvatarSex() {
+            ["Leaving so soon? Fine, leave me with the baby. Go on, leave me. Just like my wife!"*];
+        } else {
+            ["Leaving so soon? Ah, that's all right, <v1>. I understand, thou hast real man things to do."*];
+        }
+    }
+    if (event = _Bark) {
+        BarkAboutWork_i(_Effrem);
+    }
+}

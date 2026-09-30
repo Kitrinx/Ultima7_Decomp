@@ -1,0 +1,208 @@
+Function ~BargeType_i accepts a0 #locals(7) {
+    v1 = ~FindNearby_i(0, 2, _All, item);
+    v2 = << 840 >>;
+    v3 = << 796, 652, 660, 773, 774, 757, 301 >>;
+    Foreach v6 in v1 {
+        v7 = ~Item_getType(v6);
+        if (v7 in v2) {
+            return 840;
+        }
+        if (v7 in v3) {
+            return 652;
+        }
+    }
+    return 199;
+}
+
+Function ~IsPartySeated_i #locals(5) {
+    v0 = ~GetParty();
+    Foreach v3 in v0 {
+        v4 = ~GetFrame(v3);
+        if (not (v4 = 10) and not (v4 = 26)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+Function ~ToggleDrawbridges_i accepts a0 #locals(14) #uses(MemberSays_i) {
+    Foreach v3 in v0 {
+        if (~Item_getType(v3) = _Drawbridge) {
+            v4 = ~GetCoord(v3);
+            v5 = v4::1;
+            v6 = v4::2;
+            v7 = v4::3;
+            v8 = ~FindNearby_i(0, 10, _All, v3);
+            Foreach v11 in v8 {
+                v4 = ~GetCoord(v11);
+                if (v4::3 > v7) && ((v4::1 <= v5) and (v4::1 >= (v5 - 3))) && ((v4::2 <= v6) and (v4::2 >= (v6 - 6))) {
+                    MemberSays_i("I believe the bridge is blocked.");
+                    return false;
+                }
+            }
+        }
+    }
+    Foreach v3 in v0 {
+        if (~Item_getType(v3) = _Drawbridge) {
+            v14 = ~PostAction(<< _aFRAME, 0, _aCONTINUE_i, _aSFX_i, 34, _aFRAME, 1, _aCONTINUE_i, _aSFX_i, 34, _aUSABLE_i, #SwapDrawbridge_i, _aCONTINUE_i, _aFRAME, 0, _aCONTINUE_i, _aSFX_i, 34 >>, v3);
+        } else {
+            v14 = ~PostAction(<< _aFRAME, 0, _aCONTINUE_i, _aSFX_i, 34, _aUSABLE_i, #SwapDrawbridge_i, _aCONTINUE_i, _aFRAME, 1, _aCONTINUE_i, _aSFX_i, 34, _aFRAME, 0, _aCONTINUE_i, _aSFX_i, 34 >>, v3);
+        }
+    }
+    if (~ListSize_i(v0) = 0) {
+        return false;
+    } else {
+        return true;
+    }
+}
+
+Usable ClearMurderScene_i #locals(11) {
+    if (event = _Trigger) {
+        v0 = ~FindNearby_i(0, 15, _Victim, item);
+        v1 = ~FindNearby_i(0, 15, _Lit_Light_Source, item);
+        v2 = ~FindNearby_i(0, 15, _Light_Source, item);
+        v3 = ~FindNearby_i(176, 15, _Bucket, item);
+        v4 = ~FindNearby_i(128, 15, _Blood, item);
+        v5 = ~FindNearby_i(0, 15, _Serpentine_Dagger, item);
+        v6 = ~FindNearby_i(176, 15, _Beam_Of_Light, item);
+        v7 = << v0, v1, v2, v3, v4, v5, v6 >>;
+        Foreach v10 in v7 {
+            Item_destroy(v10);
+        }
+    }
+}
+
+Routine SetCubeFloor_i accepts a0, a1 #locals(10) {
+    if (v1 = 0) {
+        v1 = 368;
+        v2 = 8;
+    } else {
+        v1 = 369;
+        v2 = 5;
+    }
+    v3 = ~GetCoord(item);
+    v3 = (v3 & << ~GetQuality(item), 6 >>);
+    v4 = ~FindNearby_i(16, 80, _Egg, v3);
+    v5 = 0;
+    Foreach v8 in v4 {
+        v5 = (v5 + 1);
+        v3 = ~GetCoord(v8);
+        v9 = ~FindNearby_i(0, 1, v1, v3);
+        if (v0 = 1) {
+            if v9 {
+                v10 = ~Item_push(v9);
+                v10 = ~PopToMap(_Destroy);
+                Sfx(10);
+            }
+        } else {
+            if (v9 = 0) {
+                v11 = ~Item_create(v1);
+                SetFrame(v2, v11);
+                v10 = ~PopToMap(v3);
+                v10 = ~Item_push(v9);
+                v10 = ~PopToMap(_Destroy);
+                Sfx(83);
+            }
+        }
+    }
+}
+
+Usable MakePartyWait_i #locals(4) #uses(~RemoveFromList_i) {
+    v0 = ~RemoveFromList_i(~GetParty(), ~NPCToItem_i(_Avatar));
+    Foreach v3 in v0 {
+        flag(57) = true;
+        SetWorkType(_Wait, v3);
+    }
+}
+
+Routine LaunchCarpet_i accepts a0 #locals(3) {
+    v1 = ~GetBarge_i(_Avatar);
+    if ~IsOnBarge_i() {
+        v2 = ~GetCoord(v0);
+        v3 = ~PostAction(<< _aGO_UP_i, _aBREAK, _aLOOP_i, 65534, 15 >>, v0);
+        SetMusic(0, 25);
+        SetItemFlag_i(_OnMovingBarge_i, 2);
+        SetItemFlag_i(_ActiveBarge_i, v1);
+    }
+}
+
+Routine FeedMember_i accepts a0, a1, a2 #locals(7) #uses(StealItem_i, ConsumeOne_i, ~IsAbleToTalk_i) {
+    v3 = ~GetTarget();
+    v4 = ~GetParty();
+    if ((v3 in v4) and (not ~GetItemFlag_i(_Asleep, v3) and (not ~GetItemFlag_i(_Paralyzed, v3) and not ~GetItemFlag_i(_Dead, v3)))) {
+        v5 = ~GetNPCStat_i(_FoodLevel, v3);
+        v6 = (v5 + v1);
+        if (v5 > 24) {
+            v7 = "@No, thank thee.@";
+        } else {
+            StealItem_i(v2);
+            playSFX(item, v0);
+            ConsumeOne_i(v2);
+            v8 = ~rndRange(10, 1);
+            if (v5 <= 4) {
+                if (v6 <= 4) {
+                    v7 = "@More!@";
+                    if (v8 < 6) {
+                        v7 = "@I must have more!@";
+                    }
+                    goto label_31;
+                }
+                if (v6 < 10) {
+                    v7 = "@I am still hungry.@";
+                    if (v8 < 6) && not (v3 = ~NPCToItem_i(_Avatar)) {
+                        v7 = "@May I have some more?@";
+                    }
+                    goto label_31;
+                }
+                if (v6 < 20) {
+                    if (~Item_getType(v2) = _Reagent) {
+                        v7 = "@Yum, garlic!@";
+                    } else {
+                        v7 = "@Ah yes, much better.@";
+                    }
+                    goto label_31;
+                }
+                v7 = "@That hit the spot!@";
+                if (v8 < 6) {
+                    v7 = "@Burp@";
+                }
+            } else {
+                if (v5 < 20) {
+                    if (~Item_getType(v2) = _Reagent) {
+                        v7 = "@Yum, garlic!@";
+                    }
+                    v7 = "@Ahh, very tasty.@";
+                    if ((v6 > 24) and (v8 < 3)) {
+                        v7 = "@Belch@";
+                    }
+                } else {
+                    if ($MetBatlin and (v8 < 2)) {
+                        v7 = "@I'll soon be plump.@";
+                    } else {
+                        if (v8 < 5) {
+                            v7 = "@I'll soon be plump.@";
+                        } else {
+                        }
+                    }
+                }
+            }
+        }
+        label_31:
+        if not (v7 = "") && ~IsAbleToTalk_i(v3) {
+            Item_bark(v7, v3);
+        }
+        v9 = ~ChangeNPCStat_i(v1, _FoodLevel, v3);
+    }
+}
+
+Function ~GolemsInPentacle_i #locals(6) {
+    v0 = << >>;
+    v1 = ~FindNearby_i(0, 40, _Body_414, _Avatar);
+    Foreach v4 in v1 {
+        v5 = ~GetCoord(v4);
+        if ((v5::1 >= (2487 - 8)) and (v5::1 <= (2487 + 8))) && ((v5::2 >= (1736 - 8)) and ((v5::2 <= (1736 + 8)) and ((~GetFrame(v4) = 4) or (~GetFrame(v4) = 5)))) {
+            v0 = (v0 & v4);
+        }
+    }
+    return v0;
+}

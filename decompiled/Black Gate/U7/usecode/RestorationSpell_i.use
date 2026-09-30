@@ -1,0 +1,20 @@
+Routine RestorationSpell_i accepts a0 #locals(7) #uses(~IsMagicOK_i) {
+    if (event = _Action) {
+        Kernel_resetRef(item);
+        Item_bark("@Vas Mani@", item);
+        if ~IsMagicOK_i() {
+            v0 = ~PostAction(<< _aRAISE1_FRAME_i, _aOUT_FRAME_i, _aTHRUST2_FRAME_i, _aSFX_i, 64 >>, item);
+            v1 = ~GetParty();
+            Foreach v4 in v1 {
+                ClearItemFlag_i(_Paralyzed, v4);
+                ClearItemFlag_i(_Poisoned, v4);
+                v5 = ~GetNPCStat_i(_Str, v4);
+                v6 = ~GetNPCStat_i(_Hits, v4);
+                v0 = ~ChangeNPCStat_i((v5 - v6), _Hits, v4);
+                CreateSpriteOn_i(65535, 0, 0, 0, 65535, 65535, 13, _Avatar);
+            }
+        } else {
+            v0 = ~PostAction(<< _aRAISE1_FRAME_i, _aOUT_FRAME_i, _aTHRUST2_FRAME_i, _aUSABLE_i, #FizzleSpell_i >>, item);
+        }
+    }
+}

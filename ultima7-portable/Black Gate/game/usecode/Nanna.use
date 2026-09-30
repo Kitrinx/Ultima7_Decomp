@@ -1,0 +1,125 @@
+Routine Nanna accepts a0 #locals(7) #uses(~IsNearEachOther_i, ~IsNPCNear, DescribeFellowship_i, ExplainPhilosophy_i, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Nanna);
+        v0 = ~GetTime();
+        v1 = ~GetWorkType(~NPCToItem_i(_Nanna));
+        v2 = ~IsMedallionOn_i();
+        if (v0 = 7) {
+            v3 = ~IsNearEachOther_i(_Batlin, _Nanna);
+            if v3 {
+                [Nanna gives you a stern look for bothering her during The Fellowship meeting, much like the look of an elementary school teacher you once had.*];
+                terminate;
+            } else {
+                if $BATLIN_MISSING {
+                    ["I cannot imagine where Batlin may be. He has never missed a Fellowship meeting!"];
+                    goto label_9;
+                } else {
+                    ["Oh! Hello! I must not stop to speak now. I am on my way to The Fellowship meeting!"*];
+                    terminate;
+                }
+            }
+        }
+        label_9:
+        TurnOn(<< "name", "job", "bye" >>);
+        if not $MetNanna {
+            [You see a working-class elderly woman who exudes sweetness.];
+            $MetNanna = true;
+        } else {
+            ["Yes, may I help thee?" Nanna asks.];
+        }
+        converse {
+            key ("name") {
+                ["Oh, everyone simply calls me 'Nanna'."];
+                TurnOff("name");
+            }
+            key ("job") {
+                ["I watch over the Royal Nursery. I am the nanny of these wonderful children."];
+                TurnOn(<< "Royal Nursery", "nanny", "children" >>);
+            }
+            key ("Royal Nursery") {
+                ["There have been a great number of babies born in Britannia in recent years, so Lord British established this nursery. It is nice that the noblemen and noblewomen have this luxury so that they may attend to their daily duties."];
+                TurnOff("Royal Nursery");
+                TurnOn("luxury");
+                v4 = ~IsNPCNear(_Spark);
+                if (v1 = 7) {
+                    if v4 {
+                        SetSpeaker(0, _Spark);
+                        ["Whew! Dost thou smell what I smell, Avatar?"*];
+                        CloseSpeaker(_Spark);
+                    }
+                    v5 = ~IsNPCNear(_Iolo);
+                    if v5 {
+                        SetSpeaker(0, _Iolo);
+                        ["I believe that is the smell of diapers, boy. When thou art a father one day, thou wilt come to know that smell quite well."*];
+                        CloseSpeaker(_Iolo);
+                    }
+                    SetSpeaker(0, _Nanna);
+                }
+                TurnOff("Royal Nursery");
+            }
+            key ("nanny") {
+                ["Well, I feed them and change their diapers and read aloud all the books thou dost see lying around. Luckily, I have Sherry to help me."];
+                TurnOff("nanny");
+                TurnOn(<< "books", "Sherry" >>);
+            }
+            key ("books") {
+                ["Lord British brought them from his homeland. They are very foreign to us here in Britannia, but the children enjoy them just the same."];
+                TurnOff("books");
+            }
+            key ("Sherry") {
+                ["Sherry is a special mouse who has lived here in the castle for many, many years. She recites stories for the children."];
+                TurnOff("Sherry");
+            }
+            key ("children") {
+                ["They are lovely, are they not? Every day they seem to learn more and more. Most of the time they are a joy." Nanna whispers to you conspiratorially, "And other times I could happily throw them out with the bathwater!"];
+                v6 = ~GetWorkType(~NPCToItem_i(_Max));
+                if (v6 = 25) {
+                    ["The children must be outside playing with Sherry now."];
+                    TurnOn("Sherry");
+                }
+                TurnOff("children");
+            }
+            key ("luxury") {
+                ["Yes, I suppose it really is a luxury. The poorer people in Britannia certainly do not have such a service for caring for their children. The rich do have an advantage." You detect a hint of bitterness in her voice.];
+                TurnOff("luxury");
+                TurnOn("advantage");
+            }
+            key ("advantage") {
+                ["I do not mean to complain by any means. I adore my work. But contrary to the thinking of many of the noblemen and women, a class structure exists in Britannia more than ever before. Taxes are unbearable. The rich get richer, and the poor get poorer, as the saying goes."];
+                TurnOff("advantage");
+                TurnOn(<< "class structure", "taxes" >>);
+            }
+            key ("taxes") {
+                ["The Britannian Tax Council drains us all dry. Especially the lower and middle classes."];
+                TurnOff("taxes");
+            }
+            key ("class structure") {
+                ["Well, look around! There are rich men who live in opulent castles. And right outside are poor people who live in hovels. Thou dost know how there are winged gargoyles and wingless gargoyles? Well, it seems the human race is getting to be just as divided. There is no unity in the land anymore. It is why I have joined The Fellowship."];
+                TurnOff("class structure");
+                TurnOn(<< "Fellowship", "philosophy" >>);
+                flag(130) = true;
+            }
+            key ("Fellowship") {
+                DescribeFellowship_i();
+                TurnOff("Fellowship");
+            }
+            key ("philosophy") {
+                if v2 {
+                    [She notices your medallion. "But thou dost know all that already!];
+                } else {
+                    ["Thou shouldst really come to a meeting. Thou wouldst learn a lot!"];
+                    ExplainPhilosophy_i();
+                }
+                TurnOff("philosophy");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["Good day! Do come back and visit again soon!"*];
+    }
+    if (event = _Bark) {
+        BarkAboutWork_i(_Nanna);
+    }
+}

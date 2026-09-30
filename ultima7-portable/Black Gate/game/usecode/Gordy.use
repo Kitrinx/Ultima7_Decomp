@@ -1,0 +1,110 @@
+Routine Gordy accepts a0 #locals(9) #uses(~LordOrLady, ~AvatarName, ~AskList, ~AskYesNo, ~IsInInv, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Gordy);
+        v0 = ~GetTime();
+        v1 = ~IsMedallionOn_i();
+        v2 = ~LordOrLady();
+        v3 = ~AvatarName();
+        v4 = "Avatar";
+        v5 = "a pseudonym";
+        TurnOn(<< "name", "job", "bye" >>);
+        if (flag(260) or flag(309)) {
+            TurnOn("Hook");
+        }
+        if not $MetGordy {
+            [You see a pirate who is elegantly dressed and obviously rich. He reeks of pomade.];
+            $MetGordy = true;
+        } else {
+            ["Yes?" Gordy asks.];
+        }
+        converse {
+            key ("name") {
+                ["I am Gordy." He grins widely offering you his hand. You notice that it is none too clean.];
+                TurnOff("name");
+            }
+            key ("job") {
+                ["I am 'The Mister' of the House of Games. Inside mine House thou mayest challenge thy skill at games of chance." He eyes you carefully, measuring your worth and gullibility.];
+                if ((v0 = 5) or ((v0 = 6) or ((v0 = 7) or (v0 = 0)))) {
+                    ["Enter and enjoy! But first thou must register. Please sign the book so that we may verify thy proclaimed worth." Which name do you sign?];
+                    v6 = << v3, v4, v5 >>;
+                    v7 = ~AskList(v6);
+                    if (v7 = v3) {
+                        [You sign your name. "Very good, <v3>. Welcome to the House of Games!" Gordy spreads his arms in an expansive gesture, obviously pleased to welcome your money to his gambling parlour.];
+                    }
+                    if (v7 = v4) {
+                        [Gordy frowns when he sees what you wrote. "Avatar, eh? We just had one of them a week ago. He was caught cheating at the tables!" He takes a step back and glowers. "Art thou going to give us trouble?"];
+                        if ~AskYesNo() {
+                            ["Then thou canst not enter!"*];
+                            terminate;
+                        } else {
+                            ["We shall see about that!"];
+                        }
+                    }
+                    if (v7 = v5) {
+                        [You sign in a false name. "Fine, <v2>. I be glad to welcome thee!" Gordy spreads his arms in an expansive gesture, obviously pleased to welcome your money to his gambling parlour.];
+                    }
+                } else {
+                    ["I hope to see thee there during business hours."];
+                }
+                if $JoinFellow {
+                    ["Ah, thou art a Fellowship member. Thou wilt surely find thy reward at these tables!" Gordy winks and nudges you, then guffaws loudly.];
+                }
+                TurnOn(<< "The Mister", "House of Games", "skill" >>);
+            }
+            key ("House of Games") {
+                ["The House of Games was established six years ago with the funds of... an interested party. It attracts people from all over Britannia who wish to live dangerously with their money. The business is very profitable." He pats his pouch, and coins clink. "Very profitable." He grins.];
+                TurnOff("House of Games");
+                TurnOn(<< "party", "profitable" >>);
+            }
+            key ("The Mister") {
+                ["It refers to my being the overseer, but everyone here has always called me 'The Mister'. I am not sure why. But it appeals to me." He puffs up like a bantam rooster, trying to look important. He almost succeeds.];
+                ["And that is 'Mister' Gordy, to thee!"];
+                TurnOff("The Mister");
+                TurnOn("Mister Gordy");
+            }
+            key ("Mister Gordy") {
+                ["Yes, what can I do for thee?"];
+                [He grins, very pleased with himself.];
+                TurnOff("Mister Gordy");
+            }
+            key ("skill") {
+                ["Each game requires a definite skill in determining the most profitable way to place a bet. Many visitors to the House of Games find that they have a skill. Others, sadly, do not."];
+                if $JoinFellow && v1 {
+                    [He gestures toward your Fellowship medallion. "Thou shouldst not have any problem." He winks and wiggles his eyebrows.];
+                }
+                TurnOff("skill");
+            }
+            key ("profitable") {
+                ["Well, Buccaneer's Den is not in the jurisdiction of the Britannian Tax Council. We are not subject to Britannia's taxes." Gordy smiles wickedly. "And that... is very profitable!"];
+                TurnOff("profitable");
+            }
+            key ("Hook") {
+                v8 = ~IsInInv(1, 65177, _Prism_981, 1, _Party);
+                if v8 {
+                    [The Cube vibrates a moment. "Yes, I know Hook very well. He lives beneath the House of Games. Talk to Sintag. He can direct thee."];
+                } else {
+                    ["I do not know anyone of that description." Gordy looks around nervously and loosens his collar as though it has suddenly gotten too tight.];
+                }
+                TurnOff("Hook");
+            }
+            key ("party") {
+                v8 = ~IsInInv(1, 65177, _Prism_981, 1, _Party);
+                if v8 {
+                    [The Cube vibrates a moment. "That would be The Fellowship, of course."];
+                } else {
+                    ["Well, now,... that would be revealin' the secret of my business and profit, now wouldn't it?" His demeanor becomes threatening as he leans closer to you and snarls, "Find thine own backers, whelp!"*];
+                    terminate;
+                }
+                TurnOff("party");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["Farewell, friend. I look forward to thy return."*];
+    }
+    if (event = _Bark) {
+        BarkAboutWork_i(_Gordy);
+    }
+}

@@ -1,0 +1,114 @@
+Routine Millie accepts a0 #locals(8) #uses(~LordOrLady, ~IsNearEachOther_i, ~AskYesNo, DescribeFellowship_i, ExplainPhilosophy_i, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Millie);
+        v0 = ~LordOrLady();
+        v1 = ~IsMedallionOn_i();
+        v2 = ~GetTime();
+        if (v2 = 7) {
+            v3 = ~IsNearEachOther_i(_Batlin, _Millie);
+            if v3 {
+                [Millie ignores your attempts to get her attention and goes back to intently watching the Fellowship ceremony.*];
+                terminate;
+            } else {
+                if $BATLIN_MISSING {
+                    [Millie looks perturbed. "Batlin has never missed a meeting before. What does he expect? Does he want -me- to run the meeting?"];
+                    goto label_9;
+                } else {
+                    ["Sorry, I cannot speak with thee now! I am late for the Fellowship meeting!"*];
+                    terminate;
+                }
+            }
+        }
+        label_9:
+        TurnOn(<< "name", "job", "bye" >>);
+        if $MetThad {
+            TurnOn("Thad");
+        }
+        if not $MetMillie {
+            [You see a cute-looking woman who beams with a huge smile when she notices you looking at her.];
+            $MetMillie = true;
+        } else {
+            ["It is good to speak with thee, again," says Millie.];
+        }
+        converse {
+            key ("name") {
+                ["My name is Millie," she giggles coyly.];
+                TurnOff("name");
+            }
+            key ("job") {
+                ["I suppose I have no job, but is that really so bad? I am a member of The Fellowship and I talk to people about them all day long."];
+                TurnOn(<< "Fellowship", "talk" >>);
+            }
+            key ("Fellowship") {
+                if v1 {
+                    ["I see we have the same job!" She laughs at her own joke. "Dost thou spend all thy time talking to people about The Fellowship? For if that is what thou dost do, thou must get thyself another corner!" Millie's face wrinkles in displeasure.];
+                } else {
+                    ["Dost thou know what The Fellowship is?"];
+                    v4 = ~AskYesNo();
+                    if v4 {
+                        ["Oh, I think thou dost not really know!"];
+                        DescribeFellowship_i();
+                        TurnOff("Fellowship");
+                        TurnOn("philosophy");
+                    } else {
+                        DescribeFellowship_i();
+                        TurnOff("Fellowship");
+                        TurnOn("philosophy");
+                    }
+                }
+            }
+            key ("philosophy") {
+                ExplainPhilosophy_i();
+                ["If thou dost wish, thou mayest attend tonight's meeting at the Fellowship Hall. It begins at nine o'clock sharp. Just tell them that thou art my guest. I shall see thee there, I hope." Millie giggles and looks away shyly.];
+                TurnOff("philosophy");
+            }
+            key ("talk") {
+                ["I spend all my time trying to recruit, er... spread the word of The Fellowship. It is better than having a job! I learned how to do this at the Meditation Retreat."];
+                TurnOff("talk");
+                TurnOn("Meditation Retreat");
+            }
+            key ("Meditation Retreat") {
+                ["'Tis located on an island in south Britannia near Serpent's Hold. Most new Fellowship members spend some time down there learning the tenets of the group. One can also learn to hear 'the voice' at the retreat."];
+                TurnOn("the voice");
+                TurnOff("Meditation Retreat");
+                flag(139) = true;
+            }
+            key ("the voice") {
+                ["Fellowship members have an inner voice which speaks to them. I have not heard it yet, but I am working toward it. I may need to spend another few days at the Meditation Retreat in order to do so. Batlin tells me not to be discouraged, though. He says I will hear it when I have made myself worthy."];
+                TurnOff("the voice");
+                flag(138) = true;
+            }
+            key ("Thad") {
+                [Millie rolls her eyes. "Thou hast met my brother? Thou poor thing! He is really a candidate for the asylum, I wouldst say! He believes The Fellowship kidnapped me and charmed me into following them. Well, I joined of mine own free will, without a second thought, and it was a pure lark! No one coerced me! Thad can go hang! Mama always said he was the impulsive one in the family!"];
+                TurnOff("Thad");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["I shall see thee later! Maybe even at tonight's Fellowship meeting!"*];
+    }
+    if (event = _Bark) {
+        v2 = ~GetTime();
+        v5 = ~GetWorkType(~NPCToItem_i(_Millie));
+        v6 = ~rndRange(4, 1);
+        if (v5 = 12) {
+            if (v6 = 1) {
+                v7 = "Fellowship meeting tonight!@";
+            }
+            if (v6 = 2) {
+                v7 = "@Strive For Unity!@";
+            }
+            if (v6 = 3) {
+                v7 = "@Trust Thy Brother!@";
+            }
+            if (v6 = 4) {
+                v7 = "@Worthiness Precedes Reward!@";
+            }
+            Item_bark(v7, _Millie);
+        } else {
+            BarkAboutWork_i(_Millie);
+        }
+    }
+}

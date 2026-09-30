@@ -1,0 +1,302 @@
+Routine Bucket accepts a0 #locals(35) #uses(PathToItem_i, ~InAvatarInv_i, ~OuterContainer_i, ~DirFromAvatar_i, ~RemoveFromList_i) {
+    if (event = _Action) {
+        closeAllGumps();
+        v0 = ~GetFrame(item);
+        if (v0 = 6) {
+            return;
+        }
+        if not ~Item_getContainer(item) {
+            v1 = << 0, 1, 1, 1, 65535, 65535, 0, 65535 >>;
+            v2 = << 1, 1, 0, 65535, 1, 0, 65535, 65535 >>;
+            PathToItem_i(3, item, #Bucket, 65533, v2, v1, item);
+        } else {
+            if not ~InAvatarInv_i(item) {
+                closeAllGumps();
+                v3 = ~OuterContainer_i(item);
+                v1 = << 0, 1, 65535, 1 >>;
+                v2 = << 2, 1, 2, 0 >>;
+                PathToItem_i(3, item, #Bucket, 65533, v2, v1, v3);
+            } else {
+                closeAllGumps();
+                v4 = ~PostAction(<< _aWAIT_i, 2, _aUSABLE_i, #Bucket >>, item);
+            }
+        }
+    }
+    if (event = _Trigger) {
+        v3 = ~OuterContainer_i(item);
+        v5 = ~DirFromAvatar_i(v3);
+        if ~Item_isNpc(v3) {
+            v4 = ~PostAction(<< _aFACE_i, v5, _aREADY_FRAME_i, _aWAIT_i, 3, _aSTAND_FRAME_i >>, ~NPCToItem_i(_Avatar));
+            v4 = ~PostAction(<< _aWAIT_i, 3, _aUSABLE_i, #PickUpItem_i, _aWAIT_i, 2, _aUSABLE_i, #Bucket >>, item);
+        } else {
+            v4 = ~PostAction(<< _aFACE_i, v5, _aBEND_FRAME_i, _aWAIT_i, 3, _aSTAND_FRAME_i >>, ~NPCToItem_i(_Avatar));
+            v4 = ~PostAction(<< _aWAIT_i, 3, _aUSABLE_i, #PickUpItem_i, _aWAIT_i, 2, _aUSABLE_i, #Bucket >>, item);
+        }
+    }
+    if (event = _Posted_i) {
+        v0 = ~GetFrame(item);
+        v6 = ~GetTarget();
+        v7 = ~Item_getType(v6);
+        if ((v7 = 721) or (v7 = 989)) {
+            if (v0 = 2) {
+                Item_bark("@No, thank thee.@", ~NPCToItem_i(_Avatar));
+            } else {
+                if (v0 = 0) {
+                    Item_bark("@The bucket is empty.@", ~NPCToItem_i(_Avatar));
+                } else {
+                    Item_bark("@Ahhh, how refreshing.@", ~NPCToItem_i(_Avatar));
+                    v4 = ~PostAction(<< _aFRAME, 0 >>, item);
+                }
+            }
+            return;
+        }
+        if ~Item_isNpc(v6) {
+            v1 = << 0, 2, 0, 65534 >>;
+            v2 = << 2, 0, 65534, 0 >>;
+            if (v0 = 0) {
+                Item_bark("@The bucket is empty.@", ~NPCToItem_i(_Avatar));
+            } else {
+                v4 = ~PostAction(<< _aWAIT_i, 1, _aLOOP_i, 65534, 50 >>, v6);
+                PathToItem_i(4, v6, #Bucket, 0, v2, v1, v6);
+            }
+        }
+        if (v7 = 741) {
+            v1 = << 65535, 65534, 65535, 65534, 1, 1, 65532, 65532 >>;
+            v2 = << 1, 1, 65534, 65534, 0, 65535, 0, 65535 >>;
+            PathToItem_i(7, item, #Bucket, 0, v2, v1, v6);
+        }
+        if (v7 = 719) {
+            v1 = << 1, 1, 65534, 65534, 0, 65535, 0, 65535 >>;
+            v2 = << 65535, 65534, 65535, 65534, 1, 1, 65532, 65532 >>;
+            PathToItem_i(7, item, #Bucket, 0, v2, v1, v6);
+        }
+        if (v7 = 739) {
+            if ((~GetFrame(v6) >= 4) and (~GetFrame(v6) <= 7)) {
+                v1 = << 65535, 65534, 1, 1, 65535, 65534, 65532, 65532 >>;
+                v2 = << 1, 1, 65535, 65534, 65532, 65532, 65535, 65534 >>;
+                if (v0 = 0) {
+                    Item_bark("@The bucket is empty.@", ~NPCToItem_i(_Avatar));
+                }
+                if (v0 > 1) {
+                    return;
+                }
+                if (v0 = 1) {
+                    PathToItem_i(8, v6, #Bucket, 0, v2, v1, v6);
+                }
+            } else {
+                return;
+            }
+        }
+        if ((v7 = 338) or ((v7 = 435) or ((v7 = 701) or ((v7 = 658) or (v7 = 825))))) {
+            v1 = << 2, 0, 65534, 0 >>;
+            v2 = << 0, 2, 0, 65534 >>;
+            if (v0 = 0) {
+                Item_bark("@The bucket is empty.@", ~NPCToItem_i(_Avatar));
+            }
+            if (v0 > 1) {
+                return;
+            }
+            if (v0 = 1) {
+                PathToItem_i(8, v6, #Bucket, 65531, v2, v1, v6);
+            }
+        }
+        if (v7 = 740) {
+            if (v0 = 0) {
+                v8 = ~FindNearest_i(3, _Well_470, v6);
+                if v8 {
+                    v1 = << 65531, 65531 >>;
+                    v2 = << 65535, 65535 >>;
+                    PathToItem_i(9, item, #Bucket, 0, v2, v1, v8);
+                }
+            } else {
+                Item_bark("@The bucket is full.@", ~NPCToItem_i(_Avatar));
+            }
+        }
+        if (v7 = 470) {
+            if (v0 = 0) {
+                v1 = << 65531, 65531 >>;
+                v2 = << 65535, 65535 >>;
+                PathToItem_i(9, item, #Bucket, 0, v2, v1, v6);
+            } else {
+                Item_bark("@The bucket is full.@", ~NPCToItem_i(_Avatar));
+            }
+        }
+        if (v7 = 331) {
+            if (v0 = 0) {
+                Item_bark("@The bucket is empty.@", ~NPCToItem_i(_Avatar));
+                return;
+            } else {
+                v6 = ~RemoveFromList_i(v6, v6::1);
+                v6::1 = v6::1;
+                v6::2 = (v6::2 + 1);
+                v9 = ~PathfindAvatar_i(10, item, #Bucket, v6);
+            }
+        }
+        if (v6::1 = 0) {
+            if (v0 = 0) {
+                Item_bark("@The bucket is empty.@", ~NPCToItem_i(_Avatar));
+                return;
+            } else {
+                v6 = ~RemoveFromList_i(v6, v6::1);
+                v6::2 = (v6::2 + 1);
+                v9 = ~PathfindAvatar_i(10, item, #Bucket, v6);
+            }
+        }
+    }
+    if (event = _Combat) {
+        v10 = ~GetContents(_All, _All, _Bucket, ~NPCToItem_i(_Avatar));
+        v0 = ~GetFrame(v10);
+        v11 = ~DirFromAvatar_i(item);
+        v12 = ((v11 + 4) modulo 8);
+        if (v0 = 2) {
+            v13 = ~PostAction(<< _aFACE_i, v12, _aWAIT_i, 2, _aBARK_i, "@Foul miscreant!@", _aWAIT_i, 5 >>, item);
+        } else {
+            v13 = ~PostAction(<< _aFACE_i, v12, _aWAIT_i, 2, _aBARK_i, "@Hey, stop that!@", _aWAIT_i, 5 >>, item);
+        }
+        v14 = ~PostAction(<< _aFACE_i, v11, _aTHRUST1_FRAME_i, _aREADY_FRAME_i, _aSTAND_FRAME_i >>, ~NPCToItem_i(_Avatar));
+        v15 = ~PostAction(<< _aWAIT_i, 2, _aFRAME, 0 >>, v10);
+    }
+    if (event = 7) {
+        v16 = false;
+        v16 = ~FindNearest_i(5, _Water_Trough_741, ~NPCToItem_i(_Avatar));
+        if not v16 {
+            v16 = ~FindNearest_i(5, _Water_Trough_719, ~NPCToItem_i(_Avatar));
+        }
+        if v16 {
+            v0 = ~GetFrame(item);
+            v17 = ~GetFrame(v16);
+            if (v0 > 1) {
+                return;
+            }
+            if (v0 = 1) {
+                if ((v17 = 3) or (v17 = 7)) {
+                    Item_bark("@The trough is full.@", ~NPCToItem_i(_Avatar));
+                    return;
+                } else {
+                    v18 = (v17 + 1);
+                    v19 = 0;
+                }
+            } else {
+                if ((v17 = 0) or (v17 = 4)) {
+                    Item_bark("@The trough is empty.@", ~NPCToItem_i(_Avatar));
+                    return;
+                } else {
+                    v18 = (v17 - 1);
+                    v19 = 1;
+                }
+            }
+            v5 = ~DirFromAvatar_i(v16);
+            v14 = ~PostAction(<< _aFACE_i, v5, _aBEND_FRAME_i, _aWAIT_i, 2, _aSTAND_FRAME_i >>, ~NPCToItem_i(_Avatar));
+            v20 = ~PostAction(<< _aWAIT_i, 2, _aFRAME, v18, _aCONTINUE_i, _aSFX_i, 40 >>, v16);
+            v15 = ~PostAction(<< _aWAIT_i, 2, _aFRAME, v19 >>, item);
+        }
+    }
+    if (event = 8) {
+        v10 = ~GetContents(1, _All, _Bucket, ~NPCToItem_i(_Avatar));
+        v0 = ~GetFrame(v10);
+        v7 = ~Item_getType(item);
+        v21 = ~GetFrame(item);
+        if (v7 = 739) {
+            if (v21 = 4) {
+                Item_bark("@There are only coals.@", ~NPCToItem_i(_Avatar));
+                return;
+            } else {
+                if (v21 = 7) {
+                    v22 = ~PostAction(<< _aUSABLE_i, #ShowSteam_i, _aCONTINUE_i, _aPREV_FRAME, _aPREV_FRAME, _aPREV_FRAME >>, item);
+                }
+                if (v21 = 6) {
+                    v22 = ~PostAction(<< _aUSABLE_i, #ShowSteam_i, _aCONTINUE_i, _aPREV_FRAME, _aPREV_FRAME >>, item);
+                }
+                if (v21 = 5) {
+                    v22 = ~PostAction(<< _aUSABLE_i, #ShowSteam_i, _aCONTINUE_i, _aPREV_FRAME >>, item);
+                }
+                v5 = ~DirFromAvatar_i(item);
+                v14 = ~PostAction(<< _aFACE_i, v5, _aBEND_FRAME_i, _aWAIT_i, 2, _aSTAND_FRAME_i >>, ~NPCToItem_i(_Avatar));
+            }
+        }
+        if ((v7 = 338) or ((v7 = 435) or (v7 = 701))) {
+            v23 = ~GetCoord(item);
+            if (v21 = 16) {
+                v24 = 2;
+                v5 = ~DirFromAvatar_i(item);
+                v14 = ~PostAction(<< _aFACE_i, v5, _aTHRUST1_FRAME_i, _aREADY_FRAME_i, _aSTAND_FRAME_i, _aWAIT_i, 1, _aBARK_i, "@I can't douse it.@" >>, ~NPCToItem_i(_Avatar));
+            } else {
+                v24 = 3;
+                v25 = ~GetQuality(item);
+                if (v7 = 338) {
+                    v26 = 336;
+                }
+                if (v7 = 435) {
+                    v26 = 481;
+                }
+                if (v7 = 701) {
+                    v26 = 595;
+                }
+                Item_destroy(item);
+                v27 = ~Item_create(v26);
+                v4 = ~SetQuality(v25, v27);
+                SetFrame(v21, v27);
+                v28 = ~PopToMap(v23);
+                v5 = ~DirFromAvatar_i(item);
+                v14 = ~PostAction(<< _aFACE_i, v5, _aTHRUST1_FRAME_i, _aREADY_FRAME_i, _aSTAND_FRAME_i >>, ~NPCToItem_i(_Avatar));
+            }
+            if ((v23::3 = 2) or (v23::3 = 3)) {
+                v24 = (v24 + 1);
+            }
+            if ((v23::3 = 4) or (v23::3 = 5)) {
+                v24 = (v24 + 2);
+            }
+            if ((v23::3 = 6) or (v23::3 = 7)) {
+                v24 = (v24 + 3);
+            }
+            if ((v23::3 = 8) or (v23::3 = 9)) {
+                v24 = (v24 + 4);
+            }
+            if ((v23::3 = 10) or (v23::3 = 11)) {
+                v24 = (v24 + 5);
+            }
+            if ((v23::3 = 12) or (v23::3 = 13)) {
+                v24 = (v24 + 6);
+            }
+            v29::1 = (v23::1 - v24);
+            v29::2 = (v23::2 - v24);
+            createSprite(65535, 0, 0, 0, v29::2, v29::1, 9);
+            Sfx(46);
+        }
+        if (v7 = 825) {
+            if (v21 = 0) {
+                Item_bark("@There are only coals.@", ~NPCToItem_i(_Avatar));
+                return;
+            } else {
+                v30 = ~PostAction(<< _aFRAME, 0 >>, item);
+                v5 = ~DirFromAvatar_i(item);
+                v14 = ~PostAction(<< _aFACE_i, v5, _aBEND_FRAME_i, _aWAIT_i, 2, _aSTAND_FRAME_i >>, ~NPCToItem_i(_Avatar));
+                v31 = ~GetCoord(item);
+                createSprite(65535, 0, 0, 0, v31::2, v31::1, 9);
+                Sfx(46);
+            }
+        }
+        if (v7 = 658) && (v21 = 0) {
+            v5 = ~DirFromAvatar_i(item);
+            v14 = ~PostAction(<< _aFACE_i, v5, _aBEND_FRAME_i, _aWAIT_i, 2, _aSTAND_FRAME_i >>, ~NPCToItem_i(_Avatar));
+            SetFrame(2, item);
+        }
+    }
+    if (event = 9) {
+        v32 = ~FindNearest_i(10, _Well_740, ~NPCToItem_i(_Avatar));
+        v33 = ~GetFrame(v32);
+        if ((v33 >= 0) and (v33 <= 11)) {
+            v33 = 1;
+        }
+        if ((v33 >= 12) and (v33 <= 23)) {
+            v33 = 13;
+        }
+        v34 = ~PostAction(<< _aWAIT_i, 1, _aFRAME, v33, _aWAIT_i, 2, _aNEXT_FRAME, _aWAIT_i, 1, _aNEXT_FRAME, _aWAIT_i, 1, _aNEXT_FRAME, _aWAIT_i, 1, _aNEXT_FRAME, _aWAIT_i, 1, _aNEXT_FRAME >>, v32);
+        v14 = ~PostAction(<< _aFACE_i, _East, _aTHRUST1_FRAME_i, _aWAIT_i, 2, _aFACE_i, _South, _aWAIT_i, 1, _aRAISE1_FRAME_i, _aWAIT_i, 1, _aEXTEND1_FRAME_i, _aWAIT_i, 1, _aREADY_FRAME_i, _aWAIT_i, 1, _aTHRUST1_FRAME_i, _aWAIT_i, 4 >>, ~NPCToItem_i(_Avatar));
+        v15 = ~PostAction(<< _aWAIT_i, 17, _aUSABLE_i, #FillBucketAtWell_i >>, item);
+    }
+    if (event = 10) {
+        v14 = ~PostAction(<< _aFACE_i, _North, _aBEND_FRAME_i, _aWAIT_i, 3, _aSTAND_FRAME_i >>, ~NPCToItem_i(_Avatar));
+        v15 = ~PostAction(<< _aWAIT_i, 3, _aUSABLE_i, #EmptyBucket_i >>, item);
+    }
+}

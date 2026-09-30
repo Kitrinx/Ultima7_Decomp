@@ -1,0 +1,14 @@
+Routine TimeStopSpell_i accepts a0 #locals(1) #uses(~IsMagicOK_i) {
+    if (event = _Action) {
+        Kernel_resetRef(item);
+        Item_bark("@An Tym@", item);
+        if ~IsMagicOK_i() {
+            v0 = ~PostAction(<< _aSFX_i, 67, _aTHRUST2_FRAME_i, _aOUT_FRAME_i, _aUSABLE_i, #TimeStopSpell_i >>, item);
+        } else {
+            v0 = ~PostAction(<< _aTHRUST2_FRAME_i, _aOUT_FRAME_i, _aUSABLE_i, #FizzleSpell_i >>, item);
+        }
+    }
+    if (event = _Posted_i) {
+        StopTime_i(100);
+    }
+}

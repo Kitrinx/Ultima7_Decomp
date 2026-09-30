@@ -1,0 +1,70 @@
+Routine PolymorphErethian_i accepts a0 #locals(15) #uses(~AvatarStatue_i) {
+    v0 = ~GetCoord(item);
+    if $TetraGone {
+        if not flag(811) {
+            flag(811) = true;
+            createSprite(65535, 0, 0, 0, (v0::2 - 2), (v0::1 - 2), 13);
+            createSprite(65535, 0, 0, 0, (v0::2 - 2), (v0::1 - 2), 7);
+            Sfx(67);
+            SetFrame(4, item);
+            v1 = ~Item_create(_Gargoyle_Warrior);
+            SetFrame(28, v1);
+            v2 = ~PopToMap(v0);
+            v3 = ~PostAction(<< _aWAIT_i, 16, _aUSABLE_i, #DemonstratePolymorph_i >>, item);
+            v4 = ~PostAction(<< _aFACE_i, _South, _aKNEEL_FRAME_i, _aWAIT_i, 4, _aBEND_FRAME_i, _aWAIT_i, 3, _aSTEP_LEFT_FRAME_i, _aWAIT_i, 2 >>, v1);
+        } else {
+            if not flag(812) {
+                flag(812) = true;
+                createSprite(65535, 0, 0, 0, v0::2, v0::1, 17);
+                createSprite(65535, 0, 0, 0, (v0::2 - 2), (v0::1 - 2), 4);
+                Sfx(9);
+                v1 = ~FindNearest_i(1, _Gargoyle_Warrior, item);
+                Item_destroy(v1);
+                v5 = ~Item_create(_Dragon);
+                SetFrame(19, v5);
+                v2 = ~PopToMap(v0);
+                v6 = ~FindNearest_i(1, _Mage_154, v5);
+                v3 = ~PostAction(<< _aWAIT_i, 14, _aUSABLE_i, #DemonstratePolymorph_i >>, v6);
+                v7 = ~PostAction(<< _aFACE_i, _South, _aWAIT_i, 4, _aRAISE2_FRAME_i, _aWAIT_i, 3, _aTHRUST2_FRAME_i, _aWAIT_i, 2, _aEXTEND2_FRAME_i, _aWAIT_i, 1 >>, v5);
+            } else {
+                createSprite(65535, 0, 0, 0, v0::2, v0::1, 17);
+                createSprite(65535, 0, 0, 0, v0::2, v0::1, 7);
+                Sfx(8);
+                v6 = ~FindNearest_i(1, _Mage_154, item);
+                Item_destroy(item);
+                SetFrame(28, v6);
+                v3 = ~PostAction(<< _aKNEEL_FRAME_i, _aWAIT_i, 5, _aBEND_FRAME_i, _aWAIT_i, 4, _aSTAND_FRAME_i >>, v6);
+                SetWorkType(_Patrol, v6);
+                ClearItemFlag_i(_DontMove_i, ~NPCToItem_i(_Avatar));
+                v8 = ~AvatarStatue_i();
+                v9 = ~PostInFuture(13, << _aFINISH_i, _aREMOVE_i >>, v8);
+                v10 = ~PostAction(<< _aWAIT_i, 11, _aUSABLE_i, #EndErethianScene_i >>, ~NPCToItem_i(_Avatar));
+            }
+        }
+    } else {
+        if not flag(811) {
+            flag(811) = true;
+            createSprite(65535, 0, 0, 0, v0::2, v0::1, 13);
+            Sfx(67);
+            SetFrame(4, item);
+            v11 = ~Item_create(_Mouse);
+            SetFrame(16, v11);
+            v2 = ~PopToMap(v0);
+            v3 = ~PostAction(<< _aWAIT_i, 11, _aBARK_i, "@Squeak!@", _aWAIT_i, 7, _aUSABLE_i, #RestoreErethian_i >>, item);
+            v12 = ~PostAction(<< _aFACE_i, _South, _aWAIT_i, 4, _aSTEP_RIGHT_FRAME_i, _aWAIT_i, 1, _aSTEP_LEFT_FRAME_i, _aWAIT_i, 1, _aREADY_FRAME_i, _aWAIT_i, 2, _aSTEP_LEFT_FRAME_i, _aWAIT_i, 1, _aREADY_FRAME_i, _aWAIT_i, 1, _aSTEP_RIGHT_FRAME_i, _aWAIT_i, 2, _aREADY_FRAME_i >>, v11);
+        } else {
+            if not flag(812) {
+                flag(812) = true;
+                createSprite(65535, 0, 0, 0, v0::2, v0::1, 17);
+                createSprite(65535, 0, 0, 0, v0::2, v0::1, 7);
+                Sfx(62);
+                SetFrame(4, item);
+                v13 = ~Item_create(_Cow);
+                SetFrame(23, v13);
+                v2 = ~PopToMap(v0);
+                v3 = ~PostAction(<< _aWAIT_i, 11, _aBARK_i, "@MOO?!@", _aWAIT_i, 7, _aUSABLE_i, #RestoreErethian_i >>, item);
+                v14 = ~PostAction(<< _aFACE_i, _South, _aWAIT_i, 4, _aRAISE2_FRAME_i, _aWAIT_i, 1, _aEXTEND2_FRAME_i, _aWAIT_i, 1, _aTHRUST2_FRAME_i, _aWAIT_i, 2, _aEXTEND2_FRAME_i, _aWAIT_i, 2, _aTHRUST2_FRAME_i, _aWAIT_i, 1, _aEXTEND2_FRAME_i, _aWAIT_i, 1, _aRAISE2_FRAME_i >>, v13);
+            }
+        }
+    }
+}

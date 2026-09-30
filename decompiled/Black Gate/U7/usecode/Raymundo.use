@@ -1,0 +1,188 @@
+Routine Raymundo accepts a0 #locals(10) #uses(~AskYesNo, ~IsInInv, RaymundoAuditions_i, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Raymundo);
+        v0 = ~GetTime();
+        v1 = ~GetWorkType(~NPCToItem_i(_Raymundo));
+        TurnOn(<< "name", "job", "bye" >>);
+        if flag(104) {
+            TurnOn("audition");
+        }
+        if flag(105) {
+            TurnOn(<< "Miranda", "Max" >>);
+        }
+        if not $MetRaymundo {
+            [You can see the creativity literally flowing in abundance from this fellow. He looks at you with interest.];
+            $MetRaymundo = true;
+        } else {
+            ["Yes, yes?" Raymundo snaps. "What dost thou want? I'm busy!"];
+        }
+        converse {
+            key ("name") {
+                ["I am Raymundo."];
+                TurnOff("name");
+            }
+            key ("job") {
+                ["Why, I am famous throughout the land! Hast thou not heard of me?"];
+                v2 = ~AskYesNo();
+                if v2 {
+                    ["I told thee so!];
+                } else {
+                    ["-Really-!? I am surprised! But never mind...];
+                }
+                ["I am the Director of the Royal Theatre here in Britain. I am also Playwright-in-Residence. I compose a tune now and then as well. I sometimes act, but it is not wise to act in something that one directs.~];
+                if (v1 = 7) {
+                    ["We are working on a play at the moment."];
+                } else {
+                    ["Come by the theatre during the day and watch the rehearsals for our play."];
+                }
+                TurnOn(<< "Royal Theatre", "play" >>);
+            }
+            key ("play") {
+                ["It's a little something I wrote entitled 'The Trials of the Avatar'. It's about a legendary figure in Britannian history." The artist looks you up and down.];
+                ["Hmmm. Thou dost have a certain quality... hast thou ever acted on stage?"];
+                v3 = ~AskYesNo();
+                if v3 {
+                    ["I thought so!];
+                } else {
+                    ["Well, it does not matter. I am sure thou couldst quickly adapt.];
+                }
+                ["Officially, auditions have closed and the play is already cast. However, we need someone to understudy the role of the Avatar. Wouldst thou like to audition?"];
+                v4 = ~AskYesNo();
+                if v4 {
+                    ["Excellent! What thou needest to do is to visit Gaye's Clothier Shoppe and purchase an Avatar costume. I can audition thee once I see thee in -proper- attire. Run along and do that, quickly now, I'm a busy man."*];
+                    flag(103) = true;
+                    terminate;
+                } else {
+                    ["No? Thou hast never dreamed of performing on the stage? Seeing thy name in torches? Donning the olde grease paint and wig? Bowing to thunderous applause? Well, begone then, I have not the time for chatting with the public."*];
+                    terminate;
+                }
+            }
+            key ("Royal Theatre") {
+                ["'Tis a wonderful space, dost thou not think? 'Twas opened only last year, thanks to the sponsorship of a few wealthy citizens of our great city."];
+                TurnOff("Royal Theatre");
+                TurnOn(<< "sponsorship", "citizens" >>);
+            }
+            key ("sponsorship") {
+                ["The construction of the actual theatre building was paid for by the Royal Mint, but the theatre company relies solely on the support of individuals such as thyself. Wouldst thou like to make a modest contribution of, say, ten gold pieces to our theatre company?"];
+                v5 = ~AskYesNo();
+                if v5 {
+                    v6 = ~TakeFromParty_i(true, _All, _All, _Gold_Coin, 10);
+                    if v6 {
+                        ["I thank thee. Thou hast shown thyself to be a true patron of the arts and a person of culture and refinement."];
+                    } else {
+                        ["Thine unconvincing performance gave thy game away! Thou dost not have ten gold pieces!"];
+                    }
+                } else {
+                    ["Give a man a loaf of bread and thou hast fed him for a day, give a man a play and perhaps thou hast fed his soul for a lifetime! Once thou hast seen one of our productions I am certain thou shalt reconsider."];
+                }
+                TurnOff("sponsorship");
+            }
+            key ("audition") {
+                if (v1 = 7) {
+                    v7 = ~IsInInv(65177, 65177, _Avatar_Costume, 1, _Avatar);
+                    if v7 {
+                        ["I see thou art ready? Very well. Take center stage, wouldst thou?"];
+                        RaymundoAuditions_i();
+                    } else {
+                        ["Where is thy costume? Thou cannot audition without a costume!"*];
+                        terminate;
+                    }
+                } else {
+                    ["Come to the theatre during rehearsal hours, wouldst thou?"*];
+                    terminate;
+                }
+            }
+            key ("Miranda") {
+                [Raymundo takes a deep breath and smiles.];
+                ["Ah, lovely woman. 'Tis a pity she is more interested in politics than the stage. But I must say that we get along famously!"];
+                TurnOff("Miranda");
+            }
+            key ("Max") {
+                ["He is quite a character, is he not?" Raymundo's face fills with pride.];
+                ["Takes after his old man, I must say. He is sure to be a great actor. Or writer. Or director. Or producer."];
+                TurnOff("Max");
+            }
+            key ("citizens") {
+                ["Well, I am really not at liberty to divulge the names of our patrons. But most of them belong to The Fellowship."];
+                TurnOff("citizens");
+                TurnOn(<< "patrons", "Fellowship" >>);
+            }
+            key ("patrons") {
+                ["These are people who contribute to our theatre. They come from all walks of life and have little in common besides a love of fine theatre."];
+                TurnOff("patrons");
+            }
+            key ("Fellowship") {
+                ["For non-artists, they have given generous contributions to the theatre. They are -fine- people in my book!" He rubs his hands with glee.];
+                ["I am not a member, though."];
+                TurnOff("Fellowship");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["Leaving? Sorry, I do not give autographs."*];
+    }
+    if (event = _Bark) {
+        v0 = ~GetTime();
+        v1 = ~GetWorkType(~NPCToItem_i(_Raymundo));
+        v8 = ~rndRange(4, 1);
+        if (v1 = 7) {
+            if (v8 = 1) {
+                v9 = "@Louder! I can't hear thee!@";
+            }
+            if (v8 = 2) {
+                v9 = "@Move stage right, please.@";
+            }
+            if (v8 = 3) {
+                v9 = "@Try that scene again.@";
+            }
+            if (v8 = 4) {
+                v9 = "@From the top, please.@";
+            }
+            Item_bark(v9, _Raymundo);
+        } else {
+            BarkAboutWork_i(_Raymundo);
+        }
+    }
+}
+
+Usable RaymundoAuditions_i #locals(2) #uses(~IsNPCNear, GivePartyExp_i) {
+    ClearKeys();
+    v0 = ~AvatarSex();
+    SetSpeaker(0, _Raymundo);
+    [Raymundo hands you a script and you take center stage. The lights feel hot on your face. Although you are a little nervous, you clear your throat and begin to read the lines on the page.];
+    TurnOn(<< "-I- am the Avatar!", "I -am- the Avatar!", "I am -the- Avatar!", "I am the -Avatar-!" >>);
+    converse {
+        key default (1) {
+            ["No, no, no! That is all wrong! Thou art the 'Avatar'! Thou must feel like the Avatar! Thou must sound like the Avatar! Thou must -be- the Avatar! Try it again."];
+        }
+        ClearKeys();
+        TurnOn(<< "-I- am the Avatar!", "I -am- the Avatar!", "I am -the- Avatar!", "I am the -Avatar-!" >>);
+        key default (1) {
+            ["Better... better... but I think perhaps thou dost need a prop."];
+        }
+        ClearKeys();
+        v1 = ~IsNPCNear(_Jesse);
+        if v1 {
+            ["Jesse, hand our friend thy staff."*];
+            if v0 {
+                SetSpeaker(1, _Jesse);
+                ["Here it is, milady."*];
+                CloseSpeaker(_Jesse);
+            } else {
+                SetSpeaker(0, _Jesse);
+                ["Here it is, milord."*];
+                CloseSpeaker(_Jesse);
+            }
+        } else {
+            [Raymundo hands you a staff.];
+        }
+        SetSpeaker(0, _Raymundo);
+        [With the staff in hand, you try the lines once more. This time you feel like a true actor. The lines flow from your lips as if the Avatar were really saying them. You feel an excitement you have never before felt. You like this 'acting' thing. You crave more! You anxiously await Raymundo's critique...];
+        [Raymundo takes the staff and says, "Hmmmm. Yes, that's fine. I thank thee. Fine. We shall be in touch, yes? Thank thee for coming in. If thou hast a resume, just leave it by the door, yes? Thank thee."*];
+        GivePartyExp_i(20);
+        terminate;
+    }
+    clear_answers;
+}

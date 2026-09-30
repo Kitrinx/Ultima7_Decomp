@@ -1,0 +1,233 @@
+Routine Chuckles accepts a0 #locals(6) #uses(~AskYesNo, ChucklesPlaysGame_i, ChucklesCallsFoul_i, ~AskList) {
+    if (event = _Action) {
+        SetSpeaker(0, _Chuckles);
+        if not $MetChuckles {
+            [You are wary of conversing with that trickster Chuckles, but decide to anyway.];
+            $MetChuckles = true;
+            TurnOn(<< "name", "job", "bye" >>);
+        } else {
+            ["I will speak if thou dost play The Game, friend," Chuckles says.];
+            TurnOn(<< "job", "bye", "Game" >>);
+        }
+        converse {
+            key ("name") {
+                ["I must not say my name, lest I break the rule of The Game!"];
+                TurnOff("name");
+                TurnOn("Game");
+            }
+            key ("job") {
+                ["I was, am, and shall be the Court...Fool! I could give thee a clue if I wish, but for now my job is to play The Game."];
+                TurnOn("Game");
+            }
+            key ("clue") {
+                if not flag(111) {
+                    ["Art thou sure thou canst play The Game?"];
+                    v0 = ~AskYesNo();
+                    if v0 {
+                        ChucklesPlaysGame_i();
+                    } else {
+                        ["Thou must play The Game to get the clue!"];
+                    }
+                } else {
+                    ["Oops. I did give thee one!"];
+                    TurnOff("clue");
+                }
+            }
+            key ("Game") {
+                ["Thou must play The Game if thou dost want to speak with me."];
+                ClearKeys();
+                TurnOn(<< "I don't understand", "What are the rules?", "I know The Game", "Explain it" >>);
+                TurnOff("Game");
+                flag(115) = true;
+            }
+            key ("I don't understand") {
+                ChucklesCallsFoul_i();
+                TurnOff("I don't understand");
+            }
+            key ("Explain it") {
+                ChucklesCallsFoul_i();
+                TurnOff("Explain it");
+            }
+            key ("What are the rules?") {
+                ["Thou must just learn The Game and then jump in and play it!"];
+                TurnOff("What are the rules?");
+            }
+            key ("I know The Game") {
+                ["Then just play it!"];
+                TurnOff("I know the Game");
+                ClearKeys();
+                v1 = ~AskList(<< "What do we converse about?", "About what do we talk?", "Of what do we speak?" >>);
+                if (v1 = "Of what do we speak?") {
+                    ["Of what thou wouldst like."];
+                    ClearKeys();
+                    TurnOn(<< "the weather", "Lord British", "thou", "a joke" >>);
+                } else {
+                    ChucklesCallsFoul_i();
+                }
+            }
+            key ("the weather") {
+                ChucklesCallsFoul_i();
+                TurnOff("weather");
+            }
+            key ("Lord British") {
+                ChucklesCallsFoul_i();
+                TurnOff("Lord British");
+            }
+            key ("thou") {
+                ["Why dost thou want to speak of me? Canst thou not think of a thing much more fun of which to speak?"];
+                TurnOff("thou");
+                ClearKeys();
+                TurnOn(<< "women", "girls", "food", "supper" >>);
+            }
+            key ("a joke") {
+                ["I do not think I can tell a good joke whilst I play The Game! 'Twould be hard! Hmm. Ah! I have one! Why did the hen cross the road? To get to the side she was not on!"];
+                TurnOff("a joke");
+            }
+            key ("women") {
+                ChucklesCallsFoul_i();
+                TurnOff("women");
+            }
+            key ("girls") {
+                ["There be a lot of fine girls in our fair town! Or is it 'fair girls in our fine town'?" Chuckles shrugs his shoulders.];
+                TurnOff("girls");
+            }
+            key ("food") {
+                ["There is good food at the pub! As for me, I like to eat on the floor of my room!"];
+                ClearKeys();
+                v2 = ~AskList(<< "Where is the tavern?", "Where is the Blue Boar?", "The pub serves mutton?", "Is there liquor?" >>);
+                if (v2 = "Where is the Blue Boar?") {
+                    ["Thou canst get a good meal there! But I could give thee a good -clue-!"];
+                    ClearKeys();
+                    TurnOn(<< "clue", "job", "bye" >>);
+                } else {
+                    ChucklesCallsFoul_i();
+                }
+            }
+            key ("supper") {
+                ChucklesCallsFoul_i();
+                TurnOff("supper");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        if flag(115) {
+            ["So long, my friend! Do not forg... I mean, do not lose how to play The Game!"*];
+        } else {
+            ["Bye for now!"*];
+        }
+    }
+    if (event = _Bark) {
+        v3 = ~GetWorkType(~NPCToItem_i(_Chuckles));
+        if (v3 = 4) {
+            v4 = ~rndRange(4, 1);
+            if (v4 = 1) {
+                v5 = "@Hi!@";
+            }
+            if (v4 = 2) {
+                v5 = "@Want to play The Game?@";
+            }
+            if (v4 = 3) {
+                v5 = "@Let us play The Game!@";
+            }
+            if (v4 = 4) {
+                v5 = "Shall we dance?@";
+            }
+            Item_bark(v5, _Chuckles);
+        }
+    }
+}
+
+Usable ChucklesCallsFoul_i #locals(0) {
+    ["Thou didst just break the rule of The Game! Thou had best learn it!"*];
+    terminate;
+}
+
+Usable ChucklesPlaysGame_i #locals(7) #uses(~IsNPCNear, ~AskList, ChucklesCallsFoul_i, GivePartyExp_i) {
+    v0 = ~IsNPCNear(_Iolo);
+    v1 = false;
+    v2 = false;
+    v3 = false;
+    v4 = false;
+    ["Then prove it. Talk to me."];
+    ClearKeys();
+    v5 = ~AskList(<< "Hello, Chuckles", "Hello, Fool", "Hi, Chuckles", "Hi, Chuck" >>);
+    if (v5 = "Hi, Chuck") {
+        ["Hi there! What is on thy mind?"];
+        v1 = true;
+        ClearKeys();
+    } else {
+        ChucklesCallsFoul_i();
+    }
+    if (v1 = true) {
+        v5 = ~AskList(<< "trouble", "too much", "many problems", "I need answers" >>);
+        if (v5 = "too much") {
+            ["Ah, I do know what thou dost mean! Thou dost need help, yes?"];
+            v2 = true;
+            ClearKeys();
+        } else {
+            ChucklesCallsFoul_i();
+        }
+    }
+    if (v2 = true) {
+        v5 = ~AskList(<< "Yes, I do", "Absolutely", "Canst thou help?", "Most assuredly" >>);
+        if ((v5 = "Yes, I do") or (v5 = "Canst thou help?")) {
+            ["Hmmm. I might could give thee a clue."];
+            if v0 {
+                SetSpeaker(0, _Iolo);
+                ["I would like to give Chuckles a black eye!"];
+                CloseSpeaker(_Iolo);
+                SetSpeaker(0, _Chuckles);
+            }
+            v3 = true;
+            ClearKeys();
+        } else {
+            ChucklesCallsFoul_i();
+        }
+    }
+    if (v3 = true) {
+        v5 = ~AskList(<< "That would be big of thee", "I need it immediately", "That would be worthwhile", "I wish thou wouldst" >>);
+        if ((v5 = "That would be big of thee") or (v5 = "I wish thou wouldst")) {
+            ["What wilt thou give me for a clue?"];
+            v4 = true;
+            ClearKeys();
+        } else {
+            ChucklesCallsFoul_i();
+        }
+    }
+    if (v4 = true) {
+        v5 = ~AskList(<< "I shan't murder thee", "gold", "my friendship", "a smile", "nothing" >>);
+        if (v5 = "gold") {
+            [Chuckles holds his hand up. "'Tis not right. I give thee a clue for free. 'Tis here in this scroll."];
+            v6 = ~GiveToParty_i(false, _All, 1, _Scroll, 1);
+            if v6 {
+                flag(111) = true;
+                GivePartyExp_i(50);
+                ClearKeys();
+                ["So long, my friend! Do not forg... I mean, do not lose how to play The Game!"*];
+                terminate;
+            } else {
+                ["Oh! Thou dost not have room for the scroll! Put down thy things and I shall give it to thee!"*];
+                terminate;
+            }
+        }
+        if (v5 = "a smile") {
+            ["How nice! All right! I shall give thee a clue. 'Tis here in this scroll."];
+            v6 = ~GiveToParty_i(false, _All, 1, _Scroll, 1);
+            if v6 {
+                flag(111) = true;
+                GivePartyExp_i(50);
+                ClearKeys();
+                ["So long, my friend! Do not forg... I mean, do not lose how to play The Game!"*];
+                terminate;
+            } else {
+                ["Oh! Thou dost not have room for the scroll! Put down some of thy things and I can give it to thee!"*];
+                terminate;
+            }
+        }
+        if ((v5 = "I shan't murder thee") or ((v5 = "my friendship") or (v5 = "nothing"))) {
+            ChucklesCallsFoul_i();
+        }
+    }
+}

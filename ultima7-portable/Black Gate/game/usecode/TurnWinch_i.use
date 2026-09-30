@@ -1,0 +1,81 @@
+Routine TurnWinch_i accepts a0 #locals(8) #uses(~ToggleDrawbridges_i, ~IsNPCNear, ~IsAbleToTalk_i, OpenGateWithWinch_i) {
+    if (event = 7) {
+        v0 = ~GetQuality(item);
+        v1 = ~FindNearby_i(0, 15, _Drawbridge, item);
+        v2 = ~FindNearby_i(0, 15, _Closed_Drawbridge, item);
+        v1 = (v1 & v2);
+        v2 = << >>;
+        Foreach v5 in v1 {
+            if (~GetQuality(v5) = v0) {
+                v2 = (v2 & v5);
+            }
+        }
+        if ~ToggleDrawbridges_i(v2) {
+            v6 = ~PostAction(<< _aFRAME, 1, _aNEXT_FRAME, _aLOOP_i, 65535, 4 >>, item);
+            v6 = ~PostAction(<< _aFACE_i, _West, _aCONTINUE_i, _aBEND_FRAME_i, _aSTAND_FRAME_i, _aLOOP_i, 65534, 2 >>, _Avatar);
+            return;
+        }
+        if $SEARCHED_STABLES {
+            if (~IsNPCNear(_Johnson) and not flag(87)) {
+                if (~IsAbleToTalk_i(_Johnson) and ~IsAbleToTalk_i(_Avatar)) {
+                    v6 = ~PostInFuture(1, << _aNO_HALT_i, _aBARK_i, "@What's the password?@" >>, ~NPCToItem_i(_Johnson));
+                    v6 = ~PostInFuture(5, << _aNO_HALT_i, _aBARK_i, "@Blackbird@" >>, ~AvatarItem_i());
+                    v6 = ~PostInFuture(11, << _aNO_HALT_i, _aBARK_i, "@Pass.@" >>, ~NPCToItem_i(_Johnson));
+                }
+                v6 = ~PostInFuture(10, << _aNO_HALT_i, _aUSABLE_i, #TurnWinch_i >>, item);
+                return;
+            }
+            if (~IsNPCNear(_Raymundo) and not flag(87)) {
+                if (~IsAbleToTalk_i(_Raymundo) and ~IsAbleToTalk_i(_Avatar)) {
+                    v6 = ~PostInFuture(1, << _aNO_HALT_i, _aBARK_i, "@What's the password?@" >>, ~NPCToItem_i(_Raymundo));
+                    v6 = ~PostInFuture(5, << _aNO_HALT_i, _aBARK_i, "@Blackbird@" >>, ~AvatarItem_i());
+                    v6 = ~PostInFuture(11, << _aNO_HALT_i, _aBARK_i, "@Pass.@" >>, ~NPCToItem_i(_Raymundo));
+                }
+                v6 = ~PostInFuture(10, << _aNO_HALT_i, _aUSABLE_i, #TurnWinch_i >>, item);
+                return;
+            }
+            if (~FindNearest_i(65535, _Guard_806, _Avatar) and not flag(87)) {
+                v7 = ~FindNearest_i(20, _Guard_806, item);
+                if (~IsAbleToTalk_i(v7) and ~IsAbleToTalk_i(_Avatar)) {
+                    v6 = ~PostInFuture(1, << _aNO_HALT_i, _aBARK_i, "@What's the password?@" >>, v7);
+                    v6 = ~PostInFuture(5, << _aNO_HALT_i, _aBARK_i, "@Blackbird@" >>, ~AvatarItem_i());
+                    v6 = ~PostInFuture(11, << _aNO_HALT_i, _aBARK_i, "@Pass.@" >>, v7);
+                }
+                v6 = ~PostInFuture(10, << _aNO_HALT_i, _aUSABLE_i, #TurnWinch_i >>, item);
+                return;
+            }
+            OpenGateWithWinch_i(true, item);
+        } else {
+            if ~IsAbleToTalk_i(_Johnson) && (~IsNPCNear(_Johnson) and not flag(87)) {
+                v6 = ~PostInFuture(1, << _aNO_HALT_i, _aBARK_i, "@What's the password?@" >>, ~NPCToItem_i(_Johnson));
+            }
+            if (~IsNPCNear(_Raymundo) and not flag(87)) && ~IsAbleToTalk_i(_Raymundo) {
+                v6 = ~PostInFuture(1, << _aNO_HALT_i, _aBARK_i, "@What's the password?@" >>, ~NPCToItem_i(_Johnson));
+            }
+            if (~FindNearest_i(65535, _Guard_806, _Avatar) and not flag(87)) {
+                v7 = ~FindNearest_i(20, _Guard_806, item);
+                if ~IsAbleToTalk_i(v7) {
+                    v6 = ~PostInFuture(1, << _aNO_HALT_i, _aBARK_i, "@What's the password?@" >>, v7);
+                }
+            }
+        }
+    }
+    if (event = _Posted_i) {
+        OpenGateWithWinch_i(true, item);
+    }
+}
+
+Routine OpenGateWithWinch_i accepts a0, a1 #locals(6) #uses(~OpenTrinsicGate_i) {
+    v2 = (~GetAllInRegion(_Portcullis_271) & ~GetAllInRegion(_Portcullis_272));
+    v3 = false;
+    Foreach v6 in v2 {
+        if (~GetQuality(v6) = ~GetQuality(v1)) {
+            v7 = ~OpenTrinsicGate_i();
+            v7 = ~PostAction(<< _aFRAME, 1, _aNEXT_FRAME, _aLOOP_i, 65535, 6 >>, v1);
+            v3 = true;
+        }
+    }
+    if (v3 and v0) {
+        v7 = ~PostAction(<< _aFACE_i, _West, _aCONTINUE_i, _aBEND_FRAME_i, _aSTAND_FRAME_i, _aLOOP_i, 65534, 4 >>, _Avatar);
+    }
+}

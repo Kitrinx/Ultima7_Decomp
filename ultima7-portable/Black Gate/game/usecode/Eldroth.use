@@ -1,0 +1,152 @@
+Routine Eldroth accepts a0 #locals(5) #uses(~LordOrLady, EldrothSellsProvisions_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Eldroth);
+        v0 = ~LordOrLady();
+        v1 = ~GetWorkType(~NPCToItem_i(_Eldroth));
+        TurnOn(<< "name", "job", "bye" >>);
+        if not $MetEldroth {
+            [A very neat, well-groomed, kindly man stands before you.];
+            $MetEldroth = true;
+        } else {
+            ["Greetings, <v0>. How may I help thee?"];
+        }
+        converse {
+            key ("name") {
+                [He smiles at you. "Ah, excellent. Thou art not afraid to ask question. Remember, there are no stupid questions, only dumb ones. My name is Eldroth, <v0>."];
+                TurnOff("name");
+            }
+            key ("job") {
+                ["I, my friend, am the provisioner. And, if I may be immodest, also a counselor for Vesper. Perhaps I can someday give thee advice, <v0>. For remember, that which does not kill us, makes us wounded."];
+                TurnOn(<< "Vesper", "buy" >>);
+            }
+            key ("Vesper") {
+                ["Yes, <v0>, this town is full of wonderful people to whom I have given advice."];
+                TurnOn(<< "people", "advice" >>);
+                TurnOff("Vesper");
+            }
+            key ("advice") {
+                ["Early to bed, early to rise, makes Jack a dull boy."];
+                TurnOff("advice");
+            }
+            key ("buy") {
+                TurnOff("buy");
+                if (v1 = 7) {
+                    ["Thou wishest to make a purchase. Excellent. But remember, a gold piece saved is a gold piece not spent."];
+                    EldrothSellsProvisions_i();
+                } else {
+                    ["Perhaps thou couldst wait until my shop is open, <v0>."];
+                }
+            }
+            key ("people") {
+                ["About whom doth thou wish to know? Auston? The gargoyles? Liana? Cador? Perhaps Yongi?"];
+                PushKeys();
+                TurnOn(<< "Auston", "gargoyles", "Liana", "Yongi", "Cador", "no one" >>);
+                TurnOff("people");
+            }
+            key ("Liana") {
+                ["Liana is a very fine young woman who clerks at the townhall."];
+                TurnOff("Liana");
+            }
+            key ("Yongi") {
+                ["He is the bartender at the Glided Gizzard." He stops, shakes his head, and then corrects himself. "I mean the Lilded Lizard," he frowns. "No, that's the Gilded Lizard. Yes that's it!"];
+                TurnOff("Yongi");
+            }
+            key ("Cador") {
+                ["Cador oversees the mines. He and his wife, Yvella, have a lovely daughter named Catherine."];
+                TurnOff("Cador");
+            }
+            key ("Auston") {
+                ["The mayor? I would have thought thou wouldst have met him by now, <v0>. He is performing an excellent job. Thou mayest not realize this," he blushes, "but 'tis I who suggested he run for the office."];
+                TurnOff("Auston");
+            }
+            key ("gargoyles") {
+                ["I fear they will stage an uprising. I know Auston holds the same thoughts, for very recently he approached me and asked for my guidance to prepare for just such an incident. I will warn thee just as I warned him. Always remember, <v0>, the best defense is a good defense!"];
+                TurnOff("gargoyles");
+            }
+            key ("no one") {
+                PopKeys();
+                TurnOff("people");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["Farewell, <v0>. Never forget, the grass is always greener when it rains."];
+    }
+    if (event = _Bark) {
+        v2 = ~GetTime();
+        v1 = ~GetWorkType(~NPCToItem_i(_Eldroth));
+        v3 = ~rndRange(4, 1);
+        if ((v2 >= 2) or (v2 <= 6)) {
+            if ((v1 = 7) or (v1 = 5)) {
+                if (v3 = 1) {
+                    v4 = "@A stitch in time uses more thread.@";
+                }
+                if (v3 = 2) {
+                    v4 = "@Never hit a man when thou cannot.@";
+                }
+                if (v3 = 3) {
+                    v4 = "@The early bird wakes up first.@";
+                }
+                if (v3 = 4) {
+                    v4 = "@A bird in the hand squirms.@";
+                }
+            }
+            Item_bark(v4, _Eldroth);
+        }
+    }
+}
+
+Usable EldrothSellsProvisions_i #locals(13) #uses(~AskOrdList, ~PriceString_i, ~AskYesNo, ~SellItem_i) {
+    PushKeys();
+    v0 = true;
+    v1 = << "nothing", "torch", "oil flasks", "backpack", "bag", "shovel", "hoe", "powder keg", "pick", "bedroll" >>;
+    v2 = << 0, 595, 782, 801, 802, 625, 626, 704, 624, 583 >>;
+    v3 = << 0, 3, 48, 10, 3, 10, 10, 30, 12, 16 >>;
+    v4 = << "", "a ", "", "a ", "a ", "a ", "a ", "a ", "a ", "a " >>;
+    v5 = 0;
+    v6 = << "", "", " for a dozen", "", "", "", "", "", "", "" >>;
+    v7 = 65177;
+    v8 = << 0, 1, 12, 1, 1, 1, 1, 1, 1, 1 >>;
+    ["What can I sell to thee?"];
+    While v0 {
+        v9 = ~AskOrdList(v1);
+        if (v9 = 1) {
+            ["Very good."];
+            v0 = false;
+        } else {
+            v10 = ~PriceString_i(v6, v3::v9, v5, v1::v9, v4::v9);
+            v11 = 0;
+            ["^<v10>. Is that acceptable?"];
+            v12 = ~AskYesNo();
+            if v12 {
+                if ((v2::v9 = 595) or (v2::v9 = 782)) {
+                    if (v2::v9 = 782) {
+                        ["How many sets of twelve wouldst thou like?"];
+                    } else {
+                        ["How many wouldst thou like?"];
+                    }
+                    v11 = ~SellItem_i(true, 1, 20, v3::v9, v8, v7, v2::v9);
+                } else {
+                    v11 = ~SellItem_i(false, 1, 0, v3::v9, v8, v7, v2::v9);
+                }
+            }
+            if (v11 = 1) {
+                ["Very good!"];
+            } else {
+                if (v11 = 2) {
+                    ["I am sorry, but thou cannot possibly carry that much weight!"];
+                } else {
+                    if (v11 = 3) {
+                        ["Thou dost not have enough gold for that," he says, shaking his head.~~"Too many birds in the hand is worth a bush."];
+                    } else {
+                    }
+                }
+            }
+            ["Wouldst thou care to purchase something else?"];
+            v0 = ~AskYesNo();
+        }
+    }
+    PopKeys();
+}

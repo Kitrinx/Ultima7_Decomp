@@ -1,0 +1,146 @@
+Routine Burnside accepts a0 #locals(6) #uses(~IsNearEachOther_i, ~LordOrLady, ~AskYesNo, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Burnside);
+        v0 = ~GetWorkType(~NPCToItem_i(_Burnside));
+        v1 = ~GetTime();
+        if (v1 = 7) {
+            if not (v0 = 16) {
+            } else {
+                v2 = ~IsNearEachOther_i(_Elynor, _Burnside);
+                if v2 {
+                    [The Fellowship meeting is in progress, and Burnside will not speak with you now.*];
+                    terminate;
+                } else {
+                    ["I cannot speak now! I am late for the Fellowship meeting!"*];
+                    terminate;
+                }
+            }
+        }
+        v3 = ~LordOrLady();
+        v4 = ~IsMedallionOn_i();
+        TurnOn(<< "name", "job", "bye" >>);
+        if $OWENS_PLANS_ARE_UNSAFE {
+            TurnOn("plans");
+        }
+        if not $MetBurnside {
+            [You see an elderly man struggling to maintain a regal posture.];
+            [His eyes widen at the sight of you.];
+            ["I had heard thou were travelling in Britannia again, but it took mine own eyes to believe it! Welcome, Avatar!"];
+            $MetBurnside = true;
+        } else {
+            ["Ahh, Avatar. Good to see thee again." says Burnside.];
+        }
+        converse {
+            key ("name") {
+                ["Burnside is my name."];
+                TurnOff("name");
+            }
+            key ("job") {
+                if $LEARNED_ABOUT_MINOC_MURDER {
+                    ["I am Mayor of Minoc and have been lo these past twenty years and more."];
+                    TurnOn("Minoc");
+                } else {
+                    ["I beseech thee, <v3>, do show some respect for the two poor souls who have been found murdered there in William's sawmill."];
+                    $LEARNED_ABOUT_MINOC_MURDER = true;
+                    TurnOn("murders");
+                }
+            }
+            key ("Minoc") {
+                ["Apart from this business of the murders we are a town run by commerce. Gold runs this town. As goes the money, so goes Minoc. Take this monument affair, for instance."];
+                TurnOff("Minoc");
+                TurnOn(<< "murders", "monument" >>);
+            }
+            key ("murders") {
+                ["As Frederico and Tania were not actually residents of Minoc there is little I can do as Mayor other than increase the town guard. The investigation falls somewhat beyond my jurisdiction. It would appear the killer or killers were from out of town and are probably long gone by now. Thank goodness."];
+                TurnOff("murders");
+            }
+            key ("monument") {
+                if not $COMPLETED_OWENS_QUEST {
+                    ["I am sure thou art aware of the plans for a monument of Owen, the shipwright. He is paying for it himself. I am usually against such public vanity but The Fellowship is very much in favor of it."];
+                    TurnOn(<< "vanity", "Fellowship" >>);
+                } else {
+                    ["This town would have been ruined if I had allowed that monument to be built, so I immediately forbade it, of course."];
+                }
+                TurnOff("monument");
+            }
+            key ("vanity") {
+                ["But in this special case it does immeasurable good for the town. It increases our prestige. People will come from all over Britannia for the unveiling."];
+                TurnOff("vanity");
+                TurnOn("unveiling");
+            }
+            key ("unveiling") {
+                ["Why, even Lord British himself will be in attendance! It is a special opportunity when one gets a private audience."];
+                TurnOff("unveiling");
+            }
+            key ("Fellowship") {
+                if v4 {
+                    ["Ah, I see thou art wearing thy Fellowship medallion. I received mine from Elynor when The Fellowship branch was first opened here a few years ago."];
+                } else {
+                    ["Yes, I wear the Fellowship medallion, given to me by Elynor. Do not worry thyself. I shall not try to make thee join!" He laughs nervously at his own little joke.];
+                }
+                TurnOff("Fellowship");
+                TurnOn("Elynor");
+            }
+            key ("Elynor") {
+                if v4 {
+                    ["Elynor tells me The Fellowship will be doing good works here in the future. I am proud to be a member of thy society although I must confess to being fairly ignorant concerning thy, umm, our philosophy."];
+                    TurnOn("member");
+                    TurnOff("Elynor");
+                } else {
+                    ["Elynor says The Fellowship could bring much money into Minoc. It would be wonderful for trade. I could never let my personal feelings get in the way of the good of this town."];
+                    TurnOn("feelings");
+                    TurnOff("Elynor");
+                }
+            }
+            key ("member") {
+                ["I was given an honorary membership when the Fellowship branch was first opened in Minoc. I do not attend regular meetings. I hope thou'rt not disappointed in me?"];
+                v5 = ~AskYesNo();
+                if v5 {
+                    ["I am sorry, Avatar. I will try to do well and be a more valuable member of the Fellowship. I beg thee, do not speak of this to Elynor."];
+                } else {
+                    ["Thank heaven! I wear this medallion mainly for ceremonial purposes, as I suspect thou dost. We both see that support of The Fellowship is currently the wisest course of action politically, no matter our personal feelings."];
+                    TurnOn("feelings");
+                }
+                TurnOff("member");
+            }
+            key ("feelings") {
+                ["Avatar, may I tell thee a secret?"];
+                v5 = ~AskYesNo();
+                if v5 {
+                    ["Avatar, I must confess to thee that I feel The Fellowship promotes a philosophy that is dubious at best, and its membership seems to be comprised chiefly of fools and emotional weaklings."];
+                } else {
+                    ["Hrmph! Well, then, kindly forget mine ill-considered words!"];
+                }
+                TurnOff("feelings");
+            }
+            key ("plans") {
+                [You show the Mayor the plans Owen had drawn, making sure to carefully point out the flaws discovered by Julia. The Mayor is aghast.~~"This is terrible! No one must see this! It would ruin Owen and cause irreparable damage to our town if it became known that our shipwright caused those deaths!"];
+                TurnOff("plans");
+                TurnOn(<< "damage", "deaths" >>);
+            }
+            key ("damage") {
+                ["But very few suspect the deaths are attributable to Owen's shipbuilding! We can destroy the plans and the truth would never get out! It would save the town from disgrace and possible ruin!"];
+                TurnOff("damage");
+            }
+            key ("deaths") {
+                ["Then again, the ships Owen builds will continue to sink. It would harm Minoc even more if it were to become known as the place where the "death ships" are made. A town that built a monument to an incompetent."];
+                TurnOff(<< "deaths", "damage" >>);
+                TurnOn("statue");
+            }
+            key ("statue") {
+                ["There are no two ways about it. The statue must be stopped. I am hereby cancelling the erection of the statue."];
+                ["Oh, and...er, Avatar... couldst thou please go inform Owen of this bad news for me? I am a bit busy at the moment. Besides, I think he will take it much better hearing it from thee."];
+                $COMPLETED_OWENS_QUEST = true;
+                TurnOff("statue");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["A pleasure, friend Avatar. A pleasure."*];
+    }
+    if (event = _Bark) {
+        BarkAboutWork_i(_Burnside);
+    }
+}

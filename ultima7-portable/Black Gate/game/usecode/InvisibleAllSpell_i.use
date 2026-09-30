@@ -1,0 +1,22 @@
+Routine InvisibleAllSpell_i accepts a0 #locals(8) #uses(~IsMagicOK_i) {
+    if (event = _Action) {
+        Kernel_resetRef(item);
+        Item_bark("@Vas Sact Lor@", item);
+        if ~IsMagicOK_i() {
+            v0 = ~GetCoord(item);
+            createSprite(65535, 0, 0, 0, (v0::2 - 2), (v0::1 - 2), 7);
+            v1 = ~PostAction(<< _aRAISE1_FRAME_i, _aSFX_i, 67, _aSTAND_FRAME_i, _aUP_FRAME_i, _aSTAND_FRAME_i, _aTHRUST2_FRAME_i >>, item);
+            v2 = ~GetParty();
+            Foreach v5 in v2 {
+                v6 = ~GetDist(v5, item);
+                v6 = ((v6 / 3) + 5);
+                v1 = ~PostInFuture(v6, << _aNO_HALT_i, _aUSABLE_i, #InvisibleAllSpell_i >>, v5);
+            }
+        } else {
+            v7 = ~PostAction(<< _aRAISE1_FRAME_i, _aSTAND_FRAME_i, _aUP_FRAME_i, _aSTAND_FRAME_i, _aTHRUST2_FRAME_i, _aUSABLE_i, #FizzleSpell_i >>, item);
+        }
+    }
+    if (event = _Posted_i) {
+        SetItemFlag_i(_Invisible, item);
+    }
+}

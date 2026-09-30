@@ -1,0 +1,98 @@
+Routine Horffe accepts a0 #locals(3) #uses(~IsNPCNear, GargBarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Horffe);
+        TurnOn(<< "name", "job", "bye" >>);
+        if not $MET_SIR_HORFFE {
+            v0 = ~GetDist(_JohnPaul, _Horffe);
+            if (v0 < 11) {
+                if $MET_LORD_JOHNPAUL {
+                    v1 = " standing at attention just behind Lord John-Paul.";
+                } else {
+                    v1 = " standing at attention just behind another knight.";
+                }
+            } else {
+                v1 = ".";
+            }
+            append "You see a gargoyle with a very stern expression on his face";
+            append v1;
+            append "";
+            say;
+            v2 = ~IsNPCNear(_JohnPaul);
+            $MET_SIR_HORFFE = true;
+        } else {
+            ["To ask how to be of assistance." His eyes narrow.];
+        }
+        if ($STARTED_HOLD_INVESTIGATION and not flag(613)) {
+            TurnOn("statue");
+        }
+        if (flag(630) and not $FINISHED_HOLD_INVESTIGATION) {
+            TurnOn("Pendaran did it");
+        }
+        converse {
+            key ("name") {
+                ["To be named Horffe."];
+                TurnOff("name");
+            }
+            key ("job") {
+                ["To be the Captain of the guard. To serve and protect the people of Serpent's Hold."];
+                TurnOn(<< "Captain", "Serpent's Hold" >>);
+            }
+            key ("Captain") {
+                ["To have been commanded to protect the people who live in Serpent's Hold and to maintain the general order of the knights."];
+                TurnOff("Captain");
+                TurnOn(<< "people", "knights" >>);
+            }
+            key ("people", "Serpent's Hold") {
+                ["To direct you to Sir Denton, the tavernkeeper at the Hallowed Dock. To know more about the Hold and the people than I."];
+                TurnOff(<< "people", "Serpent's Hold" >>);
+            }
+            key ("Pendaran did it") {
+                ["To thank you for this information. To be pleased to know the identity of my assailant."];
+                TurnOff("Pendaran did it");
+            }
+            key ("knights") {
+                ["To inform you that many fine warriors take up residence between the Hold's walls. To have little fear of an attack from bandits or vicious animals."];
+                TurnOff("knights");
+            }
+            key ("statue") {
+                ["To know nothing about that!"];
+                if flag(607) {
+                    TurnOn("blood on fragments");
+                }
+                TurnOff("statue");
+            }
+            key ("blood on fragments") {
+                [His rough demeanor softens.~~"To be my blood." He sighs. "But to be not the one who defaced the statue! To have been wounded while trying to stop the vandal."];
+                TurnOn("vandal");
+                TurnOff("blood on fragments");
+                flag(613) = true;
+            }
+            key ("vandal") {
+                [He looks down at his feet.~~"To know not who he was. To have been very dark. To ask you not to tell Sir Richter."];
+                TurnOff("vandal");
+                TurnOn(<< "dark", "Sir Richter" >>);
+            }
+            key ("dark") {
+                ["To have been very poor visibility, but to be positive I was scuffling with an armed knight."];
+                TurnOff("dark");
+            }
+            key ("Sir Richter") {
+                ["To know he will not believe one who openly defies The Fellowship."];
+                TurnOff("Sir Richter");
+                TurnOn("Fellowship");
+            }
+            key ("Fellowship") {
+                ["To know little about it. To like little about it."];
+                TurnOff("Fellowship");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["To say goodbye."*];
+    }
+    if (event = _Bark) {
+        GargBarkAboutWork_i(_Horffe);
+    }
+}

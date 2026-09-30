@@ -1,0 +1,91 @@
+Routine TheRatRaceGame accepts a0 #locals(0) #uses(StartRatRace_i) {
+    if (not ~Kernel_getNumProcesses(item) and (event = _Action)) {
+        if ((~GetHour() >= 15) or (~GetHour() <= 3)) {
+            SetWorkType(_Hound, _Smithy);
+        }
+        StartRatRace_i();
+    }
+}
+
+Usable StartRatRace_i #locals(32) {
+    v0 = ~GetAllInRegion(_The_Rat_Race_Game_763);
+    v1 = ~GetAllInRegion(_The_Rat_Race_Game_764);
+    if (~ListSize_i(v1) = 4) && (~ListSize_i(v0) = 2) {
+        v2 = ~rndRange(4, 1);
+        v3 = ~GetCoord(v0::1);
+        v4 = ~FindNearby_i(0, 10, _Gold_Coin, v0::1);
+        v5 = ~GetCoord(item);
+        if ((~GetHour() >= 15) or (~GetHour() <= 3)) {
+            Foreach v8 in v4 {
+                v9 = ~GetCoord(v8);
+                if ((v9::1 <= v3::1) and ((v9::1 >= (v3::1 - 5)) and ((v9::2 <= (v3::2 + 8)) and (v9::2 >= (v3::2 - 8))))) {
+                    ClearItemFlag_i(_OkayToTake_i, v8);
+                }
+            }
+        }
+        v10 = << byte(85), 1548 >>;
+        v11 = << byte(70), 0, byte(39), 2, byte(77), byte(11), 65535, 28, v10 >>;
+        v12 = << byte(70), 0, byte(39), 1, byte(77), byte(11), 65535, 28, byte(39), 1, v10 >>;
+        v13 = << byte(70), 0, byte(39), 1, byte(77), byte(11), 65535, 14, byte(39), 1, byte(77), byte(11), 65535, 14, v10 >>;
+        v14 = << byte(70), 0, byte(39), 1, byte(77), byte(11), 65535, 28, v10 >>;
+        v15 = << byte(70), 0, byte(77), byte(11), 65535, 28, byte(39), 2, v10 >>;
+        v16 = << byte(39), 2, v11 >>;
+        v17 = << byte(70), 0, byte(77), byte(39), 2, byte(77), byte(11), 65532, 14, v10 >>;
+        v18 = << byte(70), 0, byte(77), byte(11), 65535, 15, byte(39), 7, byte(77), byte(11), 65535, 14, v10 >>;
+        v19 = << byte(39), 1, v12 >>;
+        v20 = << byte(39), 1, v13 >>;
+        v21 = << byte(39), 1, v14 >>;
+        v22 = << byte(39), 1, v15 >>;
+        v23 = << byte(70), 0, byte(39), 1, byte(77), byte(11), 65535, 28, byte(39), 1, byte(80), byte(11), 65535, 2, byte(78), byte(11), 65535, 2, v10 >>;
+        v24 = 0;
+        Foreach v27 in v1 {
+            v24 = (v24 + 1);
+            if (v2 = v24) {
+                v28 = ~rndRange(3, 1);
+                if (v28 = 1) {
+                    v29 = v11;
+                }
+                if (v28 = 2) {
+                    v29 = v12;
+                }
+                if (v28 = 3) {
+                    v29 = v13;
+                }
+                if (v28 = 4) {
+                    v29 = v14;
+                }
+                if (v28 = 5) {
+                    v29 = v15;
+                }
+            } else {
+                v30 = ~rndRange(8, 1);
+                if (v30 = 1) {
+                    v29 = v16;
+                }
+                if (v30 = 2) {
+                    v29 = v17;
+                }
+                if (v30 = 3) {
+                    v29 = v18;
+                }
+                if (v30 = 4) {
+                    v29 = v19;
+                }
+                if (v30 = 5) {
+                    v29 = v20;
+                }
+                if (v30 = 6) {
+                    v29 = v21;
+                }
+                if (v30 = 7) {
+                    v29 = v22;
+                }
+                if (v30 = 8) {
+                    v29 = v23;
+                }
+            }
+            Kernel_resetRef(v27);
+            v31 = ~PostAction(v29, v27);
+        }
+    }
+}

@@ -1,0 +1,19 @@
+Routine LightStuff accepts a0 #locals(9) #uses(LightSource, Torch, LampPost) {
+    if (event = _Trigger) {
+        event = 1;
+        Sfx(28);
+        v0 = ~GetQuality(item);
+        v1 = ~FindNearby_i(0, v0, _Light_Source, item);
+        Foreach v4 in v1 {
+            LightSource(v4);
+        }
+        v1 = ~FindNearby_i(0, v0, _Torch, item);
+        Foreach v4 in v1 {
+            Torch(v4);
+        }
+        v1 = ~FindNearby_i(0, v0, _Lamp_Post, item);
+        Foreach v4 in v1 {
+            LampPost(v4);
+        }
+    }
+}

@@ -1,0 +1,26 @@
+Routine BargeUsable_i accepts a0 #locals(4) #uses(~BargeType_i, LaunchCarpet_i, Cart_028C, SailFerry_i, LaunchShip_i) {
+    v0 = ~GetBarge_i(item);
+    if v0 {
+        v1 = ~BargeType_i(item);
+        if (v1 = 840) {
+            LaunchCarpet_i(v0);
+        }
+        if (v1 = 652) {
+            Cart_028C(item);
+        }
+        if (v1 = 199) {
+            v2 = ~FindNearby_i(0, 25, _The_Ferryman_155, _Avatar);
+            if v2 {
+                if (~GetBarge_i(v2) = v0) && (~GetItemFlag_i(20, _Avatar) = v2) {
+                    SailFerry_i(v0);
+                    ClearItemFlag_i(20, _Avatar);
+                }
+            } else {
+                v3 = ~GetItemFlag_i(20, _Avatar);
+                if v3 {
+                    LaunchShip_i(v3);
+                }
+            }
+        }
+    }
+}

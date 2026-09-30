@@ -1,0 +1,33 @@
+Routine BakeBreadEgg_i accepts a0 #locals(6) #uses(MemberBarks_i) {
+    if (event = _Trigger) {
+        v0 = ~FindNearby_i(0, 0, _Dough, item);
+        if v0 {
+            v1 = ~PostInFuture(60, << _aNO_HALT_i, _aUSABLE_i, #BakeBreadEgg_i >>, v0);
+            if (~rndRange(2, 1) = 1) {
+                MemberBarks_i("@Do not over cook it!@");
+            }
+        }
+    }
+    if (event = _Posted_i) {
+        v2 = ~GetCoord(item);
+        v3 = ~FindNearby_i(0, 2, _Baking_Hearth, item);
+        if (~ListSize_i(v3) > 0) {
+            Item_destroy(item);
+            v4 = ~Item_create(_Food_Item);
+            if v4 {
+                SetItemFlag_i(_IsTemporary_i, v4);
+                SetFrame(0, item);
+                v1 = ~PopToMap(v2);
+                if v1 {
+                    v5 = ~rndRange(3, 1);
+                    if (v5 = 1) {
+                        MemberBarks_i("@I believe the bread is ready.@");
+                    }
+                    if (v5 = 2) {
+                        MemberBarks_i("@Mmm... Smells good.@");
+                    }
+                }
+            }
+        }
+    }
+}

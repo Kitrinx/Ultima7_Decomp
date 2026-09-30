@@ -1,0 +1,17 @@
+Routine BeginGolemWaking_i accepts a0 #locals(6) {
+    flag(806) = false;
+    v0 = ~FindNearby_i(8, 40, _Golem, _Avatar);
+    v1 = false;
+    Foreach v4 in v0 {
+        if ~GetContents(4, 243, _Scroll, v4) {
+            v1 = v4;
+        }
+        if ~GetContents(4, 244, _Scroll, v4) {
+            v1 = v4;
+        }
+    }
+    if v1 {
+        SetFrame(29, v1);
+    }
+    v5 = ~PostInFuture(10, << _aNO_HALT_i, _aUSABLE_i, #WakeGolem_i >>, _Avatar);
+}

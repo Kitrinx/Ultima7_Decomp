@@ -1,0 +1,319 @@
+Routine IsleOfFireCreatureEgg_i accepts a0 #locals(30) #uses(MakeRoomForType_i, Dragon) {
+    if (event = _Trigger) {
+        v0 = ~GetQuality(item);
+        if (v0 = 1) && not flag(750) {
+            v1 = false;
+            v2 = ~FindNearby_i(8, 80, _Mage_154, item);
+            Foreach v5 in v2 {
+                if ~GetContents(4, 240, _Scroll, v5) {
+                    v1 = v5;
+                }
+            }
+            if not v1 {
+                v6 = ~FindNearest_i(1, _Mage_154, item);
+                if not v6 {
+                    if not ~canExistAt(16, _Mage_154, ~GetCoord(item)) {
+                        MakeRoomForType_i(16, _Mage_154, item);
+                    }
+                    v7 = (~GetCoord(item) & (65177 & 0));
+                    v8 = ~FindNearby_i(16, 0, _Egg, v7);
+                    v9 = ~PostAction(byte(72), v8);
+                    v9 = ~PostAction(<< _aFINISH_i, _aUSABLE_i, #IsleOfFireCreatureEgg_i >>, item);
+                } else {
+                    v10 = ~rndRange(6, 1);
+                    if (v10 = 1) {
+                        SetWorkType(_Sleep, v6);
+                    }
+                    if ((v10 >= 2) and (v10 <= 4)) {
+                        SetWorkType(_Loiter, v6);
+                    }
+                    if (v10 >= 5) {
+                        SetWorkType(_MajorSit, v6);
+                    }
+                    v11 = ~Item_create(_Scroll);
+                    SetItemFlag_i(_IsTemporary_i, v11);
+                    v9 = ~SetQuality(240, v11);
+                    SetFrame(4, v11);
+                    v9 = ~PopToNPC(v6);
+                    v12 = ~PostInFuture(3, << _aFINISH_i, _aNO_HALT_i, _aUSABLE_i, #WatchForDeath_i >>, v11);
+                }
+            }
+        }
+        if (v0 = 2) && not flag(751) {
+            v1 = false;
+            v2 = ~FindNearby_i(8, 80, _Dragon, item);
+            Foreach v5 in v2 {
+                if ~GetContents(4, 241, _Scroll, v5) {
+                    v1 = v5;
+                }
+            }
+            if not v1 {
+                v6 = ~FindNearest_i(1, _Dragon, item);
+                if not v6 {
+                    if not ~canExistAt(19, _Dragon, ~GetCoord(item)) {
+                        MakeRoomForType_i(19, _Dragon, item);
+                    }
+                    v7 = (~GetCoord(item) & (65177 & 0));
+                    v8 = ~FindNearby_i(16, 0, _Egg, v7);
+                    v9 = ~PostAction(byte(72), v8);
+                    v9 = ~PostAction(<< _aFINISH_i, _aUSABLE_i, #IsleOfFireCreatureEgg_i >>, item);
+                } else {
+                    SetWorkType(_Wait, v6);
+                    SetFrame(19, v6);
+                    SetItemFlag_i(_IsTemporary_i, v6);
+                    v15 = ~Item_create(_Scroll);
+                    SetItemFlag_i(_IsTemporary_i, v15);
+                    v9 = ~SetQuality(241, v15);
+                    SetFrame(4, v15);
+                    v9 = ~PopToNPC(v6);
+                    v12 = ~PostInFuture(3, << _aFINISH_i, _aNO_HALT_i, _aUSABLE_i, #WatchForDeath_i >>, v15);
+                }
+            }
+        }
+        if (v0 = 4) && (not flag(753) and flag(795)) {
+            v1 = false;
+            v2 = ~FindNearby_i(8, 80, _Golem, item);
+            Foreach v5 in v2 {
+                if ~GetContents(4, 243, _Scroll, v5) {
+                    v1 = v5;
+                }
+            }
+            if not v1 {
+                v6 = ~FindNearest_i(1, _Golem, item);
+                if not v6 {
+                    if not ~canExistAt(16, _Golem, ~GetCoord(item)) {
+                        MakeRoomForType_i(16, _Golem, item);
+                    }
+                    v7 = (~GetCoord(item) & (65177 & 0));
+                    v8 = ~FindNearby_i(16, 0, _Egg, v7);
+                    v9 = ~PostAction(byte(72), v8);
+                    v9 = ~PostAction(<< _aFINISH_i, _aUSABLE_i, #IsleOfFireCreatureEgg_i >>, item);
+                } else {
+                    SetFrame(16, v6);
+                    SetItemFlag_i(_IsTemporary_i, v6);
+                    if (flag(795) and (not flag(796) and not flag(806))) {
+                        SetWorkType(_Loiter, v6);
+                    } else {
+                        SetWorkType(_Wait, v6);
+                    }
+                    Npc_setAlignment(_Neutral, v6);
+                    v18 = ~Item_create(_Scroll);
+                    SetItemFlag_i(_IsTemporary_i, v18);
+                    v9 = ~SetQuality(243, v18);
+                    SetFrame(4, v18);
+                    v9 = ~PopToNPC(v6);
+                    v12 = ~PostInFuture(3, << _aFINISH_i, _aNO_HALT_i, _aUSABLE_i, #WatchForDeath_i >>, v18);
+                    v9 = ~PostAction(<< _aFACE_i, _West >>, v6);
+                }
+            }
+        }
+        if (v0 = 5) && (not flag(754) and not flag(796)) {
+            v1 = false;
+            v2 = ~FindNearby_i(8, 80, _Golem, item);
+            Foreach v5 in v2 {
+                if ~GetContents(4, 244, _Scroll, v5) {
+                    v1 = v5;
+                }
+            }
+            if not v1 {
+                v6 = ~FindNearest_i(1, _Golem, item);
+                if not v6 {
+                    if not ~canExistAt(16, _Golem, ~GetCoord(item)) {
+                        MakeRoomForType_i(16, _Golem, item);
+                    }
+                    v7 = (~GetCoord(item) & (65177 & 0));
+                    v8 = ~FindNearby_i(16, 0, _Egg, v7);
+                    v9 = ~PostAction(byte(72), v8);
+                    v9 = ~PostAction(<< _aFINISH_i, _aUSABLE_i, #IsleOfFireCreatureEgg_i >>, item);
+                } else {
+                    SetFrame(16, v6);
+                    if (flag(795) and (not flag(796) and not flag(806))) {
+                        SetWorkType(_Loiter, v6);
+                    } else {
+                        SetWorkType(_Wait, v6);
+                    }
+                    Npc_setAlignment(_Neutral, v6);
+                    v18 = ~Item_create(_Scroll);
+                    SetItemFlag_i(_IsTemporary_i, v18);
+                    v9 = ~SetQuality(244, v18);
+                    SetFrame(4, v18);
+                    v9 = ~PopToNPC(v6);
+                    v12 = ~PostInFuture(3, << _aFINISH_i, _aNO_HALT_i, _aUSABLE_i, #WatchForDeath_i >>, v18);
+                    v9 = ~PostAction(<< _aFACE_i, _East >>, v6);
+                }
+            }
+        }
+        if (v0 = 6) {
+            v21 = ~FindNearby_i(8, 10, 65535, item);
+            Foreach v24 in v21 {
+                if (~Item_getType(v24) = _Dragon) && ~GetContents(4, 241, _Scroll, v24) {
+                    Dragon(item);
+                }
+            }
+        }
+        v25 = false;
+        v26 = false;
+        if (v0 = 7) && not flag(755) {
+            v25 = 245;
+        }
+        if (v0 = 8) && not flag(756) {
+            v25 = 246;
+            v26 = 4;
+        }
+        if (v0 = 9) && not flag(757) {
+            v25 = 247;
+            v26 = 4;
+        }
+        if (v0 = 10) && not flag(758) {
+            v25 = 248;
+        }
+        if (v0 = 11) && not flag(759) {
+            v25 = 249;
+            v26 = 4;
+        }
+        if (v0 = 12) && not flag(760) {
+            v25 = 250;
+        }
+        if (v0 = 13) && not flag(761) {
+            v25 = 251;
+        }
+        if (v0 = 14) && not flag(762) {
+            v25 = 252;
+        }
+        if (v0 = 15) && not flag(763) {
+            v25 = 253;
+        }
+        if (v0 = 16) && not flag(764) {
+            v25 = 254;
+        }
+        if v25 {
+            v2 = ~FindNearby_i(4, 80, _Golem, item);
+            Foreach v5 in v2 {
+                if ~GetContents(4, v25, _Scroll, v5) {
+                    v1 = v5;
+                }
+            }
+            if not v1 {
+                v6 = ~FindNearest_i(1, _Golem, item);
+                if not v6 {
+                    if not ~canExistAt(16, _Golem, ~GetCoord(item)) {
+                        MakeRoomForType_i(16, _Golem, item);
+                    }
+                    v7 = (~GetCoord(item) & (65177 & 0));
+                    v8 = ~FindNearby_i(16, 0, _Egg, v7);
+                    v9 = ~PostAction(byte(72), v8);
+                    v9 = ~PostAction(<< _aFINISH_i, _aUSABLE_i, #IsleOfFireCreatureEgg_i >>, item);
+                } else {
+                    SetFrame(0, v6);
+                    SetItemFlag_i(_IsTemporary_i, v6);
+                    if v26 {
+                        v29 = ~PostAction(<< _aFACE_i, v26 >>, v6);
+                    }
+                    Npc_setAlignment(_Evil, v6);
+                    v18 = ~Item_create(_Scroll);
+                    SetItemFlag_i(_IsTemporary_i, v18);
+                    v9 = ~SetQuality(v25, v18);
+                    SetFrame(4, v18);
+                    v9 = ~PopToNPC(v6);
+                    v12 = ~PostInFuture(3, << _aFINISH_i, _aNO_HALT_i, _aUSABLE_i, #WatchForDeath_i >>, v18);
+                }
+            }
+        }
+    }
+}
+
+Routine MakeRoomForType_i accepts a0, a1, a2 #locals(18) {
+    v3 = 4;
+    v4 = 0;
+    v5 = ~GetCoord(item);
+    v6 = v5;
+    if (v1 = 154) {
+        v7 = ~FindNearby_i(0, 0, 65535, item);
+        Foreach v10 in v7 {
+            v11 = ~GetCoord(v10);
+            if (v11::3 < 5) {
+                v12 = ~Item_push(v10);
+                v13 = ~rndRange(3, 1);
+                if (v13 = 1) {
+                    v11::1 = (v11::1 - 1);
+                }
+                if (v13 = 2) {
+                    v11::2 = (v11::2 - 1);
+                }
+                if (v13 = 3) {
+                    v11::1 = (v11::1 - 1);
+                    v11::2 = (v11::2 - 1);
+                }
+                v12 = ~PopToMap(v11);
+            }
+        }
+    }
+    if (v1 = 1015) {
+        v7 = ~FindNearby_i(0, 1, 65535, item);
+        Foreach v10 in v7 {
+            v11 = ~GetCoord(v10);
+            if (v11::3 < 5) {
+                v12 = ~Item_push(v10);
+                if ((v11::1 = v5::1) and (v11::2 = v5::2)) {
+                    v11::1 = (v11::1 - 2);
+                    v11::2 = (v11::2 - 2);
+                } else {
+                    if ((v11::1 <= v5::1) and (v11::2 <= v5::2)) {
+                        v11::1 = (v11::1 - 1);
+                        v11::2 = (v11::2 - 1);
+                    }
+                }
+                v12 = ~PopToMap(v11);
+            }
+        }
+    }
+    if (v1 = 504) {
+        v3 = 6;
+        v4 = 2;
+        v7 = ~FindNearby_i(0, 3, 65535, item);
+        Foreach v10 in v7 {
+            v11 = ~GetCoord(v10);
+            if ((v11::3 < 5) and (not (~Item_getType(v10) = _Rock_331) and not (~Item_getType(v10) = _Dust_224))) {
+                if ((v11::1 = v5::1) and (v11::2 = v5::2)) {
+                    v11::1 = (v11::1 - 4);
+                    v11::2 = (v11::2 - 4);
+                } else {
+                    if ((v11::1 <= v5::1) and (v11::2 <= v5::2)) {
+                        v12 = ~Item_push(v10);
+                        v18 = (4 - ~GetDist(item, v10));
+                        v11::1 = (v11::1 - v18);
+                        v11::2 = (v11::2 - v18);
+                        v12 = ~PopToMap(v11);
+                    }
+                }
+            }
+        }
+        v6::1 = (v5::1 - 2);
+        v6::2 = (v5::2 - 2);
+    }
+    While not ~canExistAt(v0, v1, v5) {
+        v4 = (v4 + 1);
+        v7 = ~FindNearby_i(0, v4, 65535, v6);
+        Foreach v10 in v7 {
+            v11 = ~GetCoord(v10);
+            if ((v11::1 >= v5::1) and ((v11::2 >= v5::2) and (v11::3 < 5))) {
+                v12 = ~Item_push(v10);
+                if ((v11::1 = v5::1) or (v11::2 = v5::2)) {
+                    if (v11::1 = v5::1) {
+                        v11::1 = (v11::1 + 1);
+                    }
+                    if (v11::2 = v5::2) {
+                        v11::2 = (v11::2 + 1);
+                    }
+                } else {
+                    v11::1 = (v11::1 + 1);
+                    v11::2 = (v11::2 + 1);
+                }
+                v12 = ~PopToMap(v11);
+            }
+        }
+        if (v4 = v3) {
+            break;
+        }
+    }
+}

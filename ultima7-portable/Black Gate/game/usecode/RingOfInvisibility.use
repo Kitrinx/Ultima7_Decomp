@@ -1,0 +1,18 @@
+Routine RingOfInvisibility accepts a0 #locals(1) {
+    if ((event = _Equip) or (event = _Unequip)) {
+        v0 = ~Item_getContainer(item);
+        While ((v0 <> 0) and not ~Item_isNpc(v0)) {
+            v0 = ~Item_getContainer(v0);
+        }
+        if (v0 = 0) {
+            FlashMouse_i(0);
+            return;
+        }
+    }
+    if (event = _Equip) {
+        SetItemFlag_i(_Invisible, v0);
+    }
+    if (event = _Unequip) {
+        ClearItemFlag_i(_Invisible, v0);
+    }
+}

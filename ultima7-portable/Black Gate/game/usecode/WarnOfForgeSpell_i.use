@@ -1,0 +1,16 @@
+Routine WarnOfForgeSpell_i accepts a0 #locals(2) {
+    SetSpeaker(1, _Wilbur);
+    [A look of grim determination comes to Erethian's lined features. He pushes up his sleeves like a blacksmith about to shoe a high strung horse,];
+    ["Careful, now." The old mage says solicitously, "The powers I am about to release are capricious and fickle. I wouldst not like to see something untoward happen to thee."];
+    if $TetraGone {
+        [You feel a great surge in the ether as the mage draws power from his surroundings.*];
+    } else {
+        [You feel a great surge in the ether, which seems to temporarily stabilize it in this area.*];
+    }
+    CloseSpeaker(_Wilbur);
+    v0 = ~PostAction(<< _aWAIT_i, 2, _aBEND_FRAME_i, _aWAIT_i, 2, _aKNEEL_FRAME_i, _aWAIT_i, 9, _aBEND_FRAME_i, _aWAIT_i, 1, _aSTAND_FRAME_i, _aWAIT_i, 1, _aOUT_FRAME_i, _aWAIT_i, 1, _aUP_FRAME_i, _aUSABLE_i, #ConjureForge_i >>, item);
+    v1 = ~GetCoord(item);
+    createSprite(65535, 0, 0, 0, v1::2, v1::1, 17);
+    createSprite(65535, 0, 0, 0, v1::2, v1::1, 7);
+    Sfx(62);
+}

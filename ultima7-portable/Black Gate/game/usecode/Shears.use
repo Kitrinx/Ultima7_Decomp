@@ -1,0 +1,12 @@
+Routine Shears accepts a0 #locals(2) #uses(MemberSays_i) {
+    if (event = _Action) {
+        v0 = ~GetTarget();
+        v1 = ~Item_getType(v0::1);
+        if (v1 = 851) {
+            Item_setType(_Bandage, v0);
+            SetFrame(~rndRange(2, 0), v0);
+        } else {
+            MemberSays_i("@Might not those come in handy for cutting cloth into bandages?@");
+        }
+    }
+}

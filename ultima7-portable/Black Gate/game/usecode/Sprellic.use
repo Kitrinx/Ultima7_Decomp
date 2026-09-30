@@ -1,0 +1,206 @@
+Routine Sprellic accepts a0 #locals(8) #uses(~LordOrLady, ~AskYesNo, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Sprellic);
+        v0 = ~LordOrLady();
+        v1 = ~IsMedallionOn_i();
+        v2 = false;
+        v3 = ~IsDead(~NPCToItem_i(_Vokes));
+        v4 = ~IsDead(~NPCToItem_i(_Syria));
+        v5 = ~IsDead(~NPCToItem_i(_Timmons));
+        if (v3 and (v4 and v5)) {
+            v2 = true;
+        }
+        if (flag(360) and not flag(362)) {
+            TurnOn("I have false flag");
+        }
+        if (v2 or flag(362)) {
+            TurnOn("thou art safe now");
+            TurnOff("I have false flag");
+        }
+        TurnOn(<< "name", "job", "bye" >>);
+        if not $MET_SPRELLIC {
+            [You see a scrawny and timid-looking man who eyes you fearfully.];
+            ["Oh, my!" he cries. "'Tis really the Avatar this time! Please do not hurt me, Avatar!"];
+            $MET_SPRELLIC = true;
+            TurnOn("this time");
+        } else {
+            ["Greetings again, <v0>," says Sprellic.];
+        }
+        if flag(390) && not flag(368) && not flag(362) {
+            TurnOn("champion");
+        }
+        converse {
+            key ("name") {
+                ["My name is Sprellic."];
+                TurnOff("name");
+            }
+            key ("job") {
+                ["I am the proprietor of the Bunk and Stool here in Jhelom."];
+                TurnOn(<< "Bunk and Stool", "Jhelom" >>);
+            }
+            key ("Bunk and Stool") {
+                ["It is the local inn where all the fighters from the Library of Scars come to drink. They would wreck the place every night if not for Ophelia and Daphne."];
+                if not (flag(362) or v2) {
+                    ["But that does not matter for soon I will be dead."];
+                    TurnOn("dead?");
+                }
+                TurnOff("Bunk and Stool");
+                TurnOn(<< "Library of Scars", "Ophelia", "Daphne" >>);
+            }
+            key ("Jhelom") {
+                ["This is a town of fighters who pass their time fighting each other in bloody duels. It is no place for me. I should never have left Minoc!"];
+                TurnOff("Jhelom");
+            }
+            key ("Library of Scars") {
+                ["It is the club of fighters run by Master De Snel! Second home to the fiercest and most ruthless fighters in all of Britannia."];
+                TurnOff("Library of Scars");
+            }
+            key ("Ophelia") {
+                ["Ophelia is one of my barmaids. She is gorgeous. If Daphne cannot handle our patrons when they become unruly, Ophelia will simply charm them."];
+                TurnOff("Ophelia");
+            }
+            key ("Daphne") {
+                ["Daphne is one of my barmaids. She is, ahem, rather large. If Ophelia cannot charm our patrons when they become unruly, Daphne wrestles them to the ground."];
+                TurnOff("Daphne");
+            }
+            key ("dead?", "this time") {
+                ["'Tis a long story. I shall probably be dead before I can finish it."];
+                TurnOff(<< "this time", "dead?" >>);
+                TurnOn("story");
+            }
+            key ("story") {
+                ["My tale is a strange one. It may disturb and puzzle thee. Art thou certain thou wouldst like to hear it?"];
+                v6 = ~AskYesNo();
+                if not v6 {
+                    ["Well, then I hope I was of some assistance to thee. Farewell forever, <v0>."*];
+                    terminate;
+                } else {
+                    ["It all started the previous evening. I had given Ophelia and Daphne the evening off. A stranger had come to mine inn... A very odd stranger.];
+                    ["He... he claimed he was the -Avatar-!];
+                    ["...And I believed him, which shows thee how gullible I am!"];
+                    TurnOn("stranger");
+                }
+                TurnOff("story");
+            }
+            key ("stranger") {
+                ["His eccentricity seemed to be surpassed only by his wealth. He booked both rooms in the inn so that he could try each bed and decide for himself which one was the most comfortable. As for food, he was voracious.];
+                if v1 {
+                    ["No offense, but he was also a member of The Fellowship!"];
+                } else {
+                    ["He was a member of The Fellowship, too!"];
+                }
+                TurnOff("stranger");
+                TurnOn(<< "eccentricity", "food" >>);
+            }
+            key ("eccentricity") {
+                ["I fear that this stranger was not who he claimed to be at all. I was a victim of a great and terrible deception that was perpetrated upon me."];
+                TurnOff("eccentricity");
+            }
+            key ("food") {
+                ["This stranger ordered one of every kind of food and drink on the menu. So if he ever wanted anything, it would be right there to eat. I was cooking for hours. But then it got worse. He went to bed."];
+                TurnOff("food");
+                TurnOn(<< "cooking", "bed" >>);
+            }
+            key ("cooking") {
+                ["Of course most of the food he left was uneaten! I had to give it away once it started to spoil!"];
+                TurnOff("cooking");
+            }
+            key ("bed") {
+                ["After he went to bed, he complained that he was too cold. I brought him more and more blankets, but it was not enough. Finally, he had every blanket in the inn. And he was still cold!"];
+                TurnOff("bed");
+                TurnOn("cold");
+            }
+            key ("cold") {
+                ["In desperation I ran down the street. It was the middle of the night. All of the shops were closed. The only thing I could find was some sort of old tapestry hanging on a wall. So I took it down."];
+                TurnOff("cold");
+                TurnOn(<< "night", "tapestry" >>);
+            }
+            key ("night") {
+                ["Actually, now as I recall being out in the night air, it was a quite tolerable evening. Alas, I was oblivious to little else but the prospect of earning a goodly sum in the service of the stranger. Woe is me!"];
+                TurnOff("night");
+            }
+            key ("tapestry") {
+                ["The next thing I remember there was an angry woman chasing after me. For some reason she wanted to kill me! I managed to get away from her and get back to the inn and cover the stranger with the tapestry. Finally he fell asleep."];
+                TurnOff("tapestry");
+                TurnOn(<< "angry woman", "asleep" >>);
+            }
+            key ("angry woman") {
+                ["Actually, I had seen this angry woman before. She would enter mine establishment upon occasion. Unfortunately, this was our first formal acquaintance."];
+                TurnOff("angry woman");
+            }
+            key ("asleep") {
+                ["I also fell asleep, only I slept late. When I awoke the guest was gone. He had not paid his bill and had taken all the blankets, even the tapestry. Before I could go look for him I had a visitor."];
+                TurnOff("asleep");
+                TurnOn(<< "gone", "visitor" >>);
+            }
+            key ("gone") {
+                ["As I have said, I was rooked by a professional. A Master Criminal, no doubt -- and one who is still at large!"];
+                TurnOff("gone");
+            }
+            key ("visitor") {
+                ["It was the woman who had chased me the night before. Her name was Syria. She said I had stolen the honor flag from the wall of the Library of Scars. She also challenged me to a duel to the death unless I gave it back. And she is much bigger than I! When I tried to explain that I could not give it back, she hit me. It hurt. A lot!"];
+                TurnOff("visitor");
+                TurnOn(<< "hit", "duel" >>);
+            }
+            key ("hit") {
+                ["I will say this of the Lady Syria. She is quite beautiful when she is angry... At least, the visions of her that swam through mine head after she had hit me were quite beautiful. Tragically, I awoke."];
+                TurnOff("hit");
+            }
+            key ("duel") {
+                ["Later that day I ran into a man named Vokes. He is a fighter at the Library of Scars. He asked me to return the honor flag and when I tried to tell him I could not, he hit me. Then he challenged me to a duel to the death to be fought right after my duel with Syria.];
+                ["After Vokes left, I encountered a man named Timmons. He asked me to return the honor flag to the Library of Scars. I told him I could not and he also challenged me to a duel to the death. I told him I was busy, but he scheduled the challenge for right after my duel with Vokes.];
+                ["Timmons, Vokes and Syria are the three toughest fighters in Jhelom. I could not hope to survive against one of them, let alone all three. The mysterious guest and the honor flag are nowhere to be found. Even now my barmaids are taking bets on the manner of my demise!"];
+                TurnOff("duel");
+                TurnOn(<< "Timmons", "Vokes", "Syria", "demise" >>);
+            }
+            key ("Timmons") {
+                ["Timmons has come to Jhelom only recently. I can tell thee nothing more of him."];
+                TurnOff("Timmons");
+            }
+            key ("Vokes") {
+                ["He is a fearless warrior, who cherishes any opportunity for combat. Beware of him."];
+                TurnOff("Vokes");
+            }
+            key ("Syria") {
+                ["She is not as bad as she may appear to be. No doubt that woman has a temper. But I am sure she is quite nice once thou hast gotten the chance to know her. If not for these sad circumstances, we might have gotten the chance to get to know each other better."];
+                TurnOff("Syria");
+            }
+            key ("demise") {
+                ["Mine only hope for survival is to find a champion who could stand up to the fiercest fighters in Jhelom."];
+                flag(390) = true;
+                TurnOff("demise");
+                TurnOn("champion");
+            }
+            key ("champion") {
+                ["Wouldst thou be my champion, Avatar?"];
+                v7 = ~AskYesNo();
+                if v7 {
+                    [Sprellic falls to his knees before you in gratitude. "Avatar, thou hast saved my life! I cannot thank thee enough!"];
+                    flag(368) = true;
+                } else {
+                    ["Oh, well. I had no choice but to ask."];
+                }
+                TurnOff("champion");
+            }
+            key ("thou art safe now") {
+                [You tell Sprellic that the situation has been resolved and how it was done.];
+                [Sprellic practically kisses your feet.];
+                ["How can I ever thank thee? Thou art the most noble person I have ever met! I shalt be forever in thy debt! I thank thee!"];
+                TurnOff("thou art safe now");
+            }
+            key ("I have false flag") {
+                [You tell Sprellic that Kliftin made you a false flag.];
+                ["How ingenious! Please! Deliver it to Syria as soon as thou art able! And I thank thee for thy trouble in helping me!"];
+                TurnOff("I have false flag");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["Good day to thee, Avatar."];
+    }
+    if (event = _Bark) {
+        BarkAboutWork_i(_Sprellic);
+    }
+}

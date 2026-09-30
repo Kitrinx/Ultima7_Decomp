@@ -1,0 +1,292 @@
+#	MAINMENU.EXE, the Black Gate menu, credits and installer front end
+#
+#	Borland C++ 2.0 with its MAKE, and Turbo Assembler 2.51.  Run MAKE in
+#	this directory, the build directory; U7's tree sits beside it as ..\bg,
+#	and the modules INTRO or ENDGAME also link as ..\shared.
+#
+#		make			compiler in C:\BORLANDC
+#		make -DBC=C:\BC20	compiler elsewhere
+#
+#	Origin built MAINMENU from a BC 2.0 IDE project that also took modules
+#	from U7's tree.  This makefile compiles the same objects: the program's
+#	own modules see its headers first, U7's modules see U7's.  Each list of
+#	objects shares one set of options, which its name spells: MM_O1Pd is
+#	-O -1 -P -d in this directory; b0 is -b-, BG_ lists are U7 modules and
+#	SH_ lists shared ones.
+
+.autodepend
+
+!if !$d(BC)
+BC = C:\BORLANDC
+!endif
+
+CC = $(BC)\bcc +MAINMENU.CFG
+CU7 = $(BC)\bcc +SHARED.CFG
+AS = tasm
+
+all: MAINMENU.CFG SHARED.CFG MAINMENU.EXE
+
+# Options for the program's own modules; the compiler's headers come last.
+# One directory a line: BCC hangs on a long -I line.
+MAINMENU.CFG: MAKEFILE
+	copy &&|
+-c -mm
+-I.
+-Imain
+-Izevent
+-Iinclude
+-I..\shared
+-I..\shared\main
+-I..\shared\main\mem
+-I..\shared\zevent
+-I..\bg\common
+-I..\bg\inter
+-I..\bg\main
+-I..\bg\main\combat
+-I..\bg\main\mem
+-I..\bg\main\palette
+-I..\bg\main\schedule
+-I..\bg\main\video
+-I..\bg\main\xmm
+-I..\bg\sound
+-I..\bg\sound\drv
+-I..\bg\zevent
+-I..\bg\include
+-I$(BC)\include
+| MAINMENU.CFG
+
+# Options for U7's modules: U7's headers first.
+SHARED.CFG: MAKEFILE
+	copy &&|
+-c -mm
+-I..\bg\common
+-I..\bg\main
+-I..\bg\main\mem
+-I..\bg\main\video
+-I..\bg\main\xmm
+-I..\bg\sound
+-I..\bg\zevent
+-I..\bg\inter
+-I..\bg\main\combat
+-I..\bg\main\palette
+-I..\bg\main\schedule
+-I..\bg\sound\drv
+-I..\bg\include
+-I.
+-Imain
+-Izevent
+-Iinclude
+-I$(BC)\include
+| SHARED.CFG
+
+BG_COMMON_O1 = strfmt.obj
+$(BG_COMMON_O1):
+	$(CU7) -O -1 ..\bg\common\$&.c
+
+BG_COMMON_O1P = flex.obj
+$(BG_COMMON_O1P):
+	$(CU7) -O -1 -P ..\bg\common\$&.c
+
+BG_COMMON_O1Pd = easyfile.obj
+$(BG_COMMON_O1Pd):
+	$(CU7) -O -1 -P -d ..\bg\common\$&.c
+
+BG_COMMON_ASM = lstrtok.obj
+$(BG_COMMON_ASM):
+	$(AS) /mx ..\bg\common\$&.asm
+
+BG_MAIN_O1 = oops.obj rmhook.obj videomd.obj
+$(BG_MAIN_O1):
+	$(CU7) -O -1 ..\bg\main\$&.c
+
+BG_MAIN_DOS_ASM = addrptr.obj delay.obj doscreat.obj dosfile.obj dosread.obj \
+	dosseek.obj doswrite.obj memmove.obj ptraddr.obj
+$(BG_MAIN_DOS_ASM):
+	$(AS) /mx ..\bg\main\dos\$&.asm
+
+BG_MAIN_MEM_OG = drawbuf.obj inthook.obj memapi.obj memhook.obj memmgr.obj \
+	memstat.obj
+$(BG_MAIN_MEM_OG):
+	$(CU7) -O -G ..\bg\main\mem\$&.c
+
+BG_MAIN_MEM_OGP = screen.obj
+$(BG_MAIN_MEM_OGP):
+	$(CU7) -O -G -P ..\bg\main\mem\$&.c
+
+BG_MAIN_MEM_ASM = a20gate.obj
+$(BG_MAIN_MEM_ASM):
+	$(AS) /mx ..\bg\main\mem\$&.asm
+
+BG_MAIN_VIDEO_OG = colormap.obj vidmode.obj
+$(BG_MAIN_VIDEO_OG):
+	$(CU7) -O -G ..\bg\main\video\$&.c
+
+BG_MAIN_VIDEO_OGP = colorreg.obj modecolr.obj
+$(BG_MAIN_VIDEO_OGP):
+	$(CU7) -O -G -P ..\bg\main\video\$&.c
+
+BG_MAIN_VIDEO_ASM = crtport.obj vretrace.obj
+$(BG_MAIN_VIDEO_ASM):
+	$(AS) /mx ..\bg\main\video\$&.asm
+
+BG_MAIN_XMM_OG = vooalloc.obj xmmcheck.obj xmminit.obj xmmstale.obj
+$(BG_MAIN_XMM_OG):
+	$(CU7) -O -G ..\bg\main\xmm\$&.c
+
+BG_MAIN_XMM_OGP = shapehgt.obj shapewid.obj
+$(BG_MAIN_XMM_OGP):
+	$(CU7) -O -G -P ..\bg\main\xmm\$&.c
+
+BG_MAIN_XMM_ASM = copyview.obj drawblnd.obj drawfram.obj emscheck.obj \
+	framebnd.obj framecnt.obj restfram.obj restrect.obj rowaddr.obj \
+	savefram.obj saverect.obj xmmblock.obj
+$(BG_MAIN_XMM_ASM):
+	$(AS) /mx ..\bg\main\xmm\$&.asm
+
+BG_SOUND_O1P = cflxcach.obj
+$(BG_SOUND_O1P):
+	$(CU7) -O -1 -P ..\bg\sound\$&.c
+
+BG_SOUND_O1Pdb0 = gsound.obj
+$(BG_SOUND_O1Pdb0):
+	$(CU7) -O -1 -P -d -b- ..\bg\sound\$&.c
+
+BG_SOUND_DRV_ASM = vocirq.obj
+$(BG_SOUND_DRV_ASM):
+	$(AS) /mx ..\bg\sound\drv\$&.asm
+
+BG_ZEVENT_O1P = mevent.obj
+$(BG_ZEVENT_O1P):
+	$(CU7) -O -1 -P ..\bg\zevent\$&.c
+
+BG_ZEVENT_ASM = getfont.obj mouseint.obj sysclk.obj syskey.obj
+$(BG_ZEVENT_ASM):
+	$(AS) /mx ..\bg\zevent\$&.asm
+
+MM_O1P = device.obj dirdelta.obj dlist.obj dosmem.obj flexprn.obj \
+	fontprn.obj install.obj keyqueue.obj menu.obj menuent.obj scroll.obj \
+	shapebnd.obj sounddev.obj textbox.obj textfld.obj textspr.obj timerdev.obj
+$(MM_O1P):
+	$(CC) -O -1 -P $&.c
+
+MM_O1Pd = credits.obj mainmenu.obj
+$(MM_O1Pd):
+	$(CC) -O -1 -P -d $&.c
+
+MM_ASM = cpumode.obj setdac.obj xmsflat.obj
+$(MM_ASM):
+	$(AS) /mx $&.asm
+
+MM_MAIN_O1P = controls.obj
+$(MM_MAIN_O1P):
+	$(CC) -O -1 -P main\$&.c
+
+MM_MAIN_O1Pb0 = chkfile.obj
+$(MM_MAIN_O1Pb0):
+	$(CC) -O -1 -P -b- main\$&.c
+
+MM_MAIN_XMM_ASM = drawtile.obj
+$(MM_MAIN_XMM_ASM):
+	$(AS) /mx main\xmm\$&.asm
+
+MM_SOUND_DRV_O1P = specard.obj
+$(MM_SOUND_DRV_O1P):
+	$(CC) -O -1 -P sound\drv\$&.c
+
+MM_ZEVENT_O1P = cursor.obj dbgfont.obj systimer.obj u7point.obj
+$(MM_ZEVENT_O1P):
+	$(CC) -O -1 -P zevent\$&.c
+
+SH_O1P = fade.obj fadecol.obj fadepal.obj farbuf.obj inttrap.obj \
+	modebyte.obj music.obj rgbpal.obj textfile.obj
+$(SH_O1P):
+	$(CC) -O -1 -P ..\shared\$&.c
+
+SH_ASM = emsinit.obj emsmap.obj flatmode.obj palfade.obj
+$(SH_ASM):
+	$(AS) /mx ..\shared\$&.asm
+
+SH_MAIN_O1P = itable.obj
+$(SH_MAIN_O1P):
+	$(CC) -O -1 -P ..\shared\main\$&.c
+
+SH_MAIN_DOS_ASM = fileread.obj filewrit.obj
+$(SH_MAIN_DOS_ASM):
+	$(AS) /mx ..\shared\main\dos\$&.asm
+
+SH_MAIN_MEM_OGP = errors.obj
+$(SH_MAIN_MEM_OGP):
+	$(CC) -O -G -P ..\shared\main\mem\$&.c
+
+SH_MAIN_XMM_ASM = linear.obj
+$(SH_MAIN_XMM_ASM):
+	$(AS) /mx ..\shared\main\xmm\$&.asm
+
+SH_SOUND_DRV_O1Pd = midiplay.obj
+$(SH_SOUND_DRV_O1Pd):
+	$(CC) -O -1 -P -d ..\shared\sound\drv\$&.c
+
+# The IDE compiled these under their full upper-case paths, which __FILE__
+# keeps.  IDESTUB.BAT puts each source there and writes a stub including it.
+mouse.obj: zevent\mouse.c
+	idestub zevent\mouse.c \U7\ZEVENT MOUSE.C
+	$(CC) -O -1 -P MOUSE.C
+
+specache.obj: sound\specache.c
+	idestub sound\specache.c \U7\SOUND SPECACHE.C
+	$(CC) -O -1 -P SPECACHE.C
+
+# __FILE__ gives these their bare names, so they compile in their own
+# directory, as in U7's build.
+BG_MAIN_XMM_OWN_OG = freexmm.obj xmmhand.obj
+$(BG_MAIN_XMM_OWN_OG):
+	cd ..\bg\main\xmm
+	$(BC)\bcc -c -mm -I..;..\mem;$(BC)\include -n..\..\..\mainmenu -O -G $&.c
+	cd ..\..\..\mainmenu
+
+# VIDMODE.ASM shares vidmode.c's name, so its object stays in its folder.
+main\video\vidmode.obj: main\video\vidmode.asm
+	$(AS) /mx main\video\vidmode.asm, main\video\vidmode.obj
+
+# MAKE limits the length of a rule line, so MAINMENU.EXE depends on one
+# list per directory.
+all_bg_common: $(BG_COMMON_O1) $(BG_COMMON_O1P) $(BG_COMMON_O1Pd) $(BG_COMMON_ASM)
+
+all_bg_main: $(BG_MAIN_O1)
+
+all_bg_main_dos: $(BG_MAIN_DOS_ASM)
+
+all_bg_main_mem: $(BG_MAIN_MEM_OG) $(BG_MAIN_MEM_OGP) $(BG_MAIN_MEM_ASM)
+
+all_bg_main_video: $(BG_MAIN_VIDEO_OG) $(BG_MAIN_VIDEO_OGP) $(BG_MAIN_VIDEO_ASM)
+
+all_bg_main_xmm: $(BG_MAIN_XMM_OG) $(BG_MAIN_XMM_OGP) $(BG_MAIN_XMM_ASM)
+
+all_bg_sound: $(BG_SOUND_O1P) $(BG_SOUND_O1Pdb0)
+
+all_bg_sound_drv: $(BG_SOUND_DRV_ASM)
+
+all_bg_zevent: $(BG_ZEVENT_O1P) $(BG_ZEVENT_ASM)
+
+all_mm: $(MM_O1P) $(MM_O1Pd) $(MM_ASM)
+
+all_mm_main: $(MM_MAIN_O1P) $(MM_MAIN_O1Pb0)
+
+all_mm_main_xmm: $(MM_MAIN_XMM_ASM)
+
+all_mm_sound_drv: $(MM_SOUND_DRV_O1P)
+
+all_mm_zevent: $(MM_ZEVENT_O1P)
+
+all_sh: $(SH_O1P) $(SH_ASM)
+
+all_sh_main: $(SH_MAIN_O1P) $(SH_MAIN_DOS_ASM) $(SH_MAIN_MEM_OGP) $(SH_MAIN_XMM_ASM)
+
+all_sh_sub: $(SH_SOUND_DRV_O1Pd)
+
+MAINMENU.EXE: all_bg_common all_bg_main all_bg_main_dos all_bg_main_mem \
+	all_bg_main_video all_bg_main_xmm all_bg_sound all_bg_sound_drv \
+	all_bg_zevent all_mm all_mm_main all_mm_main_xmm all_mm_sound_drv \
+	all_mm_zevent all_sh all_sh_main all_sh_sub mouse.obj specache.obj \
+	$(BG_MAIN_XMM_OWN_OG) main\video\vidmode.obj MAINMENU.LNK
+	$(BC)\tlink /m /s /c /d /L$(BC)\lib @MAINMENU.LNK

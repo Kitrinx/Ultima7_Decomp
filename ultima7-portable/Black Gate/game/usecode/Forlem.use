@@ -1,0 +1,73 @@
+Routine Forlem accepts a0 #locals(2) #uses(~IsNPCNear, ~AskYesNo, GivePartyExp_i, GargBarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Forlem);
+        TurnOn(<< "name", "job", "bye" >>);
+        v0 = ~IsNPCNear(_Catherine);
+        if v0 {
+            TurnOn("girl");
+        }
+        if not $MET_FORLEM {
+            [You see a very large, strong wingless gargoyle.];
+            $MET_FORLEM = true;
+        } else {
+            ["To wish you good day, human," says For-Lem.];
+        }
+        converse {
+            key ("name") {
+                ["To answer to For-Lem."];
+                TurnOff("name");
+                TurnOn("For-Lem");
+            }
+            key ("For-Lem") {
+                ["To mean `strong one.'"];
+                TurnOff("For-Lem");
+            }
+            key ("job") {
+                ["To do odd jobs for others. Also, to record gargoyle legends in written form."];
+                TurnOn(<< "others", "legends" >>);
+            }
+            key ("others") {
+                ["To be friends with Lap-Lem, and know he is a good miner. Also to know Ansikart, who reminds us of Singularity in these troubled times."];
+                TurnOn("troubled times");
+                TurnOff("others");
+            }
+            key ("troubled times") {
+                ["To be angry with the humans. To be treated poorly and with contempt. To know not why," he shrugs.];
+                TurnOff("troubled times");
+            }
+            key ("legends") {
+                ["To have many interesting stories about our race. To be writing them down for future generations."];
+                TurnOff("legends");
+                TurnOn(<< "stories", "generations" >>);
+            }
+            key ("stories") {
+                ["To have had many exciting myths from before the Avatar's encounters with our race. To share the concept of a hero with the humans, but to have had different heroes from our own history."];
+                TurnOff("stories");
+            }
+            key ("generations") {
+                ["To be afraid for the future of gargoyle youths. To tell you they know little about their heritage. To feel it important to educate them and the offspring who follow them in our ways and history."];
+                TurnOff("generations");
+            }
+            key ("girl") {
+                [A look of concern quickly appears on his face.~~ "To talk about the human girl, Catherine? To mean no harm to her." He holds out his hands.~~ "To read gargoyle mythology to her during the day only. To have been asked by her!" His eyes widen.~~ "To ask you not to tell her parents, for they will punish her." He looks hopeful. "To tell not, agreed?"];
+                v1 = ~AskYesNo();
+                if v1 {
+                    ["To be making the right decision." He appears relieved. "To thank you, human." He smiles.];
+                } else {
+                    ["To be making a mistake." He appears disappointed. "To have the girl punished now because of me." He shakes his head.~~"To feel responsible. To be very sad."];
+                }
+                GivePartyExp_i(50);
+                flag(637) = true;
+                TurnOff("girl");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["To tell you goodbye, human."*];
+    }
+    if (event = _Bark) {
+        GargBarkAboutWork_i(_Forlem);
+    }
+}

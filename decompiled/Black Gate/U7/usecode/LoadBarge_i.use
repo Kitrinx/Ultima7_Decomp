@@ -1,0 +1,33 @@
+Function ~LoadBarge_i accepts a0 #locals(14) #uses(~RemoveFromList_i, ~SortByCriteria_i) {
+    v1 = 1;
+    v2 = 0;
+    v3 = false;
+    v4 = ~GetParty();
+    v5 = ~GetBarge_i(v0);
+    v6 = ~FindNearby_i(0, 30, _Seat_292, v0);
+    v7 = << >>;
+    v8 = << >>;
+    Foreach v11 in v6 {
+        if (~GetBarge_i(v11) = v5) {
+            if (not v3 and (~GetQuality(v11) = 255)) {
+                SitDown_i(v11, _Avatar);
+                v4 = ~RemoveFromList_i(v4, ~NPCToItem_i(_Avatar));
+                v3 = true;
+            } else {
+                v8 = (v8 & ~GetDist(_Avatar, v11));
+                v7 = (v7 & v11);
+            }
+        }
+    }
+    v12 = ~ListSize_i(v4);
+    v7 = ~SortByCriteria_i(v8, v7);
+    Foreach v11 in v7 {
+        if (v12 >= v1) {
+            SitDown_i(v11, v4::v1);
+            v1 = (v1 + 1);
+        } else {
+            return true;
+        }
+    }
+    return false;
+}

@@ -1,0 +1,61 @@
+Routine Ellen accepts a0 #locals(2) #uses(~IsNearEachOther_i, ExplainPhilosophy_i, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Ellen);
+        v0 = ~GetTime();
+        if (v0 = 7) {
+            v1 = ~IsNearEachOther_i(_Klog, _Ellen);
+            if v1 {
+                [Ellen puts her finger to her lips. There is a Fellowship meeting going on.*];
+            } else {
+                ["Hello. I am sorry to be rude, but I am late to the Fellowship meeting. May we speak another time?"*];
+            }
+            terminate;
+        }
+        if not $MetEllen {
+            [This is a woman who seems pleasant and welcoming. "I am proud to meet the Avatar," she says, beaming.];
+            $MetEllen = true;
+        } else {
+            ["Yes, Avatar?" Ellen asks.];
+        }
+        TurnOn(<< "name", "job", "murder", "bye" >>);
+        converse {
+            key ("name") {
+                ["My name is Ellen."];
+                TurnOff("name");
+            }
+            key ("job") {
+                ["I do the bookkeeping at the Fellowship Branch. I work with mine husband, Klog."];
+                TurnOn(<< "Fellowship", "Klog" >>);
+            }
+            key ("murder") {
+                ["'Tis awful, is it not? Of course, I was home with Klog all night."];
+                TurnOff("murder");
+            }
+            key ("Fellowship") {
+                ["Perhaps thou couldst call it a 'confident philosophy'. We meet here at the branch office every night."];
+                TurnOn(<< "philosophy", "branch office" >>);
+                TurnOff("Fellowship");
+            }
+            key ("branch office") {
+                ["The Fellowship has branches all over Britannia. It is a most popular philosophical society."];
+                TurnOff("branch office");
+            }
+            key ("Klog") {
+                ["Mine husband Klog is a wonderful branch leader. He is an inspiration to all of the Trinsic members."];
+                TurnOff("Klog");
+            }
+            key ("philosophy") {
+                ExplainPhilosophy_i();
+                TurnOff("philosophy");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["Goodbye. I hope to see thee again, soon."*];
+    }
+    if (event = _Bark) {
+        BarkAboutWork_i(_Ellen);
+    }
+}

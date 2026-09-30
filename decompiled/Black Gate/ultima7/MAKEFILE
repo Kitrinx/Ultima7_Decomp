@@ -1,0 +1,11 @@
+# The launcher, and Serpent Isle's from the same source.
+
+all: ultima7.com serpent.com
+
+ultima7.com: ultima7.asm
+	tasm ultima7
+	tlink /t ultima7
+
+serpent.com: ultima7.asm
+	tasm /dSERPENT ultima7, serpent
+	tlink /t serpent

@@ -1,0 +1,174 @@
+Routine SummonLicheEgg_i accepts a0 #locals(46) #uses(RemoveAll_i) {
+    if (event = _Trigger) {
+        if not ~GetQuality(item) {
+            if not flag(827) {
+                flag(827) = true;
+                v0 = ~FindNearest_i(0, _Mage_154, item);
+                if v0 {
+                    v1 = ~Item_create(_Key);
+                    SetFrame(7, v1);
+                    v2 = ~SetQuality(65, v1);
+                    v2 = ~PopToNPC(v0);
+                    Item_bark("@I summon thee!@", v0);
+                    v2 = ~PostAction(<< _aWAIT_i, 22 >>, ~NPCToItem_i(_Avatar));
+                    v2 = ~PostAction(<< _aUP_FRAME_i, _aWAIT_i, 3, _aOUT_FRAME_i, _aWAIT_i, 2, _aSTAND_FRAME_i, _aWAIT_i, 2, _aBEND_FRAME_i, _aWAIT_i, 1, _aKNEEL_FRAME_i, _aWAIT_i, 3, _aCONTINUE_i, _aUSABLE_i, #SummonLicheEgg_i, _aBEND_FRAME_i, _aWAIT_i, 2, _aSTAND_FRAME_i >>, v0);
+                    v3 = ~FindNearby_i(0, 20, _Light_Source, item);
+                    Foreach v1 in v3 {
+                        if ((~GetFrame(v1) = 7) or (~GetFrame(v1) = 9)) {
+                            v6 = ~Item_create(_Lit_Light_Source);
+                            SetFrame(~GetFrame(v1), v6);
+                            v2 = ~PopToMap(~GetCoord(v1));
+                            Item_destroy(v1);
+                        }
+                    }
+                    v3 = ~FindNearby_i(0, 20, _Lit_Light_Source, item);
+                    Foreach v1 in v3 {
+                        if (~GetFrame(v1) = 9) {
+                            v9 = ~FindNearby_i(16, 1, _Egg, v1);
+                            Foreach v12 in v9 {
+                                if ((~GetFrame(v12) = 6) and (~GetQuality(v12) = 201)) {
+                                    v13 = ~Item_create(_Fire_Field);
+                                    SetFrame(0, v13);
+                                    v2 = ~PopToMap(~GetCoord(v12));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        } else {
+            if flag(827) {
+                v3 = ~FindNearby_i(0, 20, _Lit_Light_Source, item);
+                Foreach v1 in v3 {
+                    if ((~GetFrame(v1) = 7) or (~GetFrame(v1) = 9)) {
+                        v6 = ~Item_create(_Spent_Light_Source);
+                        SetFrame(~GetFrame(v1), v6);
+                        v2 = ~PopToMap(~GetCoord(v1));
+                        Item_destroy(v1);
+                    }
+                }
+                v3 = ~FindNearby_i(16, 30, _Fire_Field, item);
+                Foreach v1 in v3 {
+                    Item_destroy(v1);
+                }
+                v3 = ~FindNearby_i(0, 30, _Beam_Of_Light, item);
+                Foreach v1 in v3 {
+                    Item_destroy(v1);
+                }
+                v3 = ~FindNearby_i(0, 10, _Body_400, item);
+                Foreach v1 in v3 {
+                    if (~GetFrame(v1) = 29) {
+                        RemoveAll_i(v1);
+                    }
+                }
+                v3 = ~FindNearby_i(16, 0, _Egg, item);
+                Foreach v1 in v3 {
+                    if (~GetFrame(v1) = 0) {
+                        Item_destroy(v1);
+                    }
+                }
+                v3 = ~FindNearby_i(8, 1, _Mage_154, item);
+                Foreach v1 in v3 {
+                    RemoveAll_i(v1);
+                }
+                Item_destroy(item);
+            }
+        }
+    }
+    if (event = _Posted_i) {
+        if (~Item_getType(item) = _Mage_154) {
+            v26 = (~GetCoord(item) & (200 & 6));
+            v3 = ~FindNearby_i(16, 20, _Egg, v26);
+            if v3 {
+                Foreach v1 in v3 {
+                    v26 = (~GetCoord(v1) & (65177 & 0));
+                    v29 = ~FindNearby_i(16, 0, _Egg, v26);
+                    Foreach v32 in v29 {
+                        v2 = ~PostAction(<< _aFINISH_i, _aHATCH_i >>, v32);
+                        v2 = ~PostAction(<< _aNO_HALT_i, _aFINISH_i, _aUSABLE_i, #SummonLicheEgg_i >>, _Avatar);
+                    }
+                }
+            }
+        }
+        if ((~Item_getType(item) = _Avatar_721) or (~Item_getType(item) = _Avatar_989)) {
+            v1 = ~FindNearby_i(8, 30, _Liche_354, _Avatar);
+            if v1 {
+                v33 = ~GetCoord(v1);
+                createSprite(65535, 0, 0, 0, (v33::2 - 2), (v33::1 - 2), 8);
+                createSprite(65535, 0, 0, 0, (v33::2 - 2), (v33::1 - 2), 7);
+                Sfx(52);
+                SetFrame(19, v1);
+                v2 = ~PostAction(<< _aFACE_i, _South, _aWAIT_i, 5, _aUSABLE_i, #SummonLicheEgg_i >>, v1);
+            } else {
+                v26 = (~GetCoord(v1) & (65177 & 6));
+                v3 = ~FindNearby_i(16, 0, _Egg, v1);
+                Foreach v1 in v3 {
+                    v2 = ~PostAction(<< _aFINISH_i, _aHATCH_i >>, v1);
+                    v2 = ~PostAction(<< _aNO_HALT_i, _aFINISH_i, _aUSABLE_i, #SummonLicheEgg_i >>, _Avatar);
+                }
+            }
+        }
+        if ~GetItemFlag_i(_Dead, _Avatar) {
+            terminate;
+        }
+        if (~Item_getType(item) = _Liche_354) {
+            v36 = ~GetDist(~NPCToItem_i(_Avatar), item);
+            if ((v36 < 20) and ~GetItemFlag_i(_InDungeon_i, ~NPCToItem_i(_Avatar))) {
+                v33 = ~GetCoord(item);
+                createSprite(65535, 0, 0, 0, (v33::2 + 3), (v33::1 + 3), 17);
+                v37 = ~GetParty();
+                Foreach v40 in v37 {
+                    v41 = "";
+                    v42 = ~rndRange(8, 0);
+                    if (v42 = 0) {
+                        v43 = << byte(109), byte(108), byte(97) >>;
+                        v41 = << v41, v43 >>;
+                    }
+                    if (v42 = 1) {
+                        v43 = << byte(109), byte(97), byte(97) >>;
+                        v41 = << v41, v43 >>;
+                    }
+                    if (v42 = 2) {
+                        v43 = << byte(108), byte(110), byte(97) >>;
+                        v41 = << v41, v43 >>;
+                    }
+                    if (v42 = 3) {
+                        v43 = << byte(97), byte(97), byte(97) >>;
+                        v41 = << v41, v43 >>;
+                    }
+                    if (v42 = 4) {
+                        v43 = << byte(109), byte(100), byte(97) >>;
+                        v41 = << v41, v43 >>;
+                    }
+                    if (v42 = 5) {
+                        v43 = << byte(100), byte(109), byte(97) >>;
+                        v41 = << v41, v43 >>;
+                    }
+                    if (v42 = 6) {
+                        v44 = (byte(48) + (~rndRange(3, 0) * 2));
+                        v43 = << byte(89), v44, byte(108), byte(97) >>;
+                        v41 = << v41, v43 >>;
+                    }
+                    if (v42 = 7) {
+                        v44 = (byte(48) + (~rndRange(3, 0) * 2));
+                        v43 = << byte(89), v44, byte(109), byte(97) >>;
+                        v41 = << v41, v43 >>;
+                    }
+                    if (v42 = 8) {
+                        v44 = (byte(48) + (~rndRange(3, 0) * 2));
+                        v43 = << byte(89), v44, byte(100), byte(97) >>;
+                        v41 = << v41, v43 >>;
+                    }
+                    Kernel_resetRef(v40);
+                    v2 = ~PostAction(v41, v40);
+                }
+                Earthquake_i(3);
+                v45 = ~rndRange(20, 5);
+                v2 = ~PostAction(<< _aREADY_FRAME_i, _aWAIT_i, v45, _aBEND_FRAME_i, _aWAIT_i, 1, _aKNEEL_FRAME_i, _aWAIT_i, 2, _aBEND_FRAME_i, _aWAIT_i, 1, _aUP_FRAME_i, _aWAIT_i, 1, _aUSABLE_i, #SummonLicheEgg_i >>, item);
+            } else {
+                v45 = ~rndRange(15, 5);
+                v2 = ~PostAction(<< _aREADY_FRAME_i, _aWAIT_i, v45, _aWAIT_i, 10, _aUSABLE_i, #SummonLicheEgg_i >>, item);
+            }
+        }
+    }
+}

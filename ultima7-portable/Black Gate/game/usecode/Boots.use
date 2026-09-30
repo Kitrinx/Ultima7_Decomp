@@ -1,0 +1,111 @@
+Routine Boots accepts a0 #locals(1) #uses(~AskYesNo, BootsBuysMutton_i, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Boots);
+        TurnOn(<< "name", "job", "bye" >>);
+        if (flag(114) = true) {
+            TurnOn("mutton");
+        }
+        if not $MetBoots {
+            [This is an elderly woman who epitomizes 'grandmotherly'.];
+            $MetBoots = true;
+        } else {
+            ["Hello, again!" Boots says.];
+        }
+        converse {
+            key ("name") {
+                ["All my brothers and sisters called me 'Boots' when I was a baby, and it hath remained my name ever since."];
+                TurnOff("name");
+            }
+            key ("job") {
+                ["Why, I am Lord British's personal cook! I prepare meals for the entire castle."];
+                TurnOn("meals");
+            }
+            key ("meals") {
+                ["Just go to the dining room at breakfast or supper time and mine husband Bennie will serve thee!"];
+                TurnOn(<< "breakfast", "supper", "Bennie" >>);
+                TurnOff("meals");
+            }
+            key ("breakfast") {
+                ["For breakfast I usually prepare a dish that my Liege brought with him from his homeland. Here we call it Eggs British. It is served with assorted fruits and tea, of course. It is the King's favorite."];
+                TurnOff("breakfast");
+            }
+            key ("supper") {
+                ["This meal is usually whatever meat or game or fish Lord British requests, accompanied by several additional courses and a fine dessert."];
+                TurnOff("supper");
+            }
+            key ("Bennie") {
+                ["He's a dear, but he has become a little absent-minded in his later years. He never remembers to bring enough meat from the slaughterhouse in Paws. In fact, we are short this week!"];
+                TurnOn(<< "absent-minded", "short" >>);
+                TurnOff("Bennie");
+                flag(113) = true;
+            }
+            key ("absent-minded") {
+                ["Last week I asked him to put a little garlic into some soup. He put in the garlic and then forgot about it. So he went and put some more in. Then he forgot he did that. So he put in more. Well, thou canst imagine the look on Lord British's face when he finally did taste that soup! It is a good thing we live and work in the castle of such a just ruler."];
+                TurnOff("absent-minded");
+            }
+            key ("short") {
+                ["That is right, we do not have enough. If thou couldst bring me mutton from the slaughterhouse, I will pay thee 5 gold for every portion thou canst bring. All right?"];
+                v0 = ~AskYesNo();
+                if v0 {
+                    ["Good, I will be awaiting thy return!"];
+                    flag(114) = true;
+                } else {
+                    ["Oh dear. Well, I know thou art busy. Some other time, then."];
+                }
+                TurnOff("short");
+            }
+            key ("mutton") {
+                ["Splendid! Let's see, we agreed on 5 gold per portion, if I remember correctly."];
+                BootsBuysMutton_i();
+                TurnOff("mutton");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["Bye now!"*];
+    }
+    if (event = _Bark) {
+        BarkAboutWork_i(_Boots);
+    }
+}
+
+Usable BootsBuysMutton_i #linear #locals(6) #uses(fn_0909) {
+label_0:
+    v0 = fn_0909();
+label_1:
+    append "\"How many portions wouldst thou wish to sell?\"";
+    say;
+    v1 = intrinsic_0C(0, 1, 10, 0);
+    if not (v1 = 0) goto label_3;
+label_2:
+    append "\"Oh, my. We truly do need the meat. Well, perhaps next time.\"";
+    say;
+    goto label_9;
+label_3:
+    v2 = intrinsic_28(8, 65177, 377, 65179);
+    if not (v2 < v1) goto label_6;
+label_4:
+    append "\"Thou cannot sell me what thou dost not have! Now, truly...!\"";
+    say;
+    goto label_1;
+label_5:
+    goto label_9;
+label_6:
+    append "\"Excellent! I accept the trade, ";
+    append v0;
+    append ". Here is thy gold.\"";
+    say;
+    v3 = (v1 * 5);
+    v4 = intrinsic_2C(true, 65177, 65177, 644, v3);
+    if not not v4 goto label_8;
+label_7:
+    append "\"Oh, dear. Thou cannot possibly carry this much gold! Perhaps thou mayest return when thou hast dropped something else.\"";
+    say;
+    goto label_9;
+label_8:
+    v5 = intrinsic_2B(true, 8, 65177, 377, v1);
+label_9:
+    return;
+}

@@ -1,0 +1,119 @@
+Routine Quaeven accepts a0 #locals(4) #uses(~IsNearEachOther_i, GargBarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Quaeven);
+        v0 = ~GetTime();
+        v1 = false;
+        TurnOn(<< "name", "job", "Fellowship", "bye" >>);
+        if (v0 = 7) {
+            v2 = ~IsNearEachOther_i(_Quan, _Quaeven);
+            if v2 {
+                ["To have not the time to speak now. To talk after meeting."*];
+            } else {
+                ["To have not the time to speak now. To hurry to Fellowship meeting."*];
+            }
+            terminate;
+        }
+        if not $MetQuaeven {
+            [The gargoyle, a contented grin on his face, greets you with a handshake.];
+            $MetQuaeven = true;
+        } else {
+            ["To express happiness at your return," says Quaeven.];
+        }
+        converse {
+            key ("name") {
+                ["To be known as Quaeven, human."];
+                TurnOff("name");
+                TurnOn("Quaeven");
+            }
+            key ("Quaeven") {
+                ["To mean `problem finder.' To be an observant one.];
+                TurnOff("Quaeven");
+            }
+            key ("job") {
+                ["To be master of the Recreation Facility and Learning Center. To be in charge of much information valuable to the gargoyle race."];
+                TurnOn(<< "Recreation Facility", "Learning Center" >>);
+            }
+            key ("Recreation Facility") {
+                ["To be a good place for gargoyles to go to exercise their muscles. To have many resources available, including stuffed bags to punch and practice fighting skills."];
+                TurnOff("Recreation Facility");
+            }
+            key ("Learning Center") {
+                ["To be located in the same building as the Recreation Center. To provide an excellent atmosphere for strengthening gargoyle minds. To have a large supply of books and educational material."];
+                TurnOff("Learning Center");
+            }
+            key ("Fellowship") {
+                v3 = ~IsMedallionOn_i();
+                if v3 {
+                    ["To be a member, too." He holds up his medallion. To have needed The Fellowship to become happy."];
+                    TurnOn("needed The Fellowship");
+                } else {
+                    ["To want to know about the organization or the tenets?"];
+                    TurnOn("organization");
+                    if not v1 {
+                        TurnOn("tenets");
+                    }
+                }
+                TurnOff("Fellowship");
+            }
+            key ("organization") {
+                ["To be a group of spiritual seekers striving to reach the highest levels of gargoyle potential. To share with all gargoyles and humans."];
+                TurnOn("share");
+                TurnOff("organization");
+            }
+            key ("share") {
+                ["To share tenets and material well-being."];
+                TurnOn("material well-being");
+                if not v1 {
+                    TurnOn("tenets");
+                }
+                TurnOff("share");
+            }
+            key ("material well-being") {
+                ["To support financially and personally a poorhouse in Paws. To organize feasts and festivals in Britannia to help morale. To be a much needed group by all gargoyles and men. To have needed The Fellowship myself!"];
+                TurnOn("needed The Fellowship");
+                TurnOff("material well-being");
+            }
+            key ("tenets") {
+                ["To apply an optimistic order of thought through the Triad of Inner Strength."];
+                TurnOn("Triad");
+                v1 = true;
+                TurnOff("tenets");
+            }
+            key ("Triad") {
+                ["To be the three concepts of Strive for Unity, Trust your Brother, and Worthiness Precedes Reward."];
+                TurnOff("Triad");
+            }
+            key ("needed The Fellowship") {
+                ["To have had poor life before The Fellowship. To have been pained, ignored, and mistreated by many.~~"To be happy now in my new life and, to hope to hear the voice soon." His eyes widen in excitement. "To be bringing happiness to another's life soon."];
+                TurnOn(<< "voice", "another" >>);
+                TurnOff("needed The Fellowship");
+            }
+            key ("voice") {
+                ["To be a good voice that will help me make choices, and to help win on Buccaneer's Den."];
+                TurnOff("voice");
+            }
+            key ("another") {
+                [He continues on, excitedly.~~"To be working on my first convert. To know the joy and well-being I will bring. To feel content and happy."];
+                flag(574) = true;
+                TurnOn(<< "working", "convert" >>);
+                TurnOff("another");
+            }
+            key ("working") {
+                ["To need a little more persuasion," he looks down, "but to be almost ready to join!"];
+                TurnOff("working");
+            }
+            key ("convert") {
+                ["To be Betra, the provisioner. To feel confident he will join soon."];
+                TurnOff("convert");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["To hope for your well-being and happiness."*];
+    }
+    if (event = _Bark) {
+        GargBarkAboutWork_i(_Quaeven);
+    }
+}

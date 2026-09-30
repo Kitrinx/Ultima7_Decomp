@@ -1,0 +1,122 @@
+Routine Sintag accepts a0 #locals(6) #uses(~IsInInv, ~AskYesNo, GivePartyExp_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Sintag);
+        v0 = ~GetTime();
+        v1 = ~GetWorkType(~NPCToItem_i(_Sintag));
+        v2 = ~IsInInv(1, 65177, _Prism_981, 1, _Party);
+        TurnOn(<< "name", "job", "bye" >>);
+        if (flag(260) or flag(309)) {
+            TurnOn("Hook");
+        }
+        if not $MetSintag {
+            [You see the meanest, toughest-looking guard you have ever seen in Britannia.];
+            $MetSintag = true;
+        } else {
+            ["What?" Sintag grunts.];
+        }
+        converse {
+            key ("name") {
+                ["Sintag," the man grunts.];
+                TurnOff("name");
+            }
+            key ("job") {
+                ["I am the guard at the House of Games. I rid the place of trouble-makers."];
+                TurnOn(<< "House of Games", "trouble-makers" >>);
+            }
+            key ("House of Games") {
+                ["I have worked for the House of Games since The Mister agreed to pay me and asked me to stay. I know all who go in or out. I see everything."];
+                TurnOff("House of Games");
+                TurnOn("The Mister");
+            }
+            key ("The Mister") {
+                ["That would be Mister Gordy, the overseer of the House of Games. Thou might find him in his office during business hours."];
+                TurnOff("The Mister");
+            }
+            key ("trouble-makers") {
+                ["We see all sorts of trouble-makers in this place. I especially do not like people who claim that they are the Avatar. I find it blasphemous. The last fellow who claimed to be an Avatar was caught cheating. He'll not be doin' that again!"];
+                TurnOff("trouble-makers");
+                TurnOn(<< "all sorts", "not again" >>);
+            }
+            key ("all sorts") {
+                ["There is a man named Robin who used to come in here and cheat at the games. He had his two varlets named Battles and Leavell intimidate anyone who tried to stop him. One day my brothers came to visit and we ran Robin, Battles and Leavell all the way off the island! We have not seen them since!"];
+                TurnOff("all sorts");
+            }
+            key ("not again") {
+                if v2 {
+                    [The Cube vibrates a little. "He is in the caverns, in the torture chamber. What's left of him."];
+                    TurnOn(<< "torture chamber", "left of him" >>);
+                } else {
+                    ["Thou dost not need to know any more."];
+                    [Sintag glares at you.];
+                }
+                TurnOff("not again");
+            }
+            key ("torture chamber") {
+                if v2 {
+                    [The Cube vibrates. "It is where The Fellowship interrogates their prisoners."];
+                } else {
+                    ["What torture chamber? Did I say torture chamber?"];
+                }
+                TurnOff("torture chamber");
+            }
+            key ("left of him") {
+                ["He has been in our care for a while now." Sintag smiles enigmatically.];
+                TurnOff("left of him");
+            }
+            key ("Hook") {
+                if (v1 = 7) {
+                    if v2 {
+                        [The Cube vibrates as Sintag speaks. "Hook lives in the cavern behind the House of Games. There is a locked door from the gaming room which leads there. I have the key. There is also a secret door in Gordy's office which Hook uses to get home."];
+                        TurnOn("key");
+                    } else {
+                        ["I do not know any man by that description."];
+                    }
+                } else {
+                    ["Do I look like I am working now? Leave me alone. Come to the House of Games during normal business hours."];
+                }
+                TurnOff("Hook");
+            }
+            key ("key") {
+                ["Dost thou want the key?"];
+                if ~AskYesNo() {
+                    v3 = ~GiveToParty_i(false, 10, 234, _Key, 1);
+                    if v3 {
+                        ["Here it is."];
+                        GivePartyExp_i(300);
+                    } else {
+                        ["Thou art carrying too much!"];
+                    }
+                } else {
+                    ["Suit thyself."];
+                }
+                TurnOff("key");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        [Sintag grunts.*];
+    }
+    if (event = _Bark) {
+        v1 = ~GetWorkType(~NPCToItem_i(_Sintag));
+        v4 = ~rndRange(4, 1);
+        if (v1 = 7) {
+            if (v4 = 1) {
+                v5 = "@I am watching thine hands!@";
+            }
+            if (v4 = 2) {
+                v5 = "@No cheating!@";
+            }
+            if (v4 = 3) {
+                v5 = "@Keep thine hands where I can see 'em.@";
+            }
+            if (v4 = 4) {
+                v5 = "@No funny stuff with the games.@";
+            }
+            Item_bark(v5, _Sintag);
+        } else {
+            terminate;
+        }
+    }
+}

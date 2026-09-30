@@ -1,0 +1,165 @@
+Routine Gorn accepts a0 #locals(7) #uses(~AvatarName, ~LordOrLady, ~IsNPCNear, ~AskYesNo) {
+    if (event = _Bark) {
+        terminate;
+    }
+    SetSpeaker(0, _Gorn);
+    v0 = ~AvatarName();
+    v1 = ~LordOrLady();
+    v2 = ~IsNPCNear(_Iolo);
+    v3 = ~IsNPCNear(_Shamino);
+    v4 = ~IsNPCNear(_Dupre);
+    v5 = ~IsMedallionOn_i();
+    if $MET_IRIALE {
+        TurnOn("Iriale");
+    }
+    if not $MET_GORN {
+        [You see a familiar face, a stern-looking bearded warrior whom you have met on one of your previous journeys to Britannia.];
+        $MET_GORN = true;
+    } else {
+        ["Ho, Avatar!" says Gorn. "Thou dost vish to speak mit me?"];
+    }
+    if flag(722) {
+        ["De voice ov Brom has told me not to trust thee, Avatar," says Gorn. "I tought dat ve vere friends and I do not vish to cause thee harm. But I varn thee, do not speak mit me anymore!"*];
+        terminate;
+    }
+    TurnOn(<< "name", "job", "bye" >>);
+    converse {
+        key ("name") {
+            [The warrior's eyes narrow. "I am Gorn, as if thou didst not remember! It is good to see thee again." He laughs and slaps you on the shoulder.];
+            TurnOff("name");
+        }
+        key ("job") {
+            ["My job is a never-ending qvest of high adventure. Ever since I vas a child und vas taken from mine homeland of Balema, I haf spent my life in search of heroic deeds to perform."];
+            TurnOn(<< "Balema", "heroic deeds" >>);
+        }
+        key ("Balema") {
+            ["Yah, Balema is vere I vas born. I vas a child dere. It is a vonderland ov snow-covered mountains und dark forests. It vas not an easy life, but it vas a place dat made young boys into strong heroic men. Dat vas long before I came to Britannia."];
+            TurnOff("Balema");
+            TurnOn("Britannia");
+        }
+        key ("Britannia") {
+            ["Yah! I came to Britannia t'rough vone ov de Moongates, de same as thee. Dat vas many, many years ago."];
+            TurnOff("Britannia");
+        }
+        key ("heroic deeds") {
+            ["I perform heroic deeds in honor ov Brom. Everyting I do is in service to him."];
+            TurnOff("heroic deeds");
+            TurnOn("Brom");
+        }
+        key ("Brom") {
+            ["He is my master, und de master ov all ov de people ov Balema. Brom is all powerful und if I am strong he vill aid me. Sometimes I hear de voice ov Brom inside ov mine head."];
+            TurnOff("Brom");
+            TurnOn(<< "master", "voice" >>);
+        }
+        key ("master") {
+            ["Ya! Brom he is my master. If he vishes me to do someting, I must do it! If he does not vant me to do someting, I must not do it!"];
+            TurnOff("master");
+        }
+        key ("voice") {
+            ["Ya! Only recently I haf begun to hear his voice in mine head. His voice tells me vat to do! As I came tovard dis cave de voice ov Brom became clearer."];
+            TurnOff("voice");
+            TurnOn(<< "what to do", "cave", "clearer" >>);
+        }
+        key ("what to do") {
+            ["Vhen I first heard de voice ov Brom, he told me dat I should follow him. But how does one follow de voice ov someone dat thou cannot see vhen de voice is coming from inside ov thine head?"];
+            TurnOff("what to do");
+            TurnOn("follow");
+        }
+        key ("follow") {
+            ["Dis vas very, very difficult for me but after a vhile I vas able to figure out how to do it. Vhen I came nearer to da camp surrounding dis cave da voice vould get louder. Vhen I vould move avay de voice vould be qvieter."];
+            TurnOff("follow");
+            TurnOn(<< "camp" >>);
+        }
+        key ("camp") {
+            ["It vas very simple for a trained varrior like myself to slip into de camp ov dose who are holding Brom prisoner. Dey posed no threat vatsoever. So dat means dat de danger must be vaiting down here. But I cannot find it!"];
+            if v5 {
+                ["I can see by dat medallion thou dost vear dat thou hast snuck into dis place by disguising thyself as vone of dem. Very clever, Avatar!"];
+            }
+            if v2 {
+                SetSpeaker(0, _Iolo);
+                [Iolo whispers to you, "This fellow is quite sharp, is he not?"*];
+                CloseSpeaker(_Iolo);
+                SetSpeaker(0, _Gorn);
+            }
+            TurnOff("camp");
+            TurnOn("danger");
+        }
+        key ("danger") {
+            ["Zo far de only danger I haf found down here has been a female fighter. She vas beautiful. Vhen I vent to talk to her she hit me over de head mit her svord. Vhen I voke up she vas gone. I bet she tought she had killed me but mine head is harder dan dat. I vas not even vounded."];
+            if v3 {
+                SetSpeaker(0, _Shamino);
+                [Shamino whispers to you. "Luckily, Gorn was hit in the one spot where he has no feeling whatsoever -- his head!"*];
+                SetSpeaker(0, _Gorn);
+                ["Hey, vhat are you vhispering about over dere?"*];
+                SetSpeaker(0, _Shamino);
+                ["Oh, nothing. Nothing at all."*];
+                CloseSpeaker(_Shamino);
+                SetSpeaker(0, _Gorn);
+            }
+            TurnOff("danger");
+        }
+        key ("cave") {
+            ["I know dat Brom is somevhere down in dis cave, und I vill not leave dis place until I find him!"];
+            TurnOff("cave");
+            TurnOn("find Brom");
+        }
+        key ("clearer") {
+            ["The nearer I haf come to dis cave, the more times I haf been hearing de voice ov Brom. But lately he has been saying tings to me dat are very, very strange!"];
+            TurnOff("clearer");
+            TurnOn("strange");
+        }
+        key ("strange") {
+            ["De first strange ting dat he says to me is "Strive For Unity". I say, yah, dat is vhy I am performing mine heroic deeds. Den Brom says someting else dat is strange."];
+            TurnOff("strange");
+            TurnOn("something else strange");
+        }
+        key ("something else strange") {
+            ["Next de voice ov Brom says to me "Trust My Brothers". Dis is strange because all ov my brothers are back in Balema, und I vould never trust dem anyvays. Dey vere all bigger den me and vere alvays beating me. But even dat vas not as strange as da next strange ting."];
+            TurnOff("something else strange");
+            TurnOn("next strange thing");
+        }
+        key ("next strange thing") {
+            ["De voice ov Brom tells me dat "Worldliness Receives Avard". I haf been tinking about dat von for a long time und I still haf not figured it out. But I vill not give up until I find Brom."];
+            if v4 {
+                SetSpeaker(0, _Dupre);
+                ["A mysterious voice speaking inside someone's head, suggesting the philosophy of The Fellowship. Does this sound familiar, <v0>?"*];
+                CloseSpeaker(_Dupre);
+                SetSpeaker(0, _Gorn);
+            }
+            TurnOff("next strange thing");
+            TurnOn("find Brom");
+        }
+        key ("find Brom") {
+            ["Wouldst thou help me find Brom?"];
+            v6 = ~AskYesNo();
+            if v6 {
+                [Gorn seems distracted for a moment. He places his hand to his ear as if he is listening to something. He looks back at you and there is a shocked look on his face. "I haf just heard de voice ov Brom and he has told me not to trust thee! Go avay from me, Avatar! I tought dat thou vert my friend! I do not vish to speak vith thee anymore!"*];
+                flag(722) = true;
+                terminate;
+            } else {
+                [Gorn has a confused look on his face. "Vhy vill thou not help me find Brom? Dost thou tink dat dis is all some kind ov trick, or should I go on looking for Brom by myself?"];
+                TurnOn(<< "look for Brom", "it's a trick" >>);
+            }
+            TurnOff("find Brom");
+        }
+        key ("look for Brom") {
+            ["If dat is how thou vants it. Den I shall go on searching for Brom mit no vone else but myself. Good luck in vhatever qvest thou art on, Avatar. Farewell to thee!"*];
+            SetWorkType(_Wander, ~NPCToItem_i(_Gorn));
+            terminate;
+        }
+        key ("it's a trick") {
+            [Gorn seems distracted for a moment. He puts his hand to his ear as if he is listening to something. He looks back at you with a shocked expression on his face. "I haf just heard de voice ov Brom and he says dat I should not trust thee! I tought dat thou vert my friend, Avatar! Go avay! I do not vish to speak vith thee again!"*];
+            flag(722) = true;
+            terminate;
+        }
+        key ("Iriale") {
+            ["Dat is de name ov de female fighter who has been guarding dis place. I haf fought her vonce already. She is a strong fighter! I haf to find her so I can make her to tell me vhere is Brom!"];
+            TurnOff("Iriale");
+        }
+        key ("bye") {
+            break;
+        }
+    }
+    clear_answers;
+    ["Until ve meet again, Avatar."*];
+}

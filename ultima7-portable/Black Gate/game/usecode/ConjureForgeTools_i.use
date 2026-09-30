@@ -1,0 +1,24 @@
+Routine ConjureForgeTools_i accepts a0 #locals(11) {
+    v0 = ~FindNearby_i(16, 10, _Egg, item);
+    Foreach v3 in v0 {
+        v4 = ~GetQuality(v3);
+        v5 = ~GetFrame(v3);
+        v6 = ~GetCoord(v3);
+        if (v5 = 6) {
+            if (v4 = 3) {
+                v7 = ~Item_create(_Hammer);
+                SetFrame(0, v7);
+                v8 = ~PopToMap(v6);
+                createSprite(65535, 0, 0, 0, (v6::2 - 2), (v6::1 - 1), 13);
+            }
+            if (v4 = 7) {
+                v9 = ~Item_create(_Bucket);
+                SetFrame(0, v9);
+                v8 = ~PopToMap(v6);
+                createSprite(65535, 0, 0, 0, (v6::2 - 2), (v6::1 - 1), 13);
+            }
+        }
+    }
+    v10 = ~PostAction(<< _aBEND_FRAME_i, _aWAIT_i, 3, _aKNEEL_FRAME_i, _aWAIT_i, 4, _aBEND_FRAME_i, _aWAIT_i, 3, _aSTAND_FRAME_i, _aWAIT_i, 2, _aUSABLE_i, #ErethianGivesSwordBlank_i >>, item);
+    Sfx(68);
+}

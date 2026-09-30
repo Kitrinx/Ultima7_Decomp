@@ -1,0 +1,105 @@
+Routine EnclosedPrism accepts a0 #locals(2) #uses(DestroySphere_i, DestroyCube_i, DestroyTetra_i) {
+    if (event = _Action) {
+        v0 = ~GetFrame(item);
+        if (v0 = 0) {
+            DestroySphere_i(item);
+        }
+        if (v0 = 1) {
+            DestroyCube_i(item);
+        }
+        if (v0 = 2) {
+            DestroyTetra_i(item);
+        }
+    }
+    if (event = _Posted_i) {
+        v1 = ~GetCoord(item);
+        createSprite(65535, 0, 0, 0, (v1::2 - 3), (v1::1 - 3), 7);
+    }
+}
+
+Routine DestroyTetra_i accepts a0 #locals(6) #uses(EndPartyWait_i, RemoveNearAvatar_i) {
+    v1 = ~FindNearby_i(0, 40, _Ethereal_Monster, v0);
+    if ~GetItemFlag_i(_Asleep, v1) {
+        v1 = 0;
+    }
+    if (not $TetraGone and not v1) {
+        Item_setType(_Prism_981, v0);
+        $TetraGone = true;
+        v2 = << 2743, 885, 0 >>;
+        Item_move(v2, v0);
+        v2::2 = (v2::2 + 2);
+        Item_move(v2, _Avatar);
+        EndPartyWait_i();
+        v3 = 200;
+        v4 = 1;
+        v5 = 65177;
+        RemoveNearAvatar_i(v5, v4, v3);
+        v6 = ~PostInFuture(8, << _aNO_HALT_i, _aUSABLE_i, #CollapseTetra_i >>, _Avatar);
+    }
+}
+
+Routine RemoveNearAvatar_i accepts a0, a1, a2 #locals(7) {
+    v3 = ~FindNearby_i(16, 30, v2, _Avatar);
+    v4 = 0;
+    Foreach v7 in v3 {
+        v8 = ~GetFrame(v7);
+        v9 = ~GetQuality(v7);
+        if ((v8 = v1) and ((v9 = v0) or (v0 = 65177))) {
+            v4 = v7;
+        }
+    }
+    if v4 {
+        Item_destroy(v4);
+    }
+}
+
+Routine DestroySphere_i accepts a0 #locals(6) #uses(EndPartyWait_i) {
+    if not $SphereGone {
+        Item_setType(_Prism_981, v0);
+        v1 = << 535, 1120, 0 >>;
+        Item_move(v1, v0);
+        v1::2 = (v1::2 + 2);
+        Item_move(v1, _Avatar);
+        EndPartyWait_i();
+        v2 = ~FindNearby_i(16, 10, _Moongate_776, _Avatar);
+        Foreach v5 in v2 {
+            Item_destroy(v5);
+        }
+        v6 = ~PostInFuture(8, << _aNO_HALT_i, _aUSABLE_i, #CollapseSphere_i >>, _Avatar);
+        $SphereGone = true;
+    }
+}
+
+Routine ExplodeGenerator_i accepts a0, a1 #locals(6) {
+    v2 = ~GetCoord(v0);
+    v3 = ~FindNearby_i(176, 20, v1, v2);
+    v3 = (v3 & ~FindNearby_i(176, 20, (v1 + 1), v2));
+    v3 = (v3 & ~FindNearby_i(176, 20, (v1 + 2), v2));
+    v3 = (v3 & ~FindNearby_i(176, 20, (v1 + 3), v2));
+    Foreach v6 in v3 {
+        v7 = ~PostAction(<< _aNEXT_FRAME, _aLOOP_i, 65535, 6, byte(85), 968 >>, v6);
+    }
+    Earthquake_i(7);
+}
+
+Routine DestroyCube_i accepts a0 #locals(2) #uses(EndPartyWait_i) {
+    if not $CubeGone {
+        Item_setType(_Prism_981, v0);
+        v1 = << 1767, 2784, 0 >>;
+        Item_move(v1, v0);
+        v1::2 = (v1::2 + 2);
+        Item_move(v1, _Avatar);
+        EndPartyWait_i();
+        v2 = ~PostInFuture(8, << _aNO_HALT_i, _aUSABLE_i, #CollapseCube_i >>, _Avatar);
+        $CubeGone = true;
+    }
+}
+
+Usable EndPartyWait_i #locals(5) #uses(~RemoveFromList_i) {
+    v0 = ~RemoveFromList_i(~GetParty(), ~NPCToItem_i(_Avatar));
+    v1 = ~GetWorkType(~NPCToItem_i(_Avatar));
+    Foreach v4 in v0 {
+        flag(57) = false;
+        SetWorkType(v1, v4);
+    }
+}

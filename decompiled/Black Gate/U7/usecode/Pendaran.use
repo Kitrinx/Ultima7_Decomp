@@ -1,0 +1,89 @@
+Routine Pendaran accepts a0 #locals(2) #uses(~LordOrLady, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Pendaran);
+        v0 = ~LordOrLady();
+        v1 = false;
+        TurnOn(<< "name", "job", "bye" >>);
+        if not $MET_SIR_PENDARAN {
+            [You are greeted with a stern look on this man's face.];
+            $MET_SIR_PENDARAN = true;
+        } else {
+            ["^<v0>." He nods at you.];
+        }
+        if ($STARTED_HOLD_INVESTIGATION and not flag(630)) {
+            TurnOn("statue");
+        }
+        converse {
+            key ("name") {
+                ["Thou mayest call me Sir Pendaran."];
+                TurnOff("name");
+            }
+            key ("job") {
+                ["I am a knight here in Serpent's Hold. 'Tis my job to help protect the citizens of Britannia."];
+                TurnOn(<< "protect", "Serpent's Hold" >>);
+            }
+            key ("protect") {
+                ["Aye, <v0>. Britannia can be a dangerous place outside town boundaries. Especially now that the ruling faction have gone soft!"];
+                TurnOff("protect");
+                TurnOn(<< "ruling faction", "soft" >>);
+            }
+            key ("ruling faction") {
+                ["Well, I mean Lord British and his advisors."];
+                TurnOff("ruling faction");
+            }
+            key ("worthless", "soft") {
+                ["Though I'd follow the land's ideals to the ends of the land, I find it difficult to accept how poor the conditions are in Britannia. Brigands populate the land, disease overruns the towns, and corruption fills the councils. Were it not for The Fellowship, I would be hard pressed to avoid falling on mine own blade, despite how dishonorable an act that may seem."];
+                v1 = true;
+                TurnOff(<< "soft", "worthless" >>);
+                TurnOn("Fellowship");
+            }
+            key ("Fellowship") {
+                ["A noble group of people who strive to instill a greater sense of spiritual knowledge throughout all of Britannia. 'Twill be but a matter of time, <v0>, before all people will see the wisdom."];
+                TurnOff("Fellowship");
+            }
+            key ("Serpent's Hold") {
+                ["I live here in the hold with my lady."];
+                TurnOn("lady");
+                TurnOff("Serpent's Hold");
+            }
+            key ("lady") {
+                ["Her name is Jehanne, <v0>," he says suspiciously. "She is the provisioner."];
+                TurnOff("lady");
+            }
+            key ("statue") {
+                ["Terrible shame, <v0>." He eyes you coldly.];
+                if flag(605) {
+                    TurnOn("Thou didst do it!");
+                }
+                TurnOff("statue");
+            }
+            key ("Thou didst do it!") {
+                ["What! Thou art accusing me! Preposterous. I had nothing to do with it!"];
+                TurnOff("Thou didst do it!");
+                TurnOn("Lady Jehanne");
+            }
+            key ("Lady Jehanne") {
+                flag(630) = true;
+                [He shakes his head.~~"Thou wouldst take the word of a woman over that of a knight of the Hold? Thou art lower than a worm!" He glares at you for a moment, and then his expression changes.~~"All right," he says, "I am the one\x09who defaced the statue, but only because the government has become so worthless and soft!" He quickly turns away from\x09you, ashamed.~~"If thou dost think it best," he sighs, "tomorrow I shall beg forgiveness from my fellow knights."];
+                PushKeys();
+                TurnOn(<< "'tis best", "no need" >>);
+            }
+            key ("'tis best") {
+                [Nodding his agreement, he sighs again, and turns away.*];
+                terminate;
+            }
+            key ("no need") {
+                ["No, no, <v0>. Thou hast shown me the way. I must repent." He turns away from you to reflect on his decision.*];
+                terminate;
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["Good day to thee, <v0>."*];
+    }
+    if (event = _Bark) {
+        BarkAboutWork_i(_Pendaran);
+    }
+}

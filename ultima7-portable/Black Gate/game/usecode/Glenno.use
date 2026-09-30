@@ -1,0 +1,184 @@
+Routine Glenno accepts a0 #locals(10) #uses(~AskYesNo, ~IsNPCNear, GlennoSellsDrink_i, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Glenno);
+        v0 = ~GetTime();
+        v1 = ~IsMedallionOn_i();
+        TurnOn(<< "name", "job", "bye" >>);
+        if not $MetGlenno {
+            [You see a handsome, muscular man with an air of mischief about him.];
+            $MetGlenno = true;
+        } else {
+            ["Yes, may I help thee?" Glenno asks.];
+        }
+        converse {
+            key ("name") {
+                ["Glenno at thy service!"];
+                TurnOff("name");
+            }
+            key ("job") {
+                ["I am the manager of The Baths.];
+                if ((v0 = 6) or ((v0 = 7) or (v0 = 0))) {
+                    ["The entrance fee is 300 gold. Everything is included in this fixed price. No tips are necessary. Dost thou want to enter?"];
+                    if ~AskYesNo() {
+                        v2 = ~CountItem(_All, _All, _Gold_Coin, _Party);
+                        if (v2 >= 300) {
+                            v3 = ~GiveToParty_i(false, 4, 251, _Key, 1);
+                            if v3 {
+                                ["Excellent! Here is thy key!];
+                                v4 = ~TakeFromParty_i(true, _All, _All, _Gold_Coin, 300);
+                            } else {
+                                ["Thine hands are too full to carry the key!"*];
+                                terminate;
+                            }
+                        } else {
+                            ["What art thou trying to pull? Thou hast not 300 gold!"*];
+                            terminate;
+                        }
+                    } else {
+                        ["Well, some other time, then! Thou wilt not be sorry if thou dost! It is well worth the price."*];
+                        terminate;
+                    }
+                    ["Enter! Please relax! Enjoy thyself! Allow one of our hosts or hostesses to make thy stay more comfortable. ];
+                    if v1 {
+                        [He notices your medallion. "Fellowship members are especially welcome!"];
+                        TurnOn("Fellowship");
+                    }
+                    ["Please! Make thyself at home. If thou dost want a drink, let me know."];
+                    v5 = ~IsNPCNear(_Spark);
+                    if v5 {
+                        ["Uhm, wait a minute. How old art thou, boy?"*];
+                        SetSpeaker(0, _Spark);
+                        ["Uhm, eighteen."*];
+                        SetSpeaker(0, _Glenno);
+                        ["Thou dost not look eighteen."*];
+                        SetSpeaker(0, _Spark);
+                        ["All right, I am sixteen."*];
+                        SetSpeaker(0, _Glenno);
+                        ["Thou dost not look sixteen either. Well, never mind. Thou canst enter. But make sure the management doth not see thee." Glenno scratches his head. "Yes, but... no! I am the management! All right, come on. Just don't cause any trouble."*];
+                        SetSpeaker(0, _Spark);
+                        ["All right! Wenches!"*];
+                        CloseSpeaker(_Spark);
+                        v6 = ~IsNPCNear(_Iolo);
+                        if v6 {
+                            SetSpeaker(0, _Iolo);
+                            [Iolo whispers to you, "Methinks young Spark hath learned a lot whilst adventuring with thee!"*];
+                            CloseSpeaker(_Iolo);
+                        }
+                        SetSpeaker(0, _Glenno);
+                    }
+                    TurnOn(<< "The Baths", "drink" >>);
+                } else {
+                    ["Please come visit in the late evening hours when our hosts and hostesses are here!"];
+                }
+            }
+            key ("The Baths") {
+                ["The Baths exist for the pleasure of visitors to Buccaneer's Den. Thou canst bathe in our spring pools. Thou canst lounge in our Community Room and socialize with our attractive hosts or hostesses. Thou canst drink fine wine and ale. Thou canst view our collection of fine artwork. Thou canst... escape into a dream-world!"];
+                TurnOff("The Baths");
+                TurnOn(<< "spring pools", "hosts or hostesses", "Community Room", "fine artwork" >>);
+            }
+            key ("drink") {
+                GlennoSellsDrink_i();
+            }
+            key ("hosts or hostesses") {
+                ["They have come from all over Britannia to serve thine every wish! I, Glenno, have assured them that The Baths is the most prestigious establishment of its kind anywhere in the known world. It is probably the only establishment of its kind in the known world!"];
+                TurnOff("hosts or hostesses");
+            }
+            key ("spring pools") {
+                ["The water is guaranteed to be pure, warm and cleansing."];
+                TurnOff("spring pools");
+            }
+            key ("Community Room") {
+                ["Thou canst lie in comfort among the many soft cushions and pillows. Get to know thy neighbor. Get to know thy neighbor 'very well'!"];
+                TurnOff("Community Room");
+            }
+            key ("fine artwork") {
+                ["Ah, yes, those are erotic masterpieces from the brush of Britannian artist Glen Johnson. Notice how the curves on that one are extremely naturalistic, dost thou not agree?"];
+                TurnOff("fine artwork");
+            }
+            key ("Fellowship") {
+                ["Yes, I am a member. If it were not for The Fellowship, I would not be manager of The Baths! I served the group well, trusted my many brothers, strived for unity, and... well, my worthiness preceded my reward! And all of this... was my reward!" Glenno smiles as if he were a tomcat who had just swallowed a mouse.];
+                TurnOff("Fellowship");
+                TurnOn("reward");
+            }
+            key ("reward") {
+                ["Yes, The Fellowship gave me this place. They own it, thou knowest." Suddenly Glenno holds his hand to his mouth, as if he has said something he shouldn't have. "I mean, The Fellowship only owns the -land- on which it was built. I -built- The Baths with money with which I was rewarded by The Fellowship. So, enough of that -- enjoy thyself. I must tend to business!" With that, Glenno turns away from you.*];
+                TurnOff("reward");
+                terminate;
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["Leaving so soon?"*];
+    }
+    if (event = _Bark) {
+        v0 = ~GetTime();
+        v7 = ~GetWorkType(~NPCToItem_i(_Glenno));
+        v8 = ~rndRange(4, 1);
+        if (v7 = 11) {
+            if ((v0 = 5) or ((v0 = 7) or (v0 = 0))) {
+                if (v8 = 1) {
+                    v9 = "@Wine and women!@";
+                }
+                if (v8 = 2) {
+                    v9 = "@Need a girl, sailor?@";
+                }
+                if (v8 = 3) {
+                    v9 = "@How about a stud, lady?@";
+                }
+                if (v8 = 4) {
+                    v9 = "@Relax here in The Baths!@";
+                }
+                Item_bark(v9, _Glenno);
+            }
+        } else {
+            BarkAboutWork_i(_Glenno);
+        }
+    }
+}
+
+Usable GlennoSellsDrink_i #locals(13) #uses(~AskOrdList, ~PriceString_i, ~AskYesNo, ~SellItem_i) {
+    PushKeys();
+    v0 = true;
+    v1 = << "nothing", "wine", "ale" >>;
+    v2 = << 0, 616, 616 >>;
+    v3 = << 65177, 5, 3 >>;
+    v4 = << 0, 5, 5 >>;
+    v5 = "";
+    v6 = 0;
+    v7 = << "", " for a bottle", " for a tankard" >>;
+    v8 = 1;
+    ["What wouldst thou like to whet thy palate?"];
+    While v0 {
+        v9 = ~AskOrdList(v1);
+        if (v9 = 1) {
+            ["Fine choice."];
+            v0 = false;
+        } else {
+            v10 = ~PriceString_i(v7::v9, v4::v9, v6, v1::v9, v5);
+            v11 = 0;
+            ["^<v10> Dost thou think it worth the cost?"];
+            v12 = ~AskYesNo();
+            if v12 {
+                ["Thou art correct!"];
+                v11 = ~SellItem_i(true, 1, 0, v4::v9, v8, v3::v9, v2::v9);
+            }
+            if (v11 = 1) {
+                ["Done!"];
+            } else {
+                if (v11 = 2) {
+                    ["Thou cannot possibly carry that much!"];
+                } else {
+                    if (v11 = 3) {
+                        ["Thou dost not have enough gold for that!"];
+                    } else {
+                    }
+                }
+            }
+            ["Wouldst thou like something else?"];
+            v0 = ~AskYesNo();
+        }
+    }
+    PopKeys();
+}

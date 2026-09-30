@@ -1,0 +1,51 @@
+Routine Fodus accepts a0 #locals(1) #uses(~LordOrLady) {
+    if (event = _Bark) {
+        terminate;
+    }
+    if (event = _Action) {
+        SetSpeaker(0, _Fodus);
+        v0 = ~LordOrLady();
+        if not $MetFodus {
+            [You see a wingless gargoyle with a terrible skin disease. It looks as if his face is falling off in patches.];
+            $MetFodus = true;
+        } else {
+            ["To want something else?" Fodus asks.];
+        }
+        TurnOn(<< "name", "job", "bye" >>);
+        converse {
+            key ("name") {
+                ["To be named Fodus."];
+                TurnOff("name");
+            }
+            key ("job") {
+                ["To be a digger in the mines. To be looking for iron ore and lead and..."];
+                TurnOn("and...");
+            }
+            key ("and...") {
+                ["The secret ore..."];
+                [A wave of delirium passes over the gargoyle. "To... to be going back to work now, Mikos!... To be working hard!... To have no need to give me any more of the the silver fluid..."];
+                flag(263) = true;
+                TurnOff("and...");
+                TurnOn(<< "secret ore", "silver fluid" >>);
+            }
+            key ("secret ore") {
+                ["To be called... blackrock."];
+                TurnOff("secret ore");
+                TurnOn("blackrock");
+            }
+            key ("blackrock") {
+                ["To be the lode located in a hidden area of the mine..." The gargoyle's eyes roll up into his head. He is obviously sick.];
+                TurnOff("blackrock");
+            }
+            key ("silver fluid") {
+                ["To need the venom... to have more venom..."];
+                TurnOff("silver fluid");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["To be going back to work now, Mikos..."*];
+    }
+}

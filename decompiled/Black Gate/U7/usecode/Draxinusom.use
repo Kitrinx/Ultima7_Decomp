@@ -1,0 +1,130 @@
+Routine Draxinusom accepts a0 #locals(3) #uses(~AvatarName, GivePartyExp_i, ~AskYesNo) {
+    if (event = _Action) {
+        SetSpeaker(0, _Draxinusom);
+        v0 = ~AvatarName();
+        TurnOn(<< "name", "job", "bye" >>);
+        if flag(569) && not flag(568) {
+            TurnOn("Inamo");
+        }
+        if $SphereGone {
+            TurnOn("Moongates");
+        }
+        if not $MET_DRAXINUSOM {
+            [You see an aged gargoyle, bent and withered, with a regal bearing. He smiles gently.];
+            $MET_DRAXINUSOM = true;
+        } else {
+            ["To be good to see you again, old friend. To be needing Draxinusom again so soon?"];
+        }
+        converse {
+            key ("name") {
+                ["To have been many years. To be your old acquaintance, <v0>, Draxinusom."];
+                TurnOff("name");
+            }
+            key ("job") {
+                ["To ask about Job? To be unable to say that I truly have one at this time. To notice how the young ones no longer look to me for guidance any more. To look more to Teregus, or, more often, to those in The Fellowship."];
+                TurnOn(<< "Teregus", "Fellowship" >>);
+            }
+            key ("Terfin") {
+                ["To be quite comfortable for our needs. To be, however, unfortunate that it was thought necessary to isolate us from the humans. To have engendered resentment and tension in our younger generations. To remember not the old days, my friend -- the days when we had to work together to survive." He smiles, reliving old memories, then shakes his head.~~"To have had to give up many much when we moved."];
+                TurnOn("give up");
+                TurnOff("Terfin");
+            }
+            key ("give up") {
+                ["To have been many favorite possessions. To be too much trouble to move so much." He sighs.];
+                if flag(480) {
+                    [~"To especially regret selling my Ethereal Ring."];
+                    TurnOn(<< "selling", "Ethereal Ring" >>);
+                }
+                TurnOff("give up");
+            }
+            key ("Ethereal Ring") {
+                ["Ah. To be, indeed, a lovely treasure. To have been quite useful. A shame to have been, really, to have had to sell it. To have been one of my favorites."];
+                TurnOff("Ethereal Ring");
+            }
+            key ("selling") {
+                ["To have sold most of my treasures when we were... uh... asked, shall to say, to move to the island. To have all happened rather quickly, you see. To have sold most to the Sultan of Spektran."];
+                TurnOn("Sultan");
+                TurnOff("selling");
+            }
+            key ("Sultan") {
+                ["To have seemed nice enough, for a human. To be a bit mad, he is, even for a human. To tell you he lives on an island just to the west of us. To know, at least, that my prized possessions would be safe in his hands."];
+                TurnOn("safe");
+                flag(571) = true;
+                GivePartyExp_i(50);
+                TurnOff("Sultan");
+            }
+            key ("safe") {
+                [He nods his head. "To be rumored to have one of the best-guarded vaults in all of Britannia. To be supposedly enchanted. To know not details."];
+                TurnOff("safe");
+            }
+            key ("Inamo") {
+                TurnOff("Inamo");
+                ["To be a fine young gargoyle. To have been raised by Teregus, keeper of the altars. To have left town because of the tension between the altar worshippers and The Fellowship. To have been angry and distrustful of The Fellowship. To have news of him?"];
+                v1 = ~AskYesNo();
+                if v1 {
+                    ["To be excellent! To have seen him? To know how he is faring? To be well?"];
+                    flag(568) = true;
+                    PushKeys();
+                    TurnOn(<< "murdered", "not well", "well" >>);
+                } else {
+                    ["Ah. To be too bad. To tell you Teregus wanted to know how he was doing."];
+                }
+            }
+            key ("well") {
+                ["To be very good. To know Teregus will be pleased to learn that, as well!"];
+                PopKeys();
+            }
+            key ("murdered") {
+                ["To be terrible news! To have been such a fine gargoyle. To know Teregus will be heartbroken. To be wishing not for him to grieve, but to take to him the news immediately. To be better to hear it from you."];
+                PopKeys();
+            }
+            key ("Moongates") {
+                ["Mine own Orb of the Moons exploded recently! To no longer be able to travel via Moongates. To be strange!"];
+                TurnOff("Moongates");
+            }
+            key ("not well") {
+                ["To be a shame. To be taking the news to Teregus of his youngling. To be wondering why we had not heard from Inamo recently."];
+                PopKeys();
+            }
+            key ("Teregus") {
+                ["To be truly a fine young gargoyle. To be one of the most sensible, too. To have seen fit to adhere to the old ways, the ways of the altars. To see that some of the youngest still look up to him, but the majority seem to have been wooed away by the glamor of The Fellowship."];
+                if not flag(568) {
+                    ["To tell you that his weanling, Inamo, is in Trinsic at this time."];
+                    flag(569) = true;
+                    TurnOn("Inamo");
+                }
+                TurnOff("Teregus");
+            }
+            key ("Fellowship") {
+                ["To know not what to think of them and their tenets. To seem not dangerous, but not to be following the old ways, the ways of Passion, Diligence, and Control. To feign worship to the shrines here in Terfin, of course, especially to Control, but not yet to trust them. To wait and see. To have forceful leaders who espouse doctrines of submission." He shrugs.~~"To be genuinely inspired, perhaps, and perhaps not."];
+                TurnOn(<< "Terfin", "leaders" >>);
+                TurnOff("Fellowship");
+            }
+            key ("leaders") {
+                ["To inform you that The Fellowship is directed by two winged brethren. To be called Runeb and Quan."];
+                TurnOn(<< "Runeb", "Quan" >>);
+                TurnOff("leaders");
+            }
+            key ("Runeb") {
+                ["To mean, in your language, `Red Mist'. To have been given that name because that is all he leaves behind of an adversary in battle. Before his conversion by The Fellowship, to have been known as a particularly cruel and dangerous gargoyle."];
+                v2 = ~IsDead(~NPCToItem_i(_Runeb));
+                if v2 {
+                    ["To be gone -- dead -- now."];
+                }
+                TurnOff("Runeb");
+            }
+            key ("Quan") {
+                ["Ah, to be an interesting one. To be a strong, powerful personality, to be from one of the families most able to claim noble lineage in our society. To have been always most self-serving, striving only to gain status and wealth for himself. To have certainly changed his tune since joining The Fellowship. To have my doubts, however, that his goals have changed as well."];
+                TurnOff("Quan");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["To bid farewell, old friend. To not be hesitating to return if there is aught else I can do for you. To be lonely here now for an old gargoyle dedicated to the ancient ways..."*];
+    }
+    if (event = _Bark) {
+        terminate;
+    }
+}

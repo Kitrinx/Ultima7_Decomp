@@ -1,0 +1,422 @@
+Routine Mage accepts a0 #locals(26) #uses(Door_01B0, ~AvatarStatue_i, ~DirFromAvatar_i, ~AvatarName, ~AskYesNo, DemonstratePolymorph_i, TeleportToForge_i) {
+    if (event = _Bark) {
+        v0 = ~FindNearest_i(1, _Light_Source, item);
+        v1 = ~FindNearest_i(1, _Lit_Light_Source, item);
+        v2 = ~FindNearest_i(1, _Spent_Light_Source, item);
+        if (v0 or (v1 or v2)) {
+            v3 = ~Random(100);
+            if (v3 >= 60) {
+                Item_bark("@Damn candles!@", item);
+                return;
+            }
+            if (v3 <= 40) {
+                v4 = v0;
+                v4 = (v4 & v1);
+                v4 = (v4 & v2);
+                Foreach v7 in v4 {
+                    v8 = ~GetCoord(v7);
+                    Item_destroy(v7);
+                    createSprite(65535, 0, 0, 0, (v8::2 - 1), (v8::1 - 1), 5);
+                    Sfx(8);
+                }
+                v9 = ~PostAction(<< _aUP_FRAME_i, _aWAIT_i, 1, _aCONTINUE_i, _aBARK_i, "@An Ailem!", _aWAIT_i, 3, _aOUT_FRAME_i, _aWAIT_i, 6 >>, item);
+                return;
+            }
+        } else {
+            if ~FindNearest_i(1, _Chair, item) {
+                Item_bark("@I'm famished!@", item);
+                return;
+            } else {
+                v10 = ~FindNearest_i(2, _Door_432, item);
+                v11 = ~FindNearest_i(2, _Door_433, item);
+                if (v10 or v11) {
+                    if v10 {
+                        Item_bark("@My door, at last.@", item);
+                        event = 1;
+                        Door_01B0(v10);
+                        return;
+                    }
+                    if v11 {
+                        Item_bark("@My door, at last.@", item);
+                        return;
+                    }
+                } else {
+                    v12 = ~FindNearby_i(16, 0, _Path, item);
+                    if v12 {
+                        Foreach v15 in v12 {
+                            if ((~GetFrame(v15) = 4) and (~GetFrame(item) >= 16)) {
+                                Item_bark("@Ah, a wall.@", item);
+                                v16 = ~PostInFuture(18, << _aNO_HALT_i, _aBARK_i, "@I'll follow it.@" >>, item);
+                                return;
+                            } else {
+                                Item_bark("@Where am I?@", item);
+                                return;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    if not ~GetContents(4, 240, _Scroll, item) {
+        return;
+    }
+    if (event = _Action) {
+        if not ~AvatarStatue_i() {
+            v17 = ~DirFromAvatar_i(item);
+            v18 = ((v17 + 4) modulo 8);
+            v9 = ~PostAction(<< _aSTAND_FRAME_i, _aFACE_i, v18, _aUSABLE_i, #Mage, 0 >>, item);
+        } else {
+            terminate;
+        }
+    }
+    if (event = _Posted_i) {
+        v19 = ~AvatarName();
+        if flag(782) {
+            SetSpeaker(1, _Wilbur);
+            ["I'll speak to thee no more, Avatar!" He ignores you.*];
+            terminate;
+        }
+        if not flag(784) {
+            SetSpeaker(0, _Wilbur);
+            [At your approach, the old man straightens and looking directly at you he says, "Well met, <v19>. I am called Erethian. Although thou dost not know me, I know thee well.];
+            [I have seen thee destroy Mondain's power and so defeat that misguided mage, I have seen thee vanquish the enchantress Minax, I have also seen, in a very unique way, how thou brought low the hellspawn Exodus."];
+            [He falls silent here and you notice that the old man's eyes are milky white.];
+            flag(784) = true;
+            TurnOn(<< "name", "job", "Mondain", "Minax", "Exodus", "bye" >>);
+        } else {
+            if not (flag(810) or flag(811)) {
+                SetSpeaker(0, _Wilbur);
+                ["Greetings once again, <v19>. How may I assist thee?" The blind old man looks unerringly in your direction.];
+            } else {
+                SetSpeaker(1, _Wilbur);
+                ["I'll never get any work done like this! What do you wish of me?" Erethian seems a little pevish at this point.];
+            }
+            TurnOn(<< "name", "job", "bye" >>);
+        }
+        if flag(823) {
+            if not flag(824) && not flag(816) {
+                TurnOn("black sword");
+            }
+        } else {
+            if not flag(786) && flag(785) {
+                TurnOn("powerful artifact");
+            }
+        }
+        if flag(787) {
+            if not flag(815) {
+                TurnOn("daemon mirror");
+            } else {
+                if not flag(816) {
+                    if not flag(824) {
+                        TurnOn("daemon gem");
+                    }
+                } else {
+                    if not flag(825) {
+                        TurnOn("daemon blade");
+                    }
+                }
+            }
+        } else {
+            if flag(815) && flag(816) && not flag(825) {
+                TurnOn("daemon blade");
+            }
+        }
+        if flag(792) {
+            TurnOn("the Psyche returns");
+        }
+        if flag(807) {
+            TurnOn("great evil");
+        }
+        if flag(833) {
+            TurnOn("Talisman of Infinity");
+        }
+        v20 = false;
+        v21 = false;
+        v22 = false;
+        v23 = false;
+        converse {
+            key ("the Psyche returns") {
+                SetSpeaker(0, _Wilbur);
+                ["Could this possibly be true?" Erethian's blind eyes light up with unabashed glee. "What an opportunity I have here."];
+                SetSpeaker(1, _Wilbur);
+                [He once again notices your presence. "Now, do not let any strange ideas of destruction enter thy mind, Avatar. I shan't let thee deprive me of this chance to experience a true wonder of the world. Run along now... Is there not a right to be wronged, somewhere else?];
+                TurnOff("the Psyche returns");
+            }
+            key ("great evil") {
+                SetSpeaker(1, _Wilbur);
+                [The elderly mage frowns. "I sense no great evil, but then I never did quite get the knack of cosmic awareness. Nevertheless, don't worry thyself over much. These things tend to work themselves out." You feel as if you've just been patted on the head and asked to go play elsewhere.];
+                TurnOff("great evil");
+            }
+            key ("Talisman of Infinity") {
+                if not flag(783) {
+                    flag(783) = true;
+                    ["Ah, yes. I once had a scroll that told of a talisman by that name. If only I could remember where I put it. Dost thou by chance have the parchment entitled Scroll of Infinity with thee?];
+                    if ~AskYesNo() {
+                        if not ~CountItem(1, 50, _Scroll, _Party) {
+                            ["If thou dost not have the scroll, I cannot help thee in this matter."];
+                        } else {
+                            ["Here we are. Now then, it appears to be written in a strange format. One might even say a code of sorts... I have it! Apparently, the Talisman currently resides in the Great Void. A plane somewhat removed from ours. If thou wishest to gain access to this void, thou shalt need to craft two lenses: one concave, the other convex. Light focused through the properly enchanted lenses will open a conduit between our realm and the void. I believe this treatise speaks of three Talismans of Principle that send out a call to the Infinity Talisman and bring it here. Once here, it would seem that its sole purpose is to coerce a powerful force into the void." A thought hits the mage like lightning strikes a tree. "Oh no, Avatar... Thou shan't gain any more aid from me. I may be blind, but I see through thy sham. I'll not help thee send the Core into the void." Erethian falls silent, and it would appear that he'll speak no more.];
+                            CloseSpeaker(_Wilbur);
+                            SetSpeaker(0, _Korryn);
+                            [Arcadion's voice whispers to you like ripple in still pond, "Fear not, my master. I have some knowledge of these matters."*];
+                            flag(782) = true;
+                            terminate;
+                        }
+                    } else {
+                        ["Very well. I shall need the scroll to give thee further information."];
+                    }
+                } else {
+                    ["Dost thou have the Scroll of Infinity amongst thy possessions?"];
+                    if ~AskYesNo() {
+                        if not ~CountItem(1, 50, _Scroll, _Party) {
+                            ["I needs must touch the scroll to glean its meaning. Else I'll not be able to help thee in this matter."];
+                        } else {
+                            ["Here we are. Now then, it appears to be written in a strange format. One might even say a code of sorts... I have it! Apparently, the Talisman currently resides in the Great Void. A plane somewhat removed from ours. If thou wishest to gain access to this void, thou shalt need to craft two lenses: one concave, the other convex. Light focused through the properly enchanted lenses will open a conduit between our realm and the void. I believe this treatise speaks of three Talismans of Principle that send out a call to the Infinity Talisman and bring it here. Once here, it would seem that its sole purpose is to coerce a powerful force into the void." A thought hits the mage like lightning strikes a tree. "Oh no, Avatar... Thou shan't gain any more aid from me. I may be blind, but I see through thy sham. I'll not help thee send the Core into the void." Erethian falls silent, and it would appear that he'll speak no more.];
+                            CloseSpeaker(_Wilbur);
+                            SetSpeaker(0, _Korryn);
+                            [Arcadion's voice whispers to you like ripple in still pond, "Fear not, my master. I have some knowledge of these matters."*];
+                            flag(782) = true;
+                            terminate;
+                        }
+                    } else {
+                        ["If thou bringest the scroll to me I can aid the in finding the meaning of the archaic text."];
+                    }
+                }
+                TurnOff("Talisman of Infinity");
+            }
+            key ("powerful artifact") {
+                ["I once attempted to create a sword of great power." Erethian frowns in concentration then says, "if thou wishest to continue my work, thou shalt have need of some few pieces of forging equipment... And a place to put them... I know just the spot. Come with me and I'll see what I can do to help thee."*];
+                v21 = true;
+                break;
+            }
+            key ("black sword") {
+                SetSpeaker(1, _Wilbur);
+                [Erethian nods his head when you tell him of your dilemma with the black sword. "Yes, I can see how the blade would be too clumsy to swing in combat. However, if thou were to bind a magical source of power into the hilt of the blade, thou mightest be able to counteract the unwieldy nature of the sword."];
+                if ~GetContents(13, _All, _Gem, ~NPCToItem_i(_Avatar)) {
+                    SetSpeaker(0, _Hook);
+                    [The little gem sparks up at this turn of the conversation. "I believe that in my current form, I could serve perfectly well as the blade's stabilizing force. In truth, this would allow me to give thee access to some of my more dramatic powers." The daemon sounds excited at this prospect, perhaps a little too excited.];
+                    CloseSpeaker(_Hook);
+                    SetSpeaker(1, _Wilbur);
+                    [Erethian's voice is quiet as he says, "Consider well before thou bindest Arcadion into the sword. For it is true that he will be able to solve the sword's problem of balance, but will he be able to solve his own problems as well?"];
+                    TurnOn("problems");
+                } else {
+                    if flag(815) {
+                        [You wonder if perhaps Arcadion might be able to shed some light on this issue, and as if reading your thoughts, Erethian says, "Beware the daemon. His goals are not those of thine or mine. If he offers to help thee, it is to help himself. Of that thou canst be sure."];
+                    }
+                }
+                flag(824) = true;
+                TurnOff(<< "black sword", "daemon gem" >>);
+            }
+            key ("problems") {
+                ["This is thy choice to make. Apparently thou hast need to make this sword function, but if the daemon is thy only recourse, I pity thee. For as surely as Arcadion will be bound within the sword, thou wilt be bound to possess it. I can tell thee no more."];
+                TurnOff("problems");
+            }
+            key ("name") {
+                [The mage gives you a half smile, "'Twould seem that thy memory is failing thee, <v19>. As I have said, my name is Erethian."];
+                TurnOff("name");
+            }
+            key ("job") {
+                ["I am a follower of the principle of Truth. But unlike those of the Lyceaum, I would prefer to seek out the knowledge instead of waiting for it to come to me.];
+                [It is this curiosity which has brought me to this island from which Exodus, the spawn of Mondain and Minax, sought to rule the world.];
+                [The books and scrolls here have taught me much of Britannia's\x09history and other... interesting subjects."];
+                [His clouded eyes sparkle with intelligence. But you can't help wondering how books and scrolls are of any use to a man afflicted with blindness.];
+                TurnOff("job");
+                TurnOn(<< "Mondain", "Minax", "Exodus", "subjects", "blindness" >>);
+            }
+            key ("subjects") {
+                ["If thou art interested, feel free to inspect them. This is no library." As if regretting his gracious gesture, he adds, "However, I trust that thou wilt take utmost care with the older ones." He stops, on the verge of saying more.];
+                TurnOff("subjects");
+            }
+            key ("blindness") {
+                if not flag(811) {
+                    v20 = true;
+                    break;
+                } else {
+                    ["Thou art a tiresome child. Leave me be!" He ignores your presence.*];
+                    terminate;
+                }
+            }
+            key ("Mondain") {
+                [Erethian scowls, "Now there was a mighty wizard. A bit twisted but then who knows what happens to the human mind when 'tis subjected to the powers he wielded.];
+                ['Tis even said his skull alone had the power to destroy enemies... he must have locked a magical matrix upon it, I'll have to research that." He nods his head, seemingly making a mental note, then continues with a wistful look on his aged features,];
+                ["I\x09would have loved to study that fascinating Gem of Immortality, but alas, I was born in too late an era."];
+                TurnOn(<< "Gem of Immortality", "skull" >>);
+                TurnOff("Mondain");
+            }
+            key ("Minax") {
+                [A sad sweet smile comes to the wizard's face, "She was quite a comely lass at one time, with a mind forever searching." His expression darkens, "But then Mondain forced all of the good sense from her.];
+                [She became a power unto herself, in time. I do not think she quite rivaled her former mentor, Mondain, but she was a force to be reckoned with, nevertheless.];
+                [And that thou didst, with the Quicksword, Enilno. That\x09act will most likely have tales sung about it for the next eon." Under his breath he adds, "Even if Iolo's the only one who sings it."];
+                if ~FindNearest_i(40, _Iolo_465, item) {
+                    SetSpeaker(0, _Iolo);
+                    [With a look of indignation Iolo says, "Pardon me, sir. But I'll have thee know that ballads of the Avatar still grace all of the finest drinking establishments of Britannia."];
+                    SetSpeaker(0, _Wilbur);
+                    ["And what a dubious distinction that is." The corners of the mage's mouth come up in a delicate smile.];
+                    SetSpeaker(0, _Iolo);
+                    [An angry retort dies on Iolo's lips as the elderly mage lifts his hands in a gesture of peace.];
+                    SetSpeaker(0, _Wilbur);
+                    ["Please, forgive the offense I have given. Thou shouldst know that I have seen, almost first hand, the Avatar's bravery in the face of adversity.];
+                    [I have nothing but the highest regard for the Destroyer of the Age of Darkness and Harbinger of the Age of Enlightenment.];
+                    CloseSpeaker(_Iolo);
+                }
+                TurnOn("Enilno");
+                TurnOff("Minax");
+            }
+            key ("Exodus") {
+                ["That being has become a passion of mine, lately." He almost glows with excitement. "Indeed, 'tis what brought me here. While I\x09was at the Lyceaum, I happened upon a passage in a manuscript that described an Island of Fire.];
+                [Upon further research, I found that the entity known as Exodus was not truly destroyed. The interface between its two parts and the world was merely severed."];
+                TurnOn(<< "two parts", "interface" >>);
+                TurnOff("Exodus");
+            }
+            key ("two parts") {
+                ["One part, his psyche we shall call it, was taken by the gargoyles who live below us in a realm on the other side of the world. A truly fascinating culture they have, but I digress..." You begin to wonder just how long this old man has\x09been out of circulation.];
+                [He continues, "The other, I have here. I call it the Dark Core, because without the psyche, it is mostly lifeless." His face appears to youthen, and you feel as if you're speaking to a child describing his new toy... or perhaps, pet.];
+                ["I believe 'twas the removal of the psyche from the Core that caused this island to sink beneath the waves."];
+                TurnOn("gargoyles");
+                if not v22 {
+                    TurnOn("psyche");
+                }
+                if not v23 {
+                    TurnOn("Dark Core");
+                }
+                TurnOff("two parts");
+            }
+            key ("interface") {
+                [His expression is unreadable, "The machine that thou destroyed was Exodus' means of communication with and control of the world.];
+                [When it was destroyed, his psyche could no longer retain its hold on the Dark Core.];
+                [I have often wondered if another interface was implemented, would the psyche return, or possibly be regenerated..."];
+                [As his\x09idle musings begin to run toward possibly dangerous conclusions, his mouth audibly snaps shut.];
+                if not v22 {
+                    TurnOn("psyche");
+                }
+                if not v23 {
+                    TurnOn("Dark Core");
+                }
+                TurnOff("interface");
+            }
+            key ("gargoyles") {
+                ["Interesting creatures, thou mightest call them balrons, but they are not the beasts that history has made of them.];
+                [The larger, winged ones are intelligent and magical by nature,\x09while the smaller, wingless ones appear to be the work force for the species."];
+                [He turns his head in your direction with a puzzled expression in his eyes, "I have the oddest feeling that thou hast heard all of this before..." Erethian falls silent.];
+                TurnOff("gargoyles");
+            }
+            key ("psyche") {
+                ["Eventually, I shall turn my studies to that being. The gargoyles have placed it within a statue, in a shrine they dedicated to their principle of Diligence.];
+                v22 = true;
+                TurnOff("psyche");
+            }
+            key ("Dark Core") {
+                if ~FindNearest_i(7, _The_Dark_Core, ~NPCToItem_i(_Avatar)) {
+                    ["Yes, here it is. It is the cylinder sitting upon yon pedastal." He motions in the direction of the Dark Core.];
+                }
+                ["I have found it to be quite a treasure trove of useful facts. Its sole purpose seems to be the storage of information.];
+                [Much of the information is trivial, such as the detailed description\x09of the color of the\x09sky on a particular day eons ago,];
+                [while other bits give instructions for the manipulation of the\x09world.];
+                [Within it I even found the knowledge to raise and sustain this island\x09we stand upon. It is truly a remarkable artifact."];
+                [He thinks for a moment, then looks nervously in your direction, "Please, do be careful around it. Artifacts seem to have a tendency to, shall we say, disappear around thee."];
+                v23 = true;
+                TurnOff("Dark Core");
+            }
+            key ("Enilno") {
+                ["Ah, now there's a question. I've heard naught of it's existence since the Age of Darkness ended. Would that I knew its location.];
+                [It was reputedly a great item of magic. Didst thou find it so?" He cocks his head to one side as he asks the question.];
+                v24 = ~AskYesNo();
+                if v24 {
+                    ["Yes, 'tis a pity to lose such an item of antiquity. Perhaps as time unfolds it will turn up. These things have a way of surfacing at the strangest times."];
+                } else {
+                    ["No? It didst seem to serve thee well enough to dispatch the enchantress Minax. But then I suppose only a poor bard blames his instrument." He winks mischieviously in your general direction.];
+                }
+                TurnOff("Enilno");
+            }
+            key ("Gem of Immortality") {
+                [Milky eyes glitter up at you like twin marbles, "Ah, yes. But thou knowest all too well about that little bauble.];
+                [After all, it was thee who smashed it into the shards which caused thee so much trouble during the regency of Lord Blackthorn.];
+                [So much power that even in a shattered state, its magic still flowed. 'Tis sad to lose such an artifact." As if suddenly remembering with whom he is speaking, he ammends, "Much better than having Mondain running about mucking with things, I suppose."];
+                TurnOff("Gem of Immortality");
+            }
+            key ("skull") {
+                ["'Twould seem that someone," he pauses dramatically, "let that slip into a volcano..." His wry smile belies his careless tone.];
+                TurnOff("skull");
+            }
+            key ("daemon mirror") {
+                ["Ah, so thou hast met that old windbag. Truly, I feel that I would do better to free myself of that burdensome beast, but he sometimes proves to be useful. If it weren't for his whining, perhaps he and I would get along better."];
+                TurnOn(<< "whining", "free" >>);
+                TurnOff("daemon mirror");
+            }
+            key ("whining") {
+                ["'Tis his favorite passtime. He begs, pleads, and threatens me to free him from that stupid mirror. Believe me, if I could I would have done it long ago." Erethian's lined face shows his chagrin.];
+                TurnOff("whining");
+            }
+            key ("free") {
+                ["He wants this special bauble. I once possessed this gem he seeks, and I don't think he'd be very happy once he gets it. I have tried to tell him that 'twould only imprison\x09him in a more mobile jail, but alas, his head is made of stone."];
+                TurnOn("jail");
+                TurnOff("free");
+            }
+            key ("jail") {
+                ["Quite. Arcadion seeks to have dominion over Britannia and believes that the gem will give him the ability to exert his power here. In truth, the Ether Gem works in the reverse, his power will become accessible to the one who possesses the gem."];
+                TurnOn("Ether Gem");
+                TurnOff("jail");
+            }
+            key ("Ether Gem") {
+                ["The gem was pilfered from me by an ill tempered dragon. She blew her way into this castle, waylayed the golems that protect the Shrine of Principle, then destroyed a perfectly good secret door on her way to the Test of Courage. I'd have liked to see her squeeze through the hole she made, 'tis hardly big enough for a creature of her bulk." The mage's milky eyes twinkle with suppressed mirth.];
+                TurnOn(<< "golems", "Shrine of Principle", "Test of Courage" >>);
+                TurnOff("Ether Gem");
+            }
+            key ("golems") {
+                ["Mmmm... Yes. This pair of manshaped, magical constucts used to guard the Shrine of Principle, but alas, one fell pray to falling rocks when the dragon assaulted the castle. The other picked up his, ah... brother, for lack of a better word, and carried him off through the portal to the Test of Love."];
+                TurnOn("Test of Love");
+                TurnOff("golems");
+            }
+            key ("Shrine of Principle") {
+                ["The shrine lies through the doors at the rear of the main hall. There thou canst find three statues, each one dedicated to a Principle set forth by Lord Britsh at the beginning of the Age of Enlightenment." Conspiratorially he adds, "A bit stuffy, but they make nice cloakracks."];
+                TurnOff("Shrine of Principle");
+            }
+            key ("Test of Love") {
+                ["I not had the chance to inspect that oddity yet, however, thou art welcome to peruse it at thy leisure." He smiles like a grandfather giving a present to a child.];
+                TurnOff("Test of Love");
+            }
+            key ("Test of Courage") {
+                if ~AvatarSex() {
+                    v25 = "heroine's";
+                } else {
+                    v25 = "hero's";
+                }
+                ["I believe 'twas set in motion by Lord British in order to test..." He gestures in your direction, "A virtuous <v25> fighting ability and courage. The statues in the back of this castle can tell thee more about the tests, though." Erethian grins mysteriously.];
+                TurnOff("Test of Courage");
+            }
+            key ("daemon gem") {
+                ["So... thou hast made a servant of Arcadion. 'Tis good to be rid of his incessant whining. I hope that thou findest him to be as useful as I didst." You're not sure, but his words might be construed as a curse.];
+                if ~GetContents(13, _All, _Gem, ~NPCToItem_i(_Avatar)) {
+                    SetSpeaker(0, _Hook);
+                    [The gem glows brighter, "'Tis good to see the last of thee, also, old man. Perhaps in another life, I shall be thy master, and thou the slave." The daemon lets out a chilling little laugh.];
+                    CloseSpeaker(_Hook);
+                    SetSpeaker(1, _Wilbur);
+                    [Erethian looks a little shaken at hearing the daemon's voice, but quickly recovers his composure. "I think not, daemon. I'm not at all sure that there is a way for thou to get out of that little gem." The elderly mage's expression is unreadable.*];
+                    SetSpeaker(0, _Wilbur);
+                }
+                TurnOff("daemon gem");
+            }
+            key ("daemon blade") {
+                ["I see that thou didst not heed my warning. Alas, my pity shall be thine eternally. And so, what wouldst thou have of me, Master and Slave of the Shade Blade."];
+                flag(825) = true;
+                TurnOff("daemon blade");
+            }
+            key ("bye") {
+                if not flag(824) {
+                    ["Goodbye and good luck... Thou'lt need it." The old mage snickers under his breath as if enjoying a personal joke, quite possibly at your expense.*];
+                } else {
+                    ["Goodbye and good luck..." Erethian sounds truly sympathetic.];
+                }
+                terminate;
+            }
+        }
+        clear_answers;
+        if v20 {
+            DemonstratePolymorph_i(item);
+        }
+        if v21 {
+            TeleportToForge_i(item);
+        }
+    }
+}

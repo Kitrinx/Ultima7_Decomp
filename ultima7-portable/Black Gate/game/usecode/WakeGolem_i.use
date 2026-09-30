@@ -1,0 +1,28 @@
+Routine WakeGolem_i accepts a0 #locals(13) {
+    v0 = ~FindNearby_i(8, 40, _Golem, _Avatar);
+    v1 = false;
+    Foreach v4 in v0 {
+        if ~GetContents(4, 243, _Scroll, v4) {
+            v1 = v4;
+        }
+        if ~GetContents(4, 244, _Scroll, v4) {
+            v1 = v4;
+        }
+    }
+    if v1 {
+        v5 = ~PostAction(<< _aWAIT_i, 3, _aFACE_i, byte(52), _aKNEEL_FRAME_i, _aWAIT_i, 2, _aSTAND_FRAME_i >>, v1);
+        v6 = ~GetCoord(v1);
+        createSprite(1, 0, 0, 0, v6::2, v6::1, 17);
+        Sfx(62);
+        LightningBolt();
+    }
+    v0 = ~FindNearby_i(176, 40, _Blood, _Avatar);
+    Foreach v9 in v0 {
+        v10 = ~GetCoord(v9);
+        v11 = ~Item_create(_Fire_Field);
+        v12 = ~PopToMap(v10);
+        Item_destroy(v9);
+        v5 = ~PostInFuture(~rndRange(150, 50), << _aNO_HALT_i, _aFINISH_i, _aREMOVE_i >>, v11);
+    }
+    SetWorkType(_Wait, v1);
+}

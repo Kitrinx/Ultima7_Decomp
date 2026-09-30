@@ -1,0 +1,192 @@
+Routine Katrina accepts a0 #locals(12) #uses(~LordOrLady, ~AvatarName, ~IsNPCNear, ~AskList, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Katrina);
+        v0 = ~LordOrLady();
+        v1 = ~GetParty();
+        v2 = ~NPCToItem_i(_Katrina);
+        v3 = ~AvatarName();
+        v4 = ~IsNPCNear(_Shamino);
+        v5 = ~IsNPCNear(_Iolo);
+        v6 = ~IsNPCNear(_Dupre);
+        TurnOn(<< "name", "job", "bye" >>);
+        if (v2 in v1) {
+            TurnOn("leave");
+        }
+        if $MetHenry {
+            TurnOn("Henry");
+        }
+        if flag(381) {
+            TurnOn("locket");
+        }
+        if flag(384) {
+            TurnOn("strangers");
+        }
+        if not $MetKatrina {
+            [You see your old companion Katrina looking only slightly older than when you saw her during your last visit.];
+            $MetKatrina = true;
+        } else {
+            ["Hello again, <v3>!" Katrina greets you with a smile.];
+        }
+        converse {
+            key ("name") {
+                ["Why," she blinks at you, "I know it has been a long time, but surely thou cannot have forgotten me. I am Katrina. One of thine old companions."];
+                [You share a friendly laugh at your reunion.];
+                TurnOn(<< "old companions", "time" >>);
+                TurnOff("name");
+            }
+            key ("old companions") {
+                ["Ah, yes, Iolo, Shamino, and Dupre."];
+                TurnOff("old companions");
+                TurnOn(<< "Iolo", "Shamino", "Dupre" >>);
+            }
+            key ("time") {
+                ["Although there is a vast difference in how time passes in our world and in this one, I am certain I have aged at least a bit," she says pleasantly.];
+                TurnOff("time");
+            }
+            key ("job") {
+                if not (v2 in v1) {
+                    ["Why, after last accompanying thee on thine adventures I settled down to the peaceful life of a shepherd in New Magincia."];
+                    TurnOn(<< "shepherd", "New Magincia" >>);
+                    if not (v2 in v1) {
+                        ["If thou dost have need of me I could join thy party again."];
+                        TurnOn("join");
+                    }
+                } else {
+                    ["Following thee around, <v0>! I shall never miss New Magincia!"];
+                    TurnOn("New Magincia");
+                }
+            }
+            key ("shepherd") {
+                ["I watch over my flock, and the townspeople as well, when they need me."];
+                TurnOff("shepherd");
+            }
+            key ("join") {
+                v7 = 0;
+                v1 = ~GetParty();
+                Foreach v10 in v1 {
+                    v7 = (v7 + 1);
+                }
+                if (v7 < 6) {
+                    ["It would be an honor, <v0>!"];
+                    JoinParty(_Katrina);
+                    TurnOn("leave");
+                    TurnOff("join");
+                } else {
+                    ["I prefer smaller crowds, Avatar. Perhaps later."];
+                }
+                TurnOff("join");
+            }
+            key ("leave") {
+                ["Dost thou want me to wait here or shall I go on home?"];
+                ClearKeys();
+                v11 = ~AskList(<< "wait here", "go home" >>);
+                if (v11 = "wait here") {
+                    ["I shall be happy to wait here until thou dost return."*];
+                    LeaveParty(_Katrina);
+                    SetWorkType(_Wait, ~NPCToItem_i(_Katrina));
+                    terminate;
+                } else {
+                    ["If thou dost think it best, I shall. If thou dost need me again thou dost have but to ask."*];
+                    LeaveParty(_Katrina);
+                    SetWorkType(_Loiter, ~NPCToItem_i(_Katrina));
+                    terminate;
+                }
+            }
+            key ("New Magincia") {
+                ["We are isolated here. We get no news from the world outside. Life is much the same as it was the last time thou didst visit Britannia two hundred years ago. I have many friends here."];
+                TurnOn("isolated");
+                TurnOff("New Magincia");
+            }
+            key ("isolated") {
+                ["That is the way we like it here. Now we have three other strangers on the island -- besides thee. Of course, thou couldst hardly be called a stranger. This is the largest number of visitors we have had in years.~~"But, never fear, <v3>, I am seldom lonely."];
+                TurnOff("isolated");
+                TurnOn(<< "lonely", "visitors" >>);
+            }
+            key ("lonely") {
+                ["I have many friends here. When I am lonely, I speak with Alagner the Sage, Russell the shipwright, or Henry the peddler."];
+                TurnOff("lonely");
+                TurnOn(<< "Alagner", "Russell", "Henry" >>);
+            }
+            key ("Alagner") {
+                ["He is a wise man who knows many things and tells wonderful stories. Alagner came here to retreat from the outside world. I know not why."];
+                TurnOff("Alagner");
+            }
+            key ("Russell") {
+                ["He has a sailor's heart, an artist's soul and a craftsman's hands. He never lived his dream of sailing the world. His ships do that for him."];
+                TurnOff("Russell");
+            }
+            key ("Henry") {
+                ["Henry has been a very dear friend for years. He is a simple but good man who does not have an ounce of hate in his heart for anyone. I am so fond of him that I gave him a valuable heirloom."];
+                TurnOff("Henry");
+                TurnOn("heirloom");
+            }
+            key ("heirloom", "locket") {
+                ["Since he does not have much money, I gave Henry my gold locket so he could present it to his sweetheart Constance. I have not talked to him lately, but I must confess I am worried about him."];
+                TurnOff("locket");
+                TurnOff("heirloom");
+                TurnOn("worried");
+            }
+            key ("worried") {
+                ["Soon after Henry left carrying the locket, I saw the three strangers on the island, wandering off in the same direction."];
+                TurnOff("worried");
+            }
+            key ("strangers", "visitors") {
+                ["The three visitors come from Buccaneer's Den. I met them shortly after their arrival and we spoke briefly. Robin is the one dressed like a gambler and the other two, Battles and Leavell, appear to be bullies."];
+                TurnOff(<< "strangers", "visitors" >>);
+                flag(384) = true;
+            }
+            key ("Iolo") {
+                if not v5 {
+                    ["Iolo should be in our party adventuring with us."];
+                } else {
+                    ["How hast thou been keeping thyself all these years, Iolo?"*];
+                    SetSpeaker(0, _Iolo);
+                    ["The years have not been as kind to me as they obviously have been to thee, milady."*];
+                    SetSpeaker(0, _Katrina);
+                    ["Ha! I see thou art still a scallywag, Iolo."*];
+                    CloseSpeaker(_Iolo);
+                    SetSpeaker(0, _Katrina);
+                }
+                TurnOff("Iolo");
+            }
+            key ("Shamino") {
+                if not v4 {
+                    ["Shamino should be here with us."];
+                } else {
+                    ["Is that a gray hair I see in thine hair, Shamino?"*];
+                    SetSpeaker(0, _Shamino);
+                    ["It is not! Where?"*];
+                    SetSpeaker(0, _Katrina);
+                    ["Perhaps it is but a trick of the light."*];
+                    CloseSpeaker(_Shamino);
+                    SetSpeaker(0, _Katrina);
+                }
+                TurnOff("Shamino");
+            }
+            key ("Dupre") {
+                if not v6 {
+                    ["I cannot help but miss Dupre a little. I have not seen him since he was knighted."];
+                } else {
+                    ["Sir Dupre, hast thou finished thy studies yet?"*];
+                    SetSpeaker(0, _Dupre);
+                    [Dupre looks confounded. "My studies, milady?"*];
+                    SetSpeaker(0, _Katrina);
+                    ["Of all the various drinking establishments in Britannia!"*];
+                    SetSpeaker(0, _Dupre);
+                    ["Oh, yes, of course, my studies! Continuing mine education has always been of the utmost importance to me."*];
+                    CloseSpeaker(_Dupre);
+                    SetSpeaker(0, _Katrina);
+                }
+                TurnOff("Dupre");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["Pleasant days, <v3>."*];
+    }
+    if (event = _Bark) {
+        BarkAboutWork_i(_Katrina);
+    }
+}

@@ -1,0 +1,82 @@
+Routine SwordBlank accepts a0 #locals(13) #uses(Hammer, PathToItem_i, ~InAvatarInv_i, ~OuterContainer_i, ~DirFromAvatar_i) {
+    if (event = _Action) {
+        if ~IsEquipped_i(_All, _Hammer, 1, _Avatar) {
+            v0 = ~FindNearest_i(3, _Anvil, item);
+            if v0 {
+                v1 = ~GetCoord(item);
+                v2 = ~GetCoord(v0);
+                if (v1::1 = v2::1) && (v1::2 = v2::2) && (v1::3 = (v2::3 + 1)) {
+                    v3 = ~GetFrame(item);
+                    if ((v3 >= 10) and (v3 <= 12)) {
+                        Hammer(v0);
+                        return;
+                    }
+                }
+            }
+        }
+        closeAllGumps();
+        v4 = ~GetFrame(item);
+        if ((v4 >= 8) and (v4 <= 15)) {
+            if not ~Item_getContainer(item) {
+                v5 = << 0, 1, 65535, 1 >>;
+                v6 = << 2, 1, 2, 0 >>;
+                PathToItem_i(7, item, #SwordBlank, 65533, v6, v5, item);
+            } else {
+                if not ~InAvatarInv_i(item) {
+                    v7 = ~OuterContainer_i(item);
+                    v5 = << 0, 1, 65535, 1 >>;
+                    v6 = << 2, 1, 2, 0 >>;
+                    PathToItem_i(7, v7, #SwordBlank, 65533, v6, v5, v7);
+                } else {
+                    v8 = ~PostAction(<< _aWAIT_i, 2, _aUSABLE_i, #SwordBlank >>, item);
+                }
+            }
+        }
+    }
+    if (event = 7) {
+        v9 = ~DirFromAvatar_i(item);
+        v8 = ~PostAction(<< _aFACE_i, v9, _aBEND_FRAME_i, _aWAIT_i, 3, _aSTAND_FRAME_i, _aUSABLE_i, #SwordBlank >>, ~NPCToItem_i(_Avatar));
+        v8 = ~PostAction(<< _aWAIT_i, 3, _aUSABLE_i, #TakeSwordBlank_i >>, item);
+    }
+    if (event = _Posted_i) {
+        v10 = ~GetContents(_All, _All, _Sword_Blank, ~NPCToItem_i(_Avatar));
+        if v10 {
+            v11 = ~GetTarget();
+            v12 = ~Item_getType(v11);
+            if (v12 = 991) && (~GetFrame(v11) = 1) {
+                PathToItem_i(8, v11, #SwordBlank, 0, 2, 0, v11);
+            }
+            if (v12 = 739) && ((~GetFrame(v11) >= 4) and (~GetFrame(v11) <= 7)) {
+                PathToItem_i(9, v11, #SwordBlank, 0, 0, 1, v11);
+            }
+            if (v12 = 741) {
+                v3 = ~GetFrame(v10);
+                if ((v3 >= 8) and (v3 <= 12)) {
+                    PathToItem_i(10, v11, #SwordBlank, 0, 1, 0, v11);
+                } else {
+                    Item_bark("@The sword's not hot.@", ~NPCToItem_i(_Avatar));
+                }
+            }
+        } else {
+            Item_bark("@I can't pick it up.@", ~NPCToItem_i(_Avatar));
+            return;
+        }
+    }
+    if (event = 8) {
+        v9 = ~DirFromAvatar_i(item);
+        v8 = ~PostAction(<< _aFACE_i, v9, _aBEND_FRAME_i, _aWAIT_i, 3, _aSTAND_FRAME_i >>, ~NPCToItem_i(_Avatar));
+        v10 = ~GetContents(_All, _All, _Sword_Blank, ~NPCToItem_i(_Avatar));
+        v8 = ~PostAction(<< _aWAIT_i, 3, _aUSABLE_i, #PutBlankOnAnvil_i >>, v10);
+    }
+    if (event = 9) {
+        v9 = ~DirFromAvatar_i(item);
+        v8 = ~PostAction(<< _aFACE_i, v9, _aBEND_FRAME_i, _aWAIT_i, 3, _aSTAND_FRAME_i >>, ~NPCToItem_i(_Avatar));
+        v10 = ~GetContents(_All, _All, _Sword_Blank, ~NPCToItem_i(_Avatar));
+        v8 = ~PostAction(<< _aWAIT_i, 3, _aUSABLE_i, #PutBlankInFire_i >>, v10);
+    }
+    if (event = 10) {
+        v9 = ~DirFromAvatar_i(item);
+        v8 = ~PostAction(<< _aFACE_i, v9, _aBEND_FRAME_i >>, ~NPCToItem_i(_Avatar));
+        v8 = ~PostAction(<< _aWAIT_i, 5, _aUSABLE_i, #DipBlank_i >>, item);
+    }
+}

@@ -1,0 +1,83 @@
+Routine Judith accepts a0 #locals(2) #uses(~IsNPCNear, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Judith);
+        v0 = ~GetTime();
+        if (v0 = 7) {
+            v1 = ~IsNPCNear(_Coop);
+            if v1 {
+                [Judith is busy performing with The Avatars and cannot speak at the moment.*];
+                terminate;
+            } else {
+                ["I must run! I am late for my performance with The Avatars! I shall talk with thee later!"*];
+                terminate;
+            }
+        }
+        TurnOn(<< "name", "job", "bye" >>);
+        if not $MetJudith {
+            [You see an attractive middle-aged woman with music in her eyes.];
+            $MetJudith = true;
+        } else {
+            ["Hello!" Judith says.];
+        }
+        converse {
+            key ("name") {
+                ["I am Judith. And I already know who thou art!"];
+                TurnOff("name");
+            }
+            key ("job") {
+                ["I teach music at The Music Hall. I also fatten my purse a bit by playing with The Avatars!"];
+                TurnOn(<< "music", "Music Hall", "The Avatars" >>);
+            }
+            key ("music") {
+                ["Music is my life. I know I will never be a famous bard, but I receive great pleasure from playing and performing. I enjoy teaching as well."];
+                TurnOff("music");
+                TurnOn("teaching");
+            }
+            key ("Music Hall") {
+                ["Lord British appointed me music teacher a couple of years ago. It is a wonderful job!"];
+                TurnOff("Music Hall");
+            }
+            key ("The Avatars") {
+                ["We are a singing group. We play at the Blue Boar every evening. Please come and hear us! My pupil, Neno, is in the group. We hope to tour the country next year, if we can raise the funds."];
+                TurnOff("The Avatars");
+            }
+            key ("teaching") {
+                ["It fulfills my life's purpose to teach others. It also gives me time away from home."];
+                TurnOff("teaching");
+                TurnOn("home");
+            }
+            key ("home") {
+                ["Oh, I do not want to speak about mine home. Mine husband and I... well, we are not altogether... happy."];
+                TurnOff("home");
+                TurnOn("husband");
+            }
+            key ("husband") {
+                ["Thou mightest know him. He is Patterson, the Town Mayor. He is an intelligent and honest man, but we have our differences.~~"I do not know why I am telling thee all of this!"];
+                TurnOff("husband");
+                TurnOn("differences");
+            }
+            key ("differences") {
+                ["Well, for one thing, he is a member of that group, The Fellowship. Another thing is that he does not spend too much time at home. I cannot believe he works so much."];
+                flag(129) = true;
+                TurnOff("differences");
+                TurnOn(<< "Fellowship", "works" >>);
+            }
+            key ("Fellowship") {
+                ["They seem to have taken over our lives. They seem to have taken over our country!"];
+                TurnOff("Fellowship");
+            }
+            key ("works") {
+                ["He is always saying he has to work late. Some nights he comes home before dawn. Other nights he is out the entire night.~~"Well, I must not think about it. I only become saddened. I must concentrate on my music."];
+                TurnOff("works");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        [Judith goes back to her instrument after a smile and a wave.*];
+    }
+    if (event = _Bark) {
+        BarkAboutWork_i(_Judith);
+    }
+}

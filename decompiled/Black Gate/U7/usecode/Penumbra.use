@@ -1,0 +1,205 @@
+Routine Penumbra accepts a0 #locals(8) #uses(~IsBlackrockPlaced_i, ~AvatarName, ~IsInInv, ~LordOrLady, GivePartyExp_i, ~AskYesNo, ~AskList) {
+    if (event = _Bark) {
+        terminate;
+    }
+    SetSpeaker(0, _Penumbra);
+    flag(482) = ~IsBlackrockPlaced_i();
+    v0 = ~AvatarName();
+    v1 = ~IsInInv(65177, 65177, _Ethereal_Ring, 1, _Party);
+    v2 = ~LordOrLady();
+    TurnOn(<< "name", "job", "bye" >>);
+    if flag(479) {
+        TurnOn("blackrock");
+    }
+    if flag(480) {
+        TurnOn("ring");
+    }
+    if not flag(504) {
+        [The mage, having been asleep for 200 years, looks just as she did upon your last visit to Britannia.~~"Avatar! I cannot believe 'tis thee! Thou didst come and wake me! I knew thee would!"];
+        [Suddenly, Penumbra grabs her head in pain. "Oh!" she cries. "Mine head! The pain! What is happening? What didst thou do to me?" She closes her eyes and concentrates. "There is a disturbance in the ether! I can feel my magical powers fading! Help me, <v0>! Help me!!"];
+        SetWorkType(_Loiter, ~NPCToItem_i(_Penumbra));
+        TurnOn("ether");
+        flag(504) = true;
+        GivePartyExp_i(800);
+    } else {
+        if not $TetraGone {
+            if not flag(482) {
+                [Penumbra is in so much pain she can barely speak. "Yes, <v0>?"];
+            } else {
+                ["Oh! I feel so much better! The pain is ebbing. Now we may converse much more easily."];
+            }
+        } else {
+            ["Yes, <v0>?"];
+        }
+        TurnOn("ether");
+    }
+    converse {
+        key ("name") {
+            ["I am Penumbra. Surely thou dost remember me?"];
+            TurnOff("name");
+        }
+        key ("job") {
+            if not flag(482) {
+                [Penumbra is in pain. "I cannot think straight whilst the ether is disturbed. I can do nothing until it is flowing smoothly again!"];
+            } else {
+                ["I am a practicing mage. Once I get my business going again, I should be able to sell spells and reagents. After all, I have been asleep for 200 years!"];
+            }
+        }
+        key ("ether") {
+            if not $TetraGone {
+                if not flag(482) {
+                    ["The ether controls all the magic in the world. When there is a disturbance in the ether, no mage can cast successful spells. A mage might even lose his mind after a long period of time! Thou must find a way to protect me from the warped ethereal waves!"];
+                    TurnOn("protect");
+                } else {
+                    ["I feel much better. The damaged ethereal waves are not striking my mind. But now we must destroy what is causing this problem!"];
+                    if not $SeenTetra {
+                        [Penumbra thinks a moment. "I feel that the damaged ethereal waves are coming from a source very near here. I suspect there is something in a dungeon on these islands that is creating the havoc. Try Dungeon Deceit. I have a strong sense that thy goal is there.];
+                        [She closes her eyes a moment.];
+                        ["In my mind's eye, I see a large object shaped like a tetrahedron. I am beginning to understand what this is."];
+                    } else {
+                        ["In my mind's eye, I see a large object in a dungeon north of here. Thou dost know of what I speak, dost thou not?"];
+                    }
+                    TurnOn("Tetrahedron");
+                }
+            } else {
+                ["The ether is flowing smoothly now. I thank thee, <v0>. Thou hast saved all mages everywhere!"];
+            }
+            TurnOff("ether");
+        }
+        key ("Draxinusom") {
+            ["Thou shalt find him on the island of Terfin. Ask him about the ring."];
+            TurnOff("Draxinusom");
+        }
+        key ("Tetrahedron") {
+            if not $TetraGone {
+                if not flag(482) {
+                    ["Please! I cannot help thee until I am protected from the damaged ether!"];
+                } else {
+                    ["Yes, that is the shape of the thing I have seen in my mind's eye. It appears to be some type of magic generator which damages the ethereal flow."];
+                    [Penumbra thinks a moment. "This generator is producing dangerous ethereal waves. Thou must find the Ethereal Ring and wear it to break the generator's defense. Now where is that ring...?"];
+                    if not v1 {
+                        [Penumbra consults some books and cross references them with a map. "I believe that the Ethereal Ring was last in the possession of King Draxinusom of the Gargoyles. Once thou hast found the ring, thou must bring it back to me. I must perform an enchantment upon it so that it may work for thee."];
+                        TurnOn("Draxinusom");
+                        flag(480) = true;
+                    } else {
+                        if flag(481) {
+                            ["The enchanted ring shall protect thee."];
+                        } else {
+                            ["The ethereal ring must be enchanted."];
+                            TurnOn("ring");
+                        }
+                    }
+                }
+            } else {
+                ["Thou hast destroyed it! All the mages thank thee!"];
+            }
+            TurnOff("Tetrahedron");
+        }
+        key ("protect") {
+            ["I need some kind of barrier to protect me from the ethereal waves. There must be a material we could use!"~~ Penumbra clutches her temples. She is obviously in great pain.];
+            ["Dost thou know of a material that is impenetrable?"];
+            v3 = ~AskYesNo();
+            if v3 {
+                ["What is it?"];
+                PushKeys();
+                v4 = ~AskList(<< "iron ore", "gold", "blackrock", "lead" >>);
+                if (v4 = "blackrock") {
+                    ["Yes! That is what we need!];
+                } else {
+                    ["No, I do not think that will work. Oh, I cannot think, the pain is so great!];
+                }
+                PopKeys();
+            } else {
+                ["There must be something! Oh, I cannot think, the pain is so great!];
+            }
+            ["Please -- canst thou find a few pieces of blackrock to set about my room? I will need four pieces! But hurry! I do not think I can last much longer! Please go!"];
+            flag(479) = true;
+            TurnOff("protect");
+        }
+        key ("blackrock") {
+            if not $TetraGone {
+                if not flag(482) {
+                    v5 = ~IsInInv(65177, 65177, _Blackrock, 4, _Party);
+                    if v5 {
+                        ["Thou hast brought the blackrock! I did not think I could manage much longer! Hurry! Place the pieces on the pedestals at the north, south, east, and west ends of the room! I shall wait here!"*];
+                        terminate;
+                    } else {
+                        ["But thou dost not have the blackrock! Thou must get four pieces and help me! Thou wilt need to place the pieces on the pedestals at the north, south, east, and west ends of the room! Hurry!"*];
+                        terminate;
+                    }
+                } else {
+                    ["The blackrock is working! I no longer feel the painful ether!"];
+                    TurnOff("blackrock");
+                }
+            } else {
+                ["It is quite a material, is it not? I imagine it could be used for many magical things."];
+                TurnOff("blackrock");
+            }
+        }
+        key ("ring") {
+            if not $TetraGone {
+                if not flag(481) {
+                    v1 = ~IsInInv(0, 65177, _Ethereal_Ring, 1, _Party);
+                    if v1 {
+                        ["Thou hast the ethereal ring? Good! I must enchant it! Quickly!"~~Penumbra takes the ring from you and intones a few magical words upon it. After a moment, she hands it back to you.];
+                        v6 = ~TakeFromParty_i(false, 0, _All, _Ethereal_Ring, 1);
+                        v7 = ~GiveToParty_i(false, 1, _All, _Ethereal_Ring, 1);
+                        flag(481) = true;
+                        GivePartyExp_i(200);
+                        ["Now thou must go to the generator. Be sure thou art wearing the ring! It should now protect thee from the ethereal attacks. Be aware that it is functional only near the Tetrahedron. And tell thy companions to wait out of range. Thou must enter the generator alone!"];
+                        [Penumbra thinks a moment. "By the way. How didst thou happen to know to come to me about this problem?"];
+                        v4 = ~AskList(<< "Nicodemus", "Time Lord" >>);
+                        if ((v4 = "Nicodemus") or (v4 = "Time Lord")) {
+                            [You tell Penumbra the story of how you need to get the hourglass enchanted.];
+                            ["I see. Well, thou best be on thy way, so that thou canst indeed get thine hourglass enchanted!"];
+                        }
+                    } else {
+                        ["Where is the ring? Dost thou not have it? We can do nothing without the ring! Go and find it! Please!"*];
+                        terminate;
+                    }
+                } else {
+                    ["What dost thou want? I have already enchanted the ring!"];
+                }
+            } else {
+                ["What dost thou want? I have already enchanted the ring. It can do no more for thee!"];
+            }
+            TurnOff("ring");
+        }
+        key ("bye") {
+            break;
+        }
+    }
+    clear_answers;
+    if not flag(482) {
+        [Penumbra waves at you and then closes her eyes in pain.*];
+    } else {
+        ["Farewell, <v0>! And good luck to thee!"*];
+    }
+}
+
+Function ~IsBlackrockPlaced_i #locals(16) #uses(~AbsValue_i) {
+    v0 = ~FindNearby_i(0, 40, _Pedestal_718, item);
+    v1 = ~FindNearby_i(0, 40, _Blackrock, item);
+    v2 = 0;
+    Foreach v5 in v0 {
+        v6 = ~GetCoord(v5);
+        v7 = v6::1;
+        v8 = v6::2;
+        v9 = false;
+        Foreach v12 in v1 {
+            v13 = ~GetCoord(v12);
+            v14 = v13::1;
+            v15 = v13::2;
+            if (not v9 and ((~AbsValue_i((v14 - v7)) <= 1) and (~AbsValue_i((v15 - v8)) <= 1))) {
+                v2 = (v2 + 1);
+                ClearItemFlag_i(_IsTemporary_i, v12);
+                v9 = true;
+            }
+        }
+    }
+    if (v2 = 4) {
+        return true;
+    } else {
+        return false;
+    }
+}

@@ -1,0 +1,107 @@
+Routine Kreg accepts a0 #locals(8) #uses(~LordOrLady, GivePartyExp_i, ~AskYesNo, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Kreg);
+        v0 = ~LordOrLady();
+        v1 = ~NPCToItem_i(_Kreg);
+        TurnOn(<< "name", "job", "bye" >>);
+        v2 = ~Npc_getAlignment(v1);
+        if (v2 = 2) {
+            SetWorkType(_Combat_0, v1);
+        }
+        if (flag(345) and $MetKreg) {
+            TurnOn("Thief!");
+        }
+        if not $MetKreg {
+            [The friendly-looking monk signals you over to him.];
+            $MetKreg = true;
+        } else {
+            ["Hello, <v0>."];
+            if flag(303) {
+                TurnOn("give potion");
+            }
+        }
+        converse {
+            key ("name") {
+                [He smiles. "My name is Kreg, <v0>."];
+                if flag(345) {
+                    TurnOn("Thief!");
+                }
+                TurnOff("name");
+            }
+            key ("job") {
+                ["I am a monk here at the Abbey. I am working on an alchemical mixture."];
+                TurnOn(<< "mixture", "Abbey" >>);
+            }
+            key ("Thief!") {
+                ["Ah! Found me out, didst thou? 'Tis too bad... for thee!"*];
+                GivePartyExp_i(100);
+                v3 = ~CountItem(_All, _All, _Great_Dagger, _Kreg);
+                if (v3 < 1) {
+                    v4 = ~Item_create(_Great_Dagger);
+                    v5 = ~PopToNPC(_Kreg);
+                }
+                Npc_setAlignment(_Evil, v1);
+                SetWorkType(_Combat_0, v1);
+                terminate;
+            }
+            key ("Abbey") {
+                ["Sadly, I am so involved with my studies that I have no time to visit the surrounding area or learn any new faces."];
+                TurnOff("Abbey");
+            }
+            key ("mixture") {
+                ["Well, <v0>, we here at the Abbey will soon be taking a vow of silence. However, it will take some time for all of us to become accustomed to the sound of silence. Therefore, I am creating a potion that enables the imbiber to become temporarily silent. The concept is very similar to a potion of invisibility."];
+                TurnOn(<< "vow", "invisibility" >>);
+                TurnOff("mixture");
+            }
+            key ("vow") {
+                ["Well," he looks embarrassed, "after reading a book on how we compare to our predecessors, we learned that most people expect us to take a vow of silence.~~ "So," he shrugs, "we have chosen to do so, once I can make that potion. I realize that it sounds foolish, but I truly believe it will help us produce more wine."];
+                TurnOff("vow");
+                TurnOn(<< "predecessors", "wine" >>);
+            }
+            key ("predecessors") {
+                ["Surely thou knowest of what I speak? Meditation, silence, aesthetics, ascetics, and so forth."];
+                TurnOff("predecessors");
+            }
+            key ("wine") {
+                ["The monks' wine is renowned throughout all of Britannia, or so I thought." A puzzled look fills his face.~~"Ah, well, that is no matter. Regardless, I sincerely recommend to thee to try some of our exquisite drink."];
+                TurnOff("wine");
+            }
+            key ("invisibility") {
+                ["As a matter of fact, my research has reached an impasse, for I cannot determine the nature of some critical reagents. What I need is a potion of invisibility to analyze. Then I could progress from there." He looks at you, hopefully. "Wouldst thou be willing to obtain a potion for my studies? It is likely that thou couldst find one easily at the mage, Nicodemus'."];
+                v6 = ~AskYesNo();
+                if v6 {
+                    [He sighs, obviously relieved. "Thank thee, <v0>."];
+                    flag(303) = true;
+                } else {
+                    ["Art thou sure? I will give thee information in return."];
+                    TurnOn("information");
+                }
+                TurnOff("invisibility");
+            }
+            key ("information") {
+                ["I will tell thee about Lord British, The Fellowship, or Buccaneer's Den if thou bringest me the potion of invisibility."];
+                flag(303) = true;
+                TurnOff("information");
+            }
+            key ("give potion") {
+                v7 = ~TakeFromParty_i(true, 7, _All, _Potion, 1);
+                if v7 {
+                    [He takes the potion from you and quickly drinks it. "Thank thee, <v0>, for helping in mine escape!" As he fades from view, his laughter fills your ears.*];
+                    RemoveNPC_i(_Kreg);
+                    terminate;
+                } else {
+                    ["Thou dost not have a potion to give," he says sadly. "My research will again have to wait."];
+                }
+                TurnOff("give potion");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        [He nods farewell to you.*];
+    }
+    if (event = _Bark) {
+        BarkAboutWork_i(_Kreg);
+    }
+}

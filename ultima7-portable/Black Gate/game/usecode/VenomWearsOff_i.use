@@ -1,0 +1,18 @@
+Routine VenomWearsOff_i accepts a0 #locals(4) #uses(SetStatTo_i, MemberBarks_i) {
+    v0 = ~ChangeNPCStat_i(65530, _Str, item);
+    v0 = ~ChangeNPCStat_i(65530, _Dex, item);
+    v0 = ~ChangeNPCStat_i(65530, _Int, item);
+    v1 = ~GetNPCStat_i(_Str, item);
+    v2 = ~GetNPCStat_i(_Str, item);
+    v3 = ~GetNPCStat_i(_Str, item);
+    if (v1 < 1) {
+        SetStatTo_i(1, _Str, item);
+    }
+    if (v2 < 1) {
+        SetStatTo_i(1, _Int, item);
+    }
+    if (v3 < 1) {
+        SetStatTo_i(1, _Dex, item);
+    }
+    MemberBarks_i("@Thou dost not look well.@");
+}

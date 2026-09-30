@@ -1,0 +1,15 @@
+Routine MinocMurderEgg_i accepts a0 #locals(1) #uses(ClearMurderScene_i) {
+    if (event = _Trigger) {
+        if not flag(290) {
+            flag(290) = true;
+            SetClock(5);
+            terminate;
+        } else {
+            v0 = ~GetClock(5);
+            if (v0 >= 24) {
+                ClearMurderScene_i();
+            }
+            Item_destroy(item);
+        }
+    }
+}

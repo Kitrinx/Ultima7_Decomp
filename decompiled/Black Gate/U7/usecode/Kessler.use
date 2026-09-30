@@ -1,0 +1,192 @@
+Routine Kessler accepts a0 #locals(10) #uses(~LordOrLady, ~IsInInv, ~AskYesNo, KesslerSellsPotions_i, BarkAboutWork_i) {
+    if (event = _Action) {
+        SetSpeaker(0, _Kessler);
+        v0 = ~GetTime();
+        v1 = ~GetWorkType(~NPCToItem_i(_Kessler));
+        v2 = ~LordOrLady();
+        TurnOn(<< "name", "job", "bye" >>);
+        v3 = ~IsInInv(65177, 65177, _Venom, 1, _Party);
+        if v3 {
+            TurnOn("venom");
+        }
+        if not $MetKessler {
+            [You see a very authoritative-looking older man who looks at you with thoughtful concern.];
+            $MetKessler = true;
+        } else {
+            ["I am very glad thou hast come to see me again," says Kessler.];
+        }
+        converse {
+            key ("name") {
+                ["My name is Kessler."];
+                TurnOff("name");
+            }
+            key ("job") {
+                ["I run the apothecary shop here in Britain."];
+                TurnOn("apothecary");
+            }
+            key ("apothecary") {
+                ["While the normal function of an apothecary is to administer potions and magical reagents, I am nowadays working almost exclusively for Lord British trying to study a specific problem."];
+                TurnOff("apothecary");
+                TurnOn(<< "potions", "study", "problem" >>);
+            }
+            key ("potions") {
+                ["They are certainly not a recent invention here in Britannia! Potions are liquids that possess certain magical qualities which are used for all sorts of purposes, such as the treatment of injury and disease. I have a quantity of them for sale if thou art interested."];
+                TurnOff("potions");
+                TurnOn(<< "magical qualities", "buy potions" >>);
+            }
+            key ("magical qualities") {
+                ["Since the mages have become so ineffective, we have been forced to develop other ways to accomplish all the things we used to be able to depend on mages to do. Unfortunately, many of these new methods are as yet untested."];
+                TurnOff("magical qualities");
+                TurnOn("untested");
+            }
+            key ("untested") {
+                ["We still know very little about the effects of most of the substances we use. Many cause more problems than they solve, or react differently if taken in unison with other elements. Some might cause thee to become dependent on them for thine health and some may simply be poisonous."];
+                TurnOff("untested");
+            }
+            key ("study") {
+                ["I am studying the effects of a particular substance known as silver snake venom. But I am encountering a number of difficulties."];
+                TurnOff("study");
+                TurnOn(<< "silver snake", "difficulties" >>);
+            }
+            key ("silver snake") {
+                ["As one may surmise from the name it is the venom taken from the dangerous silver snake. The fascination that many people possess for these creatures has created a great deal of curiosity about the venom itself."];
+                TurnOff("silver snake");
+                TurnOn("curiosity");
+            }
+            key ("curiosity") {
+                ["There are those who claim that gargoyles take the venom which results in their becoming enhanced in combat and such. Now this may be just a myth, but the curiosity people feel is real enough."];
+                TurnOff("curiosity");
+            }
+            key ("difficulties") {
+                ["My greatest difficulty is in finding any significant quantity of silver snake venom. But it is by no means mine only difficulty."];
+                TurnOff("difficulties");
+                TurnOn(<< "finding", "other difficulties" >>);
+            }
+            key ("finding") {
+                ["If by any chance thou wouldst come across any silver snake venom bring it back to me here. I shall pay thee fifty gold coins for every vial of it thou canst supply."];
+                v4 = true;
+                TurnOff("finding");
+            }
+            key ("other difficulties") {
+                ["People need to be alerted to how dangerous silver snake venom is. To this end I wish to announce my findings before Lord British and a consortium of lords and mayors, but to do that I must first finish my study."];
+                TurnOff("other difficulties");
+            }
+            key ("problem") {
+                ["Recently there has been a dramatic rise in the use of a very strange substance. People have begun to purposefully ingest the venom of the silver snake."];
+                TurnOff("problem");
+                TurnOn("ingest");
+            }
+            key ("ingest") {
+                ["The silver snake produces a venom that is extremely poisonous, but when taken in less than lethal amounts, it causes a variety of strange effects."];
+                TurnOff("ingest");
+                TurnOn("effects");
+            }
+            key ("effects") {
+                ["For a time the venom will heighten one's physical and mental performance, such as allowing one to work harder, for example. But after the effects have worn off, it will impair the user permanently."];
+                TurnOff("effects");
+                TurnOn("impair");
+            }
+            key ("impair") {
+                ["It first makes the user feel extremely tired and eventually causes a sloughing of the skin. The venom is a dangerous substance and thou shouldst not partake of it under any circumstances."];
+                TurnOff("impair");
+            }
+            key ("venom") {
+                v5 = ~CountItem(_All, _All, _Venom, _Party);
+                v6 = (50 * v5);
+                if (v5 = 0) {
+                    ["Thou dost not have any vials of venom!"];
+                } else {
+                    if (v5 = 1) {
+                        [Kessler examines the vial carefully. ];
+                    } else {
+                        [Kessler examines the vials carefully. ];
+                    }
+                    [He looks up at you and nods. "This is indeed silver snake venom. I shall pay thee 50 gold coins per vial. All right?"];
+                    if ~AskYesNo() {
+                        v7 = ~TakeFromParty_i(true, _All, _All, _Venom, v5);
+                        if v7 {
+                            v8 = ~GiveToParty_i(true, _All, _All, _Gold_Coin, v6);
+                            if v8 {
+                                [Kessler opens his coinpurse and pays you <v6> gold coins.];
+                            } else {
+                                ["Thou art too burdened to carry any more money."];
+                            }
+                        } else {
+                            ["I see thou dost have a quantity of silver snake venom in thy possession. Perhaps we should talk further."];
+                        }
+                    } else {
+                        ["Very well."];
+                    }
+                }
+                TurnOff("venom");
+            }
+            key ("buy potions") {
+                if not (v1 = 7) {
+                    ["The Apothecary is closed. It is open from noon until midnight. Thou mayest return then."];
+                } else {
+                    ["I always keep a fresh stock of ingredients and an inventory of prepared potions in case anyone should be in need of them. Wouldst thou like to buy one?"];
+                    v9 = ~AskYesNo();
+                    if v9 {
+                        KesslerSellsPotions_i();
+                    } else {
+                        ["Be sure to come back if thou dost ever need any potions."];
+                    }
+                }
+                TurnOff("buy potions");
+            }
+            key ("bye") {
+                break;
+            }
+        }
+        clear_answers;
+        ["It was good speaking with thee, <v2>."*];
+    }
+    if (event = _Bark) {
+        BarkAboutWork_i(_Kessler);
+    }
+}
+
+Usable KesslerSellsPotions_i #locals(13) #uses(~AskOrdList, ~PriceString_i, ~AskYesNo, ~SellItem_i) {
+    PushKeys();
+    v0 = true;
+    v1 = << "nothing", "poison", "curative", "illumination", "sleep", "protection", "invisibility", "healing", "awakening" >>;
+    v2 = 340;
+    v3 = << 65177, 3, 2, 6, 0, 5, 7, 1, 4 >>;
+    v4 = << 0, 15, 150, 50, 15, 150, 100, 150, 30 >>;
+    v5 = << "", "a ", "a ", "an ", "a ", "a ", "an ", "a ", "an " >>;
+    v6 = 0;
+    v7 = " for one potion";
+    v8 = 1;
+    ["What wouldst thou like to buy?"];
+    While v0 {
+        v9 = ~AskOrdList(v1);
+        if (v9 = 1) {
+            ["Fine."];
+            v0 = false;
+        } else {
+            v10 = ~PriceString_i(v7, v4::v9, v6, v1::v9, v5::v9);
+            v11 = 0;
+            ["^<v10> Dost thou still wish to trade?"];
+            v12 = ~AskYesNo();
+            if v12 {
+                ["How many wouldst thou like?"];
+                v11 = ~SellItem_i(false, 1, 20, v4::v9, v8, v3::v9, v2);
+            }
+            if (v11 = 1) {
+                ["Done!"];
+            } else {
+                if (v11 = 2) {
+                    ["Thou cannot possibly carry that much!"];
+                } else {
+                    if (v11 = 3) {
+                        ["Thou dost not have enough gold for that!"];
+                    } else {
+                    }
+                }
+            }
+            ["Wouldst thou like something else?"];
+            v0 = ~AskYesNo();
+        }
+    }
+    PopKeys();
+}

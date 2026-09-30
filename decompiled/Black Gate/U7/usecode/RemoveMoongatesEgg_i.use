@@ -1,0 +1,10 @@
+Routine RemoveMoongatesEgg_i accepts a0 #locals(4) #uses(ConsumeOne_i) {
+    if (event = _Trigger) && $SphereGone {
+        v0 = ~FindNearby_i(16, 10, _Moongate_776, item);
+        v0 = (v0 & ~FindNearby_i(16, 10, _Moongate_777, item));
+        Foreach v3 in v0 {
+            ConsumeOne_i(v3);
+        }
+        ConsumeOne_i(item);
+    }
+}

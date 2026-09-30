@@ -1,0 +1,58 @@
+Routine RestInBed_i accepts a0 #locals(13) #uses(~PartySpeaker_i, ~IsBedroll_i, RollUpBedroll_i, SetWorkTypeUnlessWaiting_i, PlaySpeechOrText_i, RestParty_i, ~RemoveFromList_i) {
+    if (event = _Action) {
+        v0 = ~GetParty();
+        v1 = ~PartySpeaker_i();
+        if (v1 = 65180) {
+            v2 = (6 + ~rndRange(9, 0));
+        } else {
+            SetSpeaker(0, v1);
+            v3 = ~GetNPCName_i(_Avatar);
+            v4 = ~ListSize_i(~GetParty());
+            if (v4 > 2) {
+                v5 = "we";
+            } else {
+                v5 = "I";
+            }
+            ["In how many hours shall <v5> wake thee up, <v3>?"];
+            v2 = ~AskBarInput(8, 1, 12, 0);
+            if (v2 = 0) {
+                v3 = ~GetNPCName_i(v1);
+                [<v3> gives you an exasperated look.* "Never mind, then."];
+                if ~IsBedroll_i(item) {
+                    RollUpBedroll_i(item);
+                }
+                Foreach v8 in v0 {
+                    SetWorkTypeUnlessWaiting_i(_FollowAvt, v8);
+                }
+                CloseSpeaker(v1);
+                ClearItemFlag_i(_Asleep, _Avatar);
+                return;
+            }
+            ["Pleasant dreams."];
+            CloseSpeaker(v1);
+        }
+        if (~rndRange(4, 1) = 1) {
+            PlaySpeechOrText_i(1);
+        }
+        FadePalette_i(0, 1, 12);
+        v9 = (v2 * 1500);
+        RestParty_i(item, v2);
+        v0 = ~RemoveFromList_i(v0, ~NPCToItem_i(_Avatar));
+        Foreach v8 in v0 {
+            SetWorkTypeUnlessWaiting_i(_Loiter, v8);
+        }
+        v12 = ~PostAction(<< _aWAIT_i, 35 >>, _Avatar);
+        v12 = ~PostInFuture(33, << _aNO_HALT_i, _aUSABLE_i, #FadeInArrival_i, _aUSABLE_i, #WakeUp_i >>, item);
+        AdvanceTime_i(v9);
+    }
+}
+
+Function ~IsBedroll_i accepts a0 #locals(2) {
+    v1 = ~GetFrame(v0);
+    v2 = ~Item_getType(v0);
+    if ((v1 = 17) and (v2 = 1011)) {
+        return true;
+    } else {
+        return false;
+    }
+}

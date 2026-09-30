@@ -1,0 +1,221 @@
+Routine Rowena accepts a0 #locals(4) #uses(~LordOrLady, RowenaEmbracesTrent_i, EscortRowena_i, RowenaGivesRing_i, RowenaIgnoresAvatar_i, RowenaPleadsIllness_i) {
+    if (event = _Action) {
+        if not flag(440) {
+            SetSpeaker(0, _Rowena);
+            [The beautiful ghost looks through you with a slack look. Nothing\x09you do seems to attract her attention.*];
+            flag(423) = false;
+            terminate;
+        }
+        if flag(408) {
+            TurnOn("sacrifice");
+        }
+        v0 = ~AvatarSex();
+        v1 = ~LordOrLady();
+        if flag(422) {
+            SetSpeaker(1, _Rowena);
+            RowenaEmbracesTrent_i();
+        }
+        if flag(426) {
+            SetSpeaker(1, _Rowena);
+            EscortRowena_i();
+        }
+        if flag(423) && not flag(425) {
+            SetSpeaker(1, _Rowena);
+            RowenaGivesRing_i();
+        }
+        v2 = ~GetTime();
+        v3 = ~GetWorkType(_Rowena);
+        if ((v2 = 0) or (v2 = 1)) {
+            if (v3 = 14) {
+                SetSpeaker(0, _Rowena);
+                RowenaIgnoresAvatar_i();
+            } else {
+                if not (v3 = 16) {
+                    SetSpeaker(0, _Rowena);
+                    RowenaPleadsIllness_i();
+                }
+            }
+        }
+        SetSpeaker(0, _Rowena);
+        if not $MetRowena {
+            [You see a ghostly lady wearing a long, black gown. Something is a bit strange about the way she looks, but you can't quite place it. After a pause, she says, "Greetings, <v1>. I am Rowena, lady of this wondrous tower." She gestures around the room, indicating the moldering walls and cobwebbed rafters.];
+            $MetRowena = true;
+        } else {
+            [Rowena smiles in an abstract manner as you approach. "Ah, thou hast returned, <v1>. How may the lady of the tower be of assistance to thee?"];
+        }
+        TurnOn(<< "name", "job", "tower", "bye" >>);
+        converse {
+            key ("name") {
+                ["I am called... Rowena"];
+                TurnOff("name");
+            }
+            key ("job") {
+                [She stares blankly for a second, then, as if on cue, "I am the Mistress of the Tower. I tend to my Lord Horance's needs and keep our place looking respectable." It would appear that she's been falling behind in the latter duty.];
+                TurnOn("Horance");
+            }
+            key ("tower") {
+                [After a moment, "This is a lovely tower, dost thou not agree?" Before you can answer, she continues.~~ "Dost thou see the lovely rays of light playing across the flagstones of the floor? Water sparkles in the fountain. This is truly a beautiful place in which to live." Her eyes fix upon the floor.];
+                TurnOff("tower");
+            }
+            key ("Horance") {
+                [She blinks once, then, "Horance... What a wonderful name. He found me lost and lonely and brought me here to be a lady. Is he not truly the most magnificent of Lords?"];
+                TurnOff("Horance");
+            }
+            key ("bye") {
+                [She pauses. "Goodbye, <v1>. I hope thou hast enjoyed thy visit to our glorious tower. Please, return whenever thou wishest." You feel as if you've been speaking to a statue.*];
+                terminate;
+            }
+        }
+        clear_answers;
+    }
+    if (event = _Bark) {
+        terminate;
+    }
+}
+
+Usable RowenaEmbracesTrent_i #locals(2) #uses(~LordOrLady, ~IsNPCNear) {
+    v0 = ~LordOrLady();
+    v1 = ~IsNPCNear(_Trent);
+    if not v1 {
+        ["Where, oh where has my dear husband gone. I cannot stand to be away from him!"*];
+        terminate;
+    } else {
+        [As far as you can tell, the couple haven't released their embrace since they were first reunited, and they show no sign of doing so at any time in the near future.];
+        TurnOn("bye");
+        converse {
+            key ("sacrifice") {
+                TurnOff("sacrifice");
+                if not flag(413) {
+                    SetSpeaker(1, _Trent);
+                    ["No, <v0>. She is my life. If thou takest her, thou takest mine heart." Trent holds on tightly to his wife.];
+                    flag(413) = true;
+                    CloseSpeaker(_Trent);
+                    SetSpeaker(1, _Rowena);
+                } else {
+                    ["I cannot leave my lord like this. Surely thou canst understand, <v0>."];
+                }
+            }
+            key ("bye") {
+                [The couple continue staring into one another's eyes as if to make up for all of the years they lost.*];
+                terminate;
+            }
+        }
+        clear_answers;
+    }
+}
+
+Usable EscortRowena_i #locals(10) #uses(~LordOrLady, ~IsNPCNear, ~AskYesNo) {
+    v0 = ~LordOrLady();
+    v1 = ~GetParty();
+    v2 = ~NPCToItem_i(_Rowena);
+    if (v2 in v1) {
+        v3 = ~IsNPCNear(_Trent);
+        if v3 {
+            LeaveParty(_Rowena);
+            [The starcrossed lovers rush into each other's ghostly embrace. For a time it's hard to see where one spirit ends and the other begins, then the two slowly turn to face you. "Thou hast done so much for us, I hope that in helping us, thou hast been assisted in thine own quest." Rowena performs a curtsey then turns to regard her handsome husband.*];
+            SetWorkType(_Wait, ~NPCToItem_i(_Rowena));
+            flag(422) = true;
+            terminate;
+        } else {
+            ["How can I help thee, <v0>? I must get to Trent quickly." She looks impatient to be with her husband.];
+            TurnOn(<< "Trent", "bye" >>);
+            converse {
+                key ("Trent") {
+                    [Her face lights up as you say her husband's name. "He is the town smith. He hand crafted that music box thou didst use to awaken me from Horance's dark power."];
+                    TurnOff("Trent");
+                }
+                key ("sacrifice") {
+                    ["I cannot do that to my poor Trent, at least not without seeing him one more time." She shakes her head in negation.];
+                    flag(413) = true;
+                }
+                key ("bye") {
+                    ["Yes, we must be getting to the smithy. Trent will be worrying about me."*];
+                    terminate;
+                }
+            }
+            clear_answers;
+        }
+    } else {
+        ["This place is horrible. Wouldst thou be so kind as to take me to mine husband, Trent? He has a tendency to worry about me."];
+        v4 = ~AskYesNo();
+        if v4 {
+            v5 = false;
+            [Rowena smiles radiantly, "Thank thee, <v0>. Thy spirit is a generous one, indeed."*];
+            v6 = 0;
+            v1 = ~GetParty();
+            Foreach v9 in v1 {
+                v6 = (v6 + 1);
+            }
+            if (v6 < 8) {
+                [She steps in line and motions for you to lead on.*];
+                JoinParty(_Rowena);
+                v5 = true;
+                terminate;
+            } else {
+                ["Thou hast too many people in thy party at the moment for me to travel with thee."];
+                terminate;
+            }
+        } else {
+            ["Then I shall wait here for one of virtue who would safeguard my well being, and help me to return to mine husband." She seems distanced as she turns away from you.*];
+            terminate;
+        }
+    }
+}
+
+Usable RowenaGivesRing_i #locals(5) #uses(~LordOrLady, ~IsNPCNear, ~PopToNPCNumber_i) {
+    v0 = ~AvatarSex();
+    v1 = ~LordOrLady();
+    if not flag(440) {
+        SetSpeaker(0, _Rowena);
+        [The beautiful ghost looks through you with a slack look. Nothing\x09you do seems to attract her attention.*];
+        flag(423) = false;
+        terminate;
+    }
+    if not flag(425) {
+        v2 = ~IsNPCNear(_Horance);
+        if v2 {
+            [The music of the little box makes Rowena turn her head in your direction. She blinks several times as if waking from a dream, or, in this case, a nightmare. When she sees the Liche, she pretends to be enthralled, but as soon as he is no longer looking in her direction, she motions for you to come closer.];
+        } else {
+            [The music of the little box makes Rowena turn her head in your direction. She blinks several times as if waking from a dream, or, in this case, a nightmare.];
+        }
+        ["I am in control of my mind for the time being, but I know not for how long. Tell me what has transpired in the town outside." You relay to her what you know of the events you've heard in town.];
+        if $MetTrent {
+            ["My poor Trent. I cannot bear to think that he's become so hurt that he would forget our love." She wrings her hands in sorrow and notices something on one of them.];
+        } else {
+            ["And what of my poor Trent? He must be heartsick. I must find a way to get a message to him." Something on her hand sparkles brilliantly.];
+        }
+        ["Please, <v1>, wouldst thou take this ring to him and tell him that I still love him. Mayhaps it will restore him to the beloved Trent I knew."];
+        v3 = ~Item_create(_Wedding_Ring);
+        if ~PopToNPCNumber_i(~NPCToItem_i(_Avatar)) {
+            [She takes a ring from her slender finger and places it in your hand. You expect it to pass right through, but it rests neatly in your palm.];
+        } else {
+            v4 = ~PopToMap(~GetCoord(_Avatar));
+            [She takes a ring from her slender finger and places it in your hand. You expect it to pass right through, and it does. Fortunately, it falls to the floor, softly ringing as it striks the stones.];
+        }
+        if v0 {
+            ["I thank thee, kind lady. I know not how to repay thee."];
+        } else {
+            ["I thank thee, kind sir. I know not how to repay thee."];
+        }
+        [Rowena's eyes begin to look a little glassy and she blinks slowly as if entering a deep trance.];
+        flag(425) = true;
+    }
+    [She blinks slowly. "What beautiful music. My Lord... Horance, once gave me a music box like that one." Rowena turns away, distracted.*];
+    terminate;
+}
+
+Usable RowenaIgnoresAvatar_i #locals(0) {
+    if not $MetRowena {
+        [The beautiful ghost appears to be incapable of responding to you at the current time, or in fact anyone else for that matter.*];
+        terminate;
+    } else {
+        [Rowena appears to be incapable of responding to you at the current time, or in fact anyone else for that matter.*];
+        terminate;
+    }
+}
+
+Usable RowenaPleadsIllness_i #locals(1) #uses(~LordOrLady) {
+    v0 = ~LordOrLady();
+    [The lovely ghost holds up her hand as you begin to speak, "Please, <v0>, forgive me, I am not feeling very well right now. Come back later and mayhaps I'll feel more disposed to conversation."*];
+    terminate;
+}

@@ -1,0 +1,34 @@
+Routine LitTorch accepts a0 #locals(2) #uses(DouseTorch_i, ~DirFrom_i, StartBurning_i) {
+    if ((event = _Action) or (event = _Posted_i)) {
+        DouseTorch_i(event, _Torch, item);
+    }
+    if (event = 7) {
+        v0 = ~DirFrom_i(item, _Avatar);
+        v1 = ~PostAction(<< _aFACE_i, v0, _aCONTINUE_i, _aTHRUST2_FRAME_i, _aSTAND_FRAME_i >>, _Avatar);
+        DouseTorch_i(event, _Torch, item);
+    }
+    if (event = _Equip) {
+        StartBurning_i(item);
+    }
+}
+
+Routine DouseTorch_i accepts a0, a1, a2 #locals(0) {
+    if ((v0 = 1) or (v0 = 2)) {
+        Item_setType(v1, v2);
+        Kernel_resetRef(v2);
+        Sfx(46);
+        SetLight_i(true, item);
+    }
+    if (v0 = 7) {
+        Item_setType(v1, v2);
+        Kernel_resetRef(v2);
+        Sfx(46);
+        SetLight_i(true, item);
+    }
+    if (v0 = 5) {
+        SetLight_i(true, item);
+    }
+    if (v0 = 6) {
+        SetLight_i(false, item);
+    }
+}

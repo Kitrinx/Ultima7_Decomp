@@ -1,0 +1,46 @@
+Routine Dough accepts a0 #locals(8) #uses(MemberBarks_i) {
+    if (event = _Action) {
+        v0 = ~GetFrame(item);
+        if ((v0 = 1) or (v0 = 2)) {
+            v1 = ~GetTarget();
+            v2 = ~Item_getType(v1);
+            if (v2 = 831) {
+                v3 = ~Item_push(item);
+                if v3 {
+                    v4 = ~GetCoord(v1);
+                    v4::1 = (v4::1 - ~rndRange(2, 1));
+                    v4::3 = (v4::3 + 1);
+                    v3 = ~PopToMap(v4);
+                    if v3 {
+                        v3 = ~PostInFuture(60, << _aNO_HALT_i, _aUSABLE_i, #Dough >>, item);
+                        if (~rndRange(2, 1) = 1) {
+                            MemberBarks_i("@Do not over cook it!@");
+                        }
+                    }
+                }
+            }
+        }
+    }
+    if (event = _Posted_i) {
+        v4 = ~GetCoord(item);
+        v5 = ~FindNearby_i(0, 2, _Baking_Hearth, item);
+        if (~ListSize_i(v5) > 0) {
+            Item_destroy(item);
+            v6 = ~Item_create(_Food_Item);
+            if v6 {
+                SetItemFlag_i(_IsTemporary_i, v6);
+                SetFrame(0, item);
+                v3 = ~PopToMap(v4);
+                if v3 {
+                    v7 = ~rndRange(3, 1);
+                    if (v7 = 1) {
+                        MemberBarks_i("@I believe the bread is ready.@");
+                    }
+                    if (v7 = 2) {
+                        MemberBarks_i("@Mmm... Smells good.@");
+                    }
+                }
+            }
+        }
+    }
+}
