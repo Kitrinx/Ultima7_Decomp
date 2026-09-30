@@ -6,3 +6,8 @@
 
 #include "u7port.h"
 int16_t UnusedPaletteGlobal2 = 0;
+
+extern "C" void ResetPaldata2Globals(void)
+{
+	UnusedPaletteGlobal2 = 0;
+}

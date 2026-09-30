@@ -3,6 +3,7 @@
  */
 
 #include "u7port.h"
+#include <new>
 #include "u7manage.h"
 #include "item.h"
 #include "colbuf.h"
@@ -31,7 +32,7 @@ struct View;
 
 struct PointOffset { int16_t x, y; };
 /* each kind of container's close button, from its corner */
-PointOffset CloseButtonOffsets[] = {
+const PointOffset CloseButtonOffsets[] = {
 	{ 23, 42 },
 	{ 23, 52 },
 	{ 23, 63 },
@@ -47,7 +48,7 @@ PointOffset CloseButtonOffsets[] = {
 
 struct RectangleOffset { int16_t x, y, x1, y1; };
 /* each kind of container's contents area, from its corner */
-RectangleOffset ContainerContentAreas[] = {
+const RectangleOffset ContainerContentAreas[] = {
 	{ 46, 28, 124, 63 },
 	{ 49, 19, 117, 61 },
 	{ 50, 50, 120, 86 },
@@ -237,9 +238,10 @@ void ItemGrid::initialize(objref item, uint8_t x, uint8_t y, uint8_t x1, uint8_t
 
 void ItemGrid::refresh() { build(container); }
 
+static int16_t column, row, rowHeight, inset;
+
 void ItemGrid::place(objref item, uint8_t *x, uint8_t *y, uint8_t *reset)
 {
-	static int16_t column, row, rowHeight, inset;
 	int16_t height, width;
 	if (*reset) {
 		inset = 0;
@@ -391,3 +393,17 @@ uint8_t ItemGrid::accepts(objref moved, int16_t x, int16_t y)
 }
 
 ProportionalTextPrinter StatsTextPrinter;
+
+extern "C" void ResetContgumpGlobals(void)
+{
+	column = 0;
+	row = 0;
+	rowHeight = 0;
+	inset = 0;
+	memset((void *)&StatsTextPrinter, 0, sizeof(StatsTextPrinter));
+}
+
+extern "C" void ConstructContgumpGlobals(void)
+{
+	new (&StatsTextPrinter) ProportionalTextPrinter();
+}

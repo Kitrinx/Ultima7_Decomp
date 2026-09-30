@@ -6,7 +6,7 @@
  *     |
  *   backend (one per target, chosen when linking): matoya, ...
  *
- * Threads: the game runs on one thread (called the main thread here, whatever the host
+ * Threads: each program runs on one thread (called the main thread here, whatever the host
  * calls it) except the sound tick, which the audio backend calls on its own clock.
  * Code shared with the sound tick is bracketed by plat_sound_lock()/plat_sound_unlock(),
  * where the DOS game disabled interrupts.
@@ -26,15 +26,31 @@ extern "C" {
 
 /* ---- System ---- */
 
-/* The game's entry point. The backend owns the process's main(): it opens the window and
- * audio, then calls this on the game thread with the game's own arguments. */
+/* The backend owns the process's main(). It opens the window and audio once, then calls
+ * Ultima7Main, the launcher, or with a program named runs just that one program. */
+int16_t Ultima7Main(int16_t argc, char **argv);
+/* Calls the entry point of the program with this DOS name ("u7", "mainmenu", ...). */
+int16_t ProgramMain(const char *name, int16_t argc, char **argv);
+/* U7.EXE's entry point. */
 int16_t GameMain(int16_t argc, char **argv);
-/* Shows the message and ends the program. */
+/* Provided by the game: puts all its globals back to their start-up values. */
+void ResetEnvironment(void);
+/* Runs the named program in this process, as ULTIMA7.COM ran each EXE, and waits for its
+ * exit code. The backend first clears what it holds for the game and calls ResetEnvironment,
+ * so the program starts as if the process were new. */
+int16_t plat_run_program(const char *name, int16_t argc, char **argv);
+/* Shows the message and ends the process. */
 void plat_fatal(const char *message);
-/* Ends the program with the DOS exit code the launcher used to see. */
+/* Ends the program with the DOS exit code the launcher used to see. Its stack is not
+ * unwound. */
 void plat_exit(int16_t code);
 /* Text the DOS game printed to the console. */
 void plat_log(const char *text);
+/* Text on the game screen, as the DOS game's printf and cprintf drew it in graphics mode: 8x8
+ * characters on a 40 by 25 grid. goto counts from 1, as gotoxy did; write handles \r, \n
+ * (down a row only) and \b like the BIOS. */
+void plat_console_goto(int16_t x, int16_t y);
+void plat_console_write(const char *text);
 
 /* ---- Time ---- */
 

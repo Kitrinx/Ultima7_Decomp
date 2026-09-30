@@ -32,7 +32,7 @@ uint8_t ProcessDialogInput(MouseState *state, uint8_t picking, objref *out);
 uint8_t PickWorldItem(objref *out);
 
 extern uint8_t GameRestored;
-extern char *GumpMgrFileName;
+extern char *const GumpMgrFileName;
 extern GumpFile GumpMgrFile;
 void StartNumberedDialog(int8_t number);
 void OpenItemDialog(objref obj);

@@ -107,3 +107,8 @@ int16_t DetermineBulkOfContents(objref item)
 	}
 	return bulk;
 }
+
+extern "C" void ResetWeightGlobals(void)
+{
+	TypeWeightVolumes = 0;
+}

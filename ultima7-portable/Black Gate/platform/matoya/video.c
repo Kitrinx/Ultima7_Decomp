@@ -41,6 +41,17 @@ void video_init(void)
 		draw_rgba[i][3] = 0xFF;
 }
 
+/* A new program starts with a black palette and no frame of its own; the window keeps
+ * showing the last one until it presents. */
+void video_reset(void)
+{
+	for (int i = 0; i < 256; i++)
+		memset(palette[i], 0, 3);
+	palette_dirty = false;
+	last_pixels = NULL;
+	last_present_us = 0;
+}
+
 void plat_video_set_palette(int16_t first, int16_t count, const uint8_t *rgb)
 {
 	for (int16_t i = 0; i < count; i++) {
@@ -72,6 +83,11 @@ void plat_video_present(const uint8_t *pixels)
 {
 	last_pixels = pixels;
 	convert(pixels);
+}
+
+uint8_t *video_screen(void)
+{
+	return (uint8_t *) last_pixels;
 }
 
 void video_refresh(bool force)

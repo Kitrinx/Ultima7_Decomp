@@ -180,3 +180,27 @@ void LoadShpDims(char *name)
 		ReportFileReadError(name);
 	file.close();
 }
+
+extern "C" void ResetCullmaskGlobals(void)
+{
+	ShapeDimensions = 0;
+	WorldMaskObject = 0;
+	OcclusionBoxX = 0;
+	OcclusionBoxY = 0;
+	OcclusionBoxZ = 0;
+	OcclusionBoxWidth = 0;
+	OcclusionBoxLength = 0;
+	OcclusionBoxHeight = 0;
+	OcclusionMaskEnd = 0;
+	OcclusionMaskSize = 0;
+	OcclusionRows = 0;
+	OcclusionOriginX = 0;
+	OcclusionOriginY = 0;
+	OcclusionMask = 0;
+	OcclusionMaskOrigin = 0;
+	OcclusionMaskInset = 0;
+	OccludersPresent = 0;
+	OcclusionEnabled = 1;
+	CheatKeyWToggle = 1;
+	CheatKeyDToggle = 0;
+}

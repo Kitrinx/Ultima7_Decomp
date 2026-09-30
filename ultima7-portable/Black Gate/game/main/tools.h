@@ -2,7 +2,7 @@
 #define TOOLS_H
 
 extern int16_t unused_global_2;
-extern char *WorldMapFileName;
+extern char *const WorldMapFileName;
 
 uint8_t IsPointOnMap(int16_t x, int16_t y);
 void DrawWorldMap(int16_t check, int16_t *shape);

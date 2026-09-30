@@ -22,11 +22,23 @@ set(U7_PLATFORM_DIR "${CMAKE_CURRENT_SOURCE_DIR}/platform")
 set(U7_THIRD_PARTY_DIR "${CMAKE_CURRENT_SOURCE_DIR}/third_party")
 
 option(U7_BACKEND_MATOYA "Build the libmatoya backend" ON)
+option(U7_RESET_CHECK "Test only: report game globals a reset leaves changed (clang, macOS or Linux)" OFF)
 set(U7_MT32_ROM_DIR "" CACHE PATH
     "Folder with the MT-32 control and PCM ROMs; the U7_MT32_ROMS variable overrides it at run time")
 
 # The game: .c files were written in C, .cpp files in C++.
 file(GLOB_RECURSE U7_GAME_SOURCES CONFIGURE_DEPENDS "${U7_GAME_DIR}/*.c" "${U7_GAME_DIR}/*.cpp")
+
+# The launcher and the programs it runs besides U7. Their files reuse U7 module names, so
+# they stay out of the U7.LNK ordering below and link after it.
+set(U7_PROGRAM_SOURCES "")
+foreach(dir IN ITEMS ultima7 shared mainmenu intro endgame)
+    file(GLOB_RECURSE sources CONFIGURE_DEPENDS "${U7_GAME_DIR}/${dir}/*.c" "${U7_GAME_DIR}/${dir}/*.cpp")
+    list(APPEND U7_PROGRAM_SOURCES ${sources})
+endforeach()
+if(U7_PROGRAM_SOURCES)
+    list(REMOVE_ITEM U7_GAME_SOURCES ${U7_PROGRAM_SOURCES})
+endif()
 
 # Borland's startup code ran static constructors of equal priority from the end of the link
 # order backwards, and the game depends on it (the save list order, for one). The linker runs
@@ -50,9 +62,22 @@ foreach(line IN LISTS U7_LINK_LINES)
         endif()
     endforeach()
 endforeach()
-list(APPEND U7_ORDERED_SOURCES ${U7_GAME_SOURCES})
+list(APPEND U7_ORDERED_SOURCES ${U7_GAME_SOURCES} ${U7_PROGRAM_SOURCES})
 
 add_library(u7_game OBJECT ${U7_ORDERED_SOURCES})
+
+# ResetEnvironment() calls every file's Reset...Globals and Construct...Globals; the list is
+# regenerated from the sources, in link order, whenever one of them changes.
+set(U7_RESET_LIST "${CMAKE_CURRENT_BINARY_DIR}/resets.inc")
+string(REPLACE ";" "\n" U7_SOURCE_LINES "${U7_ORDERED_SOURCES}")
+file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/u7_sources.txt" "${U7_SOURCE_LINES}\n")
+add_custom_command(OUTPUT "${U7_RESET_LIST}"
+    COMMAND "${CMAKE_COMMAND}" -DSOURCE_LIST="${CMAKE_CURRENT_BINARY_DIR}/u7_sources.txt"
+        -DOUTPUT="${U7_RESET_LIST}" -P "${CMAKE_CURRENT_SOURCE_DIR}/cmake/Resets.cmake"
+    DEPENDS ${U7_ORDERED_SOURCES} "${CMAKE_CURRENT_SOURCE_DIR}/cmake/Resets.cmake"
+    COMMENT "Listing the game's reset functions")
+target_sources(u7_game PRIVATE "${U7_RESET_LIST}")
+target_include_directories(u7_game PRIVATE "${CMAKE_CURRENT_BINARY_DIR}")
 target_include_directories(u7_game PUBLIC
     "${U7_GAME_DIR}/include"
     "${U7_GAME_DIR}/main"
@@ -108,7 +133,31 @@ if(U7_BACKEND_MATOYA)
     if(WIN32)
         target_link_libraries(u7 PRIVATE dbghelp)       # names null accesses (nullpage.c)
     endif()
+
+    # Windows loads the window and taskbar icon from the exe; macOS gets a PNG for the Dock.
+    get_filename_component(U7_ICON_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../assets/icons" ABSOLUTE)
+    if(WIN32)
+        enable_language(RC)
+        file(CONFIGURE OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/u7.rc"
+            CONTENT "1 ICON \"${U7_ICON_DIR}/windows/u7.ico\"\n")
+        target_sources(u7 PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/u7.rc")
+    elseif(APPLE)
+        target_link_options(u7 PRIVATE "LINKER:-sectcreate,__TEXT,__u7_icon,${U7_ICON_DIR}/macos/u7.png")
+        set_target_properties(u7 PROPERTIES LINK_DEPENDS "${U7_ICON_DIR}/macos/u7.png")
+    endif()
     if(U7_MT32_ROM_DIR)
         target_compile_definitions(u7 PRIVATE U7_DEFAULT_ROM_DIR="${U7_MT32_ROM_DIR}")
+    endif()
+
+    # The game's globals go into sections of their own, which the check compares after each
+    # reset. Exported symbols let it name what it finds.
+    if(U7_RESET_CHECK)
+        if(NOT CMAKE_CXX_COMPILER_ID MATCHES "Clang" OR NOT (APPLE OR CMAKE_SYSTEM_NAME STREQUAL "Linux"))
+            message(FATAL_ERROR "U7_RESET_CHECK needs clang on macOS or Linux")
+        endif()
+        target_compile_options(u7_game PRIVATE -include "${U7_PLATFORM_DIR}/matoya/resetcheck/sections.h")
+        target_sources(u7 PRIVATE "${U7_PLATFORM_DIR}/matoya/resetcheck/resetcheck.c")
+        target_compile_definitions(u7 PRIVATE U7_RESET_CHECK)
+        set_target_properties(u7 PROPERTIES ENABLE_EXPORTS ON)
     endif()
 endif()

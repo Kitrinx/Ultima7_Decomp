@@ -82,3 +82,8 @@ int16_t u7_random(int16_t range)
 {
 	return (int16_t)(((int32_t)BorlandRand() * range) / 0x8000);
 }
+
+void ResetU7portGlobals(void)
+{
+	BorlandSeed = 1;
+}

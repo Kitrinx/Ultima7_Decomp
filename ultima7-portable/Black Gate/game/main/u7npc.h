@@ -170,7 +170,7 @@ inline uint8_t IsFamished(objref *who) { return GetNpcBufferForIbo(who)->food ==
 void DetachItem(int16_t item);
 void SendNPCToLunch(objref npc);
 
-extern char *U7NBufFileName;
+extern char *const U7NBufFileName;
 extern NpcSaver NpcBufferFile;
 
 #endif

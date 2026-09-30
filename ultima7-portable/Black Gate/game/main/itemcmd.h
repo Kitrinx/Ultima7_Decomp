@@ -13,7 +13,7 @@ void Item_returnToWorld(ItemId *object);
 void Item_addToView(ItemId *object);
 
 extern char SpeechFileName[];
-extern int16_t FallbackFrames[];
+extern const int16_t FallbackFrames[];
 extern BitArray SteppedNPCs;
 extern BitArray HaltedNPCs;
 void InitNPCSets();

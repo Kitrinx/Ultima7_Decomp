@@ -2,11 +2,14 @@
  *
  *   U7_TEST_INPUT="4000 key i; 6000 move 320 100; 6100 down; 6600 move 400 120; 6700 up"
  *
- * Each step is a time in milliseconds since start and an action: "key" with a character or
- * esc, enter, space, up, down, left, right; "move x y" in the game's 640x200 mouse space;
- * "down" and "up" for the left button, "rdown" and "rup" for the right; "shot file.ppm" saves
- * the game's last frame; "quit" ends the run. Steps go through the same event handling as real
- * input. While a script runs the window stays hidden and never takes focus.
+ * Each step is a time in milliseconds since the process started and an action: "key" with a
+ * character or esc, enter, space, up, down, left, right, f1 to f12; "move x y" in the game's
+ * 640x200 mouse space; "down" and "up" for the left button, "rdown" and "rup" for the right;
+ * "shot file.ppm" saves the frame on screen; "end n" makes the running program exit with code
+ * n, as if it had quit by itself; "quit" ends the run. The clock runs across the whole session,
+ * so under the launcher one script drives every program in turn; a step that comes due between
+ * programs goes to the next. Steps go through the same event handling as real input. While a
+ * script runs the window stays hidden and never takes focus.
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -24,7 +27,8 @@ typedef struct {
 	int64_t at_ms;
 	MTY_Event event;
 	int32_t game_x, game_y;
-	bool is_move, is_quit;
+	bool is_move, is_quit, is_end;
+	int16_t end_code;
 	char shot[128];
 } step;
 
@@ -41,6 +45,14 @@ static MTY_Key named_key(const char *name)
 	if (strcmp(name, "down") == 0) return MTY_KEY_DOWN;
 	if (strcmp(name, "left") == 0) return MTY_KEY_LEFT;
 	if (strcmp(name, "right") == 0) return MTY_KEY_RIGHT;
+	if (name[0] == 'f' && name[1] >= '1' && name[1] <= '9') {
+		static const MTY_Key function_keys[] = {MTY_KEY_F1, MTY_KEY_F2, MTY_KEY_F3, MTY_KEY_F4,
+			MTY_KEY_F5, MTY_KEY_F6, MTY_KEY_F7, MTY_KEY_F8, MTY_KEY_F9, MTY_KEY_F10, MTY_KEY_F11,
+			MTY_KEY_F12};
+		int n = atoi(name + 1);
+
+		return n >= 1 && n <= 12 ? function_keys[n - 1] : MTY_KEY_NONE;
+	}
 	return name[1] == 0 ? keys_for_char(name[0]) : MTY_KEY_NONE;
 }
 
@@ -92,6 +104,10 @@ static void parse(void)
 			s->event.type = MTY_EVENT_MOTION;
 		} else if (strcmp(action, "shot") == 0 && sscanf(part, "%*ld %*s %127s", steps[step_count].shot) == 1) {
 			steps[step_count++].at_ms = at;
+		} else if (strcmp(action, "end") == 0 && sscanf(part, "%*ld %*s %d", &x) == 1) {
+			steps[step_count].at_ms = at;
+			steps[step_count].end_code = (int16_t) x;
+			steps[step_count++].is_end = true;
 		} else if (strcmp(action, "quit") == 0) {
 			steps[step_count].at_ms = at;
 			steps[step_count++].is_quit = true;
@@ -124,6 +140,8 @@ void test_input_poll(void)
 
 		if (s->is_quit) {
 			backend_request_exit(0);
+		} else if (s->is_end) {
+			plat_exit(s->end_code);
 		} else if (s->shot[0] != 0) {
 			video_write_shot(s->shot);
 		} else {

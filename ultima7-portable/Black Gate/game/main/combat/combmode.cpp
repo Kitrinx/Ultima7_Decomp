@@ -30,9 +30,9 @@
 inline uint8_t IsProtecting(objref *p) { return Item_getQuality(p) == ATTACK_PROTECT; }
 inline uint8_t IsInGroup(objref *p) { return CombatGroups.leaders[GetAlignment(p)] != -1; }
 
-int16_t SummonTypes[10] = {528, 514, 532, 337, 501, 505, 504, 530, 517, 661};
-uint8_t SummonCounts[10] = {4, 4, 2, 1, 1, 1, 1, 4, 8, 3};
-uint8_t SummonOdds[10] = {50, 65, 69, 73, 77, 81, 85, 89, 95, 100};
+const int16_t SummonTypes[10] = {528, 514, 532, 337, 501, 505, 504, 530, 517, 661};
+const uint8_t SummonCounts[10] = {4, 4, 2, 1, 1, 1, 1, 4, 8, 3};
+const uint8_t SummonOdds[10] = {50, 65, 69, 73, 77, 81, 85, 89, 95, 100};
 extern "C" void PlaySfx(uint8_t number, int16_t volume, int16_t pan, int16_t flags);
 extern uint8_t CanItemMoveTo(CellCoord, CellCoord, int16_t, ItemId);
 /* damage type 1 is fire */

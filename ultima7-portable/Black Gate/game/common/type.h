@@ -54,7 +54,7 @@ uint16_t GetFootprintY(uint16_t *typeFrame);
 #define TYPE_CLASS_BUILDING     14
 
 /* what an item of a class has, one word per class */
-extern uint16_t ItemTypeClassFlags[16];
+extern const uint16_t ItemTypeClassFlags[16];
 
 #define CLASS_RECORDS           0x003   /* its extra records */
 #define CLASS_REGION            0x004

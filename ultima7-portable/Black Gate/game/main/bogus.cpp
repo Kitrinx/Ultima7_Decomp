@@ -120,7 +120,7 @@ void CheatCastSpell()
 	Coord x, y;
 	int16_t z;
 	DebugPrintfAtCoords(1, 1, "Enter the spell number (0-79) :");
-	scanf("%d", &spell);
+	spell = (int16_t) ConsoleReadNumber(0);
 	HavePlayerSelect(&selected, &x, &y, &z);
 	if (selected.isBody())
 		TryToCastSpell(selected, spell, 0, 0, 1);
@@ -469,4 +469,10 @@ void WearOffInvisibility(objref item)
 		return;
 	}
 	Item_setQualityFlags(&item, Item_getQualityFlags(&item) & 0xfe);
+}
+
+extern "C" void ResetBogusGlobals(void)
+{
+	EarthquakeCount = 0;
+	StompCounter = 0;
 }

@@ -276,3 +276,14 @@ int32_t MeasureFarBlock(void *memory)
 	}
 	return size;
 }
+
+void ResetMemmgrGlobals(void)
+{
+	FarHeapReady = 0;
+	FarHeapSpareEntries = 128;
+	KbForDos = 0;
+	FarHeapStart = 0;
+	FarHeapSize = 0;
+	FarBlockTable = 0;
+	FarHeapMemory = 0;
+}

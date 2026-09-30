@@ -67,47 +67,49 @@ uint8_t CheckNpcCache(void)
 	return ok;
 }
 
+static int8_t LoadNpcSlotBusy = 0;
+
 /* Loads NPC npc from the backing store into slot. */
 void LoadNpcSlot(uint16_t npc, int16_t slot)
 {
-	static int8_t busy = 0;
-
-	if (busy)
+	if (LoadNpcSlotBusy)
 		RECURSION_ERROR(124);
-	busy = 1;
+	LoadNpcSlotBusy = 1;
 	CopyLinearToFar(&NpcCacheBuffers[slot], NpcStore + npc * sizeof(struct NpcBuffer), sizeof(struct NpcBuffer));
 	NpcSlotOf[npc] = slot;
 	NpcSlotUsed[slot] = 1;
 	NpcInSlot[slot] = npc;
-	busy = 0;
+	LoadNpcSlotBusy = 0;
 }
+
+static int8_t SaveNpcSlotBusy = 0;
 
 /* Writes slot back to its NPC's place in the backing store and frees the slot. */
 void SaveNpcSlot(int16_t slot)
 {
-	static int8_t busy = 0;
 	uint16_t npc;
 
-	if (busy)
+	if (SaveNpcSlotBusy)
 		RECURSION_ERROR(158);
-	busy = 1;
+	SaveNpcSlotBusy = 1;
 	npc = NpcInSlot[slot];
 	CopyFarToLinear(NpcStore + npc * sizeof(struct NpcBuffer), &NpcCacheBuffers[slot], sizeof(struct NpcBuffer));
 	NpcSlotOf[npc] = 255;
 	NpcSlotUsed[slot] = 0;
-	busy = 0;
+	SaveNpcSlotBusy = 0;
 }
+
+static int8_t GetCachedNpcBufferBusy = 0;
 
 /* The cached copy of NPC npc, loading it into a free slot, or evicting a random one, if needed. */
 extern "C" struct NpcBuffer *GetCachedNpcBuffer(NpcBufferPool *pool, int16_t npc)
 {
-	static int8_t busy = 0;
 	int16_t slot;
 	int16_t i;
 
-	if (busy)
+	if (GetCachedNpcBufferBusy)
 		RECURSION_ERROR(203);
-	busy = 1;
+	GetCachedNpcBufferBusy = 1;
 	slot = NpcSlotOf[npc];
 	if (slot == 255) {
 		for (i = 0; i < CACHE_SLOTS; i++) {
@@ -124,7 +126,7 @@ extern "C" struct NpcBuffer *GetCachedNpcBuffer(NpcBufferPool *pool, int16_t npc
 		}
 		LoadNpcSlot(npc, slot);
 	}
-	busy = 0;
+	GetCachedNpcBufferBusy = 0;
 	return NpcCacheBuffers + slot;
 }
 
@@ -150,4 +152,21 @@ extern "C" uint8_t InitNpcCache(NpcBufferPool *pool, int16_t count)
 		}
 	}
 	return ok;
+}
+
+extern "C" void ResetVoonpcGlobals(void)
+{
+	NpcCacheBuffers = 0;
+	memset(NpcSlotUsed, 0, sizeof(NpcSlotUsed));
+	memset(NpcInSlot, 0, sizeof(NpcInSlot));
+	memset(NpcSlotOf, 0, sizeof(NpcSlotOf));
+	memset(NpcItemRefs, 0, sizeof(NpcItemRefs));
+	NpcStore = 0;
+	NpcCacheFaultIndex = 0;
+	NpcCacheFaultValue = 0;
+	LastNpcSlot = 0;
+	NpcCacheSize = 0;
+	LoadNpcSlotBusy = 0;
+	SaveNpcSlotBusy = 0;
+	GetCachedNpcBufferBusy = 0;
 }

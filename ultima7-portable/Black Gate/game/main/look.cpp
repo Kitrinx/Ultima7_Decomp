@@ -172,3 +172,8 @@ void LookAtItem(void)
 		}
 	}
 }
+
+extern "C" void ResetLookGlobals(void)
+{
+	DescriptFileName = "DESCRIPT.FLX";
+}

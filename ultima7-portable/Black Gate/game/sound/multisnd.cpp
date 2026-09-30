@@ -4,6 +4,7 @@
  */
 
 #include "u7port.h"
+#include <new>
 #define SOUND_SLOTS 20
 
 extern "C" void PlaySfx(uint8_t number, int16_t volume, int16_t pan, int16_t flags);
@@ -60,4 +61,14 @@ void SoundSlotTable::adjustCount(int8_t id, int8_t up)
 				slots[i].count--;
 		}
 	}
+}
+
+extern "C" void ResetMultisndGlobals(void)
+{
+	memset(&SoundSlots, 0, sizeof SoundSlots);
+}
+
+extern "C" void ConstructMultisndGlobals(void)
+{
+	new (&SoundSlots) SoundSlotTable();
 }

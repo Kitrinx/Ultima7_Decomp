@@ -180,3 +180,8 @@ uint16_t SpeechCache::readBytes(void *to, uint16_t n)
 	pos += n;
 	return n;
 }
+
+extern "C" void ResetSpecacheGlobals(void)
+{
+	SpecacheErrorFormat = "%s line#%d";
+}

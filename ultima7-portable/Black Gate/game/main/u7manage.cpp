@@ -4,6 +4,7 @@
 
 /* path: u7manage.c */
 #include "u7port.h"
+#include <new>
 #include <stdio.h>
 #include "lowlevel.h"
 #include "dosio.h"
@@ -65,11 +66,11 @@ extern uint8_t GetShapeFrameKind(uint16_t type);
 /* Where type i's entry sits in the frame flag table. */
 #define OFFSET(i)   (FrameFlagTable.data + ((int32_t) (i) << 2))
 
-char *TempFileFormat = "TEMP%04x";
-char *FacesFileName = "FACES.VGA";
-char *GumpsFileName = "GUMPS.VGA";
-char *FontsFileName = "FONTS.VGA";
-char *SpritesFileName = "SPRITES.VGA";
+char *const TempFileFormat = "TEMP%04x";
+char *const FacesFileName = "FACES.VGA";
+char *const GumpsFileName = "GUMPS.VGA";
+char *const FontsFileName = "FONTS.VGA";
+char *const SpritesFileName = "SPRITES.VGA";
 U7ShapeManager gShapeManager;
 char CurrentDirectory[80] = ".";
 char StaticDirectory[80] = ".";
@@ -556,4 +557,35 @@ void LoadShapesInUse(void)
 			continue;
 		gShapeManager.use(i);
 	}
+}
+
+extern "C" void ResetU7manageGlobals(void)
+{
+	int16_t i;
+
+	memset(&ShapeCache, 0, sizeof(ShapeCache));
+	memset(BlockSlotKeys, 0, sizeof(BlockSlotKeys));
+	memset((void *)&gShapeManager, 0, sizeof(gShapeManager));
+	strncpy(CurrentDirectory, ".", sizeof(CurrentDirectory));
+	strncpy(StaticDirectory, ".", sizeof(StaticDirectory));
+	strncpy(GamedatDirectory, ".", sizeof(GamedatDirectory));
+	memset((void *)&ShapesFile, 0, sizeof(ShapesFile));
+	ShapePoolSize = INT32_C(583680);
+	for (i = 0; i < 3; i++) {
+		memset((void *)&ViewBlocks[i], 0, sizeof(ViewBlocks[i]));
+		memset((void *)&ViewBlockCopies[i], 0, sizeof(ViewBlockCopies[i]));
+	}
+	ShapeSweepHand = -1024;
+}
+
+extern "C" void ConstructU7manageGlobals(void)
+{
+	int16_t i;
+
+	new (&gShapeManager) U7ShapeManager();
+	new (&ShapesFile) CachedFlex();
+	for (i = 0; i < 3; i++)
+		new (&ViewBlocks[i]) View();
+	for (i = 0; i < 3; i++)
+		new (&ViewBlockCopies[i]) View();
 }

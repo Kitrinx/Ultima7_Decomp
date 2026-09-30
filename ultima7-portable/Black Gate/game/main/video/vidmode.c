@@ -14,7 +14,7 @@ struct View;
 
 int8_t DisplayMode = -1;
 int8_t UnusedModeByte = 3;
-char BiosVideoModes[] = { 0x13, 0x0d, 0x04, 0x09, 0x07, 0 };  /* BIOS video mode for each display mode */
+const char BiosVideoModes[] = { 0x13, 0x0d, 0x04, 0x09, 0x07, 0 };  /* BIOS video mode for each display mode */
 int16_t SlotRunLengths[SLOT_COUNT]; /* a run's length at each slot it holds, 0 when free */
 extern struct View ScreenView;
 
@@ -72,4 +72,11 @@ void FreeSlotRun(int16_t first)
 
 	for (i = 0; i < length; i++)
 		SlotRunLengths[first + i] = 0;
+}
+
+void ResetVidmodeGlobals(void)
+{
+	DisplayMode = -1;
+	UnusedModeByte = 3;
+	memset(SlotRunLengths, 0, sizeof(SlotRunLengths));
 }

@@ -431,3 +431,8 @@ int16_t TextBox::lines()
 
 	return r.height() / lh;
 }
+
+extern "C" void ResetConvgumpGlobals(void)
+{
+	memset(AnswerSpots, 0, sizeof(AnswerSpots));
+}

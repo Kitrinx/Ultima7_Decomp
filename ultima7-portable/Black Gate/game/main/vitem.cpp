@@ -4,6 +4,7 @@
 
 /* path: vitem.c */
 #include "u7port.h"
+#include <new>
 #include "plat.h"
 #include "lowlevel.h"
 #include "objref.h"
@@ -314,4 +315,19 @@ void UnloadWindowChunks(Coord ox, Coord oy, Coord nx, Coord ny)
 		y += 16;
 	}
 	ClearCollisionBuffer();
+}
+
+extern "C" void ResetVitemGlobals(void)
+{
+	IfixFileFormat = "u7ifix%02x";
+	IfixFilePattern = "u7ifix*.";
+	memset((void *)IfixCaches, 0, sizeof(IfixCaches));
+}
+
+extern "C" void ConstructVitemGlobals(void)
+{
+	int16_t i;
+
+	for (i = 0; i < 4; i++)
+		new (&IfixCaches[i]) IfixCache();
 }

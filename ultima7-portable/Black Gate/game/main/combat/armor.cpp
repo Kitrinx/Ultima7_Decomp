@@ -4,6 +4,7 @@
  */
 
 #include "u7port.h"
+#include <new>
 #include "lowlevel.h"
 #include "dosio.h"
 #include "oops.h"
@@ -34,4 +35,17 @@ void ArmorTable::load(char *name)
 	if (!ReadMojo(fd, -INT32_C(1), INT32_C(1), ArmorCount, count, base, INT32_C(10)))
 		ReportFileNotFound(name);
 	DosClose(fd);
+}
+
+extern "C" void ResetArmorGlobals(void)
+{
+	strcpy(ArmorFileName, "armor.dat");
+	memset((void *)&ArmorRecords, 0, sizeof(ArmorRecords));
+	ArmorCount = 0;
+	memset(&ArmorLookup, 0, sizeof(ArmorLookup));
+}
+
+extern "C" void ConstructArmorGlobals(void)
+{
+	new (&ArmorRecords) ArmorTable();
 }

@@ -34,6 +34,6 @@ extern Operate UseSpotFinder;
 
 /* The schedule handlers, indexed by work type */
 typedef void ( *WorkHandler)(objref *);
-extern WorkHandler WorkTypeHandlers[53];
+extern const WorkHandler WorkTypeHandlers[53];
 
 #endif

@@ -122,3 +122,14 @@ extern "C" void MainGameLoop(void)
 			ExitForEndgame();
 	}
 }
+
+extern "C" void ResetMainGlobals(void)
+{
+	RestartRequested = 0;
+	EndgameRequested = 0;
+	PendingSteps = 0;
+	EndgameQuitRequested = 0;
+	TimeAdvanceRate = 0;
+	FrameDelay = 6;
+	PreviousFrameTime = 0;
+}

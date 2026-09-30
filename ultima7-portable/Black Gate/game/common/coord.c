@@ -6,7 +6,7 @@
 #include "u7port.h"
 #include "coord.h"
 
-int16_t UnusedCoordTable[17] = { 101, 98, 95, 92, 89, 84, 81, 78, 75, 70, 55, 53, 50, 42, 39, 21, 16 };
+const int16_t UnusedCoordTable[17] = { 101, 98, 95, 92, 89, 84, 81, 78, 75, 70, 55, 53, 50, 42, 39, 21, 16 };
 
 /* how far a lies past b, the short way round */
 int16_t CompareWorldCoords(int16_t *a, int16_t *b)

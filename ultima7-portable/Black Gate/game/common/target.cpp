@@ -133,3 +133,8 @@ int8_t FindItemAtScreenPoint(objref *hit, int16_t x, int16_t y, WorldView *view,
 	}
 	return found;
 }
+
+extern "C" void ResetTargetGlobals(void)
+{
+	ShadowNpcBuffer = 0;
+}

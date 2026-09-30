@@ -4,6 +4,7 @@
  */
 
 #include "u7port.h"
+#include <new>
 #include "plat.h"
 #include "dosio.h"
 #include "u7point.h"
@@ -486,3 +487,26 @@ MouseState MouseEventQueue[MOUSE_QUEUE_SIZE];
 uint8_t GumpMode = 0, KeyMouseEnabled = 0;
 int16_t KeyMouseX = 0, KeyMouseY = 0;
 uint8_t PreviousCtrlStatus = 0, CtrlStatus = 0, KeyMouseReleasePending = 0;
+
+extern "C" void ResetU7eventGlobals(void)
+{
+	PushedBackKey = -1;
+	memset((void *)&GameInput, 0, sizeof(GameInput));
+	PolledKey = 0;
+	HeldMouseButton = 0;
+	memset((void *)MouseEventQueue, 0, sizeof(MouseEventQueue));
+	GumpMode = 0;
+	KeyMouseEnabled = 0;
+	KeyMouseX = 0;
+	KeyMouseY = 0;
+	PreviousCtrlStatus = 0;
+	CtrlStatus = 0;
+	KeyMouseReleasePending = 0;
+}
+
+extern "C" void ConstructU7eventGlobals(void)
+{
+	new (&GameInput) Input();
+	for (int i = 0; i < MOUSE_QUEUE_SIZE; i++)
+		new (&MouseEventQueue[i]) MouseState();
+}

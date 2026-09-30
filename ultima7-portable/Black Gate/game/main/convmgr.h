@@ -17,10 +17,10 @@ extern FaceGump *NPCFaces[2];
 extern TextBox *TextBoxes[2];
 extern int16_t SavedScreen;
 extern int8_t ConversationShown;
-extern int16_t TextBoxLeft[2];
-extern int16_t TextBoxTop[2];
-extern int16_t TextBoxRight[2];
-extern int16_t TextBoxBottom[2];
+extern const int16_t TextBoxLeft[2];
+extern const int16_t TextBoxTop[2];
+extern const int16_t TextBoxRight[2];
+extern const int16_t TextBoxBottom[2];
 
 void CloseConversationGumps(void);
 uint8_t OpenConversationGumps(int16_t mode);

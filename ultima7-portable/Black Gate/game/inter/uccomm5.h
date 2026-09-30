@@ -18,6 +18,6 @@ void UC_InCombat(Value *, Value *ret);
 void UC_StartBlockingSpeech(Value *args, Value *ret);
 void UC_Summon(Value *args, Value *);
 
-extern char UsecodeSpeechFileName[];
+extern const char UsecodeSpeechFileName[];
 
 #endif

@@ -31,7 +31,7 @@ extern objref AvatarRef;
 extern uint8_t VerifyItemBuffer(void);
 
 int16_t unused_global_2 = 8192;
-char *WorldMapFileName = "WORLDMAP.VGA";
+char *const WorldMapFileName = "WORLDMAP.VGA";
 
 /* Whether a screen point lies on the map. */
 uint8_t IsPointOnMap(int16_t x, int16_t y)
@@ -203,4 +203,9 @@ void CheckItemBuffer(void)
 		} while (!done);
 		QuitToDos();
 	}
+}
+
+extern "C" void ResetToolsGlobals(void)
+{
+	unused_global_2 = 8192;
 }

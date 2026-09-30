@@ -235,10 +235,10 @@ void WorldView::paintTerrain(int16_t x0, int16_t y0, int16_t x1, int16_t y1)
 	}
 }
 
+static ItemSnapshot snapshot;
+
 void WorldView::paintItem(int16_t handle)
 {
-	static ItemSnapshot snapshot;
-
 	PaintItemRecord = (ItemRecord *)ItemAt(handle);
 	PaintItemCopy = &snapshot;
 	PaintItemCopy->position = PaintItemRecord->position;
@@ -507,4 +507,24 @@ uint8_t IsItemInCellWindow(int16_t handle)
 
 	Item_getXAndY(item, &x.value, &y.value);
 	return IsInWindow(x, y);
+}
+
+extern "C" void ResetMapviewGlobals(void)
+{
+	PaintTick = 0;
+	CellBuffer = 0;
+	PaintItemRecord = 0;
+	PaintItemCopy = 0;
+	PaintFrameCount = 0;
+	PaintFrame = 0;
+	UnusedItemResetWord = 0;
+	memset(LoadedRegions, 0, sizeof LoadedRegions);
+	LightTotal = -1;
+	CellWindowX = 0;
+	CellWindowY = 0;
+	CeilingZ = 15;
+	CheatKeyFToggle = 1;
+	ForceCellReload = 0;
+	AnimationEnabled = 1;
+	memset(&snapshot, 0, sizeof snapshot);
 }

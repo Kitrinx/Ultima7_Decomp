@@ -26,7 +26,8 @@
 extern int16_t DiscardedPathLength[2];
 
 /* frames of the plant a patroller lays on a grave */
-char GraveFlowerFrames[5] = { 1, 2, 3, 6, 7 };
+static const char GraveFlowerFramesStart[5] = { 1, 2, 3, 6, 7 };
+char GraveFlowerFrames[5];
 
 extern objref AvatarRef;
 
@@ -271,4 +272,9 @@ void RunPatrolSchedule(objref *npc)
 		CUR_SCHED(npc).state = 40;
 		break;
 	}
+}
+
+extern "C" void ResetSchepatrGlobals(void)
+{
+	memcpy(GraveFlowerFrames, GraveFlowerFramesStart, sizeof(GraveFlowerFrames));
 }

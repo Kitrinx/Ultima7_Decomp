@@ -54,7 +54,7 @@ public:
 	}
 };
 
-extern char *GameTimerFileName;
+extern char *const GameTimerFileName;
 extern GameTimer GameTime;
 extern int8_t TimerFileLetter;
 

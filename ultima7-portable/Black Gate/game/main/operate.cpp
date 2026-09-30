@@ -37,20 +37,20 @@ extern int16_t DiscardedPathLength[2];
 
 /* The types that can be operated; the spots for entry n run from OperateSpotStarts[n] up to
  * OperateSpotStarts[n + 1]. Each spot's comment names its type. */
-static int16_t OperableTypes[70] = {
+static const int16_t OperableTypes[70] = {
 	431, 991, 719, 810, 642, 715, 470, 1011, 377, 717, 696, 889, 995, 340,
 	739, 668, 602, 735, 597, 860, 722, 261, 651, 698, 851, 654, 653, 738,
 	971, 623, 994, 1003, 633, 1018, 872, 944, 388, 616, 681, 628, 863, 658,
 	1024, 831, 1000, 1001, 407, 675, 697, 679, 423, 283, 624, 915, 916, 526,
 	336, 338, 997, 372, 291, 322, 290, 890, 312, 363, 724
 };
-static uint8_t OperateSpotStarts[71] = {
+static const uint8_t OperateSpotStarts[71] = {
 	0, 1, 2, 4, 8, 12, 13, 14, 17, 21, 25, 28, 32, 36, 40, 44, 46, 48, 49, 51, 52, 54, 55, 56, 58, 60,
 	62, 65, 69, 77, 81, 83, 89, 95, 101, 106, 110, 114, 118, 122, 126, 130, 134, 136, 137, 142, 149,
 	157, 159, 160, 164, 166, 174, 178, 182, 186, 190, 194, 198, 202, 206, 210, 214, 218, 226, 229,
 	232, 234
 };
-static OperateSpot OperateSpots[270] = {
+static const OperateSpot OperateSpots[270] = {
 	{ 2, 0, 0, 6 }, /* 431 */
 	{ 0, 1, 0, 0 }, /* 991 */
 	{ 0, 1, 0, 0 }, { -1, 1, 0, 0 },    /* 719 */
@@ -229,4 +229,9 @@ uint8_t Operate::findUseSpot(objref *npc, objref target, int16_t *spotX, int16_t
 	if (IS_SOLID(ITEM(npc->off)))
 		AddTypeToCollision(x0, y0, startZ, ITEM(npc->off)->typeFrame);
 	return 0;
+}
+
+extern "C" void ResetOperateGlobals(void)
+{
+	memset(&UseSpotFinder, 0, sizeof(UseSpotFinder));
 }

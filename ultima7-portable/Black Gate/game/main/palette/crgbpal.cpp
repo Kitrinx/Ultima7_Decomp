@@ -12,7 +12,7 @@
 #include "oops.h"
 #include "crgbpal.h"
 
-char *PaletteFileName = "PALETTES.FLX";
+char *const PaletteFileName = "PALETTES.FLX";
 
 /* read one palette from PALETTES.FLX into a block, allocating it on first use */
 void LoadPalette(int32_t *block, int16_t index)

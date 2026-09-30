@@ -109,3 +109,12 @@ void VerifyShapeLookups(int16_t unused1, int16_t unused2)
 	AmmoLookup.verifyChecksum(unused1, unused2);
 	ReadyLookup.verifyChecksum(unused1, unused2);
 }
+
+extern "C" void ResetVoolookGlobals(void)
+{
+	LoadedWeaponCount = 0;
+	LoadedAmmoCount = 0;
+	LoadedArmorCount = 0;
+	LoadedMonsterCount = 0;
+	LoadedReadyCount = 0;
+}

@@ -30,9 +30,9 @@
 extern void ( *DriverSysexEntry)(int32_t, int16_t, void *);
 extern void ( *DriverPortEntry)(int16_t);
 
-char *TfaFileName = "TFA.DAT";
-char *WgtVolFileName = "WGTVOL.DAT";
-char *WihhFileName = "WIHH.DAT";
+char *const TfaFileName = "TFA.DAT";
+char *const WgtVolFileName = "WGTVOL.DAT";
+char *const WihhFileName = "WIHH.DAT";
 
 void InitWorldPhysics(void)
 {

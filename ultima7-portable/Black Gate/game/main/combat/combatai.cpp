@@ -186,12 +186,12 @@ inline uint8_t CanPlace(CellCoord x, CellCoord y, int16_t z, TypeFrame &&typeFra
 }
 
 /* by direction to the threat: the three directions away from it, repeated so any start reads three */
-uint8_t FleeDirections[8][5] = {
+const uint8_t FleeDirections[8][5] = {
 	{ 3, 4, 5, 3, 4 }, { 4, 5, 6, 4, 5 }, { 5, 6, 7, 5, 6 }, { 6, 7, 0, 6, 7 },
 	{ 7, 0, 1, 7, 0 }, { 0, 1, 2, 0, 1 }, { 1, 2, 3, 1, 2 }, { 2, 3, 4, 2, 3 }
 };
-char ProtectChance[] = { 100, 75, 50, 25 };
-char CallForHelpChance[] = { 100, 85, 70, 55 };
+const char ProtectChance[] = { 100, 75, 50, 25 };
+const char CallForHelpChance[] = { 100, 85, 70, 55 };
 
 inline uint8_t IsDying(int8_t hp) { return hp <= 0; }
 inline uint8_t IsNpcInMode(NPCRef &npc, uint8_t mode)
@@ -727,7 +727,7 @@ int8_t IsRangedAttack(objref *npc, int16_t weaponNumber, objref target)
 	return weapon->range < (uint16_t)dist;
 }
 
-int16_t InvisibleTypes[] = { 445, 446, 154, 317, 299, 519, 504, 511, 354, -1 };
+const int16_t InvisibleTypes[] = { 445, 446, 154, 317, 299, 519, 504, 511, 354, -1 };
 
 int8_t CanTurnInvisible(objref *p)
 {
@@ -740,7 +740,7 @@ int8_t CanTurnInvisible(objref *p)
 	return 0;
 }
 
-int16_t TeleportingTypes[] = { 445, 446, 154, 317, 299, 382, 519, 534, 354, -1 };
+const int16_t TeleportingTypes[] = { 445, 446, 154, 317, 299, 382, 519, 534, 354, -1 };
 
 int8_t CanTeleport(objref *p)
 {
@@ -753,7 +753,7 @@ int8_t CanTeleport(objref *p)
 	return 0;
 }
 
-int16_t SummoningTypes[] = { 445, 446, 154, 519, 354, -1 };
+const int16_t SummoningTypes[] = { 445, 446, 154, 519, 354, -1 };
 
 int8_t CanSummon(objref *p)
 {
@@ -1171,4 +1171,9 @@ uint8_t GetDirectionTo(objref *from, objref to)
 {
 	return DirectionBySign[GetSign(Item_getX(to) - Item_getX(*from)) + 1]
 		[GetSign(Item_getY(to) - Item_getY(*from)) + 1];
+}
+
+extern "C" void ResetCombataiGlobals(void)
+{
+	memset(PartyMissileFlags, 0, sizeof(PartyMissileFlags));
 }

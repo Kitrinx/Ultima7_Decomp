@@ -48,7 +48,7 @@ extern void Item_attackTarget(ItemId *);
 extern uint8_t Item_updateMissile(ItemId *, int16_t);
 
 Action *ActionTable = 0;
-uint8_t *EmptyScript = (uint8_t *)"\002\002";
+uint8_t *const EmptyScript = (uint8_t *)"\002\002";
 int16_t ActionQueueTime;
 
 char * DescribeScript(char *script)
@@ -502,4 +502,13 @@ void Action::run(uint8_t immediate)
 void Action::delay()
 {
 	due = ActionQueueTime + 1;
+}
+
+extern "C" void ResetActionGlobals(void)
+{
+	ActionTable = 0;
+	ActionQueueTime = 0;
+	ExecuteDepth = 0;
+	memset(RetiredScripts, 0, sizeof(RetiredScripts));
+	RetiredCount = 0;
 }

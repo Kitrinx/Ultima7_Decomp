@@ -19,6 +19,7 @@
 #include "equip.h"
 #include "voonpc.h"
 #include "npcref.h"
+#include <new>
 
 #define ITEM_TYPE(i) ((i)->typeFrame & 0x3ff)
 #define TYPE_CLASS(i) (gItemTypeInfo[ITEM_TYPE(i)].typeClass)
@@ -45,7 +46,7 @@ struct NpcExtra {
 
 extern int16_t NpcItemRefs[];
 
-int16_t FacingFrameOffsets[] = { 0, 48, 16, 32 };
+const int16_t FacingFrameOffsets[] = { 0, 48, 16, 32 };
 objref AvatarRef;
 int16_t FreeNpcNumbers = -1;
 int16_t FreeMonsterNumbers = -1;
@@ -443,4 +444,17 @@ void Npc_changeFood(objref *ref, int8_t amount)
 		GetNpcBufferForIbo(ref)->food = 0;
 	else
 		GetNpcBufferForIbo(ref)->food = food;
+}
+
+extern "C" void ResetNpcrefGlobals(void)
+{
+	AvatarRef = 0;
+	FreeNpcNumbers = -1;
+	FreeMonsterNumbers = -1;
+	memset(&NullNpcBuffer, 0, sizeof NullNpcBuffer);
+}
+
+extern "C" void ConstructNpcrefGlobals(void)
+{
+	new (&NpcPool) NpcBufferPool();
 }

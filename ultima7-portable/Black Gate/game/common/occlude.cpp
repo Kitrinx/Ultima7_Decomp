@@ -7,6 +7,7 @@
 #include "dosio.h"
 #include "easyfile.h"
 #include "cullmask.h"
+#include <new>
 
 static char *OccludeFileName = "OCCLUDE.DAT";
 Occlusion OcclusionTable;
@@ -39,4 +40,14 @@ void Occlusion::load(char *dir)
 		ReadFileBlock(fd, INT32_C(0), (int32_t) size, (char *)data);
 		DosClose(fd);
 	}
+}
+
+extern "C" void ResetOccludeGlobals(void)
+{
+	OccludeFileName = "OCCLUDE.DAT";
+}
+
+extern "C" void ConstructOccludeGlobals(void)
+{
+	new (&OcclusionTable) Occlusion();
 }

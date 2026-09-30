@@ -31,7 +31,7 @@
 
 extern objref AvatarRef;
 
-char UsecodeSpeechFileName[] = "u7speech.spc";  /* never referenced */
+const char UsecodeSpeechFileName[] = "u7speech.spc";  /* never referenced */
 int16_t RemoteViewActive = 0;
 
 extern uint8_t StrikeItemWithWeapon(objref actor, objref target, int16_t weapon);
@@ -169,4 +169,9 @@ void UC_Summon(Value *args, Value *)
 	CombatGroups.spawnGroup(ARG(args - 1, 1), 1, 1,
 		(uint8_t) (GetNpcBufferForIbo(&AvatarRef)->workType == WORK_COMBAT ? WORK_COMBAT : WORK_FOLLOW_AVT),
 		10, 0, 0, 0, objref(0), 1);
+}
+
+extern "C" void ResetUccomm5Globals(void)
+{
+	RemoteViewActive = 0;
 }

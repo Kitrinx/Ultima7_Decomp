@@ -4,6 +4,7 @@
  */
 
 #include "u7port.h"
+#include <new>
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -70,21 +71,21 @@ struct WorldMask { WorldMask(); };
 
 int16_t CursorX = 0, CursorY = 0;
 uint8_t CursorDrawn = 0, CursorTracking = 0;
-char *U7MapFileName = "U7MAP";
-char *U7IregFileFormat = "U7IREG%02x";
-char *U7ChunksFileName = "U7CHUNKS";
-char *ShpDimsFileName = "shpdims.dat";
+char *const U7MapFileName = "U7MAP";
+char *const U7IregFileFormat = "U7IREG%02x";
+char *const U7ChunksFileName = "U7CHUNKS";
+char *const ShpDimsFileName = "shpdims.dat";
 char OptionDelimiters[] = "\r\n= ";
 char MusicKeyword[] = "MUSIC";
 char SpeechKeyword[] = "SPEECH";
 char SfxKeyword[] = "SFX";
-char InterruptKeyword[] = "INTERRUPT";
-char PortKeyword[] = "PORT";
-char AdlibKeyword[] = "ADLIB";
-char RolandKeyword[] = "ROLAND";
+const char InterruptKeyword[] = "INTERRUPT";
+const char PortKeyword[] = "PORT";
+const char AdlibKeyword[] = "ADLIB";
+const char RolandKeyword[] = "ROLAND";
 char OnKeyword[] = "ON";
 char OffKeyword[] = "OFF";
-char CheatPassword[] = "ABCD\xff";
+const char CheatPassword[] = "ABCD\xff";
 uint8_t CheatStart = 0;
 Speech SpeechPlayer(3072, 10667, 0x220, 7, 3);
 SoundConfig SoundSetup;
@@ -372,4 +373,27 @@ uint8_t ReadAudioOptions(char *filename, AudioOptions *settings)
 	}
 	options.close();
 	return 1;
+}
+
+extern "C" void ResetPreloadGlobals(void)
+{
+	CursorX = 0;
+	CursorY = 0;
+	CursorDrawn = 0;
+	CursorTracking = 0;
+	memcpy(OptionDelimiters, "\r\n= ", sizeof(OptionDelimiters));
+	memcpy(MusicKeyword, "MUSIC", sizeof(MusicKeyword));
+	memcpy(SpeechKeyword, "SPEECH", sizeof(SpeechKeyword));
+	memcpy(SfxKeyword, "SFX", sizeof(SfxKeyword));
+	memcpy(OnKeyword, "ON", sizeof(OnKeyword));
+	memcpy(OffKeyword, "OFF", sizeof(OffKeyword));
+	CheatStart = 0;
+	memset((void *)&SpeechPlayer, 0, sizeof(SpeechPlayer));
+	memset((void *)&SoundSetup, 0, sizeof(SoundSetup));
+}
+
+extern "C" void ConstructPreloadGlobals(void)
+{
+	new (&SpeechPlayer) Speech(3072, 10667, 0x220, 7, 3);
+	new (&SoundSetup) SoundConfig();
 }

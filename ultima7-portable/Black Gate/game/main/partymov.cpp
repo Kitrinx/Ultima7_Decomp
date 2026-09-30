@@ -57,7 +57,7 @@ extern void Item_move(objref *, uint8_t, int16_t);
 int8_t FormationFacing = 0;
 int8_t FormationSize = 0;
 /* Formation offsets per party size: x, y, and the member each one follows. */
-char FormationSlotX[8][8] = {
+static const char FormationSlotXStart[8][8] = {
 	{ 0 },
 	{ 0, -2 },
 	{ 0, -2, 2 },
@@ -67,7 +67,8 @@ char FormationSlotX[8][8] = {
 	{ 0, -2, 2, -1, 1, -2, 2 },
 	{ 0, -2, 2, 0, -3, 3, -2, 2 }
 };
-char FormationSlotY[8][8] = {
+char FormationSlotX[8][8];
+static const char FormationSlotYStart[8][8] = {
 	{ 0 },
 	{ 0, 2 },
 	{ 0, 2, 2 },
@@ -77,7 +78,8 @@ char FormationSlotY[8][8] = {
 	{ 0, 2, 2, 4, 4, 6, 6 },
 	{ 0, 2, 2, 4, 4, 4, 6, 6 }
 };
-char FormationLeaders[8][8] = {
+char FormationSlotY[8][8];
+extern const char FormationLeaders[8][8] = {
 	{ 0 },
 	{ 0, 0 },
 	{ 0, 0, 0 },
@@ -88,7 +90,7 @@ char FormationLeaders[8][8] = {
 	{ 0, 0, 0, 1, 1, 2, 3, 3 }
 };
 /* Pairs of members that may trade places, ended by 0. */
-char FormationSwapPairs[8][8] = {
+extern const char FormationSwapPairs[8][8] = {
 	{ 0 },
 	{ 0 },
 	{ 1, 2 },
@@ -98,11 +100,11 @@ char FormationSwapPairs[8][8] = {
 	{ 1, 2, 3, 4, 5, 6 },
 	{ 1, 2, 4, 5, 6, 7 }
 };
-char DirectionDX[8] = { 0, 1, 1, 1, 0, -1, -1, -1 };
-char DirectionDY[8] = { -1, -1, 0, 1, 1, 1, 0, -1 };
-char DirectionBySign[3][3] = { { 7, 6, 5 }, { 0, -1, 4 }, { 1, 2, 3 } };
+extern const char DirectionDX[8] = { 0, 1, 1, 1, 0, -1, -1, -1 };
+extern const char DirectionDY[8] = { -1, -1, 0, 1, 1, 1, 0, -1 };
+extern const char DirectionBySign[3][3] = { { 7, 6, 5 }, { 0, -1, 4 }, { 1, 2, 3 } };
 /* DirectionBySign row for each direction. */
-char DirectionSignRow[8] = { 0, 0, 1, 2, 2, 2, 1, 0 };
+extern const char DirectionSignRow[8] = { 0, 0, 1, 2, 2, 2, 1, 0 };
 
 /* C names, as partymov.h declares them as objref. */
 extern "C" {
@@ -689,4 +691,20 @@ int16_t GetPartySize(void)
 uint8_t IsPartyMember(objref *item)
 {
 	return Item_isPartyMember(*item);
+}
+
+extern "C" void ResetPartymovGlobals(void)
+{
+	FormationFacing = 0;
+	FormationSize = 0;
+	memcpy(FormationSlotX, FormationSlotXStart, sizeof(FormationSlotX));
+	memcpy(FormationSlotY, FormationSlotYStart, sizeof(FormationSlotY));
+	memset(PartyMembers, 0, sizeof(PartyMembers));
+	memset(DownedPartyMembers, 0, sizeof(DownedPartyMembers));
+	PartySize = 0;
+	DownedPartyCount = 0;
+	PartyFacing = 0;
+	memset(PartyMemberFlags, 0, sizeof(PartyMemberFlags));
+	PartyFollowTicks = 0;
+	AvatarIdleSteps = 0;
 }

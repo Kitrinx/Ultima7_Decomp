@@ -9,7 +9,8 @@
 
 int16_t ColorByteCount = 0;
 char *ColorBytes[MAX_COLOR_BYTES] = { 0 };
-char IdentityColorBytes[BASE_COLORS] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
+static const char IdentityColorBytesStart[BASE_COLORS] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
+char IdentityColorBytes[BASE_COLORS];
 struct ColorMap ModeColorMaps[5];
 
 #define IS_VALID(p) ((uint8_t) ((p) != 0))
@@ -21,4 +22,12 @@ uint8_t MapColor(struct ColorMap *colorMap, int16_t color)
 	if (!IS_VALID(colorMap->map))
 		return color;
 	return colorMap->map[color];
+}
+
+void ResetColormapGlobals(void)
+{
+	ColorByteCount = 0;
+	memset(ColorBytes, 0, sizeof(ColorBytes));
+	memcpy(IdentityColorBytes, IdentityColorBytesStart, sizeof(IdentityColorBytes));
+	memset(ModeColorMaps, 0, sizeof(ModeColorMaps));
 }

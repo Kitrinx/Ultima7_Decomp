@@ -24,10 +24,10 @@
 
 #define TYPE_OF(item) ((item)->typeFrame & 0x3ff)
 
-char FoodFrames[] = {0, 2, 3, 6, 9, 11, 12, 15, 16, 17, 19, 24, 25, 27, 29, 30, 31};
-char PlateFrames[] = {4, 5};
-char DeskItemFrames[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 12, 13, 15};
-char KitchenItemFrames[] = {0, 2, 3, 4, 7, 8};
+const char FoodFrames[] = {0, 2, 3, 6, 9, 11, 12, 15, 16, 17, 19, 24, 25, 27, 29, 30, 31};
+const char PlateFrames[] = {4, 5};
+const char DeskItemFrames[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 12, 13, 15};
+const char KitchenItemFrames[] = {0, 2, 3, 4, 7, 8};
 
 inline void SetStatusFlags(objref *r, uint16_t clear, uint16_t set) {
 	NpcBuffer *p = GetNpcBufferForIbo(r);

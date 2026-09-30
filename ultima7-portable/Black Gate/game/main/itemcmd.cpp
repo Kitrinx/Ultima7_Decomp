@@ -3,6 +3,7 @@
  */
 
 #include "u7port.h"
+#include <new>
 #include "objref.h"
 #include "itemrec.h"
 #include "iteminfo.h"
@@ -92,7 +93,7 @@ inline uint8_t HasLinkedDestination(const objref &object)
 }
 
 char SpeechFileName[] = "u7speech.spc";
-int16_t FallbackFrames[] = {0, 0, 0, 0, 7, 8, 9, 4, 5, 6, 0, 12, 11, 0, 9, 3};
+const int16_t FallbackFrames[] = {0, 0, 0, 0, 7, 8, 9, 4, 5, 6, 0, 12, 11, 0, 9, 3};
 BitArray SteppedNPCs, HaltedNPCs;
 
 void InitNPCSets()
@@ -515,4 +516,17 @@ void AdvanceWeather(uint8_t advance)
 {
 	if (CurrentWeather.type)
 		UpdateWeather(&CurrentWeather, advance);
+}
+
+extern "C" void ResetItemcmdGlobals(void)
+{
+	memcpy(SpeechFileName, "u7speech.spc", sizeof(SpeechFileName));
+	memset((void *)&SteppedNPCs, 0, sizeof(SteppedNPCs));
+	memset((void *)&HaltedNPCs, 0, sizeof(HaltedNPCs));
+}
+
+extern "C" void ConstructItemcmdGlobals(void)
+{
+	new (&SteppedNPCs) BitArray();
+	new (&HaltedNPCs) BitArray();
 }

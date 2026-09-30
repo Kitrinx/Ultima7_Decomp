@@ -38,3 +38,9 @@ int16_t GetTypeAnimation(uint16_t type)
 	else
 		return TypeAnimations[type >> 1] & 0xf;
 }
+
+void ResetTypeGlobals(void)
+{
+	TypeAnimations = 0;
+	memset(gItemTypeInfo, 0, sizeof gItemTypeInfo);
+}

@@ -89,7 +89,7 @@ uint8_t UnkBugChecking = 1;
 uint8_t StatusLineRaised = 1;
 uint8_t FollowersEnabled = 0;
 
-/* prints at column x, row y; the host log has no columns or rows */
+/* prints at column x, row y */
 void ConsolePrintAt(int16_t x, int16_t y, char *fmt, ...)
 {
 	va_list args;
@@ -98,7 +98,7 @@ void ConsolePrintAt(int16_t x, int16_t y, char *fmt, ...)
 		va_start(args, fmt);
 		vsprintf(WorkString, fmt, args);
 	}
-	plat_log(WorkString);
+	ConsoleWriteAt(x, y, WorkString);
 }
 
 /* prints at column x, row y, then waits for a key */
@@ -110,7 +110,8 @@ void ConsolePrintAndWait(int16_t x, int16_t y, char *fmt, ...)
 		va_start(args, fmt);
 		vsprintf(WorkString, fmt, args);
 	}
-	plat_log(WorkString);
+	plat_console_goto(x, y);
+	ConsoleWrite(WorkString);
 	while (KeyPressed())
 		ReadKey();
 	while (!KeyPressed())
@@ -155,8 +156,7 @@ char *PromptForWord(char *prompt)
 	ConsolePrintAt(1, 25 - StatusLineRaised, "%s", line);
 	ConsolePrintAt(1, 23, "Select->          ");
 	ConsolePrintAt(9, 23, "");
-	fflush(stdin);
-	scanf("%s", PromptWordBuffer);
+	ConsoleReadWord(PromptWordBuffer, sizeof PromptWordBuffer);
 	return PromptWordBuffer;
 }
 
@@ -172,11 +172,7 @@ int32_t PromptForLong(char *prompt, int8_t hex)
 	ConsolePrintAt(1, 25 - StatusLineRaised, "%s", line);
 	ConsolePrintAt(1, 23, "Select->          ");
 	ConsolePrintAt(9, 23, "");
-	fflush(stdin);
-	if (hex)
-		scanf("%lx", &value);
-	else
-		scanf("%ld", &value);
+	value = ConsoleReadNumber(hex);
 	return value;
 }
 
@@ -199,7 +195,6 @@ int8_t PromptForKey(char *prompt)
 	ConsolePrintAt(1, 25 - StatusLineRaised, "%s", line);
 	ConsolePrintAt(1, 23, "Select->          ");
 	ConsolePrintAt(9, 23, "");
-	fflush(stdin);
 	key = ReadKey();
 	return key;
 }
@@ -1144,4 +1139,19 @@ void EmptyPickedContainer(void)
 			Item_move(&thing, x, y, z);
 		}
 	}
+}
+
+extern "C" void ResetCheatGlobals(void)
+{
+	CheatsEnabled = 0;
+	FrameRateShown = 0;
+	memset(PromptWordBuffer, 0, sizeof(PromptWordBuffer));
+	DoScheduleNpc = -1;
+	ShowNpcNumbers = 0;
+	ShowAvatarLocation = 0;
+	PowerAvatar = 0;
+	QueueToggle = 0;
+	UnkBugChecking = 1;
+	StatusLineRaised = 1;
+	FollowersEnabled = 0;
 }

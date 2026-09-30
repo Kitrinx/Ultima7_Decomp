@@ -36,7 +36,7 @@ extern uint16_t DmaBlockCount;
 extern uint8_t SpeechStreaming;
 extern SpeechCache *CurrentSpeech;
 extern uint16_t DmaChannel;
-extern char CardErrorFormat[];
+extern const char CardErrorFormat[];
 void OnDmaDone(void);
 
 extern uint16_t SpeechRate;

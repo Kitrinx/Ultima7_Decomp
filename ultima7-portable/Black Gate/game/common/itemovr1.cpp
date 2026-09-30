@@ -314,3 +314,8 @@ void RestoreAvatarMana()
 {
 	GetNpcBufferForIbo(&AvatarRef)->mana = GetNpcBufferForIbo(&AvatarRef)->magic;
 }
+
+extern "C" void ResetItemovr1Globals(void)
+{
+	MlmFileName = "mlm.txt";
+}

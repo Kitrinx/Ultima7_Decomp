@@ -33,6 +33,6 @@ extern GameFlagSet GameFlags;
 
 void VerifyFlags(char *where);
 
-extern char *FlagInitFileName;
+extern char *const FlagInitFileName;
 
 #endif

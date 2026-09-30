@@ -48,6 +48,6 @@ void DumpActionQueue();
 int16_t GetActionCount();
 int16_t IsActionQueueRoom();
 
-extern char *ActionFileName;
+extern char *const ActionFileName;
 
 #endif

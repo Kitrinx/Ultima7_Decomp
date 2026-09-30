@@ -4,6 +4,7 @@
  */
 
 #include "u7port.h"
+#include <new>
 #include "iteminfo.h"
 #include "objref.h"
 #include "datanode.h"
@@ -265,3 +266,14 @@ void UC_ViewTile(Value *args)
 
 inline GameTimer::GameTimer() { init(43, 1); }
 GameTimer UsecodeTimers[USECODE_TIMER_COUNT];
+
+extern "C" void ResetUccomm4Globals(void)
+{
+	memset((void *)UsecodeTimers, 0, sizeof(UsecodeTimers));
+}
+
+extern "C" void ConstructUccomm4Globals(void)
+{
+	for (int i = 0; i < USECODE_TIMER_COUNT; i++)
+		new (&UsecodeTimers[i]) GameTimer();
+}

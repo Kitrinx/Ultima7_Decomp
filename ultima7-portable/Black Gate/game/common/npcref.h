@@ -53,7 +53,7 @@ void Npc_setCoordTarget(objref *ref, Coord x, Coord y, int16_t z);
 
 int16_t Npc_getTargetWeapon(objref *ref);
 
-extern int16_t FacingFrameOffsets[];
+extern const int16_t FacingFrameOffsets[];
 extern objref AvatarRef;
 extern int16_t FreeNpcNumbers;
 extern int16_t FreeMonsterNumbers;

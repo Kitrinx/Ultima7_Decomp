@@ -3,6 +3,7 @@
  */
 
 #include "u7port.h"
+#include <new>
 #include "lowlevel.h"
 #include "activity.h"
 #include "dosio.h"
@@ -58,7 +59,7 @@ struct NpcSaver : DataNode {
 
 extern int16_t NpcItemRefs[];
 
-char *U7NBufFileName = "U7NBUF.DAT";
+char *const U7NBufFileName = "U7NBUF.DAT";
 NpcSaver NpcBufferFile;
 
 char *NpcSaver::name()
@@ -249,4 +250,14 @@ void Npc_popSchedule(objref *who, int16_t result)
 		if (!IsFighting(*who))
 			CURRENT(who).state++;
 	}
+}
+
+extern "C" void ResetU7npcGlobals(void)
+{
+	memset((void *)&NpcBufferFile, 0, sizeof(NpcBufferFile));
+}
+
+extern "C" void ConstructU7npcGlobals(void)
+{
+	new (&NpcBufferFile) NpcSaver();
 }

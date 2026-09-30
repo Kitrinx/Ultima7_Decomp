@@ -353,3 +353,9 @@ void LoadGameArgs(void)
 	}
 	plat_file_remove(GameArgsFileName);
 }
+
+extern "C" void ResetColbufGlobals(void)
+{
+	memcpy(GameArgsFileName, "gameargs.dat", sizeof(GameArgsFileName));
+	CollisionGrid = 0;
+}

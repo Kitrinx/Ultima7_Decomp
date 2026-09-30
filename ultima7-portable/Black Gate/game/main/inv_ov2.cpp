@@ -4,6 +4,7 @@
  */
 
 #include "u7port.h"
+#include <new>
 #include <stdio.h>
 #include <string.h>
 #include "lowlevel.h"
@@ -40,7 +41,7 @@ ProportionalTextPrinter InventoryTextPrinter;
 struct PointOffset { int16_t x, y; };
 
 /* where each equipment slot sits on the paperdoll */
-PointOffset PaperdollSlotOffsets[] = {
+const PointOffset PaperdollSlotOffsets[] = {
 	{ 116, 24 },
 	{ 116, 55 },
 	{ 36, 55 },
@@ -610,7 +611,7 @@ void InventoryGump::draw(View *target)
 void InventoryGump::moveTo(int16_t x, int16_t y)
 {
 	bounds.moveTo(x, y);
-	PointOffset *positions;
+	const PointOffset *positions;
 	closeButton.moveTo(x + 23, y + 124);
 	if (NPCRef(object()).isAvatar()) {
 		diskButton.moveTo(x + 124, y + 114);
@@ -747,4 +748,14 @@ uint8_t InventoryGump::findPosition(objref item, int16_t *x, int16_t *y)
 		}
 	}
 	return 0;
+}
+
+extern "C" void ResetInv_ov2Globals(void)
+{
+	memset((void *)&InventoryTextPrinter, 0, sizeof(InventoryTextPrinter));
+}
+
+extern "C" void ConstructInv_ov2Globals(void)
+{
+	new (&InventoryTextPrinter) ProportionalTextPrinter();
 }

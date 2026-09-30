@@ -202,3 +202,18 @@ void ShapeManager_drawItem(ShapeManager *shapes, int16_t x, int16_t y, objref it
 	ShapeManager_draw(shapes, destination, x, y, ITEM(item.off)->typeFrame & 0x3ff,
 		(ITEM(item.off)->typeFrame & 0x7c00) >> 10, 0, translation);
 }
+
+extern "C" void ResetBltshapeGlobals(void)
+{
+	ShapesFileName = "SHAPES.VGA";
+	XformFileName = "XFORM.TBL";
+	DrawTranslation = 0;
+	DrawTarget = &Viewport;
+	DrawType = 0;
+	DrawFrameNumber = 0;
+	DrawCellX = 0;
+	DrawCellY = 0;
+	DrawMirrored = 0;
+	DrawTranslucent = 0;
+	DrawZOffset = 0;
+}

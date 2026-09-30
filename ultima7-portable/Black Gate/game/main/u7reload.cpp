@@ -32,3 +32,9 @@ void ReloadRegionTerrain(void)
 	MainWorldView.setCenter(Item_getX(AvatarRef), Item_getY(AvatarRef));
 	ReloadingTerrain = 0;
 }
+
+extern "C" void ResetU7reloadGlobals(void)
+{
+	ReloadingTerrain = 0;
+	unused_global_4 = 0xff;
+}

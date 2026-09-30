@@ -9,8 +9,8 @@
 #define MEMBER_ON_PATH  4   /* walking a route back to the avatar */
 
 /* The party and the eight compass directions. */
-extern char DirectionDX[8], DirectionDY[8];
-extern char DirectionBySign[3][3];
+extern const char DirectionDX[8], DirectionDY[8];
+extern const char DirectionBySign[3][3];
 extern "C" objref PartyMembers[8];         /* defined as NPCRef; includers compile against objref */
 extern "C" objref DownedPartyMembers[16];
 extern int8_t PartySize, DownedPartyCount;
@@ -23,9 +23,9 @@ extern int8_t FormationFacing;
 extern int8_t FormationSize;
 extern char FormationSlotX[8][8];
 extern char FormationSlotY[8][8];
-extern char FormationLeaders[8][8];
-extern char FormationSwapPairs[8][8];
-extern char DirectionSignRow[8];
+extern const char FormationLeaders[8][8];
+extern const char FormationSwapPairs[8][8];
+extern const char DirectionSignRow[8];
 extern int8_t PartyFacing;
 extern uint8_t PartyMemberFlags[8];
 extern int8_t PartyFollowTicks;

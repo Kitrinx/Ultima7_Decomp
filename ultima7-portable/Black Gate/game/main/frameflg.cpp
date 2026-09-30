@@ -4,6 +4,7 @@
  */
 
 #include "u7port.h"
+#include <new>
 #include "lowlevel.h"
 #include "dosio.h"
 #include "vooalloc.h"
@@ -17,7 +18,7 @@
 
 uint8_t TrimmedShapeBits[128] = { 0 };
 FrameFlags FrameFlagTable;
-char *FrameFlagsFileName = "FRAMES.FLG";
+char *const FrameFlagsFileName = "FRAMES.FLG";
 
 void FrameFlags::init()
 {
@@ -81,4 +82,15 @@ void TrimShapeFrames(CacheEntry *entry)
 	entry->size = PackShapeFrames(entry->address, FrameFlagTable.data + ((int32_t) entry->id << 2));
 	n = entry->id;
 	TrimmedShapeBits[n >> 3] |= 1 << (n & 7);
+}
+
+extern "C" void ResetFrameflgGlobals(void)
+{
+	memset(TrimmedShapeBits, 0, sizeof(TrimmedShapeBits));
+	memset((void *)&FrameFlagTable, 0, sizeof(FrameFlagTable));
+}
+
+extern "C" void ConstructFrameflgGlobals(void)
+{
+	new (&FrameFlagTable) FrameFlags();
 }

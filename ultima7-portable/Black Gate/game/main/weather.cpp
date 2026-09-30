@@ -4,6 +4,7 @@
  */
 
 #include "u7port.h"
+#include <new>
 #include "dosio.h"
 #include "easyfile.h"
 #include "u7manage.h"
@@ -253,3 +254,16 @@ void SetWeather(WeatherSet *p, uint8_t type)
 }
 
 WeatherSet::WeatherSet() { type = 0; }
+
+extern "C" void ResetWeatherGlobals(void)
+{
+	memset((void *)&CurrentWeather, 0, sizeof(CurrentWeather));
+	memset((void *)&WeatherFile, 0, sizeof(WeatherFile));
+	memcpy(WeatherFileName, "WEATHER.DAT", sizeof(WeatherFileName));
+}
+
+extern "C" void ConstructWeatherGlobals(void)
+{
+	new (&CurrentWeather) WeatherSet();
+	new (&WeatherFile) WeatherSaver();
+}

@@ -15,10 +15,10 @@ struct GameFiles {
 	void deleteGameDirectory();
 };
 
-extern char *InitGameFileName;
-extern char *SaveGameFileName;
-extern char *SaveFileNameFormat;
-extern char *NPCFileName;
+extern char *const InitGameFileName;
+extern char *const SaveGameFileName;
+extern char *const SaveFileNameFormat;
+extern char *const NPCFileName;
 int32_t GetDiskFreeBytes(void);
 int8_t MakeNewGame(void);
 

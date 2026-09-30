@@ -4,6 +4,7 @@
  */
 
 #include "u7port.h"
+#include <new>
 #include "plat.h"
 #include "arena.h"
 #include "objref.h"
@@ -248,4 +249,18 @@ void CenterOnAvatar(void)
 	MainWorldView.setCenter(Item_getX(AvatarRef), Item_getY(AvatarRef));
 	UpdateCeiling((ItemId) AvatarRef);
 	MainWorldView.setCenter(Item_getX(AvatarRef), Item_getY(AvatarRef));
+}
+
+extern "C" void ResetCameraGlobals(void)
+{
+	memset((void *)&gCamera, 0, sizeof(gCamera));
+	memset((void *)&MainWorldView, 0, sizeof(MainWorldView));
+	FirstFramePending = 1;
+	CopyingFrame = 0;
+}
+
+extern "C" void ConstructCameraGlobals(void)
+{
+	new (&gCamera) Camera();
+	new (&MainWorldView) WorldView();
 }

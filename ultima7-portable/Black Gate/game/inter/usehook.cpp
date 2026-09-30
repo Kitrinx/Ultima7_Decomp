@@ -106,3 +106,9 @@ uint8_t HasUsable(uint16_t func)
 
 	return code.load(func);
 }
+
+extern "C" void ResetUsehookGlobals(void)
+{
+	TelekinesisUsable = -1;
+	UsableRunning = 0;
+}

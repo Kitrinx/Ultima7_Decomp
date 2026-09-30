@@ -45,6 +45,7 @@ static MTY_Mutex *midi_mutex;
 static uint8_t midi_buffer[MIDI_BUFFER_SIZE];
 static uint32_t midi_count;
 static bool midi_overflow_logged;
+static bool synth_reset_pending;
 
 /* Speech samples waiting to play, unsigned 8-bit mono at pcm_rate. */
 static MTY_Mutex *pcm_mutex;
@@ -65,6 +66,14 @@ void plat_sound_unlock(void)
 {
 	if (--sound_depth == 0 && sound_mutex != NULL)
 		MTY_MutexUnlock(sound_mutex);
+}
+
+void audio_drop_lock(void)
+{
+	if (sound_depth > 0) {
+		sound_depth = 0;
+		MTY_MutexUnlock(sound_mutex);
+	}
 }
 
 void plat_sound_tick_set(plat_timer_fn fn)
@@ -96,19 +105,35 @@ void plat_midi_send(const uint8_t *message, int16_t length)
 	MTY_MutexUnlock(midi_mutex);
 }
 
+/* Back to power-on state, as a new process found it: no notes, no uploaded timbres. */
+static void reopen_synth(void)
+{
+	mt32emu_close_synth(synth);
+	if (mt32emu_open_synth(synth) != MT32EMU_RC_OK) {
+		fprintf(stderr, "u7: the MT-32 synth could not restart; music is off\n");
+		mt32emu_free_context(synth);
+		synth = NULL;
+	}
+}
+
 static void play_queued_midi(void)
 {
 	static uint8_t taken[MIDI_BUFFER_SIZE];
 	uint32_t count;
+	bool reset;
 
 	MTY_MutexLock(midi_mutex);
 	count = midi_count;
 	memcpy(taken, midi_buffer, count);
 	midi_count = 0;
+	reset = synth_reset_pending;
+	synth_reset_pending = false;
 	MTY_MutexUnlock(midi_mutex);
 
+	if (reset)
+		reopen_synth();
 	/* The stream parser handles SysEx and running status alike. */
-	if (count > 0)
+	if (synth != NULL && count > 0)
 		mt32emu_parse_stream(synth, taken, count);
 }
 
@@ -147,10 +172,27 @@ static bool find_roms(const char *dir, char *control, char *pcm, size_t size)
 	return control[0] != '\0' && pcm[0] != '\0';
 }
 
+static mt32emu_report_handler_version MT32EMU_C_CALL report_version(mt32emu_report_handler_i i)
+{
+	(void) i;
+	return MT32EMU_REPORT_HANDLER_VERSION_0;
+}
+
+/* Munt's debug notes (such as drum keys the MT-32 has no sound for, which the scores do play)
+ * are dropped; other reports keep Munt's defaults. */
+static void MT32EMU_C_CALL ignore_debug(void *instance, const char *fmt, va_list list)
+{
+	(void) instance;
+	(void) fmt;
+	(void) list;
+}
+
+static const mt32emu_report_handler_i_v0 quiet_reports = {report_version, ignore_debug};
+
 static mt32emu_context open_synth(void)
 {
 	const char *dir = getenv("U7_MT32_ROMS");
-	mt32emu_report_handler_i no_reports = {0};
+	mt32emu_report_handler_i reports = {&quiet_reports};
 	char control[1024], pcm[1024];
 	mt32emu_context context;
 
@@ -160,7 +202,7 @@ static mt32emu_context open_synth(void)
 		fprintf(stderr, "u7: no MT-32 ROMs in %s; music is off\n", dir);
 		return NULL;
 	}
-	context = mt32emu_create_context(no_reports, NULL);
+	context = mt32emu_create_context(reports, NULL);
 	if (mt32emu_add_rom_file(context, control) != MT32EMU_RC_ADDED_CONTROL_ROM
 		|| mt32emu_add_rom_file(context, pcm) != MT32EMU_RC_ADDED_PCM_ROM) {
 		fprintf(stderr, "u7: MT-32 ROMs in %s could not be loaded; music is off\n", dir);
@@ -283,6 +325,27 @@ static void mix_speech(int16_t *block)
 	MTY_MutexUnlock(pcm_mutex);
 }
 
+/* ---- Between programs ---- */
+
+void audio_reset(void)
+{
+	plat_sound_tick_set(NULL);
+
+	MTY_MutexLock(midi_mutex);
+	midi_count = 0;
+	midi_overflow_logged = false;
+	synth_reset_pending = true;
+	MTY_MutexUnlock(midi_mutex);
+
+	MTY_MutexLock(pcm_mutex);
+	pcm_rate = 0;
+	pcm_head = 0;
+	pcm_count = 0;
+	pcm_phase = 0.0;
+	lp_x1 = lp_x2 = lp_y1 = lp_y2 = 0.0;
+	MTY_MutexUnlock(pcm_mutex);
+}
+
 /* ---- Audio thread ---- */
 
 static void render_block(int16_t *block)
@@ -292,8 +355,9 @@ static void render_block(int16_t *block)
 		sound_tick();
 	plat_sound_unlock();
 
-	if (synth != NULL) {
+	if (synth != NULL)
 		play_queued_midi();
+	if (synth != NULL) {
 		mt32emu_render_bit16s(synth, block, BLOCK_FRAMES);
 	} else {
 		memset(block, 0, BLOCK_FRAMES * 2 * sizeof *block);

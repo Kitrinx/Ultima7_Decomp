@@ -4,6 +4,7 @@
  */
 
 #include "u7port.h"
+#include <new>
 #include <string.h>
 #include "dosio.h"
 #include "oops.h"
@@ -171,4 +172,16 @@ int16_t AnswerList::unchanged()
 	}
 	KeywordChecksum = sum;
 	return 1;
+}
+
+extern "C" void ResetKeywordsGlobals(void)
+{
+	KeywordChecksum = 0;
+	memset((void *)&OfferedAnswers, 0, sizeof(OfferedAnswers));
+	memset(ChosenAnswer, 0, sizeof(ChosenAnswer));
+}
+
+extern "C" void ConstructKeywordsGlobals(void)
+{
+	new (&OfferedAnswers) AnswerList();
 }

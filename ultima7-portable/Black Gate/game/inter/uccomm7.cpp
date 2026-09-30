@@ -5,6 +5,7 @@
 
 #include "u7port.h"
 #include <stdio.h>
+#include "plat.h"
 #include "itemrec.h"
 #include "objref.h"
 #include "ucvalue.h"
@@ -204,19 +205,22 @@ void UC_Telekinesis(Value *args)
 
 void PrintUsecodeNode(Node *node)
 {
+	char text[300];
+
 	switch (node->type) {
 	case NODE_CHAR:
-		printf("%c\n", (int8_t)node->integer());
+		snprintf(text, sizeof text, "%c\n", (int8_t)node->integer());
 		break;
 	case NODE_INT:
-		printf("%d\n", node->number);
+		snprintf(text, sizeof text, "%d\n", node->number);
 		break;
 	case NODE_TEXT:
-		printf("%s\n", node->text.str);
+		snprintf(text, sizeof text, "%s\n", node->text.str);
 		break;
 	default:
-		printf("Uninitialized\n");
+		snprintf(text, sizeof text, "Uninitialized\n");
 	}
+	plat_log(text);
 }
 
 void PrintUsecodeList(Value *value)

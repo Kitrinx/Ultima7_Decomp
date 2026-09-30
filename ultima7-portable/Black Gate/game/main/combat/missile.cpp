@@ -3,6 +3,7 @@
  */
 
 #include "u7port.h"
+#include <new>
 #include <stdlib.h>
 #include "lowlevel.h"
 #include "typefram.h"
@@ -83,7 +84,7 @@ struct TypeLookup {
 };
 extern "C" int16_t GetPartyIndex(objref);
 
-char *MissTracFileName = "MISSTRAC.DAT";
+char *const MissTracFileName = "MISSTRAC.DAT";
 int32_t MissileGuardLow = INT32_C(0xa5a55a5a);  /* guard word; nothing checks it */
 MissileTracker MissileTrackers[MISSILE_COUNT];
 int32_t MissileGuardHigh = INT32_C(0xa5a55a5a);  /* guard word; nothing checks it */
@@ -91,11 +92,11 @@ uint8_t MissileHitThisPass = 0;
 uint16_t FirstMissileThisPass = 0;
 int16_t ActiveMissiles = 0;
 MissileFile MissTracFile;
-int8_t PathStepX[6] = { 1, -1, 0, 0, 0, 0 };
-int8_t PathStepY[6] = { 0, 0, 1, -1, 0, 0 };
-int8_t PathStepZ[6] = { 0, 0, 0, 0, 1, -1 };
-uint8_t MissileFrames[6] = { 12, 20, 16, 8, 22, 14 };
-int8_t MissileFrameTurns[4][4] = {
+const int8_t PathStepX[6] = { 1, -1, 0, 0, 0, 0 };
+const int8_t PathStepY[6] = { 0, 0, 1, -1, 0, 0 };
+const int8_t PathStepZ[6] = { 0, 0, 0, 0, 1, -1 };
+const uint8_t MissileFrames[6] = { 12, 20, 16, 8, 22, 14 };
+const int8_t MissileFrameTurns[4][4] = {
 	{ 0, 0, 1, -1 }, { 0, 0, -1, 1 }, { -1, 1, 0, 0 }, { 1, -1, 0, 0 }
 };
 
@@ -534,4 +535,20 @@ uint8_t UpdateMissile(int16_t index)
 	} else {
 		return MissileTrackers[index].update();
 	}
+}
+
+extern "C" void ResetMissileGlobals(void)
+{
+	MissileGuardLow = INT32_C(0xa5a55a5a);
+	memset((void *)MissileTrackers, 0, sizeof(MissileTrackers));
+	MissileGuardHigh = INT32_C(0xa5a55a5a);
+	MissileHitThisPass = 0;
+	FirstMissileThisPass = 0;
+	ActiveMissiles = 0;
+	memset((void *)&MissTracFile, 0, sizeof(MissTracFile));
+}
+
+extern "C" void ConstructMissileGlobals(void)
+{
+	new (&MissTracFile) MissileFile();
 }

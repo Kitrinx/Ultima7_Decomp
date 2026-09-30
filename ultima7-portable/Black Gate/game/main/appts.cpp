@@ -105,3 +105,8 @@ void UpdateNpcSchedules(void)
 		}
 	}
 }
+
+extern "C" void ResetApptsGlobals(void)
+{
+	unused_global_1 = -1;
+}

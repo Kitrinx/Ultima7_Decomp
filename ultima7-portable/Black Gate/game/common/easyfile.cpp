@@ -162,3 +162,10 @@ uint8_t WriteHandleFromVoodoo(int16_t fd, int32_t offset, int32_t size, int32_t 
 	}
 	return 1;
 }
+
+extern "C" void ResetEasyfileGlobals(void)
+{
+	memset(PathBuffers, 0, sizeof PathBuffers);
+	FileTransferBuffer = 0;
+	PathBufferIndex = 0;
+}

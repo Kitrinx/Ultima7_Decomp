@@ -3,6 +3,7 @@
  */
 
 #include "u7port.h"
+#include <new>
 #include <string.h>
 #include <stdlib.h>
 #include <ctype.h>
@@ -642,4 +643,16 @@ void Value::clear()
 {
 	deleteNodes();
 	head = tail = 0;
+}
+
+extern "C" void ResetUclistGlobals(void)
+{
+	memset((void *)&ResultNode, 0, sizeof(ResultNode));
+	memset((void *)&ScratchValue, 0, sizeof(ScratchValue));
+}
+
+extern "C" void ConstructUclistGlobals(void)
+{
+	::new (&ResultNode) Node();
+	new (&ScratchValue) Value();
 }

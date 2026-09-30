@@ -4,13 +4,14 @@
  */
 
 #include "u7port.h"
+#include <new>
 #include <string.h>
 #include "dosio.h"
 #include "easyfile.h"
 #include "datanode.h"
 #include "gtimer.h"
 
-char *GameTimerFileName = "GAMETIM_.DAT";
+char *const GameTimerFileName = "GAMETIM_.DAT";
 GameTimer GameTime(6, 1);
 int8_t TimerFileLetter = 'A';     /* the letter that tells clocks' files apart */
 
@@ -116,4 +117,15 @@ void GameTimer::tick()
 int16_t IsNight(void)
 {
 	return GameTime.getHour() < 5 || GameTime.getHour() > 20;
+}
+
+extern "C" void ResetGtimerGlobals(void)
+{
+	memset((void *)&GameTime, 0, sizeof(GameTime));
+	TimerFileLetter = 'A';
+}
+
+extern "C" void ConstructGtimerGlobals(void)
+{
+	new (&GameTime) GameTimer(6, 1);
 }

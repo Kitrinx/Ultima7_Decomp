@@ -18,7 +18,8 @@ uint8_t RomTextBackground = 0;
 uint8_t *RomTextScreen = 0;
 int16_t RomTextPitch = 320;
 void (*DebugHook)(void) = 0;
-char DebugAreaBuffer[80] = "Area=";
+static const char DebugAreaBufferStart[80] = "Area=";
+char DebugAreaBuffer[80];
 
 RomFontLoader::RomFontLoader()
 {
@@ -90,4 +91,17 @@ void CallDebugHook(void)
 {
 	if (DebugHook)
 		(*DebugHook)();
+}
+
+extern "C" void ResetDbgfontGlobals(void)
+{
+	RomFontGlyphs = 0;
+	DebugAreaValue = 0;
+	DebugAreaLine = 0;
+	RomTextColor = 15;
+	RomTextBackground = 0;
+	RomTextScreen = 0;
+	RomTextPitch = 320;
+	DebugHook = 0;
+	memcpy(DebugAreaBuffer, DebugAreaBufferStart, sizeof(DebugAreaBuffer));
 }

@@ -29,11 +29,25 @@
 #define SEGMENT_SIZE 0x10000
 #define MAX_LOGGED 128
 
+#define SEGMENT_START "\0\0\0\0Borland C++ - Copyright 1991 Borland Intl."
+
 /* Padded, so a wide read that starts near the end stays inside. */
-static uint8_t segment[SEGMENT_SIZE + 64] =
-	"\0\0\0\0Borland C++ - Copyright 1991 Borland Intl.";
+static uint8_t segment[SEGMENT_SIZE + 64] = SEGMENT_START;
 static uintptr_t logged[MAX_LOGGED];
 static int logged_count;
+
+/* The game can write through a null pointer too; each program starts with a clean segment. */
+void nullpage_reset(void)
+{
+	memset(segment, 0, sizeof segment);
+	memcpy(segment, SEGMENT_START, sizeof SEGMENT_START);
+}
+
+#else
+
+void nullpage_reset(void)
+{
+}
 
 #endif
 

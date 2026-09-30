@@ -670,3 +670,8 @@ void LeaveVehicle()
 		ActiveBarge = 0;
 	}
 }
+
+extern "C" void ResetBargeGlobals(void)
+{
+	BargeAnimationDue = 1;
+}

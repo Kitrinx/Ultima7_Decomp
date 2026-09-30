@@ -182,7 +182,10 @@ void FlexWriter::compact(void *buffer, int32_t size)
 		getEntry(index, &current);
 		if (!(int16_t)current.empty() && (uint8_t)(current == previous)) {
 			current.clear();
-			printf("Clipped #%4d   ", index);
+			char text[24];
+
+			snprintf(text, sizeof text, "Clipped #%4d   ", index);
+			plat_log(text);
 		} else {
 			previous = current;
 		}
@@ -228,4 +231,9 @@ uint8_t FlexWriter::compactIfNeeded(int16_t percent)
 	if (needed)
 		compact(0, -INT32_C(1));
 	return !needed;
+}
+
+extern "C" void ResetFlxwriteGlobals(void)
+{
+	FlexTempFileName = "FLEXFILE.$$$";
 }

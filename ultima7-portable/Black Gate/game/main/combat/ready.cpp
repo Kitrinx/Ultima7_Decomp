@@ -4,6 +4,7 @@
  */
 
 #include "u7port.h"
+#include <new>
 #include "lowlevel.h"
 #include "dosio.h"
 #include "oops.h"
@@ -34,4 +35,17 @@ void ReadyTable::load(char *name)
 	if (!ReadMojo(fd, -INT32_C(1), INT32_C(1), ReadyCount, count, base, INT32_C(9)))
 		ReportFileNotFound(name);
 	DosClose(fd);
+}
+
+extern "C" void ResetReadyGlobals(void)
+{
+	strcpy(ReadyFileName, "ready.dat");
+	memset((void *)&ReadyRecords, 0, sizeof(ReadyRecords));
+	ReadyCount = 0;
+	memset(&ReadyLookup, 0, sizeof(ReadyLookup));
+}
+
+extern "C" void ConstructReadyGlobals(void)
+{
+	new (&ReadyRecords) ReadyTable();
 }

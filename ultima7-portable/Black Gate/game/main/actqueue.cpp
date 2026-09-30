@@ -3,6 +3,7 @@
  */
 
 #include "u7port.h"
+#include <new>
 #include <stdarg.h>
 #include <stdio.h>
 #include "dosio.h"
@@ -28,7 +29,7 @@ inline ActionScheduler::ActionScheduler() : DataNode()
 	ActionQueueTime = 10000;
 }
 
-char *ActionFileName = "ACTION.DAT";
+char *const ActionFileName = "ACTION.DAT";
 ActionScheduler ActionQueue;
 uint8_t SuspendedActionCount = 0;
 int16_t ActionSweepDepth = 0;
@@ -398,4 +399,16 @@ int16_t IsActionQueueRoom()
 	if (ActionQueue.count < ACTION_SLOTS - 16)
 		return 1;
 	return 0;
+}
+
+extern "C" void ResetActqueueGlobals(void)
+{
+	memset((void *)&ActionQueue, 0, sizeof(ActionQueue));
+	SuspendedActionCount = 0;
+	ActionSweepDepth = 0;
+}
+
+extern "C" void ConstructActqueueGlobals(void)
+{
+	new (&ActionQueue) ActionScheduler();
 }

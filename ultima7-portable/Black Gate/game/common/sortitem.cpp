@@ -93,20 +93,20 @@ inline uint8_t IsBoxBlockedAt(Loc x, Loc y, int16_t z, TypeFrame &s) { return Is
 extern void ApplyContactEffect(objref, objref);
 
 /* one step in each of the eight directions, north first, then none */
-int16_t DirDeltaX[9] = { 0, 1, 1, 1, 0, -1, -1, -1, 0 };
-int16_t DirDeltaY[9] = { -1, -1, 0, 1, 1, 1, 0, -1, 0 };
+const int16_t DirDeltaX[9] = { 0, 1, 1, 1, 0, -1, -1, -1, 0 };
+const int16_t DirDeltaY[9] = { -1, -1, 0, 1, 1, 1, 0, -1, 0 };
 /* the same for the four straight directions */
-int16_t CardinalDeltaX[5] = { 0, 1, 0, -1, 0 };
-int16_t CardinalDeltaY[5] = { -1, 0, 1, 0, 0 };
+const int16_t CardinalDeltaX[5] = { 0, 1, 0, -1, 0 };
+const int16_t CardinalDeltaY[5] = { -1, 0, 1, 0, 0 };
 objref RenderItems[1024];
 RenderOrder ItemRenderOrder(RenderItems, 1024);
 uint8_t ContactFound = 0;
 objref ContactItem, ContactOther;
 Coord RenderOriginX, RenderOriginY;
 /* a mask of n + 1 cells */
-uint16_t CellSpanMasks[8] = { 0x1, 0x3, 0x7, 0xf, 0x1f, 0x3f, 0x7f, 0xff };
+const uint16_t CellSpanMasks[8] = { 0x1, 0x3, 0x7, 0xf, 0x1f, 0x3f, 0x7f, 0xff };
 /* the height bits covered by a type of each height */
-uint16_t ExtentHeightMasks[8] = { 0x8000, 0x4000, 0x6000, 0x7000, 0x7800, 0x7c00, 0x7e00, 0x7f00 };
+const uint16_t ExtentHeightMasks[8] = { 0x8000, 0x4000, 0x6000, 0x7000, 0x7800, 0x7c00, 0x7e00, 0x7f00 };
 
 /* Per chunk of the 5 by 5 view: the next item to place, its sort state and two held-back items. */
 int16_t ChunkNextItem[5][5];
@@ -920,4 +920,30 @@ uint8_t RenderOrder::build(CellCoord x0, CellCoord y0, CellCoord x1, CellCoord y
 	if (ContactFound)
 		TripContactItem();
 	return 1;
+}
+
+extern "C" void ResetSortitemGlobals(void)
+{
+	memset(RenderItems, 0, sizeof RenderItems);
+	memset(&ItemRenderOrder, 0, sizeof ItemRenderOrder);
+	ContactFound = 0;
+	ContactItem = 0;
+	ContactOther = 0;
+	RenderOriginX = 0;
+	RenderOriginY = 0;
+	memset(ChunkNextItem, 0, sizeof ChunkNextItem);
+	memset(ChunkSortState, 0, sizeof ChunkSortState);
+	memset(HeldItemFirst, 0, sizeof HeldItemFirst);
+	memset(HeldItemSecond, 0, sizeof HeldItemSecond);
+	LastChunkColumn = 0;
+	LastChunkRow = 0;
+	RenderBoxHeight = 0;
+	RenderBoxWidth = 0;
+	RenderMinZ = 0;
+	RenderMaxZ = 0;
+}
+
+extern "C" void ConstructSortitemGlobals(void)
+{
+	new (&ItemRenderOrder) RenderOrder(RenderItems, 1024);
 }

@@ -9,10 +9,10 @@ struct DropSpot { uint8_t direction, z; };
 
 struct NPCRef;
 
-extern char FoodFrames[];
-extern char PlateFrames[];
-extern char DeskItemFrames[];
-extern char KitchenItemFrames[];
+extern const char FoodFrames[];
+extern const char PlateFrames[];
+extern const char DeskItemFrames[];
+extern const char KitchenItemFrames[];
 
 /* Items an NPC carries for its schedule: find, create and remove them by type and frame. */
 uint8_t DeleteCarriedItem(objref *container, TypeFrame &wanted);

@@ -4,6 +4,7 @@
 
 /* path: ..\inter\flags.c */
 #include "u7port.h"
+#include <new>
 #include "plat.h"
 #include <ctype.h>
 #include <stdio.h>
@@ -20,7 +21,7 @@
 
 #define FLAGS_ERROR(where, line)    FatalError("%s:%s%d", where, __FILE__, line)
 
-char *FlagInitFileName = "FLAGINIT.";
+char *const FlagInitFileName = "FLAGINIT.";
 GameFlagSet GameFlags(FlagInitFileName);
 
 void VerifyFlags(char *where)
@@ -199,4 +200,14 @@ void GameFlagSet::show()
 	while (!KeyPressed())
 		plat_yield();
 	ReadKey();
+}
+
+extern "C" void ResetFlagsGlobals(void)
+{
+	memset((void *)&GameFlags, 0, sizeof(GameFlags));
+}
+
+extern "C" void ConstructFlagsGlobals(void)
+{
+	new (&GameFlags) GameFlagSet(FlagInitFileName);
 }

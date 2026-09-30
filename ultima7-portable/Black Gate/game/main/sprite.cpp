@@ -4,6 +4,7 @@
  */
 
 #include "u7port.h"
+#include <new>
 #include "lowlevel.h"
 #include "objref.h"
 #include "iteminfo.h"
@@ -321,3 +322,16 @@ uint8_t SpellCastCounts[72] = { 0 };
 SpriteManager gSpriteManager;
 uint8_t ItemSpritesChanged = 0;
 uint8_t SpriteAdvanceToggle = 0;
+
+extern "C" void ResetSpriteGlobals(void)
+{
+	memset(SpellCastCounts, 0, sizeof(SpellCastCounts));
+	memset((void *)&gSpriteManager, 0, sizeof(gSpriteManager));
+	ItemSpritesChanged = 0;
+	SpriteAdvanceToggle = 0;
+}
+
+extern "C" void ConstructSpriteGlobals(void)
+{
+	new (&gSpriteManager) SpriteManager();
+}

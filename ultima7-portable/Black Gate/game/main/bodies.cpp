@@ -15,7 +15,7 @@ struct BodyEntry {
 };
 
 /* each creature type, the body it leaves and that body's frame */
-struct BodyEntry BodyTable[BODY_COUNT] = {
+const struct BodyEntry BodyTable[BODY_COUNT] = {
 	{ 721, 400, 1 }, { 989, 400, 2 }, { 445, 400, 3 }, { 446, 400, 4 },
 	{ 318, 400, 5 }, { 448, 400, 6 }, { 449, 400, 7 }, { 450, 400, 8 },
 	{ 319, 400, 9 }, { 452, 400, 10 }, { 455, 400, 11 }, { 454, 400, 12 },

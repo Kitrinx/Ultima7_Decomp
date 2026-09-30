@@ -4,6 +4,7 @@
  */
 
 #include "u7port.h"
+#include <new>
 #include "plat.h"
 #include "mouse.h"
 #include "dbgfont.h"
@@ -185,4 +186,18 @@ uint8_t CheckPointerMoved(void)
 	}
 	LastMouseAction.action = 0;
 	return 0;
+}
+
+extern "C" void ResetMsclickGlobals(void)
+{
+	MouseHand = 0;
+	memset((void *)&LastMouseAction, 0, sizeof(LastMouseAction));
+	DoubleClickDelay = 0;
+	memset((void *)&RomFont, 0, sizeof(RomFont));
+}
+
+extern "C" void ConstructMsclickGlobals(void)
+{
+	new (&LastMouseAction) MouseState();
+	new (&RomFont) RomFontLoader();
 }

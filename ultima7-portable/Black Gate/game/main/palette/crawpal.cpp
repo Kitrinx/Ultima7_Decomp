@@ -22,7 +22,7 @@ struct ColorRange {
 	int16_t hi;
 };
 
-ColorRange PaletteCycleRanges[CYCLE_RANGE_COUNT] = {
+const ColorRange PaletteCycleRanges[CYCLE_RANGE_COUNT] = {
 	{ 224, 231 }, { 232, 239 }, { 240, 243 }, { 244, 247 }, { 248, 251 }, { 252, 254 }
 };
 

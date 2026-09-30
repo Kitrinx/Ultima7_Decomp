@@ -11,6 +11,7 @@
 #include "specard.h"
 #include "cflxbuf.h"
 #include "plat.h"
+#include <new>
 
 uint16_t SpeechRate = 0;
 uint16_t DspTimeConstant = 0;
@@ -31,7 +32,7 @@ uint8_t SpeechStreaming = 1;
 SpeechCache *CurrentSpeech = 0;
 
 uint16_t DmaChannel = 1;
-char CardErrorFormat[] = "%s line#%d";
+const char CardErrorFormat[] = "%s line#%d";
 
 SoundBlaster SpeechCard;
 
@@ -161,7 +162,9 @@ void SoundBlaster::feed()
 		SpillStart += taken;
 		SpillCount -= taken;
 	}
-	while (SpillCount == 0 && !SpeechDraining && plat_pcm_pending() < 2 * CardRate())
+	/* A streamed sound waits for its player to queue the next block before another half goes. */
+	while (SpillCount == 0 && !SpeechDraining && !(SpeechStreaming == 1 && BlockConsumed)
+		&& plat_pcm_pending() < 2 * CardRate())
 		OnDmaDone();
 	if (SpeechDraining && SpillCount == 0 && plat_pcm_pending() == 0) {
 		SpeechRunning = 0;
@@ -202,7 +205,9 @@ void OnDmaDone(void)
 	}
 	QueueSamples((uint8_t *)half, count);
 	if (SpeechStreaming == 1) {
-		CopyLinearToFar(DmaBuffer, QueuedBlock, QueuedBlockSize);
+		/* U7 copied every block to the first half; only the intro streams, and its driver refilled
+		 * the half just played. */
+		CopyLinearToFar(DmaBuffer + fill, QueuedBlock, QueuedBlockSize);
 		if (QueuedBlockSize < DmaHalfSize)
 			--QueuedBlockSize;
 		if (DmaNextHalf == 0) {
@@ -237,4 +242,35 @@ void SoundBlaster::fail(char *message)
 {
 	shutdown();
 	FatalError(message);
+}
+
+extern "C" void ResetSpecardGlobals(void)
+{
+	SpeechRate = 0;
+	DspTimeConstant = 0;
+	CardPort = 0;
+	CardIrq = 7;
+	DmaHalfSize = 0;
+	DmaBuffer = 0;
+	DmaNextHalf = 0;
+	DmaFirstCount = 0;
+	DmaSecondCount = 0;
+	QueuedBlock = 0;
+	QueuedBlockSize = 0;
+	BlockConsumed = 0;
+	SpeechFinished = 1;
+	DmaBlockCount = 0;
+	SpeechStreaming = 1;
+	CurrentSpeech = 0;
+	DmaChannel = 1;
+	SpeechRunning = 0;
+	SpeechDraining = 0;
+	Spill = 0;
+	SpillStart = 0;
+	SpillCount = 0;
+}
+
+extern "C" void ConstructSpecardGlobals(void)
+{
+	new (&SpeechCard) SoundBlaster();
 }

@@ -21,18 +21,19 @@ uint32_t ExtendedArea, ExtendedAreaSize;
 
 void InitLinearMemory(uint32_t size)
 {
-	if (LinearBase)
-		return;
-	if (size <= EXTENDED_AREA)
-		plat_fatal("Linear memory is too small.");
-	LinearBase = (uint8_t *) calloc(1, size);
-	if (LinearBase == 0)
-		plat_fatal("Not enough memory.");
-	LinearSize = size;
+	/* the block is allocated once and kept across programs; the areas are set on each start */
+	if (LinearBase == 0) {
+		if (size <= EXTENDED_AREA)
+			plat_fatal("Linear memory is too small.");
+		LinearBase = (uint8_t *) calloc(1, size);
+		if (LinearBase == 0)
+			plat_fatal("Not enough memory.");
+		LinearSize = size;
+	}
 	FarHeapArea = FAR_HEAP_AREA;
 	FarHeapAreaSize = FAR_HEAP_AREA_SIZE;
 	ExtendedArea = EXTENDED_AREA;
-	ExtendedAreaSize = size - EXTENDED_AREA;
+	ExtendedAreaSize = LinearSize - EXTENDED_AREA;
 }
 
 uint8_t *ScreenPixels(void)
@@ -40,4 +41,15 @@ uint8_t *ScreenPixels(void)
 	if (LinearBase == 0)
 		InitLinearMemory(LINEAR_MEMORY_SIZE);
 	return LINEAR(SCREEN_AREA);
+}
+
+/* Keeps the block and its size, cleared as calloc gave it. */
+extern "C" void ResetArenaGlobals(void)
+{
+	if (LinearBase)
+		memset(LinearBase, 0, LinearSize);
+	FarHeapArea = 0;
+	FarHeapAreaSize = 0;
+	ExtendedArea = 0;
+	ExtendedAreaSize = 0;
 }

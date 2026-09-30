@@ -39,9 +39,9 @@ struct UsecodeRoutine {
 
 void InitUsecodeIndex();
 
-extern char Linkdep1FileName[];
-extern char Linkdep2FileName[];
-extern char UsecodeFileName[];
+extern const char Linkdep1FileName[];
+extern const char Linkdep2FileName[];
+extern const char UsecodeFileName[];
 extern int32_t Linkdep1Block;
 extern int32_t Linkdep2Block;
 extern uint16_t Linkdep1Count;

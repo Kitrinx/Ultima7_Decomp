@@ -15,6 +15,8 @@ ultima7-portable/Black Gate/
   CMakeLists.txt         the build
   cmake/Libmatoya.cmake  builds libmatoya with its own makefiles
   game/                  the game: .c files are C, .cpp files are C++, as originally written
+  game/ultima7/          the launcher (ULTIMA7.COM)
+  game/mainmenu/, intro/, endgame/, shared/   the other programs, and what menu and intro share
   platform/plat.h        everything the game needs from the host
   platform/matoya/       the libmatoya backend (window, input, audio, files, timing)
   third_party/libmatoya/ libmatoya, vendored at a pinned commit (MIT)
@@ -66,6 +68,8 @@ Options:
   `-DCMAKE_C_FLAGS="-fsanitize=address,undefined -fno-sanitize=alignment"` (same for
   `CMAKE_CXX_FLAGS`), then run with
   `ASAN_OPTIONS=handle_segv=0:handle_sigbus=0:detect_leaks=0`.
+- `-DU7_RESET_CHECK=ON` (clang, macOS or Linux; for testing only) reports, after each handoff
+  between programs, any game global that differs from how the first program found it.
 
 ## What you need to supply
 
@@ -81,14 +85,34 @@ option. Without them the game runs with no music or MIDI sound effects.
 ## Run
 
 ```sh
-build/u7 --data /path/to/ultima7 -p
+build/u7 --data /path/to/ultima7
 ```
 
 - `--data` is the game data folder (or set `U7_DATA`; the default is the current folder).
-- `-p` is the flag the original launcher passed; the game will not start without it.
+- This is the launcher, as `ULTIMA7.COM` was: it runs the main menu, intro, game and endgame in
+  turn, in one process and one window, each starting afresh as its own EXE did. Other arguments
+  go on to the game.
+- `--program <name> <args>` runs one program alone: `u7 -p` for the game (`-p` is the flag the
+  launcher passes; the game will not start without it), `mainmenu v`, `intro ereiamjh`,
+  `endgame ereiamjh`.
+- `--help` lists every switch.
+- Alt-Enter (Option-Return on a Mac keyboard) toggles fullscreen.
 
-**Starting a new game.** The original main menu isn't part of this port yet. This sets one up,
-the way the menu did, and the game builds it on its next start:
+The game's own command-line options, as switches (with the letter U7.EXE took):
+
+| Switch | Original | Effect |
+| --- | --- | --- |
+| `--cheat` | `ABCD` + Alt-255 | cheat keys (F1 lists them, on the game screen as in DOS) |
+| `--cheat-start` | `s` | with `--cheat`: move at once, move anything, an Avatar that can't die, debug output |
+| `--speech` | `v` | speech on |
+| `--adlib[=port]` | `a` | AdLib music (every score plays on the MT-32 here) |
+| `--roland[=n]` | `r` | Roland MT-32 music |
+| `--shape-pool=KB` | `c` | size of the shape cache |
+| `--overlay-size` | `b` | report the DOS overlay buffer size, then stop |
+| `--version` | `?` | show the version, then stop |
+
+**Starting a new game.** Use "Start New Game" in the main menu. For scripted runs that skip the
+menu, this sets one up the way the menu does, and the game builds it on its next start:
 
 ```sh
 python3 "ultima7-portable/Black Gate/tools/u7_new_game.py" /path/to/ultima7 --name Jamie --female

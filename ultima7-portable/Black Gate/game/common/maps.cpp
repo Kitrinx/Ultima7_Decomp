@@ -94,3 +94,20 @@ int8_t SetCurrentMap(Coord map)
 	}
 	return 0;
 }
+
+extern "C" void ResetMapsGlobals(void)
+{
+	int16_t i;
+
+	memset(MapSizes, 0, sizeof MapSizes);
+	MapWidth = 12;
+	CurrentMap = 0;
+	MapFirstRegion = 0;
+	for (i = 0; i < 256; i++) {
+		RegionX[i] = 0;
+		RegionY[i] = 0;
+		RegionMap[i] = 0;
+	}
+	MapCount = 0;
+	RegionsChanged = 1;
+}

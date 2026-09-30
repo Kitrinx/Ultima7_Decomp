@@ -157,7 +157,11 @@ int16_t Flex::getError(uint8_t clear)
 
 void Flex::printError(FlexEntry *entry)
 {
-	printf("Flex error, \"%s\" at %ld, len %ld,  #%04X\n", name, entry->offset, entry->size, getError(1));
+	char text[160];
+
+	snprintf(text, sizeof text, "Flex error, \"%s\" at %ld, len %ld,  #%04X\n", name, (long) entry->offset,
+		(long) entry->size, getError(1));
+	plat_log(text);
 }
 
 uint8_t Flex::open(char *path)

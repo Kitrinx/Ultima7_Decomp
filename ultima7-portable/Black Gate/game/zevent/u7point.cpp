@@ -364,3 +364,24 @@ void ShowCursorAt(int16_t x, int16_t y)
 	CursorDrawn = 1;
 	CursorTracking = 1;
 }
+
+extern "C" void ResetU7pointGlobals(void)
+{
+	CursorTarget = 0;
+	ArrowCenterX = 0;
+	ArrowCenterY = 0;
+	CursorFrame = 0;
+	PointerFrameCount = 0;
+	CursorBase = 0;
+	CursorCenterZ = 0;
+	PointerShapes = 0;
+	CursorSaveBuffer = 0;
+	memset(&CursorRect, 0, sizeof(CursorRect));
+	CursorDrawFlags = 0;
+	CursorSaveMode = 0;
+	CardinalArrowsOnly = 0;
+	ArrowLength = 0;
+	CursorFrozen = 0;
+	CursorSaveSize = 0;
+	unused_global_3 = 0;
+}

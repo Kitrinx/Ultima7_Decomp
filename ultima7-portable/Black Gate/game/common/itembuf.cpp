@@ -78,3 +78,11 @@ void ResetItemBuffer(void)
 	UnusedItemResetWord = 0;
 	ForgetSavedRegions();
 }
+
+extern "C" void ResetItembufGlobals(void)
+{
+	ItemBufferBytes = 0;
+	ItemBufferCount = 0;
+	NpcRecordCount = 0;
+	ExtraNpcRecordCount = 0;
+}

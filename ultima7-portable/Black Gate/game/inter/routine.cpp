@@ -29,9 +29,9 @@ struct LinkRecord {
 	uint16_t first, offset;
 };
 
-char Linkdep1FileName[] = "linkdep1.";
-char Linkdep2FileName[] = "linkdep2.";
-char UsecodeFileName[] = "usecode.";
+const char Linkdep1FileName[] = "linkdep1.";
+const char Linkdep2FileName[] = "linkdep2.";
+const char UsecodeFileName[] = "usecode.";
 int32_t Linkdep1Block = 0, Linkdep2Block = 0;
 uint16_t Linkdep1Count = 0, Linkdep2Size = 0;
 int32_t UnusedRoutineGlobal = 0;
@@ -63,12 +63,12 @@ void ReadLinkdep2(DataFile *input, uint16_t bytes)
 
 void LoadLinkdep()
 {
-	InputFile first(BuildPath(StaticPath, Linkdep1FileName, 0));
+	InputFile first(BuildPath(StaticPath, (char *)Linkdep1FileName, 0));
 	uint16_t bytes = first.getLength();
 	Linkdep1Count = (bytes - sizeof(LinkRecord)) / sizeof(LinkRecord);
 	AllocateLinkdep1(bytes);
 	ReadLinkdep1(&first, bytes);
-	InputFile second(BuildPath(StaticPath, Linkdep2FileName, 0));
+	InputFile second(BuildPath(StaticPath, (char *)Linkdep2FileName, 0));
 	Linkdep2Size = second.getLength();
 	AllocateLinkdep2(Linkdep2Size);
 	ReadLinkdep2(&second, Linkdep2Size);
@@ -132,7 +132,7 @@ uint8_t UsecodeRoutine::load(uint16_t id)
 		return 1;
 	} else {
 		handle = gShapeManager.allocateBlock(offset + sizeof(LinkedRoutines) + sizeof(*this), id, 0);
-		InputFile input(BuildPath(StaticPath, UsecodeFileName, 0));
+		InputFile input(BuildPath(StaticPath, (char *)UsecodeFileName, 0));
 		memset(LinkedRoutines, -1, sizeof(LinkedRoutines));
 		uint16_t entry = NO_ROUTINE;
 		int16_t n = 0;
@@ -196,3 +196,13 @@ int32_t UsecodeRoutine::text(uint16_t offset, uint16_t index)
 }
 
 void InitUsecodeIndex() { LoadLinkdep(); }
+
+extern "C" void ResetRoutineGlobals(void)
+{
+	Linkdep1Block = 0;
+	Linkdep2Block = 0;
+	Linkdep1Count = 0;
+	Linkdep2Size = 0;
+	UnusedRoutineGlobal = 0;
+	memset(LinkedRoutines, 0, sizeof(LinkedRoutines));
+}

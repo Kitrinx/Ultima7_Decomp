@@ -557,3 +557,19 @@ int8_t Route::walk(int16_t steps)
 	}
 	return result;
 }
+
+extern "C" void ResetMovepathGlobals(void)
+{
+	memcpy(PathFileName, "PATH.DAT", sizeof(PathFileName));
+	memset(RouteOwners, 0, sizeof(RouteOwners));
+	memset(NPCRoutes, 0, sizeof(NPCRoutes));
+	Autoroute = 0;
+	memset((void *)&WaypointScratch, 0, sizeof(WaypointScratch));
+	memset(DiscardedPathLength, 0, sizeof(DiscardedPathLength));
+	ArrivalUsecode = 0;
+	ArrivalItem = 0;
+	ArrivalEvent = 0;
+	FailureUsecode = 0;
+	FailureItem = 0;
+	FailureEvent = 0;
+}

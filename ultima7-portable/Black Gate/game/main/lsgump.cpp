@@ -4,6 +4,7 @@
  */
 
 #include "u7port.h"
+#include <new>
 #include "plat.h"
 #include <string.h>
 #include "u7event.h"
@@ -577,4 +578,14 @@ uint8_t SaveGump::handle(MouseState *state)
 SaveGump *NewSaveGump()
 {
 	return new SaveGump;
+}
+
+extern "C" void ResetLsgumpGlobals(void)
+{
+	memset((void *)&SaveSlotTextPrinter, 0, sizeof(SaveSlotTextPrinter));
+}
+
+extern "C" void ConstructLsgumpGlobals(void)
+{
+	new (&SaveSlotTextPrinter) ProportionalTextPrinter();
 }

@@ -3,6 +3,7 @@
  */
 
 #include "u7port.h"
+#include <new>
 #include "objref.h"
 #include "activity.h"
 #include "dosio.h"
@@ -361,4 +362,15 @@ void PartySaver::load(char *directory)
 	FormationSize = f.readByte();
 	f.read(DownedPartyMembers, INT32_C(32));
 	DownedPartyCount = f.readByte();
+}
+
+extern "C" void ResetPartyGlobals(void)
+{
+	memcpy(PartyFileName, "PARTY", sizeof(PartyFileName));
+	memset((void *)&PartyFile, 0, sizeof(PartyFile));
+}
+
+extern "C" void ConstructPartyGlobals(void)
+{
+	new (&PartyFile) PartySaver();
 }

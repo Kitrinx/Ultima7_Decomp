@@ -4,6 +4,7 @@
  */
 
 #include "u7port.h"
+#include <new>
 #include "plat.h"
 #include "lowlevel.h"
 #include "u7event.h"
@@ -27,18 +28,19 @@ uint8_t PlayerActionSuspended;
 Stopwatch PaletteStopwatch;
 
 /* rotate the cycling colors, a quarter of a second apart */
+static int16_t CycleUnusedCount = 0;
+static int16_t CycleStarted = 0;
+
 void CyclePalette(void)
 {
-	static int16_t unusedCount = 0;
-	static int16_t started = 0;
 	uint32_t elapsed;
 
 	if (!GameTime.running())
 		return;
-	unusedCount++;
-	if (!started) {
+	CycleUnusedCount++;
+	if (!CycleStarted) {
 		PaletteStopwatch.restart();
-		started = 1;
+		CycleStarted = 1;
 	}
 	elapsed = Stopwatch_getElapsed(&PaletteStopwatch);
 	if (elapsed > 15) {
@@ -51,25 +53,26 @@ void CyclePalette(void)
 		}
 		Stopwatch_stop(&PaletteStopwatch);
 		PaletteStopwatch.restart();
-		unusedCount = 0;
+		CycleUnusedCount = 0;
 	}
 }
 
 /* fade the screen out, one step every ticks / 12 ticks, then hold for a second */
+static int16_t FadeOutUnusedCount = 0;
+static int16_t FadeOutStarted = 0;
+
 void FadeScreenOut(int16_t ticks, int16_t)
 {
-	static int16_t unusedCount = 0;
-	static int16_t started = 0;
 	int16_t step;
 	uint32_t elapsed;
 
 	step = ticks / 12;
 	if (step > 0) {
 		GameScreen.lightBand = 0;
-		unusedCount++;
-		if (!started) {
+		FadeOutUnusedCount++;
+		if (!FadeOutStarted) {
 			PaletteStopwatch.restart();
-			started = 1;
+			FadeOutStarted = 1;
 		}
 		GameScreen.fadeOut();
 		while (GameScreen.fadeSteps != 0) {
@@ -83,7 +86,7 @@ void FadeScreenOut(int16_t ticks, int16_t)
 				}
 				Stopwatch_stop(&PaletteStopwatch);
 				PaletteStopwatch.restart();
-				unusedCount = 0;
+				FadeOutUnusedCount = 0;
 			}
 		}
 	}
@@ -96,10 +99,11 @@ void FadeScreenOut(int16_t ticks, int16_t)
 }
 
 /* fade the screen back in, one step every ticks / 12 ticks */
+static int16_t FadeInUnusedCount = 0;
+static int16_t FadeInStarted = 0;
+
 void FadeScreenIn(int16_t ticks, int16_t)
 {
-	static int16_t unusedCount = 0;
-	static int16_t started = 0;
 	int16_t step;
 	uint32_t elapsed;
 
@@ -107,10 +111,10 @@ void FadeScreenIn(int16_t ticks, int16_t)
 	GameScreen.selectCurrent();
 	if (step > 0) {
 		GameScreen.lightBand = 0;
-		unusedCount++;
-		if (!started) {
+		FadeInUnusedCount++;
+		if (!FadeInStarted) {
 			PaletteStopwatch.restart();
-			started = 1;
+			FadeInStarted = 1;
 		}
 		GameScreen.fadeIn();
 		while (GameScreen.fadeSteps != 0) {
@@ -124,10 +128,27 @@ void FadeScreenIn(int16_t ticks, int16_t)
 				}
 				Stopwatch_stop(&PaletteStopwatch);
 				PaletteStopwatch.restart();
-				unusedCount = 0;
+				FadeInUnusedCount = 0;
 			}
 		}
 	}
 	PlayerActionSuspended = 0;
 	FlushKeyboard();
+}
+
+extern "C" void ResetPalfadeGlobals(void)
+{
+	PlayerActionSuspended = 0;
+	memset((void *)&PaletteStopwatch, 0, sizeof(PaletteStopwatch));
+	CycleUnusedCount = 0;
+	CycleStarted = 0;
+	FadeOutUnusedCount = 0;
+	FadeOutStarted = 0;
+	FadeInUnusedCount = 0;
+	FadeInStarted = 0;
+}
+
+extern "C" void ConstructPalfadeGlobals(void)
+{
+	new (&PaletteStopwatch) Stopwatch();
 }

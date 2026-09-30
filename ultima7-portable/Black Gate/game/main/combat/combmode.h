@@ -26,8 +26,8 @@ void SetAttackMode(NPCRef &actor, int8_t mode);
 inline void SetAttackMode(NPCRef &&actor, int8_t mode) { SetAttackMode(actor, mode); }
 void SetAttackModeByRef(objref *actor, int16_t mode);
 
-extern int16_t SummonTypes[10];
-extern uint8_t SummonCounts[10];
-extern uint8_t SummonOdds[10];
+extern const int16_t SummonTypes[10];
+extern const uint8_t SummonCounts[10];
+extern const uint8_t SummonOdds[10];
 
 #endif

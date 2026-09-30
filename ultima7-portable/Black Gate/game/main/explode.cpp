@@ -43,10 +43,10 @@ struct AmmoRef {
 };
 
 /* each explosive type has an effect and a sound; each effect has a radius */
-uint8_t ExplosionRadii[] = { 3, 3, 3, 3, 7, 7, 3, 14, 4, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 5, 3, 3, 0, 6, 2 };
-int16_t ExplosiveTypes[] = { 554, 769, 565, 856, 78, 621, 704, 639, 399, 702, 287, -1 };
-uint8_t ExplosionEffects[] = { 19, 6, 18, 5, 4, 4, 4, 8, 13, 4, 23, 5 };
-char ExplosionSounds[] = { 7, 36, 7, 65, 8, 9, 9, 63, 65, 9, 65, -1 };
+extern const uint8_t ExplosionRadii[] = { 3, 3, 3, 3, 7, 7, 3, 14, 4, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 5, 3, 3, 0, 6, 2 };
+extern const int16_t ExplosiveTypes[] = { 554, 769, 565, 856, 78, 621, 704, 639, 399, 702, 287, -1 };
+extern const uint8_t ExplosionEffects[] = { 19, 6, 18, 5, 4, 4, 4, 8, 13, 4, 23, 5 };
+extern const char ExplosionSounds[] = { 7, 36, 7, 65, 8, 9, 9, 63, 65, 9, 65, -1 };
 
 extern uint8_t Item_getQuality(objref *ref);
 extern void Item_setQuality(objref *, int8_t);

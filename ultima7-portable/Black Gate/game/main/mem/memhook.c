@@ -25,3 +25,8 @@ AllocHook SwapVoodooAllocHook(AllocHook handler)
 	VoodooAllocHook = handler;
 	return old;
 }
+
+void ResetMemhookGlobals(void)
+{
+	VoodooAllocHook = IgnoreVoodooAllocation;
+}

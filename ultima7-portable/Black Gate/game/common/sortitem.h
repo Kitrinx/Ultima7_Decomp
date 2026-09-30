@@ -26,18 +26,18 @@ struct RenderOrder {
 
 extern RenderOrder ItemRenderOrder;
 
-extern int16_t DirDeltaX[9];
-extern int16_t DirDeltaY[9];
-extern int16_t CardinalDeltaX[5];
-extern int16_t CardinalDeltaY[5];
+extern const int16_t DirDeltaX[9];
+extern const int16_t DirDeltaY[9];
+extern const int16_t CardinalDeltaX[5];
+extern const int16_t CardinalDeltaY[5];
 extern objref RenderItems[1024];
 extern uint8_t ContactFound;
 extern objref ContactItem;
 extern objref ContactOther;
 extern Coord RenderOriginX;
 extern Coord RenderOriginY;
-extern uint16_t CellSpanMasks[8];
-extern uint16_t ExtentHeightMasks[8];
+extern const uint16_t CellSpanMasks[8];
+extern const uint16_t ExtentHeightMasks[8];
 extern int16_t ChunkNextItem[5][5];
 extern uint8_t ChunkSortState[5][5];
 extern int16_t HeldItemFirst[5][5];

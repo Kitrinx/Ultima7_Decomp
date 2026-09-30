@@ -26,7 +26,7 @@ void UC_GetTime(Value *args, Value *ret);
 void UC_IsNPCNear(Value *args, Value *ret);
 
 /* the engine calls, indexed by number */
-EngineCall EngineCalls[ENGINE_CALL_COUNT] = {
+const EngineCall EngineCalls[ENGINE_CALL_COUNT] = {
 	UC_Random,                            /* 0x00 */
 	UC_Post,                              /* 0x01 */
 	UC_PostInFuture,                      /* 0x02 */

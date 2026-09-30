@@ -13,6 +13,7 @@
 #include "crime.h"
 #include "u7sound.h"
 #include "plat.h"
+#include <new>
 
 /* One 8-byte note of a Roland sound effect, as the MIDI player reads it. */
 struct SfxNote {
@@ -35,20 +36,20 @@ char *AdlibMusicFile = "adlibmus.dat";
 char *Mt32MusicFile = "mt32mus.dat";
 char *AdlibSfxFile = "adlibsfx.dat";
 char *Mt32SfxFile = "mt32sfx.dat";
-uint8_t Mt32MusicVolumes[MUSIC_TRACK_COUNT] = {
+const uint8_t Mt32MusicVolumes[MUSIC_TRACK_COUNT] = {
 	180, 180, 180, 180, 255, 255, 180, 180, 180, 200, 220, 220, 180, 180, 180, 180,
 	180, 220, 200, 180, 200, 200, 220, 220, 180, 210, 220, 210, 190, 230, 220, 180,
 	220, 250, 220, 200, 220, 220, 220, 200, 180, 240, 220, 240, 220, 220, 220, 220,
 	220, 220, 220, 180, 255, 240, 220, 210, 210, 210, 210, 210
 };
-uint8_t AdlibMusicVolumes[MUSIC_TRACK_COUNT] = {
+const uint8_t AdlibMusicVolumes[MUSIC_TRACK_COUNT] = {
 	180, 180, 180, 180, 255, 255, 180, 180, 180, 180, 180, 180, 180, 180, 180, 180,
 	180, 210, 200, 120, 120, 120, 220, 170, 56, 180, 180, 180, 200, 220, 200, 180,
 	180, 180, 180, 180, 200, 200, 180, 180, 170, 195, 210, 210, 210, 210, 210, 210,
 	210, 210, 210, 180, 255, 180, 180, 190, 190, 190, 190, 210
 };
 /* 0 background music; 2 a piece the background waits for; 1 one queued to play once after the current song */
-uint8_t MusicTrackModes[MUSIC_TRACK_COUNT] = {
+const uint8_t MusicTrackModes[MUSIC_TRACK_COUNT] = {
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 1, 1, 2,
 	2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -56,11 +57,11 @@ uint8_t MusicTrackModes[MUSIC_TRACK_COUNT] = {
 };
 uint8_t CurrentMusic = MUSIC_NONE, DeferredMusic = MUSIC_NONE, AdlibSfxActive = 0;
 int8_t unused_global_5 = 0;           /* never referenced */
-int16_t RolandVoiceNumbers[32] = {
+const int16_t RolandVoiceNumbers[32] = {
 	2, 3, 4, 8, 9, 10, 11, 20, 21, 22, 29, 36, 44, 45, 46, 48,
 	62, 63, 64, 67, 81, 100, 101, 105, 116, 117, 120, 121, 124, 126, 127, 128
 };
-SfxNote RolandSfxNotes[SFX_COUNT] = {
+static const SfxNote RolandSfxNotesStart[SFX_COUNT] = {
 	{ 0, 0, 60, 127, 45, 0, 0 }, { 0, 0, 60, 127, 5, 0, 0 },
 	{ 0, 0, 55, 127, 30, 0, 0 }, { 0, 0, 50, 127, 10, 0, 0 },
 	{ 0, 0, 59, 127, 5, 0, 0 }, { 0, 0, 59, 127, 60, 0, 0 },
@@ -120,18 +121,23 @@ SfxNote RolandSfxNotes[SFX_COUNT] = {
 	{ 0, 0, 43, 96, 120, 0, 0 }, { 4, 0, 79, 127, 75, 0, 0 },
 	{ 4, 0, 60, 127, 75, 0, 0 }
 };
-uint8_t RolandPatchSetup[77] = {
+static const uint8_t RolandPatchSetupStart[77] = {
 	1, 3, 1, 32, 0, 90, 7, 0, 1, 3, 1, 52, 6, 100, 7, 1,
 	1, 3, 2, 88, 1, 90, 5, 0, 12, 3, 2, 96, 1, 90, 6, 0,
 	1, 90, 7, 0, 2, 100, 7, 1, 1, 90, 8, 0, 5, 90, 7, 1,
 	1, 90, 9, 0, 3, 95, 7, 1, 4, 100, 4, 1, 4, 100, 5, 1,
 	4, 100, 6, 1, 4, 100, 7, 1, 4, 100, 8, 1, 0
 };
-char VoiceFlexName[] = "U7VOICE.FLX";
-char DriverFileName[] = "U7STRAX.DRV";
-uint8_t Mt32AltReverb[3] = { 1, 5, 7 };
-uint8_t Mt32Reverb[3] = { 1, 3, 3 };
-uint8_t Mt32PatchEntry[8] = { 2, 0, 24, 50, 24, 0, 0, 0 };
+SfxNote RolandSfxNotes[SFX_COUNT];
+uint8_t RolandPatchSetup[77];
+static const char VoiceFlexNameStart[] = "U7VOICE.FLX";
+static const char DriverFileNameStart[] = "U7STRAX.DRV";
+char VoiceFlexName[sizeof VoiceFlexNameStart];
+char DriverFileName[sizeof DriverFileNameStart];
+const uint8_t Mt32AltReverb[3] = { 1, 5, 7 };
+const uint8_t Mt32Reverb[3] = { 1, 3, 3 };
+static const uint8_t Mt32PatchEntryStart[8] = { 2, 0, 24, 50, 24, 0, 0, 0 };
+uint8_t Mt32PatchEntry[8];
 VoiceSlot VoiceSlots[32];
 uint8_t FirstVoiceChannel;
 uint8_t *MusicBuffer;
@@ -221,9 +227,9 @@ void SetMusicVariant(uint8_t track)
 		if (alternate != AlternateReverb) {
 			AlternateReverb = alternate;
 			if (AlternateReverb)
-				DriverSysexEntry(INT32_C(0x100001), 3, Mt32AltReverb);
+				DriverSysexEntry(INT32_C(0x100001), 3, (void *)Mt32AltReverb);
 			else
-				DriverSysexEntry(INT32_C(0x100001), 3, Mt32Reverb);
+				DriverSysexEntry(INT32_C(0x100001), 3, (void *)Mt32Reverb);
 		}
 	}
 }
@@ -524,4 +530,45 @@ void EnableSfx(int8_t enabled)
 		}
 		SfxEnabled = 0;
 	}
+}
+
+extern "C" void ResetU7soundGlobals(void)
+{
+	AdlibPort = 0x388;
+	RolandArgument = 2;
+	MusicResume = 0;
+	BackgroundMusicDue = 1;
+	AlternateReverb = 0;
+	SfxEnabled = 1;
+	VoiceSlotHead = 0;
+	SpecialMusicPlaying = 0;
+	AdlibMusicFile = "adlibmus.dat";
+	Mt32MusicFile = "mt32mus.dat";
+	AdlibSfxFile = "adlibsfx.dat";
+	Mt32SfxFile = "mt32sfx.dat";
+	CurrentMusic = MUSIC_NONE;
+	DeferredMusic = MUSIC_NONE;
+	AdlibSfxActive = 0;
+	unused_global_5 = 0;
+	memcpy(RolandSfxNotes, RolandSfxNotesStart, sizeof RolandSfxNotes);
+	memcpy(RolandPatchSetup, RolandPatchSetupStart, sizeof RolandPatchSetup);
+	memcpy(VoiceFlexName, VoiceFlexNameStart, sizeof VoiceFlexName);
+	memcpy(DriverFileName, DriverFileNameStart, sizeof DriverFileName);
+	memcpy(Mt32PatchEntry, Mt32PatchEntryStart, sizeof Mt32PatchEntry);
+	memset(VoiceSlots, 0, sizeof VoiceSlots);
+	FirstVoiceChannel = 0;
+	MusicBuffer = 0;
+	SpecialMusicBuffer = 0;
+	MusicFileName = 0;
+	memset(unused_global_6, 0, sizeof unused_global_6);
+	memset(SfxAlternate, 0, sizeof SfxAlternate);
+	memset(SfxVoices, 0, sizeof SfxVoices);
+}
+
+extern "C" void ConstructU7soundGlobals(void)
+{
+	int16_t i;
+
+	for (i = 0; i < SFX_CHANNELS; i++)
+		new (&SfxChannels[i]) SoundChannel();
 }

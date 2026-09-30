@@ -4,6 +4,7 @@
  */
 
 #include "u7port.h"
+#include <new>
 #include "lowlevel.h"
 #include "dosio.h"
 #include "debug.h"
@@ -38,4 +39,17 @@ void AmmoTable::load(char *name)
 	if (!ReadMojo(fd, -INT32_C(1), INT32_C(1), AmmoCount, count, base, INT32_C(13)))
 		ReportError(0xe302);
 	DosClose(fd);
+}
+
+extern "C" void ResetAmmoGlobals(void)
+{
+	strcpy(AmmoFileName, "ammo.dat");
+	memset((void *)&AmmoRecords, 0, sizeof(AmmoRecords));
+	AmmoCount = 0;
+	memset(&AmmoLookup, 0, sizeof(AmmoLookup));
+}
+
+extern "C" void ConstructAmmoGlobals(void)
+{
+	new (&AmmoRecords) AmmoTable();
 }

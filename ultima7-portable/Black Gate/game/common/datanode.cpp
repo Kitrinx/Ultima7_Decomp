@@ -53,3 +53,8 @@ void DataNode::refresh(char *dir)
 {
 	save(dir);
 }
+
+extern "C" void ResetDatanodeGlobals(void)
+{
+	SaveNodes = 0;
+}

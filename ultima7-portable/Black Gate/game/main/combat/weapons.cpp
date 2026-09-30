@@ -4,6 +4,7 @@
  */
 
 #include "u7port.h"
+#include <new>
 #include "lowlevel.h"
 #include "dosio.h"
 #include "debug.h"
@@ -42,4 +43,17 @@ void WeaponTable::load(char *name)
 	if (!ReadMojo(fd, -INT32_C(1), INT32_C(1), WeaponCount, count, base, INT32_C(21)))
 		ReportFileNotFound(name);
 	DosClose(fd);
+}
+
+extern "C" void ResetWeaponsGlobals(void)
+{
+	strcpy(WeaponsFileName, "weapons.dat");
+	memset((void *)&WeaponRecords, 0, sizeof(WeaponRecords));
+	WeaponCount = 0;
+	memset(&WeaponLookup, 0, sizeof(WeaponLookup));
+}
+
+extern "C" void ConstructWeaponsGlobals(void)
+{
+	new (&WeaponRecords) WeaponTable();
 }

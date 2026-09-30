@@ -10,7 +10,7 @@
 #include "coord.h"
 #include "mapview.h"
 
-char CoordFormat[] = "Coord:%X,%X";
+extern const char CoordFormat[] = "Coord:%X,%X";
 
 void ShowScreenCoords(void)
 {

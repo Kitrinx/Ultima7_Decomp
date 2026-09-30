@@ -374,3 +374,9 @@ abort:
 	if (ConversationShown)
 		OfferedAnswers.clear();
 }
+
+extern "C" void ResetInterGlobals(void)
+{
+	memset(&CurrentEvent, 0, sizeof(CurrentEvent));
+	OpcodeCount = 0;
+}

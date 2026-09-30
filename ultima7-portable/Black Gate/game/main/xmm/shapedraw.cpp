@@ -113,3 +113,8 @@ void DrawShapeFrame(struct View *view, int16_t x, int16_t y, int32_t shape, int1
 			flipped ? SCREEN_WIDTH : 1, SpanPixels + first, last - first + 1, mode, tableBytes);
 	}
 }
+
+extern "C" void ResetShapedrawGlobals(void)
+{
+	memset(SpanPixels, 0, sizeof(SpanPixels));
+}

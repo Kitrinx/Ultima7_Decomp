@@ -129,3 +129,10 @@ void WriteFileBlock(int16_t handle, int32_t pos, int32_t count, char *buf)
 {
 	DosWrite(handle, pos, count, buf);
 }
+
+extern "C" void ResetDosioGlobals(void)
+{
+	DosError = 0;
+	DosErrorHandler = AcceptDosError;
+	DosBytesRead = 0;
+}

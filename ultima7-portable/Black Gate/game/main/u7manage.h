@@ -235,10 +235,10 @@ int16_t GetMaxFrameWidth(int32_t shape, int16_t flags);
 
 extern RecordCache ShapeCache;
 extern int16_t BlockSlotKeys[40];
-extern char *TempFileFormat;
-extern char *FacesFileName;
-extern char *GumpsFileName;
-extern char *FontsFileName;
-extern char *SpritesFileName;
+extern char *const TempFileFormat;
+extern char *const FacesFileName;
+extern char *const GumpsFileName;
+extern char *const FontsFileName;
+extern char *const SpritesFileName;
 
 #endif

@@ -61,3 +61,14 @@ int16_t InitBackScreen(View *view, uint8_t color)
 	SetRect(&view->clip, 0, 0, SCREEN_WIDTH - 1, SCREEN_HEIGHT - 1);
 	return AllocateDrawBuffer(view, color, DRAW_IN_XMS);
 }
+
+extern "C" void ResetScreenGlobals(void)
+{
+	VgaScreen = 0;
+	BackScreen = 0;
+	VgaRowTable = 0;
+	UnreadScreenWord = 0;
+	ActiveScreen = 0;
+	UnusedScreenWord = 0;
+	UnreadScreenWordPointer = 0;
+}

@@ -19,7 +19,7 @@ void UncharmNpc(objref *npc);
 
 extern uint8_t CrimeUsecodeOff;
 extern Combat CombatGroups;
-extern char *AvFlagsFileName;
+extern char *const AvFlagsFileName;
 extern CombatSaver AvFlagsFile;
 
 #endif

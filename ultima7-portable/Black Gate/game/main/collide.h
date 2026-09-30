@@ -9,7 +9,7 @@ struct ItemId;
 struct Coord;
 
 extern uint8_t BlockedByDoor, InDungeon;
-extern int32_t HeightMasks[16];
+extern const int32_t HeightMasks[16];
 
 void AllocateCollisionBuffer();
 int8_t WorldToCollisionCell(CellCoord x, CellCoord y, int16_t *dx, int16_t *dy, int16_t margin);

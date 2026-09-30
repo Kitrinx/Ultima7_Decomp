@@ -9,10 +9,10 @@ ItemId GetItemInSlot(ItemId owner, uint8_t slot);
 
 extern int16_t CastingFramesLeft;
 extern VoodooAddress WihhTable;
-extern char LightSourceStrength[32];
-extern int16_t HeldItemFrame[32];
+extern const char LightSourceStrength[32];
+extern const int16_t HeldItemFrame[32];
 extern int8_t CurrentNpcTint;
-extern uint8_t NpcTintColors[];
+extern const uint8_t NpcTintColors[];
 int16_t AllocateVoodooBlock(int32_t *address, uint16_t size);
 struct Hotspot ReadHotspot(VoodooAddress table, int16_t frame);
 void LoadWihh(char *name);

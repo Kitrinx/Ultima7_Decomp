@@ -4,6 +4,7 @@
  */
 
 #include "u7port.h"
+#include <new>
 #include <stdlib.h>
 #include "plat.h"
 #include "objref.h"
@@ -48,17 +49,17 @@ int16_t CastingFramesLeft = 0;
 /* WIHH.DAT: per type, the offset of its frames' hotspots. */
 VoodooAddress WihhTable = INT32_C(0);
 /* Per frame of the lit light source. */
-char LightSourceStrength[32] = {
+extern const char LightSourceStrength[32] = {
 	1, 1, 2, 5, 5, 5, 1, 2, 2, 2, 5, 5, 2, 1, 1, 1,
 	1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
 };
 /* The frame of a held item for each frame of the one holding it; 0 hides it. */
-int16_t HeldItemFrame[32] = {
+extern const int16_t HeldItemFrame[32] = {
 	1, 1, 1, 1, 4, 3, 2, 4, 3, 2, 0, 0, 0, 0, 0, 0,
 	1, 1, 1, 1, 2, 3, 4, 2, 3, 4, 0, 0, 0, 0, 0, 0
 };
 int8_t CurrentNpcTint = -1;
-uint8_t NpcTintColors[] = {
+extern const uint8_t NpcTintColors[] = {
 	0x00, 0x0e, 0x1d, 0x1e, 0x2d, 0x2e, 0x3a, 0x3b, 0x49, 0x58, 0x65, 0x66, 0x75, 0x76,
 	0x85, 0x86, 0x93, 0x94, 0xa3, 0xb1, 0xb2, 0xbf, 0xc0, 0xd0, 0xd1, 0xe0, 0xdf, 0xff
 };
@@ -251,7 +252,7 @@ void SetNpcTint(int16_t obj)
 			frame = 13;
 	}
 	if (CurrentNpcTint != frame) {
-		SetXformEntries(&gShapeManager.translations, NpcTintColors, frame);
+		SetXformEntries(&gShapeManager.translations, (uint8_t *)NpcTintColors, frame);
 		CurrentNpcTint = frame;
 	}
 }
@@ -267,4 +268,16 @@ void CopyWihhEntry(uint16_t type, uint16_t source)
 	ReadFileBlock(fd, (int32_t)(source * 2), INT32_C(2), &offset);
 	DosClose(fd);
 	PokeWord(WihhTable.address + type * 2, offset);
+}
+
+extern "C" void ResetWihhGlobals(void)
+{
+	CastingFramesLeft = 0;
+	memset(&WihhTable, 0, sizeof(WihhTable));
+	CurrentNpcTint = -1;
+}
+
+extern "C" void ConstructWihhGlobals(void)
+{
+	new (&WihhTable) VoodooAddress(INT32_C(0));
 }

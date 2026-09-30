@@ -4,6 +4,7 @@
  */
 
 #include "u7port.h"
+#include <new>
 #include "objref.h"
 #include "colbuf.h"
 #include "gumps.h"
@@ -29,3 +30,13 @@ uint8_t Spellbook::findPosition(objref, int16_t *, int16_t *)
 }
 
 ProportionalTextPrinter SpellbookTextPrinter;
+
+extern "C" void ResetSpelliniGlobals(void)
+{
+	memset((void *)&SpellbookTextPrinter, 0, sizeof(SpellbookTextPrinter));
+}
+
+extern "C" void ConstructSpelliniGlobals(void)
+{
+	new (&SpellbookTextPrinter) ProportionalTextPrinter();
+}

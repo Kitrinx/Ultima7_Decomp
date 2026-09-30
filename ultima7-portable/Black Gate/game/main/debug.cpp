@@ -7,36 +7,71 @@
 #include "plat.h"
 #include <stdio.h>
 #include <stdarg.h>
+#include <stdlib.h>
+#include <string.h>
 #include "dosio.h"
 #include "cheat.h"
 #include "debug.h"
 #include "u7event.h"
 
-char *GameTitle = TitleString;
-char *GameVersion = VersionString;
-char *GameCopyright = CopyrightString;
+char *const GameTitle = (char *)TitleString;
+char *const GameVersion = (char *)VersionString;
+char *const GameCopyright = (char *)CopyrightString;
 char *StaticPath = 0;
 char *GamedatPath = 0;
-char *BuildStamp = BuildStampString;
+char *const BuildStamp = (char *)BuildStampString;
 uint8_t ShouldExitMainGameLoop = 0;
 uint8_t DebugOutputEnabled = 0;
-char TitleString[] = "Ultima VII - The Black Gate";
-char VersionString[] = "ver 3.4";
-char CopyrightString[] = "(C) 1991, 1992 Origin Systems Inc.";
+const char TitleString[] = "Ultima VII - The Black Gate";
+const char VersionString[] = "ver 3.4";
+const char CopyrightString[] = "(C) 1991, 1992 Origin Systems Inc.";
 /* a stamping tool fills the blanks after the marker */
-char BuildStampString[] = "!Stamp!"
+const char BuildStampString[] = "!Stamp!"
 	"                                                                "
 	"\nUltima VII - The Black Gate\nver 3.4\nCreated Jun 02 1992 18:50:49"
 	"\n(C) 1991, 1992 Origin Systems Inc.";
 
-static char TgCodeFormat[] = "TG Code:%0x";
+static const char TgCodeFormat[] = "TG Code:%0x";
+
+/* printf in the DOS game: onto the game screen at the text cursor, where \n started a new line;
+ * copied to the log. */
+void ConsoleWrite(const char *text)
+{
+	char line[128];
+	const char *at;
+	int16_t n = 0;
+
+	for (at = text; *at; at++) {
+		if (*at != '\n')
+			line[n++] = *at;
+		if (*at == '\n' || n == (int16_t) sizeof line - 1) {
+			line[n] = '\0';
+			plat_console_write(line);
+			n = 0;
+		}
+		if (*at == '\n')
+			plat_console_write("\r\n");
+	}
+	line[n] = '\0';
+	plat_console_write(line);
+	plat_log(text);
+}
+
+/* gotoxy and cprintf: onto the game screen at column x, row y; copied to the log. */
+void ConsoleWriteAt(int16_t x, int16_t y, const char *text)
+{
+	plat_console_goto(x, y);
+	plat_console_write(text);
+	plat_log(text);
+	plat_log("\n");
+}
 
 static void LogTgCode(int16_t code)
 {
 	char text[20];
 
 	sprintf(text, TgCodeFormat, code);
-	plat_log(text);
+	ConsoleWrite(text);
 }
 
 void DebugPrintf(char *fmt, ...)
@@ -48,7 +83,7 @@ void DebugPrintf(char *fmt, ...)
 			va_start(args, fmt);
 			vsprintf(WorkString, fmt, args);
 		}
-		plat_log(WorkString);
+		ConsoleWrite(WorkString);
 	}
 }
 
@@ -61,7 +96,7 @@ void DebugPrintfAtCoords(int16_t x, int16_t y, char *fmt, ...)
 			va_start(args, fmt);
 			vsprintf(WorkString, fmt, args);
 		}
-		plat_log(WorkString);
+		ConsoleWriteAt(x, y, WorkString);
 	}
 }
 
@@ -81,7 +116,7 @@ void DebugPrintfWait(char *fmt, ...)
 			va_start(args, fmt);
 			vsprintf(WorkString, fmt, args);
 		}
-		plat_log(WorkString);
+		ConsoleWrite(WorkString);
 		plat_sleep(100);
 		while (KeyPressed())
 			ReadKey();
@@ -100,7 +135,8 @@ void DebugPrintfAtCoordsWait(int16_t x, int16_t y, char *fmt, ...)
 			va_start(args, fmt);
 			vsprintf(WorkString, fmt, args);
 		}
-		plat_log(WorkString);
+		plat_console_goto(x, y);
+		ConsoleWrite(WorkString);
 		plat_sleep(100);
 		while (KeyPressed())
 			ReadKey();
@@ -132,7 +168,64 @@ void CheatPrintf(char *fmt, ...)
 		vsprintf(WorkString, fmt, args);
 	}
 	if (CheatsEnabled)
-		plat_log(WorkString);
+		ConsoleWrite(WorkString);
+}
+
+/* A line typed on the game screen, as DOS read one: echoed, Backspace erases, Enter ends it. */
+static void ConsoleReadLine(char *line, int16_t size)
+{
+	int16_t length = 0;
+	char echo[2] = {0, 0};
+	int16_t key;
+
+	for (;;) {
+		key = ReadKey();
+		if (key == '\r') {
+			ConsoleWrite("\n");
+			break;
+		}
+		if (key == '\b') {
+			if (length > 0) {
+				length--;
+				plat_console_write("\b \b");
+			}
+		} else if (key >= ' ' && key < 0x7f && length < size - 1) {
+			line[length++] = (char) key;
+			echo[0] = (char) key;
+			plat_console_write(echo);
+		}
+	}
+	line[length] = '\0';
+}
+
+/* The next word typed, as scanf("%s") read it: blank lines are skipped. */
+void ConsoleReadWord(char *word, int16_t size)
+{
+	char line[128];
+	char *start;
+	size_t length;
+
+	for (;;) {
+		ConsoleReadLine(line, sizeof line);
+		start = line + strspn(line, " \t");
+		length = strcspn(start, " \t");
+		if (length == 0)
+			continue;
+		if (length >= (size_t) size)
+			length = size - 1;
+		memcpy(word, start, length);
+		word[length] = '\0';
+		return;
+	}
+}
+
+/* The next number typed, as scanf("%ld") or "%lx" read it. */
+int32_t ConsoleReadNumber(int8_t hex)
+{
+	char word[32];
+
+	ConsoleReadWord(word, sizeof word);
+	return (int32_t) strtol(word, 0, hex ? 16 : 10);
 }
 
 void CheatPrintfAtCoords(int16_t x, int16_t y, char *fmt, ...)
@@ -144,7 +237,7 @@ void CheatPrintfAtCoords(int16_t x, int16_t y, char *fmt, ...)
 		vsprintf(WorkString, fmt, args);
 	}
 	if (CheatsEnabled) {
-		plat_log(WorkString);
+		ConsoleWriteAt(x, y, WorkString);
 	}
 }
 
@@ -157,7 +250,7 @@ void CheatPrintfWait(char *fmt, ...)
 		vsprintf(WorkString, fmt, args);
 	}
 	if (CheatsEnabled) {
-		plat_log(WorkString);
+		ConsoleWrite(WorkString);
 		plat_sleep(100);
 		while (KeyPressed())
 			ReadKey();
@@ -176,7 +269,8 @@ void CheatPrintfAtCoordsWait(int16_t x, int16_t y, char *fmt, ...)
 		vsprintf(WorkString, fmt, args);
 	}
 	if (CheatsEnabled) {
-		plat_log(WorkString);
+		plat_console_goto(x, y);
+		ConsoleWrite(WorkString);
 		plat_sleep(100);
 		while (KeyPressed())
 			ReadKey();
@@ -184,4 +278,12 @@ void CheatPrintfAtCoordsWait(int16_t x, int16_t y, char *fmt, ...)
 			plat_yield();
 		ReadKey();
 	}
+}
+
+extern "C" void ResetDebugGlobals(void)
+{
+	StaticPath = 0;
+	GamedatPath = 0;
+	ShouldExitMainGameLoop = 0;
+	DebugOutputEnabled = 0;
 }

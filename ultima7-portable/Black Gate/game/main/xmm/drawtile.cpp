@@ -5,7 +5,7 @@
 #include "view.h"
 
 /* Screen offset of each row of tiles, eight lines apart. */
-uint16_t TileRowOffsets[] = {
+const uint16_t TileRowOffsets[] = {
 	0, 2560, 5120, 7680, 10240, 12800, 15360, 17920, 20480, 23040,
 	25600, 28160, 30720, 33280, 35840, 38400, 40960, 43520, 46080, 48640,
 	51200, 53760, 56320, 58880, 61440
@@ -41,4 +41,10 @@ void FillView(void *view, uint8_t color)
 		memset(LINEAR(LinearGet32(rowPtr) + left), color, width);
 		rowPtr += 4;
 	} while (--rows != 0);
+}
+
+extern "C" void ResetDrawtileGlobals(void)
+{
+	ViewportFirstRow = 0;
+	FlatModeFlags = 0;
 }

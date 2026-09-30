@@ -48,3 +48,8 @@ char *MakeScript(int32_t first, ...)
 	ScriptPacket.length = n;
 	return (char *) &ScriptPacket;
 }
+
+extern "C" void ResetScriptGlobals(void)
+{
+	memset(&ScriptPacket, 0, sizeof(ScriptPacket));
+}

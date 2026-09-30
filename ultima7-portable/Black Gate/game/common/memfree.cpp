@@ -7,6 +7,7 @@
 #include "vooalloc.h"
 #include "memapi.h"
 #include "memfree.h"
+#include <new>
 
 /* The near heap is the host's now; report a fixed figure well above what the game checks for. */
 #define NEAR_FREE 32000
@@ -29,4 +30,14 @@ extern "C" void GetMemoryInfo(struct MemInfo *m)
 	m->nearFree = NearMemory.getNearFree();
 	m->farFree = GetFarHeapFree(0);
 	m->highFree = VoodooXmsBlock.free;
+}
+
+extern "C" void ResetMemfreeGlobals(void)
+{
+	StartupNearFree = 0;
+}
+
+extern "C" void ConstructMemfreeGlobals(void)
+{
+	new (&NearMemory) NearMemoryInfo();
 }

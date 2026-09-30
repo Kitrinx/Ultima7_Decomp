@@ -3,6 +3,7 @@
  */
 
 #include "u7port.h"
+#include <new>
 #include "plat.h"
 #include "u7manage.h"
 #include "item.h"
@@ -150,7 +151,7 @@ Caption *BarkTexts[10] = { 0 };
 uint8_t TheftReported = 0;
 uint8_t PickingItem = 0;
 uint8_t GameRestored = 0;
-char *GumpMgrFileName = "GUMPMGR.DAT";
+char *const GumpMgrFileName = "GUMPMGR.DAT";
 GumpFile GumpMgrFile;
 
 char *GumpFile::name()
@@ -1028,4 +1029,25 @@ int16_t GetSliderValue(int16_t low, int16_t high, int16_t increment, int16_t ini
 int16_t GetDialogMemoryNeeded()
 {
 	return 4071;
+}
+
+extern "C" void ResetGumpmgrGlobals(void)
+{
+	memset(PaperdollPositions, 0, sizeof(PaperdollPositions));
+	WorldArea = 0;
+	OpenSaveDialog = 0;
+	DialogState = 0;
+	memset(BarkTexts, 0, sizeof(BarkTexts));
+	TheftReported = 0;
+	PickingItem = 0;
+	GameRestored = 0;
+	memset((void *)&OpenItemDialogsList, 0, sizeof(OpenItemDialogsList));
+	memset((void *)&GumpMgrFile, 0, sizeof(GumpMgrFile));
+}
+
+extern "C" void ConstructGumpmgrGlobals(void)
+{
+	new (&GumpManager) GumpMgr();
+	new (&OpenItemDialogsList) GumpList();
+	new (&GumpMgrFile) GumpFile();
 }

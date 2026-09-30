@@ -185,3 +185,21 @@ void MouseHandler::detach()
 			plat_mouse_set_handler(0);
 	}
 }
+
+extern "C" void ResetMouseGlobals(void)
+{
+	MousePresent = 0;
+	MouseButtonCount = 0;
+	MouseCallbackOff = 0;
+	MouseHandlerCount = 0;
+	MouseX = 0;
+	MouseY = 0;
+	memset(MouseHandlers, 0, sizeof(MouseHandlers));
+	memset(MouseHandlerMasks, 0, sizeof(MouseHandlerMasks));
+	MouseStackOverrun = 0;
+	MouseXMin = 0;
+	MouseXMax = 639;
+	MouseYMin = 0;
+	MouseYMax = 199;
+	MouseDispatching = 0;
+}

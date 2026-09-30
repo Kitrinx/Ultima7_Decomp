@@ -4,10 +4,10 @@
 struct Loc;
 struct objref;
 
-extern uint8_t ExplosionRadii[];
-extern int16_t ExplosiveTypes[];
-extern uint8_t ExplosionEffects[];
-extern char ExplosionSounds[];
+extern const uint8_t ExplosionRadii[];
+extern const int16_t ExplosiveTypes[];
+extern const uint8_t ExplosionEffects[];
+extern const char ExplosionSounds[];
 
 void EmptyExplodeStub();
 void Explode(objref attacker, Loc x, Loc y, int16_t width, int16_t weaponNum, int16_t ammoNum, objref projectile);

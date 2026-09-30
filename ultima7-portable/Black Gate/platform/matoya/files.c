@@ -173,6 +173,17 @@ static bool resolve(const char *dos, bool create, char *path)
 
 /* ---- Handles ---- */
 
+/* Closes whatever the last program left open. */
+void files_reset(void)
+{
+	for (int i = 1; i <= MAX_HANDLES; i++) {
+		if (handles[i].file != NULL)
+			fclose(handles[i].file);
+		handles[i].file = NULL;
+		handles[i].last = LAST_NONE;
+	}
+}
+
 static int16_t add_handle(FILE *file)
 {
 	if (file == NULL)

@@ -20,7 +20,7 @@ extern "C" void PlaySfx(uint8_t number, int16_t volume, int16_t pan, int16_t fla
 
 int32_t RedScreenCycleRate = 1;
 int16_t RedScreenShapeNumber = 19;
-char *EndshapeFileName = "static\\endshape.flx";
+char *const EndshapeFileName = "static\\endshape.flx";
 
 RedScreen::RedScreen()
 {
@@ -107,4 +107,11 @@ void CycleRedScreenPalette(void)
 {
 	GameScreen.pal->cycleRange(1);
 	SetPaletteRange(GameScreen.pal->colors, GameScreen.pal->order, 16, 77);
+}
+
+extern "C" void ResetRedscrnGlobals(void)
+{
+	RedScreenCycleRate = 1;
+	RedScreenShapeNumber = 19;
+	RedScreenShownAt = 0;
 }

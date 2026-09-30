@@ -47,3 +47,10 @@ void LogMemoryUsage(char *fmt, ...)
 	LastFarFree = farFree;
 	LastVoodooFree = voodooFree;
 }
+
+extern "C" void ResetSysusageGlobals(void)
+{
+	LastNearFree = 0;
+	LastFarFree = -1;
+	LastVoodooFree = -1;
+}

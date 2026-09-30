@@ -17,6 +17,7 @@
 #include "gtimer.h"
 #include "u7ibuf.h"
 #include "u7sound.h"
+#include <new>
 
 #define CONTINUOUS_SOUNDS   12
 
@@ -45,7 +46,7 @@ inline ItemRecord *GetItemRecord(objref ref)
 
 uint8_t WaterWheelPlayed = 0, MillStonePlayed = 0;
 /* The effect each continuous sound loops. */
-uint8_t ContinuousSoundSfx[CONTINUOUS_SOUNDS] = {48, 50, 77, 78, 82, 80, 81, 114, 25, 52, 79, 113};
+const uint8_t ContinuousSoundSfx[CONTINUOUS_SOUNDS] = {48, 50, 77, 78, 82, 80, 81, 114, 25, 52, 79, 113};
 /* The world renderer supplies the previous animation frame. */
 int16_t AnimationPhase;
 /* The loudest volume asked for this pass, and the volume playing. */
@@ -212,11 +213,11 @@ void PlayItemAmbientSound(uint16_t type, int16_t frame, int16_t dx, int16_t dy)
 	}
 }
 
+static Stopwatch interval;
+static int32_t ready = -1;
+
 void PlayAmbientSounds()
 {
-	static Stopwatch interval;
-	static int32_t ready = -1;
-
 	/* at most once every six ticks */
 	if (ready != -1 && !(ready = Stopwatch_getElapsed(&interval) > 6))
 		return;
@@ -275,4 +276,20 @@ extern "C" void PlaySoundAtItem(uint8_t sound, ItemId object)
 		pan = 64 - dx * 2;
 	}
 	PlaySfx(sound, volume, pan, 0);
+}
+
+extern "C" void ResetSoundsGlobals(void)
+{
+	WaterWheelPlayed = 0;
+	MillStonePlayed = 0;
+	AnimationPhase = 0;
+	memset(ContinuousSoundRequest, 0, sizeof ContinuousSoundRequest);
+	memset(ContinuousSoundVolume, 0, sizeof ContinuousSoundVolume);
+	memset(&interval, 0, sizeof interval);
+	ready = -1;
+}
+
+extern "C" void ConstructSoundsGlobals(void)
+{
+	new (&interval) Stopwatch();
 }

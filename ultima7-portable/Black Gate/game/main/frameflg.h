@@ -16,7 +16,7 @@ struct FrameFlags : DataNode {
 
 extern uint8_t TrimmedShapeBits[128];
 extern FrameFlags FrameFlagTable;
-extern char *FrameFlagsFileName;
+extern char *const FrameFlagsFileName;
 
 int8_t IsShapeTrimmed(CacheEntry *entry);
 void TrimShapeFrames(CacheEntry *entry);

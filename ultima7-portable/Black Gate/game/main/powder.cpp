@@ -132,3 +132,8 @@ void ExplodePowderKeg(objref source)
 	Explode(AvatarRef, x, y, z, weapon, 0, 0);
 	PowderKegExploding = 0;
 }
+
+extern "C" void ResetPowderGlobals(void)
+{
+	PowderKegExploding = 0;
+}

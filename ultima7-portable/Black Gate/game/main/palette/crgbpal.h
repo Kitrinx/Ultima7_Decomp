@@ -8,6 +8,6 @@ void LoadPalette(int32_t *block, int16_t index);
 void AllocatePaletteBlock(int32_t *block);
 void BuildRedPalette(int32_t *block);
 
-extern char *PaletteFileName;
+extern char *const PaletteFileName;
 
 #endif

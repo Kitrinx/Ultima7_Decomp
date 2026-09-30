@@ -15,10 +15,11 @@
 static SoundDriver Mt32Info = { 0, 0 };
 
 /* The patch written for each bank timbre; byte 1 is the memory timbre it plays. */
-static uint8_t BankPatch[8] = { 2, 0, 24, 50, 24, 0, 1, 0 };
-static char Banner[] = "Origin Sound System!";
-static char Title[] = "<<<  MQ Driver  >>> ";
-static uint8_t ResetValue = 0;
+static const uint8_t BankPatchStart[8] = { 2, 0, 24, 50, 24, 0, 1, 0 };
+static uint8_t BankPatch[8];
+static const char Banner[] = "Origin Sound System!";
+static const char Title[] = "<<<  MQ Driver  >>> ";
+static const uint8_t ResetValue = 0;
 
 /* The game thread and the sound tick both send; the lock keeps each message whole. */
 static void SendMidi(const uint8_t *message, int16_t length)
@@ -64,8 +65,8 @@ int16_t Mt32Init(void *timbres)
 
 	if (!plat_midi_available())
 		return 0;
-	Mt32Sysex(INT32_C(0x7f007f), 1, &ResetValue);
-	Mt32Sysex(INT32_C(0x200000), 20, Banner);
+	Mt32Sysex(INT32_C(0x7f007f), 1, (void *)&ResetValue);
+	Mt32Sysex(INT32_C(0x200000), 20, (void *)Banner);
 	if (timbres != 0) {
 		p = (uint8_t *)timbres;
 		count = *p++;
@@ -77,7 +78,7 @@ int16_t Mt32Init(void *timbres)
 		/* the effects' timbres go after the bank, one slot further on */
 		Mt32Info.first = slot;
 	}
-	Mt32Sysex(INT32_C(0x200000), 20, Title);
+	Mt32Sysex(INT32_C(0x200000), 20, (void *)Title);
 	return 1;
 }
 
@@ -152,4 +153,10 @@ void Mt32Sysex(int32_t address, int16_t length, void *data)
 		flat += count;
 		address = (flat >> 14) << 16 | ((flat >> 7) & 0x7f) << 8 | (flat & 0x7f);
 	}
+}
+
+extern "C" void ResetMt32drvGlobals(void)
+{
+	memset(&Mt32Info, 0, sizeof Mt32Info);
+	memcpy(BankPatch, BankPatchStart, sizeof BankPatch);
 }

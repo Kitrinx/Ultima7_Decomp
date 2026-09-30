@@ -42,3 +42,10 @@ extern "C" void StopRedScreenCycle(void)
 		plat_game_timer_remove(RedScreenTick);
 	Cycling = 0;
 }
+
+extern "C" void ResetRedtimerGlobals(void)
+{
+	RedScreenStepTicks = 1;
+	Countdown = 0;
+	Cycling = 0;
+}

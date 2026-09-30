@@ -4,6 +4,7 @@
  */
 
 #include "u7port.h"
+#include <new>
 #include "plat.h"
 #include <stdarg.h>
 #include <stdio.h>
@@ -48,9 +49,9 @@ inline void Release(char *p) { if (p) delete p; }
 uint8_t GameDisplayMode;
 uint16_t _ovrbuffer = 6400;     /* overlay buffer, in paragraphs */
 uint16_t _stklen = 6000;
-char MonoFontSize[3] = { '6', 'x', '7' };
-char MonoFontFileName[] = "MONO.FNT";
-char MouseFileName[] = "MOUSE.V00";
+extern const char MonoFontSize[3] = { '6', 'x', '7' };
+extern const char MonoFontFileName[] = "MONO.FNT";
+extern const char MouseFileName[] = "MOUSE.V00";
 
 View ScreenView;
 View Viewport;
@@ -60,7 +61,7 @@ ScreenPalette GameScreen;
 uint8_t ShuttingDown = 0;     /* shut down, or shutting down */
 char *EndStatsFileName = "ENDSTATS.DAT";
 uint8_t ReportingError = 0;       /* an error is being reported */
-char NumberLineFormat[] = "%d\n";
+extern const char NumberLineFormat[] = "%d\n";
 uint8_t PlainErrors = 0;      /* report errors without the apology */
 
 /* undo the start-up, once */
@@ -209,4 +210,28 @@ void ExitForEndgame(void)
 {
 	RestoreSystem();
 	plat_exit(9);
+}
+
+extern "C" void ResetInitGlobals(void)
+{
+	GameDisplayMode = 0;
+	_ovrbuffer = 6400;
+	_stklen = 6000;
+	memset((void *)&ScreenView, 0, sizeof(ScreenView));
+	memset((void *)&Viewport, 0, sizeof(Viewport));
+	memset(&VoodooXmsBlock, 0, sizeof(VoodooXmsBlock));
+	memset((void *)&OriginalFreeMemoryStats, 0, sizeof(OriginalFreeMemoryStats));
+	memset((void *)&GameScreen, 0, sizeof(GameScreen));
+	ShuttingDown = 0;
+	EndStatsFileName = "ENDSTATS.DAT";
+	ReportingError = 0;
+	PlainErrors = 0;
+}
+
+extern "C" void ConstructInitGlobals(void)
+{
+	new (&ScreenView) View();
+	new (&Viewport) View();
+	new (&OriginalFreeMemoryStats) MemInfo();
+	new (&GameScreen) ScreenPalette();
 }

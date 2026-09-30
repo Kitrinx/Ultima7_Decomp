@@ -4,14 +4,15 @@
  */
 
 #include "u7port.h"
+#include <new>
 #include "u7manage.h"
 #include "itable.h"
 
 ProportionalTextPrinter YellowTextPrinter;
 
 /* Extra pixels between letters and between lines, per font. */
-int16_t FontLetterSpacing[8] = { -1, 1, 0, 1, 0, 0, 0, -1 };
-int16_t FontLineSpacing[8] = { -1, 0, -1, 0, 1, 1, 1, -1 };
+const int16_t FontLetterSpacing[8] = { -1, 1, 0, 1, 0, 0, 0, -1 };
+const int16_t FontLineSpacing[8] = { -1, 0, -1, 0, 1, 1, 1, -1 };
 
 ProportionalTextPrinter::~ProportionalTextPrinter()
 {
@@ -63,4 +64,14 @@ int16_t ProportionalTextPrinter::textWidth(char *s)
 		width += spacing;
 	}
 	return width;
+}
+
+extern "C" void ResetU7fontGlobals(void)
+{
+	memset((void *)&YellowTextPrinter, 0, sizeof(YellowTextPrinter));
+}
+
+extern "C" void ConstructU7fontGlobals(void)
+{
+	new (&YellowTextPrinter) ProportionalTextPrinter();
 }

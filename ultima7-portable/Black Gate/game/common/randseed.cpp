@@ -9,8 +9,10 @@
 #include "easyfile.h"
 #include "datanode.h"
 #include "random.h"
+#include <new>
 
-static char RandSeedFileName[] = "RANDSEED.DAT";
+static const char RandSeedFileNameStart[] = "RANDSEED.DAT";
+static char RandSeedFileName[sizeof RandSeedFileNameStart];
 
 /* the random number seed, carried from one session to the next */
 struct RandSeed : DataNode {
@@ -48,4 +50,14 @@ void RandSeed::load(char *dir)
 int16_t RollRandom(int16_t n)
 {
 	return random(n);
+}
+
+extern "C" void ResetRandseedGlobals(void)
+{
+	memcpy(RandSeedFileName, RandSeedFileNameStart, sizeof RandSeedFileName);
+}
+
+extern "C" void ConstructRandseedGlobals(void)
+{
+	new (&RandSeedFile) RandSeed();
 }

@@ -1,6 +1,7 @@
 /* The pointer drawn by the host: each frame is drawn once into a buffer of its own and handed over. */
 
 #include "u7port.h"
+#include <new>
 #include "plat.h"
 #include "arena.h"
 #include "lowlevel.h"
@@ -37,4 +38,15 @@ void SetHostCursorFrame(int32_t shapes, int16_t frame, int16_t flags)
 	DrawFrame(&PointerImage, -bounds.x0, -bounds.y0, shapes, frame, 0x111);
 	plat_cursor_set_shape(LINEAR(GetRowAddress(0, PointerImage.rowTable)),
 		PointerImage.clip.x1 + 1, PointerImage.clip.y1 + 1, -bounds.x0, -bounds.y0);
+}
+
+extern "C" void ResetHostcursGlobals(void)
+{
+	memset((void *)&PointerImage, 0, sizeof(PointerImage));
+	PointerImageFrame = -1;
+}
+
+extern "C" void ConstructHostcursGlobals(void)
+{
+	new (&PointerImage) View();
 }

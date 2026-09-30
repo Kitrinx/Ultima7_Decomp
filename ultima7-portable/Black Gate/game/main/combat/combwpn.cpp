@@ -257,3 +257,15 @@ void BreakHitItem(objref ref)
 	else if (!PowderKegExploding)
 		RunUsable(4, ref, 0x626);
 }
+
+extern "C" void ResetCombwpnGlobals(void)
+{
+	memset((void *)&HitTargetItem, 0, sizeof(HitTargetItem));
+	memset((void *)&HitX, 0, sizeof(HitX));
+	memset((void *)&HitY, 0, sizeof(HitY));
+	HitMissile = 0;
+	HitFromExplosion = 0;
+	NaturalDamage = 0;
+	HitZ = 0;
+	HitSourceItem = 0;
+}

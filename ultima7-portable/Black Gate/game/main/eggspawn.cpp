@@ -32,10 +32,10 @@
 struct ScriptBuffer { uint8_t length, data[127]; };
 
 /* per monster category: attack modes to try, and the odds of stopping at each */
-uint8_t CategoryAttackModes[5][4] = {
+extern const uint8_t CategoryAttackModes[5][4] = {
 	{ 0, 8, 7, 0 }, { 1, 0, 0, 0 }, { 0, 8, 0, 0 }, { 6, 5, 1, 2 }, { 3, 0, 0, 0 }
 };
-uint8_t CategoryAttackOdds[5][4] = {
+extern const uint8_t CategoryAttackOdds[5][4] = {
 	{ 5, 2, 1, 0 }, { 1, 0, 0, 0 }, { 2, 1, 0, 0 }, { 2, 2, 2, 1 }, { 1, 0, 0, 0 }
 };
 int16_t SpawnGroupLeader = -1;
@@ -142,4 +142,9 @@ void SpawnFromEgg(EggRecord *spawn, objref source, Coord x, Coord y)
 		else
 			attempts--;
 	}
+}
+
+extern "C" void ResetEggspawnGlobals(void)
+{
+	SpawnGroupLeader = -1;
 }

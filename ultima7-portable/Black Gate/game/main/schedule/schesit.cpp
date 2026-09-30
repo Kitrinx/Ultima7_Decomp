@@ -68,3 +68,9 @@ void RunMajorSitSchedule(objref *npc)
 		}
 	}
 }
+
+extern "C" void ResetSchesitGlobals(void)
+{
+	NapBed = 0;
+	memset(PartySitRefs, 0, sizeof(PartySitRefs));
+}

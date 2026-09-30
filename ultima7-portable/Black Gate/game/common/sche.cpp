@@ -8,6 +8,7 @@
 #include "maps.h"
 #include "sche_ov1.h"
 #include "sche.h"
+#include <new>
 
 char *ScheduleFileName = "static\\schedule.dat";
 char *ScheduleTempFileName = "art\\schedule.$$$";
@@ -124,4 +125,16 @@ int16_t Schedule_getEntryRegion(Schedules *s, uint8_t npc, uint8_t time)
 	if ((n = Schedule_findEntry(s, npc, time)) == 0xff)
 		return -1;
 	return s->entries[s->index[npc] + n].region;
+}
+
+extern "C" void ResetScheGlobals(void)
+{
+	ScheduleFileName = "static\\schedule.dat";
+	ScheduleTempFileName = "art\\schedule.$$$";
+	memset(&ScheduleTable, 0, sizeof ScheduleTable);
+}
+
+extern "C" void ConstructScheGlobals(void)
+{
+	new (&ScheduleTable) Schedules();
 }

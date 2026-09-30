@@ -28,7 +28,7 @@ struct SpellbookRecord {
 };
 
 /* The reagents each spell needs, one bit per reagent. */
-uint8_t SpellReagents[72] = {
+extern const uint8_t SpellReagents[72] = {
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 	0x38, 0x30, 0x44, 0x50, 0xc0, 0x80, 0x04, 0x30,
 	0x82, 0x09, 0x81, 0x88, 0x38, 0xb0, 0x0b, 0xcf,
@@ -171,4 +171,9 @@ void SetSpellbookBookmark(NPCRef book, int8_t bookmark)
 		innerRecord = ITEM(record)->data.extra;
 		SUB(innerRecord)->bookmark = bookmark;
 	}
+}
+
+extern "C" void ResetSpellGlobals(void)
+{
+	memset(ReagentCounts, 0, sizeof(ReagentCounts));
 }

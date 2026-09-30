@@ -4,6 +4,7 @@
  */
 
 #include "u7port.h"
+#include <new>
 #include "dosio.h"
 #include "init.h"
 #include "errors.h"
@@ -102,4 +103,16 @@ int16_t ClampInt(int16_t lo, int16_t v, int16_t hi)
 	if (v > hi)
 		return hi;
 	return v;
+}
+
+extern "C" void ResetErrorsGlobals(void)
+{
+	WorkString = 0;
+	WorkstringSize = 0;
+	FatalHook = DefaultFatalHook;
+}
+
+extern "C" void ConstructErrorsGlobals(void)
+{
+	new (&TheWorkstringOwner) WorkstringOwner();
 }

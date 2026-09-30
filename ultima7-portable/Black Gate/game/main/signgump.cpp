@@ -27,9 +27,9 @@ struct Rect {
 };
 
 /* Per style, numbered from 49: where the box goes, the text area inside it, and the font. */
-static Position SignGumpPositions[3] = { { 66, 41 }, { 63, 73 }, { 45, 35 } };
-static Rect SignTextAreas[3] = { { 5, 3, 182, 91 }, { 22, 19, 176, 109 }, { 37, 10, 196, 92 } };
-static int16_t SignFonts[3] = { 1, 3, 6 };
+static const Position SignGumpPositions[3] = { { 66, 41 }, { 63, 73 }, { 45, 35 } };
+static const Rect SignTextAreas[3] = { { 5, 3, 182, 91 }, { 22, 19, 176, 109 }, { 37, 10, 196, 92 } };
+static const int16_t SignFonts[3] = { 1, 3, 6 };
 
 SignGump::SignGump(int16_t signStyle, char *text)
 {

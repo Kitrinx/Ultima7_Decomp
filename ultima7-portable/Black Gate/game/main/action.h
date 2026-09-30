@@ -47,7 +47,7 @@ struct Action {
 };
 
 extern Action *ActionTable;
-extern uint8_t *EmptyScript;
+extern uint8_t *const EmptyScript;
 extern int16_t ActionQueueTime;
 char * DescribeScript(char *script);
 

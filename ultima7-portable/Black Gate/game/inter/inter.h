@@ -84,7 +84,7 @@ void UC_CallIntrinsic(int16_t num, Value *args, Value *ret);
 
 typedef void ( *EngineCall)(Value *args, Value *ret);
 
-extern EngineCall EngineCalls[ENGINE_CALL_COUNT];
+extern const EngineCall EngineCalls[ENGINE_CALL_COUNT];
 
 void UC_Interpret(UsecodeRoutine *code, ValueStack *stack, CallStack *calls, char *answer, int16_t item, int16_t event);
 

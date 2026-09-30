@@ -1,8 +1,8 @@
 #ifndef MAINCTRL_H
 #define MAINCTRL_H
 
-extern uint8_t DirectionForDirectionKey[11];
-extern uint8_t DirectionForNumberKey[9];
+extern const uint8_t DirectionForDirectionKey[11];
+extern const uint8_t DirectionForNumberKey[9];
 extern uint8_t SingleStepMode;
 extern uint8_t AudioDisabled;
 extern uint8_t MovementDirection;

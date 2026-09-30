@@ -4,6 +4,7 @@
  */
 
 #include "u7port.h"
+#include <new>
 #include "dosio.h"
 #include "easyfile.h"
 #include "datanode.h"
@@ -83,4 +84,15 @@ void WorldCoordsToScreen(Coord tx, Coord ty, int16_t *x, int16_t *y)
 	*x = (CompareWorldCoords(&tx, &left) + 20) * 8 + 7;
 	top = MainWorldView.centerY;
 	*y = (CompareWorldCoords(&ty, &top) + 12) * 8 + 7;
+}
+
+extern "C" void ResetU7mapGlobals(void)
+{
+	memset((void *)&MapCoordsFile, 0, sizeof(MapCoordsFile));
+	MapCoordFileName = "MAPCOORD.DAT";
+}
+
+extern "C" void ConstructU7mapGlobals(void)
+{
+	new (&MapCoordsFile) MapCoordsSaver();
 }

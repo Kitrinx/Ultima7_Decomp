@@ -3,6 +3,7 @@
  */
 
 #include "u7port.h"
+#include <new>
 #include <stdio.h>
 #include "iteminfo.h"
 #include "u7npc.h"
@@ -723,4 +724,15 @@ void Route::load(char *name)
 		f.read((char *) &w, INT32_C(5));
 		path.set(i, &w);
 	}
+}
+
+extern "C" void ResetNpcpathGlobals(void)
+{
+	memset(NearestPathDistance, 0, sizeof(NearestPathDistance));
+	memset((void *)&SavedPaths, 0, sizeof(SavedPaths));
+}
+
+extern "C" void ConstructNpcpathGlobals(void)
+{
+	new (&SavedPaths) PathSaver();
 }

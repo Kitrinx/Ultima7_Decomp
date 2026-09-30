@@ -251,3 +251,8 @@ uint8_t WorldGump::accepts(objref dragged, int16_t x, int16_t y)
 	ReportNoCanDo(0);
 	return 0;
 }
+
+extern "C" void ResetGamegumpGlobals(void)
+{
+	HackMoverEnabled = 0;
+}

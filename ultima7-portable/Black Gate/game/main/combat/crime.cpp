@@ -3,6 +3,7 @@
  */
 
 #include "u7port.h"
+#include <new>
 #include "lowlevel.h"
 #include "activity.h"
 #include "iteminfo.h"
@@ -65,7 +66,7 @@ inline void StartSchedule(NPCRef &&npc, int8_t type) { StartSchedule(npc, type);
 
 uint8_t CrimeUsecodeOff = 0;
 Combat CombatGroups;
-char *AvFlagsFileName = "av_flags.dat";
+char *const AvFlagsFileName = "av_flags.dat";
 CombatSaver AvFlagsFile;
 int8_t AvatarInCombat;
 uint8_t KillNpcMode;
@@ -552,4 +553,19 @@ void UncharmNpc(objref *npc)
 	NPC(npc)->setAlignment(GetInitialAlignment(npc));
 	if (NPC(npc)->workType == WORK_COMBAT)
 		StartSchedule(*npc, WORK_COMBAT);
+}
+
+extern "C" void ResetCrimeGlobals(void)
+{
+	CrimeUsecodeOff = 0;
+	memset((void *)&CombatGroups, 0, sizeof(CombatGroups));
+	memset((void *)&AvFlagsFile, 0, sizeof(AvFlagsFile));
+	AvatarInCombat = 0;
+	KillNpcMode = 0;
+}
+
+extern "C" void ConstructCrimeGlobals(void)
+{
+	new (&CombatGroups) Combat();
+	new (&AvFlagsFile) CombatSaver();
 }

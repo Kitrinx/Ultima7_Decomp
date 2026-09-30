@@ -4,6 +4,7 @@
  */
 
 #include "u7port.h"
+#include <new>
 #include "lowlevel.h"
 #include "dosio.h"
 #include "oops.h"
@@ -42,4 +43,17 @@ void MonsterTable::load(char *name)
 	if (!ReadMojo(fd, -INT32_C(1), INT32_C(1), MonsterCount, count, base, INT32_C(25)))
 		ReportFileNotFound(name);
 	DosClose(fd);
+}
+
+extern "C" void ResetMonstersGlobals(void)
+{
+	strcpy(MonstersFileName, "monsters.dat");
+	memset((void *)&MonsterRecords, 0, sizeof(MonsterRecords));
+	MonsterCount = 0;
+	memset(&MonsterLookup, 0, sizeof(MonsterLookup));
+}
+
+extern "C" void ConstructMonstersGlobals(void)
+{
+	new (&MonsterRecords) MonsterTable();
 }

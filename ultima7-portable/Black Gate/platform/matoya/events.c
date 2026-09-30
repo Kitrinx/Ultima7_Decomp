@@ -48,10 +48,33 @@ static plat_timer_fn timers[MAX_TIMERS];
 static bool timers_started;
 static uint32_t timer_ticks;
 static bool pumping;
+static int64_t clock_start_us;
 
 void events_init(void)
 {
 	queue_lock = MTY_MutexCreate();
+}
+
+void events_reset(void)
+{
+	MTY_MutexLock(queue_lock);
+	queue_count = 0;
+	warp_pending = false;
+	MTY_MutexUnlock(queue_lock);
+	key_head = 0;
+	key_count = 0;
+	pending_scan = -1;
+	modifiers = 0;
+	mouse_x = 0;
+	mouse_y = 0;
+	mouse_buttons = 0;
+	mouse_handler = NULL;
+	memset(timers, 0, sizeof timers);
+	timers_started = false;
+	timer_ticks = 0;
+	pumping = false;
+	/* Each program's clock starts at zero. */
+	clock_start_us = backend_elapsed_us();
 }
 
 /* ---- Keys ---- */
@@ -468,12 +491,12 @@ void plat_pump(void)
 
 uint32_t plat_ticks(void)
 {
-	return (uint32_t) (backend_elapsed_us() * PLAT_TICKS_PER_SECOND / 1000000);
+	return (uint32_t) ((backend_elapsed_us() - clock_start_us) * PLAT_TICKS_PER_SECOND / 1000000);
 }
 
 uint32_t plat_milliseconds(void)
 {
-	return (uint32_t) (backend_elapsed_us() / 1000);
+	return (uint32_t) ((backend_elapsed_us() - clock_start_us) / 1000);
 }
 
 void plat_sleep(uint32_t milliseconds)

@@ -4,6 +4,7 @@
  */
 
 #include "u7port.h"
+#include <new>
 #include "mouse.h"
 #include "mevent.h"
 #include "u7event.h"
@@ -153,4 +154,19 @@ uint8_t CheckMouseMoved(void)
 void FlushMouseToRelease(void)
 {
 	SkipToMouseRelease();
+}
+
+extern "C" void ResetMeventGlobals(void)
+{
+	MouseEventSize = 0;
+	MouseQueueStart = 0;
+	MouseQueueEnd = 0;
+	MouseQueueHead = 0;
+	MouseQueueTail = 0;
+	memset((void *)&LastMouseEvent, 0, sizeof(LastMouseEvent));
+}
+
+extern "C" void ConstructMeventGlobals(void)
+{
+	new (&LastMouseEvent) MouseEvent();
 }

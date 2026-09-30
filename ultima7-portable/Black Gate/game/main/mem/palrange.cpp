@@ -50,3 +50,8 @@ extern "C" void ReadPaletteRange(int32_t table, int16_t *indices, int16_t first,
 	for (i = 0; i < num; i++)
 		memcpy(LINEAR(table + (uint16_t) indices[first + i] * 3), &PaletteShadow[(uint8_t) (first + i) * 3], 3);
 }
+
+extern "C" void ResetPalrangeGlobals(void)
+{
+	memset(PaletteShadow, 0, sizeof(PaletteShadow));
+}

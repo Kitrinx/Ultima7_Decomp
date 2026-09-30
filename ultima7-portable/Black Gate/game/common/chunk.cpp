@@ -86,3 +86,9 @@ int16_t AllocateChunkBlock(int32_t *block)
 	*block = AllocateVoodooMemory(&VoodooXmsBlock, CHUNK_BYTES);
 	return *block != 0;
 }
+
+extern "C" void ResetChunkGlobals(void)
+{
+	memset(ChunkFileName, 0, sizeof ChunkFileName);
+	ChunkFileHandle = -1;
+}

@@ -4,6 +4,7 @@
  */
 
 #include "u7port.h"
+#include <new>
 #include "plat.h"
 #include "redscrn.h"
 #include "systimer.h"
@@ -122,4 +123,18 @@ void Timer_delay(Timer *t, uint32_t length)
 	t->start = TickCount;
 	t->length = length;
 	Timer_wait(t);
+}
+
+extern "C" void ResetSystimerGlobals(void)
+{
+	TickCount = 0;
+	TickTimerInstalled = 0;
+	memset((void *)&RedScreenPicture, 0, sizeof(RedScreenPicture));
+	memset((void *)&SystemTimer, 0, sizeof(SystemTimer));
+}
+
+extern "C" void ConstructSystimerGlobals(void)
+{
+	new (&RedScreenPicture) RedScreen();
+	new (&SystemTimer) SysTimer();
 }

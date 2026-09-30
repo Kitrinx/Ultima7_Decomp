@@ -32,7 +32,7 @@ extern objref AvatarRef;
 #define CURRENT(ref) (NPC(ref)->schedules[NPC(ref)->currentSchedule])
 
 /* The schedule handlers, indexed by work type */
-WorkHandler WorkTypeHandlers[53] = {
+const WorkHandler WorkTypeHandlers[53] = {
 	0, RunPaceSchedule, RunPaceSchedule, RunTalkSchedule, RunDanceSchedule, RunEatSchedule, RunFarmSchedule,
 	(WorkHandler) RunTendShopSchedule, RunMinerSchedule, DoWorkHound, RunStandSchedule,
 	(WorkHandler) RunLoiterSchedule, (WorkHandler) RunWanderSchedule, RunBlacksmithSchedule, RunSleepSchedule,

@@ -205,3 +205,8 @@ void UC_Armageddon(void)
 	}
 	ArmageddonDone = 1;
 }
+
+extern "C" void ResetUccomm2Globals(void)
+{
+	SpeechTrack = 0;
+}

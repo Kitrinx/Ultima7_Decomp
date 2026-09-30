@@ -520,3 +520,10 @@ uint8_t IsAvatarDead()
 {
 	return (GetNpcBufferForIbo(&AvatarRef)->status & NPC_DEAD) != 0;
 }
+
+extern "C" void ResetAttackGlobals(void)
+{
+	SchedulePeriod = 0;
+	AvatarStepRequested = 0;
+	AutorouteActive = 0;
+}

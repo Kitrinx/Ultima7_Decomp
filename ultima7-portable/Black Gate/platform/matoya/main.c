@@ -1,7 +1,12 @@
 /* Process entry, window and threads.
  *
- * The process main thread runs the window (libmatoya wants it there). The game runs
- * GameMain on its own thread, and sound renders on a third.
+ * The process main thread runs the window (libmatoya wants it there). A launcher thread runs
+ * Ultima7Main, or the one program named, and each program runs on a game thread of its own.
+ * Sound renders on another.
+ *
+ *   launcher: plat_run_program --reset--> game thread: ProgramMain ... plat_exit(code)
+ *                  ^                                                       |
+ *                  +------------------- code (thread parked) --------------+
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -15,6 +20,7 @@ static MTY_App *app;
 static MTY_Window window = -1;
 static MTY_Time start_time;
 static _Thread_local bool on_app_thread;
+static _Thread_local bool on_game_thread;
 
 static MTY_Atomic32 exit_claimed;
 static MTY_Atomic32 exit_requested;
@@ -25,6 +31,11 @@ static char fatal_text[1024];
 
 static int game_argc;
 static char **game_argv;
+static const char *program_name;
+
+/* A program's exit code, handed to the launcher waiting in plat_run_program. */
+static MTY_Waitable *program_done;
+static int16_t program_code;
 
 /* The window's client size, for mapping scripted mouse positions on the game thread. */
 static MTY_Mutex *view_lock;
@@ -42,6 +53,8 @@ MTY_Size backend_view_size(void)
 }
 
 #ifdef __APPLE__
+#include <mach-o/getsect.h>
+#include <mach-o/ldsyms.h>
 #include <objc/message.h>
 #include <objc/runtime.h>
 
@@ -54,8 +67,33 @@ static void run_in_background(void)
 	((void (*)(id, SEL, long)) objc_msgSend)(nsapp, sel_registerName("setActivationPolicy:"), 2L);
 	((void (*)(id, SEL, id)) objc_msgSend)(nsapp, sel_registerName("hide:"), (id) 0);
 }
+
+/* A bare executable has no icon of its own, so the linker embeds a PNG for the Dock. */
+static void set_dock_icon(void)
+{
+	unsigned long size = 0;
+	const uint8_t *png = getsectiondata(&_mh_execute_header, "__TEXT", "__u7_icon", &size);
+
+	if (png == NULL)
+		return;
+	id nsapp = ((id (*)(id, SEL)) objc_msgSend)((id) objc_getClass("NSApplication"),
+		sel_registerName("sharedApplication"));
+	id data = ((id (*)(id, SEL, const void *, unsigned long)) objc_msgSend)(
+		(id) objc_getClass("NSData"), sel_registerName("dataWithBytes:length:"), png, size);
+	id image = ((id (*)(id, SEL)) objc_msgSend)((id) objc_getClass("NSImage"), sel_registerName("alloc"));
+
+	image = ((id (*)(id, SEL, id)) objc_msgSend)(image, sel_registerName("initWithData:"), data);
+	if (image == NULL)
+		return;
+	((void (*)(id, SEL, id)) objc_msgSend)(nsapp, sel_registerName("setApplicationIconImage:"), image);
+	((void (*)(id, SEL)) objc_msgSend)(image, sel_registerName("release"));
+}
 #else
 static void run_in_background(void)
+{
+}
+
+static void set_dock_icon(void)
 {
 }
 #endif
@@ -92,6 +130,13 @@ void plat_exit(int16_t code)
 {
 	if (on_app_thread)
 		end_process(code);
+	if (on_game_thread) {
+		/* As a DOS exit: the program's stack is left as it is, never unwound. */
+		audio_drop_lock();
+		program_code = (int16_t) (code & 0xff);
+		MTY_WaitableSignal(program_done);
+		wait_for_exit();
+	}
 	backend_request_exit(code);
 	wait_for_exit();
 }
@@ -149,6 +194,15 @@ static void on_event(const MTY_Event *event, void *opaque)
 	case MTY_EVENT_SHUTDOWN:
 		backend_request_exit(0);
 		return;
+	case MTY_EVENT_KEY:
+		/* Alt-Enter toggles fullscreen and never reaches the game. */
+		if ((event->key.key == MTY_KEY_ENTER || event->key.key == MTY_KEY_NP_ENTER)
+			&& (event->key.mod & MTY_MOD_ALT)) {
+			if (event->key.pressed)
+				MTY_WindowSetFullscreen(app, window, !MTY_WindowIsFullscreen(app, window));
+			return;
+		}
+		break;
 	case MTY_EVENT_MOTION:
 		/* The game draws its own pointer over the image. */
 		if (!event->motion.relative) {
@@ -195,14 +249,80 @@ static bool on_frame(void *opaque)
 	return true;
 }
 
+typedef struct {
+	const char *name;
+	int16_t argc;
+	char **argv;
+} program_start;
+
 static void *game_thread(void *opaque)
 {
-	(void) opaque;
-	plat_exit(GameMain((int16_t) game_argc, game_argv));
+	program_start *start = opaque;
+
+	on_game_thread = true;
+	plat_exit(ProgramMain(start->name, start->argc, start->argv));
 	return NULL;
 }
 
-/* Takes "--data <dir>" out of the arguments the game sees. */
+int16_t plat_run_program(const char *name, int16_t argc, char **argv)
+{
+	program_start start = {name, (int16_t) (argc + 1), calloc((size_t) argc + 2, sizeof (char *))};
+
+	/* The program sees this executable as its argv[0], as a DOS program saw its EXE. */
+	start.argv[0] = game_argv[0];
+	memcpy(start.argv + 1, argv, (size_t) argc * sizeof *argv);
+
+	events_reset();
+	video_reset();
+	audio_reset();
+	files_reset();
+	console_reset();
+	nullpage_reset();
+	ResetEnvironment();
+#ifdef U7_RESET_CHECK
+	reset_check();
+#endif
+	MTY_ThreadDetach(game_thread, &start);
+	MTY_WaitableWait(program_done, -1);
+	free(start.argv);
+	return program_code;
+}
+
+static void *launcher_thread(void *opaque)
+{
+	int16_t code;
+
+	(void) opaque;
+	if (program_name == NULL)
+		code = Ultima7Main((int16_t) game_argc, game_argv);
+	else
+		code = plat_run_program(program_name, (int16_t) (game_argc - 1), game_argv + 1);
+	backend_request_exit(code);
+	return NULL;
+}
+
+/* Takes "--data <dir>" and "--program <name>" out of the arguments the game sees. */
+static void show_help(void)
+{
+	printf("Usage: u7 [--data <dir>] [switches]\n"
+		"\n"
+		"  --data <dir>        the game folder (default: U7_DATA, or the current folder)\n"
+		"  --program <name>    run one program alone: u7 (add -p), mainmenu, intro, endgame\n"
+		"  --help              this list\n"
+		"\n"
+		"The game's own options:\n"
+		"  --cheat             enable the cheat keys\n"
+		"  --cheat-start       with --cheat: move at once, move anything, an Avatar that can't\n"
+		"                      die, debug output\n"
+		"  --speech            speech on\n"
+		"  --adlib[=port]      AdLib music (this port plays every score on the MT-32)\n"
+		"  --roland[=n]        Roland MT-32 music\n"
+		"  --shape-pool=<KB>   size of the shape cache\n"
+		"  --overlay-size      report the DOS overlay buffer size, then stop\n"
+		"  --version           show the version, then stop\n");
+	exit(0);
+}
+
 static const char *take_data_dir(int argc, char **argv)
 {
 	const char *dir = getenv("U7_DATA");
@@ -211,6 +331,10 @@ static const char *take_data_dir(int argc, char **argv)
 	for (int i = 0; i < argc; i++) {
 		if (i > 0 && strcmp(argv[i], "--data") == 0 && i + 1 < argc)
 			dir = argv[++i];
+		else if (i > 0 && strcmp(argv[i], "--program") == 0 && i + 1 < argc)
+			program_name = argv[++i];
+		else if (i > 0 && strcmp(argv[i], "--help") == 0)
+			show_help();
 		else
 			game_argv[game_argc++] = argv[i];
 	}
@@ -223,18 +347,23 @@ int main(int argc, char **argv)
 	char problem[1024];
 
 	on_app_thread = true;
-	nullpage_install();
+#ifdef U7_RESET_CHECK
+	reset_check_startup();
+#endif
 	start_time = MTY_GetTime();
 	files_set_root(take_data_dir(argc, argv));
 	if (!files_check_data(problem, sizeof problem))
 		plat_fatal(problem);
+	nullpage_install();
 	events_init();
 	video_init();
 	view_lock = MTY_MutexCreate();
+	program_done = MTY_WaitableCreate();
 
 	app = MTY_AppCreate(0, on_frame, on_event, NULL);
 	if (app == NULL)
 		plat_fatal("Could not start the window system.");
+	set_dock_icon();
 	frame = MTY_MakeDefaultFrame(0, 0, 3 * 320, 3 * 240, 0.9f);
 	window = MTY_WindowCreate(app, WINDOW_TITLE, &frame, 0);
 	MTY_AppSetPNGCursor(app, blank_cursor, sizeof blank_cursor, 0, 0);
@@ -244,7 +373,7 @@ int main(int argc, char **argv)
 	MTY_WindowSetMinSize(app, window, 320, 240);
 
 	audio_start();
-	MTY_ThreadDetach(game_thread, NULL);
+	MTY_ThreadDetach(launcher_thread, NULL);
 	MTY_AppRun(app);
 
 	MTY_AppDestroy(&app);

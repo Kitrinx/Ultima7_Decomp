@@ -46,7 +46,7 @@ extern void Item_setFrame(objref *, int16_t);
 extern uint8_t Item_getQuantity(objref *ref);
 extern Coord Item_getX(objref &);
 extern Coord Item_getY(objref &);
-extern uint8_t SpellReagents[];
+extern const uint8_t SpellReagents[];
 
 int16_t SpellCost;
 objref ReagentItems[8];
@@ -257,4 +257,10 @@ uint8_t CanAvatarReach(objref target, uint8_t ignoreRange)
 		}
 	}
 	return 0;
+}
+
+extern "C" void ResetCastGlobals(void)
+{
+	SpellCost = 0;
+	memset(ReagentItems, 0, sizeof(ReagentItems));
 }

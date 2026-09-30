@@ -141,14 +141,15 @@ uint8_t ChannelPan[11] = { 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64 };
 uint8_t SongProgram[11] = { 0 };
 
 /* Channels 2-9 for effects, each linked to the next in its list; the two list heads follow. */
-uint8_t ChannelLinks[CHANNEL_LINKS] = { 0, 1, 3, 4, 5, 6, 7, 8, 9, 11, 10, 2, 12 };
+static const uint8_t ChannelLinksStart[CHANNEL_LINKS] = { 0, 1, 3, 4, 5, 6, 7, 8, 9, 11, 10, 2, 12 };
+uint8_t ChannelLinks[CHANNEL_LINKS];
 char ChannelPriority[CHANNEL_LINKS] = { 0 };
 uint8_t ChannelOwner[CHANNEL_LINKS] = { 0 };
 uint32_t TickLength = 10000;
 int32_t SongClock = 0;
 
 /* On Adlib, percussion notes are played as this channel and note. */
-uint8_t PercussionChannel[88] = {
+const uint8_t PercussionChannel[88] = {
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 12, 0, 0, 0,
 	0, 13, 0, 10, 10, 29, 11, 0, 0, 0, 27, 0, 16, 0, 14, 0,
@@ -156,7 +157,7 @@ uint8_t PercussionChannel[88] = {
 	20, 29, 29, 21, 21, 22, 0, 30, 30, 24, 17, 20, 17, 17, 18, 17,
 	19, 17, 23, 0, 0, 0, 0, 0
 };
-uint8_t PercussionNote[88] = {
+const uint8_t PercussionNote[88] = {
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 28, 0, 0, 0,
 	0, 33, 0, 48, 48, 48, 48, 0, 0, 0, 71, 0, 71, 0, 71, 0,
@@ -1198,4 +1199,61 @@ void EnableMusic(int16_t on)
 			}
 		}
 	}
+}
+
+extern "C" void ResetMidiplayGlobals(void)
+{
+	SoundDriverInfo = 0;
+	DriverDescribeEntry = 0;
+	DriverInitEntry = 0;
+	DriverShutdownEntry = 0;
+	DriverTimerEntry = 0;
+	DriverNoteEntry = 0;
+	DriverControlEntry = 0;
+	DriverPitchEntry = 0;
+	DriverProgramEntry = 0;
+	DriverPortEntry = 0;
+	DriverSysexEntry = 0;
+	DriverReleaseChannelEntry = 0;
+	DriverClaimChannelEntry = 0;
+	SoundTickFirst = 0;
+	TimbreBank = 0;
+	memset(unused_global_7, 0, sizeof unused_global_7);
+	memset(LoopTrackPos, 0, sizeof LoopTrackPos);
+	memset(LoopTrackStatus, 0, sizeof LoopTrackStatus);
+	memset(LoopTrackClock, 0, sizeof LoopTrackClock);
+	memset(LoopTrackDone, 0, sizeof LoopTrackDone);
+	memset(TrackPos, 0, sizeof TrackPos);
+	memset(TrackStatus, 0, sizeof TrackStatus);
+	memset(TrackClock, 0, sizeof TrackClock);
+	memset(TrackDone, 0, sizeof TrackDone);
+	SongFormat = 0;
+	TrackCount = 0;
+	TicksPerBeat = 0;
+	MusicDevice = 0;
+	MidiSfxReady = 0;
+	SongMarker = 0;
+	SongBranchValue = 0;
+	SongFromStart = 1;
+	MusicOn = 1;
+	SongVolume = 256;
+	MusicVolume = 256;
+	FadeStep = 0;
+	FadeLevel = 0;
+	FadeKeepsSong = 0;
+	SongExitPending = 0;
+	QueuedSong = 0;
+	CurrentSong = 0;
+	memset(MidiSfxVoices, 0, sizeof MidiSfxVoices);
+	memset(ChannelProgram, 255, sizeof ChannelProgram);
+	memset(ChannelVolume, 127, sizeof ChannelVolume);
+	memset(ChannelPan, 64, sizeof ChannelPan);
+	memset(SongProgram, 0, sizeof SongProgram);
+	memcpy(ChannelLinks, ChannelLinksStart, sizeof ChannelLinks);
+	memset(ChannelPriority, 0, sizeof ChannelPriority);
+	memset(ChannelOwner, 0, sizeof ChannelOwner);
+	TickLength = 10000;
+	SongClock = 0;
+	SongStopped = 1;
+	MusicFlags = 0;
 }

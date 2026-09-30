@@ -200,3 +200,8 @@ void UnequipItem(ItemId id)
 	} else
 		Item_moveIntoContainer(&item, container);
 }
+
+extern "C" void ResetEquipGlobals(void)
+{
+	memset(&EquipList, 0, sizeof(EquipList));
+}

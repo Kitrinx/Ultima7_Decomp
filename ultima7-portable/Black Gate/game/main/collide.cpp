@@ -47,7 +47,7 @@ extern int32_t CollisionGrid;
 
 uint8_t BlockedByDoor = 0;
 uint8_t InDungeon = 0;
-int32_t HeightMasks[16] = {
+const int32_t HeightMasks[16] = {
 	INT32_C(0x0), INT32_C(0x1), INT32_C(0x5), INT32_C(0x15), INT32_C(0x55), INT32_C(0x155), INT32_C(0x555), INT32_C(0x1555),
 	INT32_C(0x5555), INT32_C(0x15555), INT32_C(0x55555), INT32_C(0x155555), INT32_C(0x555555), INT32_C(0x1555555), INT32_C(0x5555555), INT32_C(0x15555555)
 };
@@ -478,4 +478,10 @@ void CheckContactEffects(objref npc)
 		if (IS_SET(GetNpcBufferForIbo(&NPCRef(npc))->status, 0x400))
 			return;
 	}
+}
+
+extern "C" void ResetCollideGlobals(void)
+{
+	BlockedByDoor = 0;
+	InDungeon = 0;
 }

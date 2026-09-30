@@ -4,6 +4,7 @@
  */
 
 #include "u7port.h"
+#include <new>
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -211,4 +212,15 @@ void String::clear()
 {
 	if (len > 0)
 		*this = "";
+}
+
+extern "C" void ResetVstringGlobals(void)
+{
+	memset((void *)&TempString, 0, sizeof(TempString));
+	memset(EmptyString, 0, sizeof(EmptyString));
+}
+
+extern "C" void ConstructVstringGlobals(void)
+{
+	new (&TempString) String();
 }

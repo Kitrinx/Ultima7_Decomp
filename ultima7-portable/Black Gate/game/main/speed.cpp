@@ -4,6 +4,7 @@
  */
 
 #include "u7port.h"
+#include <new>
 #include "systimer.h"
 
 struct Stopwatch {
@@ -23,10 +24,11 @@ void ResetFrameRate(void)
 	FrameCount = 0;
 }
 
+static Stopwatch stopwatch;
+
 /* Measures the frame rate; the rates are worked out but never shown. */
 void MeasureFrameRate(void)
 {
-	static Stopwatch stopwatch;
 	uint32_t elapsed;
 	uint32_t unusedRate, unusedRemainder, unusedAverage;
 
@@ -42,4 +44,16 @@ void MeasureFrameRate(void)
 		}
 	}
 	stopwatch.start();
+}
+
+extern "C" void ResetSpeedGlobals(void)
+{
+	FrameTimeTotal = 0;
+	FrameCount = 0;
+	memset((void *)&stopwatch, 0, sizeof(stopwatch));
+}
+
+extern "C" void ConstructSpeedGlobals(void)
+{
+	new (&stopwatch) Stopwatch();
 }

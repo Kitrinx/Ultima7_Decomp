@@ -60,8 +60,8 @@ inline uint8_t WrapDir(int16_t dir) { return dir & 7; }
 inline uint8_t HasTarget(NPCRef &npc) { return npc.buffer()->primaryTarget != -1; }
 inline uint8_t HasTarget(NPCRef &&npc) { return HasTarget(npc); }
 
-uint8_t DirectionForDirectionKey[11] = { 7, 0, 1, 255, 6, 255, 2, 255, 5, 4, 3 };
-uint8_t DirectionForNumberKey[9] = { 5, 4, 3, 6, 255, 2, 7, 0, 1 };
+const uint8_t DirectionForDirectionKey[11] = { 7, 0, 1, 255, 6, 255, 2, 255, 5, 4, 3 };
+const uint8_t DirectionForNumberKey[9] = { 5, 4, 3, 6, 255, 2, 7, 0, 1 };
 uint8_t SingleStepMode = 0, AudioDisabled = 0, MovementDirection = 255;
 char TildeString[] = "~";
 
@@ -358,7 +358,7 @@ void ProcessKey(uint16_t key, int16_t mouseX, int16_t mouseY, uint8_t *steps)
 				objref selected;
 				Coord x, y;
 				CheatPrintfAtCoords(1, 1, "Sprite Number:  ");
-				scanf("%d", &sprite);
+				sprite = (int16_t) ConsoleReadNumber(0);
 				HavePlayerSelect(&selected, &x, &y, &z);
 				SpriteManager_playSpriteForItem(&gSpriteManager, selected.off, 0, 0, 0, 0, sprite + 1024, 0, -1, 5);
 			}
@@ -424,4 +424,12 @@ void PollAndProcessKey(uint8_t *steps)
 		PollKeyAndTranslateWithMouse(&key, &mouseX, &mouseY);
 		ProcessKey(key, mouseX, mouseY, steps);
 	}
+}
+
+extern "C" void ResetMainctrlGlobals(void)
+{
+	SingleStepMode = 0;
+	AudioDisabled = 0;
+	MovementDirection = 255;
+	memcpy(TildeString, "~", sizeof(TildeString));
 }

@@ -18,7 +18,7 @@ extern RedScreen RedScreenPicture;
 
 extern int32_t RedScreenCycleRate;
 extern int16_t RedScreenShapeNumber;
-extern char *EndshapeFileName;
+extern char *const EndshapeFileName;
 void CycleRedScreenPalette(void);
 
 #endif

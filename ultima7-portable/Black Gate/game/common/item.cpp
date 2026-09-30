@@ -1188,3 +1188,15 @@ void ReportBadFreeList(char *file, int16_t line)
 	FatalError("Bad Free List @%s, %d", file, line);
 }
 
+
+extern "C" void ResetItemGlobals(void)
+{
+	ItemBuffer = 0;
+	ItemBufferBase = 0;
+	ItemFreeList = 0;
+	DetachedItems = 0;
+	ItemFreeCount = 0;
+	OffMapItemLink = 0;
+	memset(ChunkItemLists, 0, sizeof ChunkItemLists);
+	UnusedItemGlobal = 0;
+}

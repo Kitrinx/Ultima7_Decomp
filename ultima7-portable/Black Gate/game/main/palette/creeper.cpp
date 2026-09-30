@@ -4,6 +4,7 @@
  */
 
 #include "u7port.h"
+#include <new>
 #include "lowlevel.h"
 #include "dosio.h"
 #include "vooalloc.h"
@@ -183,10 +184,10 @@ uint8_t Creeper_stepAndShow(Creeper *creeper)
 
 /* The effect colors live in the creeper, outside linear memory, so they are converted
  * through a far heap buffer. */
+static void *scratch = 0;
+
 static void WordsToColors(RgbColor *dest, int32_t src)
 {
-	static void *scratch = 0;
-
 	if (scratch == 0 && (scratch = AllocateFarHeap(256 * sizeof(RgbColor), 0)) == 0)
 		ReportOutOfFarMemory();
 	PaletteWordsToBytes(PointerToLinear(scratch), src);
@@ -316,4 +317,46 @@ void Creeper_savePalette(Creeper *creeper)
 		Creeper_allocateSaved(creeper);
 	MoveLinear(creeper->saved, creeper->pal->colors, PALETTE_SIZE, 0x111);
 	creeper->pal->modified = 1;
+}
+
+extern "C" void ResetCreeperGlobals(void)
+{
+	memset((void *)&RedPalette, 0, sizeof(RedPalette));
+	memset((void *)&DarkPalette, 0, sizeof(DarkPalette));
+	memset((void *)&LightningPalette, 0, sizeof(LightningPalette));
+	memset((void *)&CandlePalette, 0, sizeof(CandlePalette));
+	memset((void *)&SingleLightPalette, 0, sizeof(SingleLightPalette));
+	memset((void *)&ManyLightsPalette, 0, sizeof(ManyLightsPalette));
+	memset((void *)&LightSpellPalette, 0, sizeof(LightSpellPalette));
+	memset((void *)&OvercastPalette, 0, sizeof(OvercastPalette));
+	memset((void *)&FogPalette, 0, sizeof(FogPalette));
+	memset((void *)&DayPalette, 0, sizeof(DayPalette));
+	memset((void *)&NightPalette, 0, sizeof(NightPalette));
+	memset((void *)&DuskPalette, 0, sizeof(DuskPalette));
+	memset((void *)&InvisiblePalette, 0, sizeof(InvisiblePalette));
+	memset((void *)&SparePalette, 0, sizeof(SparePalette));
+	memset((void *)&RedRampPalette, 0, sizeof(RedRampPalette));
+	memset((void *)&LivePalette, 0, sizeof(LivePalette));
+	EffectCountdown = 0;
+	scratch = 0;
+}
+
+extern "C" void ConstructCreeperGlobals(void)
+{
+	new (&RedPalette) PaletteResource();
+	new (&DarkPalette) PaletteResource();
+	new (&LightningPalette) PaletteResource();
+	new (&CandlePalette) PaletteResource();
+	new (&SingleLightPalette) PaletteResource();
+	new (&ManyLightsPalette) PaletteResource();
+	new (&LightSpellPalette) PaletteResource();
+	new (&OvercastPalette) PaletteResource();
+	new (&FogPalette) PaletteResource();
+	new (&DayPalette) PaletteResource();
+	new (&NightPalette) PaletteResource();
+	new (&DuskPalette) PaletteResource();
+	new (&InvisiblePalette) PaletteResource();
+	new (&SparePalette) PaletteResource();
+	new (&RedRampPalette) PaletteResource();
+	new (&LivePalette) Palette();
 }

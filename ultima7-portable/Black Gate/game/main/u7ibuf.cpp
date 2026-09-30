@@ -4,6 +4,7 @@
  */
 
 #include "u7port.h"
+#include <new>
 #include <stdio.h>
 #include <string.h>
 #include "plat.h"
@@ -59,9 +60,9 @@ int16_t DeadPartyMembers[12];
 ItemNodesSaver ItemNodesFile;
 ItemBufferSaver ItemBufferFile;
 OstiaSaver OstiaFile;
-char *ItemNodeFileName = "ITEMNODE.DAT";
-char *U7IBufFileName = "U7IBUF.DAT";
-char *U7OstiaFileName = "U7_OSTIA.DAT";
+char *const ItemNodeFileName = "ITEMNODE.DAT";
+char *const U7IBufFileName = "U7IBUF.DAT";
+char *const U7OstiaFileName = "U7_OSTIA.DAT";
 uint8_t AvatarDontMove = 1;
 uint8_t ArmageddonDone = 0;
 int16_t ActiveSailor = 0;
@@ -229,4 +230,26 @@ uint8_t GetShapeFrameKind(uint16_t type)
 char * GetItemName(uint16_t ref)
 {
 	return GetGameText(0, ItemType(ref));
+}
+
+extern "C" void ResetU7ibufGlobals(void)
+{
+	memset(DeadPartyMembers, 0, sizeof(DeadPartyMembers));
+	memset((void *)&ItemNodesFile, 0, sizeof(ItemNodesFile));
+	memset((void *)&ItemBufferFile, 0, sizeof(ItemBufferFile));
+	memset((void *)&OstiaFile, 0, sizeof(OstiaFile));
+	AvatarDontMove = 1;
+	ArmageddonDone = 0;
+	ActiveSailor = 0;
+	CurrentVehicle = 0;
+	ActiveBarge = 0;
+	DeadPartyCount = 0;
+	OinkMode = 0;
+}
+
+extern "C" void ConstructU7ibufGlobals(void)
+{
+	new (&ItemNodesFile) ItemNodesSaver();
+	new (&ItemBufferFile) ItemBufferSaver();
+	new (&OstiaFile) OstiaSaver();
 }

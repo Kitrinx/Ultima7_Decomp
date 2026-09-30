@@ -145,3 +145,11 @@ void LoadRegionMap(uint8_t *region, void *buf)
 		DosClose(fd);
 	}
 }
+
+extern "C" void ResetLoadregGlobals(void)
+{
+	memset(SavedRegionBits, 0, sizeof SavedRegionBits);
+	IregPathFormat = 0;
+	MapPath = 0;
+	CurrentRegion = 255;
+}

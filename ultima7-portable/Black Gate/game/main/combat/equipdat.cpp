@@ -4,6 +4,7 @@
  */
 
 #include "u7port.h"
+#include <new>
 #include "lowlevel.h"
 #include "dosio.h"
 #include "oops.h"
@@ -32,4 +33,16 @@ void EquipTable::load(char *name)
 	if (!ReadMojo(fd, -INT32_C(1), INT32_C(1), EquipCount, count, base, INT32_C(60)))
 		ReportFileNotFound(name);
 	DosClose(fd);
+}
+
+extern "C" void ResetEquipdatGlobals(void)
+{
+	strcpy(EquipFileName, "equip.dat");
+	memset((void *)&EquipRecords, 0, sizeof(EquipRecords));
+	EquipCount = 0;
+}
+
+extern "C" void ConstructEquipdatGlobals(void)
+{
+	new (&EquipRecords) EquipTable();
 }

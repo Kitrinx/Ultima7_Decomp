@@ -25,20 +25,20 @@ void TakeCombatTurn(NPCRef *);
 uint8_t FleeStep(objref *, int8_t, int8_t, int8_t);
 int16_t GetMoveStride(objref *);
 
-extern char ProtectChance[];
+extern const char ProtectChance[];
 extern uint8_t PartyMissileFlags[];
-extern uint8_t FleeDirections[8][5];
-extern char CallForHelpChance[];
+extern const uint8_t FleeDirections[8][5];
+extern const char CallForHelpChance[];
 uint16_t GetRangeWithWeapon(NPCRef &npc, int16_t *weapon);
 void CallForHelp(NPCRef &self);
 inline void CallForHelp(NPCRef &&self) { CallForHelp(self); }
 uint8_t IsTargetInReach(NPCRef *attacker, objref target);
 int8_t IsRangedAttack(objref *npc, int16_t weaponNumber, objref target);
-extern int16_t InvisibleTypes[];
+extern const int16_t InvisibleTypes[];
 int8_t CanTurnInvisible(objref *p);
-extern int16_t TeleportingTypes[];
+extern const int16_t TeleportingTypes[];
 int8_t CanTeleport(objref *p);
-extern int16_t SummoningTypes[];
+extern const int16_t SummoningTypes[];
 int8_t CanSummon(objref *p);
 uint8_t RespondToAttack(NPCRef &self, int16_t attacker, int8_t hp);
 inline uint8_t RespondToAttack(NPCRef &&self, int16_t attacker, int8_t hp) { return RespondToAttack(self, attacker, hp); }

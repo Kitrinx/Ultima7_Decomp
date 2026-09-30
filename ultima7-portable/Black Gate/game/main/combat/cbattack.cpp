@@ -453,3 +453,15 @@ static int8_t ResolveAttack(objref actor, int16_t number)
 		ApplyWeaponHit(actor, StrikeTargetItem, number, ammoIndex.index, 0, 0);
 	return 1;
 }
+
+extern "C" void ResetCbattackGlobals(void)
+{
+	StrikeTargetX = 0;
+	StrikeTargetY = 0;
+	StrikeTargetZ = 0;
+	AttackTargetZ = 0;
+	memset((void *)&AttackTargetItem, 0, sizeof(AttackTargetItem));
+	memset((void *)&AttackTargetX, 0, sizeof(AttackTargetX));
+	memset((void *)&AttackTargetY, 0, sizeof(AttackTargetY));
+	memset((void *)&StrikeTargetItem, 0, sizeof(StrikeTargetItem));
+}

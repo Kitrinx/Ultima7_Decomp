@@ -4,6 +4,7 @@
  */
 
 #include "u7port.h"
+#include <new>
 #include <string.h>
 #include "easyfile.h"
 #include "flex.h"
@@ -19,12 +20,12 @@ struct TextCache : DataCache {
 	char *read(int16_t n, int16_t *len, char *dst);
 };
 
-static char *TextFileName = "text.flx";
+static char *const TextFileName = "text.flx";
 static TextCache GameTextCache;
 /* Shown for an entry out of range. */
-static char *MissingText = "NA";
+static char *const MissingText = "NA";
 /* The first entry of each section. */
-static uint16_t TextSectionStart[7] = { 0, 1024, 1280, 1536, 1792, 2048, 2304 };
+static const uint16_t TextSectionStart[7] = { 0, 1024, 1280, 1536, 1792, 2048, 2304 };
 
 char *TextCache::text(uint16_t section, uint16_t n)
 {
@@ -64,4 +65,14 @@ char *GetGameText(uint8_t section, uint16_t n)
 void InitTextCache(void)
 {
 	GameTextCache.init(1024);
+}
+
+extern "C" void ResetTextGlobals(void)
+{
+	memset((void *)&GameTextCache, 0, sizeof(GameTextCache));
+}
+
+extern "C" void ConstructTextGlobals(void)
+{
+	new (&GameTextCache) TextCache();
 }

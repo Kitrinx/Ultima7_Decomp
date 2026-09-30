@@ -39,10 +39,10 @@ struct SaveGameFile : FlexWriter {
 GameFiles SaveGameFiles;
 
 uint8_t SaveLoadActive = 0;
-char *InitGameFileName = "INITGAME.DAT";
-char *SaveGameFileName = "SAVEGAME.DAT";
-char *SaveFileNameFormat = "GAME%02d.U7";
-char *NPCFileName = "NPC.DAT";
+char *const InitGameFileName = "INITGAME.DAT";
+char *const SaveGameFileName = "SAVEGAME.DAT";
+char *const SaveFileNameFormat = "GAME%02d.U7";
+char *const NPCFileName = "NPC.DAT";
 
 /* Free bytes on the current drive. */
 int32_t GetDiskFreeBytes(void)
@@ -195,4 +195,10 @@ void GameFiles::deleteGameDirectory()
 		}
 		plat_dir_remove(GamedatPath);
 	}
+}
+
+extern "C" void ResetSavegameGlobals(void)
+{
+	memset(&SaveGameFiles, 0, sizeof(SaveGameFiles));
+	SaveLoadActive = 0;
 }

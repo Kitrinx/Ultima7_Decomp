@@ -15,6 +15,7 @@
 #include "uccomm2.h"
 #include "voice.h"
 #include "memapi.h"
+#include <new>
 
 uint8_t SpeechOn = 0;
 uint8_t SpeechCardStarted = 0;
@@ -124,4 +125,20 @@ void ContinuePlayingSpeech(void)
 uint8_t IsSpeechPlaying(void)
 {
 	return SpeechPlayer.isPlaying();
+}
+
+extern "C" void ResetVoiceGlobals(void)
+{
+	SpeechOn = 0;
+	SpeechCardStarted = 0;
+	SpeechCardConfigured = 0;
+	SpeechStarted = 0;
+	SpeechSpriteShown = 0;
+	SpeechSprite = 0;
+	memset((void *)&SpeechStream, 0, sizeof SpeechStream);
+}
+
+extern "C" void ConstructVoiceGlobals(void)
+{
+	new (&SpeechStream) BorrowedSpeechCache();
 }

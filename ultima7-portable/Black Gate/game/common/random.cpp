@@ -49,3 +49,8 @@ int16_t GenerateRandomIntegerInRange(int16_t n)
 	return (int16_t) (n ? r % (uint16_t) n : 0);
 }
 }
+
+extern "C" void ResetRandomGlobals(void)
+{
+	RandomSeed = 0x0BAD0BAD;
+}

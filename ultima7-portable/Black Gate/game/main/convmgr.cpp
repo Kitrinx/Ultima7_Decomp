@@ -4,6 +4,7 @@
 
 /* path: convmgr.c */
 #include "u7port.h"
+#include <new>
 #include "plat.h"
 #include "objref.h"
 #include "lowlevel.h"
@@ -107,10 +108,10 @@ FaceGump *NPCFaces[2] = { 0, 0 };
 TextBox *TextBoxes[2] = { 0, 0 };
 int16_t SavedScreen = -1;                   /* the screen under the gumps */
 int8_t ConversationShown = 0;
-int16_t TextBoxLeft[2] = { 56, 56 };        /* mode 1: where each text box lies */
-int16_t TextBoxTop[2] = { 10, 144 };
-int16_t TextBoxRight[2] = { 312, 312 };
-int16_t TextBoxBottom[2] = { 70, 202 };
+const int16_t TextBoxLeft[2] = { 56, 56 };        /* mode 1: where each text box lies */
+const int16_t TextBoxTop[2] = { 10, 144 };
+const int16_t TextBoxRight[2] = { 312, 312 };
+const int16_t TextBoxBottom[2] = { 70, 202 };
 
 ConvMgr::ConvMgr()
 {
@@ -489,4 +490,26 @@ void ShowSign(int16_t shape, char *text)
 void BeginConversation(int16_t type)
 {
 	OpenBook(type);
+}
+
+extern "C" void ResetConvmgrGlobals(void)
+{
+	ConversationMode = 0;
+	FaceNPC[0] = 0;
+	FaceNPC[1] = 0;
+	SpeakingFace = -1;
+	SpeakerLineCount = 0;
+	ConversationAnswers = 0;
+	AvatarFace = 0;
+	NPCFaces[0] = 0;
+	NPCFaces[1] = 0;
+	TextBoxes[0] = 0;
+	TextBoxes[1] = 0;
+	SavedScreen = -1;
+	ConversationShown = 0;
+}
+
+extern "C" void ConstructConvmgrGlobals(void)
+{
+	new (&ConversationManager) ConvMgr();
 }

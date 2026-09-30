@@ -18,7 +18,8 @@
 #include "search.h"
 #include "script.h"
 
-uint8_t BakedFoodFrames[6] = { 0, 2, 3, 4, 5, 6 };
+static const uint8_t BakedFoodFramesStart[6] = { 0, 2, 3, 4, 5, 6 };
+uint8_t BakedFoodFrames[6];
 
 extern int8_t FindItemInArea(AreaSearch *, Loc, Loc, int16_t, int16_t, int8_t, int16_t);
 
@@ -179,4 +180,9 @@ void RunBakeSchedule(objref *npc)
 		CUR_SCHED(npc).state = 1;
 		break;
 	}
+}
+
+extern "C" void ResetSchebakeGlobals(void)
+{
+	memcpy(BakedFoodFrames, BakedFoodFramesStart, sizeof(BakedFoodFrames));
 }
