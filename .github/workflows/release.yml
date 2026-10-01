@@ -1,0 +1,100 @@
+# Builds the portable Black Gate for macOS, Windows and Linux. A pushed tag starting with "v"
+# also publishes the three archives as a GitHub release; a manual run only keeps them as
+# workflow artifacts.
+name: Release builds
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  SOURCE_DIR: ultima7-portable/Black Gate
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: linux-x64
+            os: ubuntu-24.04
+            exe: u7
+          - name: macos-arm64
+            os: macos-14
+            exe: u7
+          - name: windows-x64
+            os: windows-2022
+            exe: u7.exe
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Linux build tools
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y glslang-tools
+
+      - name: Build (macOS, Linux)
+        if: runner.os != 'Windows'
+        run: |
+          cmake -S "$SOURCE_DIR" -B build -DCMAKE_BUILD_TYPE=Release
+          cmake --build build --target u7 --parallel
+
+      - name: Set up the Visual Studio tools
+        if: runner.os == 'Windows'
+        uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: x64
+
+      # libmatoya's makefile needs cmd's mkdir, so Git's usr\bin comes off the PATH.
+      - name: Build (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $env:PATH = ($env:PATH -split ';' | Where-Object { $_ -notmatch 'Git\\usr\\bin' }) -join ';'
+          cmake -S "$env:SOURCE_DIR" -B build -G Ninja -DCMAKE_BUILD_TYPE=Release `
+            -DCMAKE_C_COMPILER=clang-cl -DCMAKE_CXX_COMPILER=clang-cl
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          cmake --build build --target u7
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Package
+        shell: bash
+        run: |
+          name="ultima7-portable-${GITHUB_REF_NAME//\//-}-${{ matrix.name }}"
+          mkdir -p "package/$name/licenses"
+          cp "build/${{ matrix.exe }}" "package/$name/"
+          cp "$SOURCE_DIR/README.md" "package/$name/"
+          cp "$SOURCE_DIR/third_party/libmatoya/LICENSE" "package/$name/licenses/libmatoya-LICENSE"
+          cp "$SOURCE_DIR/third_party/munt/mt32emu/COPYING.LESSER.txt" "package/$name/licenses/munt-COPYING.LESSER.txt"
+          cp "$SOURCE_DIR/third_party/munt/mt32emu/COPYING.txt" "package/$name/licenses/munt-COPYING.txt"
+          cd package
+          if [ "$RUNNER_OS" = "Windows" ]; then
+            7z a "$name.zip" "$name" > /dev/null
+          else
+            zip -qr "$name.zip" "$name"
+          fi
+          echo "ARCHIVE=package/$name.zip" >> "$GITHUB_ENV"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.name }}
+          path: ${{ env.ARCHIVE }}
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: build
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: archives
+          merge-multiple: true
+
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: archives/*.zip
+          generate_release_notes: true

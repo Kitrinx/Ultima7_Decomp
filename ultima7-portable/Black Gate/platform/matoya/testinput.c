@@ -84,7 +84,7 @@ static void parse(void)
 
 		if (sscanf(part, "%ld %15s", &at, action) != 2)
 			continue;
-		if (strcmp(action, "key") == 0 && sscanf(part, "%*ld %*s %15s", arg) == 1) {
+		if (strcmp(action, "key") == 0 && sscanf(part, "%*d %*s %15s", arg) == 1) {
 			MTY_Key key = named_key(arg);
 			if (key == MTY_KEY_NONE)
 				continue;
@@ -95,16 +95,16 @@ static void parse(void)
 				s->event.key.key = key;
 				s->event.key.pressed = pressed != 0;
 			}
-		} else if (strcmp(action, "move") == 0 && sscanf(part, "%*ld %*s %d %d", &x, &y) == 2) {
+		} else if (strcmp(action, "move") == 0 && sscanf(part, "%*d %*s %d %d", &x, &y) == 2) {
 			step *s = &steps[step_count++];
 			s->at_ms = at;
 			s->is_move = true;
 			s->game_x = x;
 			s->game_y = y;
 			s->event.type = MTY_EVENT_MOTION;
-		} else if (strcmp(action, "shot") == 0 && sscanf(part, "%*ld %*s %127s", steps[step_count].shot) == 1) {
+		} else if (strcmp(action, "shot") == 0 && sscanf(part, "%*d %*s %127s", steps[step_count].shot) == 1) {
 			steps[step_count++].at_ms = at;
-		} else if (strcmp(action, "end") == 0 && sscanf(part, "%*ld %*s %d", &x) == 1) {
+		} else if (strcmp(action, "end") == 0 && sscanf(part, "%*d %*s %d", &x) == 1) {
 			steps[step_count].at_ms = at;
 			steps[step_count].end_code = (int16_t) x;
 			steps[step_count++].is_end = true;
