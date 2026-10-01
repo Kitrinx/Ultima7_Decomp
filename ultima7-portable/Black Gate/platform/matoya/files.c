@@ -49,6 +49,11 @@ typedef struct {
 static char root[PATH_SIZE] = ".";
 static handle handles[MAX_HANDLES + 1];
 
+const char *files_root(void)
+{
+	return root;
+}
+
 void files_set_root(const char *dir)
 {
 	size_t n;
@@ -213,10 +218,51 @@ static FILE *use_handle(int16_t file, int op)
 	return h->file;
 }
 
+/* U7.CFG is the sound setup the DOS installer wrote: line 1 the music card, line 2 the speech
+ * card's port, IRQ and DMA. Here music is MT-32 emulation or nothing, and speech always has an
+ * output, so the game reads a setup to match: "r 330" when the MT-32 ROMs were found, and a
+ * speech line when the file has none. The rest is the file's own; the file is never changed. */
+static bool is_sound_config(const char *name)
+{
+	return strcasecmp(name, "u7.cfg") == 0 || strcasecmp(name, ".\\u7.cfg") == 0;
+}
+
+static FILE *open_sound_config(const char *name)
+{
+	char path[PATH_SIZE], music[81] = "p", speech[81] = "", copy[81];
+	int tokens = 0;
+	FILE *f;
+
+	if (resolve(name, false, path) && is_file(path) && (f = fopen(path, "rb")) != NULL) {
+		if (fgets(music, sizeof music, f) == NULL || fgets(speech, sizeof speech, f) == NULL)
+			speech[0] = '\0';
+		fclose(f);
+		music[strcspn(music, "\r\n")] = '\0';
+		speech[strcspn(speech, "\r\n")] = '\0';
+	}
+	/* the game turns speech on only with all three of port, IRQ and DMA */
+	snprintf(copy, sizeof copy, "%s", speech);
+	for (char *t = strtok(copy, " \t"); t != NULL; t = strtok(NULL, " \t"))
+		tokens++;
+	if (plat_midi_available())
+		snprintf(music, sizeof music, "r 330");
+	if (tokens < 3)
+		snprintf(speech, sizeof speech, "220 7 1");
+
+	if ((f = tmpfile()) == NULL)
+		return NULL;
+	fprintf(f, "%s\r\n%s\r\n", music, speech);
+	rewind(f);
+	return f;
+}
+
 int16_t plat_file_open(const char *name, int16_t mode)
 {
 	char path[PATH_SIZE];
+	FILE *config;
 
+	if (is_sound_config(name) && (config = open_sound_config(name)) != NULL)
+		return add_handle(config);
 	if (!resolve(name, false, path) || !is_file(path))
 		return -1;
 	return add_handle(fopen(path, (mode & PLAT_FILE_WRITE) ? "r+b" : "rb"));

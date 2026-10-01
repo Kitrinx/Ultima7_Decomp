@@ -17,8 +17,9 @@
 
 #include "backend.h"
 
+/* Without a folder built in, the ROMs are looked for beside the game's files. */
 #ifndef U7_DEFAULT_ROM_DIR
-#define U7_DEFAULT_ROM_DIR "."
+#define U7_DEFAULT_ROM_DIR files_root()
 #endif
 
 #define RATE 48000

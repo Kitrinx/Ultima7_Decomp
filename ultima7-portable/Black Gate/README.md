@@ -22,6 +22,7 @@ ultima7-portable/Black Gate/
   third_party/libmatoya/ libmatoya, vendored at a pinned commit (MIT)
   third_party/munt/      Munt's mt32emu library, vendored at a pinned tag (LGPL 2.1+)
   tools/u7_new_game.py   sets up a new game with a named Avatar
+  packaging/README.txt   the players' README, shipped in the release archives
 ```
 
 ## Requirements
@@ -58,8 +59,8 @@ libmatoya's makefile relies on `cmd`'s `mkdir`. If Git's `usr\bin` is on `PATH`,
 Git's `mkdir` instead and the libmatoya step fails, so build from a prompt without it.
 
 The first build also builds libmatoya (through its own makefile, into
-`third_party/libmatoya/bin/`) and mt32emu (as a CMake subproject). The program is `build/u7`
-(`build\u7.exe` on Windows).
+`third_party/libmatoya/bin/`) and mt32emu (as a CMake subproject). The program is `build/Ultima7`
+(`build\Ultima7.exe` on Windows).
 
 Options:
 
@@ -77,18 +78,29 @@ Options:
 `STATIC` folder (and `GAMEDAT`, if you have a game in progress). File names are matched in any
 letter case. The game writes to this folder, so use a copy.
 
-**MT-32 ROMs.** Munt needs the Roland MT-32 control and PCM ROM images
-(`MT32_CONTROL.ROM`, `MT32_PCM.ROM`; CM-32L images also work). They are not included. Point the
-game at their folder with the `U7_MT32_ROMS` environment variable or the `U7_MT32_ROM_DIR` build
-option. Without them the game runs with no music or MIDI sound effects.
+**MT-32 ROMs.** Munt needs the Roland MT-32 control and PCM ROM images (any file names; they
+are recognised by content). CM-32L images and split control-ROM halves are not used. They are
+not included. The game looks in the `U7_MT32_ROMS` folder, else the `U7_MT32_ROM_DIR` build
+option, else the game data folder. Without them the game runs with no music or MIDI sound
+effects.
+
+**Sound setup.** `U7.CFG` is the setup the DOS installer wrote. Music here is the MT-32 or
+nothing, so when the ROMs are found the game reads `U7.CFG` as saying Roland (`r 330`), and with
+no speech line it reads one (`220 7 1`), whatever the file says (`platform/matoya/files.c`). The
+file on disk is never changed. The in-game audio options still turn each part off.
 
 ## Run
 
 ```sh
-build/u7 --data /path/to/ultima7
+build/Ultima7 --data /path/to/ultima7
 ```
 
-- `--data` is the game data folder (or set `U7_DATA`; the default is the current folder).
+- `--data` is the game data folder (or set `U7_DATA`). By default it is the current folder if
+  that has `STATIC`, else the folder the program is in, so a double-clicked `Ultima7` placed in
+  the game folder finds its data on every platform. The game checks for its core files at
+  launch and names any that are missing or empty.
+- On Windows the program is a windowed one, so no console opens with it. Started from a
+  terminal, it prints its messages there; redirected output goes to the file or pipe as usual.
 - This is the launcher, as `ULTIMA7.COM` was: it runs the main menu, intro, game and endgame in
   turn, in one process and one window, each starting afresh as its own EXE did. Other arguments
   go on to the game.

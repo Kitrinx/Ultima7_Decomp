@@ -128,10 +128,16 @@ if(U7_BACKEND_MATOYA)
 
     file(GLOB U7_MATOYA_SOURCES CONFIGURE_DEPENDS "${U7_PLATFORM_DIR}/matoya/*.c")
     add_executable(u7 ${U7_MATOYA_SOURCES})
+    # Ultima7(.exe), so it can sit in the game folder beside the DOS U7.EXE without clashing.
+    set_target_properties(u7 PROPERTIES OUTPUT_NAME Ultima7)
     target_include_directories(u7 PRIVATE "${U7_PLATFORM_DIR}")
     target_link_libraries(u7 PRIVATE u7_game Matoya::matoya mt32emu)
     if(WIN32)
         target_link_libraries(u7 PRIVATE dbghelp)       # names null accesses (nullpage.c)
+        # A windowed program, so no console opens with the game; main() stays the entry point.
+        # Started from a terminal, it attaches to that console for its messages (main.c).
+        set_target_properties(u7 PROPERTIES WIN32_EXECUTABLE TRUE)
+        target_link_options(u7 PRIVATE /ENTRY:mainCRTStartup)
     endif()
 
     # Windows loads the window and taskbar icon from the exe; macOS gets a PNG for the Dock.

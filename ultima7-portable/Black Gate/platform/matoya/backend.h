@@ -59,6 +59,8 @@ bool video_write_shot(const char *path);
 
 /* files.c */
 void files_set_root(const char *dir);
+/* The game's folder, as set. */
+const char *files_root(void);
 /* Whether the data folder holds the game's files; if not, says what is wrong in message. */
 bool files_check_data(char *message, size_t size);
 void files_reset(void);

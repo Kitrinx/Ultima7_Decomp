@@ -304,9 +304,10 @@ static void *launcher_thread(void *opaque)
 /* Takes "--data <dir>" and "--program <name>" out of the arguments the game sees. */
 static void show_help(void)
 {
-	printf("Usage: u7 [--data <dir>] [switches]\n"
+	printf("Usage: Ultima7 [--data <dir>] [switches]\n"
 		"\n"
-		"  --data <dir>        the game folder (default: U7_DATA, or the current folder)\n"
+		"  --data <dir>        the game folder (default: U7_DATA, else the current folder if it\n"
+		"                      has STATIC, else the folder Ultima7 is in)\n"
 		"  --program <name>    run one program alone: u7 (add -p), mainmenu, intro, endgame\n"
 		"  --help              this list\n"
 		"\n"
@@ -338,20 +339,86 @@ static const char *take_data_dir(int argc, char **argv)
 		else
 			game_argv[game_argc++] = argv[i];
 	}
-	return dir != NULL && dir[0] != '\0' ? dir : ".";
+	return dir != NULL && dir[0] != '\0' ? dir : NULL;
 }
+
+#ifdef _WIN32
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#elif defined(__APPLE__)
+#include <mach-o/dyld.h>
+#else
+#include <unistd.h>
+#endif
+
+/* The folder the program itself is in. */
+static bool exe_directory(char *out, size_t size)
+{
+	char *slash;
+
+#ifdef _WIN32
+	DWORD n = GetModuleFileNameA(NULL, out, (DWORD) size);
+
+	if (n == 0 || n >= size)
+		return false;
+	slash = strrchr(out, '\\');
+#elif defined(__APPLE__)
+	uint32_t n = (uint32_t) size;
+
+	if (_NSGetExecutablePath(out, &n) != 0)
+		return false;
+	slash = strrchr(out, '/');
+#else
+	ssize_t n = readlink("/proc/self/exe", out, size - 1);
+
+	if (n <= 0)
+		return false;
+	out[n] = '\0';
+	slash = strrchr(out, '/');
+#endif
+	if (slash == NULL)
+		return false;
+	*slash = '\0';
+	return true;
+}
+
+#ifdef _WIN32
+
+/* The exe is a windowed program, so a double-click opens no console. Started from a terminal,
+ * its messages go to that terminal; output already redirected to a file or pipe stays there. */
+static void use_parent_console(void)
+{
+	if (!AttachConsole(ATTACH_PARENT_PROCESS))
+		return;
+	if (GetFileType(GetStdHandle(STD_OUTPUT_HANDLE)) == FILE_TYPE_UNKNOWN)
+		freopen("CONOUT$", "w", stdout);
+	if (GetFileType(GetStdHandle(STD_ERROR_HANDLE)) == FILE_TYPE_UNKNOWN)
+		freopen("CONOUT$", "w", stderr);
+}
+#else
+static void use_parent_console(void)
+{
+}
+#endif
 
 int main(int argc, char **argv)
 {
 	MTY_Frame frame;
-	char problem[1024];
+	char problem[1024], own_dir[1024];
+	const char *data_dir;
 
+	use_parent_console();
 	on_app_thread = true;
 #ifdef U7_RESET_CHECK
 	reset_check_startup();
 #endif
 	start_time = MTY_GetTime();
-	files_set_root(take_data_dir(argc, argv));
+	data_dir = take_data_dir(argc, argv);
+	files_set_root(data_dir != NULL ? data_dir : ".");
+	/* With no folder named, the current one, else the program's own: a double-click does not
+	 * always start in the game's folder (macOS starts in the home folder). */
+	if (data_dir == NULL && !plat_dir_exists("STATIC") && exe_directory(own_dir, sizeof own_dir))
+		files_set_root(own_dir);
 	if (!files_check_data(problem, sizeof problem))
 		plat_fatal(problem);
 	nullpage_install();
