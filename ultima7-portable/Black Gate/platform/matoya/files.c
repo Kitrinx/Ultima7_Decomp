@@ -590,6 +590,14 @@ static void append(char *message, size_t size, const char *text)
 		snprintf(message + n, size - n, "%s", text);
 }
 
+#ifdef __APPLE__
+#define WHERE_TO_PUT_GAME "Copy your Ultima VII folder into Documents and name it Ultima7, or " \
+	"point the game at it with --data <folder> or the U7_DATA variable."
+#else
+#define WHERE_TO_PUT_GAME "Put the game next to this program or in Documents/Ultima7, or point " \
+	"the game at it with --data <folder> or the U7_DATA variable."
+#endif
+
 bool files_check_data(char *message, size_t size)
 {
 	char missing[512] = "", empty[512] = "";
@@ -597,15 +605,13 @@ bool files_check_data(char *message, size_t size)
 
 	message[0] = '\0';
 	if (!is_dir(root)) {
-		snprintf(message, size, "The game data folder \"%s\" does not exist.\n\n"
-			"Point the game at your Ultima VII folder with --data <folder> or the U7_DATA "
-			"variable.", root);
+		snprintf(message, size, "The game data folder \"%s\" does not exist.\n\n%s", root,
+			WHERE_TO_PUT_GAME);
 		return false;
 	}
 	if (!plat_dir_exists("STATIC")) {
-		snprintf(message, size, "\"%s\" is not an Ultima VII folder: it has no STATIC folder.\n\n"
-			"Point the game at your Ultima VII folder with --data <folder> or the U7_DATA "
-			"variable.", root);
+		snprintf(message, size, "\"%s\" is not an Ultima VII folder: it has no STATIC folder.\n\n%s",
+			root, WHERE_TO_PUT_GAME);
 		return false;
 	}
 	for (size_t i = 0; i < sizeof required_files / sizeof *required_files; i++) {

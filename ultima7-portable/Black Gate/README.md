@@ -60,7 +60,7 @@ Git's `mkdir` instead and the libmatoya step fails, so build from a prompt witho
 
 The first build also builds libmatoya (through its own makefile, into
 `third_party/libmatoya/bin/`) and mt32emu (as a CMake subproject). The program is `build/Ultima7`
-(`build\Ultima7.exe` on Windows).
+(`build\Ultima7.exe` on Windows, the app `build/Ultima7.app` on macOS).
 
 Options:
 
@@ -95,9 +95,13 @@ file on disk is never changed. The in-game audio options still turn each part of
 build/Ultima7 --data /path/to/ultima7
 ```
 
+On macOS the program inside the app takes the same options:
+`build/Ultima7.app/Contents/MacOS/Ultima7 --data /path/to/ultima7`.
+
 - `--data` is the game data folder (or set `U7_DATA`). By default it is the current folder if
-  that has `STATIC`, else the folder the program is in, so a double-clicked `Ultima7` placed in
-  the game folder finds its data on every platform. The game checks for its core files at
+  that has `STATIC`, else the folder the program is in (on macOS, the folder holding
+  `Ultima7.app`), else `Documents/Ultima7`, so a double-clicked `Ultima7` placed in the game
+  folder finds its data on every platform. The game checks for its core files at
   launch and names any that are missing or empty.
 - On Windows the program is a windowed one, so no console opens with it. Started from a
   terminal, it prints its messages there; redirected output goes to the file or pipe as usual.

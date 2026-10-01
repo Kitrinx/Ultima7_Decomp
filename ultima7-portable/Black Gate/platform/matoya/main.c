@@ -53,8 +53,6 @@ MTY_Size backend_view_size(void)
 }
 
 #ifdef __APPLE__
-#include <mach-o/getsect.h>
-#include <mach-o/ldsyms.h>
 #include <objc/message.h>
 #include <objc/runtime.h>
 
@@ -67,33 +65,8 @@ static void run_in_background(void)
 	((void (*)(id, SEL, long)) objc_msgSend)(nsapp, sel_registerName("setActivationPolicy:"), 2L);
 	((void (*)(id, SEL, id)) objc_msgSend)(nsapp, sel_registerName("hide:"), (id) 0);
 }
-
-/* A bare executable has no icon of its own, so the linker embeds a PNG for the Dock. */
-static void set_dock_icon(void)
-{
-	unsigned long size = 0;
-	const uint8_t *png = getsectiondata(&_mh_execute_header, "__TEXT", "__u7_icon", &size);
-
-	if (png == NULL)
-		return;
-	id nsapp = ((id (*)(id, SEL)) objc_msgSend)((id) objc_getClass("NSApplication"),
-		sel_registerName("sharedApplication"));
-	id data = ((id (*)(id, SEL, const void *, unsigned long)) objc_msgSend)(
-		(id) objc_getClass("NSData"), sel_registerName("dataWithBytes:length:"), png, size);
-	id image = ((id (*)(id, SEL)) objc_msgSend)((id) objc_getClass("NSImage"), sel_registerName("alloc"));
-
-	image = ((id (*)(id, SEL, id)) objc_msgSend)(image, sel_registerName("initWithData:"), data);
-	if (image == NULL)
-		return;
-	((void (*)(id, SEL, id)) objc_msgSend)(nsapp, sel_registerName("setApplicationIconImage:"), image);
-	((void (*)(id, SEL)) objc_msgSend)(image, sel_registerName("release"));
-}
 #else
 static void run_in_background(void)
-{
-}
-
-static void set_dock_icon(void)
 {
 }
 #endif
@@ -345,13 +318,14 @@ static const char *take_data_dir(int argc, char **argv)
 #ifdef _WIN32
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
+#include <shlobj.h>
 #elif defined(__APPLE__)
 #include <mach-o/dyld.h>
 #else
 #include <unistd.h>
 #endif
 
-/* The folder the program itself is in. */
+/* The folder the program itself is in; for Ultima7.app, the folder holding the app. */
 static bool exe_directory(char *out, size_t size)
 {
 	char *slash;
@@ -365,8 +339,14 @@ static bool exe_directory(char *out, size_t size)
 #elif defined(__APPLE__)
 	uint32_t n = (uint32_t) size;
 
+	char *bundle;
+
 	if (_NSGetExecutablePath(out, &n) != 0)
 		return false;
+	/* ".../Ultima7.app/Contents/MacOS/Ultima7" becomes ".../Ultima7.app". */
+	bundle = strstr(out, ".app/Contents/MacOS/");
+	if (bundle != NULL)
+		bundle[4] = '\0';
 	slash = strrchr(out, '/');
 #else
 	ssize_t n = readlink("/proc/self/exe", out, size - 1);
@@ -380,6 +360,24 @@ static bool exe_directory(char *out, size_t size)
 		return false;
 	*slash = '\0';
 	return true;
+}
+
+/* Ultima7 in the user's Documents folder. */
+static bool documents_directory(char *out, size_t size)
+{
+#ifdef _WIN32
+	char docs[MAX_PATH];
+
+	if (SHGetFolderPathA(NULL, CSIDL_PERSONAL, NULL, 0, docs) != S_OK)
+		return false;
+	return snprintf(out, size, "%s\\Ultima7", docs) < (int) size;
+#else
+	const char *home = getenv("HOME");
+
+	if (home == NULL || home[0] == '\0')
+		return false;
+	return snprintf(out, size, "%s/Documents/Ultima7", home) < (int) size;
+#endif
 }
 
 #ifdef _WIN32
@@ -404,7 +402,7 @@ static void use_parent_console(void)
 int main(int argc, char **argv)
 {
 	MTY_Frame frame;
-	char problem[1024], own_dir[1024];
+	char problem[1024], own_dir[1024] = "", docs_dir[1024];
 	const char *data_dir;
 
 	use_parent_console();
@@ -415,12 +413,31 @@ int main(int argc, char **argv)
 	start_time = MTY_GetTime();
 	data_dir = take_data_dir(argc, argv);
 	files_set_root(data_dir != NULL ? data_dir : ".");
-	/* With no folder named, the current one, else the program's own: a double-click does not
-	 * always start in the game's folder (macOS starts in the home folder). */
-	if (data_dir == NULL && !plat_dir_exists("STATIC") && exe_directory(own_dir, sizeof own_dir))
-		files_set_root(own_dir);
-	if (!files_check_data(problem, sizeof problem))
+	/* With no folder named: the current one, the program's own (a double-click does not always
+	 * start in the game's folder), then Documents/Ultima7. Documents comes last because macOS
+	 * asks the player before letting an app look there. */
+	if (data_dir == NULL && !plat_dir_exists("STATIC")) {
+		const char *fallback = exe_directory(own_dir, sizeof own_dir) ? own_dir : ".";
+
+		files_set_root(fallback);
+		if (!plat_dir_exists("STATIC") && documents_directory(docs_dir, sizeof docs_dir)) {
+			files_set_root(docs_dir);
+#ifndef __APPLE__
+			/* Found nowhere: report the program's folder, where the game is meant to go. A Mac
+			 * install keeps the app in Applications and the game in Documents/Ultima7. */
+			if (!plat_dir_exists("STATIC"))
+				files_set_root(fallback);
+#endif
+		}
+	}
+	if (!files_check_data(problem, sizeof problem)) {
+		/* macOS runs a downloaded app from a hidden copy until it is moved in Finder. */
+		if (strstr(own_dir, "/AppTranslocation/") != NULL)
+			snprintf(problem, sizeof problem, "macOS started Ultima7 from a temporary copy, so "
+				"it can't see the game files. In Finder, drag Ultima7.app out of the game "
+				"folder and back in, then open it again.");
 		plat_fatal(problem);
+	}
 	nullpage_install();
 	events_init();
 	video_init();
@@ -430,7 +447,6 @@ int main(int argc, char **argv)
 	app = MTY_AppCreate(0, on_frame, on_event, NULL);
 	if (app == NULL)
 		plat_fatal("Could not start the window system.");
-	set_dock_icon();
 	frame = MTY_MakeDefaultFrame(0, 0, 3 * 320, 3 * 240, 0.9f);
 	window = MTY_WindowCreate(app, WINDOW_TITLE, &frame, 0);
 	MTY_AppSetPNGCursor(app, blank_cursor, sizeof blank_cursor, 0, 0);

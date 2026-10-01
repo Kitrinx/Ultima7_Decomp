@@ -140,7 +140,7 @@ if(U7_BACKEND_MATOYA)
         target_link_options(u7 PRIVATE /ENTRY:mainCRTStartup)
     endif()
 
-    # Windows loads the window and taskbar icon from the exe; macOS gets a PNG for the Dock.
+    # Windows loads the window and taskbar icon from the exe; macOS builds Ultima7.app.
     get_filename_component(U7_ICON_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../assets/icons" ABSOLUTE)
     if(WIN32)
         enable_language(RC)
@@ -148,8 +148,17 @@ if(U7_BACKEND_MATOYA)
             CONTENT "1 ICON \"${U7_ICON_DIR}/windows/u7.ico\"\n")
         target_sources(u7 PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/u7.rc")
     elseif(APPLE)
-        target_link_options(u7 PRIVATE "LINKER:-sectcreate,__TEXT,__u7_icon,${U7_ICON_DIR}/macos/u7.png")
-        set_target_properties(u7 PROPERTIES LINK_DEPENDS "${U7_ICON_DIR}/macos/u7.png")
+        set(U7_ICNS "${U7_ICON_DIR}/macos/u7.icns")
+        set_source_files_properties("${U7_ICNS}" PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
+        target_sources(u7 PRIVATE "${U7_ICNS}")
+        set(U7_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/packaging/Info.plist.in")
+        # LINK_DEPENDS relinks, and so re-signs, when only the plist or icon changed.
+        set_target_properties(u7 PROPERTIES MACOSX_BUNDLE TRUE MACOSX_BUNDLE_INFO_PLIST "${U7_PLIST}"
+            LINK_DEPENDS "${U7_PLIST};${U7_ICNS}")
+        # A self-signature over the whole bundle: downloaded, macOS then offers "Open Anyway"
+        # instead of calling the app damaged.
+        add_custom_command(TARGET u7 POST_BUILD
+            COMMAND codesign --force --sign - "$<TARGET_BUNDLE_DIR:u7>" VERBATIM)
     endif()
     if(U7_MT32_ROM_DIR)
         target_compile_definitions(u7 PRIVATE U7_DEFAULT_ROM_DIR="${U7_MT32_ROM_DIR}")

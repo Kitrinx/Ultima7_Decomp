@@ -25,13 +25,16 @@ jobs:
             exe: Ultima7
           - name: macos-arm64
             os: macos-14
-            exe: Ultima7
+            exe: Ultima7.app
           - name: windows-x64
             os: windows-2022
             exe: Ultima7.exe
     runs-on: ${{ matrix.os }}
+    env:
+      # Forks and unconfigured repos have no signing secrets; their Mac build stays self-signed.
+      HAS_SIGNING: ${{ secrets.MACOS_CERTIFICATE != '' }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Install Linux build tools
         if: runner.os == 'Linux'
@@ -43,17 +46,46 @@ jobs:
           cmake -S "$SOURCE_DIR" -B build -DCMAKE_BUILD_TYPE=Release
           cmake --build build --target u7 --parallel
 
-      - name: Set up the Visual Studio tools
-        if: runner.os == 'Windows'
-        uses: ilammy/msvc-dev-cmd@v1
-        with:
-          arch: x64
+      # Developer ID signature, then Apple's notarization ticket stapled to the app, so macOS
+      # opens it without "Open Anyway".
+      - name: Sign and notarize (macOS)
+        if: runner.os == 'macOS' && env.HAS_SIGNING == 'true'
+        env:
+          MACOS_CERTIFICATE: ${{ secrets.MACOS_CERTIFICATE }}
+          MACOS_CERTIFICATE_PASSWORD: ${{ secrets.MACOS_CERTIFICATE_PASSWORD }}
+          APPLE_API_KEY: ${{ secrets.APPLE_API_KEY }}
+          APPLE_API_KEY_ID: ${{ secrets.APPLE_API_KEY_ID }}
+          APPLE_API_ISSUER_ID: ${{ secrets.APPLE_API_ISSUER_ID }}
+        run: |
+          app=build/Ultima7.app
+          keychain="$RUNNER_TEMP/signing.keychain-db"
+          keychain_password=$(openssl rand -base64 24)
+          security create-keychain -p "$keychain_password" "$keychain"
+          security set-keychain-settings -lut 21600 "$keychain"
+          security unlock-keychain -p "$keychain_password" "$keychain"
+          echo "$MACOS_CERTIFICATE" | base64 --decode > "$RUNNER_TEMP/certificate.p12"
+          security import "$RUNNER_TEMP/certificate.p12" -k "$keychain" \
+            -P "$MACOS_CERTIFICATE_PASSWORD" -T /usr/bin/codesign
+          security set-key-partition-list -S apple-tool:,apple:,codesign: -s \
+            -k "$keychain_password" "$keychain" > /dev/null
+          security list-keychains -d user -s "$keychain" $(security list-keychains -d user | tr -d '"')
+          identity=$(security find-identity -v -p codesigning "$keychain" \
+            | awk '/Developer ID Application/ { print $2; exit }')
+          echo "SIGNING_IDENTITY=$identity" >> "$GITHUB_ENV"
+          codesign --force --options runtime --timestamp --sign "$identity" "$app"
+          codesign --verify --strict --verbose=2 "$app"
+          "$SOURCE_DIR/packaging/notarize.sh" "$app"
+          spctl --assess --type execute --verbose=2 "$app"
 
       # libmatoya's makefile needs cmd's mkdir, so Git's usr\bin comes off the PATH.
       - name: Build (Windows)
         if: runner.os == 'Windows'
         shell: pwsh
         run: |
+          # Visual Studio's x64 tools (clang-cl, rc, link) onto the PATH.
+          $vs = & "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe" -latest -property installationPath
+          Import-Module "$vs\Common7\Tools\Microsoft.VisualStudio.DevShell.dll"
+          Enter-VsDevShell -VsInstallPath $vs -SkipAutomaticLocation -DevCmdArguments '-arch=x64 -host_arch=x64'
           $env:PATH = ($env:PATH -split ';' | Where-Object { $_ -notmatch 'Git\\usr\\bin' }) -join ';'
           cmake -S "$env:SOURCE_DIR" -B build -G Ninja -DCMAKE_BUILD_TYPE=Release `
             -DCMAKE_C_COMPILER=clang-cl -DCMAKE_CXX_COMPILER=clang-cl
@@ -61,25 +93,45 @@ jobs:
           cmake --build build --target u7
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
+      # Windows and Linux: a zip of a folder to put next to the game. macOS: a disk image to
+      # drag Ultima7.app from into Applications.
       - name: Package
         shell: bash
         run: |
+          # The archive name tells the platforms apart; the folder inside is just Ultima7.
           name="ultima7-portable-${GITHUB_REF_NAME//\//-}-${{ matrix.name }}"
-          mkdir -p "package/$name/licenses"
-          cp "build/${{ matrix.exe }}" "package/$name/"
-          cp "$SOURCE_DIR/packaging/README.txt" "package/$name/"
-          cp "$SOURCE_DIR/third_party/libmatoya/LICENSE" "package/$name/licenses/libmatoya-LICENSE"
-          cp "$SOURCE_DIR/third_party/munt/mt32emu/COPYING.LESSER.txt" "package/$name/licenses/munt-COPYING.LESSER.txt"
-          cp "$SOURCE_DIR/third_party/munt/mt32emu/COPYING.txt" "package/$name/licenses/munt-COPYING.txt"
+          mkdir -p package/Ultima7/licenses
+          cp -R "build/${{ matrix.exe }}" package/Ultima7/
+          cp "$SOURCE_DIR/packaging/README.txt" package/Ultima7/
+          cp "$SOURCE_DIR/third_party/libmatoya/LICENSE" package/Ultima7/licenses/libmatoya-LICENSE
+          cp "$SOURCE_DIR/third_party/munt/mt32emu/COPYING.LESSER.txt" package/Ultima7/licenses/munt-COPYING.LESSER.txt
+          cp "$SOURCE_DIR/third_party/munt/mt32emu/COPYING.txt" package/Ultima7/licenses/munt-COPYING.txt
           cd package
-          if [ "$RUNNER_OS" = "Windows" ]; then
-            7z a "$name.zip" "$name" > /dev/null
+          if [ "$RUNNER_OS" = "macOS" ]; then
+            ln -s /Applications Ultima7/Applications
+            hdiutil create -volname Ultima7 -srcfolder Ultima7 -format UDZO "$name.dmg"
+            archive="$name.dmg"
+          elif [ "$RUNNER_OS" = "Windows" ]; then
+            7z a "$name.zip" Ultima7 > /dev/null
+            archive="$name.zip"
           else
-            zip -qr "$name.zip" "$name"
+            zip -qr "$name.zip" Ultima7
+            archive="$name.zip"
           fi
-          echo "ARCHIVE=package/$name.zip" >> "$GITHUB_ENV"
+          echo "ARCHIVE=package/$archive" >> "$GITHUB_ENV"
 
-      - uses: actions/upload-artifact@v4
+      - name: Sign and notarize the disk image (macOS)
+        if: runner.os == 'macOS' && env.HAS_SIGNING == 'true'
+        env:
+          APPLE_API_KEY: ${{ secrets.APPLE_API_KEY }}
+          APPLE_API_KEY_ID: ${{ secrets.APPLE_API_KEY_ID }}
+          APPLE_API_ISSUER_ID: ${{ secrets.APPLE_API_ISSUER_ID }}
+        run: |
+          codesign --force --timestamp --sign "$SIGNING_IDENTITY" "$ARCHIVE"
+          "$SOURCE_DIR/packaging/notarize.sh" "$ARCHIVE"
+          spctl --assess --type open --context context:primary-signature --verbose=2 "$ARCHIVE"
+
+      - uses: actions/upload-artifact@v7
         with:
           name: ${{ matrix.name }}
           path: ${{ env.ARCHIVE }}
@@ -89,12 +141,12 @@ jobs:
     needs: build
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with:
           path: archives
           merge-multiple: true
 
-      - uses: softprops/action-gh-release@v2
+      - uses: softprops/action-gh-release@v3
         with:
-          files: archives/*.zip
+          files: archives/*
           generate_release_notes: true
