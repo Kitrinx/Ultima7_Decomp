@@ -130,7 +130,7 @@ void Flex::setName(char *path)
 {
 	if (name != path) {
 		if (name)
-			delete name;
+			delete[] name;
 		if (path == 0)
 			name = 0;
 		else {

@@ -91,11 +91,13 @@ static void wait_for_exit(void)
 		MTY_Sleep(1000);
 }
 
+/* Ends at once, as a DOS program did. The system frees the window, the sound device and the
+ * memory; tearing them down first only adds delay and risk (an X11 display closed under a live
+ * GL context can corrupt the driver's heap). Static destructors are skipped too: the game thread
+ * may still be running. */
 static void end_process(int code)
 {
-	audio_stop();
 	fflush(NULL);
-	/* Skips static destructors, which could run under a still-live game thread. */
 	_Exit(code);
 }
 
@@ -458,8 +460,6 @@ int main(int argc, char **argv)
 	audio_start();
 	MTY_ThreadDetach(launcher_thread, NULL);
 	MTY_AppRun(app);
-
-	MTY_AppDestroy(&app);
 	end_process(MTY_Atomic32Get(&exit_code));
 	return 0;
 }

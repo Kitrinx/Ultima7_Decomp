@@ -76,7 +76,7 @@ char *BuildNumberedTempPath(char *dir, char *fmt, int16_t n, int8_t temp)
 void ReplaceString(char **p, char *s)
 {
 	if (*p != 0)
-		delete *p;
+		delete[] *p;
 	*p = new char[strlen(s) + 1];
 	strcpy(*p, s);
 }

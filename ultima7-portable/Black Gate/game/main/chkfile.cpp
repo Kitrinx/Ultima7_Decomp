@@ -34,14 +34,14 @@ DataFile::~DataFile()
 	if (handle != -1)
 		close();
 	if (name != 0)
-		delete name;
+		delete[] name;
 }
 
 /* keeps a private copy of the name, and the mode */
 void DataFile::setName(char *path, int8_t how)
 {
 	if (name != 0)
-		delete name;
+		delete[] name;
 	name = new char[_fstrlen(path) + 1];
 	if (name == 0)
 		ReportOutOfNearMemory();

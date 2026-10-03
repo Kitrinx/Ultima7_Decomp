@@ -16,6 +16,8 @@
 
 Node ResultNode;
 Value ScratchValue;
+/* what an array store below element 1 writes to */
+static Node NullElement;
 
 /* s as a whole number, allowing a sign and surrounding spaces; 0 when it is not one */
 int8_t ParseWholeNumber(int16_t *result, char *s)
@@ -557,7 +559,9 @@ void Value::setElement(Value *other, int16_t index)
 			break;
 		}
 	}
-	*(Node *) cur = *GetListNode(other, 1);
+	/* An index below 1 leaves cur null; the DOS game wrote that element through a null pointer
+	 * into the start of its data segment, which nothing read back. */
+	*(cur != 0 ? (Node *) cur : &NullElement) = *GetListNode(other, 1);
 	/* other's first node is in place; copy the rest after it */
 	n = 0;
 	LinkList_stepForward(other, &n);
@@ -648,11 +652,13 @@ void Value::clear()
 extern "C" void ResetUclistGlobals(void)
 {
 	memset((void *)&ResultNode, 0, sizeof(ResultNode));
+	memset((void *)&NullElement, 0, sizeof(NullElement));
 	memset((void *)&ScratchValue, 0, sizeof(ScratchValue));
 }
 
 extern "C" void ConstructUclistGlobals(void)
 {
 	::new (&ResultNode) Node();
+	::new (&NullElement) Node();
 	new (&ScratchValue) Value();
 }

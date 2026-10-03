@@ -76,7 +76,6 @@ void nullpage_reset(void);
 
 /* audio.c */
 void audio_start(void);
-void audio_stop(void);
 /* Stops the sound tick, flushes queued MIDI and speech, and restarts the synth as powered on. */
 void audio_reset(void);
 /* Releases the sound lock if this thread holds it. */

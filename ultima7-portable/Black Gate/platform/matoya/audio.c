@@ -27,7 +27,6 @@
 #define QUEUE_AHEAD_MS 60
 #define MIDI_BUFFER_SIZE (256 * 1024)
 #define PCM_BUFFER_SIZE 65536
-#define STOP_WAIT_MS 300
 
 /* Sound lock: recursive per thread. */
 static MTY_Mutex *sound_mutex;
@@ -39,7 +38,6 @@ static MTY_Audio *output;
 static FILE *dump;
 static MTY_Thread *thread;
 static MTY_Atomic32 running;
-static MTY_Atomic32 finished;
 
 /* MIDI bytes waiting for the audio thread. */
 static MTY_Mutex *midi_mutex;
@@ -393,7 +391,6 @@ static void *audio_thread(void *opaque)
 			MTY_AudioQueue(output, block, BLOCK_FRAMES);
 		blocks++;
 	}
-	MTY_Atomic32Set(&finished, 1);
 	return NULL;
 }
 
@@ -420,23 +417,3 @@ void audio_start(void)
 	thread = MTY_ThreadCreate(audio_thread, NULL);
 }
 
-void audio_stop(void)
-{
-	if (thread == NULL)
-		return;
-	MTY_Atomic32Set(&running, 0);
-	/* A thread stuck in the sound tick (it may have ended the program) is left alone. */
-	for (int waited = 0; !MTY_Atomic32Get(&finished) && waited < STOP_WAIT_MS; waited++)
-		MTY_Sleep(1);
-	if (!MTY_Atomic32Get(&finished))
-		return;
-	MTY_ThreadDestroy(&thread);
-	if (dump != NULL)
-		fclose(dump);
-	MTY_AudioDestroy(&output);
-	if (synth != NULL) {
-		mt32emu_close_synth(synth);
-		mt32emu_free_context(synth);
-		synth = NULL;
-	}
-}

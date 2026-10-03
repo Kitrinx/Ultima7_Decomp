@@ -222,7 +222,7 @@ void U7ShapeManager::releaseBlock(int16_t h)
 		int16_t i = h - FIRST_FILE_BLOCK;
 
 		if (names[i] != 0)
-			delete names[i];
+			delete[] names[i];
 		names[i] = 0;
 	} else if (h >= FIRST_BLOCK && h < SHAPE_HANDLES) {
 		int16_t k = h - FIRST_BLOCK;

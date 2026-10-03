@@ -11,6 +11,7 @@
 #include "coord.h"
 #include "colbuf.h"
 #include "gumps.h"
+#include "slider.h"
 #include "spellbk.h"
 #include "dosio.h"
 #include "easyfile.h"
@@ -90,39 +91,6 @@ struct SaveGump : Control {
 	void moveTo(int16_t, int16_t);
 	uint8_t handle(MouseState *);
 	void draw(View *);
-};
-
-struct Button : Control {
-	int16_t x, y, shape, frame, image, width, height;
-	Button(int16_t);
-	void moveTo(int16_t, int16_t);
-	uint8_t handle(MouseState *);
-	void draw(View *);
-	virtual int16_t getFrame();
-	virtual void setFrame(int16_t);
-	virtual int16_t getShape();
-	virtual void size(int16_t *, int16_t *);
-	virtual void press();
-	virtual void release();
-};
-
-struct RepeatButton : Button {
-	RepeatButton(int16_t shape) : Button(shape) {}
-	uint8_t handle(MouseState *);
-};
-
-/* a dialog that asks for a number */
-struct SliderGump : Control {
-	ProportionalTextPrinter text;
-	Button accept;
-	RepeatButton down, up;
-	int16_t thumbShape, backgroundShape, endShape;
-	int16_t minimum, maximum, step;
-	int16_t left, right, x, y, value;
-	SliderGump(int16_t, int16_t, int16_t, int16_t, int16_t, int16_t);
-	void moveTo(int16_t, int16_t);
-	void draw(View *);
-	uint8_t handle(MouseState *);
 };
 
 struct GumpFile : DataNode {
