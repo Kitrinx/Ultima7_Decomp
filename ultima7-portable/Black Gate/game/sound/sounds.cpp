@@ -45,6 +45,7 @@ inline ItemRecord *GetItemRecord(objref ref)
 }
 
 uint8_t WaterWheelPlayed = 0, MillStonePlayed = 0;
+extern "C" uint8_t QuietWeapons = 0;
 /* The effect each continuous sound loops. */
 const uint8_t ContinuousSoundSfx[CONTINUOUS_SOUNDS] = {48, 50, 77, 78, 82, 80, 81, 114, 25, 52, 79, 113};
 /* The world renderer supplies the previous animation frame. */
@@ -123,6 +124,8 @@ void PlayItemAmbientSound(uint16_t type, int16_t frame, int16_t dx, int16_t dy)
 			break;
 		if (type == 825 && frame == 8)
 			break;
+		if ((type == 551 || type == 553) && QuietWeapons)
+			break;
 		if (GenerateRandomIntegerInRange(100) < 60)
 			PlaySfx(GenerateRandomIntegerInRange(3) + 20, volume, pan, 2);
 		break;
@@ -193,6 +196,8 @@ void PlayItemAmbientSound(uint16_t type, int16_t frame, int16_t dx, int16_t dy)
 			PlaySfx(11, volume, pan, 0);
 		break;
 	case 547: case 548: case 559: case 562:     /* magic weapons */
+		if (QuietWeapons)
+			break;
 		if (GenerateRandomIntegerInRange(100) < 10)
 			PlaySfx(104, volume, pan, 0);
 		break;
@@ -282,6 +287,7 @@ extern "C" void ResetSoundsGlobals(void)
 {
 	WaterWheelPlayed = 0;
 	MillStonePlayed = 0;
+	QuietWeapons = 0;
 	AnimationPhase = 0;
 	memset(ContinuousSoundRequest, 0, sizeof ContinuousSoundRequest);
 	memset(ContinuousSoundVolume, 0, sizeof ContinuousSoundVolume);

@@ -37,16 +37,20 @@ static const struct {
 static const char Password[] = "ereiamjh";
 
 /* U7.EXE's command-line options, as switches. A value goes after '=' (or, when it is required,
- * as the next argument) and is appended to the option letter, as in "r3". */
+ * as the next argument) and is appended to the option letter, as in "r3". A switch with no
+ * option letter is a setting of this port and sets its flag instead. */
 enum { NO_VALUE, OPTIONAL_VALUE, REQUIRED_VALUE };
 
 /* Host alignment: the game's packing would leave these pointers unaligned. */
 #pragma pack(push)
 #pragma pack()
+extern uint8_t QuietWeapons;
+
 static const struct {
 	const char *name;
 	const char *option;
 	int8_t value;
+	uint8_t *flag;
 } Switches[] = {
 	{"--cheat", "ABCD\xff", NO_VALUE},     /* the password, typed with Alt-255 */
 	{"--cheat-start", "s", NO_VALUE},
@@ -56,6 +60,7 @@ static const struct {
 	{"--shape-pool", "c", REQUIRED_VALUE},
 	{"--overlay-size", "b", NO_VALUE},
 	{"--version", "?", NO_VALUE},
+	{"--quiet-weapons", 0, NO_VALUE, &QuietWeapons},
 };
 #pragma pack(pop)
 
@@ -95,7 +100,9 @@ static int16_t TranslateSwitches(int16_t argc, char **argv, char **out)
 			plat_log(" needs a value.\n");
 			return -1;
 		}
-		if (value == 0 || Switches[k].value == NO_VALUE) {
+		if (Switches[k].flag != 0) {
+			*Switches[k].flag = 1;
+		} else if (value == 0 || Switches[k].value == NO_VALUE) {
 			out[count++] = (char *) Switches[k].option;
 		} else {
 			char *option = (char *) malloc(strlen(Switches[k].option) + strlen(value) + 1);

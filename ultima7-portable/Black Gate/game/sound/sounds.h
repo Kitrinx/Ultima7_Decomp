@@ -18,5 +18,7 @@ void UpdateContinuousSounds();
 
 extern uint8_t WaterWheelPlayed;
 extern uint8_t MillStonePlayed;
+/* No crackle from fire weapons or hum from magic ones (a launcher switch, not in the original). */
+extern "C" uint8_t QuietWeapons;
 
 #endif

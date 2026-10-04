@@ -127,6 +127,12 @@ The game's own command-line options, as switches (with the letter U7.EXE took):
 | `--overlay-size` | `b` | report the DOS overlay buffer size, then stop |
 | `--version` | `?` | show the version, then stop |
 
+Settings of this port, not in the original:
+
+| Switch | Effect |
+| --- | --- |
+| `--quiet-weapons` | no crackle from the fire sword and firedoom staff, no hum from the magic sword, Hoe of Destruction, Magebane and Death Scythe |
+
 **Starting a new game.** Use "Start New Game" in the main menu. For scripted runs that skip the
 menu, this sets one up the way the menu does, and the game builds it on its next start:
 

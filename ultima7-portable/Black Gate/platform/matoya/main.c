@@ -295,7 +295,11 @@ static void show_help(void)
 		"  --roland[=n]        Roland MT-32 music\n"
 		"  --shape-pool=<KB>   size of the shape cache\n"
 		"  --overlay-size      report the DOS overlay buffer size, then stop\n"
-		"  --version           show the version, then stop\n");
+		"  --version           show the version, then stop\n"
+		"\n"
+		"Settings of this port:\n"
+		"  --quiet-weapons     no crackle from the fire sword and firedoom staff, no hum from\n"
+		"                      magic weapons\n");
 	exit(0);
 }
 
