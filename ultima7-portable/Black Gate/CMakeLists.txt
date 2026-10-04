@@ -138,6 +138,9 @@ if(U7_BACKEND_MATOYA)
         # Started from a terminal, it attaches to that console for its messages (main.c).
         set_target_properties(u7 PROPERTIES WIN32_EXECUTABLE TRUE)
         target_link_options(u7 PRIVATE /ENTRY:mainCRTStartup)
+    elseif(NOT APPLE)
+        # Function names in the dynamic symbol table, so null-access reports can name them.
+        set_target_properties(u7 PROPERTIES ENABLE_EXPORTS ON)
     endif()
 
     # Windows loads the window and taskbar icon from the exe; macOS builds Ultima7.app.

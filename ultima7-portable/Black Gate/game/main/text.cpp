@@ -33,7 +33,7 @@ char *TextCache::text(uint16_t section, uint16_t n)
 
 	if (section >= 0 && section <= 6) {
 		/* section 6 reads its end from past the table */
-		if (n < 0 || n >= TextSectionStart[section + 1] - TextSectionStart[section])
+		if (n < 0 || n >= (uint16_t)(TextSectionStart[section + 1] - TextSectionStart[section]))
 			s = MissingText;
 		else
 			s = StorePath(get(TextSectionStart[section] + n));

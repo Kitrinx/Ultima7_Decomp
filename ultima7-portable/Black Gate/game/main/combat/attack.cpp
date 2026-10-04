@@ -309,7 +309,7 @@ void UpdateCombatNPCs()
 						i--;
 						continue;
 					}
-					intercept = (int16_t) lineY - dx * lineX / dy;
+					intercept = (int16_t) lineY - (int16_t)(dx * lineX) / dy;
 					if (dx / dy > 1 || dx / dy < -1) {
 						if (dx == 0) {
 							StopFlanking(&actor);
@@ -322,10 +322,10 @@ void UpdateCombatNPCs()
 					for (k = reach; k >= 1; k--) {
 						if (steep) {
 							farAY = lineY + k;
-							farAX = (farAY * dy - intercept * dy) / dx;
+							farAX = (int16_t)(farAY * dy - intercept * dy) / dx;
 						} else {
 							farAX = lineX + k;
-							farAY = dx * farAX / dy + intercept;
+							farAY = (int16_t)(dx * farAX) / dy + intercept;
 						}
 						if (CanTypeMoveTo(farAX, farAY, Item_getZ(&actor), ITEM(actor.off)->typeFrame))
 							break;
@@ -333,25 +333,25 @@ void UpdateCombatNPCs()
 					for (k = reach; k >= 1; k--) {
 						if (steep) {
 							farBY = lineY - k;
-							farBX = (farBY * dy - intercept * dy) / dx;
+							farBX = (int16_t)(farBY * dy - intercept * dy) / dx;
 						} else {
 							farBX = lineX - k;
-							farBY = dx * farBX / dy + intercept;
+							farBY = (int16_t)(dx * farBX) / dy + intercept;
 						}
 						if (CanTypeMoveTo(farBX, farBY, Item_getZ(&actor), ITEM(actor.off)->typeFrame))
 							break;
 					}
 					lineX = ownX;
 					lineY = ownY;
-					intercept = (int16_t) lineY - dx * lineX / dy;
+					intercept = (int16_t) lineY - (int16_t)(dx * lineX) / dy;
 					reach = reach * 7 / 10;
 					for (k = reach; k >= 1; k--) {
 						if (steep) {
 							nearAY = lineY + k;
-							nearAX = (nearAY * dy - intercept * dy) / dx;
+							nearAX = (int16_t)(nearAY * dy - intercept * dy) / dx;
 						} else {
 							nearAX = lineX + k;
-							nearAY = dx * nearAX / dy + intercept;
+							nearAY = (int16_t)(dx * nearAX) / dy + intercept;
 						}
 						if (CanTypeMoveTo(nearAX, nearAY, Item_getZ(&actor), ITEM(actor.off)->typeFrame))
 							break;
@@ -359,10 +359,10 @@ void UpdateCombatNPCs()
 					for (k = reach; k >= 1; k--) {
 						if (steep) {
 							nearBY = lineY - k;
-							nearBX = (nearBY * dy - intercept * dy) / dx;
+							nearBX = (int16_t)(nearBY * dy - intercept * dy) / dx;
 						} else {
 							nearBX = lineX - k;
-							nearBY = dx * nearBX / dy + intercept;
+							nearBY = (int16_t)(dx * nearBX) / dy + intercept;
 						}
 						if (CanTypeMoveTo(nearBX, nearBY, Item_getZ(&actor), ITEM(actor.off)->typeFrame))
 							break;

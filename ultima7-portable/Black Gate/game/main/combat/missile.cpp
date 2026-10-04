@@ -65,8 +65,8 @@ struct MissileTracker : Path {
 	uint8_t isReturning() { return mode == 2; }
 	uint8_t update();
 	void updateChecksum() {
-		storedChecksum = missile + mode + weapon + ammo + attacker.off + damage
-			+ target.off + kind + range + targetX.value + targetY.value + counted;
+		storedChecksum = (uint16_t)(missile + mode + weapon + ammo + attacker.off + damage
+			+ target.off + kind + range + targetX.value + targetY.value + counted);
 	}
 };
 struct MissileFile : DataNode {
@@ -224,8 +224,8 @@ void MissileTracker::checksum(char *where)
 	if (!active)
 		return;
 	previous = storedChecksum;
-	storedChecksum = missile + mode + weapon + ammo + attacker.off + damage
-		+ target.off + kind + range + targetX.value + targetY.value + counted;
+	storedChecksum = (uint16_t)(missile + mode + weapon + ammo + attacker.off + damage
+		+ target.off + kind + range + targetX.value + targetY.value + counted);
 	if (storedChecksum != previous)
 		DebugPrintfAtCoordsWait(1, 23, "MissileTracker checksum failure @ %s!", where);
 }

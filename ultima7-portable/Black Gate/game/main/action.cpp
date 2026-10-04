@@ -87,7 +87,7 @@ char *Action::describe()
 	else if (marked(ACTION_STOPPED))
 		kind = 'T';
 	sprintf(text, "%c%c%2dt [%4d] @%d:%-40.40s", kind,
-		due < ActionQueueTime ? ' ' : '+', due - ActionQueueTime,
+		due < ActionQueueTime ? ' ' : '+', (int16_t)(due - ActionQueueTime),
 		(uint16_t)target.off >> 3, cursor, DescribeScript((char *)script));
 	return StorePath(text);
 }
@@ -102,7 +102,7 @@ char *Action::describeName()
 	else if (marked(ACTION_STOPPED))
 		kind = 'T';
 	sprintf(text, "%c%c%2d\"%-6.6s\"%04u@%d:%-40.40s", kind,
-		due < ActionQueueTime ? ' ' : '+', due - ActionQueueTime,
+		due < ActionQueueTime ? ' ' : '+', (int16_t)(due - ActionQueueTime),
 		GetItemName(target.off), (uint16_t)target.off >> 3, cursor,
 		DescribeScript((char *)script));
 	return StorePath(text);

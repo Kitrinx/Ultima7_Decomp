@@ -74,7 +74,7 @@ inline int16_t RendererState::frame(int16_t type, int16_t frame)
 {
 	if (!IsAnimated(type) || GetTypeAnimation(type) != 0)
 		return frame;
-	return (frame + animationTick) % (uint16_t)(ShapeManager_getFrameCount(shapes, type));
+	return (uint16_t)(frame + animationTick) % (uint16_t)(ShapeManager_getFrameCount(shapes, type));
 }
 
 int16_t LightTotal = -1;

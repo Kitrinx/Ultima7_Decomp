@@ -172,7 +172,7 @@ extern "C" void ParseCommandLine(int16_t argc, char **argv)
 					break;
 				case 'B':
 					PlainErrors = 1;
-					AssertFail("Ovr=%uK", (_ovrbuffer << 4) >> 10);
+					AssertFail("Ovr=%uK", (uint16_t)(_ovrbuffer << 4) >> 10);
 					break;
 				case 'A':
 					MusicDevice = 2;

@@ -3,7 +3,8 @@
  * A null near pointer read the start of the data segment: four zero bytes, then Borland's
  * copyright text. The game relies on that in places (an empty string, a table not yet loaded).
  * Here the first 64 KB cannot be mapped, so a fault there is served from a stand-in segment
- * of the same shape and the program carries on. Each place it happens is logged once.
+ * of the same shape and the program carries on. Each place it happens is logged once, with the
+ * functions that called it.
  *
  * arm64 macOS emulates the faulting load or store. x64 Windows and Linux point the
  * instruction's address register at the segment, run the one instruction, and put the
@@ -14,6 +15,7 @@
 #endif
 #include <signal.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include "backend.h"
@@ -33,8 +35,63 @@
 
 /* Padded, so a wide read that starts near the end stays inside. */
 static uint8_t segment[SEGMENT_SIZE + 64] = SEGMENT_START;
-static uintptr_t logged[MAX_LOGGED];
+/* Each logged access: where it happened and who called that, so a second path is logged too. */
+static uintptr_t logged[MAX_LOGGED][2];
 static int logged_count;
+
+#define CALLERS 6
+
+static bool first_logging(uintptr_t pc, uintptr_t caller)
+{
+	for (int i = 0; i < logged_count; i++) {
+		if (logged[i][0] == pc && logged[i][1] == caller)
+			return false;
+	}
+	if (logged_count < MAX_LOGGED) {
+		logged[logged_count][0] = pc;
+		logged[logged_count][1] = caller;
+		logged_count++;
+	}
+	return true;
+}
+
+#ifndef _WIN32
+#include <dlfcn.h>
+
+char *__cxa_demangle(const char *name, char *buffer, size_t *length, int *status);
+
+/* A code address as "function+offset", or "module+offset" when the name isn't visible. */
+static void describe(uintptr_t pc, char *out, size_t size)
+{
+	Dl_info info;
+
+	if (dladdr((void *) pc, &info) && info.dli_sname != NULL) {
+		char *name = __cxa_demangle(info.dli_sname, NULL, NULL, NULL);
+
+		snprintf(out, size, "%s+%lu", name != NULL ? name : info.dli_sname,
+			(unsigned long) (pc - (uintptr_t) info.dli_saddr));
+		free(name);
+	} else if (dladdr((void *) pc, &info) && info.dli_fname != NULL) {
+		snprintf(out, size, "%s+%#lx", strrchr(info.dli_fname, '/') ? strrchr(info.dli_fname, '/') + 1
+			: info.dli_fname, (unsigned long) (pc - (uintptr_t) info.dli_fbase));
+	} else {
+		snprintf(out, size, "%#lx", (unsigned long) pc);
+	}
+}
+
+static void print_access(const char *what, uintptr_t pc, uintptr_t address, const uintptr_t *callers,
+	int count)
+{
+	char text[512];
+
+	describe(pc, text, sizeof text);
+	fprintf(stderr, "%s at %s (address %#lx)\n", what, text, (unsigned long) address);
+	for (int i = 0; i < count; i++) {
+		describe(callers[i], text, sizeof text);
+		fprintf(stderr, "  called from %s\n", text);
+	}
+}
+#endif
 
 /* The game can write through a null pointer too; each program starts with a clean segment. */
 void nullpage_reset(void)
@@ -53,7 +110,6 @@ void nullpage_reset(void)
 
 #if defined(__APPLE__) && defined(__aarch64__)
 
-#include <dlfcn.h>
 #include <mach/thread_status.h>
 #include <sys/ucontext.h>
 
@@ -235,24 +291,40 @@ static bool emulate(cpu_state *ss, simd_state *ns, uint32_t insn)
 	return false;
 }
 
-static void log_once(uintptr_t pc, uintptr_t address)
+/* The callers, from the fault's own registers: lr, then the frame records x29 links. The arm64
+ * ABI keeps frame pointers, so this works in optimised builds too. */
+static int find_callers(const cpu_state *ss, uintptr_t pc, uintptr_t *callers)
 {
-	Dl_info info;
-	char text[256];
+	Dl_info here, info;
+	uintptr_t sp = (uintptr_t) arm_thread_state64_get_sp(*ss);
+	uintptr_t fp = (uintptr_t) arm_thread_state64_get_fp(*ss);
+	uintptr_t lr = (uintptr_t) arm_thread_state64_get_lr(*ss);
+	int n = 0;
 
-	for (int i = 0; i < logged_count; i++) {
-		if (logged[i] == pc)
-			return;
+	/* lr points back into the faulting function itself once that has made a call. */
+	if (!dladdr((void *) pc, &here) || !dladdr((void *) lr, &info) || info.dli_saddr != here.dli_saddr)
+		callers[n++] = lr;
+	while (n < CALLERS && fp >= sp && fp < sp + 0x800000 && (fp & 15) == 0) {
+		uintptr_t next = ((uintptr_t *) fp)[0], ret = ((uintptr_t *) fp)[1];
+
+		if (ret == 0)
+			break;
+		if (n == 0 || callers[n - 1] != ret)
+			callers[n++] = ret;
+		if (next <= fp)
+			break;
+		fp = next;
 	}
-	if (logged_count < MAX_LOGGED)
-		logged[logged_count++] = pc;
-	if (dladdr((void *) pc, &info) && info.dli_sname != NULL)
-		snprintf(text, sizeof text, "null access at %s+%lu (address %#lx)\n", info.dli_sname,
-			(unsigned long) (pc - (uintptr_t) info.dli_saddr), (unsigned long) address);
-	else
-		snprintf(text, sizeof text, "null access at %#lx (address %#lx)\n", (unsigned long) pc,
-			(unsigned long) address);
-	fputs(text, stderr);
+	return n;
+}
+
+static void log_once(const cpu_state *ss, uintptr_t pc, uintptr_t address)
+{
+	uintptr_t callers[CALLERS];
+	int count = find_callers(ss, pc, callers);
+
+	if (first_logging(pc, count > 0 ? callers[0] : 0))
+		print_access("null access", pc, address, callers, count);
 }
 
 static void on_fault(int sig, siginfo_t *info, void *context)
@@ -263,7 +335,7 @@ static void on_fault(int sig, siginfo_t *info, void *context)
 	uintptr_t pc = (uintptr_t) arm_thread_state64_get_pc(*ss);
 
 	if (address < SEGMENT_SIZE && emulate(ss, &uc->uc_mcontext->__ns, *(const uint32_t *) pc)) {
-		log_once(pc, address);
+		log_once(ss, pc, address);
 		arm_thread_state64_set_pc_fptr(*ss, (void *) (pc + 4));
 		return;
 	}
@@ -476,7 +548,7 @@ static void set_trap(cpu_context *c, bool on)
 }
 #endif
 
-static void log_once(uintptr_t pc, uintptr_t address, const char *what);
+static void log_once(const cpu_context *c, uintptr_t pc, uintptr_t address, const char *what);
 
 static void arm(cpu_context *c, int reg)
 {
@@ -503,7 +575,7 @@ static bool begin_step(cpu_context *c, uintptr_t pc, uintptr_t address)
 	insn_info in;
 
 	if (!decode((const uint8_t *) pc, &in)) {
-		log_once(pc, address, "unhandled null access");
+		log_once(c, pc, address, "unhandled null access");
 		return false;
 	}
 	pending.count = 0;
@@ -522,7 +594,7 @@ static bool begin_step(cpu_context *c, uintptr_t pc, uintptr_t address)
 			pending.count = 0;
 	}
 	if (pending.count == 0) {
-		log_once(pc, address, "unhandled null access");
+		log_once(c, pc, address, "unhandled null access");
 		return false;
 	}
 
@@ -531,7 +603,7 @@ static bool begin_step(cpu_context *c, uintptr_t pc, uintptr_t address)
 	pending.info = in;
 	pending.armed = true;
 	set_trap(c, true);
-	log_once(pc, address, "null access");
+	log_once(c, pc, address, "null access");
 	return true;
 }
 
@@ -563,47 +635,72 @@ static void finish_step(cpu_context *c)
 	pending.armed = false;
 }
 
-static bool first_logging(uintptr_t pc)
-{
-	for (int i = 0; i < logged_count; i++) {
-		if (logged[i] == pc)
-			return false;
-	}
-	if (logged_count < MAX_LOGGED)
-		logged[logged_count++] = pc;
-	return true;
-}
-
 #ifdef _WIN32
 
 static bool dbghelp_ready;
 
-static void log_once(uintptr_t pc, uintptr_t address, const char *what)
+/* A code address as "function+offset" from the debug symbols, or "module+offset". */
+static void describe(uintptr_t pc, char *out, size_t size)
 {
 	char buffer[sizeof(SYMBOL_INFO) + 256];
 	SYMBOL_INFO *symbol = (SYMBOL_INFO *) buffer;
 	DWORD64 offset = 0;
 	HMODULE module;
-	char path[MAX_PATH], text[512];
+	char path[MAX_PATH];
 
-	if (!first_logging(pc))
-		return;
 	memset(buffer, 0, sizeof buffer);
 	symbol->SizeOfStruct = sizeof(SYMBOL_INFO);
 	symbol->MaxNameLen = 255;
 	if (dbghelp_ready && SymFromAddr(GetCurrentProcess(), pc, &offset, symbol))
-		snprintf(text, sizeof text, "%s at %s+%llu (address %#llx)\n", what, symbol->Name,
-			(unsigned long long) offset, (unsigned long long) address);
+		snprintf(out, size, "%s+%llu", symbol->Name, (unsigned long long) offset);
 	else if (GetModuleHandleExA(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS |
 		GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT, (LPCSTR) pc, &module) &&
 		GetModuleFileNameA(module, path, sizeof path) != 0)
-		snprintf(text, sizeof text, "%s at %s+%#llx (address %#llx)\n", what,
-			strrchr(path, '\\') ? strrchr(path, '\\') + 1 : path,
-			(unsigned long long) (pc - (uintptr_t) module), (unsigned long long) address);
+		snprintf(out, size, "%s+%#llx", strrchr(path, '\\') ? strrchr(path, '\\') + 1 : path,
+			(unsigned long long) (pc - (uintptr_t) module));
 	else
-		snprintf(text, sizeof text, "%s at %#llx (address %#llx)\n", what,
-			(unsigned long long) pc, (unsigned long long) address);
-	fputs(text, stderr);
+		snprintf(out, size, "%#llx", (unsigned long long) pc);
+}
+
+/* The callers, unwound from the fault's own context with the image's unwind tables. */
+static int find_callers(const CONTEXT *c, uintptr_t *callers)
+{
+	CONTEXT ctx = *c;
+	int n = 0;
+
+	while (n < CALLERS) {
+		DWORD64 image = 0, frame = 0;
+		PVOID data = NULL;
+		PRUNTIME_FUNCTION function = RtlLookupFunctionEntry(ctx.Rip, &image, NULL);
+
+		if (function != NULL) {
+			RtlVirtualUnwind(UNW_FLAG_NHANDLER, image, ctx.Rip, function, &ctx, &data, &frame, NULL);
+		} else {
+			/* A leaf: the return address is on top of the stack. */
+			ctx.Rip = *(DWORD64 *) ctx.Rsp;
+			ctx.Rsp += 8;
+		}
+		if (ctx.Rip == 0)
+			break;
+		callers[n++] = (uintptr_t) ctx.Rip;
+	}
+	return n;
+}
+
+static void log_once(const cpu_context *c, uintptr_t pc, uintptr_t address, const char *what)
+{
+	uintptr_t callers[CALLERS];
+	int count = find_callers(c, callers);
+	char text[512];
+
+	if (!first_logging(pc, count > 0 ? callers[0] : 0))
+		return;
+	describe(pc, text, sizeof text);
+	fprintf(stderr, "%s at %s (address %#llx)\n", what, text, (unsigned long long) address);
+	for (int i = 0; i < count; i++) {
+		describe(callers[i], text, sizeof text);
+		fprintf(stderr, "  called from %s\n", text);
+	}
 }
 
 static LONG CALLBACK on_exception(EXCEPTION_POINTERS *pointers)
@@ -634,24 +731,36 @@ void nullpage_install(void)
 
 #else
 
-static void log_once(uintptr_t pc, uintptr_t address, const char *what)
-{
-	Dl_info info;
-	char text[512];
+#include <execinfo.h>
 
-	if (!first_logging(pc))
-		return;
-	if (dladdr((void *) pc, &info) && info.dli_sname != NULL)
-		snprintf(text, sizeof text, "%s at %s+%lu (address %#lx)\n", what, info.dli_sname,
-			(unsigned long) (pc - (uintptr_t) info.dli_saddr), (unsigned long) address);
-	else if (dladdr((void *) pc, &info) && info.dli_fname != NULL)
-		snprintf(text, sizeof text, "%s at %s+%#lx (address %#lx)\n", what,
-			strrchr(info.dli_fname, '/') ? strrchr(info.dli_fname, '/') + 1 : info.dli_fname,
-			(unsigned long) (pc - (uintptr_t) info.dli_fbase), (unsigned long) address);
-	else
-		snprintf(text, sizeof text, "%s at %#lx (address %#lx)\n", what, (unsigned long) pc,
-			(unsigned long) address);
-	fputs(text, stderr);
+/* The callers: glibc unwinds through the signal frame with the unwind tables, so this works
+ * without frame pointers. Frames up to and including the faulting one are dropped. */
+static int find_callers(uintptr_t pc, uintptr_t *callers)
+{
+	void *frames[CALLERS + 8];
+	int count = backtrace(frames, CALLERS + 8), first = 0, n = 0;
+	Dl_info here, info;
+
+	for (int i = 0; i < count; i++) {
+		if ((uintptr_t) frames[i] == pc || (dladdr((void *) pc, &here) && dladdr(frames[i], &info) &&
+			info.dli_saddr == here.dli_saddr && here.dli_saddr != NULL)) {
+			first = i + 1;
+			break;
+		}
+	}
+	for (int i = first; i < count && n < CALLERS; i++)
+		callers[n++] = (uintptr_t) frames[i];
+	return n;
+}
+
+static void log_once(const cpu_context *c, uintptr_t pc, uintptr_t address, const char *what)
+{
+	uintptr_t callers[CALLERS];
+	int count = find_callers(pc, callers);
+
+	(void) c;
+	if (first_logging(pc, count > 0 ? callers[0] : 0))
+		print_access(what, pc, address, callers, count);
 }
 
 static void on_signal(int sig, siginfo_t *info, void *context)

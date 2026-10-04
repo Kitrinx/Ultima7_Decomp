@@ -41,7 +41,7 @@ void LogMemoryUsage(char *fmt, ...)
 		LastFarFree = farFree;
 		LastVoodooFree = voodooFree;
 	}
-	DebugPrintf("%5un %7ldf %7ldv\n%s:\n", LastNearFree - nearFree, LastFarFree - farFree,
+	DebugPrintf("%5un %7ldf %7ldv\n%s:\n", (uint16_t)(LastNearFree - nearFree), LastFarFree - farFree,
 		LastVoodooFree - voodooFree, label);
 	LastNearFree = nearFree;
 	LastFarFree = farFree;

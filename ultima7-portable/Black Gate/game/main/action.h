@@ -23,7 +23,7 @@ struct Action {
 	uint8_t *script;
 	uint8_t marked(uint8_t mask) { return flags & mask; }
 	uint8_t finished() { return cursor >= script[0]; }
-	uint8_t matches(uint16_t id) { return target.off == id; }
+	uint8_t matches(uint16_t id) { return (uint16_t)target.off == id; }
 	uint8_t dueNow(int16_t tick) { return due == tick; }
 	uint8_t dueNext(int16_t tick) { return due == tick + 1; }
 	int8_t active() { return script != 0; }

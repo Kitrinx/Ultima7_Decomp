@@ -74,7 +74,9 @@ void EraseCursor(void)
 		plat_cursor_show(0);
 		return;
 	}
-	RestoreRect(CursorTarget, CursorSaveBuffer, &CursorRect, CursorSaveMode);
+	/* No target yet: DOS used a view at address 0, whose clip box was empty. */
+	if (CursorTarget != 0)
+		RestoreRect(CursorTarget, CursorSaveBuffer, &CursorRect, CursorSaveMode);
 }
 
 void DrawCursorAt(int16_t x, int16_t y)
@@ -90,9 +92,11 @@ void DrawCursorAt(int16_t x, int16_t y)
 		CursorRect.y1 = r.y0 + (CursorRect.y1 - CursorRect.y0);
 		CursorRect.x0 = r.x0;
 		CursorRect.y0 = r.y0;
-		SaveRect(CursorTarget, CursorSaveBuffer, &CursorRect, CursorSaveMode);
-		if (MousePresent)
-			DrawFrame(CursorTarget, x, y, PointerShapes, CursorFrame, CursorDrawFlags);
+		if (CursorTarget != 0) {
+			SaveRect(CursorTarget, CursorSaveBuffer, &CursorRect, CursorSaveMode);
+			if (MousePresent)
+				DrawFrame(CursorTarget, x, y, PointerShapes, CursorFrame, CursorDrawFlags);
+		}
 	}
 	CursorX = x;
 	CursorY = y;

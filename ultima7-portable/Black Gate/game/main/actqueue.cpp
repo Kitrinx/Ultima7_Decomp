@@ -155,7 +155,8 @@ void ActionScheduler::link(uint8_t current)
 		if (next) {
 			if (entries[next].marked(ACTION_STOPPED))
 				found = 1;
-			else if (entries[next].due - ActionQueueTime <= entries[current].due - ActionQueueTime)
+			/* Times wrap at 16 bits, as DOS int did: a due past 32767 is still in the future. */
+			else if ((int16_t)(entries[next].due - ActionQueueTime) <= (int16_t)(entries[current].due - ActionQueueTime))
 				found = 1;
 		}
 		if (found)

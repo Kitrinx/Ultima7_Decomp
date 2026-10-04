@@ -1104,7 +1104,7 @@ void ShowReadableTexts(void)
 	}
 	first = PromptForIntegerWord(GetGameText(5, 110));
 	last = PromptForIntegerWord(GetGameText(5, 111));
-	for (quality = first; quality < last + 1; quality++) {
+	for (quality = first; quality < (int16_t)(last + 1); quality++) {
 		ConsolePrintAt(1, 1, "%s%d", GetGameText(5, 109), quality);
 		Item_setQuality(&thing, quality);
 		RunUsable(1, thing, -1);
