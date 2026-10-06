@@ -1,0 +1,38 @@
+Routine LightningWhipEgg_i accepts a0 #locals(18) #uses(GivePartyExp_i) {
+    v0 = << 549 >>;
+    v1 = ~FindNearby_i(0, 2, v0, item);
+    v2 = ~GetCoord(v1);
+    if v1 {
+        GivePartyExp_i(100);
+        Item_destroy(v1);
+        Sfx(116);
+        createSprite(65535, 0, 0, 1, v2::2, v2::1, 25);
+        v3 = ~FindNearby_i(0, 6, _Fire_Pillar, item);
+        Foreach v6 in v3 {
+            Item_destroy(v6);
+        }
+        v7 = ~Item_create(_Fire_Pillar);
+        if v7 {
+            v8 = ~PopToMap(<< 2488, 2908, 1 >>);
+            SetFrame(0, v7);
+        }
+        v9 = ~FindNearby_i(0, 12, _Field_Energy, item);
+        Foreach v12 in v9 {
+            Sfx(33);
+            Item_destroy(v12);
+            createSprite(65535, 0, 0, 0, v2::2, v2::1, 32);
+        }
+        v13 = ~FindNearby_i(16, 16, _Egg_Type, _Avatar);
+        Foreach v16 in v13 {
+            v17 = ~GetFrame(v16);
+            if (v17 = 0) {
+                Item_destroy(v16);
+            }
+        }
+        Item_destroy(item);
+    } else {
+        v2 = ~GetCoord(item);
+        createSprite(65535, 0, 0, 1, v2::2, v2::1, 9);
+        Sfx(33);
+    }
+}

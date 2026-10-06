@@ -1,0 +1,315 @@
+Routine Filbercio accepts a0 #locals(13) #uses(~LordOrLady, ~AvatarName, PartyFaces_i, Bark_i, InterruptFilbercio_i, ~IsInInv, ~PartyUtters) {
+    v0 = ~LordOrLady();
+    v1 = ~AvatarSex();
+    v2 = "his";
+    v3 = "him";
+    v4 = "he";
+    v5 = "man";
+    if ~AvatarSex() {
+        v2 = "her";
+        v4 = "she";
+        v3 = "her";
+        v5 = "woman";
+    }
+    v6 = ~AvatarName();
+    v7 = ~GetTime();
+    v8 = 0;
+    if (~GetNPCID_i(_Frigidazzi) > 1) {
+        v8 = 2;
+    }
+    if ((v7 > 1) or (v7 < 6)) {
+        v7 = "day";
+    } else {
+        v7 = "evening";
+    }
+    if ((event = _NearDeath) and ~GetItemFlag_i(_Tournament, item)) {
+        v9 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #Black_Mage >>, item);
+    }
+    if (event = _Converse) {
+        Item_bark("@Greetings!@", _Avatar);
+        PartyFaces_i(65518);
+        Bark_i(2, "@Ah, yes...@", _Filbercio);
+        SetWorkType(_Talk, _Filbercio);
+    }
+    if (event = _Talking) {
+        Npc_schedule(_Filbercio);
+        Kernel_resetRef(_Filbercio);
+        SetSpeaker0_i(0, _Filbercio);
+        v10 = ~GetItemFlag_i(_Met, _Filbercio);
+        ["'Tis thee again. Hast thou good news?"];
+        TurnOn(<< "duties", "politics" >>);
+        if (flag(234) and (not $rotomanor and not ~GetItemFlag_i(_Dead, _Rotoluncia))) {
+            TurnOn("kidnap");
+        }
+        if ($rotomanor and not ~IsDead(_Rotoluncia)) {
+            TurnOn("search");
+        }
+        if ($magesknowapparati and not $knowlabitem) {
+            TurnOn("apparatus");
+        }
+        if ($magesknowslippers and not $knowslippers) {
+            TurnOn("slippers");
+        }
+        TurnOn(<< "bye" >>);
+        converse {
+            key ("change subject") {
+                ["But we were only beginning! Very well, if thou dost insist..."];
+                PopKeys();
+            }
+            key ("duties") {
+                TurnOff("duties");
+                ["As thou hast no doubt noticed, the burden of being MageLord wears heavily upon me. I spend all of mine hours in the palace. I have no life of mine own. I seldom even research new spells."];
+                InterruptFilbercio_i();
+                PushKeys();
+                TurnOn(<< "burden", "palace", "life", "spells", "change subject" >>);
+            }
+            key ("spells") {
+                TurnOff("spells");
+                ["Hmmpf..."];
+                ["'Tis beneath my station to teach thee, or any other, the awesome knowledge that is mine alone. Go and badger Melino or Columna, if thou dost wish to learn the arcane arts."];
+            }
+            key ("burden") {
+                TurnOff("burden");
+                ["Indeed. Sometimes I think that my subjects do not appreciate me. They have given me wealth and power, but I have given them my life! Now is that a fair exchange?"];
+                ["Perhaps I shall go live in a hut on the coast. That would be less stressful..."];
+                InterruptFilbercio_i();
+            }
+            key ("palace") {
+                TurnOff("palace");
+                ["Is this not a grand old building? Most of the downstairs chambers are used for business of the court, while the remaining rooms are mine own."];
+                ["Never mind the legends of hidden treasure chambers here. If there were gold here, I would have it by now!"];
+                InterruptFilbercio_i();
+            }
+            key ("life") {
+                TurnOff("life");
+                ["It is lonely to be MageLord. I have the needs of a normal man, yet I am overwhelmed by the demands of the citizens..."];
+                if ~AvatarSex() {
+                    ["I am grateful for thy sympathy, madam. I too am attracted to thee. Aha, thou didst not think I noticed thy glances!"];
+                    ["But alas, I am spoken for! The sorceress Frigidazzi is my current love, and she allows me no trespasses."];
+                    ["And I am jealous of her affections, as well. I have found that women are notoriously fickle..."];
+                } else {
+                    ["No doubt thou hast heard tales of my romantic conquests! This is the answer I have found to the pressures of being MageLord."];
+                    ["I know that the citizens talk of me all the time, behind my back. They say that I am a great lover, and indeed, I am!"];
+                    ["But I have never found true love. Romance is like the fog that dissolves in the sunlight."];
+                    ["Do not speak of this to the Sorceress Frigidazzi! She is my current passion, and I fear that she doth love me too much."];
+                    ["I am supremely jealous of her affections, as well. Though I do not truly love her, I will not be made a fool of!"];
+                }
+                InterruptFilbercio_i();
+            }
+            key ("politics") {
+                TurnOff("politics");
+                ["Is there no end to the bickering among the Mages? We have three factions here, and each elects its favorite to the Council of Moonshade."];
+                ["As the voice of compromise and experience, I have always been selected MageLord by the Adepts."];
+                if ~GetItemFlag_i(_Dead, _Rotoluncia) {
+                    ["My fellow Lords are Gustacio and Mortegro."];
+                } else {
+                    ["My fellow Lords are Rotoluncia and Gustacio."];
+                }
+                InterruptFilbercio_i();
+                PushKeys();
+                TurnOn(<< "Adept Gustacio" >>);
+                if ~GetItemFlag_i(_Dead, _Rotoluncia) {
+                    TurnOn("Adept Mortegro");
+                } else {
+                    TurnOn("Adept Rotoluncia");
+                }
+                TurnOn("change subject");
+            }
+            key ("Adept Rotoluncia") {
+                TurnOff("Adept Rotoluncia");
+                ["The Sorceress Rotoluncia is the heart of dissension. She is ambitious beyond measure, and causes all manner of trouble."];
+                ["She was not always this way. I remember the summer of my last apprenticeship year. She was two years younger than I, and asked me to be her tutor..."];
+                ["Ah, but she did tutor me as well, that summer! There have been many loves, before and since, but I shall always remember Rotoluncia."];
+                InterruptFilbercio_i();
+            }
+            key ("Adept Gustacio") {
+                TurnOff("Adept Gustacio");
+                ["Gustacio doth\x09adhere too strictly to outdated codes of ethics. Why, we could accomplish nothing in Moonshade if we followed his advice!"];
+                if not flag(226) {
+                    ["I doubt that he shall even deign to speak with thee. He is of the old school, and speaks only to those he considers worthy of his time."];
+                    ["Until thou hast proven thyself, he shall have little to do with thee."];
+                }
+                InterruptFilbercio_i();
+            }
+            key ("Adept Mortegro") {
+                TurnOff("Adept Mortegro");
+                ["Now that Rotoluncia is dead -- and I shall miss her, for she and I were once lovers -- I hope for greater harmony."];
+                ["The Black Mage, Mortegro, hath been selected to take Rotoluncia's seat on the Council."];
+                ["They say that he is crazy, but I think there is prejudice everywhere against necromancers. He is not that bad."];
+                InterruptFilbercio_i();
+            }
+            key ("apparatus") {
+                TurnOff("apparatus");
+                if ~IsInInv(1, 65177, _Al_App_1, 1, _Party) {
+                    ["Allow me to see what thou hast -- it had better not be one of mine own!"];
+                    if ~IsNPCNear_i(_Serv06) {
+                        SetSpeaker1_i(0, _Forskis);
+                        ["Thieves could not take thy goods, MageLord. I protect them well."];
+                        CloseSpeaker1_i();
+                        SetSpeakerSlot_i(0);
+                        ["That had best be true, or thou wilt find thyself on the scrap heap!"];
+                    }
+                    v11 = ~PartyUtters(false, "@Here it is.@", "@This be it.@", 1);
+                    SetSpeakerSlot_i(0);
+                    ["Ah, good! 'Tis not mine at all. Thou must understand that every item of magical equipment must be custom-made for each Mage."];
+                    ["I do not know to whom this belongs, but it is not mine."];
+                } else {
+                    ["Hast thou brought this object with thee?"];
+                    v11 = ~PartyUtters(false, "@No, I have not.@", "@No, we do not have it with us.@", 1);
+                    SetSpeakerSlot_i(0);
+                    ["Then I can tell thee nothing. But if thou hast stolen this from me, I shall not pay ransom for it!"];
+                }
+                InterruptFilbercio_i();
+            }
+            key ("slippers") {
+                TurnOff("slippers");
+                ["Slippers! What business is my footwear to thee! Dost thou think to have a laugh at mine expense?"];
+                ["Begone with thee, fool..."];
+                v12 = ~GetCoord(_Filbercio);
+                createSprite(65535, 0, 0, 0, v12::2, v12::1, 26);
+                Item_move(<< 1522, 1935, 0 >>, _Filbercio);
+                terminate;
+            }
+            key ("kidnap") {
+                TurnOff("kidnap");
+                ["Thy friend hath been taken! How foul! And by magical means! Indeed..."];
+                ["Whom dost thou suspect of this terrible crime?"];
+                PushKeys();
+                TurnOn(<< "Batlin" >>);
+                if flag(319) {
+                    TurnOn("Mortegro");
+                }
+                if flag(322) {
+                    TurnOn("Torrissio");
+                }
+                TurnOn(<< "Rotoluncia", "unknown" >>);
+            }
+            key ("Mortegro") {
+                ["Nonsense! That man is an honest and an upright Mage, though he doth have unsettling habits..."];
+                ["Withdraw thy suspicions -- I vouch for his integrity. Mortegro did not steal thy friend."];
+                PopKeys();
+            }
+            key ("Torrissio") {
+                ["Hmm... He is very young, but also clever and devious. Perhaps thou shouldst confront him with thy suspicions, and see what he doth have to say."];
+                PopKeys();
+            }
+            key ("Batlin") {
+                TurnOff("Batlin");
+                ["That name is familiar to me... he came to Moonshade many weeks ago, a large man in a brown cloak of a very common quality."];
+                ["Perhaps thou shouldst inquire of Bucia at the Provisioner's Shop -- if there is anything to be known in this city, she would know it."];
+                PopKeys();
+            }
+            key ("Rotoluncia") {
+                TurnOff("Rotoluncia");
+                if ~GetItemFlag_i(_Dead, _Rotoluncia) {
+                    ["A tragedy that the two of thee were unable to settle thy differences amicably."];
+                    PopKeys();
+                } else {
+                    ["I have heard that she believes thee to consort with Daemons, and to be a partner of the one called Batlin."];
+                    ["Thou shouldst search her manor for clues. Open every door, for thy friend might be hidden anywhere."];
+                    ["Thou canst find her mansion in the northeast part of town, built into the face of the southern mountains."];
+                    ["Be careful -- the Red Witch is most powerful, and I cannot protect thee from her enchantments!"];
+                    Bark_i(0, "@Report thy findings.@", _Filbercio);
+                    terminate;
+                }
+            }
+            key ("unknown") {
+                TurnOff("unknown");
+                ["If thou hast no suspects, then thou surely art clueless! I mourn for thee and thy lost friend."];
+                PopKeys();
+            }
+            key ("search") {
+                TurnOff("search");
+                if $bargecheatflag {
+                    ["I have already given thee my permission. Go! Do not trouble me further! I can do no more in this matter."];
+                } else {
+                    ["So thou hast searched Rotoluncia's manor, and there is no sign of thy friend, or of Rotoluncia? How interesting..."];
+                    ["I have one last hope for thee, but I must first share a secret with thee..."];
+                    PushKeys();
+                    TurnOn(<< "last hope", "secret", "change subject" >>);
+                }
+            }
+            key ("last hope") {
+                TurnOff("last hope");
+                ["If I am wrong this time, then thine enemy must not be Rotoluncia, but rather some other Mage."];
+                ["If this is so, I cannot aid thee."];
+            }
+            key ("secret") {
+                TurnOff("secret");
+                ["I am reluctant to admit this, but under the circumstances, I think that I must."];
+                ["A year ago, the Red Sorceress and I renewed that passionate affair which we began in our youth. This was none of mine idea, but I could not resist her advances..."];
+                ["She demanded that our love-making be done in secret, and so I built a secluded love palace."];
+                TurnOn(<< "love palace", "love-making" >>);
+            }
+            key ("love palace") {
+                TurnOff("love palace");
+                ["Oh, it is a modest place -- not like this great masterpiece! A mere cottage."];
+                ["Perhaps Rotoluncia hath gone there to hide, and taken thy friend as well. If so, then she hath betrayed me."];
+                ["Go quickly! See if she is there, and if so, flush her out!"];
+                TurnOn("Where is it?");
+            }
+            key ("Where is it?") {
+                TurnOff("Where is it?");
+                ["It is located in the center of the Lake of Enchantment, south and west of where we now stand."];
+                ["Thou shalt need a boat to reach this place. Take my yacht. I give thee permission."];
+                ["The royal yacht is moored at the pier which can only be reached from within my palace. Thou wilt note that my yacht will not move unless the mystic engine is engaged."];
+                $bargecheatflag = true;
+                TurnOn("betrayed");
+            }
+            key ("betrayed") {
+                TurnOff("betrayed");
+                ["Did she make love to me, only thinking to use me? Was her passion false, a mere pretense in order to coerce me into building that hidden citadel?"];
+                if not ~AvatarSex() {
+                    ["Women are fickle! Never give thine heart to one of their kind, stranger. Better to love them and then leave them..."];
+                }
+                ["I am undone! Mine heart grieves. I must go away to be with my thoughts..."];
+                v12 = ~GetCoord(_Filbercio);
+                createSprite(65535, 0, 0, 0, v12::2, v12::1, 7);
+                RemoveNPC_i(_Filbercio);
+                SetWorkType(_Dance, _Filbercio);
+                Bark_i(3, "@Gosh!@", _Avatar);
+                terminate;
+            }
+            key ("love-making") {
+                TurnOff("love-making");
+                ["Aha, but I cannot speak of this with thee! It is a private matter..."];
+                ["But let me say this -- in the years since our youth, the Red Sorceress learned many strange and difficult practices. Why, she even taught me a thing or two!"];
+            }
+            key ("bye") {
+                CloseSpeaker0_i();
+                Bark_i(0, "@Must be going...@", _Avatar);
+                Bark_i(2, "@Good fortune!@", _Filbercio);
+                break;
+            }
+        }
+        clear_answers;
+    }
+}
+
+Usable InterruptFilbercio_i #locals(4) #uses(~AvatarName) {
+    if ((~Random(3) = 1) and ~IsNPCNear_i(_Serv06)) {
+        SetSpeaker1_i(0, _Forskis);
+        v0 = << "MageLord, the documents are ready for thy signature.", "The sorceress Frigidazzi hath arrived, honor.", "Thou art needed in the treasury, MageLord.", "It is time for thine appointment, MageLord.", "MageLord, thou art needed to handle a tax matter.", "Thou art urgently needed, MageLord." >>;
+        v1 = v0::~Random(~ListSize_i(v0));
+        ["<v1>"];
+        SetSpeakerSlot_i(0);
+        v1 = ~Random(3);
+        if (v1 = 1) {
+            v2 = ~AvatarName();
+            ["Then I must go immediately. Please excuse me, <v2>."];
+            v3 = ~GetCoord(_Filbercio);
+            createSprite(65535, 0, 0, 0, v3::2, v3::1, 7);
+            Item_move(<< 1524, 1935, 0 >>, _Filbercio);
+            v3 = ~GetCoord(_Serv06);
+            createSprite(65535, 0, 0, 0, v3::2, v3::1, 7);
+            Item_move(<< 1526, 1935, 0 >>, _Serv06);
+            terminate;
+        }
+        if (v1 = 2) {
+            ["Surely that can wait! <v2>, as thou canst see, the strain of ruling this great city hath left me little more than skin and bones..."];
+        }
+        if (v1 > 2) {
+            ["In a moment, automaton."];
+        }
+    }
+}

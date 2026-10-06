@@ -1,0 +1,562 @@
+Routine Brendann accepts a0 #locals(28) #uses(BrendannBegsRelease_i, ~LordOrLady, ~AvatarName, ~BrendannBedDistance_i, ~OrderList_i, ~InListField_i, ChangeHits_i, DeclareWinner_i, NowSettleDownBoys, ~RemoveFromList_i, Bark_i, FaceAvatar_i, PartyFaces_i, ~GimmePathEgg, ~IsInInv, ~AskList, ~PartyUtters, ~AskYesNo, ~GiveItemsOrDrop_i) {
+    v0 = ~GetCoord(item);
+    if ((v0::1 >= 1074) and ((v0::1 <= 1081) and ((v0::2 >= 996) and ((v0::2 <= 1003) and (v0::3 < 5))))) {
+        BrendannBegsRelease_i();
+        terminate;
+    }
+    v1 = ~LordOrLady();
+    v2 = ~AvatarName();
+    v3 = false;
+    v4 = ~GetItemFlag_i(_Dead, _Lydia);
+    if ($brendanninvited and ((~GetWorkType(_Brendann) = _Sleep) and (~BrendannBedDistance_i() < 15))) {
+        v5 = true;
+        if (not ~IsNPCNear_i(_Iolo) and (not ~IsNPCNear_i(_Dupre) and (not ~IsNPCNear_i(_Shamino) and not ~IsNPCNear_i(_Boydon)))) {
+            v6 = true;
+        }
+    }
+    if (event = _NearDeath) {
+        if $tournamentflag {
+            v7 = ~GetAttacker_i(_Brendann);
+            v7 = (0 - v7);
+            if not v7 {
+                v7 = 65180;
+            }
+            if ((v7 <> 65180) and not (v7 in ~OrderList_i())) {
+                v8 = ~OrderList_i();
+                v8 = (v8 & 65180);
+                Foreach v11 in v8 {
+                    if ~InListField_i(v11) {
+                        goto label_16;
+                    }
+                }
+                v11 = 65180;
+                label_16:
+                Npc_setTarget(v11, _Brendann);
+                Npc_setTarget(v11, v7);
+                ChangeHits_i(3, _Brendann);
+                ChangeHits_i(3, v7);
+                return;
+            }
+            if not $temp1flag {
+                $temp1flag = true;
+                DeclareWinner_i(~NPCToItem_i(_Brendann), ~NPCToItem_i(v7));
+                return;
+            }
+            NowSettleDownBoys(v7);
+            return;
+        } else {
+            v0 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #Paladin >>, item);
+        }
+    }
+    if (event = _Bark) {
+        v12 = << 65473 >>;
+        if not $marstenarrested {
+            v12 = (v12 & 65467);
+        } else {
+            v12 = (v12 & 65462);
+        }
+        if not $spektorarrested {
+            v12 = (v12 & 65459);
+        }
+        Foreach v15 in v12 {
+            if not ~IsNPCNear_i(v15) {
+                v12 = ~RemoveFromList_i(v12, v15);
+            }
+        }
+        if (v12 = << >>) {
+            terminate;
+        }
+        ClearBark_i(_Brendann);
+        v16 = v12::~Random(~ListSize_i(v12));
+        ClearBark_i(v16);
+        v17 = ~Random(6);
+        if (v17 = 1) {
+            Bark_i(0, "@Protect the roads!@", _Brendann);
+            Bark_i(3, "@Protect the city!@", v16);
+        }
+        if (v17 = 2) {
+            Bark_i(0, "@We should adjourn!@", _Brendann);
+        }
+        if (v17 = 3) {
+            if $POMDIRGUN_IS_DEAD {
+                Bark_i(0, "@The Goblin King is dead!@", v16);
+                Bark_i(3, "@Long live the Avatar!@", _Brendann);
+            } else {
+                Bark_i(0, "@The Goblins are coming!@", v16);
+                Bark_i(3, "@Then we must attack.@", _Brendann);
+            }
+        }
+        if (v17 = 4) {
+            if not $spektorconfessed {
+                Bark_i(0, "@The storms grow worse.@", _Brendann);
+                Bark_i(3, "@Nothing we can do.@", v16);
+            } else {
+                Bark_i(0, "@Who is the thief?@", _Brendann);
+                Bark_i(3, "@Do not look at me!@", v16);
+            }
+        }
+        if (v17 = 5) {
+            if $simonshedsskin {
+                Bark_i(0, "@Simon was the traitor!@", _Brendann);
+                Bark_i(2, "@I rejoice in his death...@", v16);
+            } else {
+                if $marstenarrested {
+                    Bark_i(0, "@Execute Marsten!@", _Brendann);
+                    Bark_i(2, "@We must consider...@", v16);
+                } else {
+                    Bark_i(0, "@There is a traitor.@", _Brendann);
+                    Bark_i(2, "@Difficult to believe.@", v16);
+                }
+            }
+        }
+        if (v17 = 6) {
+            Bark_i(0, "@The Bears are wrong!@", _Brendann);
+        }
+    }
+    if ((event = _Converse) and (~GetWorkType(_Brendann) <> _Wait)) {
+        if ($brendanninvited and (((~GetWorkType(_Brendann) = _Sleep) or (~GetWorkType(_Brendann) = _Stand)) and (~BrendannBedDistance_i() < 15))) {
+            FaceAvatar_i(65386);
+            PartyFaces_i(65386);
+            SetWorkType(_Wait, _Brendann);
+            Bark_i(2, "@At last!@", _Brendann);
+            SetMusic(~GimmePathEgg(1, 5), 28);
+            SetNPCID_i(0, _Brendann);
+            $temp1flag = false;
+            $temp2flag = false;
+            $temp3flag = false;
+            v0 = ~PostInFuture(10, << _aNO_HALT_i, _aUSABLE_i, #Brendann >>, _Brendann);
+        } else {
+            Bark_i(0, "@Greetings, sir.@", _Avatar);
+            PartyFaces_i(65386);
+            Bark_i(2, "@Hello.@", _Brendann);
+            SetWorkType(_Talk, _Brendann);
+        }
+    }
+    if (event = _Action) {
+        v0 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #Paldn2 >>, _Brendann);
+    }
+    if (event = _Talking) {
+        Npc_schedule(_Brendann);
+        ClearBark_i(_Brendann);
+        SetSpeaker0_i(0, _Brendann);
+        if not ~GetItemFlag_i(_Met, _Brendann) {
+            if ($cantrataken = false) {
+                ["I am Brendann, stranger."];
+            } else {
+                ["I am Brendann. I did meet thee at the Banquet Hall."];
+            }
+            if ~AvatarSex() {
+                ["And thou art the most beautiful creature I have ever seen."];
+            }
+            SetItemFlag_i(_Met, _Brendann);
+        } else {
+            ["So we meet again, <v2>."];
+            if ($gottattoo and not $brendanncompliments) && ~AvatarSex() {
+                ["And thy tattoo makes thee even more desirable than before, <v1>."];
+                $brendanncompliments = true;
+            }
+        }
+        TurnOn(<< "duties" >>);
+        if ($simongavekey and not $gothelmofmonitor) {
+            TurnOn("Goblin raid");
+        }
+        if $brendanninvited {
+            TurnOn("ready to spar");
+        }
+        if ($AVATAR_IS_KNIGHT and not ~GetItemFlag_i(_Dead, _Simon)) {
+            TurnOn("traitor");
+        }
+        if ($KNOW_MARSTEN_IS_TRAITOR and not $marstenarrested) {
+            TurnOn("know traitor");
+        }
+        if ($brendannknowsstockings and not $knowmoonsilkstockings) {
+            TurnOn("stockings");
+        }
+        if $funeraldone {
+            TurnOn("Gwenno");
+        }
+        if $AVATAR_IS_KNIGHT {
+            TurnOn("Welcome to the Wolf Command");
+        }
+        if ($marstenarrested and not $IOLO_MADE_EQUIPMENT_LIST) {
+            TurnOn("Iolo");
+        }
+        if ($foundsimonbottle and (~GetWorkType(_Simon) <> _Wait)) {
+            TurnOn("brown bottle");
+        }
+        if $gothelmofmonitor {
+            TurnOn("Helm of Monitor");
+        }
+        TurnOn("bye");
+        converse {
+            key ("Helm of Monitor") {
+                TurnOff("Helm of Monitor");
+                ["As thou hast won back the helm of Monitor, thou art truly deserved of the title Champion Knight of Monitor. I salute thee!"];
+            }
+            key ("change subject") {
+                PopKeys();
+                ["Of what shall we speak?"];
+            }
+            key ("brown bottle") {
+                TurnOff("brown bottle");
+                ["What clear thinking, <v2>! Now I understand the wisdom of the Test of Knighthood, when it proclaimed thee a member of our Command."];
+                ["Surely this proves Krayg's innocence, for he is not a drinking man."];
+                if ~IsInInv(9, 65177, _Bottles, 1, _Party) {
+                    ["'Tis certainly a unique bottle, unlike common ale bottles."];
+                    ["If I were thee, I would take this to Luther and confront him. I have always suspected him, and a drunkard like him might well drop a bottle in the woods!"];
+                } else {
+                    ["Perhaps someone could identify the bottle, if thou wert to show it around. Lucilla at the pub might recognize it."];
+                }
+            }
+            key ("Gwenno") {
+                TurnOff("Gwenno");
+                ["A fine looking woman, but I know nothing more of her. Simon would be the one to ask concerning information of the strangers passing through town."];
+            }
+            key ("Welcome to the Wolf Command") {
+                TurnOff("Welcome to the Wolf Command");
+                ["'Tis good to have thee as one of us, <v2>. Again, congratulations on receiving thy Knighthood."];
+            }
+            key ("duties") {
+                TurnOff("duties");
+                ["I am the leader of the Command of the Wolf. Like all of the Wolves, I am a warrior of cunning as well as strength."];
+                if $gothelmofmonitor {
+                    ["Why, I daresay I may be the most capable knight in all of Monitor... Save for thee, Champion Knight. Now that thou hast undeniably won that honor, the ladies will certainly fawn on thee!"];
+                } else {
+                    ["When I recover the Helm of Monitor from the Goblins, then my prowess will be known to all, and I shall become the next Champion Knight of Monitor!"];
+                    ["Then glory will be mine. And the ladies will truly fawn on me!"];
+                }
+                if not $AVATAR_IS_KNIGHT {
+                    ["But I should not be speaking with thee until thou dost become a Knight of Monitor. Speak with Marsten about that."];
+                    terminate;
+                } else {
+                    TurnOn(<< "Wolves", "cunning", "Champion Knight", "ladies" >>);
+                }
+            }
+            key ("Wolves") {
+                ["The Wolves are the most canny fighters in Monitor. We are quick, silent, and deadly. We are experts at tracking and hunting our prey, and when we attack -- nothing can withstand us. Someday all of Serpent Isle will belong to Monitor, and it will be because of the Command of the Wolf!"];
+                TurnOff("Wolves");
+                TurnOn("Serpent Isle");
+            }
+            key ("Serpent Isle") {
+                TurnOff("Serpent Isle");
+                PushKeys();
+                ["I do not see why we stay down here in the south! Undoubtedly, the climate is warmer here, but the entire continent is ours for the taking! The Bears merely want to hide here and stagnate. And the Leopards have no ambition at all!"];
+                TurnOff("Serpent Isle");
+                TurnOn(<< "Bears", "Leopards", "change subject" >>);
+            }
+            key ("Bears") {
+                ["I believe one of them is a traitor! Didst thou hear that their patrol was ambushed at Fawn Tower? Our beloved Champion Knight was slain by goblins in that battle."];
+                ["She may have been a Bear, but she was beautiful..."];
+                if ~AvatarSex() {
+                    ["But, er, thou art even more beautiful, <v1>."];
+                }
+                ["The patrol was betrayed. And who could have known the plans? Why, another Bear, of course!"];
+                TurnOff("Bears");
+                if not v3 {
+                    TurnOn("traitor");
+                }
+            }
+            key ("traitor") {
+                TurnOff("traitor");
+                v3 = true;
+                if $AVATAR_IS_KNIGHT {
+                    ["The charges against Krayg are odious. Simply because a man is different, doth not make him a criminal! He is not the traitor."];
+                }
+                if ($KNOWS_GOBLINS_HIDEOUT and not $foundsimonbottle) {
+                    ["So Krayg hath told thee of a secret rendezvous site in the woods? By all means, investigate! Surely, thou wilt find evidence there to convict the traitor."];
+                } else {
+                    if $marstenarrested {
+                        ["I cannot still believe that Marsten would betray the entire city to the Goblins. Still, thine evidence is most convincing..."];
+                        if $spektorarrested {
+                            ["And Marsten would surely need an accomplice to his evil deeds. It seems that is the role Spektor chose to play in this tragic little drama."];
+                        }
+                    } else {
+                        ["I would not be surprised to find that one of the Bears did play traitor to their own Command! Inspect closely the actions of Luther. He is not to be trusted. He is a braggart and a buffoon. He thinks he shall be the next Champion Knight. But he hath never beaten me!"];
+                        $lutherisbraggart = true;
+                    }
+                    TurnOn(<< "Luther", "List Field" >>);
+                    if (not $marstenarrested and not $spektorarrested) && (~GetItemFlag_i(_Dead, _Lydia) or ~GetItemFlag_i(_Dead, _Shmed)) {
+                        PushKeys();
+                        if ~GetItemFlag_i(_Dead, _Lydia) {
+                            TurnOn("Was Lydia the traitor?");
+                        }
+                        if ~GetItemFlag_i(_Dead, _Shmed) {
+                            TurnOn("Was Shmed the traitor?");
+                        }
+                        TurnOn("change subject");
+                    }
+                }
+            }
+            key ("Was Lydia the traitor?") {
+                TurnOff("Was Lydia the traitor?");
+                ["I find it hard to believe that any member of my Command could be a traitor to Monitor."];
+                ["How could she betray the patrol? She was a tattoo artist, not a warrior..."];
+                ["No, Luther is still the most likely suspect. Continue on thy quest to find the traitor, my friend. As thy commander, I order it."];
+            }
+            key ("Was Shmed the traitor?") {
+                TurnOff("Was Shmed the traitor?");
+                ["I do not pretend to know what happened in the Knighthood Dungeon, but it sounds more like wizardry than Goblin mischief."];
+                ["Dost thou have enemies in the City of Mages, <v2>? Hast thou been to Moonshade?"];
+                ["Lord Marsten may want us to believe that the traitor hath been caught, but I do not believe it."];
+                if not ~GetItemFlag_i(_Dead, _Lydia) {
+                    ["As a favor to me, please continue searching for the spy. Surely, conclusive evidence shall appear sooner or later..."];
+                }
+            }
+            key ("Luther") {
+                TurnOff("Luther");
+                ["He may be a Bear, but he doth act like a pig! Ha!"];
+            }
+            key ("List Field") {
+                ["If thou dost feel like a skirmish, I shall be happy to meet thee there at the List Field. I often give lessons in combat, teaching how to strike quickly. I am there every day\x09at three o' clock. Thou dost look like thou art capable of a couple of rounds!"];
+                if ~AvatarSex() {
+                    ["And if thou dost meet me at my barracks at next midnight, I shall show thee another way to spar..."];
+                    ["My room is at the corner of Kosric Street and Roland Street, facing the List Field."];
+                    $brendanninvited = true;
+                }
+                TurnOff(<< "List Field", "ready to spar" >>);
+            }
+            key ("Leopards") {
+                ["Oh, they are all right. At least they listen to us and try to see our point of view. It is time that we dispense with the notion of 'all-for-one and one-for-all' and adopt the concept of -- may the best Knight win!"];
+                TurnOff("Leopards");
+            }
+            key ("cunning") {
+                TurnOff("cunning");
+                ["Stealth and cunning are primary attributes of a fighter. The Wolves are specialists in these regards. To be stalked and caught by a Wolf patrol would be a ghastly, but altogether honorable, death."];
+            }
+            key ("Champion Knight") {
+                if $gothelmofmonitor {
+                    ["And a fine champion thou dost make, as well. A true pride to the Wolf Command."];
+                    if ($simonshedsskin and $POMDIRGUN_IS_DEAD) {
+                        ["Not only didst thou root out the imposter in our midst, but thou hast slain our longtime enemy Pomdirgun, the Goblin King. Thou shalt be the stuff of legend one day, surely! Thy place in the history of Monitor is assured."];
+                    }
+                } else {
+                    ["Astrid was a brave woman. But the next Champion Knight shall be me."];
+                    if ~AvatarSex() {
+                        ["Unless, my dear, thou shalt claim the title thyself."];
+                    }
+                }
+                TurnOff("Champion Knight");
+            }
+            key ("ladies") {
+                TurnOff("ladies");
+                PushKeys();
+                if ~AvatarSex() {
+                    ["None of the ladies in Monitor are as beautiful as thou! When I gaze upon thy lovely features, I no longer remember that I have had relations with nearly every woman in this town."];
+                    ["What were their names? Lydia, Lucilla, Shazzana, Cellia... and dost thou not see the resemblance between myself and young Cantra? But I should not speak of this..."];
+                    ["Well, they mean nothing to me now that thou art in my life."];
+                } else {
+                    ["Ah, the ladies of Monitor. All are governed by their own particular passions."];
+                    ["Lydia, Lucilla, Shazzana, Cellia, Harnna..."];
+                }
+                TurnOff("ladies");
+                TurnOn(<< "Lydia", "Lucilla", "Shazzana", "Cellia", "Harnna", "change subject" >>);
+            }
+            key ("Lydia") {
+                if v4 {
+                    ["Lydia was a strange woman, beautiful but dangerous."];
+                } else {
+                    ["She is a spicy wench, that one! Hath quite a temper and is very opinionated."];
+                }
+                ["They say her sister was even more beautiful, but the sorcerers took her away to their city. 'Twould certainly be an experience to meet her, I am certain of that!"];
+                TurnOff("Lydia");
+            }
+            key ("Lucilla") {
+                ["She is quite a flirt, that one. A true tease, if thou dost know what I mean. Quite good-looking, and fun, too.];
+                if not ~AvatarSex() {
+                    ["Perhaps thou mayest enjoy her company?"];
+                }
+                ["To tell the truth, I believe she must be interested in someone else. A secret, torrid affair, perhaps? Now, who could her lover be? I haven't a clue."];
+                TurnOff("Lucilla");
+            }
+            key ("Shazzana") {
+                ["Now that Astrid is dead, Shazzana deeply desires to be the new Champion Knight of Monitor. This is not such a great revelation, of course. Any of us would gladly welcome such an honor."];
+                TurnOff("Shazzana");
+            }
+            key ("Cellia") {
+                ["She is more quiet. Yet she is not unaffected by the often lonely life of a Monitor knight."];
+                if not ~AvatarSex() {
+                    ["Her skin is smooth and soft. Finer than any luxuriant mane or hide thou wilt find in her shop, I can assure thee... Harrumph, excuse me!"];
+                }
+                TurnOff("Cellia");
+            }
+            key ("Harnna") {
+                TurnOff("Harnna");
+                ["She is a widow now, and hath a fine daughter."];
+                ["These days, she keeps to herself and dabbles in magic, canst thou imagine? Hah!"];
+                if $cantrataken {
+                    ["I hope Cantra can be found. The Goblins must have taken her -- they eat children, as thou knowest."];
+                }
+            }
+            key ("ready to spar") {
+                TurnOff("ready to spar");
+                ["If thou dost mean what I think thou dost mean, please, meet me in my barracks tonight."];
+            }
+            key ("Goblin raid") {
+                TurnOff("Goblin raid");
+                if $gothelmofmonitor {
+                    ["Thy raid of the Goblin camp and recovery of the Helm of Monitor will live in our history forever. Astrid is avenged!"];
+                } else {
+                    ["Thou dost plan to raid the Goblin camp? I fear it may be too dangerous, <v1>. Best leave it to more experienced fighters."];
+                    v18 = ~AskList(<< "I will go!", "I beg thy pardon!" >>);
+                    ["Well, if that is the way thou dost feel... Go thou. Prove thyself worthy! Go on!"];
+                    if ~AvatarSex() {
+                        ["I shall miss thee if thou dost not return..."];
+                    }
+                    ["Templar is the expert on the Goblins. Thou mightest consider seeking his advice, before risking thy life."];
+                }
+            }
+            key ("know traitor") {
+                TurnOff("know traitor");
+                ["Aha! I always knew that buffoon Luther was the criminal. Those Bears shall sing a different tune now!"];
+                ["But dost thou have proof?"];
+                v16 = ~PartyUtters(false, "@I found evidence in the Goblin camp.@", "@We found evidence among the Goblins. Documents signed by the traitor!@", 65535);
+                SetSpeakerSlot_i(0);
+                ["May I see?"];
+                if (~IsInInv(65177, 120, _Scroll, 1, _Party) or (~IsInInv(65177, 121, _Scroll, 1, _Party) or ~IsInInv(65177, 122, _Scroll, 1, _Party))) {
+                    if (((~IsInInv(65177, 120, _Scroll, 1, _Party) + ~IsInInv(65177, 121, _Scroll, 1, _Party)) + ~IsInInv(65177, 122, _Scroll, 1, _Party)) > 1) {
+                        v16 = ~PartyUtters(false, "@Here are the scrolls.@", "@Here are the scrolls.@", 65533);
+                    } else {
+                        v16 = ~PartyUtters(false, "@Here it is.@", "@Here it is.@", 65533);
+                    }
+                    SetSpeakerSlot_i(0);
+                    ["But this is not what I expected..."];
+                    v0 = 0;
+                    if ~IsInInv(65177, 120, _Scroll, 1, _Party) {
+                        ["This is proof that Lord Marsten hath been conspiring with the Goblins! That old goat!"];
+                        ["He planned to destroy the Wolves! And the Bears! And to make himself King of the city!"];
+                        v0 = 1;
+                        $marstenarrested = true;
+                    }
+                    if ~IsInInv(65177, 121, _Scroll, 1, _Party) {
+                        ["Lord Marsten was the traitor, and that worm Spektor aided him! Death would be too kind for them!"];
+                        ["It seems that Marsten sought to spare Astrid's life, but he failed her even as he betrayed his manhood."];
+                        v0 = (v0 + 1);
+                        $marstenarrested = true;
+                        $spektorarrested = true;
+                    }
+                    if ~IsInInv(65177, 122, _Scroll, 1, _Party) {
+                        ["Marsten sought to betray Bull Tower! We must act quickly to warn the Tower."];
+                        v0 = (v0 + 1);
+                        $marstenarrested = true;
+                    }
+                    if (v0 = 1) {
+                        ["I thank thee for showing me this document. Justice will be served. Thou mayest keep this document if thou wishest."];
+                    } else {
+                        if (v0 > 1) {
+                            ["I thank thee for showing me these documents. Justice will be served. Thou mayest keep these documents if thou wishest."];
+                        }
+                    }
+                    if ($marstenarrested and not ~GetItemFlag_i(_Dead, _Marsten)) {
+                        Item_move(<< 1094, 2501, 0 >>, _Marsten);
+                        NewSchedule_i(<< 1094, 2501, 1094, 2501 >>, << 14, 7 >>, << 7, 2 >>, _Marsten);
+                    }
+                    if ($spektorarrested and not ~GetItemFlag_i(_Dead, _Spektor)) {
+                        Item_move(<< 1096, 2518, 0 >>, _Spektor);
+                        NewSchedule_i(<< 1096, 2518, 1096, 2518 >>, << 14, 7 >>, << 7, 2 >>, _Spektor);
+                    }
+                    NewSchedule_i(<< 945, 2633, 983, 2698, 974, 2559, 923, 2678, 946, 2565, 1052, 2647 >>, << 14, 27, 7, 27, 16, 26 >>, << 0, 3, 4, 5, 6, 7 >>, _Caladin);
+                    v19 = 3;
+                    While (v19 > 0) {
+                        v20 = ~GetCoord(_Avatar);
+                        v20::1 = ((v20::1 + 20) - (~rndRange(1, 0) * 40));
+                        v20::2 = ((v20::2 + 20) - (~rndRange(1, 0) * 40));
+                        v21 = ~CreateCreature_i(v20, _Pikeman);
+                        v22 = ~ApproachAvatar_i(40, 50, v21);
+                        if v22 {
+                            SetItemFlag_i(_IsTemporary_i, v21);
+                            v23 = true;
+                        } else {
+                            Item_destroy(v21);
+                        }
+                        v19 = (v19 - 1);
+                    }
+                    v24 = ~FindNearby_i(0, 30, _Pikeman, _Brendann);
+                    if v24 {
+                        Foreach v27 in v24 {
+                            SetWorkType(_Talk, v27);
+                            SetNPCID_i(6, v27);
+                        }
+                    }
+                    if v23 {
+                        if $spektorarrested {
+                            ["Do not worry -- we shall arrest these vermin!"];
+                        } else {
+                            ["Do not worry -- I shall personally see that Marsten is hunted down like the dog he is."];
+                        }
+                        Bark_i(0, "@Pikemen!@", _Brendann);
+                        SetWorkType(_Stand, _Brendann);
+                        Bark_i(2, "@Yes, lord!@", v24::1);
+                        terminate;
+                    } else {
+                        if $spektorarrested {
+                            ["Do not worry, <v2>! I shall order the Pikemen to place the traitors under arrest!"];
+                        } else {
+                            ["Do not worry, <v2>! I shall order the Pikemen to place the traitor under arrest!"];
+                        }
+                        Bark_i(0, "@Pikemen!@", _Brendann);
+                        SetWorkType(_Shy, _Brendann);
+                        terminate;
+                    }
+                } else {
+                    v16 = ~PartyUtters(false, "@I did not bring it.@", "@We did not bring it with us.@", 65534);
+                    SetSpeakerSlot_i(0);
+                    ["Until thou dost bring proof, no one will believe us..."];
+                    Bark_i(0, "@Bring proof!@", _Brendann);
+                    terminate;
+                }
+            }
+            key ("stockings") {
+                TurnOff("stockings");
+                ["Ha! I surmise thou hast heard of my reputation as something of a womanizer. Purely undeserved, I assure thee. I will try to answer thy questions."];
+                if ~IsInInv(0, 65177, _Stockings, 1, _Party) {
+                    ["A female mage would wear stockings such as the ones thou didst discover amongst thy possessions."];
+                } else {
+                    ["Thou must have the stockings that thou didst discover amongst thy possessions? If thou dost not have them, I cannot tell thee anything about them."];
+                }
+                if ~IsInInv(1, 65177, _Stockings, 1, _Party) {
+                    ["The stockings that thou didst take from Shmed were made in the city of Fawn."];
+                }
+            }
+            key ("Iolo") {
+                TurnOff("Iolo");
+                if ($BRENDANN_GAVE_JAIL_KEY = false) {
+                    ["If thou wilt vouch for thy friend's future behavior, then I shall let him go free."];
+                    if ~AskYesNo() {
+                        ["Very well. Keep thine eye on him. We do not want people popping in and out of our city as he did!"];
+                        ["Here is the key to thy friend's jail cell. Set him free."];
+                        v0 = ~GiveItemsOrDrop_i(true, 0, 5, 104, 641, 1, _Avatar);
+                        $BRENDANN_GAVE_JAIL_KEY = true;
+                    } else {
+                        ["Then he must remain in his cell."];
+                    }
+                } else {
+                    if ~IsInInv(5, 104, _Unique_Key, 1, _Party) {
+                        ["I did already give thee the key to thy friend's cell!"];
+                    } else {
+                        ["Didst thou lose the key I did give thee?"];
+                        if ~AskYesNo() {
+                            ["Very well. Here then, take this copy. And do not lose this one!"];
+                            v0 = ~GiveItemsOrDrop_i(true, 0, 5, 104, 641, 1, _Avatar);
+                        } else {
+                            ["Good. I would hate for thee to have lost it..."];
+                        }
+                    }
+                }
+            }
+            key ("bye") {
+                Bark_i(0, "@Goodbye@", _Avatar);
+                if ~AvatarSex() {
+                    if $brendanninvited {
+                        Bark_i(2, "@Until tonight!@", _Brendann);
+                    } else {
+                        Bark_i(2, "@Nice legs...@", _Brendann);
+                    }
+                } else {
+                    Bark_i(2, "@Be cunning!@", _Brendann);
+                }
+                break;
+            }
+        }
+        clear_answers;
+    }
+}

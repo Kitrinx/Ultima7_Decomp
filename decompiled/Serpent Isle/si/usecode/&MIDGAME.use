@@ -1,0 +1,98 @@
+Routine StartMidgame_i accepts a0 #locals(2) #uses(SetWorkTypeAt_i, RavageMoonshade_i) {
+    if $BANES_RELEASED {
+        v0 = ~FindNearby_i(0, 10, _NPC2_Bodies, _Avatar);
+        if v0 && (~GetFrame(v0) = 16) {
+            ClearItemFlag_i(_IsTemporary_i, v0);
+        }
+        RemoveNPC_i(_Fedabiblio);
+        RemoveNPC_i(_Renfry);
+        SetItemFlag_i(_Dead, _Renfry);
+        SetWorkTypeAt_i(_Wait, 2729, 870, _Andral);
+        SetWorkTypeAt_i(_Wait, 2644, 950, _Brendann);
+        SetWorkTypeAt_i(_Wait, 2748, 803, _Flicken);
+        SetWorkTypeAt_i(_Wait, 2583, 948, _Caladin);
+        SetWorkTypeAt_i(_Wait, 2569, 979, _Cellia);
+        SetWorkTypeAt_i(_Wait, 2643, 952, _Shazzana);
+        SetWorkTypeAt_i(_Wait, 2595, 1028, _Krayg);
+        SetWorkTypeAt_i(_Wait, 2599, 1042, _Luther);
+        SetWorkTypeAt_i(_Wait, 2603, 1045, _Lydia);
+        SetWorkTypeAt_i(_Wait, 2679, 1075, _Shmed);
+        SetWorkTypeAt_i(_Wait, 2690, 1026, _Standarr);
+        SetWorkTypeAt_i(_Wait, 2631, 1031, _Templar);
+        SetWorkTypeAt_i(_Wait, 2503, 1063, _Marsten);
+        SetWorkTypeAt_i(_Wait, 2506, 1090, _Spektor);
+        SetWorkTypeAt_i(_Wait, 2629, 1014, _Lucilla);
+        NewSchedule_i(<< 842, 2740, 1033, 2596, 937, 2587, 859, 2698 >>, << 11, 11, 12, 14 >>, << 2, 4, 5, 7 >>, _Harnna);
+        Npc_schedule(_Harnna);
+        Npc_setAlignment(_Evil, _SuperGoblin);
+        Item_move(<< 1036, 2598 >>, _SuperGoblin);
+        SetWorkType(_Combat_0, _SuperGoblin);
+        SetWorkTypeAt_i(_Wait, 2069, 2403, _Bucia);
+        SetWorkTypeAt_i(_Wait, 1813, 2242, _Hawk);
+        SetWorkTypeAt_i(_Wait, 2073, 2424, _Gustacio);
+        SetWorkTypeAt_i(_Wait, 2021, 2487, _Melino);
+        SetWorkTypeAt_i(_Wait, 1986, 2411, _Julia);
+        SetWorkTypeAt_i(_Wait, 1958, 2443, _Rocco);
+        SetWorkTypeAt_i(_Wait, 1954, 2457, _Topo);
+        SetWorkTypeAt_i(_Wait, 1939, 2392, _Pothos);
+        SetWorkTypeAt_i(_Wait, 1924, 2376, _Mosh);
+        SetWorkTypeAt_i(_Wait, 1860, 2418, _Filbercio);
+        SetWorkTypeAt_i(_Wait, 1859, 2423, _Frigidazzi);
+        SetWorkTypeAt_i(_Wait, 1876, 2452, _Flindo);
+        SetWorkTypeAt_i(_Wait, 1862, 2306, _Kane);
+        SetWorkTypeAt_i(_Wait, 1846, 2230, _GoblinMessenge);
+        SetWorkTypeAt_i(_Wait, 1797, 2242, _Edrin);
+        SetWorkTypeAt_i(_Wait, 1973, 2387, _Columna);
+        NewSchedule_i(<< 2296, 1820, 2314, 1816, 2295, 1847, 2325, 1826, 2314, 1816 >>, << 14, 5, 16, 12, 5 >>, << 0, 3, 4, 5, 6 >>, _Torrissio);
+        NewSchedule_i(<< 2324, 1767, 2329, 1767, 2364, 1922 >>, << 14, 5, 7 >>, << 0, 2, 3 >>, _Ducio);
+        NewSchedule_i(<< 2359, 1989, 2275, 1859, 2435, 1958, 2467, 2083 >>, << 14, 12, 12, 12 >>, << 0, 2, 5, 6 >>, _Freli);
+        NewSchedule_i(<< 2359, 1989, 2275, 1859, 2435, 1958, 2467, 2083 >>, << 14, 12, 12, 12 >>, << 0, 2, 5, 6 >>, _Andrio);
+        Npc_schedule(_Torrissio);
+        Npc_schedule(_Ducio);
+        Npc_schedule(_Freli);
+        Npc_schedule(_Andrio);
+        if ~GetItemFlag_i(_Dead, _Stefano) {
+            ResurrectNPC_i(_Stefano);
+            flag(329) = true;
+        }
+        SetWorkTypeAt_i(_Wait, 1878, 998, _Alyssand);
+        SetWorkTypeAt_i(_Wait, 1774, 1033, _Delin);
+        SetWorkTypeAt_i(_Wait, 1847, 1033, _Garth);
+        SetWorkTypeAt_i(_Wait, 1805, 968, _Joth);
+        SetWorkTypeAt_i(_Wait, 1826, 1095, _Voldin);
+        SetWorkTypeAt_i(_Wait, 1816, 1045, _Jendon);
+        SetWorkTypeAt_i(_Wait, 1752, 1010, _Jorvin);
+        SetWorkTypeAt_i(_Wait, 1941, 1030, _Kylista);
+        SetWorkTypeAt_i(_Wait, 1782, 1120, _Delphynia);
+        SetWorkTypeAt_i(_Wait, 1687, 949, _Leon);
+        SetWorkTypeAt_i(_Wait, 1646, 1031, _Kalen);
+        SetWorkTypeAt_i(_Wait, 1737, 1127, _Olon);
+        SetWorkTypeAt_i(_Wait, 1920, 1031, _Scots);
+        SetWorkTypeAt_i(_Wait, 1942, 1015, _Zulith);
+        NewSchedule_i(<< 1030, 1911, 1033, 1870, 1030, 1816, 1126, 1773, 943, 1760, 982, 1734 >>, << 11, 12, 12, 11, 26, 14 >>, << 2, 3, 4, 5, 6, 7 >>, _Ruggs);
+        Npc_schedule(_Ruggs);
+        v1 = ~GiveToCont_i(0, 0, 10, _Scroll, 1, _Leon);
+        v1 = ~GiveToCont_i(0, 0, 7, _Scroll, 1, _Zulith);
+        Polymorph_i(_Skinless, _Yelinda);
+        Item_move(<< 1561, 1465 >>, _Yelinda);
+        SetWorkTypeAt_i(_Wander, 1465, 1561, _Yelinda);
+        if ~GetItemFlag_i(_Met, _Olon) {
+            v1 = ~GiveToCont_i(0, 9, 5, _Bottles, 1, _Olon);
+            v1 = ~GiveToCont_i(0, 9, 5, _Bottles, 1, _Olon);
+            v1 = ~GiveToCont_i(0, 4, 124, _Book, 1, _Olon);
+            v1 = ~GiveToCont_i(0, 19, 125, _Book, 1, _Olon);
+        }
+        SetWorkTypeAt_i(_Wait, 2232, 1313, _Ensorcio);
+        SetWorkTypeAt_i(_Wait, 2233, 1256, _Argus);
+        SetWorkTypeAt_i(_Wait, 2195, 1303, _Byrin);
+        SetWorkTypeAt_i(_Wait, 2214, 1272, _Devra);
+        NewSchedule_i(<< 1302, 2295, 1271, 2252, 1293, 2230, 1302, 2210, 1271, 2252 >>, << 14, 5, 3, 11, 5 >>, << 0, 3, 4, 5, 7 >>, _Wilfred);
+        Npc_schedule(_Wilfred);
+        SetWorkTypeAt_i(_Wait, 875, 1078, _Baiyanda);
+        SetWorkTypeAt_i(_Wait, 840, 1088, _Bwundiai);
+        SetWorkTypeAt_i(_Wait, 852, 1145, _Mwaerno);
+        SetWorkTypeAt_i(_Wait, 923, 1028, _Gilwoyai);
+        SetWorkTypeAt_i(_Wait, 851, 1080, _Kapyundi);
+        RavageMoonshade_i(0);
+    }
+}

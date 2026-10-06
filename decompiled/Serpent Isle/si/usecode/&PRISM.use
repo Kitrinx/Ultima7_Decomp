@@ -1,0 +1,44 @@
+Routine Soul_Prism accepts a0 #locals(6) {
+    v0 = ~GetFrame(item);
+    v1 = ~GetTarget();
+    if not v1 {
+        return;
+    }
+    v2 = ~Item_getType(v1);
+    if (v2 = 810) {
+        if not (v0 = 1) {
+            return;
+        }
+        v3 = ~GetQuality(v1);
+        v4 = false;
+        if (v3 = 0) {
+            return;
+        }
+        if (v3 = 10) {
+            SetFrame(2, item);
+        }
+        if (v3 = 11) {
+            SetFrame(3, item);
+        }
+        if (v3 = 12) {
+            SetFrame(4, item);
+        }
+        SetFrame(0, v1);
+        v5 = ~SetQuality(0, v1);
+        return;
+    }
+    if (v2 = 806) {
+        if ($anarchybaneinsword and (v0 = 4)) {
+            $anarchybaneinsword = false;
+            SetFrame(7, item);
+        }
+        if (flag(210) and (v0 = 2)) {
+            flag(210) = false;
+            SetFrame(5, item);
+        }
+        if (flag(209) and (v0 = 3)) {
+            flag(209) = false;
+            SetFrame(6, item);
+        }
+    }
+}

@@ -1,0 +1,45 @@
+Routine SleepArrowUsable_i accepts a0 #locals(3) #uses(DoDamage_i, Bark_i, AttackAvatar_i, BarkIfNear_i) {
+    if (event = _Combat) {
+        v0 = ~GetTarget();
+        if not ~Item_isNpc(v0) {
+            terminate;
+        }
+        Sfx(91);
+        v1 = ~ItemToNPC_i(v0);
+        if (v1 = 65380) {
+            flag(700) = true;
+            SetItemFlag_i(_Tournament, _Draygan);
+            Npc_setAlignment(_Chaotic, _Draygan);
+            SetFrame(13, _Draygan);
+            SetWorkType(_Wait, _Draygan);
+            v2 = ~GetNPCStat_i(_Hits, _Draygan);
+            DoDamage_i((v2 - 1), _Draygan);
+            Bark_i(2, "@zzzzzz....@", _Draygan);
+            if ~IsNPCNear_i(_Hurd) {
+                AttackAvatar_i(_Hurd);
+                Bark_i(2, "@I obey, Master!@", _Hurd);
+            }
+            if ~IsNPCNear_i(_Ivor) {
+                AttackAvatar_i(_Ivor);
+                Bark_i(7, "@Hold on, Master!@", _Ivor);
+            }
+            if ~GetItemFlag_i(_Dead, _Beryl) {
+                terminate;
+            }
+            if not ~FindNearby_i(176, 65535, _Wench, item) {
+                v2 = ~ApproachAvatar_i(40, 140, _Beryl);
+                v2 = ~PostAction(<< _aSTAND_FRAME_i, _aBEND_FRAME_i, _aKNEEL_FRAME_i, _aLIE_FRAME_i >>, v0);
+            }
+            ClearItemFlag_i(_Asleep, _Beryl);
+            SetWorkType(_Combat_0, _Beryl);
+            Npc_setTarget(_Draygan, _Beryl);
+            SetAttacker_i(_Draygan, _Beryl);
+            Npc_setAlignment(_Good, _Beryl);
+            ClearBark_i(_Beryl);
+            BarkIfNear_i(<< "Die, Draygan!", "I shall kill thee!", "Whoreson!" >>, _Beryl);
+        } else {
+            SetItemFlag_i(_Asleep, v0);
+            SetWorkType(_Sleep, v0);
+        }
+    }
+}

@@ -1,0 +1,152 @@
+Routine Gwanni_Child accepts a0 #locals(8) #uses(~WhereAmI_i, Bark_i, ~AskCopyProtection_i, ~GiveItemsOrDrop_i, BarkIfNear_i) {
+    v0 = ~AvatarSex();
+    v1 = ~WhereAmI_i();
+    v2 = "son";
+    v3 = ~NPCToItem_i(_Thoxa);
+    if v0 {
+        v2 = "daughter";
+    }
+    if ((event = _Trigger) and (v1 = 31)) {
+        SetSpeaker0_i(0, _Thoxa);
+        [Greetings, hero from another world!"];
+        ["I foretold that we would meet again, though I had not expected thee in the realm of dreams." *"That which thou dost see before thee is the Moon's Eye. It is thy goal in the waking world."];
+        ["Seek out the true Moon's Eye in the Temple of the Ancient Ones in the icy wastes to the north. It will show thee what thou must know..."];
+        CloseSpeaker0_i();
+        Bark_i(2, "@Seek the Moon's Eye...@", _Thoxa);
+        Bark_i(12, "@Wait...@", _Avatar);
+        v4 = ~GetCoord(item);
+        createSprite(65535, 0, 0, 0, v4::2, v4::1, 7);
+        Sfx(81);
+        v5 = ~SetQuality(5, item);
+        v5 = ~PostInFuture(10, << _aNO_HALT_i, _aUSABLE_i, #DreamScenesEgg_i >>, item);
+        terminate;
+    }
+    if (event = _Action) {
+        if ((item = v3) and (v1 = 24)) {
+            v6 = ~GetCoord(_Thoxa);
+            While (v6::3 > 0) {
+                v6::1 = (v6::1 - 1);
+                v6::2 = (v6::2 - 1);
+                v6::3 = (v6::3 - 2);
+            }
+            createSprite(65535, 0, 0, 0, v6::2, v6::1, 7);
+            RemoveNPC_i(_Thoxa);
+            ClearItemFlag_i(_Asleep, _Dupre);
+            ClearItemFlag_i(_Asleep, _Shamino);
+            ClearItemFlag_i(_Asleep, _Iolo);
+            terminate;
+        }
+        if (v1 = 27) {
+            ClearSpeakers_i();
+            SetSpeaker0_i(0, _Thoxa);
+            ["Even as was foretold! I have travelled a great distance to meet with thee. My name is Thoxa."];
+            ["But wait! I proceed too quickly. Perhaps thou art not the promised Hero... I must test thee, lest I give mine assistance in error."];
+            if ~AskCopyProtection_i() {
+                ["Thou art truly the one I seek! Here is the Hourglass of Fate. Keep it with thee always, for through it the Monks of Xenka can aid thee."];
+                v5 = ~GiveItemsOrDrop_i(true, false, 1, 65177, 839, 1, _Avatar);
+                TurnOn(<< "foretold", "promised Hero", "assistance", "Hourglass" >>);
+                TurnOn("bye");
+                converse {
+                    key ("Hourglass") {
+                        TurnOff("Hourglass");
+                        ["As long as the Hourglass of Fate is with thee, if thou art killed, thou shalt be resurrected on Monk Isle."];
+                        ["And if one of thy companions is killed, thou canst summon one of us to resurrect him or her, by use of the Hourglass."];
+                        ["The monk shall come soon, when thou art in a safe place, without strangers or distractions."];
+                    }
+                    key ("foretold") {
+                        TurnOff("foretold");
+                        ["I am a Xenkan monk, my <v2>. As such, I have devoted my life to studying the prophecies of Xenka."];
+                        ["The writings are clear: the Hero shall come in the last days, with Three Companions, to battle against the Evil which is in the land."];
+                        ["Further, the Hero shall be given guidance from a Power that dwells in the Void."];
+                        TurnOn(<< "Companions", "Power" >>);
+                    }
+                    key ("Companions") {
+                        TurnOff("Companions");
+                        ["The writings of Xenka speak of the Three which shall travel with thee. Without them, thou canst not succeed."];
+                        ["They shall be thine oldest and most trusted friends, and it is their part to share thine adventure with thee."];
+                        ["Thou must find them, Hero! And then never let them leave thy side..."];
+                        flag(707) = true;
+                    }
+                    key ("Power") {
+                        TurnOff("Power");
+                        ["The writings are vague on this point, so that it is not certain whether the Power lives in the Void now, or merely came from that place."];
+                        ["However, I know that thou shalt need to seek out three artifacts -- a Ring, a Necklace, and an Earring."];
+                        ["Through these ancient items, the Power shall communicate with thee. More than this, I know not."];
+                        flag(706) = true;
+                    }
+                    key ("Xenka") {
+                        TurnOff("Xenka");
+                        ["How can I explain Xenka in the short time we have? Xenka is the prophetess who receives wisdom from beyond the Void..."];
+                    }
+                    key ("promised Hero") {
+                        TurnOff("promised Hero");
+                        ["The land is in dire need of a Hero, for the end of the world draws nigh!"];
+                        ["There are storms which lash out with magical lightnings, and strange illnesses which plague the innocent."];
+                        ["Lastly, there is the growing sense that something is wrong in the land..."];
+                        TurnOn(<< "storms", "illnesses", "wrong" >>);
+                    }
+                    key ("storms") {
+                        TurnOff("storms");
+                        ["The storms are one of the signs that the end of the world is at hand. I know not what causes them, or how they may be stopped."];
+                        ["Most ships have ceased to sail, for the storms strike any vessel which leaves harbor."];
+                        ["The lightning doth have the power to kill or to teleport, and sometimes it changes the nature of that which it strikes."];
+                    }
+                    key ("illnesses") {
+                        TurnOff("illnesses");
+                        ["The prophecies mention that a plague will come among us, to sicken the meek and the innocent."];
+                        ["Hast thou noticed the dying birds? They are only the first victims. At first the disease shall strike the wildest races, and lastly, the race of Men."];
+                    }
+                    key ("wrong") {
+                        TurnOff("wrong");
+                        ["I cannot explain further. Dost thou not feel it? The sense that something is... not right?"];
+                        ["Xenka speaks of these days as the Time of Imbalance."];
+                    }
+                    key ("assistance") {
+                        TurnOff("assistance");
+                        ["My time with thee is short, so take careful heed of mine advice --"];
+                        ["There is a cave further south by a large red bush -- its entrance is invisible. If thou canst find thy way in, it may provide more clues."];
+                        ["Follow the coast until thou dost come to a great city. The name of the city is Monitor. An old friend of thine awaits thee there."];
+                    }
+                    key ("aid") {
+                        TurnOff("aid");
+                        ["With it, thou wilt know how long thou hast to complete thy quest before we are all doomed! And as long as the sands run within the Hourglass of Fate, we may intercede if thou art slain before thy quest is completed -- Thou wilt be resurrected on Monk Isle."];
+                    }
+                    key ("Sands of Time") {
+                        TurnOff("Sands of Time");
+                        ["Within the Hourglass of Fate lie the Sands of Time. As each grain doth fall, so doth another moment hasten us to our doom."];
+                        TurnOn("doom");
+                    }
+                    key ("doom") {
+                        TurnOff("doom");
+                        ["If thou dost fail in thy quest, our world will end... ripped apart by the earthquakes that will soon plague it."];
+                    }
+                    key ("bye") {
+                        ["I must go now, before those who oppose me find that I have been here."];
+                        v5 = ("@Farewell!@" & "@No!@");
+                        BarkIfNear_i(v5, _Thoxa);
+                        EndConverse_i();
+                        CloseSpeaker0_i();
+                        v7 = ~GetCoord(_Thoxa);
+                        v7::1 = (v7::1 + 12);
+                        v7::2 = (v7::2 - 3);
+                        Item_move(v7, _Karnax);
+                        Sfx(81);
+                        createSprite(65535, 0, 0, 0, v7::2, v7::1, 26);
+                        v5 = ~PostInFuture(20, << _aNO_HALT_i, _aUSABLE_i, #M_Bard >>, _Karnax);
+                        v5 = ~PostInFuture(7, << _aNO_HALT_i, _aFACE_i, byte(50), _aCONTINUE_i, _aREADY_FRAME_i >>, item);
+                        v5 = ("@Thoxa!@" & ("" & ("@Vex Ort!@" & ("@Mas Ort!@" & ("@Vex Ort!@" & ("" & "@She lives!@"))))));
+                        BarkIfNear_i(v5, _Karnax);
+                        terminate;
+                    }
+                }
+                clear_answers;
+            } else {
+                SetWorkType(_Shy, _Thoxa);
+                ClearBark_i(_Thoxa);
+                Bark_i(0, "@An impostor!@", _Thoxa);
+                ClearItemFlag_i(_DontMove_i, _Avatar);
+                terminate;
+            }
+        }
+    }
+}

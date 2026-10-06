@@ -1,0 +1,26 @@
+Routine PressurePlateEgg_i accepts a0 #locals(3) #uses(PlateSwingsDoor_i, CheckPlateOrder_i) {
+    v0 = ~FindNearby_i(0, 5, _Pressure_Plate, item);
+    v1 = ~GetFrame(v0);
+    if ((v1 modulo 2) = 0) {
+        SetFrame((v1 + 1), v0);
+    } else {
+        SetFrame((v1 - 1), v0);
+    }
+    playSFX(v0, 70);
+    v2 = ~GetQuality(v0);
+    if (v2 = 0) {
+        PlateSwingsDoor_i(v2);
+    }
+    if (v2 = 1) && not flag(749) {
+        PlateSwingsDoor_i(v2);
+    }
+    if (v2 = 2) && not flag(751) {
+        PlateSwingsDoor_i(v2);
+    }
+    if (v2 = 3) && not flag(752) {
+        PlateSwingsDoor_i(v2);
+    }
+    if ((v2 >= 4) and (v2 <= 6)) {
+        CheckPlateOrder_i(v2);
+    }
+}

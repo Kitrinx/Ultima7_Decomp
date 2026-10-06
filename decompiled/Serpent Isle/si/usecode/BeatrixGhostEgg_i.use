@@ -1,0 +1,45 @@
+Routine BeatrixGhostEgg_i accepts a0 #locals(3) #uses(~GimmePathEgg) {
+    if $BEATRIX_FORGAVE_SHAMINO {
+        Item_destroy(item);
+        terminate;
+    }
+    if not ~IsNPCNear_i(_Shamino) {
+        terminate;
+    }
+    SetMusic(~GimmePathEgg(1, 5), 56);
+    v0 = ~CreateCreature_i(~GetCoord(item), _Ghost_482);
+    Npc_setAlignment(_Good, v0);
+    Sfx(57);
+    v1 = ~GiveToCont_i(18, _All, 5, _M_Poison, 1, v0);
+    v1 = ~GiveToCont_i(18, _All, 2, _Dragon_Breath, 1, v0);
+    v1 = ~GiveToCont_i(18, _All, 5, _Sp_Bang, 1, v0);
+    v2 = ~GetQuality(item);
+    Item_destroy(item);
+    SetSpeaker0_i(0, _XenkaMonk_286);
+    if (v2 = 0) {
+        ["So, thou didst finally think to return, King? It is too late! All are dead, the Goblins conquered all..."];
+        v1 = ~PostAction(<< _aNO_HALT_i, _aBARK_i, "@Too late!@" >>, v0);
+    }
+    if (v2 = 1) {
+        ["Here is where my body did lie, until the Goblins pillaged the tomb..."];
+        ["I died of a broken heart, waiting for thy return..."];
+        v1 = ~PostAction(<< _aNO_HALT_i, _aBARK_i, "@Betrayer!@" >>, v0);
+    }
+    if (v2 = 2) {
+        ["To think I loved thee once! I wrote thee notes of love, letters of trust -- but thou didst remember me no more, when Lord British summoned thee to his aid!"];
+        v1 = ~PostAction(<< _aNO_HALT_i, _aBARK_i, "@Damn British!@" >>, v0);
+    }
+    if (v2 > 2) {
+        ["Welcome to the Castle of King Shamino, the Betrayer! Let me greet thee..."];
+        v1 = ~PostAction(<< _aNO_HALT_i, _aBARK_i, "@Die, King!@" >>, v0);
+    }
+    Npc_setAlignment(_Evil, v0);
+    SetWorkType(_Combat_0, v0);
+    Npc_setTarget(_Shamino, v0);
+    SetAttacker_i(_Avatar, v0);
+    SetItemFlag_i(_Tournament, v0);
+    SetItemFlag_i(_IsTemporary_i, v0);
+    v0 = ~PostInFuture(20, << _aNO_HALT_i, _aUSABLE_i, #Ghost_01E2 >>, ~GimmePathEgg(1, 5));
+    SetItemFlag_i(_Tournament, _Shamino);
+    $BEATRIX_PROTECTION = true;
+}

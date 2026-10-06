@@ -1,0 +1,412 @@
+Routine DDSerpEW accepts a0 #locals(1) #uses(~DoorState_i, ~SwingDoor_i, SwingSerpPartner_i, SwingPartner_i, SayDoorBlocked_i, BarkLocked_i, BarkMagicLocked_i) {
+    if ((event <> _Converse) and (event <> _Action)) {
+        return;
+    }
+    v0 = ~DoorState_i(item);
+    if (v0 = 1) {
+        if ~SwingDoor_i(5, 0, 3, 0, _DDSerpNS, item) {
+            SwingSerpPartner_i(225, item);
+            SwingPartner_i(7, 0, 0, 0, _Serp_NS, 1, 1, _Serp_EW_Door, item);
+            playSFX(item, 105);
+        } else {
+            SayDoorBlocked_i();
+        }
+    }
+    if (v0 = 0) {
+        if ~SwingDoor_i(7, 65533, 0, 1, _DDSerpNS, item) {
+            SwingSerpPartner_i(225, item);
+            SwingPartner_i(7, 0, 0, 1, _Serp_NS, 2, 0, _Serp_EW_Door, item);
+            playSFX(item, 106);
+        } else {
+            SayDoorBlocked_i();
+        }
+    }
+    if (v0 = 2) {
+        BarkLocked_i(item);
+    }
+    if (v0 = 3) {
+        BarkMagicLocked_i(item);
+    }
+}
+
+Routine Serp_NS accepts a0 #locals(1) #uses(~DoorState_i, ~SwingDoor_i, SwingSerpPartner_i, SwingPartner_i, SayDoorBlocked_i, BarkLocked_i, BarkMagicLocked_i) {
+    if ((event <> _Converse) and (event <> _Action)) {
+        return;
+    }
+    v0 = ~DoorState_i(item);
+    if (v0 = 1) {
+        if ~SwingDoor_i(7, 0, 0, 0, _Serp_EW_Door, item) {
+            SwingSerpPartner_i(246, item);
+            SwingPartner_i(1, 3, 0, 0, _DDSerpEW, 2, 1, _DDSerpNS, item);
+            playSFX(item, 105);
+        } else {
+            SayDoorBlocked_i();
+        }
+    }
+    if (v0 = 0) {
+        if ~SwingDoor_i(7, 0, 0, 1, _Serp_EW_Door, item) {
+            SwingSerpPartner_i(246, item);
+            SwingPartner_i(7, 0, 65533, 1, _DDSerpEW, 1, 0, _DDSerpNS, item);
+            playSFX(item, 106);
+        } else {
+            SayDoorBlocked_i();
+        }
+    }
+    if (v0 = 2) {
+        BarkLocked_i(item);
+    }
+    if (v0 = 3) {
+        BarkMagicLocked_i(item);
+    }
+}
+
+Routine Door_EW accepts a0 #locals(6) #uses(~DoorState_i, ~SwingDoor_i, SwingPartner_i, SayDoorBlocked_i, SetDoorState_i, BarkLocked_i, BarkMagicLocked_i, SpringRodTrap_i, ~GimmePathEgg, Bark_i) {
+    if ((event <> _Converse) and (event <> _Action)) {
+        return;
+    }
+    v0 = ~GetQuality(item);
+    if (v0 = 50) && (($gotcloak and ($gottattoo and $gavemeat)) and (not $AVATAR_IS_KNIGHT and ($RENOUNCED_BRITISH or not $TOLD_MARSTEN_SERVES_LORD_BRITISH))) {
+        v1 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #M_Noble >>, item);
+        terminate;
+    }
+    if (v0 = 179) && (($AUDIENCE_WITH_YELINDA or $FAWN_TRIAL_DONE) and not ($AUDIENCE_WITH_YELINDA and $FAWN_TRIAL_DONE)) {
+        v1 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #FawnTrialEgg_i >>, item);
+        terminate;
+    }
+    v2 = ~DoorState_i(item);
+    if (v2 = 1) {
+        if ~SwingDoor_i(7, 0, 0, 0, _Door_NS, item) {
+            SwingPartner_i(5, 3, 0, 0, _DDoor_NS, 1, 1, _DDoor_EW, item);
+            playSFX(item, 31);
+        } else {
+            SayDoorBlocked_i();
+        }
+    }
+    if (v2 = 0) {
+        if ~SwingDoor_i(7, 0, 0, 1, _Door_NS, item) {
+            SwingPartner_i(7, 0, 65533, 1, _DDoor_NS, 2, 0, _DDoor_EW, item);
+            playSFX(item, 32);
+        } else {
+            SayDoorBlocked_i();
+        }
+    }
+    if (v2 = 2) {
+        if (v0 = 5) {
+            v3 = ~GetCoord(item);
+            createSprite(65535, 0, 0, 0, v3::2, (v3::1 - 2), 12);
+            SetDoorState_i(0, item);
+            v1 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #Door_EW >>, item);
+            terminate;
+        }
+        BarkLocked_i(item);
+    }
+    if (v2 = 3) {
+        BarkMagicLocked_i(item);
+    }
+    if (v0 = 220) {
+        SpringRodTrap_i();
+        terminate;
+    }
+    if (v0 = 5) {
+        SetMusic(~GimmePathEgg(1, 5), 41);
+        v4 = ~GetDist(_Avatar, item);
+        SetItemFlag_i(_DontMove_i, _Avatar);
+        v5 = ~GetCoord(item);
+        v5::1 = (v5::1 - 2);
+        v5::2 = (v5::2 + 3);
+        PathfindNPC_i(true, #EnterCloneTest_i, item, _Pathfind1, v5, _Avatar);
+        Sfx(57);
+        v1 = ~PostInFuture((v4 + 2), << _aNO_HALT_i, _aUSABLE_i, #EnterCloneTest_i >>, item);
+        Bark_i(2, "@Can't stop myself...@", _Avatar);
+    }
+}
+
+Routine Door_NS accepts a0 #locals(8) #uses(~DoorState_i, ~SwingDoor_i, SwingPartner_i, SayDoorBlocked_i, SetDoorState_i, BarkLocked_i, BarkMagicLocked_i, SpringRodTrap_i, ~GimmePathEgg, Bark_i) {
+    if ((event <> _Converse) and (event <> _Action)) {
+        return;
+    }
+    v0 = ~GetQuality(item);
+    v1 = ~DoorState_i(item);
+    if (v1 = 1) {
+        if ~SwingDoor_i(7, 0, 0, 0, _Door_EW, item) {
+            SwingPartner_i(1, 0, 3, 0, _DDoor_EW, 2, 1, _DDoor_NS, item);
+            playSFX(item, 31);
+        } else {
+            SayDoorBlocked_i();
+        }
+    }
+    if (v1 = 0) {
+        if ~SwingDoor_i(7, 0, 0, 1, _Door_EW, item) {
+            SwingPartner_i(7, 65533, 0, 1, _DDoor_EW, 1, 0, _DDoor_NS, item);
+            playSFX(item, 32);
+        } else {
+            SayDoorBlocked_i();
+        }
+    }
+    if (v1 = 2) {
+        if ((v0 = 6) or (v0 = 7)) {
+            v2 = ~GetCoord(item);
+            createSprite(65535, 0, 0, 0, (v2::2 - 2), v2::1, 12);
+            SetDoorState_i(0, item);
+            v3 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #Door_NS >>, item);
+            terminate;
+        }
+        BarkLocked_i(item);
+    }
+    if (v1 = 3) {
+        BarkMagicLocked_i(item);
+    }
+    v4 = ~GetCoord(item);
+    if ((v4::1 = 2335) and ((v4::2 = 1369) and (v4::3 = 0))) && (~GetFrame(item) = 13) {
+        closeAllGumps();
+        v5 = ~PostAction(<< _aWAIT_i, 1, _aUSABLE_i, #FreedomEgg_i >>, _Avatar);
+    }
+    if (v0 = 220) {
+        SpringRodTrap_i();
+        terminate;
+    }
+    if ((v0 = 6) or (v0 = 7)) {
+        if (v0 = 6) {
+            v6 = 3;
+        } else {
+            v6 = 65533;
+            SetMusic(~GimmePathEgg(1, 5), 24);
+        }
+        v7 = ~GetDist(_Avatar, item);
+        SetItemFlag_i(_DontMove_i, _Avatar);
+        v4::1 = (v4::1 + v6);
+        v4::2 = (v4::2 - 3);
+        PathfindNPC_i(true, #EnterCloneTest_i, item, _Pathfind1, v4, _Avatar);
+        Sfx(57);
+        v3 = ~PostInFuture((v7 + 2), << _aNO_HALT_i, _aUSABLE_i, #EnterCloneTest_i >>, item);
+        Bark_i(2, "@Can't stop myself...@", _Avatar);
+    }
+}
+
+Routine DDoor_EW accepts a0 #locals(3) #uses(~DoorState_i, ~SwingDoor_i, SwingPartner_i, SayDoorBlocked_i, BarkLocked_i, BarkMagicLocked_i) {
+    if ((event <> _Converse) and (event <> _Action)) {
+        return;
+    }
+    v0 = ~GetQuality(item);
+    if (v0 = 50) && (($gotcloak and ($gottattoo and $gavemeat)) and (not $AVATAR_IS_KNIGHT and ($RENOUNCED_BRITISH or not $TOLD_MARSTEN_SERVES_LORD_BRITISH))) {
+        v1 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #M_Noble >>, item);
+        terminate;
+    }
+    if (v0 = 179) && (($AUDIENCE_WITH_YELINDA or $FAWN_TRIAL_DONE) and not ($AUDIENCE_WITH_YELINDA and $FAWN_TRIAL_DONE)) {
+        v1 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #FawnTrialEgg_i >>, item);
+        terminate;
+    }
+    v2 = ~DoorState_i(item);
+    if (v2 = 1) {
+        if ~SwingDoor_i(5, 3, 0, 0, _DDoor_NS, item) {
+            SwingPartner_i(7, 0, 0, 0, _Door_NS, 1, 1, _Door_EW, item);
+            playSFX(item, 31);
+        } else {
+            SayDoorBlocked_i();
+        }
+    }
+    if (v2 = 0) {
+        if ~SwingDoor_i(7, 0, 65533, 1, _DDoor_NS, item) {
+            SwingPartner_i(7, 0, 0, 1, _Door_NS, 2, 0, _Door_EW, item);
+            playSFX(item, 32);
+        } else {
+            SayDoorBlocked_i();
+        }
+    }
+    if (v2 = 2) {
+        BarkLocked_i(item);
+    }
+    if (v2 = 3) {
+        BarkMagicLocked_i(item);
+    }
+}
+
+Routine DDoor_NS accepts a0 #locals(1) #uses(~DoorState_i, ~SwingDoor_i, SwingPartner_i, SayDoorBlocked_i, BarkLocked_i, BarkMagicLocked_i) {
+    if ((event <> _Converse) and (event <> _Action)) {
+        return;
+    }
+    v0 = ~DoorState_i(item);
+    if (v0 = 1) {
+        if ~SwingDoor_i(1, 0, 3, 0, _DDoor_EW, item) {
+            SwingPartner_i(7, 0, 0, 0, _Door_EW, 2, 1, _Door_NS, item);
+            playSFX(item, 31);
+        } else {
+            SayDoorBlocked_i();
+        }
+    }
+    if (v0 = 0) {
+        if ~SwingDoor_i(7, 65533, 0, 1, _DDoor_EW, item) {
+            SwingPartner_i(7, 0, 0, 1, _Door_EW, 1, 0, _Door_NS, item);
+            playSFX(item, 32);
+        } else {
+            SayDoorBlocked_i();
+        }
+    }
+    if (v0 = 2) {
+        BarkLocked_i(item);
+    }
+    if (v0 = 3) {
+        BarkMagicLocked_i(item);
+    }
+}
+
+Routine Serp_EW_Door accepts a0 #locals(1) #uses(~DoorState_i, ~SwingDoor_i, SwingSerpPartner_i, SwingPartner_i, SayDoorBlocked_i, BarkLocked_i, BarkMagicLocked_i) {
+    if ((event <> _Converse) and (event <> _Action)) {
+        return;
+    }
+    v0 = ~DoorState_i(item);
+    if (v0 = 1) {
+        if ~SwingDoor_i(7, 0, 0, 0, _Serp_NS, item) {
+            SwingSerpPartner_i(471, item);
+            SwingPartner_i(5, 0, 3, 0, _DDSerpNS, 1, 1, _DDSerpEW, item);
+            playSFX(item, 105);
+        } else {
+            SayDoorBlocked_i();
+        }
+    }
+    if (v0 = 0) {
+        if ~SwingDoor_i(7, 0, 0, 1, _Serp_NS, item) {
+            SwingSerpPartner_i(471, item);
+            SwingPartner_i(7, 65533, 0, 1, _DDSerpNS, 2, 0, _DDSerpEW, item);
+            playSFX(item, 106);
+        } else {
+            SayDoorBlocked_i();
+        }
+    }
+    if (v0 = 2) {
+        BarkLocked_i(item);
+    }
+    if (v0 = 3) {
+        BarkMagicLocked_i(item);
+    }
+}
+
+Routine DDSerpNS accepts a0 #locals(1) #uses(~DoorState_i, ~SwingDoor_i, SwingSerpPartner_i, SwingPartner_i, SayDoorBlocked_i, BarkLocked_i, BarkMagicLocked_i) {
+    if ((event <> _Converse) and (event <> _Action)) {
+        return;
+    }
+    v0 = ~DoorState_i(item);
+    if (v0 = 1) {
+        if ~SwingDoor_i(1, 3, 0, 0, _DDSerpEW, item) {
+            SwingSerpPartner_i(516, item);
+            SwingPartner_i(7, 0, 0, 0, _Serp_EW_Door, 2, 1, _Serp_NS, item);
+            playSFX(item, 105);
+        } else {
+            SayDoorBlocked_i();
+        }
+    }
+    if (v0 = 0) {
+        if ~SwingDoor_i(7, 0, 65533, 1, _DDSerpEW, item) {
+            SwingSerpPartner_i(516, item);
+            SwingPartner_i(7, 0, 0, 1, _Serp_EW_Door, 1, 0, _Serp_NS, item);
+            playSFX(item, 106);
+        } else {
+            SayDoorBlocked_i();
+        }
+    }
+    if (v0 = 2) {
+        BarkLocked_i(item);
+    }
+    if (v0 = 3) {
+        BarkMagicLocked_i(item);
+    }
+}
+
+Routine SDoor_NS accepts a0 #locals(1) #uses(~SwingSDoorNS_i) {
+    if ((event <> _Converse) and (event <> _Action)) {
+        return;
+    }
+    if (~GetQuality(item) = 0) {
+        v0 = ~SwingSDoorNS_i(item);
+    }
+}
+
+Routine SDoor_EW accepts a0 #locals(1) #uses(~SwingSDoorEW_i) {
+    if ((event <> _Converse) and (event <> _Action)) {
+        return;
+    }
+    if (~GetQuality(item) = 0) {
+        v0 = ~SwingSDoorEW_i(item);
+    }
+}
+
+Routine SwingSerpPartner_i accepts a0, a1 #locals(6) #uses(Serp_NS, Serp_EW_Door, DDSerpNS, DDSerpEW) {
+    v2 = ~FindNearby_i(0, 5, v0, v1);
+    v3 = ~GetFrame(v1);
+    Foreach v6 in v2 {
+        v7 = ~GetFrame(v6);
+        if (((v7 > 15) and (v3 <= 15)) or ((v7 <= 15) and (v3 > 15))) {
+            if (v0 = 246) {
+                Serp_NS(v6);
+                return;
+            }
+            if (v0 = 471) {
+                Serp_EW_Door(v6);
+                return;
+            }
+            if (v0 = 516) {
+                DDSerpNS(v6);
+                return;
+            }
+            if (v0 = 225) {
+                DDSerpEW(v6);
+                return;
+            }
+        }
+    }
+}
+
+Usable SayDoorBlocked_i #locals(0) #uses(MemberSays_i) {
+    MemberSays_i("@The door appears blocked.@");
+}
+
+Routine BarkLocked_i accepts a0 #locals(0) {
+    Item_bark("Locked", v0);
+}
+
+Routine BarkMagicLocked_i accepts a0 #locals(0) {
+    Item_bark("Magically Locked", v0);
+}
+
+Function ~DoorState_i accepts a0 #locals(0) {
+    return (~GetFrame(v0) modulo 4);
+}
+
+Routine SetDoorState_i accepts a0, a1 #locals(2) {
+    v2 = ~GetFrame(v1);
+    v3 = (v2 modulo 4);
+    SetFrame(((v2 - v3) + v0), v1);
+    if (v0 = 2) {
+        Item_bark("Click", v1);
+    }
+}
+
+Function ~SwingDoor_i accepts a0, a1, a2, a3, a4, a5 #locals(2) #uses(SetDoorState_i) {
+    SetDoorState_i(v3, v5);
+    Item_setType(v4, v5);
+    v6 = ~GetCoord(v5);
+    v6::1 = (v6::1 + v2);
+    v6::2 = (v6::2 + v1);
+    if ~Item_push(v5) {
+        v7 = ~PopToMap(v6);
+    }
+    return true;
+}
+
+Routine SwingPartner_i accepts a0, a1, a2, a3, a4, a5, a6, a7, a8 #locals(8) #uses(~DoorState_i, ~SwingDoor_i) {
+    v9 = ~GetCoord(v8);
+    v10 = v9::v5;
+    v11 = ~FindNearby_i(0, 7, v7, v8);
+    v12 = false;
+    Foreach v15 in v11 {
+        v16 = ~GetCoord(v15);
+        v16 = v16::3;
+        if ((~DoorState_i(v15) = v6) and ((v9::v5 = v10) and (v9::3 = v16))) {
+            v12 = true;
+            break;
+        }
+    }
+    if v12 {
+        v12 = ~SwingDoor_i(v0, v1, v2, v3, v4, v15);
+    }
+}

@@ -1,0 +1,152 @@
+Routine MetalMan accepts a0 #locals(13) #uses(AutomatonUsable_i, ToggleSliders_i, Bark_i) {
+    if ~GetItemFlag_i(_Zombie, item) {
+        AutomatonUsable_i();
+        terminate;
+    }
+    v0 = ~GetItemFlag_i(_Met, _MetalMan);
+    if (event = _Converse) {
+        ClearBark_i(_MetalMan);
+        SetSpeaker0_i(0, _Forskis);
+        if not v0 {
+            ["Halt! Only a true follower of Order may pass this portal. Art thou such a disciple?"];
+            TurnOn(<< "I follow Order", "I follow Chaos" >>);
+        } else {
+            if $openedthedoor {
+                ["'Tis good to see thee again, scholar of Order."];
+                ["I surmise thou didst come across with the others."];
+                TurnOn(<< "door locked", "others", "bye" >>);
+            } else {
+                ["Oh, 'tis only thee. I hope that thou hast become more learned in the ways of Order, lest thou wilt not be permitted to enter the grand shrine."];
+                TurnOn(<< "Give me the test", "grand shrine", "bye" >>);
+            }
+        }
+        converse {
+            key ("I follow Order") {
+                TurnOff(<< "I follow Order", "I follow Chaos" >>);
+                ["That may be, but I must test thy knowledge before I permit thee access to the grand shrine."];
+                TurnOn(<< "test", "grand shrine", "bye" >>);
+            }
+            key ("test") {
+                TurnOff("test");
+                ["Though I doubt one such as thee would attempt to deceive me, many 'followers' of late do not appear to truly be devoted to Order."];
+                ["In truth, I believe them to be impostors, though they did answer the question I put to them."];
+                TurnOn(<< "impostors", "question" >>);
+            }
+            key ("question") {
+                TurnOff("question");
+                ["To insure that thou art a true student of Order, I will ask thee to complete a line from one of our greatest books and thou must name the book."];
+                ["Only a devout student of Order would know the answer."];
+                TurnOn(<< "Give me the test" >>);
+            }
+            key ("Give me the test") {
+                TurnOff("Give me the test");
+                ["Which book tells us, ~'Being sincere and fair in all of thy transactions will provide thee with more power than thou ever hadst.'"*];
+                ["'Thou wert strong, thou wilt be stronger. Thy strength will be exalted in truth.'"];
+                PushKeys();
+                TurnOn(<< "Strength Though Ethics", "Guidelines of Life", "Tenets of Discipline" >>);
+                if $readstructureoforder {
+                    TurnOn(<< "The Structure of Order" >>);
+                } else {
+                    TurnOn(<< "The Joy of Order" >>);
+                }
+            }
+            key ("Strength Though Ethics") {
+                PopKeys();
+                ["An excellent book, one that can guide a disciple of Order to new consciousness. I would recommend that thou readest it. Then thou wouldst realize that the answer thou didst give was incorrect."];
+                TurnOn(<< "Give me the test" >>);
+            }
+            key ("Tenets of Discipline") {
+                PopKeys();
+                ["Shushuro was a great man indeed. If only mine hollow head could be so enlightened. But at least I realize my quote was not from that book's pages. Mayhap thou shouldst return to the city and examine thy books further."];
+                TurnOn(<< "Give me the test" >>);
+            }
+            key ("Guidelines of Life") {
+                PopKeys();
+                ["A masterpiece! Indeed, its words of wisdom could educate thee very well. Then thou wouldst be enlightened to learn that the book thou didst name doth not contain any such quote."];
+                ["Mayhap thou dost need to study more at the Hierophant's library. 'Tis a wondrous place full of the wisdom of Order."];
+                TurnOn(<< "Give me the test" >>);
+            }
+            key ("The Joy of Order") {
+                PopKeys();
+                ["Curious, I have never heard of that book. Methinks that thou art trying to deceive me. Please, do us both a service and return thou to the library for further study."];
+                TurnOn(<< "Give me the test" >>);
+            }
+            key ("The Structure of Order") {
+                TurnOff("The Structure of Order");
+                PopKeys();
+                ["Ah, so thou art a true accolyte of Order. I will permit thee to enter the Grand Shrine."];
+                CloseSpeaker0_i();
+                v1 = ~FindNearby_i(0, 30, _Switch, item);
+                Foreach v4 in v1 {
+                    v5 = ~GetQuality(v4);
+                    if (v5 = 0) {
+                        v6 = ~SetQuality(150, v4);
+                        $openedthedoor = true;
+                        v7 = ~GetCoord(v4);
+                        Sfx(30);
+                        ToggleSliders_i(1, v4);
+                    }
+                    if (v5 = 120) {
+                        v6 = ~SetQuality(147, v4);
+                    }
+                }
+                v1 = ~FindNearby_i(0, 20, _EW_C_Slider, item);
+                Foreach v10 in v1 {
+                    v6 = ~SetQuality(147, v10);
+                }
+                v1 = ~FindNearby_i(0, 20, _EW_Slider, item);
+                Foreach v10 in v1 {
+                    v6 = ~SetQuality(147, v10);
+                    v1 = ~FindNearby_i(0, 20, _Switch, item);
+                    v5 = ~GetQuality(v4);
+                    if (v5 = 147) {
+                        ToggleSliders_i(0, v4);
+                    }
+                }
+                Bark_i(3, "@Seek Order.@", _MetalMan);
+                terminate;
+            }
+            key ("grand shrine") {
+                TurnOff("grand shrine");
+                ["At the end of this corridor lies the grand shrine of Order. That is where the Hierophant performs the ceremony to open the Wall of Lights."];
+            }
+            key ("impostors") {
+                TurnOff("impostors");
+                ["Though I should not speak such, they appeared to be, shall we say, less than intelligent. They seemed to have great difficulty with answering the most modest of my queries."];
+                ["One of their number even threatened to tear me limb from limb if I failed to open this portal. But it was the large one who answered all the questions correctly. He alone was no dolt."];
+                TurnOn(<< "large one" >>);
+            }
+            key ("others") {
+                TurnOff("others");
+                ["The others that I spoke about earlier. Or did I mention them? I thought that I mentioned that the 'disciples' of late do not appear to be truly devout."*];
+                ["In truth, I believed them to be impostors, though they passed the test I put upon them."];
+                TurnOn(<< "impostors" >>);
+            }
+            key ("large one") {
+                TurnOff("large one");
+                ["He was an impressive man, in both size and intellect. He appeared to have the combined intellect that the rest of the party lacked."*];
+                ["He answered my questions easily, though in truth I cannot remember what I asked of him."];
+            }
+            key ("door locked") {
+                TurnOff("door locked");
+                ["I am truly sorry, but I can only operate these doors. I know nothing about any other doors in this place."];
+            }
+            key ("I follow Chaos") {
+                TurnOff("I follow Chaos");
+                ["Then thou shalt not pass."];
+                Bark_i(3, "@Duty.@", _MetalMan);
+                SetWorkType(_Patrol, _MetalMan);
+                break;
+            }
+            key ("bye") {
+                CloseSpeaker0_i();
+                CloseSpeaker1_i();
+                Bark_i(0, "@I have heard enough.@", _Avatar);
+                Bark_i(3, "@Always follow Order.@", _MetalMan);
+                SetWorkType(_Patrol, _MetalMan);
+                break;
+            }
+        }
+        clear_answers;
+    }
+}

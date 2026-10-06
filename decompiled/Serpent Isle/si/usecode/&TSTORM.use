@@ -1,0 +1,121 @@
+Routine StormLightningEffect_i accepts a0 #locals(6) #uses(~PartyUtters, PartyFaces_i, ~RandomCoord_i, CreateDebris_i, ~FindDebris_i, CreateRandItem_i) {
+    v0 = ~GetCoord(item);
+    v1 = ~GetQuality(item);
+    v2 = ~GetQuantity(0, item);
+    if (~Random(2) = 1) {
+        v3 = ("@Yikes!@" & ("@Look!@" & ("@That was close!@" & ("@Run!@" & ("@Teleport storm!@" & "@Whoa!@")))));
+        v4 = ~PartyUtters(true, 0, v3::~Random(~ListSize_i(v3)), 1);
+        PartyFaces_i(item);
+    }
+    if (v1 = 1) {
+        v0 = ~RandomCoord_i(v2, v0);
+        createSprite(65535, 0, 0, 0, v0::2, v0::1, 21);
+        CreateDebris_i(v0);
+    }
+    if (v1 = 2) {
+        v5 = ~FindDebris_i((v2 + 1), v0);
+        if v5 {
+            v0 = ~GetCoord(v5);
+            createSprite(65535, 0, 0, 0, v0::2, v0::1, 9);
+            Item_destroy(v5);
+        }
+    }
+    if ((v1 = 3) or (v1 = 4)) {
+        v5 = ~FindDebris_i((v2 + 1), v0);
+        if v5 {
+            v0 = ~GetCoord(v5);
+            if (v1 = 3) {
+                createSprite(65535, 0, 0, 0, v0::2, v0::1, 9);
+            } else {
+                createSprite(65535, 0, 0, 0, v0::2, v0::1, 21);
+            }
+            Item_destroy(v5);
+            CreateRandItem_i(v0);
+        }
+    }
+}
+
+Routine StormLightningEgg_i accepts a0 #locals(4) #uses(~FindDebris_i, ~RandomCoord_i, CreateDebris_i) {
+    v0 = ~GetCoord(item);
+    v1 = ~GetQuality(item);
+    v2 = ~GetQuantity(0, item);
+    if (v1 = 0) {
+        SetWeather_i(_Rain);
+        if not ~FindDebris_i((v2 + 1), v0) {
+            v0 = ~RandomCoord_i(v2, v0);
+            CreateDebris_i(v0);
+        }
+    }
+    if (v1 = 1) {
+        Sfx(116);
+        CreateSpriteOn_i(65535, 0, 0, 0, 0, 0, 40, item);
+    }
+    if (v1 = 2) {
+        Sfx(116);
+        CreateSpriteOn_i(65535, 0, 0, 0, 0, 0, 41, item);
+    }
+    if (v1 = 3) {
+        Sfx(116);
+        CreateSpriteOn_i(65535, 0, 0, 0, 0, 0, 42, item);
+    }
+    if (v1 = 4) {
+        Sfx(116);
+        CreateSpriteOn_i(65535, 0, 0, 0, 0, 0, 43, item);
+    }
+    if (v1 > 0) {
+        Sfx(116);
+        LightningBolt();
+        v3 = ~PostInFuture(3, << _aUSABLE_i, #StormLightningEffect_i >>, item);
+        SetWeather_i(_Clear);
+    }
+}
+
+Function ~FindDebris_i accepts a0, a1 #locals(10) {
+    v2 = << 264, 278, 671, 201, 203, 415 >>;
+    v3 = << 4, 6, 18, 19, 21, 32 >>;
+    v4 = ~FindNearby_i(0, v0, _All, item);
+    Foreach v7 in v4 {
+        v8 = ~Item_getType(v7);
+        Foreach v11 in v2 {
+            if (v11 = v8) {
+                return v7;
+            }
+        }
+    }
+    return 0;
+}
+
+Routine CreateDebris_i accepts a0 #locals(6) {
+    v1 = << 264, 278, 671, 201, 203, 415 >>;
+    v2 = << 4, 6, 18, 19, 21, 32 >>;
+    v3 = ~ListSize_i(v1);
+    v4 = ~Random(v3);
+    v5 = ~Item_create(v1::v4);
+    if v5 {
+        SetItemFlag_i(_IsTemporary_i, v5);
+        SetFrame((~Random(v2::v4) - 1), v5);
+        v6 = ~PopToMap(v0);
+    }
+}
+
+Routine CreateRandItem_i accepts a0 #locals(6) {
+    v1 = << 802, 803, 267, 937, 695, 583, 682, 587, 999, 336, 997, 745, 991, 851, 377, 863, 300, 546, 377, 944, 822, 827 >>;
+    v2 = << 2, 2, 4, 5, 1, 1, 19, 5, 10, 15, 17, 1, 1, 11, 28, 19, 32, 12, 20, 8, 2, 5 >>;
+    v3 = ~ListSize_i(v1);
+    v4 = ~Random(v3);
+    v5 = ~Item_create(v1::v4);
+    if v5 {
+        SetItemFlag_i(_IsTemporary_i, v5);
+        SetFrame((~Random(v2::v4) - 1), v5);
+        v6 = ~PopToMap(v0);
+    }
+}
+
+Function ~RandomCoord_i accepts a0, a1 #locals(1) {
+    if (v0 > 0) {
+        v2 = ((v0 * 2) + 1);
+        v1::1 = (v1::1 + ((~Random(v2) - 1) - v0));
+        v1::2 = (v1::2 + ((~Random(v2) - 1) - v0));
+    }
+    return v1;
+}

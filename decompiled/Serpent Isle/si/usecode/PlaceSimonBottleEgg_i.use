@@ -1,0 +1,14 @@
+Routine PlaceSimonBottleEgg_i accepts a0 #locals(3) {
+    if $KNOWS_GOBLINS_HIDEOUT && not flag(200) {
+        v0 = ~Item_create(_Bottles);
+        if v0 {
+            SetFrame(9, v0);
+            ClearItemFlag_i(_IsTemporary_i, v0);
+            v1 = ~GetCoord(item);
+            v2 = ~PopToMap(v1);
+            if v2 {
+                flag(200) = true;
+            }
+        }
+    }
+}

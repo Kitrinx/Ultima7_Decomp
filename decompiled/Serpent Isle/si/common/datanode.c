@@ -1,0 +1,54 @@
+/* Serpent Isle SI.EXE, resident segment 49 (file offsets 0x0212b0 to 0x021381, 209 bytes).
+ * Borland C++ 2.0 -mm -O -G -P rebuilds it byte for byte as C++.
+ * Folder chosen by subsystem.
+ */
+
+#include "datanode.h"
+
+DataNode *SaveNodes = 0;
+
+DataNode::DataNode()
+{
+	next = SaveNodes;
+	SaveNodes = this;
+}
+
+/* joins the end of the list rather than the front */
+DataNode::DataNode(int)
+{
+	DataNode *prev, *n;
+
+	n = SaveNodes;
+	prev = 0;
+	while (n != 0) {
+		prev = n;
+		n = n->next;
+	}
+	if (prev != 0) {
+		prev->next = this;
+		next = 0;
+	}
+}
+
+char *DataNode::getName()
+{
+	return name() ? name() : "Unknown";
+}
+
+char *DataNode::name()
+{
+	return 0;
+}
+
+void DataNode::load(char *)
+{
+}
+
+void DataNode::save(char *)
+{
+}
+
+void DataNode::refresh(char *dir)
+{
+	save(dir);
+}

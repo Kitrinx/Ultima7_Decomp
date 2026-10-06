@@ -1,0 +1,40 @@
+Function ~ReactToTestTale_i accepts a0 #locals(1) #uses(~AvatarName) {
+    v1 = ~AvatarName();
+    v0 = (v0 + 1);
+    if (v0 = 1) {
+        ["<v1>, we are all warriors here. It is not necessary for thee to attempt to impress us with exaggerated tales..."];
+        ["What else didst thou see in the Knight's Test?"];
+        return v0;
+    }
+    if (v0 = 2) {
+        ["Art thou certain of thy facts?"];
+        SetSpeaker1_i(0, _Luther);
+        if ~AvatarSex() {
+            ["Didst thou fight a dragon as well? She is full of jests."];
+        } else {
+            ["Listen to his tales -- I think that he is attracted to thee, Shazzana."];
+        }
+        CloseSpeaker1_i();
+        SetSpeakerSlot_i(0);
+        ["Be still, Luther -- I think something strange is happening. Tell me more of what thou didst see..."];
+        return v0;
+    }
+    if (v0 = 3) {
+        ["Knights, have you been listening? Our new warrior hath had a terrible experience..."];
+        SetSpeaker1_i(0, _Spektor);
+        ["I'm sure there is an explanation for everything."];
+        CloseSpeaker1_i();
+        SetSpeakerSlot_i(0);
+        ["This time, I think thou art wrong, Spektor! What else didst thou see in the dungeon?"];
+        return v0;
+    }
+    if (v0 = 4) {
+        ["There must be something wrong..."];
+        SetSpeaker1_i(0, _Marsten);
+        ["I shall have a talk with Shmed tomorrow. If half of what this Knight says is true, then the dungeonkeeper hath been seriously delinquent in his duties."];
+        CloseSpeaker1_i();
+        SetSpeakerSlot_i(0);
+        ["<v1>, I apologize for what hath been done to thee in the Knight's Test. 'Tis an outrage!"];
+        return v0;
+    }
+}

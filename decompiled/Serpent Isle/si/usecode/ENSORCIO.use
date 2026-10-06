@@ -1,0 +1,744 @@
+Routine Ensorcio accepts a0 #locals(21) #uses(~LordOrLady, ~AvatarName, ~WhereAmI_i, ~IsNPCNear, Bark_i, PartyFaces_i, ~IsInInv, ~AskList, ~AskYesNo, ~TransferItems_i, EnsorcioSellsSpells_i) {
+	v0 = ~LordOrLady();
+	v1 = ~AvatarSex();
+	v2 = ~AvatarName();
+	v3 = ~GetItemFlag_i(_Met, _Ensorcio);
+	v4 = ~WhereAmI_i();
+	v5 = ~IsNPCNear(_Dupre);
+	v6 = ~IsNPCNear(_Shamino);
+	v7 = ~IsNPCNear(_Iolo);
+	v8 = false;
+	v9 = false;
+	v10 = false;
+	v11 = false;
+	v12 = false;
+	if (event = _Bark) {
+		v13 = ~Random(6);
+		if (v13 = 1) {
+			Item_bark("@I shall have revenge!@", _Ensorcio);
+		}
+		if (v13 = 2) {
+			Item_bark("@I am an Adept!@", _Ensorcio);
+		}
+		if (v13 = 3) {
+			Item_bark("@Bide thee...@", _Ensorcio);
+		}
+		if (v13 = 4) {
+			Item_bark("@They shall see...@", _Ensorcio);
+		}
+		if (v13 = 5) {
+			if ~IsNPCNear(_Kane) {
+				Item_bark("@Stay thou away from me!@", _Ensorcio);
+				Bark_i(2, "@Yes, m'lord.@", _Kane);
+			} else {
+				Item_bark("@I shall prevail!@", _Ensorcio);
+			}
+		}
+		if (v13 = 6) {
+			Item_bark("@What do I here?@", _Ensorcio);
+		}
+	}
+	if (event = _Converse) {
+		Item_bark("@Greetings!@", _Avatar);
+		PartyFaces_i(_Ensorcio);
+		Bark_i(5, "@Art thou speaking to me?@", _Ensorcio);
+		SetWorkType(_Talk, _Ensorcio);
+	}
+	if (event = _Talking) {
+		Npc_schedule(_Ensorcio);
+		ClearBark_i(_Ensorcio);
+		SetSpeaker0_i(0, _Ensorcio);
+		if (~GetWorkType(_Ensorcio) = 7) {
+			v14 = true;
+		}
+		if ((flag(4) = true) and (flag(212) = false)) {
+			["Seest thou, <v2>? I told thee that I would teach them not to take Ensorcio lightly! I told thee that one day they would welcome me back... Beg for me to return!"];
+			TurnOn(<< "teach them", "welcome", "bye" >>);
+		} else {
+			if (v3 = false) {
+				if (flag(62) = true) {
+					["Well, if it isn't another petty tyrant!"];
+					["Thou mayest as well leave now, Pikeman. I have no use for the likes of thee... And thou canst do nothing to avenge the wrongs I have suffered."];
+					["So, leave thou before I grow tired of thee and thou dost feel the wrath of Ensorcio the Adept!"];
+					TurnOn(<< "tyrant", "wrongs", "bye" >>);
+				} else {
+					["Thou mayest as well leave now, hero. I have seen thy kind before and have no use for the likes of thee... And thou canst do nothing to avenge the wrongs I have suffered."];
+					["So, leave thou before I grow tired of thee and thou dost feel the wrath of Ensorcio the Adept!"];
+					TurnOn(<< "hero", "wrongs", "bye" >>);
+				}
+				SetItemFlag_i(_Met, _Ensorcio);
+			} else {
+				if (flag(62) = true) {
+					["So, thou art returned... Failed in thy puny quest already, Pikeman?"];
+				} else {
+					["So, thou art returned... Failed in thy puny quest already, hero?"];
+				}
+			}
+			if v14 {
+				TurnOn("spells");
+			}
+			TurnOn(<< "wrongs", "Devra", "Hawk", "bye" >>);
+		}
+		converse {
+			key ("teach them") {
+				["Shamino the Anarch hath proclaimed me the finest of Adepts! At last someone hath seen my talents and set them for the world to see... No more shall I be Ensorcio the shunned, Ensorcio the exile! Now I am the premier Adept!"];
+				TurnOff("teach them");
+			}
+			key ("welcome") {
+				["Filbercio's unjust rule hath been brought to an end!"];
+				["Shamino the Anarch, thy wonderful companion, hath cast him from power and I have been welcomed with open arms!"];
+				["Oh, what joy! To be back in Moonshade and free to experiment as I wish!"];
+				TurnOff("welcome");
+			}
+			key ("tyrant") {
+				["Yes, tyrant! And I shall say it in front of Argus, too, for all that matters!"];
+				["You Pikemen wear your \@bravery\@ marked on your faces for all to see and expect the world to tremble at your feet! Thou demandest tribute like a king, but all thou art worthy of is contempt!"];
+				if (v5 = true) {
+					SetSpeaker1_i(0, _Dupre);
+					["Thou dost not speak to an ordinary Pikeman!" *"This is the Avatar!"];
+					CloseSpeaker1_i();
+					SetSpeakerSlot_i(0);
+				}
+				if (v6 = true) {
+					SetSpeaker1_i(0, _Shamino);
+					["Thou mayest not judge the Avatar by this mark alone!"];
+					CloseSpeaker1_i();
+					SetSpeakerSlot_i(0);
+				}
+				if (v7 = true) {
+					SetSpeaker1_i(0, _Iolo);
+					["Do not let him say such things about thee, Avatar!"];
+					CloseSpeaker1_i();
+					SetSpeakerSlot_i(0);
+				}
+				["I see thee draw thyself up... Have I offended thee? And what wilt thou do, Pikeman? Drag me to thy jail as thy comrades did drag Hawk?"];
+				TurnOff("tyrant");
+				TurnOn(<< "Argus", "tribute", "Hawk" >>);
+			}
+			key ("Argus") {
+				["For all that he is Devra's son, he is still a dog!"];
+				["I will grant that he came home when Devra summoned him, unlike Wilfred. But the two are cut from the same cloth, all the same... Vain, pompous braggarts!"];
+				TurnOff("Argus");
+				TurnOn("Wilfred");
+				if (v8 = false) {
+					TurnOn("Devra");
+				}
+			}
+			key ("Wilfred") {
+				["Wilfred is Devra's youngest whelp. And I'll wager that thou wilt never find a better example of the attitude of which I speak."];
+				if (v7 = true) {
+					SetSpeaker1_i(0, _Iolo);
+					["He's a fine one to talk of attitude..."];
+					CloseSpeaker1_i();
+					SetSpeakerSlot_i(0);
+				}
+				["Wilfred ran away to prove to the world that he was better than his brother... A better bully, a better ruffian and a better murderer thou shalt not find!"];
+				TurnOff("Wilfred");
+			}
+			key ("tribute") {
+				["Or perhaps I should say \@donation\@!"];
+				["Where is the honor in charging even the poorest peasant a ruinous fee to use the only safe road in all the islands? So much for protecting the weak and helping the poor!"];
+				TurnOff("tribute");
+			}
+			key ("Hawk") {
+				["Hawk is the captain of the Arabella."];
+				["I am afraid that Flindo was a bit distressed to hear that the good captain had no intention of risking himself or his ship to take that upstanding merchant back to Moonshade in these damnable storms. So he bought the muscle of the Pikemen to \@persuade\@ Hawk that remaining here would be unhealthy..."];
+				flag(461) = true;
+				TurnOff("Hawk");
+				PushKeys();
+				TurnOn(<< "Moonshade", "storms", "Flindo", "change subject" >>);
+			}
+			key ("change subject") {
+				["As thou dost wish..."];
+				PopKeys();
+			}
+			key ("Moonshade") {
+				["Moonshade, the city of wonders! And the city of charlatans!"];
+				["Heaven forfend that thou shouldst try something innovative! It might endanger the incompetent fools led by Filbercio and his trained Council of Mages!"];
+				TurnOff("Moonshade");
+				TurnOn(<< "Filbercio", "Council of Mages" >>);
+			}
+			key ("Filbercio") {
+				["Filbercio is a presumptuous maggot who calls himself MageLord of Moonshade!"];
+				["I doubt that he could light a candle magically! But he doth have the backing of the Council and the threat of the Mountains of Freedom to support his claim!"];
+				["The one saving grace for Moonshade is that Filbercio spends all of his time pursuing skirts! His insignificant knowledge of magic hath little effect in the bedchambers of his conquests!"];
+				v10 = true;
+				TurnOff("Filbercio");
+				TurnOn("Freedom");
+			}
+			key ("Freedom") {
+				["Freedom! What a farce!"];
+				["The Mountains of Freedom are a prison, hero! A prison filled with magical traps that none can escape. And that is where Filbercio puts all who anger or oppose him."];
+				["'Tis a small wonder that I did not end there..."];
+				TurnOff("Freedom");
+			}
+			key ("Council of Mages") {
+				["The Council of Mages is a handful of Adepts meant to keep the MageLord from misusing his power. In this case, however, they spend their time making the decisions that the MageLord should be making."];
+				["But, as unto myself, they are content to allow Filbercio to continue his \@amusements\@. With luck, he will be killed by one of his paramours."];
+				v11 = true;
+				TurnOff("Council of Mages");
+			}
+			key ("storms") {
+				["Rather showy, if thou shouldst ask me... But rather spectacular results. Entirely too random for my tastes, however."];
+				["Of course, I cannot help wondering which mage is behind them. And I wonder if that double-crossing Batlin has anything to do with them... The storms started after he left here, thou knowest."];
+				TurnOff("storms");
+				TurnOn("Batlin");
+			}
+			key ("Batlin") {
+				["I can see that thou knowest of him."];
+				["Batlin came here some time ago, he and his tame daemon. He seemed to take an interest in my story and we spent many evenings exchanging arcane lore. Then he left on some errand."];
+				["When he returned with his other two thugs, Batlin seemed restless. But we continued our discussions as if nothing had changed. I thought he was my friend..."];
+				TurnOff("Batlin");
+				TurnOn(<< "Daemon", "thugs" >>);
+			}
+			key ("Daemon") {
+				["Absolutely huge... and ugly!"];
+				["Batlin called him Palos. And the daemon went about meekly hooded and robed as his master commanded."];
+				["I do admit, I was impressed. I could not help but think about the trouble that Rotoluncia was having."];
+				TurnOff("Daemon");
+				TurnOn("Rotoluncia");
+			}
+			key ("Rotoluncia") {
+				["Ever since Filbercio replaced Rotoluncia as his playmate, Rotoluncia hath had to find some other interest to occupy her time."];
+				["And, from what I have heard, that seems to be daemons... Perhaps I can hope that she doth have designs on revenge. I would be content to think of Filbercio filling a daemon's belly."];
+				["So, I am sure that she would take quite an interest in that fat mage's pet daemon. I wish I could send her word..."];
+				TurnOff("Rotoluncia");
+			}
+			key ("thugs") {
+				["I should have guessed that Batlin intended something shady when I saw those two!"];
+				["I am sure that Batlin brought them expressly to steal the old jawbone left to me by my mentor."];
+				["Between Brunt, the idiot, and Deadeye, the one-eyed pirate, I am lucky still to be alive..."];
+				TurnOff("thugs");
+				TurnOn(<< "jawbone", "mentor" >>);
+			}
+			key ("jawbone") {
+				["'Twas a large serpent jawbone that my mentor received from his mentor, the Mad Mage."];
+				["I could never discover what its use was, though it was clearly magical. 'Twas a keepsake -- though I hoped to discover its secret some day."];
+				["I think that Batlin found its secret... and created these damned storms."];
+				v9 = true;
+				TurnOff("jawbone");
+				TurnOn("Mad Mage");
+			}
+			key ("Mad Mage") {
+				["His true name is Erstam. He taught many of the Moonshadian Adepts their craft. But, as is the way with master and apprentice, they eventually surpassed him in skill and scope."];
+				["The old mage could not abide the thought that these mages were no longer his malleable students, and went quite mad... He saw them all as thieves intent on stealing his secrets and moved to an island off Moonshade."];
+				["He doth refuse to have any dealings with Moonshade to this day. He sits on his island trying to find a way to create life."];
+				TurnOff("Mad Mage");
+			}
+			key ("mentor") {
+				["He was a very great man. His name was Vasculio."];
+				["Unfortunately, Vasculio was a man that was constantly testing the limits of convention. The Council of Mages found him threatening, and attempted to kill him when he refused to bow to their wishes..."];
+				["But his experimentation with Stoneheart had given him spells to elude even that monstrous fate. He is out there somewhere still, straining at the chains of accepted wisdom."];
+				TurnOff("mentor");
+				TurnOn(<< "Stoneheart", "spells" >>);
+			}
+			key ("Stoneheart") {
+				["Ah, such a wonder to behold! It doth come from the depths of the Mountains of Freedom, and is quite rare..."];
+				["The Council hath outlawed possession of Stoneheart, because they fear its power. But a small quantity is quietly hidden -- else how would the death spells work?"];
+				flag(669) = true;
+				TurnOff("Stoneheart");
+				if ~IsInInv(15, _All, 842, 1, _Party) {
+					["Thou dost have stoneheart! Could I..."];
+					["No, I shall not succumb to its lure. I shall be strong. But thou shouldst take care, for this reagent has a way of twisting a man's heart so that he cannot bear to part from it."];
+					["In its raw form, 'tis useless for spells. For a fee -- sizable, of course -- I could teach thee its secret so that thou mayest also cast death spells."];
+					TurnOn("secret");
+				}
+			}
+			key ("secret") {
+				["This is very valuable information, friend."];
+				["How much wouldst thou pay for it?"];
+				v15 = ~AskList(<< "Guilders", "Gold Coins" >>);
+				if (v15 = "Guilders") {
+					v16 = _Moon_Money;
+				}
+				if (v15 = "Gold Coins") {
+					v16 = _Gold_Coins;
+				}
+				/* Retry each offer after recounting the chosen currency. */
+				label_111:
+				v17 = ~CountItem(_All, _All, v16, _Party);
+				if (v17 = 0) {
+					["Thou dost not have any <v15>!"];
+					goto label_112;
+				}
+				v18 = ~AskBarInput(0, 1, v17, 0);
+				v19 = v18;
+				if (v15 = "Guilders") {
+					v19 = ((v18 * 2) / 3);
+				}
+				if (v19 < 1) {
+					["Imparting such information is risky. Thou dost offer too little in exchange for mine health..."];
+					goto label_112;
+				}
+				if ((v19 >= 1) and (v19 <= 15)) {
+					["Thou couldst not buy even so much as a novice's light spell for that paltry sum! Another offer perhaps..."];
+					goto label_111;
+				}
+				if ((v19 >= 16) and (v19 <= 30)) {
+					["Art thou serious? Thou wouldst offer only <v18> for the power of destruction? Think again..."];
+					goto label_111;
+				}
+				if ((v19 >= 31) and (v19 <= 45)) {
+					["Dost thou think me a shopkeeper to haggle with? I am Ensorcio the Adept! Do not trifle with me..."];
+					goto label_111;
+				}
+				if ((v19 >= 46) and (v19 <= 60)) {
+					["Thou canst be more reasonable than that..."];
+					goto label_111;
+				}
+				if ((v19 >= 61) and (v19 <= 75)) {
+					["How can I be sure what use thou wilt make of this? I do not know..."];
+					goto label_111;
+				}
+				if (v19 > 75) {
+					["Thou art most wise, indeed! For <v18> <v15>, I shall teach thee how to put thy Stoneheart to use. Agreed?"];
+					if (~AskYesNo() = true) {
+						v20 = ~TransferItems_i(true, _All, _All, v16, v18, _Ensorcio, _Avatar);
+						["First, thou must have a ritual blood-letting device... Most mages possess one, even though they are technically illegal."];
+						["Then thou must fill a small container with blood, using this device. The blood can be thine or that of any of thy companions... Whichever thou dost find more convenient."];
+						["Once thou hast the blood, thou must use the blood on the Stoneheart. This produces the Bloodspawn that thou wilt need for death spells."];
+					} else {
+						["Perhaps another time then..."];
+					}
+				}
+				/* Cancellation and a finished offer remove the secret answer. */
+				label_112:
+				TurnOff("secret");
+			}
+			key ("spells") {
+				if (v12 = false) {
+					["Like any apprentice, I learned all that I could from my mentor... Whether he was willing to teach me or not. 'Tis all a matter of not being discovered in the act."];
+					v12 = true;
+				}
+				["Art thou interested in buying a spell perhaps? I could always use more money for ale..."];
+				if (~AskYesNo() = true) {
+					EnsorcioSellsSpells_i();
+				} else {
+					["If thou art ever interested, find me."];
+				}
+			}
+			key ("Flindo") {
+				["Flindo would have it that he is a person of note from the fair city of Moonshade, known by one and all. But he is truly little more than a loud shopkeeper with a penchant for gossip."];
+				["Flindo flits about here and there, acquiring merchandise for Bucia to sell, and as much information as he can. I think that alone is why the Adepts humor him from time to time with some tidbit of news..."];
+				TurnOff("Flindo");
+				TurnOn("Bucia");
+			}
+			key ("Bucia") {
+				["Bucia runs Flindo's shop for him. 'Tis called the Capessi Canton -- a pompous name, if thou dost ask me."];
+				["Bucia charges a fillip more on everything she sells, for her troubles. And is very careful to show Flindo the altered accounts."];
+				TurnOff("Bucia");
+			}
+			key ("hero") {
+				["Yes, hero! And I shall say it in front of Devra, too, for all that matters!"];
+				["You adventurers swagger around as though you could save the world! Thou dost expect awe and reverence from those thou dost meet... The ones that bury thy dead body when thine arrogance doth meet its match!"];
+				if (v5 = true) {
+					SetSpeaker1_i(0, _Dupre);
+					["Thou dost not speak to an ordinary adventurer!" *"This is the Avatar!"];
+					CloseSpeaker1_i();
+					SetSpeakerSlot_i(0);
+				}
+				if (v6 = true) {
+					SetSpeaker1_i(0, _Shamino);
+					["Thou mayest not judge the Avatar so!"];
+					CloseSpeaker1_i();
+					SetSpeakerSlot_i(0);
+				}
+				if (v7 = true) {
+					SetSpeaker1_i(0, _Iolo);
+					["Do not let him say such things about thee, Avatar!"];
+					CloseSpeaker1_i();
+					SetSpeakerSlot_i(0);
+				}
+				["I see thee draw thyself up... Have I offended thee? And what wilt thou do, hero? Imprison me? Or wilt thou simply murder me?"];
+				TurnOff("hero");
+				TurnOn(<< "Devra", "Hawk" >>);
+			}
+			key ("Devra") {
+				if (v1 = true) {
+					["Devra's a fine woman, for all that she is a bit domineering..."];
+				} else {
+					["Devra's a fine woman, for all that she is a bit domineering... But then most women are, are they not?"];
+				}
+				["She hath taken her loss incredibly well. She hath convinced that worthless son of hers to return and help with some honest work here at the inn. But, if thou askest me, I would say that she is too kind to the rogues and misfits."];
+				v8 = true;
+				TurnOff("Devra");
+				TurnOn("loss");
+			}
+			key ("loss") {
+				if (v1 = true) {
+					["Quite sad, actually. I recall that the morning I went to her to report the theft, she was terribly upset."];
+					["It seems Angus had a bit of Silverpate in him after all, and disappeared... To think of it, perhaps he was the one that stole the jawbone from me... Though why it would interest him, I shall never know."];
+				} else {
+					["Quite pathetic, actually. When I reported the theft to her that morning she was too distraught to even pay attention to my complaint... Not at all professional -- after all, I am a paying guest here."];
+					["It seems Angus had a bit of Silverpate in him after all, and disappeared... To think of it, perhaps he was the one that stole the jawbone from me... Though why it would interest him, I shall never know."];
+				}
+				TurnOff("loss");
+				TurnOn(<< "Angus", "Silverpate" >>);
+				if (v9 = false) {
+					TurnOn("jawbone");
+				}
+			}
+			key ("Angus") {
+				["Angus is... er, was... Devra's husband. Seemed a right enough fellow. Liked a cup or two of ale in the evenings. Worked hard -- But then, with her nagging, he couldn't help but work hard!"];
+				["Would never have guessed that he had the spine to leave like that. But I suppose that every man doth have his breaking point..."];
+				TurnOff("Angus");
+			}
+			key ("Silverpate") {
+				["Silverpate is the great-grandfather of Angus."];
+				["They say that old Silverpate was a bloodthirsty pirate. According to popular tales, he reformed and took his ill-gotten gains and built this inn..."];
+				["But the Adepts in Moonshade tell a different tale."];
+				TurnOff("Silverpate");
+				TurnOn("tale");
+			}
+			key ("tale") {
+				["It seems that Silverpate employed Erstam to do something at the inn -- perhaps hide that fabled treasure, who knows. In any case, the pirate planned to trick Erstam so that he would not have to pay the mage's fees."];
+				["But Erstam found him out and trapped the treacherous \@innkeeper\@ in a pit filled with daemons. No one ever saw Silverpate again, and people learned to fear crossing any mage."];
+				TurnOff("tale");
+			}
+			key ("wrongs") {
+				["Thou dost not know the half of it! Here I sit, an Adept in a wretched hovel, exiled from the practice of the magic that is my life's blood!"];
+				["The Council hath turned its back on Filbercio's exploits for so long that they sought to make me their scapegoat... their public example."];
+				TurnOff("wrongs");
+				TurnOn("example");
+				if (v10 = false) {
+					TurnOn("Filbercio");
+				}
+				if (v11 = false) {
+					TurnOn("Council of Mages");
+				}
+			}
+			key ("example") {
+				["Filbercio hath hopped from bed to bed throughout the city, using every means of coercion possible. But let it be found that poor Ensorcio used magic to catch the favor of an Adept's daughter, and suddenly I am an unspeakable monster!"];
+				["Thou canst not know what humiliation is until thou hast been turned out from thine home and told never to return on pain of death!"];
+				["Thou canst not know the burning shame to hear that thy wrongdoing hath been proclaimed to all. To know that wherever thou goest people will say, \@Isn't Ensorcio that exiled mage from Moonshade?\@!"];
+				TurnOff("example");
+				TurnOn(<< "coercion", "Adept's daughter" >>);
+			}
+			key ("coercion") {
+				["The least that I have heard of is blackmail... Who knows to what other means Filbercio will stoop to fulfill his lusts?"];
+				["But I have no details, for I try not to listen to such stories as they always send me into a near-murderous fit... Thou shalt have to seek thine information elsewhere."];
+				TurnOff("coercion");
+			}
+			key ("Adept's daughter") {
+				["Oh, no! Thou shalt not have her name to drag through the mud alongside Ensorcio! Never!"];
+				["I cared enough for her to spend my magics upon her, hoping that she would come to care for me. I'll not have thee blacken her name, for all that's been done to me!"];
+				TurnOff("Adept's daughter");
+			}
+			key ("bye") {
+				CloseSpeaker0_i();
+				Bark_i(0, "@Goodbye!@", _Avatar);
+				Bark_i(5, "@Fare well...@", _Ensorcio);
+				break;
+			}
+		}
+		clear_answers;
+	}
+	if (event = _Trigger) && (v4 = 31) {
+		Item_bark("@Save me from this madman!@", _Filbercio);
+		SetSpeaker0_i(0, _Ensorcio);
+		if (v3 = true) {
+			["Do not interfere with me, Avatar!" ~"I am the MageLord now..."];
+			["Thou dost know that Filbercio is lower than swine..." ~"He doth deserve to be tortured for all the ill that he hath done."];
+		} else {
+			["Do not meddle in that which thou dost not understand, hero!" ~"I am the MageLord, and this man is evil."];
+			["He hath destroyed the lives of many." ~"He doth deserve to be tortured for all the ill that he hath done."];
+		}
+		CloseSpeaker0_i();
+		terminate;
+	}
+}
+
+Usable EnsorcioSellsSpells_i #locals(16) #uses(~AskList, ~AskOrdList, ~AskYesNo, ~SellSpell_i, ~EnsorcioHaggles_i) {
+    PushKeys();
+    v0 = true;
+    ["With what coinage dost thou wish to pay?"];
+    v1 = ~AskList(<< "Guilders", "Gold Coins" >>);
+    if (v1 = "Guilders") {
+        v2 = 952;
+    }
+    if (v1 = "Gold Coins") {
+        v2 = 644;
+        v3 = 1;
+    }
+    While v0 {
+        ["In which circle art thou interested?"];
+        v4 = ~AskOrdList(<< "nothing", "First", "Second", "Third", "Fourth", "Fifth", "Sixth", "Seventh", "Eighth", "Ninth" >>);
+        v4 = (v4 - 1);
+        if (v4 = 0) {
+            break;
+        }
+        switch v4 {
+            case 1 {
+                v5 = << "nothing", "Create Food", "Great Douse", "Locate" >>;
+                v6 = << 0, 0, 3, 6 >>;
+                v7 = << 0, 20, 18, 26 >>;
+                v8 = << 0, 12, 9, 13 >>;
+            }
+            case 2 {
+                v5 = << "nothing", "False Coin" >>;
+                v6 = << 0, 10 >>;
+                v7 = << 0, 80 >>;
+                v8 = << 0, 50 >>;
+            }
+            case 3 {
+                v5 = << "nothing", "Paralyze", "Sleep" >>;
+                v6 = << 0, 21, 22 >>;
+                v7 = << 0, 70, 60 >>;
+                v8 = << 0, 35, 34 >>;
+            }
+            case 4 {
+                v5 = << "nothing", "Deter" >>;
+                v6 = << 0, 25 >>;
+                v7 = << 0, 90 >>;
+                v8 = << 0, 50 >>;
+            }
+            case 5 {
+                v5 = << "nothing", "Mass Sleep", "Erstam's Surprise" >>;
+                v6 = << 0, 37, 39 >>;
+                v7 = << 0, 145, 160 >>;
+                v8 = << 0, 80, 100 >>;
+            }
+            case 6 {
+                v5 = << "nothing", "Fire Ring" >>;
+                v6 = << 0, 44 >>;
+                v7 = << 0, 180 >>;
+                v8 = << 0, 110 >>;
+            }
+            case 7 {
+                v5 = << "nothing", "Vibrate" >>;
+                v6 = << 0, 54 >>;
+                v7 = << 0, 220 >>;
+                v8 = << 0, 110 >>;
+            }
+            case 8 {
+                v5 = << "nothing", "Mind Blast", "Swordstrike" >>;
+                v6 = << 0, 57, 63 >>;
+                v7 = << 0, 300, 285 >>;
+                v8 = << 0, 185, 165 >>;
+            }
+            case 9 {
+                v5 = << "nothing", "Death Vortex", "Mass Death", "Spiral Missiles" >>;
+                v6 = << 0, 64, 65, 67 >>;
+                v7 = << 0, 350, 400, 425 >>;
+                v8 = << 0, 220, 250, 260 >>;
+            }
+            default {
+            }
+        }
+        ["What spell dost thou wish to buy?"];
+        v9 = ~AskOrdList(v5);
+        if (v9 = 1) {
+            ["So be it..."];
+        } else {
+            v10 = v6::v9;
+            v11 = (v7::v9 * v3);
+            v12 = (v8::v9 * v3);
+            v13 = v5::v9;
+            if (v1 = "Guilders") {
+                v11 = ((v7::v9 * 3) / 2);
+                v12 = ((v8::v9 * 3) / 2);
+            }
+            if (v11 = v12) {
+                ["I will sell thee <v13> for <v11> <v1>. Dost thou accept?"];
+                v14 = 0;
+                if (~AskYesNo() = true) {
+                    v14 = ~SellSpell_i(v11, v2, v10);
+                }
+            } else {
+                ["I will sell thee <v13> for <v11> <v1>. Dost thou accept?"];
+                v15 = ~EnsorcioHaggles_i(v12, v11);
+                v14 = 0;
+                if (v15 > 0) {
+                    v14 = ~SellSpell_i(v15, v2, v10);
+                }
+            }
+            if (v14 = 1) {
+                ["'Tis thine!"];
+            } else {
+                if (v14 = 2) {
+                    ["Find thyself a spellbook before thou dost seek to buy from me again!"];
+                    v0 = false;
+                    break;
+                }
+                if (v14 = 3) {
+                    ["Thou dost not have enough <v1> to buy that spell!"];
+                } else {
+                    if (v14 = 4) {
+                        ["If thou wilt look, thou wilt find thou dost already have that spell!"];
+                    } else {
+                    }
+                }
+            }
+        }
+        ["Wouldst thou care for another spell?"];
+        v0 = ~AskYesNo();
+    }
+    PopKeys();
+}
+
+Function ~EnsorcioHaggles_i accepts a0, a1 #locals(13) #uses(~AskList, ~Haggle_i, ~AskYesNo) {
+    v2 = v1;
+    v3 = ((v0 / 3) * 2);
+    v4 = (15 - (~GetNPCID_i(_Ensorcio) / 2));
+    v5 = 0;
+    v6 = 1;
+    v7 = 0;
+    v8 = 2;
+    v9 = ~GetNPCID_i(_Ensorcio);
+    While v6 {
+        v10 = ~AskList(<< "yes", "no", "haggle" >>);
+        if (v10 = "no") {
+            return 0;
+        } else {
+            if (v10 = "yes") {
+                v11 = 0;
+                goto label_8;
+            }
+        }
+        v12 = ~Haggle_i(v5, v4, v7, v3, v8, v0, v2);
+        v7 = (v7 + 1);
+        v5 = v12::4;
+        v11 = v12::3;
+        v13 = v2;
+        v2 = v12::2;
+        v3 = v12::1;
+        label_8:
+        v14 = ~Random(3);
+        if (v11 < 2) {
+            if (v2 < (v0 + ((v1 - v0) / 4))) {
+                if (v14 = 1) {
+                    ["Thou dost drive a hard bargain, indeed. But I must accept in order to be able to continue drinking..."];
+                }
+                if (v14 = 2) {
+                    ["'Twill hurt, but I have no choice but to accept it at this price."];
+                }
+                if (v14 = 3) {
+                    ["I must be a fool for doing this, but I will accept thine offer. Please, do not tell anyone about this..."];
+                }
+            } else {
+                if (v2 < (v0 + ((v1 - v0) / 3))) {
+                    if (v14 = 1) {
+                        ["One must have money to drink, eh? I will accept this price."];
+                    }
+                    if (v14 = 2) {
+                        ["Thou dost bargain well, hero. I will accept this price."];
+                    }
+                    if (v14 = 3) {
+                        ["Ummph. Thou art getting a good bargain with this price."];
+                    }
+                } else {
+                    if (v2 < (v0 + ((v1 - v0) / 2))) {
+                        if (v14 = 1) {
+                            ["Only <v2>??! All right, all right... I will accept this price."];
+                        }
+                        if (v14 = 2) {
+                            ["A decent price."];
+                        }
+                        if (v14 = 3) {
+                            ["One must make a living, must one not? I will accept this price."];
+                        }
+                    } else {
+                        if (v14 = 1) {
+                            ["I accept thine offer!"];
+                        }
+                        if (v14 = 2) {
+                            ["I accept thine offer. And did I say how much of a pleasure it is doing business with thee?"];
+                        }
+                        if (v14 = 3) {
+                            ["Yes, a good price that is!"];
+                        }
+                    }
+                }
+            }
+            ["So, have we agreed on the price of <v2>?"];
+            if (~AskYesNo() = true) {
+                if (v9 > 1) {
+                    SetNPCID_i((v9 - 2), _Ensorcio);
+                }
+                return v2;
+            } else {
+                if (v14 = 1) {
+                    ["Thou didst do this for jest?!"];
+                }
+                if (v14 = 2) {
+                    ["I did not enjoy this waste of my time!"];
+                }
+                if (v14 = 3) {
+                    ["Do not expect me to be so courteous to thee next time!"];
+                }
+                if (31 < (v9 + 10)) {
+                    SetNPCID_i(31, _Ensorcio);
+                } else {
+                    SetNPCID_i((v9 + 10), _Ensorcio);
+                }
+                return 0;
+            }
+        }
+        if (v5 = 1) {
+            if (v11 = 5) {
+                ["I said that <v2> is my final offer. Dost thou want it at this price?"];
+                if (v9 < 28) {
+                    SetNPCID_i((v9 + 4), _Ensorcio);
+                }
+                if (~AskYesNo() = true) {
+                    return v2;
+                }
+                v6 = 0;
+            } else {
+                ["<v2> is my final offer.  I will go no lower."];
+                if (v9 < 30) {
+                    SetNPCID_i((v9 + 2), _Ensorcio);
+                }
+            }
+        } else {
+            if (v11 = 2) {
+                if (v14 = 1) {
+                    ["Ahhh, I see thou hast a fine understanding of bartering. How does <v2> sound?"];
+                }
+                if (v14 = 2) {
+                    ["I see thou dost understand the value of this fine spell. How does <v2> sound?"];
+                }
+                if (v14 = 3) {
+                    ["What a pleasure it is to deal with thee. I offer thee <v2>."];
+                }
+            }
+            if (v11 = 3) {
+                if (v14 = 1) {
+                    ["Hmmm.... Wouldst thou pay <v2>?"];
+                }
+                if (v14 = 2) {
+                    ["Thou dost drive a hard bargain. <v2>?"];
+                }
+                if (v14 = 3) {
+                    ["I must make a living, thou knowest. What dost thou say to <v2>?"];
+                }
+            }
+            if (v11 = 4) {
+                if (v14 = 1) {
+                    ["I spit upon thy pittance! Does <v2> better please thy miserly nature?"];
+                }
+                if (v14 = 2) {
+                    ["I worked for more years than thou hast lived to acquire this knowledge! I can go no lower than <v2>."];
+                }
+                if (v14 = 3) {
+                    ["Dost thou take me for a fool? This fine spell is worth at least <v2>."];
+                }
+            }
+            if (v11 = 5) {
+                v2 = v13;
+                if (v14 = 1) {
+                    ["Thou must not be serious about this... My previous offer stands, at <v2>."];
+                }
+                if (v14 = 2) {
+                    ["I will not be insulted! I can go no lower than <v2>."];
+                }
+                if (v14 = 3) {
+                    ["Dog! I could not even afford a decent glass of ale for what thou hast offered! I will not lower my prices for such a fiend as thou. My offer stands at <v2>."];
+                }
+                if (v9 < 31) {
+                    SetNPCID_i((v9 + 1), _Ensorcio);
+                }
+            }
+        }
+    }
+}

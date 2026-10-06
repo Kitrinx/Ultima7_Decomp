@@ -1,0 +1,13 @@
+Routine Sex02 accepts a0 #locals(1) {
+    if (event = _Converse) {
+        if (~GetWorkType(_Sex02) = _Dance) {
+            Item_bark("@Later...@", item);
+        } else {
+            Item_bark("@Not the left button!@", item);
+        }
+    }
+    if (event = _Bark) {
+        v0 = ("@Thou art so manly!@" & ("@Kiss me!@" & ("@Let us do it again...@" & ("@Come closer...@" & ("@Oh, Shamino!@" & "@I am overcome...@")))));
+        Item_bark(v0::~Random(~ListSize_i(v0)), item);
+    }
+}

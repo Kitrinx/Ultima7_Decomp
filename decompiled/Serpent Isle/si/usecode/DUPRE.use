@@ -1,0 +1,269 @@
+Routine Snake_Dupre accepts a0 #locals(2) {
+    if (event = _Path_Success) {
+        v0 = ~PostAction(<< _aNO_HALT_i, _aFACE_i, _East, _aBEND_FRAME_i, _aSIT_FRAME_i >>, item);
+    }
+    if (event = _Path_Failure) {
+        SetWorkType(_Wander, item);
+    }
+    if (event = _NearDeath) {
+        if not flag(206) {
+            terminate;
+        }
+        if $daemoninsword {
+            terminate;
+        }
+        if (~GetAttacker_i(item) = 0) && (~GetWeapon_i(_Avatar) = _Daemon_Sword) {
+            SetSpeaker0_i(0, _Watson);
+            ["Vanquished! By a mere mortal!"];
+            CloseSpeaker0_i();
+            v1 = ~GetCoord(item);
+            SetWorkType(_Wait, item);
+            Npc_setTarget(1, _Avatar);
+            Item_move(<< 142, 46, 0 >>, item);
+            ClearItemFlag_i(_Dead, _Dupre);
+            Item_move(v1, _Dupre);
+            SetItemFlag_i(_Zombie, _Dupre);
+            ClearItemFlag_i(_Tournament, _Dupre);
+            ReduceHits_i(0, 55, _Dupre);
+            flag(209) = true;
+            $antidupredead = true;
+        }
+    }
+    if (event = _Action) {
+        SetSpeaker0_i(0, _Watson);
+        ["Puny mortal!"];
+        CloseSpeaker0_i();
+    }
+}
+
+Routine Dupre accepts a0 #locals(8) #uses(~LordOrLady, ~AvatarName, DeclareWinner_i, NowSettleDownBoys, PartyFaces_i, Bark_i, ~IsNPCNear, SayIfNear_i, DupreReturnsBelongings_i, ChooseMeetingPlace_i, SetGotFlags_i, ~WhereAmI_i) {
+    v0 = ~GetNPCID_i(_Dupre);
+    v1 = ~LordOrLady();
+    v2 = ~AvatarName();
+    v3 = ~AvatarSex();
+    if (event = _NearDeath) && $tournamentflag {
+        v4 = ~GetAttacker_i(_Dupre);
+        v4 = (0 - v4);
+        if not $temp1flag {
+            $temp1flag = true;
+            DeclareWinner_i(~NPCToItem_i(_Dupre), ~NPCToItem_i(v4));
+            return;
+        }
+        NowSettleDownBoys(item);
+        return;
+    }
+    if (event = _Converse) {
+        Item_bark("@Dupre...@", _Avatar);
+        PartyFaces_i(65535);
+        if not ~GetItemFlag_i(_Zombie, _Dupre) {
+            Bark_i(2, (("@Yes, " + v1) + "?@"), _Dupre);
+            SetWorkType(_Talk, _Dupre);
+        } else {
+            v5 = ~rndRange(4, 1);
+            if (v5 = 1) {
+                Bark_i(2, "@Bring to me a woman!@", _Dupre);
+            }
+            if (v5 = 2) {
+                Bark_i(2, "@I will slay you all!@", _Dupre);
+            }
+            if (v5 = 3) {
+                Bark_i(2, "@Fulfill thy desires!@", _Dupre);
+            }
+            if (v5 = 4) {
+                Bark_i(2, "@I must have ale!@", _Dupre);
+            }
+        }
+    }
+    if (event = _Talking) {
+        SetSpeaker0_i(0, _Dupre);
+        ClearBark_i(_Dupre);
+        if ~GetItemFlag_i(_InParty_i, _Dupre) {
+            SetWorkType(_FollowAvt, _Dupre);
+            TurnOn("leave");
+        } else {
+            Npc_schedule(_Dupre);
+            TurnOn("join");
+        }
+        if (v0 = 30) {
+            ["How good to see thee again, <v1>! Knowing that thou wouldst soon return, I have waited for thee at this establishment."];
+            if ~IsNPCNear(_Rocco) {
+                SayIfNear_i("@And he hath developed quite a bar tab!@", 65506);
+                SetSpeakerSlot_i(0);
+                ["One that I shall pay, worry thou not!"];
+            }
+            if not $AFTER_FREEDOM_NEWS {
+                ["And I have good news for thee, <v1>."];
+                TurnOn("good news");
+            }
+            SetNPCID_i(0, _Dupre);
+            JoinParty(_Dupre);
+            $DUPRE_HAS_BELONGINGS = true;
+            TurnOff("join");
+            TurnOn(<< "leave" >>);
+        } else {
+            if ($tookinventory and not $duprefound) {
+                ["<v2>! I thought I would never find thee!"];
+                ["When that strange storm struck, there was a flash, and then I found myself in a wilderness."];
+                ["Fearing to be slain by the Goblins patrolling the woods, I instead took shelter in this walled city. But these Pikemen insist on escorting me to their leader!"];
+                if ~IsNPCNear_i(_Marsten) {
+                    SetSpeaker1_i(0, _Marsten);
+                    ["That is all right. If thou art with my friend here, thou needest not speak with me."];
+                    CloseSpeaker1_i();
+                    SetSpeakerSlot_i(0);
+                }
+                JoinParty(_Dupre);
+                TurnOff("join");
+                TurnOn("leave");
+                NewSchedule_i(<< 2428, 1124 >>, _EatAtInn, 0, _Dupre);
+            } else {
+                v6 = ~rndRange(4, 1);
+                if (v6 = 1) {
+                    ["This is no time for idle chat. We're on a quest!"];
+                }
+                if (v6 = 2) {
+                    ["This must wait. There is no time for delay!"];
+                }
+                if (v6 = 3) {
+                    ["We must press on, Avatar!"];
+                }
+                if (v6 = 4) {
+                    ["The Sands of Time are dwindling! We must hurry!"];
+                }
+            }
+        }
+        if (~GetNPCID_i(_Shamino) = 30) {
+            TurnOn("Shamino's whereabouts");
+        }
+        if (~GetNPCID_i(_Iolo) = 30) {
+            TurnOn("Iolo's whereabouts");
+        }
+        if (~GetNPCID_i(_Boydon) = 30) {
+            TurnOn("Boydon's whereabouts");
+        }
+        if ($DUPRE_HAS_BELONGINGS and (not ~GetItemFlag_i(_InParty_i, _Dupre) and ~GetContents(_All, _All, _All, _Dupre))) {
+            TurnOn("belongings");
+        }
+        TurnOn(<< "bye" >>);
+        converse {
+            key ("belongings") {
+                TurnOff("belongings");
+                DupreReturnsBelongings_i();
+            }
+            key ("good news") {
+                TurnOff("good news");
+                if (~GetItemFlag_i(_InParty_i, _Iolo) or (~GetNPCID_i(_Iolo) = 30)) {
+                    ["But I should let Iolo tell thee..."];
+                } else {
+                    ["The wizard Gustacio hath agreed to aid us, if we will but assist him in his experiments."];
+                    ["He bet with me that thou wouldst not survive Freedom, but I told him that thou wert made of tougher stuff than any dungeon!"];
+                    ["I think thy survival shall impress him..."];
+                    $AFTER_FREEDOM_NEWS = true;
+                }
+            }
+            key ("join") {
+                if ($begunknightstest and not $doneknightstest) {
+                    ["But Sir Shmed said that the Test is only for one, <v1>! I cannot come with thee."];
+                    SayIfNear_i("@Thou must enter alone, stranger.@", 65461);
+                    Bark_i(0, "@Alone!@", _Shmed);
+                    Bark_i(0, "@Be brave!@", _Dupre);
+                    terminate;
+                }
+                TurnOff("join");
+                if (~ListSize_i(~GetParty_i()) < 5) {
+                    TurnOn("leave");
+                    ["With great pride!"];
+                    JoinParty(_Dupre);
+                    $DUPRE_HAS_BELONGINGS = true;
+                } else {
+                    ["But thou hast so many companions, <v2>! I shall only be in thy way."];
+                    ["'Twould be better for me to remain where I am, <v1>."];
+                }
+            }
+            key ("leave") {
+                TurnOff("leave");
+                if not $tookinventory {
+                    ["Leave thee at a time such as this? Surely, thou dost jest. Onward!"];
+                } else {
+                    TurnOn("join");
+                    ["I hesitate to leave thee. But if thou dost insist..."];
+                    LeaveParty(_Dupre);
+                    DupreReturnsBelongings_i();
+                    ChooseMeetingPlace_i(_Dupre);
+                }
+            }
+            key ("Shamino's whereabouts") {
+                TurnOff("Shamino's whereabouts");
+                if $SHAMINO_RESURRECTED_BY_MONKS {
+                    ["I have exciting news -- the monks have returned Shamino to us again, healthy and whole! This he can explain to thee."];
+                }
+                ["Not being as patient as I am, <v1>, our good friend Shamino hath gone into the woods to hunt wild game."];
+                ["He went west from here, towards the magic woods."];
+            }
+            key ("Iolo's whereabouts") {
+                TurnOff("Iolo's whereabouts");
+                ["The good bard was very disturbed by thy sudden departure, and hath been questioning the Mages constantly as to thy fate."];
+                ["He hath gained the friendship of the Sorcerer Gustacio, and hath taken to aiding that worthy in his studies. We can find him there."];
+            }
+            key ("Boydon's whereabouts") {
+                TurnOff("Boydon's whereabouts");
+                ["Thou wouldst never believe it! Boydon hath become very friendly with young Bucia of the Canton, and spends much time with her."];
+                ["If we can find her, then we shall find him!"];
+            }
+            key ("bye") {
+                if ($tookinventory and not $duprefound) {
+                    ["Before we go any farther, Avatar, I think we should take stock of our supplies."];
+                    ["That blasted storm exchanged all of mine equipment for useless refuse! Even mine enchanted shield!"];
+                    ["We cannot hope to survive long without the proper equipment. Perhaps if we can find where this rubbish came from, we can find our good equipment."];
+                    ["I shall prepare a list."];
+                    if ~IsNPCNear_i(_Shamino) {
+                        SayIfNear_i("@I have already begun one.@", 65534);
+                        SetSpeakerSlot_i(0);
+                        ["Then I shall add to it."];
+                    }
+                    SetGotFlags_i();
+                    $duprefound = true;
+                }
+                CloseSpeaker0_i();
+                Bark_i(0, "@That's all for now.@", _Avatar);
+                Bark_i(2, (("@Yes, " + v1) + "."), _Dupre);
+                break;
+            }
+        }
+        clear_answers;
+    }
+    if (event = _Trigger) {
+        v7 = ~WhereAmI_i();
+        if (v7 = 22) {
+            SetSpeaker0_i(0, _Dupre);
+            ["Unholy creatures!\x09We must destroy these foul skeletons, Avatar!"];
+            CloseSpeaker0_i();
+            Bark_i(2, "@I hate skeletons!@", _Dupre);
+            terminate;
+        }
+    }
+}
+
+Usable DupreReturnsBelongings_i #locals(1) #uses(~AskYesNo, ~ReturnBelongings_i) {
+    if ~GetContents(_All, _All, _All, _Dupre) {
+        ["I am carrying many items, some of which may be of use to thee. Wouldst thou care to have these back?"];
+        if ~AskYesNo() {
+            ["Here they are."];
+            $DUPRE_HAS_BELONGINGS = false;
+            v0 = ~ReturnBelongings_i(65535);
+            if (v0::1 <> 0) {
+                ["Thy friends will have to help carry these things."];
+            }
+            if (v0::2 > 0) {
+                v0 = v0::2;
+                if (v0 > 1) {
+                    ["Since thou canst not carry these remaining <v0> items, I will place them at thy feet."];
+                } else {
+                    ["Since thou dost not have enough room for this last item, I will place it at thy feet."];
+                }
+            }
+        } else {
+            $DUPRE_HAS_BELONGINGS = true;
+            ["If thou changest thy mind, thou hast but to return and ask again."];
+        }
+    }
+}

@@ -1,0 +1,99 @@
+Routine Gob_King accepts a0 #locals(1) #uses(PartyFaces_i, Bark_i, ~AskYesNo, SummonGoblins_i) {
+    if (event = _Converse) {
+        Item_bark("@Ho! Goblin King!@", _Avatar);
+        PartyFaces_i(item);
+        Bark_i(3, "@What doing here?@", item);
+        SetWorkType(_Talk, item);
+    }
+    if (((event = _Talking) or (event = _NearDeath)) and not ~GetItemFlag_i(_Zombie, item)) {
+        v0 = ~ChangeNPCStat_i(30, _Hits, item);
+        SetItemFlag_i(_Zombie, item);
+        ClearBark_i(item);
+        SetWorkType(_Combat_0, item);
+        SetSpeaker0_i(0, _HenchMan_270);
+        ["So, brave warrior come to kill King Goblin? Ha! We speak first..."];
+        TurnOn(<< "name", "goblins", "Helm of Monitor", "Simon", "bye" >>);
+        converse {
+            key ("name") {
+                TurnOff("name");
+                ["Me Pomdirgun, Warlord and King of all Goblins. Mine shall be last name thou wilt ever hear."];
+            }
+            key ("goblins") {
+                TurnOff("goblins");
+                ["Once land where Monitor built was Goblin land. Then Men come and take it. So now we kill them."];
+                TurnOn("Men");
+            }
+            key ("Men") {
+                TurnOff("Men");
+                ["One day we kill all Men. Today we kill thee. Ha! Then eat thee for supper! Mmm... Tasty!"];
+            }
+            key ("Helm of Monitor") {
+                TurnOff("Helm of Monitor");
+                ["So! Simon told thee I had it. It is mine and I will keep it!"];
+            }
+            key ("Simon") {
+                TurnOff("Simon");
+                ["Thou knowest Simon's secret? Doth all of Monitor know?"];
+                if ~AskYesNo() {
+                    ["Then Simon dead. Was good spy. Didst thou eat him?"];
+                    if ~AskYesNo() {
+                        ["Eagh! Thou dost disgust me."];
+                        SummonGoblins_i();
+                    } else {
+                        ["Simon would not taste very good anyway. I will kill thee now."];
+                        SummonGoblins_i();
+                    }
+                } else {
+                    if $gottattoo {
+                        ["Then thou must die to keep his secret!"];
+                        SummonGoblins_i();
+                    } else {
+                        ["Why thou knowest that?"];
+                        SummonGoblins_i();
+                    }
+                }
+            }
+            key ("bye") {
+                Item_bark("@I will kill thee now!@", item);
+                SummonGoblins_i();
+            }
+        }
+        clear_answers;
+    }
+    if ((event = _NearDeath) and ~GetItemFlag_i(_Zombie, item)) {
+        ClearItemFlag_i(_Tournament, item);
+        Bark_i(0, "@Thou hast slain me...@", item);
+        ReduceHits_i(0, 55, item);
+    }
+}
+
+Usable SummonGoblins_i #locals(4) #uses(Bark_i) {
+    Bark_i(0, "@Attack him!@", item);
+    if (~GetTime() < 2) {
+        v0 = 3;
+    } else {
+        v0 = 6;
+    }
+    While (v0 > 0) {
+        v1 = ~CreateCreature_i(<< 0, 0, 0 >>, _Goblin);
+        if v1 {
+            SetWorkType(_Combat_0, v1);
+            Npc_setAlignment(_Evil, v1);
+            SetAttacker_i(v1, _Avatar);
+            v2 = ~ApproachAvatar_i(40, 80, v1);
+            v3 = ~Random(6);
+            if (v3 = 1) {
+                Bark_i(~Random(20), "@Lor glak!@", v1);
+            }
+            if (v3 = 2) {
+                Bark_i(~Random(20), "@Ska ska krak!@", v1);
+            }
+            if (v3 = 3) {
+                Bark_i(~Random(20), "@Grik!@", v1);
+            }
+        }
+        v0 = (v0 - 1);
+    }
+    v2 = ~ChangeNPCStat_i(27, _Hits, item);
+    terminate;
+}

@@ -1,0 +1,206 @@
+Routine Andrio accepts a0 #locals(8) #uses(~LordOrLady, ~AvatarName, Bark_i, PartyFaces_i, ~AskList, ~AskYesNo, ~IsNPCNear, MessengerBringsScroll_i) {
+    v0 = ~LordOrLady();
+    v1 = ~AvatarName();
+    v2 = ~AvatarSex();
+    v3 = ~GetTime();
+    if ((v3 > 1) or (v3 < 6)) {
+        v3 = "day";
+    } else {
+        v3 = "evening";
+    }
+    if ((event = _NearDeath) and ~GetItemFlag_i(_Tournament, item)) {
+        v4 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #Black_Mage >>, item);
+    }
+    if ((event = _Bark) and (~GetWorkType(_Andrio) = _Hound)) {
+        if (~Random(10) < 6) {
+            terminate;
+        }
+        v5 = << "@How fascinating!@", "@Pay me no mind.@", "@I am simply watching...@", "@What art thou doing?@", "@I do hope I'm not in the way...@", "@May I see?@" >>;
+        Bark_i(0, v5::~Random(~ListSize_i(v5)), _Andrio);
+    }
+    if (event = _Converse) {
+        Item_bark((("@Good " + v3) + "!@"), _Avatar);
+        PartyFaces_i(65532);
+        Bark_i(2, (("@Greetings, " + v0) + "."), _Andrio);
+        SetWorkType(_Talk, _Andrio);
+    }
+    if (event = _Talking) {
+        Npc_schedule(_Andrio);
+        ClearBark_i(_Andrio);
+        SetSpeaker0_i(0, _Andrio);
+        v6 = ~GetItemFlag_i(_Met, _Andrio);
+        if $BANES_RELEASED {
+            ["Oh, am I glad to see thee! I have been very scared."];
+            TurnOn("scared");
+            flag(244) = true;
+        } else {
+            if (v6 = false) {
+                SetItemFlag_i(_Met, _Andrio);
+                ["Hello, I am Andrio. I never meet outsiders. Couldst thou tell me all about thy travels and adventures?"];
+                TurnOn("adventures");
+            } else {
+                ["Hast thou done anything exciting lately?"];
+                TurnOn("exciting");
+            }
+        }
+        if (flag(234) and not ~GetItemFlag_i(_Dead, _Rotoluncia)) {
+            TurnOn("kidnap");
+        }
+        TurnOn(<< "bye" >>);
+        converse {
+            key ("scared") {
+                TurnOff("scared");
+                ["The Glowing Man came and killed nearly everyone in the entire town. Fedabiblio tried to stop him, but not even he could withstand the Glowing Man's attack."];
+                TurnOn("Fedabiblio");
+            }
+            key ("Fedabiblio") {
+                TurnOff("Fedabiblio");
+                v7 = ~GetWorkType(_Fedabiblio);
+                if (v7 = 15) {
+                    ["Fedabiblio fought a terrific battle, but when the Glowing Man was done with him, he had been turned into a statue. It remains beyond mine abilities to restore him."];
+                    TurnOn("restore");
+                } else {
+                    ["Thank goodness, thou wert able to restore him to life. Else I would never finish my Mage's training!"];
+                }
+            }
+            key ("restore") {
+                TurnOff("restore");
+                ["I do not know for certain if anything can bring Fedabiblio back to life. Once I overheard Columna talking about a special wand that Torrissio owned."];
+                TurnOn(<< "wand", "Torrissio" >>);
+            }
+            key ("wand") {
+                TurnOff("wand");
+                ["'Twas called the Philanderer's Friend. It enabled the user to command objects to move -- quite useful in thievery, I imagine. Perhaps it is a similar sort of magic that is required to\x09enable Fedabiblio to move again."];
+                flag(327) = true;
+            }
+            key ("kidnap") {
+                TurnOff("kidnap");
+                ["I knew that thou didst lead an interesting life, <v1>! I'm sure I can help thee."];
+                ["Dost thou suspect townsfolk, or strangers?"];
+                v4 = ~AskList(<< "townsfolk", "strangers" >>);
+                if (v4 = "strangers") {
+                    ["Perhaps. Yet to me, this doth have the stench of a Moonshadian intrigue."];
+                    ["For the moment, let us assume that I am right and thou art wrong..."];
+                }
+                ["Is thine enemy a Mundane, or a Mage? What dost thou believe?"];
+                v4 = ~AskList(<< "Mundane", "Mage" >>);
+                if (v4 = "Mundane") {
+                    ["No, no, no. How could a mere mortal snatch thy friend in such an arcane fashion?"];
+                    ["The criminal must be a Mage!"];
+                } else {
+                    ["Exactly so!"];
+                }
+                ["This narrows the search! If thou dost want the secrets of the Mages, ask Bucia the Provisioner -- she doth know all the gossip of the town."];
+                ["Yet I suspect Torrissio. He is a true swine, and it would take a devious person to plan such a crime."];
+                flag(322) = true;
+            }
+            key ("exciting", "adventures") {
+                TurnOff(<< "adventures", "exciting" >>);
+                ["Yes, yes. I would very much love to hear about thine exciting adventures. While studying magic I have so little time to plan any expeditions of mine own."];
+                TurnOn(<< "magic", "expeditions" >>);
+            }
+            key ("magic") {
+                TurnOff("magic");
+                ["I am working to become a great master. Someday I hope to be as great as Master Filbercio."];
+                ["Of course, I know that level of expertise will take some time. But I have the discipline! Just ask Freli, he will tell thee I do."];
+                TurnOn(<< "Filbercio", "Freli" >>);
+            }
+            key ("Filbercio") {
+                TurnOff("Filbercio");
+                ["He is the MageLord of all Moonshade. There are rumors that no mage hath lived who was more powerful, not even the Mad Mage!"];
+                TurnOn("Mad Mage");
+            }
+            key ("Mad Mage") {
+                TurnOff("Mad Mage");
+                ["His name is Erstam. He was one of the founders of Moonshade. However, our instructors\x09claim he slowly became insane as his power grew. Eventually, he left the city to\x09be far away from his fellow spellcasters."];
+                ["They tell us the same could happen to us should we seek too much power too soon. I wonder if that is what caused the other two mages to flee to the Mountains of Freedom?"];
+                ["Goodness, I hope that doth not happen to me!"];
+                TurnOn(<< "two mages", "Mountains of Freedom" >>);
+            }
+            key ("two mages") {
+                TurnOff("two mages");
+                ["I remember not their names, but they had a reputation for conducting unusual experiments,\x09especially with reagents. Someone once told me that they were always searching for more powerful components to assist in their magics."];
+            }
+            key ("Mountains of Freedom") {
+                TurnOff("Mountains of Freedom");
+                ["They lie to the north of the island. I have heard that the caves there are filled with the\x09rare mineral known as Stoneheart. I am sure someone as brave as thou art will go there someday and discover whether the legend is true. Please promise to bring the tale whenever thou dost return from such a grand excursion."];
+                ["Thou wilt tell, wilt thou not?"];
+                if ~AskYesNo() {
+                    ["Excellent, <v0>. I cannot wait to hear further tales of thy journeys."];
+                } else {
+                    ["I see... I suppose one with thine important duties hast not the time for a simple apprentice of the arcane arts...];
+                }
+            }
+            key ("Freli") {
+                TurnOff("Freli");
+                ["He is my companion and fellow student. We have been friends for a very long time. And his mastery of magic is almost as great as mine own."];
+                if ~IsNPCNear(_Freli) {
+                    SetSpeaker1_i(0, _Freli);
+                    ["Almost!"];
+                    SetSpeakerSlot_i(0);
+                    ["Well..."];
+                    SetSpeakerSlot_i(1);
+                    ["Better!"];
+                    SetSpeakerSlot_i(0);
+                    ["Thou art mad!"];
+                    PushKeys();
+                    TurnOn(<< "Stop this bickering!", "bye" >>);
+                }
+            }
+            key ("Stop this bickering!") {
+                TurnOff("Stop this bickering!");
+                PopKeys();
+                SetSpeaker1_i(0, _Freli);
+                ["Quite right, <v0>. I am sorry."];
+                CloseSpeaker1_i();
+                SetSpeakerSlot_i(0);
+                ["Ah, yes, <v0>. I, too, am truly sorry."];
+                ["How else may I help thee?"];
+            }
+            key ("expeditions") {
+                TurnOff("expeditions");
+                ["Well, I am hesitant to admit how little I have seen of the land. Unlike thee, I am not an experienced traveller. There is so little I know about my surroundings, save how to manipulate them with magic. I have no knowledge of what it is like to face danger daily. Certainly nothing so grand as that which thou dost meet frequently. In comparison, my life is filled with boredom."];
+                TurnOn("boredom");
+            }
+            key ("boredom") {
+                TurnOff("boredom");
+                ["Yesterday I saw Torrissio leave his house at 9 in the morning -- same as always -- and run into one of the food vendors. I was positive Torrissio was about to transform her into a frog or some such, but instead, he gave no more than a rude chastising."];
+                TurnOn(<< "chastising", "Torrissio" >>);
+            }
+            key ("chastising") {
+                TurnOff("chastising");
+                ["Torrissio is not very friendly. I have heard he bears ill will for many things, and doth not often forgive transgressions. I hope never to cross him, for I could not endure his enmity for long. Thou, too, shouldst walk with care, for if thou dost ever need his aid, pray no such bad feelings exist between thee and he\x09or he will offer nothing."];
+            }
+            key ("Torrissio") {
+                TurnOff("Torrissio");
+                if $BANES_RELEASED {
+                    v7 = ~GetWorkType(_Fedabiblio);
+                    if (v7 = 15) {
+                        ["I know not if the wand is in Torrissio's possession, but perhap thou wilt be able to\x09convince him to help thee. Be wary of him, however! He hath a reputation for being very tricky!"];
+                    } else {
+                        ["I am glad thou wert able to successfully deal with him, without him getting the best of thee!"];
+                    }
+                } else {
+                    ["He is an adept mage who commands the powers of life magic. Some day, when I am less afraid of his coarse manner, I plan to ask for his assistance in my Transmute Flesh to Wood\x09spell. I am told he hath done something similar with stone before."];
+                    TurnOn(<< "flesh to wood", "similar" >>);
+                }
+            }
+            key ("flesh to wood") {
+                TurnOff("flesh to wood");
+                ["Yes, <v0>. This spell will change a warrior's skin, making it as tough as wood. This way, a fighter will require less armour to deflect blows. My greatest obstacle right now is how to permit the fighter to move once his flesh hath solidified into the wood."];
+            }
+            key ("similar") {
+                TurnOff("similar");
+                ["Freli is researching a spell like mine, but involving stone instead of wood. The patrons at the\x09Blue Boar suggested we contact Torrissio about transforming such things, because his arcane emphasis involves matters of life, including changing flesh to other materials."];
+            }
+            key ("bye") {
+                CloseSpeaker0_i();
+                Bark_i(0, "@Must be going...@", _Avatar);
+                Bark_i(2, "@I thank thee.@", _Andrio);
+                MessengerBringsScroll_i();
+                break;
+            }
+        }
+        clear_answers;
+    }
+}

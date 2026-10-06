@@ -1,0 +1,1731 @@
+Routine Bucia accepts a0 #locals(17) #uses(~IsInInv, ~LordOrLady, ~AvatarName, PartyFaces_i, Bark_i, FaceAvatar_i, ~IsNPCNear, ~UsePatience_i, ~PartyUtters, ~RemoveFromList_i, ~AskYesNo, BuciaSells_i, ExchangeCoins_i, MessengerBringsScroll_i) {
+    v0 = false;
+    if (~GetWorkType(_Bucia) = _TendShop) {
+        v0 = true;
+    }
+    v1 = ~IsInInv(15, 65177, _Reagents, 1, _Party);
+    v2 = ~LordOrLady();
+    v3 = ~AvatarSex();
+    v4 = ~AvatarName();
+    v5 = 0;
+    v6 = false;
+    v7 = ~GetItemFlag_i(_Met, _Bucia);
+    if (event = _Bark) {
+        v8 = ~Random(6);
+        if ~IsInInv(3, 65177, _Gwani_Artifacts, 1, _Party) {
+            if (v8 = 1) {
+                Item_bark("@What is that smell?@", _Bucia);
+            }
+            if (v8 = 2) {
+                Item_bark("@Phew!@", _Bucia);
+            }
+            if (v8 = 3) {
+                Item_bark("@Putrid odor...@", _Bucia);
+            }
+            if (v8 = 4) {
+                if not flag(260) {
+                    Item_bark("@Away from here!@", _Bucia);
+                } else {
+                    Item_bark("@Something doth stink...@", _Bucia);
+                }
+            }
+            if (v8 = 5) {
+                Item_bark("@Open a window!@", _Bucia);
+            }
+            if (v8 = 6) {
+                Item_bark("@Bad stench!@", _Bucia);
+            }
+        } else {
+            if (v8 = 1) {
+                if v7 {
+                    Item_bark((("@Greetings, " + v4) + "!@"), _Bucia);
+                } else {
+                    Item_bark("@Greetings, stranger!@", _Bucia);
+                }
+            }
+            if (v8 = 2) {
+                Item_bark("@Goods for sale!@", _Bucia);
+            }
+            if (v8 = 3) {
+                Item_bark("@What a nice day.@", _Bucia);
+            }
+            if (v8 = 4) {
+                if not v7 {
+                    Item_bark("@Art thou a visitor?@", _Bucia);
+                } else {
+                    Item_bark("@So nice to see thee.@", _Bucia);
+                }
+            }
+            if (v8 = 5) {
+                Item_bark("@Thou breakest, thou buyest.@", _Bucia);
+            }
+            if (v8 = 6) {
+                Item_bark("@Provisions!@", _Bucia);
+            }
+        }
+    }
+    if (event = _Converse) {
+        Item_bark("@Greetings!@", _Avatar);
+        PartyFaces_i(65523);
+        Bark_i(2, (("@Yes, " + v2) + "?@"), _Bucia);
+        if not v0 {
+            SetWorkType(_Talk, _Bucia);
+        } else {
+            SetWorkType(_Stand, _Bucia);
+            FaceAvatar_i(65523);
+            v8 = ~PostAction(<< _aNO_HALT_i, _aWAIT_i, 7, _aUSABLE_i, #Bucia >>, _Bucia);
+        }
+    }
+    if (event = _Action) {
+        event = 9;
+    }
+    if (event = _Talking) {
+        Npc_schedule(_Bucia);
+        ClearBark_i(_Bucia);
+        v0 = false;
+        if (~GetWorkType(_Bucia) = _TendShop) {
+            v0 = true;
+        }
+        SetSpeaker0_i(0, _Bucia);
+        v9 = 6;
+        if (~IsInInv(3, 65177, _Gwani_Artifacts, 1, _Party) and flag(260)) {
+            ["Go away from me with that rotten egg. Phew!"];
+            terminate;
+        }
+        if (v7 = false) {
+            if v0 {
+                ["What a pleasure to meet thee. My name is Bucia, and I tend this provisions shop. Is there anything that I can help thee with?"];
+            } else {
+                ["Strangers are always welcome in Moonshade. My name is Bucia -- if thou needest help, thou hast merely to ask."];
+            }
+            SetItemFlag_i(_Met, _Bucia);
+        } else {
+            ["I am so glad to see thee again, <v2>."];
+        }
+        if v0 {
+            TurnOn(<< "provisions", "exchange" >>);
+            v9 = 3;
+        }
+        if (flag(234) and not ~GetItemFlag_i(_Dead, _Rotoluncia)) {
+            TurnOn("kidnap");
+        }
+        if ~IsNPCNear(_Flindo) {
+            v9 = 1;
+        }
+        TurnOn(<< "information", "bye" >>);
+        v10 = false;
+        v11 = 0;
+        converse {
+            key ("kidnap") {
+                ["Oh, my! What to do? What to do?"];
+                ["Call the Rangers! Consult the Mages! Such a crime cannot go unpunished."];
+                ["Perhaps this has something to do with the magical storms? Perhaps we are all in danger!"];
+                Bark_i(0, "@I am so afraid!@", _Bucia);
+                terminate;
+            }
+            key ("information") {
+                TurnOff("information");
+                if ((~IsNPCNear_i(_Music01) or (~IsNPCNear_i(_Petra) or ~IsNPCNear_i(_Rocco))) and $startbuciagossip) {
+                    v9 = 100;
+                    $startbuciagossip = false;
+                    ["'Tis so flattering to be asked so many questions by thee, <v4>. Of what wouldst thou like to know?"];
+                    PushKeys();
+                    v11 = 1;
+                    TurnOn(<< "people", "places", "strange objects", "nothing more" >>);
+                } else {
+                    if (not flag(259) or (~GetClock(2) > 4)) {
+                        ["I am not certain that I'll know anything useful, but in what art thou interested?"];
+                        PushKeys();
+                        v11 = 1;
+                        TurnOn(<< "people", "places", "strange objects", "nothing more" >>);
+                    } else {
+                        ["I am afraid that I'm very busy right now. Perhaps we could talk about this later."];
+                    }
+                }
+            }
+            key ("people") {
+                ["'Twould be wrong for me to speak about people behind their backs."];
+                ["So please, do not tell anyone! Dost thou desire to know about townsfolk, or visitors?"];
+                PushKeys();
+                v11 = 2;
+                TurnOn(<< "townsfolk", "visitors", "nothing more" >>);
+            }
+            key ("townsfolk") {
+                TurnOff("townsfolk");
+                ["Dost thou have an interest in mere Mundanes, or Mages?"];
+                PushKeys();
+                v11 = 3;
+                TurnOn(<< "Mundanes", "Mages", "nothing more" >>);
+            }
+            key ("Mundanes") {
+                ["Those of us who do not cast magic are a small and disrespected part of society here. Whom dost thou desire to know about?"];
+                PushKeys();
+                v11 = 4;
+                TurnOn(<< "the Artisans", "the Rangers", "Rocco and Petra", "Mosh the beggar", "nothing more" >>);
+            }
+            key ("the Artisans") {
+                TurnOff("the Artisans");
+                ["Ducio is the Master Artisan, capable of forging or repairing all manner of magical apparatus."];
+                ["He hath grown lazy with prosperity, however -- his apprentice doth do most of the hard labor, while the Master wets his throat at the inn!"];
+                ["Poor Topo! Someday he'll be the Master Artisan, but for now he must labor long hours for a mere pittance."];
+                v9 = ~UsePatience_i(v9);
+            }
+            key ("Pothos the Apothecary") {
+                TurnOff("Pothos the Apothecary");
+                if $filberciobanquet {
+                    if $knowturtle {
+                        ["He hath been most delighted lately -- as if some burden hath been lifted from his mind."];
+                    } else {
+                        ["Pothos is back, and his shop is open once again."];
+                        ["Hast thou heard the rumor about the apothecary? Some say that he hath a most uncanny resemblance to the Mad Mage."];
+                        ["I think so, too."];
+                        $KNOWS_POTHOS_SECRET = true;
+                        TurnOn("Mad Mage");
+                    }
+                } else {
+                    ["Thou canst buy no reagents in Moonshade, for the Apothecary hath gone away!"];
+                    ["There is a tale that explains his absence."];
+                    ["Don't tell that I told thee, but I hear that Pothos is on a secret errand for the MageLord!"];
+                }
+                v9 = ~UsePatience_i(v9);
+            }
+            key ("Mad Mage") {
+                TurnOff("Mad Mage");
+                ["Surely thou hast heard of Erstam, the Mad Mage. 'Twas he who helped found this city. Once he was a great wizard, able to control the very elements themselves. But then, as his power grew, his sanity shrank. It shrank and shrank until it was too small to perceive, and he went dashing into the hills, shrieking threats and insults. Past the Mountains of Freedom wilt thou find his isles."];
+                v9 = ~UsePatience_i(v9);
+            }
+            key ("the Rangers") {
+                TurnOff("the Rangers");
+                ["They are the pride of our city. The Chief Ranger, Julia, hath no mercy for troublemakers."];
+                ["But if thou dost ask me, she's too gruff -- I think she'd like to give everyone orders, if she could."];
+                ["By the way, be sure to give thy greetings to Ranger Ernesto..."];
+                if v3 {
+                    ["...he's rather cute."];
+                } else {
+                    ["...he's a winsome lad."];
+                }
+                v9 = ~UsePatience_i(v9);
+            }
+            key ("Rocco and Petra") {
+                TurnOff("Rocco and Petra");
+                ["I can say nothing bad about Goodman Rocco and his inn! He is a gentleman."];
+                ["Now, some enjoy talking about him and that female automaton living under the same roof, but not I."];
+                ["Petra is a fine girl, even if she's merely a magical construct."];
+                v9 = ~UsePatience_i(v9);
+            }
+            key ("Mosh the beggar") {
+                TurnOff("Mosh the beggar");
+                ["Beware of Mosh! Those rats of hers are filled with disease."];
+                ["Do not listen to her accusations about the Sorceress Columna -- all imaginings, not true!"];
+                v9 = ~UsePatience_i(v9);
+            }
+            key ("Mages") {
+                ["Everything in this city revolves around the wizards and their cliques. Whom dost thou desire to know about?"];
+                PushKeys();
+                v11 = 4;
+                TurnOn(<< "the MageLord", "the Adepts", "the Magister", "Melino and Columna", "the minor Mages", "Pothos the Apothecary", "nothing more" >>);
+            }
+            key ("the MageLord") {
+                TurnOff("the MageLord");
+                ["Filbercio is the most powerful wizard of them all."];
+                ["'Tis said that he hath some strange compelling power over women..."];
+                if v3 {
+                    ["...thou had best watch thy step, lest he ensorcel thee with a love spell!"];
+                } else {
+                    ["...not me, of course, but he hath had his way with many other beautiful women! Thou wouldst be surprised to learn of many of them."];
+                    TurnOn("learn");
+                }
+                if not $filberciobanquet {
+                    ["He is not partial to visitors, so I doubt that thou shalt ever have the chance to make his acquaintance."];
+                }
+                v9 = ~UsePatience_i(v9);
+            }
+            key ("learn") {
+                TurnOff("learn");
+                ["Perhaps thou hast heard the name Rotoluncia?"];
+            }
+            key ("the Adepts") {
+                TurnOff("the Adepts");
+                ["Besides the MageLord, there are two others who compose the Council of Mages."];
+                ["Adept Gustacio is a wise wizard, but strict in his ways and aloof from Mundanes."];
+                ["As for Adept Rotoluncia, she is steeped in magic and a mistress of the arcane. Do not provoke her, for her anger is terrible."];
+                v9 = ~UsePatience_i(v9);
+            }
+            key ("the Magister") {
+                TurnOff("the Magister");
+                ["Fedabiblio is the Magister. 'Tis he who directs the Seminarium, where young magelings are taught."];
+                ["In former times, 'twas his job to go to the mainland and acquire those babies which had promise of magical powers."];
+                ["But each year there have been fewer students, until now the school lies nearly empty."];
+                ["Perhaps this hath something to do with the multi-colored storms."];
+                v9 = ~UsePatience_i(v9);
+            }
+            key ("Melino and Columna") {
+                TurnOff("Melino and Columna");
+                ["Such an odd couple! Melino is one of our eldest Mages, retired from the Council. He is a good man, but often befuddled."];
+                ["As for Columna, she is only one-third his age! And such an attractive woman..."];
+                if v3 {
+                    ["Between thou and me, she is too young for that husband of hers. If I were her, I'd die!"];
+                } else {
+                    ["There are many in this town who would like to steal her from Melino, but none hath succeeded!"];
+                }
+                v9 = ~UsePatience_i(v9);
+            }
+            key ("the minor Mages") {
+                TurnOff("the minor Mages");
+                ["Well, there is Mortegro -- his speciality is dead things, spirits, and burial rites. Not a pleasant fellow."];
+                ["And Torrissio, a fine young Mage with a burning ambition. He reads books and keeps to himself."];
+                ["Then there is Frigidazzi, the Frost Sorceress."];
+                if v3 {
+                    ["She hath some strange habits, need I say more. The MageLord protects her, for she is his latest paramour."];
+                } else {
+                    ["But thou shouldst stay away from her, for she is the MageLord's mistress, and he is a jealous man!"];
+                }
+                $knowfavorite = true;
+                if ($partknowfurcap and $knowfavorite) {
+                    $knowfurcap = true;
+                }
+                v9 = ~UsePatience_i(v9);
+            }
+            key ("visitors") {
+                TurnOff("visitors");
+                ["Perhaps thou shouldst speak to Rocco at the Blue Boar Inn. All of the town's visitors stay at his fine inn, even that travelling scholar."];
+                ["Also, Julia keeps an eye on all undesirables."];
+                v12 = ~PartyUtters(false, 0, "@Then she must have spotted Batlin!@", 65533);
+                if (v12 <> 65180) {
+                    if (~ListSize_i(~GetParty()) > 2) {
+                        v13 = v12;
+                        While (v13 = v12) {
+                            v13 = ~PartyUtters(false, 0, 0, 1);
+                        }
+                        v13 = ~PartyUtters(false, 0, "@Ah, but Batlin can be very gentlemanly when it suits his purposes.@", v13);
+                    }
+                    SetSpeakerSlot_i(0);
+                }
+                ["A visit to the Chief Ranger might be a good idea. Thou canst find her at the Winery, in the western part of town."];
+                v9 = ~UsePatience_i(v9);
+                TurnOn("travelling scholar");
+            }
+            key ("travelling scholar") {
+                TurnOff("travelling scholar");
+                ["Rocco could tell thee more, for he came to know her rather... well. I only know her name: Gwenno. She left here a few weeks ago."];
+            }
+            key ("places") {
+                ["Interested in seeing the sights, eh? Well, I can tell thee about the islands, or the mountains."];
+                PushKeys();
+                v11 = 2;
+                TurnOn(<< "islands", "mountains", "nothing more" >>);
+            }
+            key ("islands") {
+                TurnOff("islands");
+                ["I hope thou art not planning to visit the isle of the Mad Mage, Erstam? He was once, perhaps, a powerful wizard -- one of the founders. But now, I wonder about a man who feels the need to run from civilization." ~"Now, if thou dost mean to visit Monk Isle, than I shall not discourage thee. Residing within the dense forest, the monks devote their entire lives to the pursuit of knowledge."];
+                v9 = ~UsePatience_i(v9);
+            }
+            key ("mountains") {
+                TurnOff("mountains");
+                ["Ah, yes, the Mountains of Freedom. They occupy the entire shoreline of the northern part of the island. Be wary, for there are plenty of native monstrosities that call the mountainous caverns their home."];
+                v9 = ~UsePatience_i(v9);
+            }
+            key ("strange objects") {
+                v11 = (v11 + 1);
+                TurnOff("strange objects");
+                v14 = << >>;
+                if ($gotpinecone and not $knowpinecone) {
+                    v14 = (v14 & "pinecone");
+                }
+                if ($gotmoonsilkstockings and not $knowmoonsilkstockings) {
+                    v14 = (v14 & "moonsilk stockings");
+                }
+                if ($goturn and not $knowurn) {
+                    v14 = (v14 & "urn");
+                }
+                if ($gotlabitem and not $knowlabitem) {
+                    v14 = (v14 & "apparatus");
+                }
+                if ($gotpumice and not $knowpumice) {
+                    v14 = (v14 & "pumice");
+                }
+                if ($gotengagementring and not $knowengagementring) {
+                    v14 = (v14 & "lost ring");
+                }
+                if ($gotfurcap and not $knowfurcap) {
+                    v14 = (v14 & "fur cap");
+                }
+                if ($gotslippers and not $knowslippers) {
+                    v14 = (v14 & "slippers");
+                }
+                if ($gotbreastplate and not $knowbreastplate) {
+                    v14 = (v14 & "breastplate");
+                }
+                if ($gotpenguinegg and not $knowpenguinegg) {
+                    v14 = (v14 & "blue egg");
+                }
+                if ($gotgoblinhairbrush and not $knowgoblinhairbrush) {
+                    v14 = (v14 & "strange hairbrush");
+                }
+                if ($gotmagicwine and not $knowmagicwine) {
+                    v14 = (v14 & "bottle of wine");
+                }
+                if ($STORM_FILARI and not $KNOWS_FILARI_OWNER) {
+                    v14 = (v14 & "strange coins");
+                }
+                if ($gotbearskull and not $KNOWS_BEAR_SKULL_ORIGIN) {
+                    v14 = (v14 & "skull");
+                }
+                if ($gotbloodyhand and not $knowbloodyhand) {
+                    v14 = (v14 & "bloody hand");
+                }
+                if ($gotmonitorshield and not $knowmonitorshield) {
+                    v14 = (v14 & "plain shield");
+                }
+                if ($gotstoneheart and not $knowstoneheart) {
+                    v14 = (v14 & "glowing rock");
+                }
+                if ($gotfishnetstockings and not $knowfishnetstockings) {
+                    v14 = (v14 & "fish-net stockings");
+                }
+                if ($foundsimonbottle and (~GetWorkType(_Simon) <> _Wait)) {
+                    v14 = (v14 & "brown bottle");
+                }
+                if (v14 = << >>) {
+                    v12 = ~PartyUtters(false, 0, (("@But we have no strange objects to ask about, " + v2) + ".@"), 1);
+                    SetSpeakerSlot_i(0);
+                    ["I do not think I can help thee, but if I think of anything, I'll inform thee!"];
+                } else {
+                    ["What sort of items art thou inquiring about?"];
+                    PushKeys();
+                    v15 = 5;
+                    While (v15 > 0) {
+                        v5 = v14::~Random(~ListSize_i(v14));
+                        v14 = ~RemoveFromList_i(v14, v5);
+                        if (v14 = << >>) {
+                            v15 = 0;
+                            v6 = true;
+                        }
+                        TurnOn(v5);
+                        v15 = (v15 - 1);
+                    }
+                    TurnOn("nothing more");
+                }
+            }
+            key ("pinecone") {
+                TurnOff("pinecone");
+                if ~IsInInv(65177, 65177, _Pinecone, 1, _Party) {
+                    ["'Tis a pinecone! I don't know where they come from, but Captain Hawk gave me one once. May I have this one, too?"];
+                    $hawkknowspinecone = true;
+                    if ~AskYesNo() {
+                        ["Thank thee!"];
+                        if (~GetNPCID_i(_Bucia) < 25) {
+                            SetNPCID_i((~GetNPCID_i(_Bucia) + 5), _Bucia);
+                        }
+                        v8 = ~TakeFromParty_i(0, _All, _All, _Pinecone, 1);
+                    } else {
+                        ["'Tis fine, I do not need another one."];
+                    }
+                } else {
+                    ["Perhaps the Magister could help thee. He is an authority on many subjects."];
+                    $fedaknowspinecone = true;
+                }
+                v9 = ~UsePatience_i(v9);
+                if not v6 {
+                    v5 = v14::~Random(~ListSize_i(v14));
+                    v14 = ~RemoveFromList_i(v14, v5);
+                    if (v14 = << >>) {
+                        v6 = true;
+                    }
+                    TurnOn(v5);
+                }
+            }
+            key ("moonsilk stockings") {
+                TurnOff("moonsilk stockings");
+                $knowmoonsilkstockings = true;
+                ["From thy description, the stockings could only be one kind -- Moonsilk Stockings."];
+                ["I sell them here in the store, but not often. Only the Mages can afford luxuries like these."];
+                v12 = ~PartyUtters(false, "@Whom dost thou sell them to, milady?@", "@And who buys these fripperies?@", 65535);
+                SetSpeakerSlot_i(0);
+                ["The Green Sorceress, Columna -- she dresses in only the finest materials."];
+                ["She also has a moonsilk sleeping gown, which cost more guilders than I shall ever make!"];
+                if ~IsInInv(0, 65177, _Stockings, 1, _Party) {
+                    ["Please, may I see the stockings..."];
+                    ["The silk is so soft! Didst thou know that the stockings are made from the cocoons of lunar moths?"];
+                    ["May I... could I... wouldst thou mind if I kept this pair? No Mundane could ever own such finery!"];
+                    if ~AskYesNo() {
+                        ["Ooooh!"];
+                        if (~GetNPCID_i(_Bucia) < 20) {
+                            SetNPCID_i((~GetNPCID_i(_Bucia) + 10), _Bucia);
+                        }
+                        v8 = ~TakeFromParty_i(0, 0, _All, _Stockings, 1);
+                    } else {
+                        ["Oh."];
+                    }
+                }
+                $knowmoonsilkstockings = true;
+                v9 = ~UsePatience_i(v9);
+                if not v6 {
+                    v5 = v14::~Random(~ListSize_i(v14));
+                    v14 = ~RemoveFromList_i(v14, v5);
+                    if (v14 = << >>) {
+                        v6 = true;
+                    }
+                    TurnOn(v5);
+                }
+            }
+            key ("urn") {
+                TurnOff("urn");
+                if ~IsInInv(0, 65177, _Urn, 1, _Party) {
+                    ["I do not know what that is, but it doth give me a shuddery feeling. Please, take it away..."];
+                } else {
+                    ["It doth sound like some sort of pot. Perhaps Topo could aid thee -- he assists Master Ducio in fashioning bowls and pots for the Mages."];
+                    $topoknowsurn = true;
+                }
+                v9 = ~UsePatience_i(v9);
+                if not v6 {
+                    v5 = v14::~Random(~ListSize_i(v14));
+                    v14 = ~RemoveFromList_i(v14, v5);
+                    if (v14 = << >>) {
+                        v6 = true;
+                    }
+                    TurnOn(v5);
+                }
+            }
+            key ("apparatus") {
+                TurnOff("apparatus");
+                if $gotspellbook {
+                    ["Since thou art a Mage, perhaps thou couldst ask thy fellow wizards about this magical apparatus."];
+                    $magesknowapparati = true;
+                } else {
+                    ["'Twill do no good to speak with the Mages, for they ignore Mundanes like ourselves."];
+                    ["But if thou spokest with Master Ducio, perhaps he could help thee. He makes all of the apparatus for the wizards of Moonshade."];
+                    $ducioknowslab = true;
+                }
+                v9 = ~UsePatience_i(v9);
+                if not v6 {
+                    v5 = v14::~Random(~ListSize_i(v14));
+                    v14 = ~RemoveFromList_i(v14, v5);
+                    if (v14 = << >>) {
+                        v6 = true;
+                    }
+                    TurnOn(v5);
+                }
+            }
+            key ("pumice") {
+                TurnOff("pumice");
+                if ~IsInInv(65177, 65177, _Pumice, 1, _Party) {
+                    ["What an ugly rock. Take that with thee when thou leavest, please?"];
+                } else {
+                    ["The Magister is a storehouse of knowledge. Perhaps he could aid thee."];
+                    $fedaknowspumice = true;
+                }
+                v9 = ~UsePatience_i(v9);
+                if not v6 {
+                    v5 = v14::~Random(~ListSize_i(v14));
+                    v14 = ~RemoveFromList_i(v14, v5);
+                    if (v14 = << >>) {
+                        v6 = true;
+                    }
+                    TurnOn(v5);
+                }
+            }
+            key ("lost ring") {
+                TurnOff("lost ring");
+                if ~IsInInv(0, 65177, _Ring, 1, _Party) {
+                    ["What a pretty ring! A simple stone in a carved setting -- so unlike anything the Mages would have!"];
+                    ["All they think of are jewels and gold, until they've driven out all the beauty!"];
+                    ["I'll wager that ring comes from the Sea City, Fawn. Where else could such a wonderful creation come from?"];
+                } else {
+                    ["Perhaps thou couldst speak to the Master Artisan. He hath made many baubles for the MageLord and his mistresses."];
+                    $ducioknowsring = true;
+                }
+                v9 = ~UsePatience_i(v9);
+                if not v6 {
+                    v5 = v14::~Random(~ListSize_i(v14));
+                    v14 = ~RemoveFromList_i(v14, v5);
+                    if (v14 = << >>) {
+                        v6 = true;
+                    }
+                    TurnOn(v5);
+                }
+            }
+            key ("fur cap") {
+                TurnOff("fur cap");
+                if ~IsInInv(4, 65177, _Leath_Helm, 1, _Party) {
+                    ["Why, I sold that cap myself, from this very shop!"];
+                    ["Ordered it special from the furrier in Monitor. She obtained it from the far north, where the Trappers hunt bears, snow leopards, and the man-eating Gwani."];
+                    ["With the storms, though, 'tis too dangerous to sail to the north. And we cannot trade by way of land, for the Swamp of Gorlab cuts the mainland in half."];
+                    v12 = ~PartyUtters(false, "@About the fur cap...@", "@About the fur cap...@", 1);
+                    SetSpeakerSlot_i(0);
+                    ["Yes, yes, yes, I remember. I sold it to the MageLord, who gave it to his favorite at the Feast of Illusions. I'm surprised that unusual fellow never bought one, what with all the other furs he was collecting."];
+                    $partknowfurcap = true;
+                    TurnOn("unusual fellow");
+                    if ($partknowfurcap and $knowfavorite) {
+                        $knowfurcap = true;
+                    }
+                } else {
+                    ["Anyone could tell thee that fur comes from the north, on the mainland beyond the great swamp."];
+                    ["I've sold fur caps and cloaks from time to time, but the storms have isolated us from the Trappers. So I have none left to sell!"];
+                }
+                v9 = ~UsePatience_i(v9);
+                if not v6 {
+                    v5 = v14::~Random(~ListSize_i(v14));
+                    v14 = ~RemoveFromList_i(v14, v5);
+                    if (v14 = << >>) {
+                        v6 = true;
+                    }
+                    TurnOn(v5);
+                }
+            }
+            key ("unusual fellow") {
+                TurnOff("unusual fellow");
+                ["He was here about two months ago, buying all sorts of furs and such. Obviously he was planning a trip to the north. Of course, no one knows where he actually went, since he left in such a hurry."];
+            }
+            key ("slippers") {
+                TurnOff("slippers");
+                if ~IsInInv(5, 65177, _Leath_Boots, 1, _Party) {
+                    ["Such old, ratty things! Must have belonged to some Mundane -- no Mage would wear anything so worn."];
+                    flag(277) = true;
+                } else {
+                    ["Slippers? No Mundane could afford them, but perhaps a Mage is missing a pair."];
+                    $magesknowslippers = true;
+                }
+                v9 = ~UsePatience_i(v9);
+                if not v6 {
+                    v5 = v14::~Random(~ListSize_i(v14));
+                    v14 = ~RemoveFromList_i(v14, v5);
+                    if (v14 = << >>) {
+                        v6 = true;
+                    }
+                    TurnOn(v5);
+                }
+            }
+            key ("breastplate") {
+                TurnOff("breastplate");
+                if ~IsInInv(0, 65177, _White_Brest, 1, _Party) {
+                    ["How exotic -- armour made for a woman! 'Tis too beautiful to come from Monitor, and no ranger here wears such a thing..."];
+                    ["I'll wager that it comes from the sea-city of Fawn. Thou shouldst ask about it there."];
+                } else {
+                    ["Such items of heavy armour are not needed here, as we depend upon the Mages for our defense."];
+                    ["Thou shouldst ask the armourers of the warrior-city of Monitor -- they make many kinds of armour."];
+                }
+                v9 = ~UsePatience_i(v9);
+                if not v6 {
+                    v5 = v14::~Random(~ListSize_i(v14));
+                    v14 = ~RemoveFromList_i(v14, v5);
+                    if (v14 = << >>) {
+                        v6 = true;
+                    }
+                    TurnOn(v5);
+                }
+            }
+            key ("blue egg") {
+                TurnOff("blue egg");
+                if ~IsInInv(3, 65177, _Gwani_Artifacts, 1, _Party) {
+                    ["Oh, 'tis a rotten egg! Leave here with that!"];
+                    flag(260) = true;
+                    terminate;
+                } else {
+                    ["A blue egg? I have never heard of such a thing, but the Magister is wise in many subjects. Perhaps thou shouldst inquire of Fedabiblio."];
+                    $fedaknowsegg = true;
+                }
+                v9 = ~UsePatience_i(v9);
+                if not v6 {
+                    v5 = v14::~Random(~ListSize_i(v14));
+                    v14 = ~RemoveFromList_i(v14, v5);
+                    if (v14 = << >>) {
+                        v6 = true;
+                    }
+                    TurnOn(v5);
+                }
+            }
+            key ("strange hairbrush") {
+                TurnOff("strange hairbrush");
+                if ~IsInInv(6, 65177, _Brush, 1, _Party) {
+                    ["Such an odd little brush. I don't know why, but it doth give me a most unnatural feeling. Please, take it back!"];
+                } else {
+                    ["Thou art seeking brushes? Perhaps Topo the Artisan could help thee -- he makes many things for the Master Artisan."];
+                    $topoknowsbrushes = true;
+                }
+                v9 = ~UsePatience_i(v9);
+                if not v6 {
+                    v5 = v14::~Random(~ListSize_i(v14));
+                    v14 = ~RemoveFromList_i(v14, v5);
+                    if (v14 = << >>) {
+                        v6 = true;
+                    }
+                    TurnOn(v5);
+                }
+            }
+            key ("bottle of wine") {
+                TurnOff("bottle of wine");
+                if ~IsInInv(16, 65177, _Bottles, 1, _Party) {
+                    ["Allow me to see that bottle. But of course! This is Moonshade wine, made by the Rangers of our town!"];
+                    ["If thou desirest more, simply inquire at the Winery on the west side of town."];
+                    v12 = ~PartyUtters(false, 0, "@Very good idea. Let's go.@", 65535);
+                    SetSpeakerSlot_i(0);
+                } else {
+                    ["Perhaps thou shouldst inquire at the Winery. The Rangers are most knowledgeable about wines."];
+                    v12 = ~PartyUtters(false, 0, "@A visit to the Winery seems in order!@", 65535);
+                    SetSpeakerSlot_i(0);
+                }
+                v9 = ~UsePatience_i(v9);
+                if not v6 {
+                    v5 = v14::~Random(~ListSize_i(v14));
+                    v14 = ~RemoveFromList_i(v14, v5);
+                    if (v14 = << >>) {
+                        v6 = true;
+                    }
+                    TurnOn(v5);
+                }
+            }
+            key ("strange coins") {
+                TurnOff("strange coins");
+                if ~IsInInv(65177, 65177, _Fawn_Money, 1, _Party) {
+                    ["Why, 'tis the money used in the sea-city of Fawn. See the gems in the center!"];
+                    ["If thou desirest, I can exchange those coins for valuable Moonshadian guilders."];
+                } else {
+                    ["I cannot tell thee what the coin is unless I see it, but if it isn't green and glowing, 'tis worthless."];
+                }
+                v9 = ~UsePatience_i(v9);
+                if not v6 {
+                    v5 = v14::~Random(~ListSize_i(v14));
+                    v14 = ~RemoveFromList_i(v14, v5);
+                    if (v14 = << >>) {
+                        v6 = true;
+                    }
+                    TurnOn(v5);
+                }
+            }
+            key ("skull") {
+                TurnOff("skull");
+                if ~IsInInv(65177, 65177, _Bearskull, 1, _Party) {
+                    ["How quaint. Take it with thee when thou leavest..."];
+                } else {
+                    ["A skull?! I know nothing about bones! Perhaps Magister Fedabiblio could help thee."];
+                    flag(270) = true;
+                }
+                v9 = ~UsePatience_i(v9);
+                if not v6 {
+                    v5 = v14::~Random(~ListSize_i(v14));
+                    v14 = ~RemoveFromList_i(v14, v5);
+                    if (v14 = << >>) {
+                        v6 = true;
+                    }
+                    TurnOn(v5);
+                }
+            }
+            key ("bloody hand") {
+                TurnOff("bloody hand");
+                if ~IsInInv(0, 65177, _Creeping_Limb, 1, _Party) {
+                    ["What dost thou have there? Why, 'tis moving..."];
+                    Bark_i(0, "@Ah!!!@", _Bucia);
+                    SetWorkType(_Shy, _Bucia);
+                } else {
+                    ["How repugnant."];
+                    ["Probably the work of the Goblins -- I have heard that they are most crude, though they do not bother us here on this island."];
+                    ["Or perhaps one of the Mages hath been experimenting again in the forbidden arts."];
+                    ["Mortegro doth have an interest in Death, and goodness knows what the Mad Mage might be doing!"];
+                    $mortegroknowsbloodyhand = true;
+                }
+                v9 = ~UsePatience_i(v9);
+                if not v6 {
+                    v5 = v14::~Random(~ListSize_i(v14));
+                    v14 = ~RemoveFromList_i(v14, v5);
+                    if (v14 = << >>) {
+                        v6 = true;
+                    }
+                    TurnOn(v5);
+                }
+            }
+            key ("plain shield") {
+                TurnOff("plain shield");
+                if ~IsInInv(65177, 65177, _Shield_Heirarchy, 1, _Party) {
+                    ["Those colors are the hues worn by the Monitorians. The shield must have come from a pikeman."];
+                } else {
+                    ["Perhaps Ernesto at the Winery could help thee. 'Tis said that he is good with weapons and such."];
+                    $ernestoknowsarms = true;
+                }
+                v9 = ~UsePatience_i(v9);
+                if not v6 {
+                    v5 = v14::~Random(~ListSize_i(v14));
+                    v14 = ~RemoveFromList_i(v14, v5);
+                    if (v14 = << >>) {
+                        v6 = true;
+                    }
+                    TurnOn(v5);
+                }
+            }
+            key ("glowing rock") {
+                TurnOff("glowing rock");
+                if (v1 or $buciascaredstoneheart) {
+                    if v1 {
+                        ["Put that away! I hope that no one saw..."];
+                        ["Dost thou not know that it is a crime to possess Stoneheart! It is a most dangerous substance."];
+                    } else {
+                        ["Thou dost know that it is a crime to possess Stoneheart! It drives men into lunacy!"];
+                    }
+                    ["Thou shouldst discard it in some safe place, such as a remote isle or distant mountaintop."];
+                    $buciascaredstoneheart = true;
+                } else {
+                    ["I'm not sure of what thou speakest, but perhaps Pothos the Apothecary could identify it for thee."];
+                    flag(282) = true;
+                    if $filberciobanquet {
+                        ["Sadly, his shop is closed today. He hath not been seen for some time."];
+                    }
+                }
+                v9 = ~UsePatience_i(v9);
+                if not v6 {
+                    v5 = v14::~Random(~ListSize_i(v14));
+                    v14 = ~RemoveFromList_i(v14, v5);
+                    if (v14 = << >>) {
+                        v6 = true;
+                    }
+                    TurnOn(v5);
+                }
+            }
+            key ("fish-net stockings") {
+                TurnOff("fish-net stockings");
+                v16 = ~IsInInv(1, 65177, _Stockings, 1, _Party);
+                if v16 {
+                    ["Those are very interesting, but too daring for a nice girl to wear, methinks."];
+                } else {
+                    ["I think I know the stockings thou art speaking of, but I am not certain..."];
+                }
+                ["I do not stock such goods any more, but I know where they can be obtained -- Fawn, the sea-city."];
+                v12 = ~PartyUtters(false, 0, "@But thou used to sell these stockings?@", 65534);
+                if (v12 <> 65180) {
+                    SetSpeakerSlot_i(0);
+                    if v16 {
+                        ["Oh, yes. To the Sorceress of the Night, Selenia. But she hath been absent from this city for many weeks now."];
+                        ["This stocking might be a clue to her strange disappearance! Thou shouldst take this to the Chief Ranger!"];
+                        $knowseleniastocking = true;
+                    } else {
+                        ["Well, not having seen thy stocking, I cannot be sure. But it sounds like it might be the kind which I used to sell to the Sorceress of the Night."];
+                        ["Perhaps this is a clue to the strange disappearance of Selenia!"];
+                        $knowseleniastocking = true;
+                    }
+                }
+                v9 = ~UsePatience_i(v9);
+                if not v6 {
+                    v5 = v14::~Random(~ListSize_i(v14));
+                    v14 = ~RemoveFromList_i(v14, v5);
+                    if (v14 = << >>) {
+                        v6 = true;
+                    }
+                    TurnOn(v5);
+                }
+            }
+            key ("brown bottle") {
+                TurnOff("brown bottle");
+                if ~IsInInv(0, 65177, _Bottles, 1, _Party) {
+                    ["Could I see thy bottle? Hmm... A bitter ale of some kind."];
+                    ["If I were thee, I'd discard this bile and replace it with some of our excellent Moonshadian wine. If thou desirest some, simply inquire at the Winery on the west side of town."];
+                    v12 = ~PartyUtters(false, 0, "@Can we go?@", 65535);
+                    SetSpeakerSlot_i(0);
+                } else {
+                    ["Perhaps thou shouldst inquire at the Winery. Ernesto is most knowledgeable about wines."];
+                    v12 = ~PartyUtters(false, 0, "@I enjoy visiting wineries!@", 65535);
+                    SetSpeakerSlot_i(0);
+                }
+                v9 = ~UsePatience_i(v9);
+                if not v6 {
+                    v5 = v14::~Random(~ListSize_i(v14));
+                    v14 = ~RemoveFromList_i(v14, v5);
+                    if (v14 = << >>) {
+                        v6 = true;
+                    }
+                    TurnOn(v5);
+                }
+            }
+            key ("nothing more") {
+                if (v11 = 1) {
+                    PopKeys();
+                    ["I wish I could have been of more help to thee..."];
+                } else {
+                    While (v11 > 1) {
+                        PopKeys();
+                        v11 = (v11 - 1);
+                    }
+                    ["Is there anything else I can help thee with?"];
+                }
+            }
+            key ("provisions") {
+                ["The owner keeps the shop well-stocked with all of the most useful goods."];
+                if not v10 {
+                    ["But I am afraid that prices are rather high these days, now that the ships no longer sail."];
+                    v10 = true;
+                }
+                BuciaSells_i();
+            }
+            key ("exchange") {
+                ExchangeCoins_i();
+            }
+            key ("bye") {
+                CloseSpeaker0_i();
+                Bark_i(0, "@I must be going.@", _Avatar);
+                Bark_i(2, "@Do return sometime!@", _Bucia);
+                MessengerBringsScroll_i();
+                break;
+            }
+        }
+        clear_answers;
+    }
+}
+
+Usable ExchangeCoins_i #locals(17) #uses(~LordOrLady, ~AskYesNo, ~AskList, ~IsInInv, ~GiveItemsOrDrop_i) {
+    v0 = ~LordOrLady();
+    v1 = true;
+    ["To exchange coins, I ask for a small percentage of the money bartered. Dost thou agree to this charge?"];
+    if ~AskYesNo() {
+        While v1 {
+            ["What coinage dost thou desire?"];
+            v2 = ~AskList(<< "Monetari", "Guilders", "Filari", "Gold Coins" >>);
+            if (v2 = "Monetari") {
+                ["Which coin dost thou care to exchange for monetari?"];
+                v3 = 951;
+                v4 = << "Nothing" >>;
+                if ~IsInInv(65177, 65177, _Moon_Money, 1, _Party) {
+                    v4 = (v4 & "Guilders");
+                }
+                if ~IsInInv(65177, 65177, _Fawn_Money, 1, _Party) {
+                    v4 = (v4 & "Filari");
+                }
+                if ~IsInInv(65177, 65177, _Gold_Coins, 1, _Party) {
+                    v4 = (v4 & "Gold Coins");
+                }
+                if ~IsInInv(65177, 65177, _Gold_Nugget, 1, _Party) {
+                    v4 = (v4 & "Gold Nuggets");
+                }
+                if ~IsInInv(65177, 65177, _Garg_Jewelery, 1, _Party) {
+                    v4 = (v4 & "Jewelry");
+                }
+                if ~IsInInv(65177, 65177, _Gold_Bar, 1, _Party) {
+                    v4 = (v4 & "Gold Bars");
+                }
+                v5 = ~AskList(v4);
+                if (v5 = "Nothing") {
+                    ["Perhaps another time, <v0>."];
+                    v1 = false;
+                    goto label_258;
+                }
+                if (v5 = "Guilders") {
+                    ["I can give thee 1 monetari for every 3 guilders thou hast."];
+                    v6 = 952;
+                }
+                if (v5 = "Filari") {
+                    ["I can give thee 1 monetari for every 4 filari thou hast."];
+                    v6 = 948;
+                }
+                if (v5 = "Gold Coins") {
+                    ["I can give thee 1 monetari for every 2 gold coins thou hast."];
+                    v6 = 644;
+                }
+                if (v5 = "Gold Nuggets") {
+                    ["I can give thee 10 monetari for every 1 gold nugget thou hast."];
+                    v6 = 645;
+                }
+                if (v5 = "Jewelry") {
+                    ["I can give thee 100 monetari for any piece of jewelry thou hast."];
+                    v6 = 937;
+                    v5 = "pieces of jewelry";
+                }
+                if (v5 = "Gold Bars") {
+                    ["I can give thee 200 monetari for every gold bar thou hast."];
+                    v6 = 646;
+                    v5 = "Gold Bars";
+                }
+                ["Wilt thou agree to my rate?"];
+                if (~AskYesNo() = true) {
+                    v7 = ~CountItem(_All, _All, v6, _Party);
+                    if (v7 > 500) {
+                        v7 = 500;
+                    }
+                    if (v7 <> 0) {
+                        ["How many <v5> wouldst thou like to exchange?"];
+                        v8 = ~AskBarInput(0, 1, v7, 0);
+                        if (v8 = 0) {
+                            ["Perhaps another time, <v0>..."];
+                            goto label_255;
+                        }
+                        if (v5 = "Guilders") {
+                            v9 = (v8 / 3);
+                            v10 = 6;
+                        }
+                        if (v5 = "Filari") {
+                            v9 = (v8 / 4);
+                            v10 = 8;
+                        }
+                        if (v5 = "Gold Coins") {
+                            v9 = (v8 / 2);
+                            v10 = 4;
+                        }
+                        if (v5 = "Gold Nuggets") {
+                            v9 = (v8 * 10);
+                            if (v8 = 1) {
+                                v5 = "Gold Nugget";
+                            }
+                        }
+                        if (v5 = "pieces of jewelry") {
+                            v9 = (v8 * 100);
+                            v5 = "pieces of jewelry";
+                            if (v8 = 1) {
+                                v5 = "piece of jewelry";
+                            }
+                        }
+                        if (v5 = "Gold Bars") {
+                            v9 = (v8 * 200);
+                            if (v8 = 1) {
+                                v5 = "Gold Bar";
+                            }
+                        }
+                        v11 = (v9 / 40);
+                        v12 = (v9 - v11);
+                        if (v9 = 0) {
+                            ["Thou must offer at least <v10> <v5> to exchange for <v2>!"];
+                            goto label_255;
+                        }
+                        if (v9 = 1) {
+                            ["My fee will leave thee with nothing!"];
+                            goto label_255;
+                        }
+                        if (v9 <= 40) {
+                            v11 = 1;
+                            v12 = (v9 - v11);
+                        }
+                        if (v8 >= 1) {
+                            v13 = ~TakeFromParty_i(false, _All, _All, v6, v8);
+                            ["Let me think..."~"I will take thy <v8> <v5> and in exchange give thee <v9> Monetari, subtracting my charge of <v11> Monetari, for a final sum of <v12> Monetari given to thee."];
+                            v14 = ~GiveItemsOrDrop_i(true, false, 65177, 65177, v3, v12, _Avatar);
+                            ["'Tis done, <v0>!"];
+                        } else {
+                            ["Perhaps another time, <v0>..."];
+                        }
+                    } else {
+                        ["Thou dost not have any <v5> to exchange for <v2>!"];
+                    }
+                } else {
+                    ["Perhaps another time then..."];
+                }
+            }
+            if (v2 = "Guilders") {
+                ["Which coin dost thou care to exchange for guilders?"];
+                v3 = 952;
+                v4 = << "Nothing" >>;
+                if ~IsInInv(65177, 65177, _Monitor_Money, 1, _Party) {
+                    v4 = (v4 & "Monetari");
+                }
+                if ~IsInInv(65177, 65177, _Fawn_Money, 1, _Party) {
+                    v4 = (v4 & "Filari");
+                }
+                if ~IsInInv(65177, 65177, _Gold_Coins, 1, _Party) {
+                    v4 = (v4 & "Gold Coins");
+                }
+                if ~IsInInv(65177, 65177, _Gold_Nugget, 1, _Party) {
+                    v4 = (v4 & "Gold Nuggets");
+                }
+                if ~IsInInv(65177, 65177, _Garg_Jewelery, 1, _Party) {
+                    v4 = (v4 & "Jewelry");
+                }
+                if ~IsInInv(65177, 65177, _Gold_Bar, 1, _Party) {
+                    v4 = (v4 & "Gold Bars");
+                }
+                v5 = ~AskList(v4);
+                if (v5 = "Nothing") {
+                    ["Perhaps another time, <v0>."];
+                    v1 = false;
+                    goto label_258;
+                }
+                if (v5 = "Monetari") {
+                    ["I can give thee 3 guilders for every 1 monetari thou hast."];
+                    v6 = 951;
+                }
+                if (v5 = "Filari") {
+                    ["I can give thee 3 guilders for every 4 filari thou hast."];
+                    v6 = 948;
+                }
+                if (v5 = "Gold Coins") {
+                    ["I can give thee 3 guilders for every 2 gold coins thou hast."];
+                    v6 = 644;
+                }
+                if (v5 = "Gold Nuggets") {
+                    ["I can give thee 30 guilders for every 1 gold nugget thou hast."];
+                    v6 = 645;
+                }
+                if (v5 = "Jewelry") {
+                    ["I can give thee 300 guilders for any piece of jewelry thou hast."];
+                    v6 = 937;
+                    v5 = "pieces of jewelry";
+                }
+                if (v5 = "Gold Bars") {
+                    ["I can give thee 600 guilders for every gold bar thou hast."];
+                    v6 = 646;
+                    v5 = "Gold Bars";
+                }
+                ["Wilt thou agree to my rate?"];
+                if (~AskYesNo() = true) {
+                    v7 = ~CountItem(_All, _All, v6, _Party);
+                    if (v7 > 500) {
+                        v7 = 500;
+                    }
+                    if (v7 <> 0) {
+                        ["How many <v5> wouldst thou like to exchange?"];
+                        v8 = ~AskBarInput(0, 1, v7, 0);
+                        if (v8 = 0) {
+                            ["Perhaps another time, <v0>..."];
+                            goto label_255;
+                        }
+                        if (v5 = "Monetari") {
+                            v9 = (v8 * 3);
+                        }
+                        if (v5 = "Filari") {
+                            v9 = ((v8 * 3) / 4);
+                            v10 = 3;
+                        }
+                        if (v5 = "Gold Coins") {
+                            v9 = ((v8 * 3) / 2);
+                            v10 = 2;
+                        }
+                        if (v5 = "Gold Nuggets") {
+                            v9 = (v8 * 30);
+                            if (v8 = 1) {
+                                v5 = "Gold Nugget";
+                            }
+                        }
+                        if (v5 = "pieces of jewelry") {
+                            v9 = (v8 * 300);
+                            v5 = "pieces of jewelry";
+                            if (v8 = 1) {
+                                v5 = "piece of jewelry";
+                            }
+                        }
+                        if (v5 = "Gold Bars") {
+                            v9 = (v8 * 600);
+                            if (v8 = 1) {
+                                v5 = "Gold Bar";
+                            }
+                        }
+                        v11 = (v9 / 40);
+                        v12 = (v9 - v11);
+                        v15 = "Guilders";
+                        v16 = "Guilders";
+                        if (v9 = 0) {
+                            ["Thou must offer at least <v10> <v5> to exchange for <v2>!"];
+                            goto label_255;
+                        }
+                        if (v9 = 1) {
+                            ["My fee will leave thee with nothing!"];
+                            goto label_255;
+                        }
+                        if (v9 <= 40) {
+                            v11 = 1;
+                            v12 = (v9 - v11);
+                        }
+                        if (v12 = 1) {
+                            v15 = "Guilder";
+                        }
+                        if (v11 = 1) {
+                            v16 = "Guilder";
+                        }
+                        if (v8 >= 1) {
+                            v13 = ~TakeFromParty_i(false, _All, _All, v6, v8);
+                            ["Let me think..."~"I will take thy <v8> <v5> and in exchange give thee <v9> Guilders, subtracting my charge of <v11> <v16>, for a final sum of <v12> <v15> given to thee."];
+                            v14 = ~GiveItemsOrDrop_i(true, false, 65177, 65177, v3, v12, _Avatar);
+                            ["'Tis done, <v0>!"];
+                        } else {
+                            ["Perhaps another time, <v0>..."];
+                        }
+                    } else {
+                        ["Thou dost not have any <v5> to exchange for <v2>!"];
+                    }
+                } else {
+                    ["Perhaps another time then..."];
+                }
+            }
+            if (v2 = "Filari") {
+                ["Which coin dost thou care to exchange for filari?"];
+                v3 = 948;
+                v4 = << "Nothing" >>;
+                if ~IsInInv(65177, 65177, _Monitor_Money, 1, _Party) {
+                    v4 = (v4 & "Monetari");
+                }
+                if ~IsInInv(65177, 65177, _Moon_Money, 1, _Party) {
+                    v4 = (v4 & "Guilders");
+                }
+                if ~IsInInv(65177, 65177, _Gold_Coins, 1, _Party) {
+                    v4 = (v4 & "Gold Coins");
+                }
+                if ~IsInInv(65177, 65177, _Gold_Nugget, 1, _Party) {
+                    v4 = (v4 & "Gold Nuggets");
+                }
+                if ~IsInInv(65177, 65177, _Garg_Jewelery, 1, _Party) {
+                    v4 = (v4 & "Jewelry");
+                }
+                if ~IsInInv(65177, 65177, _Gold_Bar, 1, _Party) {
+                    v4 = (v4 & "Gold Bars");
+                }
+                v5 = ~AskList(v4);
+                if (v5 = "Nothing") {
+                    ["Perhaps another time, <v0>."];
+                    v1 = false;
+                    goto label_258;
+                }
+                if (v5 = "Monetari") {
+                    ["I can give thee 4 filari for every 1 monetari thou hast."];
+                    v6 = 951;
+                }
+                if (v5 = "Guilders") {
+                    ["I can give thee 4 filari for every 3 guilders thou hast."];
+                    v6 = 952;
+                }
+                if (v5 = "Gold Coins") {
+                    ["I can give thee 2 filari for every 1 gold coin thou hast."];
+                    v6 = 644;
+                }
+                if (v5 = "Gold Nuggets") {
+                    ["I can give thee 40 filari for every 1 gold nugget thou hast."];
+                    v6 = 645;
+                }
+                if (v5 = "Jewelry") {
+                    ["I can give thee 400 filari for any piece of jewelry thou hast."];
+                    v6 = 937;
+                    v5 = "pieces of jewelry";
+                }
+                if (v5 = "Gold Bars") {
+                    ["I can give thee 800 filari for every gold bar thou hast."];
+                    v6 = 646;
+                    v5 = "Gold Bars";
+                }
+                ["Wilt thou agree to my rate?"];
+                if (~AskYesNo() = true) {
+                    v7 = ~CountItem(_All, _All, v6, _Party);
+                    if (v7 > 500) {
+                        v7 = 500;
+                    }
+                    if (v7 <> 0) {
+                        ["How many <v5> wouldst thou like to exchange?"];
+                        v8 = ~AskBarInput(0, 1, v7, 0);
+                        if (v8 = 0) {
+                            ["Perhaps another time, <v0>..."];
+                            goto label_255;
+                        }
+                        if (v5 = "Monetari") {
+                            v9 = (v8 * 4);
+                        }
+                        if (v5 = "Guilders") {
+                            v9 = ((v8 * 4) / 3);
+                            v10 = 2;
+                        }
+                        if (v5 = "Gold Coins") {
+                            v9 = (v8 * 2);
+                            if (v8 = 1) {
+                                v5 = "Gold Coin";
+                            }
+                        }
+                        if (v5 = "Gold Nuggets") {
+                            v9 = (v8 * 40);
+                            if (v8 = 1) {
+                                v5 = "Gold Nugget";
+                            }
+                        }
+                        if (v5 = "pieces of jewelry") {
+                            v9 = (v8 * 400);
+                            v5 = "pieces of jewelry";
+                            if (v8 = 1) {
+                                v5 = "piece of jewelry";
+                            }
+                        }
+                        if (v5 = "Gold Bars") {
+                            v9 = (v8 * 800);
+                            if (v8 = 1) {
+                                v5 = "Gold Bar";
+                            }
+                        }
+                        v11 = (v9 / 40);
+                        v12 = (v9 - v11);
+                        if (v9 = 0) {
+                            ["Thou must offer at least <v10> <v5> to exchange for <v2>!"];
+                            goto label_255;
+                        }
+                        if (v9 = 1) {
+                            ["My fee will leave thee with nothing!"];
+                            goto label_255;
+                        }
+                        if (v9 <= 40) {
+                            v11 = 1;
+                            v12 = (v9 - v11);
+                        }
+                        if (v8 >= 1) {
+                            v13 = ~TakeFromParty_i(false, _All, _All, v6, v8);
+                            ["Let me think..."~"I will take thy <v8> <v5> and in exchange give thee <v9> Filari, subtracting my charge of <v11> Filari, for a final sum of <v12> Filari given to thee."];
+                            v14 = ~GiveItemsOrDrop_i(true, false, 65177, 65177, v3, v12, _Avatar);
+                            ["'Tis done, <v0>!"];
+                        } else {
+                            ["Perhaps another time, <v0>..."];
+                        }
+                    } else {
+                        ["Thou dost not have any <v5> to exchange for <v2>!"];
+                    }
+                } else {
+                    ["Perhaps another time then..."];
+                }
+            }
+            if (v2 = "Gold Coins") {
+                ["Which coin dost thou care to exchange for gold?"];
+                v3 = 644;
+                v4 = << "Nothing" >>;
+                if ~IsInInv(65177, 65177, _Monitor_Money, 1, _Party) {
+                    v4 = (v4 & "Monetari");
+                }
+                if ~IsInInv(65177, 65177, _Fawn_Money, 1, _Party) {
+                    v4 = (v4 & "Filari");
+                }
+                if ~IsInInv(65177, 65177, _Moon_Money, 1, _Party) {
+                    v4 = (v4 & "Guilders");
+                }
+                if ~IsInInv(65177, 65177, _Gold_Nugget, 1, _Party) {
+                    v4 = (v4 & "Gold Nuggets");
+                }
+                if ~IsInInv(65177, 65177, _Garg_Jewelery, 1, _Party) {
+                    v4 = (v4 & "Jewelry");
+                }
+                if ~IsInInv(65177, 65177, _Gold_Bar, 1, _Party) {
+                    v4 = (v4 & "Gold Bars");
+                }
+                v5 = ~AskList(v4);
+                if (v5 = "Nothing") {
+                    ["Perhaps another time, <v0>."];
+                    v1 = false;
+                    goto label_258;
+                }
+                if (v5 = "Monetari") {
+                    ["I can give thee 2 gold coins for every 1 monetari thou hast."];
+                    v6 = 951;
+                }
+                if (v5 = "Guilders") {
+                    ["I can give thee 2 gold coins for every 3 guilders thou hast."];
+                    v6 = 952;
+                }
+                if (v5 = "Filari") {
+                    ["I can give thee 1 gold coin for every 2 filari thou hast."];
+                    v6 = 948;
+                }
+                if (v5 = "Gold Nuggets") {
+                    ["I can give thee 20 gold coins for every 1 gold nugget thou hast."];
+                    v6 = 645;
+                }
+                if (v5 = "Jewelry") {
+                    ["I can give thee 200 gold coins for any piece of jewelry thou hast."];
+                    v6 = 937;
+                    v5 = "pieces of jewelry";
+                }
+                if (v5 = "Gold Bars") {
+                    ["I can give thee 400 gold coins for every gold bar thou hast."];
+                    v6 = 646;
+                    v5 = "Gold Bars";
+                }
+                ["Wilt thou agree to my rate?"];
+                if (~AskYesNo() = true) {
+                    v7 = ~CountItem(_All, _All, v6, _Party);
+                    if (v7 > 500) {
+                        v7 = 500;
+                    }
+                    if (v7 <> 0) {
+                        ["How many <v5> wouldst thou like to exchange?"];
+                        v8 = ~AskBarInput(0, 1, v7, 0);
+                        if (v8 = 0) {
+                            ["Perhaps another time, <v0>..."];
+                            goto label_255;
+                        }
+                        if (v5 = "Monetari") {
+                            v9 = (v8 * 2);
+                        }
+                        if (v5 = "Guilders") {
+                            v9 = ((v8 * 2) / 3);
+                            v10 = 3;
+                        }
+                        if (v5 = "Filari") {
+                            v9 = (v8 / 2);
+                            v10 = 4;
+                        }
+                        if (v5 = "Gold Nuggets") {
+                            v9 = (v8 * 20);
+                            if (v8 = 1) {
+                                v5 = "Gold Nugget";
+                            }
+                        }
+                        if (v5 = "pieces of jewelry") {
+                            v9 = (v8 * 200);
+                            v5 = "pieces of jewelry";
+                            if (v8 = 1) {
+                                v5 = "piece of jewelry";
+                            }
+                        }
+                        if (v5 = "Gold Bars") {
+                            v9 = (v8 * 400);
+                            if (v8 = 1) {
+                                v5 = "Gold Bar";
+                            }
+                        }
+                        v11 = (v9 / 40);
+                        v12 = (v9 - v11);
+                        v15 = "Gold Coins";
+                        v16 = "Gold Coins";
+                        if (v9 = 0) {
+                            ["Thou must offer at least <v10> <v5> to exchange for <v2>!"];
+                            goto label_255;
+                        }
+                        if (v9 = 1) {
+                            ["My fee will leave thee with nothing!"];
+                            goto label_255;
+                        }
+                        if (v9 <= 40) {
+                            v11 = 1;
+                            v12 = (v9 - v11);
+                        }
+                        if (v12 = 1) {
+                            v15 = "Gold Coin";
+                        }
+                        if (v11 = 1) {
+                            v16 = "Gold Coin";
+                        }
+                        if (v8 >= 1) {
+                            v13 = ~TakeFromParty_i(false, _All, _All, v6, v8);
+                            ["Let me think..."~"I will take thy <v8> <v5> and in exchange give thee <v9> Gold Coins, subtracting my charge of <v11> <v16>, for a final sum of <v12> <v15> given to thee."];
+                            v14 = ~GiveItemsOrDrop_i(true, false, 65177, 65177, v3, v12, _Avatar);
+                            ["'Tis done, <v0>!"];
+                        } else {
+                            ["Perhaps another time, <v0>..."];
+                        }
+                    } else {
+                        ["Thou dost not have any <v5> to exchange for <v2>!"];
+                    }
+                } else {
+                    ["Perhaps another time then..."];
+                }
+            }
+            label_255:
+            ["Dost thou care to exchange more coins?"];
+            v1 = ~AskYesNo();
+        }
+    } else {
+        ["If that is what thou dost desire..."];
+    }
+    label_258:
+}
+
+Usable BuciaSells_i #locals(18) #uses(~LordOrLady, ~AskOrdList, ~AskYesNo, ~BuciaHaggles_i, ~SellItem_i, ~PartyUtters) {
+    v0 = ~LordOrLady();
+    v1 = ~rndRange(2, 0);
+    PushKeys();
+    v2 = true;
+    v3 = << "nothing", "torches", "backpack", "dagger", "abacus", "sextant", "boots", "leather leggings", "bedroll", "sleeping powder", "bandages", "fur cloak" >>;
+    v4 = << 0, 595, 801, 594, 675, 650, 587, 574, 583, 648, 827, 227 >>;
+    v5 = << 65177, 0, 0, 0, 11, 0, 0, 0, 0, 0, v1, 1 >>;
+    v6 = << 0, 20, 120, 8, 120, 150, 50, 110, 175, 75, 50, 250 >>;
+    v7 = << 0, 12, 65, 5, 75, 75, 28, 60, 90, 45, 25, 135 >>;
+    v8 = 952;
+    v9 = << 0, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 >>;
+    v10 = << 0, 1, 1, 1, 0, 0, 1, 1, 0, 1, 1, 1 >>;
+    ["What dost thou require, <v0>?"];
+    While v2 {
+        v11 = ~AskOrdList(v3);
+        if (v11 = 1) {
+            v12 = ~Random(3);
+            if (v12 = 1) {
+                ["Thou art correct -- these prices are entirely too high!"];
+            }
+            if (v12 = 2) {
+                ["Oh, well. But I have so enjoyed our conversation!"];
+            }
+            if ((v12 <> 1) and (v12 <> 2)) {
+                ["But please come again sometime!"];
+            }
+            v2 = false;
+        } else {
+            v13 = v6::v11;
+            v14 = 0;
+            v12 = ~rndRange(5, 1);
+            if (v12 = 1) {
+                v15 = "Dost thou accept?";
+            }
+            if (v12 = 2) {
+                v15 = "Will this be fine with thee?";
+            }
+            if (v12 = 3) {
+                v15 = "Dost thou find the price agreeable?";
+            }
+            if (v12 = 4) {
+                v15 = "Dost thou agree?";
+            }
+            if (v12 = 5) {
+                v15 = "Is the price acceptable?";
+            }
+            if (v11 = 2) {
+                ["The price for a bundle of 3 torches is <v13> guilders."];
+                ["<v15>"];
+                v16 = "torches, in bundles of 3,";
+            }
+            if (v11 = 3) {
+                ["These are imported from Fawn, where the womenfolk are skilled at making strong cloth."];
+                ["Each backpack costs <v13> guilders, which I think is a fair price."];
+                ["<v15>"];
+                v16 = "backpacks";
+            }
+            if (v11 = 4) {
+                ["For the low price of <v13> guilders, I can sell thee a fine dagger."];
+                ["<v15>"];
+                v16 = "daggers";
+            }
+            if (v11 = 5) {
+                ["Only <v13> guilders will buy thee an excellent abacus. Thou canst use it to add thy coinage."];
+                ["<v15>"];
+            }
+            if (v11 = 6) {
+                ["If thou dost wish to navigate upon the seas, thou shalt surely need a sextant!" *"I will sell thee one for <v13> guilders."];
+                ["<v15>"];
+            }
+            if (v11 = 7) {
+                ["To protect thy feet, a sturdy pair of Moonshadian leather boots would do thee well, <v0>. For only <v13> guilders it is thine!"];
+                ["<v15>"];
+                v16 = "pairs of Moonshadian leather boots";
+            }
+            if (v11 = 8) {
+                ["<v13> guilders is not much to pay if thou dost need to protect thy legs, <v0>."];
+                ["<v15>"];
+                v16 = "pairs of leather leggings";
+            }
+            if (v11 = 9) {
+                ["Ah, this is one item that we have stocked in plenty, <v0>! I can sell thee a bedroll for <v13> guilders."];
+                ["<v15>"];
+                v16 = "bedrolls";
+            }
+            if (v11 = 10) {
+                ["This... powder... is most effective if thou dost suffer from sleepless nights, <v0>. I charge a small fee of <v13> guilders for a jar."];
+                ["<v15>"];
+                v16 = "vials of sleeping powder";
+            }
+            if (v11 = 11) {
+                ["If thou art in need of healing minor wounds I can offer thee clean bandages for <v13> guilders apiece."];
+                ["<v15>"];
+                v16 = "bandages";
+            }
+            if (v11 = 12) {
+                ["For the sum of <v13> guilders I can sell thee a bear cloak. 'Twill keep thee warm on a frosty night."];
+                ["<v15>"];
+                v16 = "bear cloaks";
+            }
+            if (v13 = v7::v11) {
+                if ~AskYesNo() {
+                    v17 = v13;
+                } else {
+                    v17 = 0;
+                }
+            } else {
+                v17 = ~BuciaHaggles_i(v7::v11, v6::v11);
+            }
+            if (v17 > 0) {
+                if (v10::v11 = 1) {
+                    ["How many <v16> wouldst thou like?"];
+                    v14 = ~SellItem_i(false, 1, 10, v17, v8, v9::v11, v5::v11, v4::v11);
+                } else {
+                    v14 = ~SellItem_i(false, 1, 0, v17, v8, v9::v11, v5::v11, v4::v11);
+                }
+            }
+            if (v14 = 1) {
+                ["Please come again, <v0>!"];
+            } else {
+                if (v14 = 2) {
+                    ["Perhaps thou canst return with more companions, for thou hast not room to carry what thou desirest to purchase!"];
+                } else {
+                    if (v14 = 3) {
+                        v12 = ~PartyUtters(false, 0, "@But we are short of funds!@", 1);
+                        v12 = ~PartyUtters(false, 0, "@How embarrassing...@", 1);
+                        if (v12 <> 65180) {
+                            SetSpeaker0_i(0, _Bucia);
+                            ["I would let thee have the goods for free, as I am sure that thou art a trustworthy person."];
+                            ["But the shop's owner is a stern man, and very strict."];
+                        } else {
+                            ["But thou dost not have the coins to pay for thy purchase! Next time, thou shouldst count thy coins first."];
+                        }
+                        if (31 < (~GetNPCID_i(_Bucia) + 4)) {
+                            SetNPCID_i(31, _Bucia);
+                        } else {
+                            SetNPCID_i((~GetNPCID_i(_Bucia) + 4), _Bucia);
+                        }
+                    } else {
+                    }
+                }
+            }
+            ["Dost thou wish to purchase anything else?"];
+            v2 = ~AskYesNo();
+        }
+    }
+    PopKeys();
+}
+
+Function ~BuciaHaggles_i accepts a0, a1 #locals(15) #uses(~LordOrLady, ~AskList, ~Haggle_i, ~AskYesNo) {
+    v2 = ~LordOrLady();
+    v3 = ~AvatarSex();
+    v4 = v1;
+    v5 = ((v0 / 3) * 2);
+    v6 = (15 - (~GetNPCID_i(_Bucia) / 2));
+    v7 = 0;
+    v8 = 1;
+    v9 = 0;
+    v10 = 2;
+    v11 = ~GetNPCID_i(_Bucia);
+    While v8 {
+        v12 = ~AskList(<< "yes", "no", "haggle" >>);
+        if (v12 = "no") {
+            return 0;
+        } else {
+            if (v12 = "yes") {
+                v13 = 0;
+                goto label_8;
+            }
+        }
+        v14 = ~Haggle_i(v7, v6, v9, v5, v10, v0, v4);
+        v9 = (v9 + 1);
+        v7 = v14::4;
+        v13 = v14::3;
+        v15 = v4;
+        v4 = v14::2;
+        v5 = v14::1;
+        label_8:
+        v16 = ~Random(3);
+        if (v13 < 2) {
+            if (v4 < (v0 + ((v1 - v0) / 4))) {
+                if (v16 = 1) {
+                    ["Thou hast better not visit this shop too often, or we shall lose all our money!"];
+                }
+                if (v16 = 2) {
+                    ["Thou hast bargained me to a bitter price, but then, I do not own this store!"];
+                }
+                if (v16 = 3) {
+                    ["Well, no one else in town is spending coins, so I must reluctantly accept thine offer."];
+                }
+            } else {
+                if (v4 < (v0 + ((v1 - v0) / 3))) {
+                    if (v16 = 1) {
+                        ["Believe me, I am allowing thee a fantastic price. Please do not tell anyone!"];
+                    }
+                    if (v16 = 2) {
+                        ["Thou must be poor, if thou must bargain me down so low. Very well, I shall have pity on thee."];
+                    }
+                    if (v16 = 3) {
+                        ["I think thou hast talked me into a price that is too low..."];
+                        ["But I do not care. Hast thou noticed how beautiful the sunsets have been lately?"];
+                    }
+                } else {
+                    if (v4 < (v0 + ((v1 - v0) / 2))) {
+                        if (v16 = 1) {
+                            ["'Tis a good price, and a great value."];
+                        }
+                        if (v16 = 2) {
+                            ["So that will be <v4> guilders -- and I will say again that it hath been nice chatting with thee today."];
+                        }
+                        if (v16 = 3) {
+                            ["'Tis a fair deal -- only <v4> guilders. Be certain to tell all thy friends!"];
+                        }
+                    } else {
+                        if (v16 = 1) {
+                            ["<v4> guilders! Thank thee, <v2>."];
+                        }
+                        if (v16 = 2) {
+                            ["That is wonderful! <v4> whole guilders... why, the owner shall be so proud of me for this sale!"];
+                        }
+                        if (v16 = 3) {
+                            ["As I always say, one must pay high prices to obtain high quality."];
+                        }
+                    }
+                }
+            }
+            ["<v4> guilders is the agreed price, <v2>?"];
+            if ~AskYesNo() {
+                if (v11 > 1) {
+                    SetNPCID_i((v11 - 2), _Bucia);
+                }
+                return v4;
+            } else {
+                if (v16 = 1) {
+                    ["Thou shouldst not jest with me. Simply because I'm only a Mundane doth not mean that thou canst waste my time."];
+                }
+                if (v16 = 2) {
+                    ["But we had an agreement!"];
+                }
+                if (v16 = 3) {
+                    ["Canst thou not make up thy mind, <v2>?"];
+                }
+                if (31 < (v11 + 10)) {
+                    SetNPCID_i(31, _Bucia);
+                } else {
+                    SetNPCID_i((v11 + 10), _Bucia);
+                }
+                return 0;
+            }
+        }
+        if (v7 = 1) {
+            if (v13 = 5) {
+                ["I have gone as low as I can, <v2>. <v4> guilders. Dost thou accept?"];
+                if (v11 < 28) {
+                    SetNPCID_i((v11 + 4), _Bucia);
+                }
+                if ~AskYesNo() {
+                    return v4;
+                }
+                v8 = 0;
+            } else {
+                ["<v4> guilders is my final offer. Is this acceptable to thee?"];
+                if (v11 < 30) {
+                    SetNPCID_i((v11 + 2), _Bucia);
+                }
+            }
+        } else {
+            if (v13 = 2) {
+                if (v16 = 1) {
+                    ["I see that thou dost appreciate quality goods! Wouldst thou pay <v4> guilders?"];
+                }
+                if (v16 = 2) {
+                    ["Thou art a most perceptive person. But wouldst thou pay <v4> guilders?"];
+                }
+                if (v16 = 3) {
+                    ["I can tell that we shall be doing business regularly. Thy price is fair, but I would prefer to receive <v4> guilders. Is this acceptable?"];
+                }
+            }
+            if (v13 = 3) {
+                if (v16 = 1) {
+                    ["Hmmm... perhaps <v4> guilders?"];
+                }
+                if (v16 = 2) {
+                    ["I would be more easy if thou wouldst pay at least <v4> guilders."];
+                }
+                if (v16 = 3) {
+                    ["Surely, thou hast more funds than this! I think that thou couldst afford <v4> guilders. Is this acceptable?"];
+                }
+            }
+            if (v13 = 4) {
+                if (v16 = 1) {
+                    ["But I would lose mine employment if I sold at such a price! Wouldst thou consider <v4> guilders?"];
+                }
+                if (v16 = 2) {
+                    ["Thou art not serious! Surely, thou canst tell that <v4> guilders is a more fair price."];
+                }
+                if (v16 = 3) {
+                    ["Dost thou think me a simpleton! I must accept no less than <v4> guilders, or I should be ashamed of myself. Dost thou accept?"];
+                }
+            }
+            if (v13 = 5) {
+                v4 = v15;
+                if (v16 = 1) {
+                    ["Of course not. <v4> guilders."];
+                }
+                if (v16 = 2) {
+                    ["<v4> guilders, and no less!"];
+                }
+                if (v16 = 3) {
+                    ["I should be a fool if I sold at such a price. <v4> guilders is where I must stand."];
+                }
+                if (v11 < 31) {
+                    SetNPCID_i((v11 + 1), _Bucia);
+                }
+            }
+        }
+    }
+}

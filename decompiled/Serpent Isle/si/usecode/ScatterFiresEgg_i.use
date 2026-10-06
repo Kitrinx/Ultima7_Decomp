@@ -1,0 +1,26 @@
+Routine ScatterFiresEgg_i accepts a0 #locals(10) #uses(~NPCLevel_i) {
+    Sfx(30);
+    v0 = << 910, 3000, 0 >>;
+    v1 = (15 + ~NPCLevel_i(_Avatar));
+    While (v1 <> 0) {
+        v1 = (v1 - 1);
+        v2 = (v0::1 + ~rndRange(10, 65527));
+        v3 = (v0::2 + ~rndRange(15, 65518));
+        v4 = v0::3;
+        v5 = << v2, v3, 0 >>;
+        v6 = ~rndRange(4, 1);
+        if ((v6 = 1) or (v6 = 2)) {
+            v7 = ~Item_create(_Field_Fire);
+        }
+        if ((v6 = 3) or (v6 = 4)) {
+            v7 = ~Item_create(_Blue_Flame);
+        }
+        if v7 {
+            v8 = ~rndRange(15, 5);
+            v6 = ~SetQuality(v8, v7);
+            v9 = ~PopToMap(v5);
+            SetItemFlag_i(_IsTemporary_i, v7);
+            Sfx(41);
+        }
+    }
+}

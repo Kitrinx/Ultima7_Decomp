@@ -1,0 +1,131 @@
+Routine CheckLevers_i accepts a0 #locals(38) #uses(ShockAvatar_i) {
+    v0 = false;
+    v1 = false;
+    v2 = false;
+    v3 = false;
+    v4 = false;
+    v5 = false;
+    v6 = false;
+    v7 = false;
+    v8 = false;
+    v9 = false;
+    v10 = false;
+    v11 = false;
+    v12 = false;
+    v13 = false;
+    v14 = false;
+    v15 = ~GetFrame(item);
+    v16 = ~GetQuality(item);
+    v17 = ~FindNearby_i(176, 10, _Lever, item);
+    if (v16 = 1) {
+        Foreach v20 in v17 {
+            v21 = ~GetQuality(v20);
+            v22 = ~GetFrame(v20);
+            if (v21 = 221) && ((v22 modulo 2) = 1) {
+                v0 = true;
+            }
+            if (v21 = 222) && ((v22 modulo 2) = 0) {
+                v1 = true;
+            }
+            if (v21 = 223) && ((v22 modulo 2) = 1) {
+                v2 = true;
+            }
+        }
+        if (v0 and (v1 and v2)) {
+            v23 = ~FindNearby_i(176, 15, _Door_EW, item);
+            Foreach v26 in v23 {
+                if (~GetQuality(v26) = 241) {
+                    v27 = ~GetCoord(v26);
+                    Item_destroy(v26);
+                    v28 = ~Item_create(_Door_NS);
+                    if v28 {
+                        v29 = ~PopToMap(v27);
+                        SetFrame(12, v28);
+                    }
+                }
+            }
+        } else {
+            ShockAvatar_i();
+        }
+    }
+    if (v16 = 2) {
+        Foreach v20 in v17 {
+            v21 = ~GetQuality(v20);
+            v22 = ~GetFrame(v20);
+            if (v21 = 224) && ((v22 modulo 2) = 0) {
+                v3 = true;
+            }
+            if (v21 = 225) && ((v22 modulo 2) = 0) {
+                v4 = true;
+            }
+            if (v21 = 226) && ((v22 modulo 2) = 1) {
+                v5 = true;
+            }
+            if (v21 = 227) && ((v22 modulo 2) = 1) {
+                v6 = true;
+            }
+            if (v21 = 228) && ((v22 modulo 2) = 0) {
+                v7 = true;
+            }
+        }
+        if (v3 and (v4 and (v5 and (v6 and v7)))) {
+            v23 = ~FindNearby_i(176, 15, _Door_EW, item);
+            Foreach v26 in v23 {
+                if (~GetQuality(v26) = 241) {
+                    v27 = ~GetCoord(v26);
+                    Item_destroy(v26);
+                    v28 = ~Item_create(_Door_NS);
+                    if v28 {
+                        v29 = ~PopToMap(v27);
+                        SetFrame(12, v28);
+                    }
+                }
+            }
+        } else {
+            ShockAvatar_i();
+        }
+    }
+    if (v16 = 3) {
+        Foreach v20 in v17 {
+            v21 = ~GetQuality(v20);
+            v22 = ~GetFrame(v20);
+            if (v21 = 229) && ((v22 modulo 2) = 1) {
+                v8 = true;
+            }
+            if (v21 = 230) && ((v22 modulo 2) = 0) {
+                v9 = true;
+            }
+            if (v21 = 231) && ((v22 modulo 2) = 0) {
+                v10 = true;
+            }
+            if (v21 = 232) && ((v22 modulo 2) = 0) {
+                v11 = true;
+            }
+            if (v21 = 233) && ((v22 modulo 2) = 1) {
+                v12 = true;
+            }
+            if (v21 = 234) && ((v22 modulo 2) = 0) {
+                v13 = true;
+            }
+            if (v21 = 235) && ((v22 modulo 2) = 1) {
+                v14 = true;
+            }
+        }
+        if (v8 and (v9 and (v10 and (v11 and (v12 and (v13 and v14)))))) {
+            v23 = ~FindNearby_i(176, 15, _Door_EW, item);
+            Foreach v26 in v23 {
+                if (~GetQuality(v26) = 241) {
+                    v27 = ~GetCoord(v26);
+                    Item_destroy(v26);
+                    v28 = ~Item_create(_Door_NS);
+                    if v28 {
+                        v29 = ~PopToMap(v27);
+                        SetFrame(12, v28);
+                    }
+                }
+            }
+        } else {
+            ShockAvatar_i();
+        }
+    }
+}

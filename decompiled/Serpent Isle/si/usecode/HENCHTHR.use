@@ -1,0 +1,12 @@
+Routine Hench3 accepts a0 #locals(0) #uses(PartyFaces_i, RaiseAlarm_i) {
+    if (event = _Converse) {
+        Item_bark("Excuse me...", _Avatar);
+        PartyFaces_i(65332);
+        RaiseAlarm_i(item);
+    }
+    if ((event = _NearDeath) and ~GetItemFlag_i(_Tournament, item)) {
+        RaiseAlarm_i(item);
+        ClearItemFlag_i(_Tournament, item);
+        ReduceHits_i(0, 50, item);
+    }
+}

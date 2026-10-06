@@ -1,0 +1,253 @@
+Routine IsstanarUsable_i accepts a0 #locals(5) #uses(~LordOrLady, ~AvatarName, PartyFaces_i, Bark_i, ~GiveItemsOrDrop_i) {
+    v0 = ~LordOrLady();
+    v1 = ~AvatarName();
+    v2 = "he";
+    if ~AvatarSex() {
+        v2 = "she";
+    }
+    if (event = _Converse) {
+        Item_bark("@Might I speak with thee?@", _Avatar);
+        PartyFaces_i(item);
+        Bark_i(5, (("@Certainly, " + v0) + ".@"), item);
+        SetWorkType(_Talk, item);
+    }
+    if (event = _Talking) {
+        SetWorkType(_Stand, item);
+        ClearBark_i(item);
+        SetSpeaker0_i(0, 65230);
+        v3 = ~GetNPCID_i(item);
+        if (v3 = false) {
+            SetNPCID_i(1, item);
+            ["So, thou art come as the Order Hierophant foretold. I must admit, even as dedicated as I am, I doubted that there could be another Champion of Balance.];
+            ["I am Isstanar, Commander of The Serpent's Fang and its garrison.];
+            ["Thou wilt forgive me if I remain skeptical a bit longer. One does not attain a position such as mine by being overly trusting."];
+            $MET_ISSTANAR = true;
+        } else {
+            if ($HAVE_SILVER_SEED or $PLANTED_SILVER_SEED) {
+                ["I am pleased to see thee, <v1>.];
+                ["How might I aid the Champion of Balance in fulfilling thy duty?"];
+                TurnOn("apologize");
+            } else {
+                ["I am pleased to see thee, <v1>. Thy continued survival does much to convince me that thou art indeed the Champion of Balance.];
+                ["How might I aid thee in fulfilling thy duty?"];
+            }
+        }
+        TurnOn(<< "Order Hierophant", "Champion of Balance", "Serpent's Fang", "bye" >>);
+        converse {
+            key ("apologize") {
+                TurnOff("apologize");
+                if ($HAVE_SILVER_SEED and not $PLANTED_SILVER_SEED) {
+                    ["I am now convinced that thou art the Champion of Balance, <v1>. I apologize for doubting thee.];
+                    ["Now that thou hast the Silver Seed, thou shouldst plant it. Our only hope is that the Tree of Balance will heal the land.];
+                    ["Please, <v1>, I humbly ask that thee to plant it soon."];
+                } else {
+                    ["I apologize for doubting thee, Champion of Balance.];
+                    ["Although it is too late to stop the war, perhaps the Tree of Balance will speed the healing of the land's wounds after this grim business is done."];
+                }
+            }
+            key ("Order Hierophant") {
+                TurnOff("Order Hierophant");
+                ["Could it be that thou dost not know of Calithiss the Avenger and our holy crusade?];
+                ["But, if thou art the Champion of Balance, perhaps thou hast spent thy life as an Acolyte on the Isle of Crypts.];
+                ["I shall honor thy title by telling thee the tale. If art an imposter, it shall be apparent soon enough... For thou wilt never survive what lies ahead."];
+                TurnOn(<< "Avenger", "holy crusade", "Isle of Crypts", "what lies ahead" >>);
+            }
+            key ("Avenger") {
+                TurnOff("Avenger");
+                ["Before the War of Imbalance began, Calithiss was known as the Steadfast. But after the foul murder of Ssithnos she named herself the Avenger."];
+                PushKeys();
+                TurnOn(<< "War of Imbalance", "Ssithnos", "nothing more" >>);
+            }
+            key ("War of Imbalance") {
+                TurnOff("War of Imbalance");
+                ["Those who served Balance were always few in number, <v1>. I cannot imagine how one could walk the shining path, swayed by neither Order nor Chaos. I do not see how it is humanly possible.];
+                ["But there has always been those few called to serve all Ophidians, and they followed the Great Hierophant. But followers of Chaos slew the last Great Hierophant and plunged the land into war, for there was no one to maintain Balance."];
+                TurnOn(<< "shining path", "Ophidians" >>);
+            }
+            key ("shining path") {
+                TurnOff("shining path");
+                ["Art thou testing my knowledge, Champion of Balance? Dost thou think to find an Order warrior of my status wanting?];
+                ["I am no follower of Balance, but even I know that only the Great Hierophant may safely enter the Void to commune with the Serpents, that he walks upon a shining path to receive Their wisdom.];
+                ["All others who would venture into the Void have no path to guide them and are doomed to death for their arrogance."];
+            }
+            key ("Ophidians") {
+                TurnOff("Ophidians");
+                ["Thy questions art most perplexing, <v1>.  Thou art the Champion of Balance, and yet thou dost ask about things that all people know...];
+                ["Art thou trying to discover how far we have fallen since Ssithnos perished? Then thou mayest judge Order by me, one of their ultimate warriors.];
+                ["We are Ophidians, followers of Balance, Order and, alas, Chaos. We revere the Serpents that dwell within the Void, for Theirs is the wisdom that guides us all.];
+                ["There, thou dost see that Order does not forget the teachings. That is why Order must triumph in this war. Chaos fiends killed the Great Hierophant. It is they who have fallen from the path, not Order."];
+            }
+            key ("Ssithnos") {
+                TurnOff("Ssithnos");
+                ["Ssithnos was the last Great Hierophant. He was a holy man, <v1>. The wisdom of the Great Earth Serpent shone in him.];
+                ["It was my honor to meet him once when I was a young warrior, when he came to the Temple of Discipline. That was long before he met his tragic end."];
+                TurnOn(<< "Great Earth Serpent", "young warrior", "Temple of Discipline" >>);
+            }
+            key ("Great Earth Serpent") {
+                TurnOff("Great Earth Serpent");
+                ["Why wouldst thou ask me? Thou art the Champion of Balance. How could I instruct thee in such a matter?];
+                ["But I would venture to ask thee a question, <v1>. Do not take this amiss, for I do not mean to disparage thee. But...];
+                ["What hope is there for thee, the Champion of Balance, to restore Balance if the Great Hierophant is dead? Without him to voice the will of the Great Earth Serpent, how canst thou hope to succeed?"];
+                PushKeys();
+                TurnOn(<< "I know not.", "All shall be revealed later.", "There is no hope." >>);
+            }
+            key ("I know not.") {
+                TurnOff(<< "I know not.", "All shall be revealed later.", "There is no hope." >>);
+                ["Alas, I had hoped that thou wouldst know what was to happen. Now I do not know whether to believe that thou art not the Champion of Balance, or whether thou art simply ignorant of thy fate.];
+                ["I must consider this... It is not unusual for a warrior to be sent into battle without knowing what he shall face, but I had expected a pawn of prophecy to be more... informed."];
+                PopKeys();
+            }
+            key ("All shall be revealed later.") {
+                TurnOff(<< "I know not.", "All shall be revealed later.", "There is no hope." >>);
+                ["Thou dost answer my question with an easy evasion. This either means that thou knowest not, or that thou wilt not tell me.];
+                ["If thou knowest not, it means that thou art either not the Champion of Balance, or that thou art ignorant of thy fate.];
+                ["If thou art not the Champion of Balance, I pity thee for thou art not long for this life. If thou art ignorant of thy fate, it is nothing to cause thee shame. Many warriors go to battle uncertain of their fate.];
+                ["If, on the other hand, thou knowest and choose not to reveal it to me, I respect thy choice. The Champion of Balance is the pawn of prophecy, and I can wait forever to learn the true answer to my question."];
+                PopKeys();
+            }
+            key ("There is no hope.") {
+                TurnOff(<< "I know not.", "All shall be revealed later.", "There is no hope." >>);
+                ["Thou art truly worthy of the title Champion of Balance. Only a true warrior understands that duty is all that remains when hope is lost.];
+                ["I salute thee, <v1>, for thy path is difficult, but thy name shall be honored among warriors."];
+                PopKeys();
+            }
+            key ("young warrior") {
+                TurnOff("young warrior");
+                ["I have not always been as thou dost see me now. I have spent a lifetime becoming worthy of this honor."];
+                TurnOn("honor");
+            }
+            key ("honor") {
+                TurnOff("honor");
+                ["I was once flesh and blood, like thee, a warrior of Order. I was chosen to be tested shortly before the war began."];
+                TurnOn("tested");
+            }
+            key ("tested") {
+                TurnOff("tested");
+                ["Only those warriors possessing unswerving Discipline, flawless Ethicality, and the finest Logic are selected for testing.];
+                ["Of all of those brought before the Order Hierophant, only a few hands of that number withstand the testing. Of that number, less than a hand make the final sacrifice.];
+                ["I am one of the elite... The ultimate Order warrior. I have traded my body for eternal service to Order."];
+            }
+            key ("Temple of Discipline") {
+                TurnOff("Temple of Discipline");
+                ["The Temple was once my home, <v1>. It was my privilege to serve as a guard for the Master of Discipline. It was there that the long road to this keep began.];
+                ["The Temple is the primary staging and training area for our efforts in this accursed war. It is the headquarters of the High Command."];
+                TurnOn("High Command");
+            }
+            key ("High Command") {
+                TurnOff("High Command");
+                ["All respect to them!];
+                ["The High Command are the highest ranking Order officers who report directly to the Order Hierophant. It is they who are charged with fulfilling the will of the Order Serpent to unite the world under the Ethicality and Discipline of Order."];
+            }
+            key ("holy crusade") {
+                TurnOff("holy crusade");
+                ["The followers of Chaos broke the Teaching and plunged the land into war. It is they who murdered the Great Hierophant. It is they who have killed thousands of peaceful followers of Order.];
+                ["The followers of Chaos must be held responsible for their crimes. There is no Great Hierophant to oversee justice, so it must fall to Order to see that the shedding of blood is met in kind until Chaos bows before Order, and Balance is restored."];
+                TurnOn("Teaching");
+            }
+            key ("Teaching") {
+                TurnOff("Teaching");
+                ["Before Ssithnos was murdered, this land thrived in Balance. Order and Chaos each knew their duty, their place within the scheme of life. Both factions were equal, held in check by the authority of the Great Hierophant.];
+                ["All people were taught that this had always been so, and must remain so. That was the will of the Great Earth Serpent, so that all people would reap the bounty of Balance's peace.];
+                ["But the Great Hierophant was murdered and now there is no peace. There is no bounty... only war and bloodshed. It was Chaos that brought us to this crossroad, and it is they who will pay."];
+            }
+            key ("Isle of Crypts") {
+                TurnOff("Isle of Crypts");
+                ["How canst thou be the Champion of Balance and not know of the Isle of Crypts?! I suspect thee to be an imposter with each question thou dost utter!];
+                ["But I have been taught that it is the duty of all people to aid a pawn of prophecy. I must hold fast to the belief that, if thou art false, thou wilt fall to a fate worse than any I could mete out.];
+                ["So I shall tell thee what little a warrior of Order knows. I hope that it instructs thee well, if thou art truly the Champion of Balance, for thou art woefully ignorant of thy duty."];
+                TurnOn("Tell me.");
+            }
+            key ("Tell me.") {
+                TurnOff("Tell me.");
+                ["The Isle of Crypts is the very heart of Balance. It is believed that the island was once the dwelling place of the Great Earth Serpent, before He journeyed into the Void to bring Balance to the universe.];
+                ["It is common knowledge that this hallowed ground is the final resting place of all the Great Hierophants... though I know not if this is true of poor Sithnos.];
+                ["It is also said that the island is the home of the Acolytes of Balance, though I would have thought that thou wouldst have known more of this than I."];
+                TurnOn("Where is the island?");
+            }
+            key ("Where is the island?") {
+                TurnOff("Where is the island?");
+                ["Thou art most certainly not what I would have expected from the Champion of Balance. But it is not my place to judge a pawn of prophecy.];
+                ["I regret to inform thee that I do not know the exact location of the Isle of Crypts. It is somewhere in the north-west, but other than that I know not.];
+                ["I had always hoped that one day I would be able to make a pilgrimage there, but now it shall have to wait until after the war."];
+            }
+            key ("what lies ahead") {
+                TurnOff("what lies ahead");
+                ["If thou art truly the Champion of Balance, which I begin to doubt more strongly, then thou must have the Silver Seed to restore Balance to the world.];
+                ["While I will freely tell thee that it is hidden here within this keep, I shall not tell thee where. Thou must be truly illumined before thou wilt find the Seed... *However, I shall tell thee that the magical orbs have been lost or scattered.];
+                ["It shall be up to thee to overcome the hazards of this region to obtain these orbs. If thou dost survive in these attempts, I shall be more disposed to believe that thou art the Champion of Balance."];
+                TurnOn(<< "Silver Seed", "magical orbs" >>);
+            }
+            key ("Silver Seed") {
+                TurnOff("Silver Seed");
+                ["The Silver Seed is the acorn from the Tree of Balance. Only once every one hundred centuries does the Tree of Balance cast an acorn. It is our honor to be the keeper of the Seed.];
+                ["When the Great Hierophant was murdered, the Tree of Balance that had existed for time beyond memory withered and died. Once we have crushed Chaos, Calithiss the Avenger shall take a new name -- the Renewer, and plant the seed so that Balance may heal our land."];
+            }
+            key ("magical orbs") {
+                TurnOff("magical orbs");
+                ["I am sorry, <v1>. My conscious will not allow me to tell thee any more on this subject. I still cannot believe that thou art the Champion of Balance. So thou must find thy own answers. I have aided thee enough.];
+                ["The only thing I will tell thee is that thou shouldst search the areas adjacent to this keep for the orbs. They have been widely scattered... And, take care for those areas are dangerous."];
+                TurnOn("dangerous");
+            }
+            key ("dangerous") {
+                TurnOff("dangerous");
+                ["I have not been at the keep long, <v1>, so I cannot yet confirm any of these stories. I shall continue investigating their truth, but I see no reason why the warriors garrisoned here should lie.];
+                ["It is said that there is a dragon, and a lich, nearby. This seems unlikely, as one would usually immediately kill or drive away the other... unless they are in league in some way.];
+                ["There is also an abandoned outpost that is considered to be inhabited by creatures of Chaos. And, of course, there is the unfinished maze... from which Issik, the architect, never returned to reveal the secret of its interior.];
+                ["I am told there is a madman who dwells within one of the caverns near here. The warriors call him the Fiend. They say that he feeds on human flesh."];
+                ["Use caution, but I fear that thou wilt have to scour these areas in search of the orbs thou dost seek."];
+            }
+            key ("Champion of Balance") {
+                TurnOff("Champion of Balance");
+                ["Thou dost possess the lost Amulet of Balance, <v1>. According to legend, only the Champion of Balance may bear it... all others would perish. However, I am no Mage. I do not know if this is true.];
+                if not $HAVE_KEYRING {
+                    ["It is said that the Champion will restore Balance and heal our land. As it appears that thou art this long-awaited Champion, I have something which should aid thee."];
+                    TurnOn("What is it?");
+                } else {
+                    ["I hope thou art finding the key ring to be of use, <v1>. Thou wilt need all the help thou canst find ere thy quest is finished."];
+                }
+            }
+            key ("What is it?") {
+                TurnOff("What is it?");
+                ["It is a key ring, <v1>. Although it may seem to be a paltry offering, it is no mere trinket. It is a magical item.];
+                ["Any key that thou dost put upon it will disappear. It shall never weigh more that what it does now. And if any of the keys thou didst put upon it fits a door thou wishest to open, one of the keys that thou dost see upon the keyring now will open it.];
+                ["I hope that thou shall find it useful to thee."];
+                v4 = ~GiveItemsOrDrop_i(true, false, 0, 65177, 485, 1, _Avatar);
+                $HAVE_KEYRING = true;
+                TurnOn(<< "Who crafted it?", "Why give it to me?" >>);
+            }
+            key ("Who crafted it?") {
+                TurnOff("Who crafted it?");
+                ["I know not who crafted it, <v1>. It is very old, and once belonged to the Order Hierophant.];
+                ["When I made the final sacrifice, Calithiss said, \@Give this to <v2> who shall heal our land.\@];
+                ["I know now that she meant thee, Champion. How she knew that I would meet thee I shall never know. But, as always, her wisdom is infallible."];
+            }
+            key ("Why give it to me?") {
+                TurnOff("Why give it to me?");
+                ["It is said that the Champion shall need the keys to the land before Balance shall be restored. I think that this was meant symbolically, but the keyring was made for thee anyway. In this way, Order recognizes what thou shalt do for us all."];
+            }
+            key ("Serpent's Fang") {
+                TurnOff("Serpent's Fang");
+                ["Serpent's Fang is the name of this keep, <v1>. It was so designated because this was once the keep from which all Order attacks on Chaos were launched.];
+                ["Commander Ardiniss, who I now replace, was a brilliant tactician. He held this keep and its surroundings through some of the most bloody fighting this war has yet seen. It was during that time that the warriors began referring to the keep as DeathWatch.];
+                ["Ardiniss' loss was a sad blow as the tides of war turned. Now Serpent's Fang holds the line of retreat, not the forefront of the war, and DeathWatch has taken on another meaning... watching for the fall of Chaos."];
+            }
+            key ("nothing more") {
+                ["As thou dost wish... What else shall we speak of?"];
+                PopKeys();
+            }
+            key ("bye") {
+                if ($HAVE_SILVER_SEED or $PLANTED_SILVER_SEED) {
+                    ["I wish thee luck in thy journeys, Champion of Balance. I am sure that thy road will be long..."];
+                } else {
+                    ["I am still unconvinced that thou art the Champion of Balance. I suppose only time will tell. Thou art free to go, but I shall be watching thee..."];
+                }
+                CloseSpeaker0_i();
+                Item_bark("@Farewell!@", _Avatar);
+                Bark_i(2, "@Mind thy duty!@", item);
+                SetWorkType(_Loiter, item);
+                break;
+            }
+        }
+        clear_answers;
+    }
+}

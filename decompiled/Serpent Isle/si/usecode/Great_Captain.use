@@ -1,0 +1,107 @@
+Routine Great_Captain accepts a0 #locals(14) #uses(Bark_i, ~PartyUtters) {
+    v0 = ~GetQuality(item);
+    v1 = ~GetFrame(item);
+    v2 = false;
+    if not flag(364) {
+        v3 = ~GetCoord(_Avatar);
+        createSprite(65535, 0, 0, 0, (v3::2 - 3), (v3::1 - 1), 5);
+        LightningBolt();
+        v4 = ~Random(2);
+        ReduceHits_i(5, v4, _Avatar);
+        v5 = ("@Yow!@" & ("@Ouch!@" & ("@That hurt!@" & ("@Ugh...@" & ("@Damn!@" & "@Yikes!@")))));
+        v2 = v5::~Random(~ListSize_i(v5));
+        Bark_i(1, v2, _Avatar);
+    }
+    if (v0 = 11) {
+        if flag(365) {
+            if flag(364) {
+                flag(364) = false;
+            } else {
+                flag(364) = true;
+            }
+            v2 = true;
+        } else {
+            Item_bark("@'Tis jammed.@", _Avatar);
+            v2 = false;
+        }
+    }
+    if (v0 = 15) {
+        if flag(365) {
+            if flag(363) {
+                flag(363) = false;
+            } else {
+                flag(363) = true;
+                v6 = ~FindNearby_i(0, 30, _Oracle, item);
+                Foreach v9 in v6 {
+                    if (~GetFrame(v9) = 1) {
+                        v2 = ~PostAction(<< _aNO_HALT_i, _aBARK_i, "@Yes, Master?@" >>, v9);
+                        v10 = ~PartyUtters(true, 0, 0, 1);
+                        Bark_i(3, "@The Oracle speaks!@", v10);
+                        v2 = ~PostInFuture(10, << _aNO_HALT_i, _aUSABLE_i, #Oracle, 0 >>, v9);
+                    }
+                }
+            }
+            v2 = true;
+        } else {
+            v2 = false;
+            Item_bark("@'Tis jammed.@", _Avatar);
+        }
+    }
+    if (v0 = 13) {
+        if flag(365) {
+            flag(365) = false;
+        } else {
+            flag(365) = true;
+        }
+        v2 = true;
+    }
+    if (v0 = 12) {
+        if flag(365) {
+            v11 = ~FindNearby_i(16, 15, _Trap_Type, item);
+            if v11 {
+                v2 = true;
+                if v1 {
+                    Item_destroy(v11);
+                } else {
+                    v2 = ~PostAction(<< _aNO_HALT_i, _aSET_EGG_i, _AvatarNear, 5 >>, v11);
+                    v10 = ~PartyUtters(true, "@Whoops...@", "@Watch out!@", 1);
+                }
+            } else {
+                v2 = false;
+                Item_bark("@'Tis jammed.@", _Avatar);
+            }
+        } else {
+            v2 = false;
+            Item_bark("@'Tis jammed.@", _Avatar);
+        }
+    }
+    if (v0 = 14) {
+        if flag(365) {
+            v2 = true;
+            if not v1 {
+                flag(358) = true;
+                Earthquake_i(2);
+                v6 = ~FindNearby_i(0, 30, _Oracle, item);
+                Foreach v9 in v6 {
+                    if (~GetFrame(v9) = 1) {
+                        v2 = ~PostAction(<< _aNO_HALT_i, _aBARK_i, "@Oh!@", _aWAIT_i, 15, _aBARK_i, "@Please, Master...@", _aWAIT_i, 15, _aBARK_i, "@Stop!@" >>, v9);
+                    }
+                }
+                v10 = ~PartyUtters(true, "@What was that?@", "@I hear something...@", 1);
+            }
+        } else {
+            v2 = false;
+            Item_bark("@'Tis jammed.@", _Avatar);
+        }
+    }
+    if v2 {
+        if ((v1 modulo 2) = 0) {
+            SetFrame((v1 + 1), item);
+        } else {
+            SetFrame((v1 - 1), item);
+        }
+        playSFX(item, 70);
+    } else {
+        FlashMouse_i(0);
+    }
+}

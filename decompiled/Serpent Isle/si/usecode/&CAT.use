@@ -1,0 +1,51 @@
+Routine Cat accepts a0 #locals(4) #uses(Bark_i, ~PartyUtters, ~GimmePathEgg) {
+    v0 = ~GetNPCID_i(item);
+    if (event = _Converse) {
+        if (v0 > 2) {
+            if (~rndRange(20, 1) = 13) {
+                ClearBark_i(item);
+                v1 = ~PostAction(<< _aNO_HALT_i, _aBARK_i, "@Meow@", _aWAIT_i, 8, _aBARK_i, "@Meow!@", _aWAIT_i, 8, _aBARK_i, "@Meow!@", _aWAIT_i, 8, _aBARK_i, "@Meow!@", _aWAIT_i, 8, _aBARK_i, "@Meow!@", _aWAIT_i, 8, _aUSABLE_i, #Cat >>, item);
+            }
+        } else {
+            Item_bark("@Here, kitty, kitty!@", _Avatar);
+            SetWorkType(_Shy, item);
+            SetNPCID_i((v0 + 1), item);
+            if ~IsNPCNear_i(_Shamino) {
+                Bark_i(8, "@I hate cats.@", _Shamino);
+            }
+        }
+    }
+    if (event = _Action) {
+        v2 = ~GetCoord(item);
+        v2::1 = (v2::1 - (v2::3 / 2));
+        v2::2 = (v2::2 - (v2::3 / 2));
+        Item_destroy(item);
+        createSprite(65535, 0, 0, 0, v2::2, v2::1, 27);
+        Sfx(42);
+        v3 = ~PartyUtters(false, 0, 0, 65534);
+        Bark_i(8, "@Bloody cats!@", v3);
+    }
+    if (event = _Bark) {
+        if flag(13) {
+            SetNPCID_i((v0 + 1), item);
+            if (~GetNPCID_i(item) = 2) {
+                FadePalette_i(0, 1, 12);
+                Polymorph_i(_Cat, item);
+                Camera_setCenterOn(_Avatar);
+                ClearItemFlag_i(_DontMove_i, _Avatar);
+                ClearSpeakers_i();
+                v1 = ~PostInFuture(10, << _aNO_HALT_i, _aUSABLE_i, #FadeInArrival_i >>, ~GimmePathEgg(1, 5));
+                SetNPCID_i(0, item);
+                flag(13) = false;
+                $USING_FAR_SIGHT_MAGIC = false;
+            }
+            if (~GetNPCID_i(item) = 1) {
+                FadePalette_i(1, 1, 12);
+                SetMusic(~GimmePathEgg(1, 5), 24);
+            }
+            terminate;
+        } else {
+            v1 = ~PostAction(<< _aNO_HALT_i, _aBARK_i, "@Meow!@" >>, item);
+        }
+    }
+}

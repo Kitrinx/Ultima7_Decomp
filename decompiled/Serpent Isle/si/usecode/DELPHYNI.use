@@ -1,0 +1,686 @@
+Routine Delphynia accepts a0 #locals(3) #uses(~LordOrLady, PartyFaces_i, Bark_i, ~AskYesNo, DelphyniaHeals_i, DelphyniaSells_i, ~IsInInv, AlyssandSeeksAvatar_i, ~GiveItemsOrDrop_i, SendAssassin_i, JorvinBringsInvitation_i) {
+    v0 = ~LordOrLady();
+    if (event = _NearDeath) {
+        v1 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #Green_Noble >>, item);
+    }
+    if (event = _Converse) {
+        Item_bark("@A moment, if thou wilt.@", _Avatar);
+        PartyFaces_i(65488);
+        Bark_i(5, (("@At thy service, " + v0) + ".@"), _Delphynia);
+        SetWorkType(_Talk, _Delphynia);
+    }
+    if (event = _Talking) {
+        Npc_schedule(_Delphynia);
+        ClearBark_i(_Delphynia);
+        SetSpeaker0_i(0, _Delphynia);
+        v2 = ~GetItemFlag_i(_Met, _Delphynia);
+        if ($FAWN_TRIAL_RECESS or ($AUDIENCE_WITH_YELINDA and not $FAWN_TRIAL_DONE)) {
+            ["Leave! I have no wish to be seen with thee! Thou dost consort with criminals and blasphemers."];
+            CloseSpeaker0_i();
+            Bark_i(0, "@Leave me alone!@", _Delphynia);
+            terminate;
+        }
+        if (v2 = false) {
+            if ($gottattoo = true) {
+                if ~AvatarSex() {
+                    ["I am Delphynia, horticulturist and healer. State thy business or be on thy way. I do not traffic with oafs and knaves."];
+                } else {
+                    ["I am Delphynia, horticulturist and healer. Welcome, noble Pikeman. Thy presence honors me."];
+                }
+            } else {
+                ["I am Delphynia, horticulturist and healer. How may I be of service, <v0>?"];
+            }
+            SetItemFlag_i(_Met, _Delphynia);
+        } else {
+            ["'Tis always a pleasure to see thee, Avatar. How may I be of service to thee?"];
+        }
+        TurnOn(<< "Goblins", "healer", "storms", "buy", "bye" >>);
+        if ($delphknowsapparatus and not $knowlabitem) {
+            TurnOn("apparatus");
+        }
+        if ($delphknowspumice and not $knowpumice) {
+            TurnOn("pumice");
+        }
+        if ($delphknowsegg and not $knowpenguinegg) {
+            TurnOn("blue egg");
+        }
+        if ($delphknowsstone and not $knowstoneheart) {
+            TurnOn("glowing rock");
+        }
+        if ((flag(338) = true) and not $tookruggsletter) {
+            TurnOn("letter");
+        }
+        if (($KNOWS_ABOUT_VARO_LEAVES = true) and (($CURED_LYDIA_POISON = false) and (flag(421) = false))) {
+            TurnOn("Varo Leaves");
+        }
+        if ($BANES_RELEASED = true) {
+            TurnOn("Iolo the Mad");
+        }
+        converse {
+            key ("Goblins") {
+                ["Would that I never hear of those horrible creatures again! They are why I am now Fawn's healer, though I am not properly trained." *"Pomdirgun's shadow hath cast a blight on all the land!"];
+                TurnOff("Goblins");
+                TurnOn("Pomdirgun");
+            }
+            key ("healer") {
+                ["I am a horticulturist by trade. What little I know of herbs hath given me a responsibility I did not want. I curse the day that Seth refused a guard escort to do his herb gathering!"];
+                ["Dost thou wish healing?"];
+                if ~AskYesNo() {
+                    DelphyniaHeals_i();
+                } else {
+                    ["I hate to say this, but I am relieved to hear that!"];
+                }
+                TurnOff("healer");
+                TurnOn("Seth");
+            }
+            key ("Seth") {
+                ["Seth was two years older than the heavens, and set in his ways, to be sure. But he was a fine healer. He refused a guard escort to gather his herbs. He told Jorvin it was because the guards stepped on the plants he wanted to gather."];
+                ["But I think he simply wanted to be able to escape alone for a while. Thou hast no idea how little time one has when thou must be at the beck and call of everyone with some imagined ill!"];
+                TurnOff("Seth");
+                TurnOn("Jorvin");
+            }
+            key ("Jorvin") {
+                ["Jorvin is the Captain of the Guards. 'Twas he that went looking for Seth near twilight when the old man had not returned to the city." *"Jorvin found signs that the Goblins had taken Seth, and led pursuit. But it was too late. By the time the guards caught the foul monsters, Seth was already the makings for their next meal!"];
+                TurnOff("Jorvin");
+            }
+            key ("Pomdirgun") {
+                ["Iiieeee! That very name sends ice down my spine! Pomdirgun hath welded all the Goblins into his weapon. He will never stop until he hath driven us all from the land... Or feasted on us to the last child." *"He is a fiend drawn to destroy our Beauty!"];
+                TurnOff("Pomdirgun");
+            }
+            key ("storms") {
+                TurnOff("storms");
+                if ($AUDIENCE_WITH_YELINDA and ($FAWN_TRIAL_DONE and not $oraclesaysinnocent)) {
+                    ["My sole hope is now that the conspiracy of Kylista and Voldin hath been exposed the curse which lies upon this land might be raised."];
+                    ["Can a City built upon the concept of Pure Beauty remain cursed? I hope not..."];
+                } else {
+                    ["What foulness is about in the land! That I received one of the harbingers of Fawn's doom stains my Beauty! Even the heavens lash out to burn away the vile truth that I harbor within mine heart!"];
+                    TurnOn(<< "harbingers", "vile truth" >>);
+                }
+            }
+            key ("harbingers") {
+                ["When those sailors -- those false prophets -- first landed on our shores, two of their number came to seek me. One was a mage of some sort who came seeking what reagents I grow."];
+                if $tookruggsletter {
+                    ["The other... as thou knowest, was Ruggs."];
+                    TurnOn(<< "false prophets", "mage" >>);
+                } else {
+                    ["The other... He was a thief who wore a face none could love. He stole mine heart away!"];
+                    TurnOn(<< "false prophets", "mage", "thief" >>);
+                }
+                TurnOff("harbingers");
+            }
+            key ("false prophets") {
+                TurnOff("false prophets");
+                if ($AUDIENCE_WITH_YELINDA and ($FAWN_TRIAL_DONE and not $oraclesaysinnocent)) {
+                    ["But now I am so confused... 'Twas Kylista who told us that The Fellowship was false, but now she doth stand accused of heresy..."];
+                    ["And The Fellowship is again openly admitted within the city! I know not what to think."];
+                } else {
+                    ["That is what the Priestess of Beauty calls them. They speak of something called The Fellowship, and claim that it will make our lives complete."];
+                    ["Everyone knows that the true way lies along Beauty's path. By seeking Beauty, we draw all good things to us." *"I rue the day I ever saw him!"];
+                    TurnOn("Fellowship");
+                }
+            }
+            key ("Fellowship") {
+                ["I can tell thee nothing. Nothing! I would not listen to such blasphemy. 'Tis enough that one of them hath bewitched me and stolen mine heart..."];
+                TurnOff("Fellowship");
+            }
+            key ("mage") {
+                ["I think his companion called him by the name Batlin." *"He was disappointed in what little I had to offer in the way of reagents. I told him to seek out Pothos in Moonshade for a better selection."];
+                ["He also inquired about blackrock carvings or sculpture, I do not remember exactly. I told him to ask Delin, who doth know artisans in Monitor and Moonshade."];
+                TurnOff("mage");
+                TurnOn("Delin");
+            }
+            key ("buy") {
+                if (~GetWorkType(_Delphynia) = _TendShop) {
+                    ["What dost thou wish to purchase?"];
+                    DelphyniaSells_i();
+                } else {
+                    ["I will gladly sell thee vegetables or reagents when I am open, <v0>. Come to Healers Hall or the greenhouse during the daytime."];
+                    TurnOff("buy");
+                }
+            }
+            key ("Delin") {
+                ["Delin is Fawn's dry goods dealer, poor man. I wished Batlin luck in discussing anything with him."];
+                ["Delin hath not been right since his wife died in childbirth. His daughter, Alyssand, hath always looked after him, though she hath problems of her own now."];
+                TurnOff("Delin");
+                TurnOn("Alyssand");
+            }
+            key ("Alyssand") {
+                TurnOff("Alyssand");
+                if ($AUDIENCE_WITH_YELINDA and ($FAWN_TRIAL_DONE and not $oraclesaysinnocent)) {
+                    ["Hast thou not heard? Lady Yelinda doth look to the young woman as her chief advisor!"];
+                    ["Alyssand hath never been so busy, nor so burdened with cares. She doth work to exhaustion, yet I think she is happy."];
+                } else {
+                    ["Alyssand hath always been a headstrong girl. Thou wouldst expect it of someone with her responsibilities. We all thought Keth would take care of her, keep her under control. But then Keth was lost in one of those terrible storms."];
+                    ["Alyssand swore that as long as she had his ring there was still hope that he would return. When that disappeared not long ago, she seemed to go mad! She seems to have fallen in with those blasphemers and claims that the Oracle is a sham."];
+                    TurnOn(<< "ring", "Oracle" >>);
+                }
+            }
+            key ("ring") {
+                ["I cannot tell thee very much about it. I fear that I only glanced at it... I would know it if I saw it again, though."];
+                if ~IsInInv(0, 65177, _Ring, 1, _Party) {
+                    ["I could not swear before the Oracle that this is truly Alyssand's ring. But it certainly doth look like it..." *"Thou shouldst find Alyssand and ask her, to be sure."];
+                }
+                AlyssandSeeksAvatar_i();
+                TurnOff("ring");
+            }
+            key ("Oracle") {
+                ["Thou dost not know of the Oracle of Fawn? The Oracle is the instrument of Beauty here on Serpent Isle. It receives messages from the heavens, which Kylista makes plain for everyone to understand."];
+                TurnOff("Oracle");
+                TurnOn("Kylista");
+            }
+            key ("Kylista") {
+                ["Kylista is the Priestess of Beauty, all honor to her. 'Tis she that instructs us all in Beauty's truth, which she receives in revelations from the Oracle." *"Even Lady Yelinda honors Kylista's wisdom."];
+                TurnOff("Kylista");
+                TurnOn("Lady Yelinda");
+            }
+            key ("Lady Yelinda") {
+                ["Lady Yelinda, honor to her, is the ruler of Fawn. She is the most beautiful woman in the city, the very embodiment of Beauty."];
+                TurnOff("Lady Yelinda");
+            }
+            key ("thief") {
+                ["Thief, yes, that's what he is! His name is Ruggs, and he hath bewitched me. Perhaps he is some sort of mage, like his companion." *"He hath stolen mine heart and I do not know what to do."];
+                TurnOff("thief");
+            }
+            key ("vile truth") {
+                ["I must confess, I am the cause of these storms. I know I am. I must live with the vile truth that I hold in mine heart of hearts." *"I am in love with one of those who brought this ruin upon my city! Although I did not embrace his beliefs, mine heart embraced him." *"I am as guilty as Alyssand! I cannot see how she bears such shame..."];
+                TurnOff("vile truth");
+            }
+            key ("apparatus") {
+                TurnOff("apparatus");
+                if ~IsInInv(1, 65177, _Al_App_1, 1, _Party) {
+                    ["That is a piece of Mage's equipment, <v0>."];
+                    ["Thou sayest it is not thine? Hmmm... Then thou wilt have to enquire in Moonshade to find who it belongs to."];
+                    ["Each Mage's equipment is different from every other Mage's... As much for pride as anything else. I am sorry I cannot be of any more help to thee."];
+                } else {
+                    ["It sounds like a piece of Mage's equipment, <v0>. But I could not be certain without seeing it. It could be a simple piece of brewing equipment for all I know."];
+                    ["Thou couldst enquire in Moonshade, to see if any of the Mages are missing any equipment. I am sorry I cannot be of any more help to thee."];
+                }
+            }
+            key ("pumice") {
+                TurnOff("pumice");
+                $knowpumice = true;
+                if ~IsInInv(65177, 65177, _Pumice, 1, _Party) {
+                    ["Why, that is pumice, <v0>. 'Tis very unusual to see any here in Fawn... There is no volcanic activity anywhere near."];
+                    ["The only place that such a rock could have come from, that I know of, is somewhere beyond Moonshade."];
+                } else {
+                    ["A grayish rock? Light in weight for its mass?"];
+                    ["This sounds like pumice, to me. The only place that such a rock could have come from, that I know of, is somewhere beyond Moonshade... Where there is volcanic activity."];
+                }
+            }
+            key ("blue egg") {
+                TurnOff("blue egg");
+                if ~IsInInv(3, 65177, _Gwani_Artifacts, 1, _Party) {
+                    ["What a putrid smell!"];
+                    ["Remove that immediately!"];
+                    CloseSpeaker0_i();
+                    Bark_i(0, "@Take it away!@", _Delphynia);
+                    terminate;
+                } else {
+                    ["A blue egg? I have never heard of a blue egg."];
+                    ["Perhaps thou couldst try asking someone in Moonshade. I am told that the Mages have a great library on their island, full of unusual things."];
+                }
+            }
+            key ("glowing rock") {
+                TurnOff("glowing rock");
+                if ~IsInInv(15, 65177, _Reagents, 1, _Party) {
+                    ["That is no reagent that I know of, <v0>. But it is fascinating..."];
+                    ["I am sure that it is magical, but I do not know how. And for some reason I feel I should ask thee to take it away from here and forget that I saw it..."];
+                    ["I am sorry I cannot be of more help."];
+                } else {
+                    ["It is no reagent that I know of, <v0>. But it sounds fascinating..."];
+                    ["I am sure that it is magical, if it glows and is cool enough to hold. But I have never heard of it before."];
+                    ["I am sorry I cannot be of more help."];
+                }
+            }
+            key ("letter") {
+                if ~IsInInv(65177, 4, _Scroll, 1, _Party) {
+                    ["A letter from Ruggs? Oh, I must see it!"];
+                    v1 = ~TakeFromParty_i(false, 5, 4, _Scroll, 1);
+                    $tookruggsletter = true;
+                    ["I am adrift! I am torn to my very soul and I know not what to do. Thou must help me."];
+                    ["Ruggs hath told me often of his love for me. In truth 'twould be a lie if I were to say that I did not care for him. But he is so... deformed... so ugly, that I know not what to think."];
+                    ["All I have been taught tells me that Ruggs' features are the outward sign of the evil within. Yet I can find no trace of it... If that is wrong, what else might also be false?" *"I am shaken to my very core, but I cannot deny mine heart."];
+                    ["Wilt thou carry a letter back to Ruggs for me?"];
+                    if ~AskYesNo() {
+                        ["There is no one else that I can trust such a secret to." *"If there be a way, some day I will go to him."];
+                        v1 = ~GiveItemsOrDrop_i(true, false, 0, 27, 797, 1, _Avatar);
+                        flag(336) = true;
+                    } else {
+                        ["Perhaps it is best this way... I know not how to look upon his face and not wonder if there is some evil lurking there."];
+                    }
+                } else {
+                    ["Thou dost lie! I see no letter!"];
+                    Bark_i(0, "@Liar!@", _Delphynia);
+                    SetWorkType(_Shy, _Delphynia);
+                    terminate;
+                }
+                TurnOff("letter");
+            }
+            key ("Varo Leaves") {
+                TurnOff("Varo Leaves");
+                if ($KNOWS_ABOUT_VARO_LEAVES = true) {
+                    ["Harnna would not have sent thee if thou didst not have great need of the Varo leaves. I would help thee if I could. But my skills as a healer are limited. Take these leaves back to Harnna quickly, before thou dost worsen."];
+                } else {
+                    ["Thou canst only be permanently cured of thine infection by a special ointment made from Varo leaves. I do not know how to make the ointment myself, however. Take these leaves back to Harnna in Monitor quickly, before thou dost worsen. She is a true healer and will be able to help thee."];
+                }
+                flag(421) = true;
+                v1 = ~GiveItemsOrDrop_i(true, false, 3, 65177, 467, 5, _Avatar);
+            }
+            key ("bye") {
+                SendAssassin_i();
+                CloseSpeaker0_i();
+                Bark_i(0, "@Many thanks.@", _Avatar);
+                Bark_i(5, "@Walk in Beauty.@", _Delphynia);
+                JorvinBringsInvitation_i();
+                break;
+            }
+        }
+        clear_answers;
+    }
+}
+
+Usable DelphyniaHeals_i #locals(21) #uses(~LordOrLady, ~AvatarName, ~IsInInv, ~AskYesNo, ~GiveItemsOrDrop_i, ~PartyNoAutomatons_i, ~AskOrdList, ~GetStat, SetStat) {
+    v0 = ~LordOrLady();
+    v1 = ~AvatarName();
+    v2 = 948;
+    v3 = ~CountItem(_All, _All, v2, _Party);
+    v4 = false;
+    v5 = false;
+    if ($poisonedbylydia and not $CURED_LYDIA_POISON) {
+        if (flag(421) = false) {
+            ["I cannot heal this infection! Thou must go to Harnna with the Varo leaves!"];
+            TurnOn("Varo Leaves");
+        } else {
+            if ~IsInInv(3, 65177, _Magic_Plants, 5, _Party) {
+                ["I did already give thee all the Varo leaves that I have! Thou must go to Harnna to heal thine infection!"];
+            } else {
+                ["Didst thou lose the leaves I did give thee?"];
+                if ~AskYesNo() {
+                    ["Very well, take five more of the Varo leaves and go thou quickly to Harnna!"];
+                    v6 = ~GiveItemsOrDrop_i(true, false, 3, 65177, 467, 5, _Avatar);
+                } else {
+                    ["Good. Go to Harnna! Quickly now!"];
+                }
+            }
+        }
+    } else {
+        if (flag(336) = false) {
+            ["I charge 50 filari to use my knowledge of herbs to attempt to heal. Dost thou agree to pay?"];
+            if ~AskYesNo() {
+                if (v3 < 50) {
+                    ["Thou dost not have the filari to pay me!"];
+                    goto label_41;
+                }
+                ["Who is in need of healing? I will do what I can."];
+                label_14:
+                v7 = 50;
+                if (v4 = true) {
+                    v7 = 10;
+                }
+                v8 = ~PartyNoAutomatons_i();
+                v8 = (0 & v8);
+                v9 = << "nobody" >>;
+                Foreach v12 in v8 {
+                    if not (v12 = 0) {
+                        v9 = (v9 & ~GetNPCName_i(v12));
+                    }
+                }
+                v13 = ~AskOrdList(v9);
+                v13 = v8::v13;
+                if (v13 = 0) {
+                    ["As thou dost wish."];
+                    goto label_41;
+                }
+                v14 = ~ItemToNPC_i(v13);
+                v15 = ~GetItemFlag_i(_Poisoned, v13);
+                v16 = ~GetStat(_Str, v13);
+                v17 = ~GetStat(_Hits, v13);
+                v18 = ~GetNPCName_i(v13);
+                if (v16 > v17) {
+                    v19 = (v16 - v17);
+                    v19 = (v19 / 2);
+                    SetStat(v19, _Hits, v14);
+                    v20 = ~TakeFromParty_i(true, _All, _All, v2, v7);
+                    v5 = true;
+                    ["I have done all that I can."];
+                } else {
+                    if (v15 = false) {
+                        if (v14 = 65180) {
+                            ["Thou art unwounded!"];
+                        } else {
+                            ["<v18> is not wounded!"];
+                        }
+                    } else {
+                        if (v14 = 65180) {
+                            ["Thou art poisoned! I believe that I can cure such a simple venom."];
+                        } else {
+                            ["<v18> is poisoned! Fortunately, 'tis a simple venom to cure."];
+                        }
+                    }
+                }
+                if (v15 = true) {
+                    if (v5 = false) {
+                        v20 = ~TakeFromParty_i(true, _All, _All, v2, v7);
+                    }
+                    ClearItemFlag_i(_Poisoned, v13);
+                    ["'Tis done, <v0>! The poison hath been removed."];
+                }
+            } else {
+                ["Perhaps another time, <v0>."];
+            }
+            goto label_41;
+        }
+        ["Since thou didst agree to take my letter, I will help thee, <v1>. I will perform mine healing for only 10 filari."];
+        ["Whom dost thou wish to heal?"];
+        v4 = true;
+        goto label_14;
+    }
+    label_41:
+}
+
+Usable DelphyniaSells_i #locals(19) #uses(~LordOrLady, ~AskOrdList, ~AskYesNo, ~DelphyniaHaggles_i, ~SellItem_i, ~PartyUtters) {
+    v0 = ~LordOrLady();
+    PushKeys();
+    v1 = true;
+    v2 = << "nothing", "black pearls", "nightshade", "garlic", "ginseng", "mandrake", "onions", "apples", "carrots", "pumpkins" >>;
+    v3 = << 0, 842, 842, 842, 842, 842, 377, 377, 377, 377 >>;
+    v4 = << 65177, 0, 2, 4, 5, 3, 22, 16, 18, 21 >>;
+    v5 = << 0, 70, 25, 15, 20, 65, 5, 6, 7, 18 >>;
+    v6 = << 0, 35, 13, 9, 11, 35, 2, 3, 4, 9 >>;
+    v7 = 948;
+    v8 = << 0, 1, 1, 1, 1, 1, 1, 1, 1, 1 >>;
+    v9 = << 0, 1, 1, 1, 1, 1, 1, 1, 1, 1 >>;
+    While v1 {
+        v10 = ~AskOrdList(v2);
+        if (v10 = 1) {
+            v11 = ~rndRange(3, 1);
+            if (v11 = 1) {
+                v12 = "Perhaps later,";
+            }
+            if (v11 = 2) {
+                v12 = "Another time then,";
+            }
+            if (v11 = 3) {
+                v12 = "Come again,";
+            }
+            ["<v12> <v0>."];
+            v1 = false;
+        } else {
+            v13 = v5::v10;
+            v14 = 0;
+            v11 = ~rndRange(5, 1);
+            if (v11 = 1) {
+                v15 = "Dost thou accept?";
+            }
+            if (v11 = 2) {
+                v15 = "Wilt thou pay my price?";
+            }
+            if (v11 = 3) {
+                v15 = "Dost thou agree?";
+            }
+            if (v11 = 4) {
+                v15 = "Is the price acceptable?";
+            }
+            if (v11 = 5) {
+                v15 = "Is that agreeable with thee?";
+            }
+            if (v10 = 2) {
+                ["These were bequeathed to me by my father. They are beautiful, are they not? I will sell one to thee for <v13> filari."];
+                [<v15>"];
+                v16 = "black pearls";
+            }
+            if (v10 = 3) {
+                ["<v13> filari is what I ask for nightshade."];
+                ["<v15>"];
+                v16 = "nightshade mushrooms";
+            }
+            if (v10 = 4) {
+                ["I can sell thee sweet cloves of garlic for the pittance of <v13> filari."];
+                ["<v15>"];
+                v16 = "cloves of garlic";
+            }
+            if (v10 = 5) {
+                ["<v13> filari is a fair price for my ginseng, <v0>."];
+                [<v15>"];
+                v16 = "ginseng roots";
+            }
+            if (v10 = 6) {
+                ["The mandrake root is very potent, <v0>. I charge <v13> filari for one."];
+                ["<v15>"];
+                v16 = "mandrake roots";
+            }
+            if (v10 = 7) {
+                ["Mine onions are very sweet! <v13> filari is what I ask."];
+                ["<v15>"];
+                v16 = "onions";
+            }
+            if (v10 = 8) {
+                ["Thou shouldst try mine apples! I can give them to thee for <v13> filari."];
+                [<v15>"];
+                v16 = "apples";
+            }
+            if (v10 = 9) {
+                ["I can sell thee carrots for <v13> filari."];
+                [<v15>"];
+                v16 = "carrots";
+            }
+            if (v10 = 10) {
+                ["Not many in Fawn care for pumpkin, but I think it makes an excellent pie. I can sell thee one for <v13> filari."];
+                [<v15>"];
+                v16 = "pumpkins";
+            }
+            if (v13 = v6::v10) {
+                if ~AskYesNo() {
+                    v17 = v13;
+                } else {
+                    v17 = 0;
+                }
+            } else {
+                v17 = ~DelphyniaHaggles_i(v6::v10, v5::v10);
+            }
+            if (v17 > 0) {
+                if (v9::v10 = 1) {
+                    ["How many <v16> dost thou desire?"];
+                    v14 = ~SellItem_i(false, 1, 20, v17, v7, v8::v10, v4::v10, v3::v10);
+                } else {
+                    v14 = ~SellItem_i(false, 1, 0, v17, v7, 1, v4::v10, v3::v10);
+                }
+            }
+            if (v14 = 1) {
+                ["I hope thou dost enjoy thy purchase, <v0>!"];
+            } else {
+                if (v14 = 2) {
+                    ["I believe that thine hands are full, <v0>!"];
+                } else {
+                    if (v14 = 3) {
+                        v18 = ~PartyUtters(false, 0, (("@But " + v0) + ", we haven't the filari to purchase this.@"), 1);
+                        if (v18 <> 65180) {
+                            SetSpeaker0_i(0, _Delphynia);
+                            ["Then I am afraid thou canst not purchase any of my goods, <v0>."];
+                        } else {
+                            ["I am afraid thou dost not have enough to pay for this..."];
+                        }
+                        if (31 < (~GetNPCID_i(_Delphynia) + 6)) {
+                            SetNPCID_i(31, _Delphynia);
+                        } else {
+                            SetNPCID_i((~GetNPCID_i(_Delphynia) + 6), _Delphynia);
+                        }
+                    } else {
+                    }
+                }
+            }
+            ["Dost thou desire another purchase?"];
+            v1 = ~AskYesNo();
+        }
+    }
+    PopKeys();
+}
+
+Function ~DelphyniaHaggles_i accepts a0, a1 #locals(14) #uses(~LordOrLady, ~AskList, ~Haggle_i, ~AskYesNo) {
+    v2 = ~LordOrLady();
+    v3 = v1;
+    v4 = ((v0 / 3) * 2);
+    v5 = (15 - (~GetNPCID_i(_Delphynia) / 2));
+    v6 = 0;
+    v7 = 1;
+    v8 = 0;
+    v9 = 2;
+    v10 = ~GetNPCID_i(_Delphynia);
+    While v7 {
+        v11 = ~AskList(<< "yes", "no", "haggle" >>);
+        if (v11 = "no") {
+            return 0;
+        } else {
+            if (v11 = "yes") {
+                v12 = 0;
+                goto label_8;
+            }
+        }
+        v13 = ~Haggle_i(v6, v5, v8, v4, v9, v0, v3);
+        v8 = (v8 + 1);
+        v6 = v13::4;
+        v12 = v13::3;
+        v14 = v3;
+        v3 = v13::2;
+        v4 = v13::1;
+        label_8:
+        v15 = ~Random(3);
+        if (v12 < 2) {
+            if (v3 < (v0 + ((v1 - v0) / 4))) {
+                if (v15 = 1) {
+                    ["Thou dost drive a hard bargain, <v2>. Do not tell anyone about this... They think little enough of me already!"];
+                }
+                if (v15 = 2) {
+                    ["Thou hast a good eye for a bargain..."];
+                }
+                if (v15 = 3) {
+                    ["I would never agree to such a price, if times were not so bad!"];
+                }
+            } else {
+                if (v3 < (v0 + ((v1 - v0) / 3))) {
+                    if (v15 = 1) {
+                        ["My prices are reasonable, given my limited supply."];
+                    }
+                    if (v15 = 2) {
+                        ["Thou couldst talk a beggar out of his begging bowl! I cannot believe I have agreed to such a price!"];
+                    }
+                    if (v15 = 3) {
+                        ["Thou shouldst have been a shopkeeper, <v2>..."];
+                    }
+                } else {
+                    if (v3 < (v0 + ((v1 - v0) / 2))) {
+                        if (v15 = 1) {
+                            ["A fair deal..."];
+                        }
+                        if (v15 = 2) {
+                            ["'Tis a pleasure to deal with thee, <v2>."];
+                        }
+                        if (v15 = 3) {
+                            ["There are few people left who specialize in herbs, <v2>. Thou wilt find no better price, I assure thee."];
+                        }
+                    } else {
+                        if (v15 = 1) {
+                            ["Thou hast made me a happy woman, <v2>! Walk with Beauty!"];
+                        }
+                        if (v15 = 2) {
+                            ["May Beauty follow thee ever, <v2>."];
+                        }
+                        if (v15 = 3) {
+                            ["I fear that the storms have driven my prices up. I have no choice unless I wish to starve."];
+                        }
+                    }
+                }
+            }
+            ["We have agreed on a price of <v3> filari, <v2>?"];
+            if ~AskYesNo() {
+                if (v10 > 1) {
+                    SetNPCID_i((v10 - 2), _Delphynia);
+                }
+                return v3;
+            } else {
+                if (v15 = 1) {
+                    ["Thou canst not change thy mind! Thou didst agree!"];
+                }
+                if (v15 = 2) {
+                    ["What of our bargain? I thought better of thee..."];
+                }
+                if (v15 = 3) {
+                    ["Where is thine honor?  What of our agreement?"];
+                }
+                if (31 < (v10 + 10)) {
+                    SetNPCID_i(31, _Delphynia);
+                } else {
+                    SetNPCID_i((v10 + 10), _Delphynia);
+                }
+                return 0;
+            }
+        }
+        if (v6 = 1) {
+            if (v12 = 5) {
+                ["I said that <v3> was my final offer. Dost thou accept or not?"];
+                if (v10 < 28) {
+                    SetNPCID_i((v10 + 4), _Delphynia);
+                }
+                if ~AskYesNo() {
+                    return v3;
+                }
+                v7 = 0;
+            } else {
+                ["Very well. <v3> filari is my final offer."];
+                if (v10 < 30) {
+                    SetNPCID_i((v10 + 2), _Delphynia);
+                }
+            }
+        } else {
+            if (v12 = 2) {
+                if (v15 = 1) {
+                    ["How doth <v3> filari sound? Thou dost bargain well..."];
+                }
+                if (v15 = 2) {
+                    ["So, have we agreed on <v3> filari? Thou wilt no doubt see the Beauty of such an offer."];
+                }
+                if (v15 = 3) {
+                    ["My price is <v3> filari. Dost thou accept?"];
+                }
+            }
+            if (v12 = 3) {
+                if (v15 = 1) {
+                    ["Wouldst thou consider <v3> filari? I have such a limited stock..."];
+                }
+                if (v15 = 2) {
+                    ["I am not sure... Wouldst thou give <v3> filari?"];
+                }
+                if (v15 = 3) {
+                    ["<v3> filari? I must have enough to tithe to the Temple."];
+                }
+            }
+            if (v12 = 4) {
+                if (v15 = 1) {
+                    ["I cannot possibly accept less than <v3> filari!"];
+                    ["What dost thou say to this?"];
+                }
+                if (v15 = 2) {
+                    ["Surely thou canst see that I can go no lower than <v3> filari."];
+                }
+                if (v15 = 3) {
+                    ["I deserve no less than <v3> filari. It doth take much work to prepare these things!"];
+                }
+            }
+            if (v12 = 5) {
+                v3 = v14;
+                if (v15 = 1) {
+                    ["I would rather walk into the Goblin camp than accept such a paltry sum! My previous price stands, at <v3> filari."];
+                }
+                if (v15 = 2) {
+                    ["<v3> filari, and no less! I may be a woman, but I am no fool!"];
+                }
+                if (v15 = 3) {
+                    ["<v3> filari is where I stand. I know the value of my wares."];
+                }
+                if (v10 < 31) {
+                    SetNPCID_i((v10 + 1), _Delphynia);
+                }
+            }
+        }
+    }
+}

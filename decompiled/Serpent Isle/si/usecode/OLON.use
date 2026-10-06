@@ -1,0 +1,728 @@
+Routine Olon accepts a0 #locals(9) #uses(~LordOrLady, ~IsNPCNear, ~AvatarName, ~IsInInv, ~WhereAmI_i, ~GimmePathEgg, Bark_i, PartyFaces_i, ~AskYesNo, AlyssandSeeksAvatar_i, SendAssassin_i, JorvinBringsInvitation_i) {
+    v0 = ~LordOrLady();
+    v1 = ~IsNPCNear(_Jendon);
+    v2 = ~AvatarName();
+    v3 = ~AvatarSex();
+    v4 = ~IsInInv(0, 65177, _Ring, 1, _Party);
+    v5 = ~GetCoord(_Olon);
+    if ((v5::1 > 928) and ((v5::1 < 1745) and ((v5::2 > 959) and (v5::2 < 1775)))) {
+        v6 = true;
+    }
+    if (event = _Action) {
+        if (flag(400) or flag(395)) {
+            terminate;
+        }
+        if (~WhereAmI_i() = 3) {
+            v7 = ~PostInFuture(20, << _aNO_HALT_i, _aUSABLE_i, #Olon >>, ~GimmePathEgg(1, 5));
+            v7 = ~ApproachAvatar_i(40, 120, _Olon);
+            SetWorkType(_Talk, _Olon);
+            Bark_i(2, "@Hold there, old man!@", _Olon);
+        } else {
+            v7 = ~PostInFuture(50, << _aNO_HALT_i, _aUSABLE_i, #Olon >>, ~GimmePathEgg(1, 5));
+        }
+    }
+    if (event = _NearDeath) {
+        v7 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #Green_Noble >>, item);
+    }
+    if (event = _Converse) {
+        Item_bark("@A word with thee, friend.@", _Avatar);
+        PartyFaces_i(65478);
+        Bark_i(5, "@If thou art paying...@", _Olon);
+        SetWorkType(_Talk, _Olon);
+    }
+    if (event = _Talking) {
+        Npc_schedule(_Olon);
+        ClearBark_i(_Olon);
+        SetSpeaker0_i(0, _Olon);
+        if (flag(396) and (not flag(395) and not flag(400))) {
+            ["Say there, thou with the lute! Art thou a bard?"];
+            SetSpeaker1_i(0, _Iolo);
+            ["Yes, I am, though as of late I do not feel the music within me."];
+            CloseSpeaker1_i();
+            SetSpeakerSlot_i(0);
+            ["I beg of thee, canst thou indulge me for but one song? The sinister thunder doth linger in mine ears."];
+            ["A few strums from thy strings may bring comfort to this sorrowful town..."];
+            SetSpeaker1_i(0, _Iolo);
+            ["I am truly sorry, but I do not think that I can help thee..."];
+            CloseSpeaker0_i();
+            CloseSpeaker1_i();
+            flag(395) = true;
+            SetWorkType(_Wait, _Olon);
+            Bark_i(0, "@Hmmmm...@", _Iolo);
+            Bark_i(2, "@Please sing...@", _Delphynia);
+            Bark_i(4, "@Sing of Beauty!@", _Kylista);
+            Bark_i(8, "@Disperse!@", _Jorvin);
+            Bark_i(12, "@Now I need me a drink!@", _Olon);
+            v7 = ~PostAction(<< _aNO_HALT_i, _aWAIT_i, 10, _aUSABLE_i, #Iolo_Type >>, _Iolo);
+            terminate;
+        }
+        v8 = ~GetItemFlag_i(_Met, _Olon);
+        if ((~GetClock(12) < 3) and flag(357)) {
+            ["Go away, I'm not drunk enough yet."];
+            Bark_i(0, "@A drink!@", _Olon);
+            SetWorkType(_EatAtInn, _Olon);
+            terminate;
+        } else {
+            flag(357) = false;
+        }
+        if (v8 = false) {
+            if ($gottattoo = true) {
+                if (v3 = true) {
+                    ["By my sore eyes! 'Tis a comely wench wit' a tattoo... like any good sailor! Me name's Olon, and I'm a fisherman by trade."];
+                    TurnOn("tattoo");
+                } else {
+                    ["I haven't been out of this 'ere tavern all day. Find someone else ta put the blame on, Pikeman! Me name's Olon, and I'm a fisherman by trade."];
+                    TurnOn("Pikeman");
+                }
+            } else {
+                ["If it's a word or three thou art wantin' of me, I do me best talkin' wit' a bottle of Fawn ale! Me name's Olon, and I'm a fisherman by trade."];
+                TurnOn("Fawn ale");
+            }
+            SetItemFlag_i(_Met, _Olon);
+        } else {
+            ["Welcome back, ol' friend. These're thirsty times, aye?"];
+            if ($gottattoo = true) {
+                if (v3 = true) {
+                    ["Come lift a glass wit' me, lass. I do enjoy the company of a tattooed wench!"];
+                    TurnOn("tattoo");
+                } else {
+                    ["Come lift a glass wit' me, lad. Tell me what a brave Pikeman like ye have been a doin'."];
+                    TurnOn("Pikeman");
+                }
+            }
+        }
+        TurnOn(<< "goblins", "bye" >>);
+        if ($olonsaidstorms = false) {
+            TurnOn("storms");
+        }
+        if ($olonknowspinecone and not $knowpinecone) {
+            TurnOn("pinecone");
+        }
+        if ($olonknowscat and not flag(664)) {
+            TurnOn("dead cat");
+        }
+        converse {
+            key ("tattoo") {
+                ["Now don't go tellin' me that thou beest a Pikeman like those ugly sons out in the tower."];
+                if (~AskYesNo() = true) {
+                    ["Well, mayhaps they be uppin' their standards. Thou certainly art easy on the eyes. Jendon over there's pleasant enough, but ain't what thee'd be wantin' ta spend time with... if thou knowest what I mean."];
+                } else {
+                    ["I didn't think so! Thou art more pleasin' ta look at. 'Tisn't often that thou findest a woman what's brave enough ta face the tattoo needle around here."];
+                }
+                if v6 {
+                    ["Join me over a bottle of Fawn's finest ale and we can swap tales. I'd like ta know how a beauty like thee came away with a tattoo."];
+                    TurnOn("tales");
+                }
+                TurnOff("tattoo");
+            }
+            key ("tales") {
+                ["Don't be hasty! There's plenty of time for that. Thou still hast not told me how a comely piece of work like unto thee did find herself with a tattoo."];
+                TurnOff("tales");
+                TurnOn(<< "I don't remember.", "I was tricked.", "I am Monitor's Champion." >>);
+            }
+            key ("I don't remember.") {
+                ["Ah! I can understand right well, that I can. I've lost a day or two meself. Come ta think of it, that's how I ended up with me first tattoo... That was on that voyage when we found that pecul'ar island of cats."];
+                TurnOff(<< "I don't remember.", "I was tricked.", "I am Monitor's Champion." >>);
+                TurnOn("island of cats");
+            }
+            key ("island of cats") {
+                ["There's this island... Can't at all remember where it is. No one lives there, though. A barren, uninviting place..."];
+                if (v1 = true) {
+                    SetSpeaker1_i(0, _Jendon);
+                    ["Oh, not that ale tale again, Olon! If thou drivest away what customers I have left, thou canst find somewhere else ta drink."];
+                    SetSpeakerSlot_i(0);
+                    ["Quit thy complainin', Jendon. I'm the only reason anyone comes in here now, and thou knowest it! They come ta hear me tales..."];
+                    SetSpeakerSlot_i(1);
+                    ["Be that as may be, Olon. 'Tis not some bar maid that thou art speakin' with. Some of thy tales are not fit for any but a sailor's ears."];
+                    SetSpeakerSlot_i(0);
+                    ["What objection hast thou of this tale?"];
+                    SetSpeakerSlot_i(1);
+                    if v3 {
+                        ["None ta this one, though it is a bigger tale than the story about the flying whale. But I know thee! Let thee start on one tale and thou must tell them all. And I'll not have thee frightening the lady."];
+                        SetSpeakerSlot_i(0);
+                        if $gottattoo {
+                            ["Frighten a saucy thing that wears a tattoo? Now where was I? Oh, yes..."];
+                        } else {
+                            ["Frighten such an adventurous wench? Now where was I? Oh, yes..."];
+                        }
+                        CloseSpeaker1_i();
+                    } else {
+                        ["None ta this one, though it is a bigger tale than the story about the flying whale. But I know thee! Let thee start on one tale and thou must tell them all. And I'll not have thee makin' a payin' customer sick wit' thy stories."];
+                        SetSpeakerSlot_i(0);
+                        ["Turn the stomach of so bold a lad? Now where was I? Oh, yes..."];
+                        CloseSpeaker1_i();
+                    }
+                }
+                ["The whole island is crawling with glowin' cats. Don't know how they arrived there, nor how they live in such a forsaken spot. But I've heard it said that they live there guarding some fantastical cat treasure." ~"This be little Delphynia's favorite tale..."];
+                TurnOff("island of cats");
+                TurnOn("Delphynia");
+            }
+            key ("Delphynia") {
+                ["Delphynia is an herbalist."];
+                if (v1 = true) {
+                    SetSpeaker1_i(0, _Jendon);
+                    ["She's a Horticulturist, Olon. Thou shouldst only give facts..."];
+                    SetSpeakerSlot_i(0);
+                    if v3 {
+                        ["Thou wouldst have me say such things in front of a lady? Weren't thou the one what was tellin' me ta mind me manners?"];
+                    } else {
+                        ["Thou wouldst have me say such things of a lady? Weren't thou the one what was tellin' me ta mind me manners?"];
+                    }
+                    SetSpeakerSlot_i(1);
+                    ["Oh, I surrender!"];
+                    SetSpeakerSlot_i(0);
+                    ["An' him worried about what's proper an' what's not..."];
+                    CloseSpeaker1_i();
+                }
+                ["She's what passes for a healer in these forsaken parts ever since the last healer were et by them goblins."];
+                if (v1 = true) {
+                    SetSpeaker1_i(0, _Jendon);
+                    if v3 {
+                        ["Don't rant on about the goblins, Olon! 'Tis not a fit subject ta discuss before a lady."];
+                        SetSpeakerSlot_i(0);
+                        ["Go back ta washin' the glasses, Jendon! Thou art no judge of what ta say in front of ladies."];
+                    } else {
+                        ["Don't rant on about the goblins, Olon! Thou canst turn the stomach of a bilge rat when thou dost have a mind to."];
+                        SetSpeakerSlot_i(0);
+                        ["Go back ta washin' the glasses, Jendon! Thou art no judge of what a darin' adventurer like this 'ere lad might like ta hear."];
+                    }
+                    SetSpeakerSlot_i(1);
+                    ["I'd throw thee out, if thou weren't mine only steady customer. I would."];
+                    CloseSpeaker1_i();
+                    SetSpeakerSlot_i(0);
+                }
+                ["Wouldst thou care to spend a while longer listenin' to another story?"];
+                if (~AskYesNo() = true) {
+                    TurnOn("story");
+                }
+                TurnOff("Delphynia");
+            }
+            key ("story") {
+                if v3 {
+                    ["Ah, I know just the one for a bold wench as thyself! A tale ta stir the blood, that's for certain... the King of the White Dragon!"];
+                } else {
+                    ["Ah, I know just the one for a bold warrior as thyself! A tale ta stir the blood, that's for certain... the King of the White Dragon!"];
+                }
+                TurnOff("story");
+                TurnOn("King of the White Dragon");
+            }
+            key ("I was tricked.") {
+                ["Aye, there are those that would do such things. Sometimes 'tis them that thou trustest most. Just like that ol' King of the White Dragon..."];
+                if (v1 = true) {
+                    SetSpeaker1_i(0, _Jendon);
+                    ["Olon, even I don't want ta hear that one... ever again!"];
+                    SetSpeakerSlot_i(0);
+                    ["Thou always didst lack a backbone, Jendon! Go ta Temple and soothe thy nerves with the Oracle's empty mouthings!"];
+                    SetSpeakerSlot_i(1);
+                    ["Now 'tis blasphemy, is it, Olon? I would never have guessed thou hadst been taken in by that lot of fools."];
+                    SetSpeakerSlot_i(0);
+                    ["Thou art a fine one ta be talkin' about being taken in, Jendon. An' I've said so often enough."];
+                    SetSpeakerSlot_i(1);
+                    ["That's all thou ever dost, Olon -- talk."];
+                    SetSpeakerSlot_i(0);
+                    TurnOn(<< "Temple", "Oracle" >>);
+                    CloseSpeaker1_i();
+                }
+                TurnOff(<< "I don't remember.", "I was tricked.", "I am Monitor's Champion." >>);
+                TurnOn("King of the White Dragon");
+            }
+            key ("Temple") {
+                ["It sits crouching in the shadow of the palace. But 'tis what controls the palace, if'n thou knowest what I mean."];
+                TurnOff("Temple");
+            }
+            key ("Oracle") {
+                ["I hear tell it was built by some important mage, in the days before our ancestors left Sosaria. Supposed ta be an instrument of truth. But, seein' that lot, I wonder whose truth it tells."];
+                TurnOff("Oracle");
+            }
+            key ("King of the White Dragon") {
+                ["Long ago, when the mountains were young, this land was ruled by two rival kings. One of those kings was called the King of the White Dragon."];
+                if (v1 = true) {
+                    SetSpeaker1_i(0, _Jendon);
+                    if v3 {
+                        ["I'll not stay here and listen ta this again! Lady, I see that thou art armed. If he doth offend thee, run him through. I'll make no complaint." *"If thou hast need of me, I shall be in back."];
+                        SetSpeakerSlot_i(0);
+                        ["Perhaps he is right. Perhaps this tale is too rough for thy pretty ears. Dost thou wish me ta tell another tale instead?"];
+                        if (~AskYesNo() = true) {
+                            ["Then perhaps thou wouldst prefer ta hear a tale of a timeless love story that crosses the frozen wastes."];
+                        } else {
+                            ["I was right! Thou art a sturdy wench! I'll tell thee a fine love story next. Now where was I?"];
+                        }
+                        TurnOn("love story");
+                        CloseSpeaker1_i();
+                    } else {
+                        ["I'll not stay here and listen ta this again! Milord, I see that thou art armed. If he doth offend thee, run him through. I'll make no complaint." *"If thou hast need of me, I shall be in back."];
+                        SetSpeakerSlot_i(0);
+                        ["Perhaps he is right. Perhaps this tale is too brutal even for thee. Dost thou wish me ta tell another tale instead?"];
+                        if (~AskYesNo() = true) {
+                            ["Then perhaps thou wouldst prefer ta hear a tale of a timeless love story that crosses the frozen wastes."];
+                        } else {
+                            ["I was right! Thou art a brave lad! I'll tell thee a fine love story next. Now where was I?"];
+                        }
+                        TurnOn("love story");
+                        CloseSpeaker1_i();
+                    }
+                }
+                ["The King of the White Dragon drove away his rival king, but he could not enjoy his victory, for the goblins were come. Hordes and hordes of goblins... and there weren't nothin' the old King of the White Dragon could do ta hold 'em back."];
+                ["Somethin' snapped in that old man's head when he saw that he could never control the land. So the King planned a way for him ta have control over everything at last. He summoned all his folk for a big party, and locked them inta the castle. Then, one by one, he murdered them all -- down ta the last babe."];
+                ["And then, as dawn broke, he stood on the tower all bloody and called ta the goblins that the King of the White Dragon had saved his people from their stewpots."];
+                ["They say he lives there still, feeding off any who pass by. One thing's certain, the goblins don't go near that place to this very day."];
+                TurnOff("King of the White Dragon");
+            }
+            key ("love story") {
+                ["This is not thine usual love story, no. This here's about dragons, ice dragons."];
+                if (v1 = true) {
+                    SetSpeaker1_i(0, _Jendon);
+                    ["A love story about ice dragons! Now I've heard everything, even from thee, Olon."];
+                    SetSpeakerSlot_i(0);
+                    ["Thou wouldst not recognize a love story if it hit thee between the eyes, Jendon."];
+                    SetSpeakerSlot_i(1);
+                    ["So sayest thou, Olon. I think Alyssand's story qualifies well enough."];
+                    SetSpeakerSlot_i(0);
+                    ["Shows what thou knowest, Jendon. We bards would call that a tragedy."];
+                    SetSpeakerSlot_i(1);
+                    ["Thou wouldst style thyself a bard now? Perhaps I should bow."];
+                    SetSpeakerSlot_i(0);
+                    ["Do that, and quiet! Thou hast interrupted all my tales so far. 'Tis rude."];
+                    TurnOn("Alyssand");
+                    CloseSpeaker1_i();
+                }
+                ["Back around the time Fawn was founded, many of our folk took it upon themselves ta explore the waterways. More than one ship returned with tales of a glittering ice dragon slowly making its way southward, calling pitiful-like."];
+                ["A few years later these same sailors spied TWO ice dragons sitting atop an icy peak, singin' ta one another. Them scholars over in Moonshade say that dragons mate for life. I'd wager that's what our lads came across -- a dragon out hunting for a mate."];
+                ["The only other thing I ever heard from those mages that made sense is that a dragon turns very hostile if its mate or young is killed."];
+                if (v1 = true) {
+                    SetSpeaker1_i(0, _Jendon);
+                    ["Now that's truly touchin', Olon. Thou surely hast brought a tear ta mine eye, thou hast."];
+                    CloseSpeaker1_i();
+                    SetSpeakerSlot_i(0);
+                }
+                TurnOff("love story");
+            }
+            key ("Alyssand") {
+                ["Alyssand's the daughter of Delin, the shopkeeper. Thou mightest think she hath had enough sadness in her short life."];
+                if (v1 = true) {
+                    SetSpeaker1_i(0, _Jendon);
+                    ["'Tis hard ta find many who have borne more, I'll wager."];
+                    CloseSpeaker1_i();
+                    SetSpeakerSlot_i(0);
+                }
+                ["Her mother died after givin' birth ta Delin's only son. Never saw a man take it harder. He near ta lost his mind. Then he did go a little crazy after the Magister took young Freli away during the annual testing." *"Alyssand hath looked after him all alone ever since, helpin' mind the store and doin' her weavin'. Then she met Keth."];
+                if (v1 = true) {
+                    SetSpeaker1_i(0, _Jendon);
+                    ["A sturdy lad, Keth was. 'Twere a pity ta lose him."];
+                    SetSpeakerSlot_i(0);
+                    ["I'll thank thee to keep thy comments to thyself, Jendon. Thou art ruining my tale."];
+                    CloseSpeaker1_i();
+                }
+                ["Keth doted upon Alyssand. Treated her better than the Lady of Fawn, he did. Sent all the way ta Moonshade ta have an engagement ring made for her."];
+                if (v1 = true) {
+                    SetSpeaker1_i(0, _Jendon);
+                    ["Cost him a pretty penny, I'll wager."];
+                    CloseSpeaker1_i();
+                    SetSpeakerSlot_i(0);
+                }
+                ["Then one day Keth didn't run fast enough ta shelter when one of those cursed storms hit. No one hath seen him since." *"Until she lost her engagement ring ta another one of those storms here recently, Alyssand swore that Keth would return. She's a changed woman now."];
+                if (v1 = true) {
+                    SetSpeaker1_i(0, _Jendon);
+                    ["Sounds like a love story to me..."];
+                    SetSpeakerSlot_i(0);
+                    ["An' I suppose that thou considerest the island of cats a tragedy then?"];
+                    SetSpeakerSlot_i(1);
+                    ["No, I'd call it an ale tale.. made from the fumes of mine ale!"];
+                    CloseSpeaker1_i();
+                    SetSpeakerSlot_i(0);
+                }
+                TurnOff("Alyssand");
+                TurnOn("island of cats");
+                if (v4 = true) {
+                    TurnOn("engagement ring");
+                }
+            }
+            key ("engagement ring") {
+                ["That could be it, right enough. Though thou shouldst ask Alyssand herself. Mine eyes are not what they were."];
+                if (v1 = true) {
+                    SetSpeaker1_i(0, _Jendon);
+                    ["'Tis it, sure as the tide comes in! Keth flashed it around enough, I'd recognize it anywhere."];
+                    CloseSpeaker1_i();
+                    SetSpeakerSlot_i(0);
+                }
+                AlyssandSeeksAvatar_i();
+                TurnOff("engagement ring");
+            }
+            key ("I am Monitor's Champion.") {
+                ["Why not say that thou art the new Lady of Fawn, whilst thou art about it, bold wench? Methinks that thy tales must be taller than mine."];
+                if (v1 = true) {
+                    SetSpeaker1_i(0, _Jendon);
+                    ["Now that be truly difficult, too."];
+                    CloseSpeaker1_i();
+                    SetSpeakerSlot_i(0);
+                }
+                ["I think that thou wouldst benefit from the wisdom of an honest tradesman. Perhaps it would divert thy mind from a foolish girl's dreams."];
+                TurnOff(<< "I don't remember.", "I was tricked.", "I am Monitor's Champion." >>);
+                TurnOn("wisdom");
+            }
+            key ("wisdom") {
+                ["That woman who travelled with the Fellowship sailors said that the greatest wisdom comes from those of us what works for our living. Smart lady. She was willin' ta listen ta what I have to say."];
+                TurnOff("wisdom");
+                TurnOn(<< "woman", "Fellowship sailors" >>);
+            }
+            key ("woman") {
+                ["A red-haired beauty by the name of Gwenno. I told her about the island of cats, the King of the White Dragon. An' I told her a love story. I remember that -- she laughed and bought another round before she left."];
+                TurnOff("woman");
+                TurnOn(<< "island of cats", "King of the White Dragon", "love story" >>);
+            }
+            key ("Fellowship sailors") {
+                TurnOff("Fellowship sailors");
+                if ($AUDIENCE_WITH_YELINDA and ($FAWN_TRIAL_DONE and not $oraclesaysinnocent)) {
+                    ["Now, if thou dost want to know more about them, thou shouldst ask them. The Lady hath let them back into the city, thou dost know..."];
+                } else {
+                    ["They're the poor lads that Jendon prattles about all the time. Ta hear him talk, the Oracle all but shook down the Temple when Kylista asked if they were the cause of the storms."];
+                    if (v1 = true) {
+                        SetSpeaker1_i(0, _Jendon);
+                        ["Thou canst blaspheme all thou likest, Olon, I was there and heard it!"];
+                        CloseSpeaker1_i();
+                        SetSpeakerSlot_i(0);
+                    }
+                    TurnOn(<< "Temple", "Oracle", "Kylista" >>);
+                }
+            }
+            key ("Kylista") {
+                ["Kylista is the priestess of Beauty. She's wondrous fair of face, but her heart's as cold as the sea is deep. Kylista cares only for those who bow and scrape ta her. She doth have no use for those what can't make her more important."];
+                TurnOff("Kylista");
+                TurnOn("Beauty");
+            }
+            key ("Beauty") {
+                ["'Tis what everyone of this town is dedicated to. Everyone but those tryin' ta increase their power or wealth, that is..." *"Me sire told me that, once upon a time, Fawn was built in honor of love. We've come a far cry from that, I'd say."];
+                TurnOff("Beauty");
+            }
+            key ("Pikeman") {
+                ["I'm not so far gone in me cups as ta not be able ta see the mark that thou bearest on thy face. All the world knows thee for a Pikeman."];
+                if ($fawntowerretaken = true) {
+                    ["But thou must be weary after takin' back the tower from those foul goblins. Pull up a chair an' we'll swap a few yarns over a cup or two."];
+                } else {
+                    ["Thou dost not seem a bad sort of fellow. I'd be lookin' for a bit of drink and company, too, if I wert thou." *"I doubt that it will be long before thou and thy companions lay siege ta those vile goblins in the tower." *"Come lift a few with me, and I'll tell a few yarns ta take thy mind off thy troubles."];
+                }
+                TurnOff("Pikeman");
+                TurnOn("yarns");
+            }
+            key ("yarns") {
+                if ($fawntowerretaken = true) {
+                    ["I'm certain that thou hast many yarns ta tell. Wert thou amongst the company that retook the tower?"];
+                    if (~AskYesNo() = true) {
+                        ["I'd wager that it was as gruesome as the King of the White Dragon's castle."];
+                    } else {
+                        ["'Twas for the best, I'll warrant. I hear it was as gruesome as the King of the White Dragon's castle. An' everyone knows what happened there."];
+                    }
+                } else {
+                    ["I'd not be in thy shoes, good Pikeman. Retaking that tower will be as gruesome as the King of the White Dragon's castle."];
+                }
+                TurnOff("yarns");
+                TurnOn("King of the White Dragon");
+            }
+            key ("King of the White Dragon") {
+                ["Thou hast not heard of the King of the White Dragon? The bards of Monitor have been lax of late then. I'll wager that thou hast not heard of the island of cats neither. Or a proper love story, neither."];
+                if (v1 = true) {
+                    SetSpeaker1_i(0, _Jendon);
+                    ["Listen ta him, wilt thou? Art thou sayin' that thou art Fawn's bard now, Olon?"];
+                    SetSpeakerSlot_i(0);
+                    ["Our 'ficial one went down with the Delyssia. Reckon I'm all there is now."];
+                    SetSpeakerSlot_i(1);
+                    ["I'd better start washin' more mugs, then. I may not have enough ta last, when word o' this gets out... If thou art not thrown out of town for thy braggin' first!"];
+                    CloseSpeaker1_i();
+                    SetSpeakerSlot_i(0);
+                }
+                ["Long ago, when the mountains were young, this land was ruled by two rival kings. One of those kings was called the King of the White Dragon."];
+                ["The King of the White Dragon drove away his rival king, but he could not enjoy his victory, for the goblins were come. Hordes and hordes of goblins... and there wasn't nothin' the old King of the White Dragon could do ta hold them back."];
+                ["Somethin' snapped in that old man's head when he saw that he could never control the land. So the King planned a way for him ta have control over everything at last. He summoned all his folk for a big party, and locked them inta the castle. Then, one by one, he murdered them all -- down ta the last babe."];
+                ["And then, as dawn broke, he stood on the tower all bloody and called ta the goblins that the King of the White Dragon had saved his people from their stewpots."];
+                ["They say he lives there still, feeding off any who pass by. One thing's for sure, the goblins don't go near that place ta this very day."];
+                if (v1 = true) && ($fawntowerretaken = false) {
+                    SetSpeaker1_i(0, _Jendon);
+                    ["I'm sure that thou hast taken his mind off his problems, for sure, Olon. Why worry about goblins when thou canst worry about the King of the White Dragon?"];
+                    CloseSpeaker1_i();
+                    SetSpeakerSlot_i(0);
+                }
+                TurnOff("King of the White Dragon");
+                TurnOn(<< "island of cats", "love story" >>);
+            }
+            key ("island of cats") {
+                ["There's this island... Can't at all remember where it is. No one lives there, though. A barren, uninviting place..."];
+                if (v1 = true) {
+                    SetSpeaker1_i(0, _Jendon);
+                    ["Oh, not again, Olon! If thou drivest away what customers I have left, thou canst find somewhere else ta drink."];
+                    SetSpeakerSlot_i(0);
+                    ["Cease thy complainin', Jendon. I'm the only reason anyone comes in here now, and thou knowest it! They come ta hear me tales..." Now where was I? Oh, yes..."];
+                    CloseSpeaker1_i();
+                }
+                ["The whole island is crawling with cats. Don't know how they arrived there, nor how they live in such a forsaken spot. But I've heard it said that they live there guarding some fantastical cat treasure."];
+                ["This be Delphynia's favorite tale."];
+                TurnOff("island of cats");
+                TurnOn("Delphynia");
+            }
+            key ("Delphynia") {
+                ["Delphynia is an herbalist."];
+                if (v1 = true) {
+                    SetSpeaker1_i(0, _Jendon);
+                    ["She's a Hor-ti-culturist, Olon. Thou shouldst only give facts..."];
+                    SetSpeakerSlot_i(0);
+                    ["Thou wouldst have me say such things in front of a stranger? 'Tisn't polite ta speak of a lady in such a fashion, Jendon."];
+                    SetSpeakerSlot_i(1);
+                    ["Oh, I surrender!"];
+                    CloseSpeaker1_i();
+                    SetSpeakerSlot_i(0);
+                }
+                ["She's what passes for a healer in these forsaken parts ever since the last healer was et by them goblins."];
+                if (v1 = true) {
+                    SetSpeaker1_i(0, _Jendon);
+                    ["Don't rant on about the goblins, Olon! `Tis not a subject this young lord wishes ta hear right now, I'm certain."];
+                    SetSpeakerSlot_i(0);
+                    ["Return ta washin' the glasses, Jendon! Thou art no judge of what a warrior wishes ta hear."];
+                    SetSpeakerSlot_i(1);
+                    ["And thou art? I'd throw thee out, if thou weren't mine only steady customer. I would."];
+                    CloseSpeaker1_i();
+                    SetSpeakerSlot_i(0);
+                }
+                TurnOff("Delphynia");
+            }
+            key ("love story") {
+                ["This is not thine usual love story, no. This here's about dragons, ice dragons."];
+                if (v1 = true) {
+                    SetSpeaker1_i(0, _Jendon);
+                    ["A love story about ice dragons! Now I've heard everything, even from thee, Olon."];
+                    SetSpeakerSlot_i(0);
+                    ["Thou wouldst not recognize a love story if it hit thee between the eyes, Jendon."];
+                    SetSpeakerSlot_i(1);
+                    ["So sayest thou, Olon. I think Alyssand's story qualifies well enough."];
+                    SetSpeakerSlot_i(0);
+                    ["Shows what thou knowest, Jendon. We bards would call that a tragedy."];
+                    SetSpeakerSlot_i(1);
+                    ["Perhaps I should bow."];
+                    SetSpeakerSlot_i(0);
+                    ["Do that, and quiet! Thou art rude to interrupt."];
+                    TurnOn("Alyssand");
+                    CloseSpeaker1_i();
+                }
+                ["Back around the time Fawn was founded, many of our folk took it upon themselves ta explore the waterways. More than one ship returned with tales of a glittering ice dragon slowly making its way southward, calling pitiful-like."];
+                ["A few years later these same sailors spied TWO ice dragons sitting atop an icy peak, singing ta one another. Them scholars over in Moonshade say that dragons mate for life. I'd wager that's what our lads came across -- a dragon out hunting for a mate."];
+                ["The only other thing I ever heard from those mages that made sense is that a dragon is very hostile if its mate or young is killed."];
+                if (v1 = true) {
+                    SetSpeaker1_i(0, _Jendon);
+                    ["Now that's truly touchin', Olon. Thou surely hast brought a tear ta mine eye, thou hast."];
+                    CloseSpeaker1_i();
+                    SetSpeakerSlot_i(0);
+                }
+                TurnOff("love story");
+                TurnOn("Alyssand");
+            }
+            key ("Alyssand") {
+                ["Alyssand's the daughter of Delin, the shopkeeper. Thou mightest think she hath had enough sadness in her short life."];
+                if (v1 = true) {
+                    SetSpeaker1_i(0, _Jendon);
+                    ["'Tis hard ta find many who have borne more, I'll wager."];
+                    CloseSpeaker1_i();
+                    SetSpeakerSlot_i(0);
+                }
+                ["Her mother died after givin' birth ta Delin's only son. Never saw a man take it harder. He near ta lost his mind."];
+                ["Then he did go a little crazy after the Magister took young Freli away during the annual testing." *"Alyssand hath looked after him all alone ever since, helpin' mind the store and doin' her weavin'. Then she met Keth."];
+                if (v1 = true) {
+                    SetSpeaker1_i(0, _Jendon);
+                    ["A sturdy lad, Keth was. 'Twere a pity ta lose him."];
+                    SetSpeakerSlot_i(0);
+                    ["I'll thank thee ta keep thy comments ta thyself, Jendon. Thou art ruining my tale."];
+                    CloseSpeaker1_i();
+                }
+                ["Keth doted upon Alyssand. Treated her better than the Lady of Fawn, he did. Sent all the way ta Moonshade ta have an engagement ring made for her."];
+                if (v1 = true) {
+                    SetSpeaker1_i(0, _Jendon);
+                    ["Cost him a pretty penny, I'll wager."];
+                    CloseSpeaker1_i();
+                    SetSpeakerSlot_i(0);
+                }
+                ["Then one day Keth didn't run fast enough ta shelter when one of those cursed storms hit. No one hath seen him since."];
+                ["Until she lost her engagement ring ta another one of those storms here recently, Alyssand swore that Keth would return. She's a changed woman now."];
+                if (v1 = true) {
+                    SetSpeaker1_i(0, _Jendon);
+                    ["Sounds like a love story ta me..."];
+                    SetSpeakerSlot_i(0);
+                    ["Goes ta show what thou knowest!"];
+                    CloseSpeaker1_i();
+                }
+                TurnOff("Alyssand");
+                if (v4 = true) {
+                    TurnOn("engagement ring");
+                }
+            }
+            key ("engagement ring") {
+                ["That could be it, right enough. Though thou shouldst ask Alyssand herself. Mine eyes are not what they were."];
+                if (v1 = true) {
+                    SetSpeaker1_i(0, _Jendon);
+                    ["'Tis it, sure as the tide comes in! Keth flashed it around enough, I'd recognize it anywhere."];
+                    CloseSpeaker1_i();
+                    SetSpeakerSlot_i(0);
+                }
+                TurnOff("engagement ring");
+            }
+            key ("Fawn ale") {
+                if (v3 = true) {
+                    ["'Tis a drink from the heavens. Thou shouldst try it."];
+                    if (v1 = true) {
+                        SetSpeaker1_i(0, _Jendon);
+                        ["I'd advise against it, lady. There aren't many outside Fawn that care for its taste, I've found. I only export a bit ta Monitor now."];
+                        TurnOn("Monitor");
+                        CloseSpeaker1_i();
+                        SetSpeakerSlot_i(0);
+                    }
+                    ["If thou wishest Fawn ale, it only comes in brown bottles."];
+                } else {
+                    ["The drink of hard-workin' men! A drink ta put hair on thy chest and make the women throw themselves at thee." *"Thou shouldst try it."];
+                    if (v1 = true) {
+                        SetSpeaker1_i(0, _Jendon);
+                        ["Be careful, Olon. There aren't many outside Fawn that care for its taste. I only export a bit ta Monitor now."];
+                        TurnOn("Monitor");
+                        CloseSpeaker1_i();
+                        SetSpeakerSlot_i(0);
+                    }
+                    ["If thou wishest Fawn ale, it comes only in brown bottles."];
+                }
+                ["Wilt thou buy me a drink? I would be glad ta share stories with thee if thou dost."];
+                if (~AskYesNo() = true) {
+                    if (v1 = true) {
+                        ["Jendon! Bring thy lazy backside over here! Thou hast a payin' customer with a thirst."];
+                        SetSpeaker1_i(0, _Jendon);
+                        ["As sweet-tongued as always, Olon. Dost thou truly wish ta buy this sot a drink, <v0>?"];
+                        if (~AskYesNo() = true) {
+                            ["Seest thou, Jendon, not everyone is as hard-hearted as thee!"];
+                            if (~CountItem(_All, _All, _Fawn_Money, _Party) > 9) {
+                                v7 = ~TakeFromParty_i(true, _All, _All, _Fawn_Money, 10);
+                            } else {
+                                SetSpeakerSlot_i(0);
+                                ["Not enough filari, no drink. No drink, no stories. Well, thou knowest where ta find me, if thou dost wish ta hear me stories."];
+                                Bark_i(0, "@I'm thirsty...@", _Olon);
+                                SetWorkType(_EatAtInn, _Olon);
+                                terminate;
+                            }
+                        } else {
+                            ["Changed thy mind, aye? No drink, no stories. Well, thou knowest where ta find me, if thou dost wish ta hear me stories."];
+                            Bark_i(0, "@I'm thirsty...@", _Olon);
+                            SetWorkType(_EatAtInn, _Olon);
+                            terminate;
+                        }
+                        SetSpeakerSlot_i(0);
+                    } else {
+                        ["Jendon doth not seem ta be around right now. Perhaps thou couldst buy that drink when he comes back. An' then me throat won't be too dry ta tell thee those stories."];
+                    }
+                } else {
+                    ["No drink, no stories! Thou knowest where ta find me, if thou dost wish ta hear me stories."];
+                    Bark_i(0, "@I'm thirsty...@", _Olon);
+                    SetWorkType(_EatAtInn, _Olon);
+                    terminate;
+                }
+                TurnOff("Fawn ale");
+                TurnOn("stories");
+            }
+            key ("Monitor") {
+                ["If thou shouldst want some while thou art in Monitor, Jendon sends it ta Simon. It doth not disappear very fast, but he orders a new batch every few months."];
+                TurnOff("Monitor");
+                TurnOn("Simon");
+            }
+            key ("Simon") {
+                ["He is the innkeeper in Monitor. If thou hast the opportunity ta stay there, send him regards from Olon in Fawn... a fellow Fawn ale drinker."];
+                TurnOff("Simon");
+            }
+            key ("stories") {
+                ["I know some fine ones -- scary, sentimental, or jus' plain odd. I can tell thee about the King of the White Dragon. Or I can tell thee about the island of cats. Or I can thee a love story."];
+                TurnOff("stories");
+                TurnOn(<< "King of the White Dragon", "island of cats", "love story" >>);
+            }
+            key ("goblins") {
+                ["Fierce little monsters, the goblins are. Not long in brains, but hard ta handle in a fight. Pomdirgun sends them at us in waves until we are all so tired that we can hardly stand and fight. But still, I'd rather deal with goblins than Gwani."];
+                TurnOff("goblins");
+                TurnOn(<< "Pomdirgun", "Gwani" >>);
+            }
+            key ("Pomdirgun") {
+                ["He's not like other goblins, no. ~He's smart, and clever. Almost makes me think he might be a Daemon of some sort, leadin' them ta take over the world. Cook us all if they can, they will."];
+                if (v1 = true) {
+                    SetSpeaker1_i(0, _Jendon);
+                    ["They'll not cook thee, Olon. Thou art already pickled!"];
+                    SetSpeakerSlot_i(0);
+                    ["An' they'll not eat thy tongue, either... 'Tis too tough from overuse!"];
+                    CloseSpeaker1_i();
+                }
+                TurnOff("Pomdirgun");
+            }
+            key ("Gwani") {
+                ["Thou hast never heard of the Gwani? They're cousins ta the goblins that live north, beyond the frozen mountains." *"Gwani make the goblins look like innocent children."];
+                if (v1 = true) {
+                    SetSpeaker1_i(0, _Jendon);
+                    ["How wouldst thou know, Olon? Thou hast never seen one, I'll wager!"];
+                    SetSpeakerSlot_i(0);
+                    ["Nor would I like ta... Thou art enough ta scare a man half ta death!"];
+                    SetSpeakerSlot_i(1);
+                    ["If thou weren't mine only steady customer, Olon, I'd throw thee out on thine ear! I would."];
+                    CloseSpeaker1_i();
+                    SetSpeakerSlot_i(0);
+                }
+                ["'Tis true, upon my sire's grave I swear it! They'll eat their own -- as well as outsiders!" *"If thou dost travel inta the northern wastes, thou art risking ending thy life in the cookpot of a fur-covered goblin!"];
+                TurnOff("Gwani");
+            }
+            key ("storms") {
+                ["I would almost believe that the world was at an end. These horrible storms have all but destroyed the town! How's a body ta make a livin' without a ship? How can a fisherman fish from a wagon... it sinks!"];
+                if (v1 = true) {
+                    SetSpeaker1_i(0, _Jendon);
+                    ["Perhaps 'twould be best if thou didst not ask him about such things right now. He's no use like this."];
+                    CloseSpeaker1_i();
+                    SetSpeakerSlot_i(0);
+                }
+                ["Can't put a sail on a cart and expect it ta take thee out ta sea and back again! Drowned!" *"Good men all... gone ta the bottom o' the sea! An' I should 'ave been with them! They'll come for me. I know they will! Down to the bottom o' the sea!"];
+                if (v1 = true) {
+                    SetSpeaker1_i(0, _Jendon);
+                    ["Come back in a few hours, <v0>. He'll have had a drink or two ta calm him down. Then thou canst have him tell his tales."];
+                    CloseSpeaker1_i();
+                    SetSpeakerSlot_i(0);
+                }
+                $olonsaidstorms = true;
+                flag(357) = true;
+                SetClock(12);
+                Bark_i(0, "@Bottom of the sea!@", _Olon);
+                SetWorkType(_Wander, _Olon);
+                terminate;
+            }
+            key ("pinecone") {
+                TurnOff("pinecone");
+                if ~IsInInv(65177, 65177, _Pinecone, 1, _Party) {
+                    ["That be a mighty big pinecone thou dost have, <v0>!"];
+                    ["I haven't seen one that size since the last time we sailed around that big forest north of here. They were all over there."];
+                } else {
+                    ["Sounds like a big pinecone!"];
+                    ["I haven't heard tell of one that size since the last time we sailed around that big forest north of here. They were all over there."];
+                }
+            }
+            key ("dead cat") {
+                TurnOff("dead cat");
+                if ~IsInInv(30, 65177, _Crtr1_Bodies, 1, _Party) {
+                    ["Poor critter. Thou shouldst give it a decent burial... Before Jendon sees it, if thou dost know what be good for thee."];
+                    ["He be mighty partic'lar about things like that in his inn."];
+                    CloseSpeaker0_i();
+                    Bark_i(0, "@Quick now!@", _Olon);
+                    terminate;
+                } else {
+                    ["I never figured that Jendon would be listenin' ta my tales! It sounds just like them cats on that island..."];
+                    ["Did I tell thee about the islands of cats?"];
+                    if (~AskYesNo() = true) {
+                        ["Oh, well... Another time, perhaps."];
+                    } else {
+                        TurnOn("island of cats");
+                    }
+                }
+            }
+            key ("bye") {
+                SendAssassin_i();
+                CloseSpeaker0_i();
+                Bark_i(0, "@Many thanks!@", _Avatar);
+                Bark_i(2, "@Take care.@", _Olon);
+                JorvinBringsInvitation_i();
+                break;
+            }
+        }
+        clear_answers;
+    }
+}

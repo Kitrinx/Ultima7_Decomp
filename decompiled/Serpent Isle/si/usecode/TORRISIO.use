@@ -1,0 +1,683 @@
+Routine Torrissio accepts a0 #locals(20) #uses(~LordOrLady, ~AvatarName, PartyFaces_i, Bark_i, ~IsInInv, TorrissioSellsSpells_i, ~AskYesNo, RestParty_i, ~GimmePathEgg, ~GiveItemsOrDrop_i, MessengerBringsScroll_i) {
+    v0 = ~LordOrLady();
+    v1 = ~AvatarSex();
+    v2 = ~AvatarName();
+    v3 = false;
+    v4 = ~GetTime();
+    if ((v4 > 1) or (v4 < 6)) {
+        v4 = "day";
+    } else {
+        v4 = "evening";
+    }
+    v5 = false;
+    if ((event = _NearDeath) and ~GetItemFlag_i(_Tournament, item)) {
+        v6 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #Black_Mage >>, item);
+    }
+    if (event = _Converse) {
+        Item_bark("@Might we speak?@", _Avatar);
+        PartyFaces_i(65503);
+        Bark_i(2, "@Make it brief...@", _Torrissio);
+        SetWorkType(_Talk, _Torrissio);
+    }
+    if (event = _Talking) {
+        Npc_schedule(_Torrissio);
+        ClearBark_i(_Torrissio);
+        SetSpeaker0_i(0, _Torrissio);
+        v7 = ~GetItemFlag_i(_Met, _Torrissio);
+        if (v7 = false) {
+            SetItemFlag_i(_Met, _Torrissio);
+            ["I am Torrissio, a Mage of Moonshade."];
+        }
+        ["I am not a sociable man, so this will be brief. What dost thou desire of me, and at what price?"];
+        if (flag(573) and not flag(310)) {
+            TurnOn("magic wand");
+        }
+        if flag(327) {
+            TurnOn("magic wand");
+        }
+        if ($lookforsoulprism and not $KNOWS_OF_SOUL_GEMS) {
+            TurnOn("soul trapping");
+        }
+        if ($magesknowapparati and not $knowlabitem) {
+            TurnOn("apparatus");
+        }
+        if ($magesknowslippers and not $knowslippers) {
+            TurnOn("slippers");
+        }
+        if $KNOWS_OF_SOUL_GEMS {
+            TurnOn("Worm Gems");
+        }
+        if (flag(234) and not ~GetItemFlag_i(_Dead, _Rotoluncia)) {
+            TurnOn("kidnap");
+        }
+        if (flag(226) and not ~GetItemFlag_i(_Dead, _Stefano)) {
+            TurnOn("Stefano");
+        }
+        if (~IsInInv(0, 65177, _Stockings, 1, _Party) and not flag(315)) {
+            TurnOn("stockings");
+        }
+        if $frelisaidstatue {
+            TurnOn("help Fedabiblio");
+        }
+        TurnOn(<< "Torrissio" >>);
+        TurnOn("bye");
+        converse {
+            key ("kidnap") {
+                TurnOff("kidnap");
+                if flag(322) {
+                    ["So thou dost suspect me of taking thy companion, <v2>? And thou dost dare to confront me -- a Mage!"];
+                    ["I am flattered by the suspicions, but alas... I am innocent in this case."];
+                    if ~IsNPCNear_i(_Serv03) {
+                        ["As thou canst surely see, thy companion is not being held prisoner in my manor. Look around at thy pleasure."];
+                    } else {
+                        ["Search my manor! I have no prisoners there..."];
+                    }
+                    Bark_i(0, "@Now leave me alone...@", _Torrissio);
+                    SetWorkType(_Wander, _Torrissio);
+                    terminate;
+                } else {
+                    ["Such poor luck, <v2>... to have angered one of the Mages of Moonshade..."];
+                    ["Could it be Mortegro, he for whom the cold sensations of death are more vivid than life?"];
+                    flag(319) = true;
+                    ["And what of Rotoluncia? She dislikes thee -- everyone knows it."];
+                    ["If I were thee, I would speak to MageLord Filbercio about this matter. Mages are involved, so thy duty is clear."];
+                    flag(321) = true;
+                }
+            }
+            key ("Torrissio") {
+                TurnOff("Torrissio");
+                ["I am Torrisso of Moonshade, Adept Mage and master of life spells."];
+                TurnOn(<< "Moonshade", "Adept Mage", "life spells" >>);
+            }
+            key ("Moonshade") {
+                TurnOff("Moonshade");
+                ["Moonshade is in many ways a perfect city, a perfect example of civilization with that highest form of government -- a Magocracy."];
+                TurnOn("Magocracy");
+            }
+            key ("Adept Mage") {
+                TurnOff("Adept Mage");
+                ["I come from one of the longest family lines of mages in all of the Serpent Isle. That is how one tells a good mage, thou must know -- by his family line. Good mages are a result of good breeding. My father always said that."];
+                TurnOn("family line");
+            }
+            key ("family line") {
+                TurnOff("family line");
+                ["A thousand years ago, our ancestors performed tricks to amuse peasants. Hundreds of years ago they were the most trusted advisors to Kings and rulers of the land. When it comes to magic the only bloodline more pure than mine is that of the ruling family. Of course, my family was decimated in the old war. If not for that, I might be ruler today."];
+                TurnOn(<< "ruling family", "old war" >>);
+            }
+            key ("apparatus") {
+                TurnOff("apparatus");
+                v8 = ~IsInInv(1, 65177, _Al_App_1, 1, _Party);
+                if v8 {
+                    ["That looks like the sort of equipment used by Erstam, the Mad Mage! He lives at the place called Mad Mage Island."];
+                    $knowlabitem = true;
+                } else {
+                    ["If thou had the item I am certain I could tell thee more about it."];
+                }
+            }
+            key ("slippers") {
+                TurnOff("slippers");
+                ["I would ask about them at the Inn of Sleeping Bull if I were thee."];
+            }
+            key ("ruling family") {
+                TurnOff("ruling family");
+                ["That would be the bloodline of the MageLord of Moonshade, Filbercio."];
+            }
+            key ("old war") {
+                TurnOff("old war");
+                ["According to family records, most of my family members were killed fighting the Daemons. This is the war which brought an end to the Age of the Two Kings."];
+            }
+            key ("life spells") {
+                TurnOff("life spells");
+                ["My personal specialty is spells involving healing and the sustenance of life energies."];
+                TurnOn("buy spells");
+            }
+            key ("Magocracy") {
+                TurnOff("Magocracy");
+                ["A government totally controlled by Mages is the only sensible form of government. Mages have a holistic understanding of the world that makes them far more suited to the responsibilities of government than any mundane could ever be. With Filbercio at the head of the Council of Mages, things are accomplished quickly with a minimum of politics."];
+                TurnOn(<< "Council of Mages", "Filbercio", "politics" >>);
+            }
+            key ("buy spells") {
+                if $filberboughtstock {
+                    TurnOff("buy spells");
+                    ["Thou hast betrayed me and betrayed my lover by giving her stolen property to Filbercio for a mere pittance of profit! Now thou dost expect me to help thee?! Begone from my sight!"];
+                    terminate;
+                } else {
+                    if (v3 = false) {
+                        ["Of course I can sell thee a spell! I have recently sold a spell to another person passing through Moonshade. It is just such a business upon which the city of Moonshade was built. With all of the experiments and developments we produce here in the magical arts, we are practically the center of the world."];
+                        v3 = true;
+                    }
+                    TorrissioSellsSpells_i();
+                    TurnOn(<< "Sold to whom?", "experiments" >>);
+                }
+            }
+            key ("Sold to whom?") {
+                TurnOff("Sold to whom?");
+                ["Why, that fat sage that passed through town a while ago. Batlin. I remember not the specifics of the transaction."];
+            }
+            key ("experiments") {
+                TurnOff("experiments");
+                ["I do not wish to violate the privacy of a fellow mage, but there is at least one mage in town working on solving the mystery of these distressing teleport storms."];
+            }
+            key ("Council of Mages") {
+                TurnOff("Council of Mages");
+                ["Do not even raise this topic -- I have no stomach for the political games which one must play in order to win a seat on the Council."];
+            }
+            key ("Filbercio") {
+                TurnOff("Filbercio");
+                ["He is a shrewd and stern ruler. A highly skilled mage. He is not someone thou wouldst want to cross."];
+            }
+            key ("politics") {
+                TurnOff("politics");
+                ["Of course, nothing ever gets done without a little politics.];
+                if ~GetItemFlag_i(_Dead, _Rotoluncia) {
+                    ["I was allied with Rotoluncia, but her death makes our partnership void."];
+                } else {
+                    ["One's enemies and allies are constantly shifting. That is why Rotoluncia and I have formed a sort of coalition, wherein we both work to protect each other's best interests."];
+                    TurnOn(<< "Rotoluncia", "allies and enemies" >>);
+                }
+            }
+            key ("Rotoluncia") {
+                TurnOff("Rotoluncia");
+                ["Of course, our working together hath led to a few rumors -- such is the way of politics. But even partners disagree. For instance, she is convinced that there is some sort of connection between thee and this other stranger who visited us -- Batlin."];
+                TurnOn(<< "partners", "Batlin" >>);
+            }
+            key ("allies and enemies") {
+                TurnOff("allies and enemies");
+                ["Of course, in the realm of politics as well as the realm of magic what is one today may very well be the other tomorrow!"];
+            }
+            key ("partners") {
+                TurnOff("partners");
+                ["Partners with Rotoluncia in politics. But partners with Columna in love."];
+                TurnOn("Columna");
+            }
+            key ("Batlin") {
+                TurnOff("Batlin");
+                ["Rotoluncia was quite repulsed yet fascinated with Batlin and his secrets. To think of it makes me wish to offer thee a word of advice."];
+                TurnOn(<< "secrets", "advice" >>);
+            }
+            key ("secrets") {
+                TurnOff("secrets");
+                ["While Batlin was here, he exhibited some sort of power or talent or knowledge. Rotoluncia is now obsessed with it although she will not speak much about this with me."];
+            }
+            key ("advice") {
+                TurnOff("advice");
+                ["Rotoluncia is not the sort of woman that thou dost want angry at thee. Mine advice to thee is that whatever she wants, thou shouldst give it to her."];
+            }
+            key ("Columna") {
+                TurnOff("Columna");
+                ["Our love must remain a secret. This saddens her, and myself as well. There are those who would come between us, who plan against us. Her heart was touched by a song sung by the lady Gwenno."];
+                TurnOn(<< "plan against thee", "Gwenno" >>);
+            }
+            key ("plan against thee") {
+                TurnOff("plan against thee");
+                ["I do not wish to burden thee with my personal problems. The less said of these things, the better."];
+            }
+            key ("Gwenno") {
+                TurnOff("Gwenno");
+                ["She came passing through our city several weeks ago. From what I hear, she is a most unusual and interesting woman."];
+            }
+            key ("Stefano") {
+                TurnOff("Stefano");
+                ["Columna and I have received information that it was Stefano who attempted to destroy our love by stealing her stockings from my manor house."];
+                if flag(569) {
+                    ["Now that he hath dared to show his face again, it shall be him who is destroyed. Columna and I have already seen to that!"];
+                } else {
+                    ["When Filbercio sentenced him to death in the Mountains of Freedom, I laughed until blood ran from mine eyes!"];
+                    ["It will serve that cretin good, to be entombed with the rats and maggots in that prison."];
+                }
+            }
+            key ("stockings") {
+                TurnOff("stockings");
+                if v1 {
+                    if not flag(316) {
+                        ["I beseech thee to turn over to me that which is the instrument of humiliation against a woman who hath done thee no harm. They belong to my lover Columna and they were stolen by the bandit Stefano. Columna's stockings can be used as evidence of our affair. I neither know nor care how thou hast come into possession of them. But know this: I shall have them!"];
+                        ["Those stockings are of no use to thee. I know thou wilt do the proper thing. Within thy chest beats a human heart. Thou art a woman of feelings."];
+                        ["So too am I a man stirred by strong emotions. Give unto me this thing, and together we shall share a night of passion the likes of which have never before been told in story or song."];
+                        ["Surrender those stockings to me."];
+                        label_107:
+                        v9 = ~AskYesNo();
+                        if v9 {
+                            v10 = ~TakeFromParty_i(0, 0, _All, _Stockings, 1);
+                            ["Excellent! First let us enjoy some wine! Wilt thou accept this glass of fine wine?"];
+                            if v10 {
+                                flag(315) = true;
+                            }
+                            if ~AskYesNo() {
+                                SetItemFlag_i(_Asleep, _Avatar);
+                                v11 = (6 + ~rndRange(9, 0));
+                                FadePalette_i(0, 1, 12);
+                                Item_move(<< 1552, 1935, 0 >>, _Torrissio);
+                                v12 = (v11 * 1500);
+                                RestParty_i(item, v11);
+                                v6 = ~PostInFuture(33, << _aNO_HALT_i, _aUSABLE_i, #FadeInArrival_i >>, ~GimmePathEgg(1, 5));
+                                v6 = ~PostInFuture(35, << _aNO_HALT_i, _aBARK_i, "@Oh, my head...@" >>, _Avatar);
+                                terminate;
+                            } else {
+                                ["Thou dost not trust me, eh? So be it..." *"Ha! The stockings are now mine!"];
+                            }
+                        } else {
+                            if not flag(316) {
+                                ["Thou dost not trust me? Then be on thy way! All I wanted were the stockings..."];
+                                ["After all, Columna is more of a woman than thou canst ever hope to be."];
+                                flag(316) = true;
+                            } else {
+                                ["Bah! Thou art only trying to taunt me! Leave me at once!"];
+                                terminate;
+                            }
+                        }
+                        goto label_120;
+                    }
+                    ["I ask thee again -- surrender those stockings to me!"];
+                    goto label_107;
+                    label_120:
+                } else {
+                    if not flag(316) {
+                        ["I shall be frank with thee. I want the stockings to protect the honor of the woman I love. The stockings rightfully belong to my lover Columna, but they were stolen by the bandit Stefano. I neither know nor care how thou hast come into possession of them, but I must have them from thee."];
+                        ["As thou dost have something I want, then I am obliged to provide something to thee that thou couldst want."];
+                        ["I offer thee one of my spells in exchange for the stockings. If thou dost accept, then give them to me."];
+                        label_123:
+                        v13 = ~AskYesNo();
+                        if v13 {
+                            v14 = ~TakeFromParty_i(0, 0, _All, _Stockings, 1);
+                            ["Ha! Now I have what I want and I did not have to give thee a thing! Thou art not dealing with a child here!"];
+                            Bark_i(0, "@I have them!@", _Torrissio);
+                            SetWorkType(_Shy, _Torrissio);
+                            if v14 {
+                                flag(315) = true;
+                            }
+                            terminate;
+                        } else {
+                            if not flag(316) {
+                                ["Thou art as cold-hearted as any man I have ever met! I can no longer tolerate thy company."];
+                                flag(316) = true;
+                                terminate;
+                            } else {
+                                ["Bah! Thou art only trying to taunt me! Leave me at once!"];
+                                terminate;
+                            }
+                            Bark_i(0, "@Begone, foul knave.@", _Torrissio);
+                            SetWorkType(_Wander, _Torrissio);
+                        }
+                    } else {
+                        ["I ask thee again -- surrender those stockings to me!"];
+                        goto label_123;
+                    }
+                }
+            }
+            key ("help Fedabiblio") {
+                TurnOff("help Fedabiblio");
+                ["If thou dost think I will help thee, then the madness that hath seemingly infected the entire world hath also infected thy brain. I suggest thou dost have it removed."];
+                Bark_i(0, "@Be gone!@", _Fedabiblio);
+                terminate;
+            }
+            key ("soul trapping") {
+                TurnOff("soul trapping");
+                ["So thou dost seek to learn the ancient art of imprisoning souls within gems? I can give this to thee, for a price -- but I warn thee, the outcome may not be what thou dost expect."];
+                TurnOn(<< "ancient art", "price", "outcome" >>);
+            }
+            key ("ask", "ancient art") {
+                TurnOff(<< "ancient art", "ask" >>);
+                if flag(310) {
+                    ["Knowledge shall be thine, Avatar. The secret is that souls can be imprisoned within gems. Only Worm Gems will do, and even these must first be enchanted with the spell which I give thee now."];
+                    $knowwormgem = true;
+                    ["On this scroll, thou shalt find the spell for creating Soul Prisms. Transcribe this to thy spellbook at the first opportunity, for I shall not give thee another!"];
+                    $KNOWS_OF_SOUL_GEMS = true;
+                    v15 = ~GiveItemsOrDrop_i(true, 0, 0, 27, 715, 1, _Avatar);
+                    TurnOn("Worm Gems");
+                } else {
+                    ["Pay the price, the Philanderer's Friend, and I shall reward thee!"];
+                    ["For now, I shall merely say that this spell was used by the ancient inhabitants of this land. They would remove their souls from their bodies, and place them within inanimate objects."];
+                }
+            }
+            key ("price") {
+                TurnOff("price");
+                if flag(573) {
+                    if flag(310) {
+                        if $KNOWS_OF_SOUL_GEMS {
+                            ["Why, I already gave thee my prize! What more dost thou expect?"];
+                        } else {
+                            ["Then again, thou didst restore the wand to me -- and the Philanderer's Friend is a great prize..."];
+                            ["Thou hast paid the price, I shall grant thee thy desires. Thou hast but to ask."];
+                            TurnOff("ancient art");
+                            TurnOn("ask");
+                        }
+                    } else {
+                        ["Thou hast something which I want very much, Avatar! I detect that thou hast come into contact with a magical artifact which was taken from me -- the Philanderer's Friend, a wand of mysterious powers."];
+                        ["Deliver the wand to me, and thou shalt have thy desires!"];
+                    }
+                } else {
+                    ["Sadly, thou hast nothing that I desire. I have no need for gold, and thou dost not know any spells which I crave..."];
+                    ["Ah, but thou art a strong warrior! I have an idea."];
+                    ["An item was stolen from me, a wand which is great in the magic which it controls. Bring it to me, and I shall aid thee."];
+                    ["The wand is known as the Philanderer's Friend. I know not where it lies. Good luck, adventurer!"];
+                }
+            }
+            key ("outcome") {
+                TurnOff("outcome");
+                ["Thou art not the first to seek this secret from me, adventurer! That fat fool Batlin purchased it from me, too."];
+                ["And I gave him this warning: The gems are not powerful enough to contain any soul of great power. Should they fail, the soul released shall be very angry..."];
+            }
+            key ("Worm Gems") {
+                TurnOff("Worm Gems");
+                ["Such gems are made, not found in nature. Seek out Ducio the Artisan, if he yet lives -- he fashions the gems for me, when I have need of them."];
+                v16 = ~IsInInv(0, 65177, _Daemon_Sword, 1, _Party);
+                if (not flag(206) and v16) {
+                    ["It is a pity that the gem upon thy sword is broken. It looks remarkably like the Worm Gems that Ducio fashions. Perhaps he can repair it for thee..."];
+                }
+            }
+            key ("magic wand") {
+                TurnOff("magic wand");
+                v17 = ~GetWorkType(_Fedabiblio);
+                if not flag(573) {
+                    if (v17 = 15) {
+                        ["I no longer have the Philanderer's Friend, else I would certainly aid thee in helping the good Fedabiblio. It was stolen from me. I do not know for sure, but I suspect mine old enemy Vasculio of the crime."];
+                    }
+                } else {
+                    if not flag(310) {
+                        ["I perceive that thou hast the device stolen from me years ago. It is called the Philanderer's Friend -- I'm not sure why, but someday I shall understand its secrets."];
+                        if ~TakeFromParty_i(false, _All, _All, _Philanderer_S_Friend, 1) {
+                            ["Good! Thou hast brought it with thee -- and now I shall take it!"];
+                            v18 = ~GetCoord(_Avatar);
+                            CreateSpriteOn_i(65535, 0, 0, 0, 0, 0, 13, _Avatar);
+                            v19 = ~GiveToCont_i(false, _All, _All, _Philanderer_S_Friend, 1, _Torrissio);
+                            SetWorkType(_Shy, _Torrissio);
+                            Bark_i(0, "@I have it!@", _Torrissio);
+                            flag(310) = true;
+                            terminate;
+                        } else {
+                            ["It is my rightful property and I shall have it back!"];
+                        }
+                    }
+                }
+            }
+            key ("bye") {
+                CloseSpeaker0_i();
+                Bark_i(0, "@So long!@", _Avatar);
+                Bark_i(2, "@Don't steal anything...@", _Torrissio);
+                MessengerBringsScroll_i();
+                break;
+            }
+        }
+        clear_answers;
+    }
+}
+
+Usable TorrissioSellsSpells_i #locals(15) #uses(~AskOrdList, ~AskYesNo, ~SellSpell_i, ~TorrissioHaggles_i) {
+    PushKeys();
+    v0 = true;
+    ["I accept guilders only!"];
+    v1 = "Guilders";
+    v2 = 952;
+    While v0 {
+        ["In which circle art thou interested?"];
+        v3 = ~AskOrdList(<< "nothing", "First", "Second", "Third", "Fourth", "Fifth", "Sixth", "Seventh" >>);
+        v3 = (v3 - 1);
+        if (v3 = 0) {
+            break;
+        }
+        switch v3 {
+            case 1 {
+                v4 = << "nothing", "Detect Trap", "Light" >>;
+                v5 = << 0, 2, 5 >>;
+                v6 = << 0, 40, 35 >>;
+                v7 = << 0, 20, 20 >>;
+            }
+            case 2 {
+                v4 = << "nothing", "Awaken", "Heal" >>;
+                v5 = << 0, 8, 13 >>;
+                v6 = << 0, 65, 75 >>;
+                v7 = << 0, 30, 38 >>;
+            }
+            case 3 {
+                v4 = << "nothing", "Enchant Missiles", "Translate" >>;
+                v5 = << 0, 18, 23 >>;
+                v6 = << 0, 150, 175 >>;
+                v7 = << 0, 80, 85 >>;
+            }
+            case 4 {
+                if $KNOWS_OF_SOUL_GEMS {
+                    v4 = << "nothing", "Create Soul Prism", "Transcribe" >>;
+                    v5 = << 0, 27, 30 >>;
+                    v6 = << 0, 300, 220 >>;
+                    v7 = << 0, 200, 130 >>;
+                } else {
+                    v4 = << "nothing", "Transcribe" >>;
+                    v5 = << 0, 30 >>;
+                    v6 = << 0, 220 >>;
+                    v7 = << 0, 130 >>;
+                }
+            }
+            case 5 {
+                v4 = << "nothing", "Great Heal" >>;
+                v5 = << 0, 35 >>;
+                v6 = << 0, 250 >>;
+                v7 = << 0, 130 >>;
+            }
+            case 6 {
+                v4 = << "nothing", "Betray", "Cause Fear", "Create Automata" >>;
+                v5 = << 0, 40, 42, 47 >>;
+                v6 = << 0, 285, 300, 750 >>;
+                v7 = << 0, 150, 175, 550 >>;
+            }
+            case 7 {
+                v4 = << "nothing", "Mass Might", "Lightning" >>;
+                v5 = << 0, 51, 55 >>;
+                v6 = << 0, 400, 350 >>;
+                v7 = << 0, 200, 200 >>;
+            }
+            default {
+            }
+        }
+        ["What spell art thou interested in?"];
+        v8 = ~AskOrdList(v4);
+        if (v8 = 1) {
+            ["Very well..."];
+        } else {
+            v9 = v5::v8;
+            v10 = v6::v8;
+            v11 = v7::v8;
+            v12 = v4::v8;
+            if (v10 = v11) {
+                ["The <v12> spell will cost <v10> <v1>. Is this acceptable?"];
+                v13 = 0;
+                if (~AskYesNo() = true) {
+                    v13 = ~SellSpell_i(v10, v2, v9);
+                }
+            } else {
+                ["The price for the <v12> spell is <v10> <v1>. Dost thou find this acceptable?"];
+                v14 = ~TorrissioHaggles_i(v11, v10);
+                v13 = 0;
+                if (v14 > 0) {
+                    v13 = ~SellSpell_i(v14, v2, v9);
+                }
+            }
+            if (v13 = 1) {
+                ["Done!"];
+            } else {
+                if (v13 = 2) {
+                    ["Thou dost not have a spellbook."];
+                    v0 = false;
+                    break;
+                }
+                if (v13 = 3) {
+                    ["Thou dost not have enough <v1> for that!"];
+                } else {
+                    if (v13 = 4) {
+                        ["Thou dost already have that spell!"];
+                    } else {
+                    }
+                }
+            }
+        }
+        ["Wouldst thou like another spell?"];
+        v0 = ~AskYesNo();
+    }
+    PopKeys();
+}
+
+Function ~TorrissioHaggles_i accepts a0, a1 #locals(13) #uses(~AskList, ~Haggle_i, ~AskYesNo) {
+    v2 = v1;
+    v3 = ((v0 / 3) * 2);
+    v4 = (15 - (~GetNPCID_i(_Torrissio) / 2));
+    v5 = 0;
+    v6 = 1;
+    v7 = 0;
+    v8 = 2;
+    v9 = ~GetNPCID_i(_Torrissio);
+    While v6 {
+        v10 = ~AskList(<< "yes", "no", "haggle" >>);
+        if (v10 = "no") {
+            return 0;
+        } else {
+            if (v10 = "yes") {
+                v11 = 0;
+                goto label_8;
+            }
+        }
+        v12 = ~Haggle_i(v5, v4, v7, v3, v8, v0, v2);
+        v7 = (v7 + 1);
+        v5 = v12::4;
+        v11 = v12::3;
+        v13 = v2;
+        v2 = v12::2;
+        v3 = v12::1;
+        label_8:
+        v14 = ~Random(3);
+        if (v11 < 2) {
+            if (v2 < (v0 + ((v1 - v0) / 4))) {
+                if (v14 = 1) {
+                    ["I do not know why, but I accept thine offer. Thou dost bargain well, friend."];
+                }
+                if (v14 = 2) {
+                    ["'Twill not do my reputation any good, but I accept thine offer."];
+                }
+                if (v14 = 3) {
+                    ["If thou dost tell anyone that I accepted such an offer, I will say that thou art a liar."];
+                }
+            } else {
+                if (v2 < (v0 + ((v1 - v0) / 3))) {
+                    if (v14 = 1) {
+                        ["I have not had much business of late. I will accept thine offer."];
+                    }
+                    if (v14 = 2) {
+                        ["Thou dost bargain well. I will accept this price."];
+                    }
+                    if (v14 = 3) {
+                        ["I hope thou dost know that thou art getting a good bargain at this price."];
+                    }
+                } else {
+                    if (v2 < (v0 + ((v1 - v0) / 2))) {
+                        if (v14 = 1) {
+                            ["Only <v2>??! I may as well give this away..."];
+                        }
+                        if (v14 = 2) {
+                            ["Not bad..."];
+                        }
+                        if (v14 = 3) {
+                            ["Thou canst not fault me for trying to make a profit. I will accept this price."];
+                        }
+                    } else {
+                        if (v14 = 1) {
+                            ["I accept thine offer!"];
+                        }
+                        if (v14 = 2) {
+                            ["Thou art a fine customer. Please stop by any time."];
+                        }
+                        if (v14 = 3) {
+                            ["'Tis a fine price by me!"];
+                        }
+                    }
+                }
+            }
+            ["So, dost thou agree to a price of <v2>?"];
+            if (~AskYesNo() = true) {
+                if (v9 > 1) {
+                    SetNPCID_i((v9 - 2), _Torrissio);
+                }
+                return v2;
+            } else {
+                if (v14 = 1) {
+                    ["Then why didst thou come here?!"];
+                }
+                if (v14 = 2) {
+                    ["Thou art an ill-mannered buffoon!"];
+                }
+                if (v14 = 3) {
+                    ["I shall remember thy poor manners in the future! Mark my words!"];
+                }
+                if (31 < (v9 + 10)) {
+                    SetNPCID_i(31, _Torrissio);
+                } else {
+                    SetNPCID_i((v9 + 10), _Torrissio);
+                }
+                return 0;
+            }
+        }
+        if (v5 = 1) {
+            if (v11 = 5) {
+                ["<v2> is my final offer. Dost thou agree or not?"];
+                if (v9 < 28) {
+                    SetNPCID_i((v9 + 4), _Torrissio);
+                }
+                if (~AskYesNo() = true) {
+                    return v2;
+                }
+                v6 = 0;
+            } else {
+                ["I can offer no lower than <v2>."];
+                if (v9 < 30) {
+                    SetNPCID_i((v9 + 2), _Torrissio);
+                }
+            }
+        } else {
+            if (v11 = 2) {
+                if (v14 = 1) {
+                    ["I am minded to give thee a good deal. How doth <v2> sound?"];
+                }
+                if (v14 = 2) {
+                    ["I like the way thou dost barter. How doth <v2> sound?"];
+                }
+                if (v14 = 3) {
+                    ["For thee only I offer <v2>."];
+                }
+            }
+            if (v11 = 3) {
+                if (v14 = 1) {
+                    ["Hmmm.... Perhaps <v2>?"];
+                }
+                if (v14 = 2) {
+                    ["<v2>? I have many expenses."];
+                }
+                if (v14 = 3) {
+                    ["<v2>? I cannot afford to be overly generous these days."];
+                }
+            }
+            if (v11 = 4) {
+                if (v14 = 1) {
+                    ["Who dost thou think thou art dealing with -- a Mundane?! <v2> and no less!"];
+                }
+                if (v14 = 2) {
+                    ["I will go no lower than <v2>. Thou dost not appreciate the work involved."];
+                }
+                if (v14 = 3) {
+                    ["This is worth at least <v2>. I think that thou shouldst reconsider."];
+                }
+            }
+            if (v11 = 5) {
+                v2 = v13;
+                if (v14 = 1) {
+                    ["Thou must not want this very badly... My previous offer stands, at <v2>."];
+                }
+                if (v14 = 2) {
+                    ["Thou art a fool if thou dost think that I will go lower than <v2>."];
+                }
+                if (v14 = 3) {
+                    ["I would sooner starve! Mine offer stands at <v2>."];
+                }
+                if (v9 < 31) {
+                    SetNPCID_i((v9 + 1), _Torrissio);
+                }
+            }
+        }
+    }
+}

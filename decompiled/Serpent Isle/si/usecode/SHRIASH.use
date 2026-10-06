@@ -1,0 +1,91 @@
+Routine Force accepts a0 #locals(2) #uses(Bark_i) {
+    if (event = _Converse) {
+        v0 = ~GetFrame(item);
+        if (v0 <> 1) {
+            terminate;
+        }
+        v1 = ~PostAction(<< _aNO_HALT_i, _aBARK_i, "@Help!@" >>, item);
+        v1 = ~PostInFuture(5, << _aNO_HALT_i, _aUSABLE_i, #Force, 0 >>, item);
+    }
+    if (event = _Action) {
+        SetSpeaker0_i(0, _StevePowers);
+        ["I am trapped! Help me!"];
+        TurnOn(<< "name", "Trapped?", "bye" >>);
+        converse {
+            key ("name") {
+                TurnOff("name");
+                ["I am Shriash. Though I am only a little girl, thou must know that I am a faithful follower of Chaos."];
+                ["I belong to the Temple of Emotion."];
+                TurnOn(<< "girl", "Chaos", "Emotion" >>);
+            }
+            key ("girl") {
+                TurnOff("girl");
+                ["Well, perhaps I am not a little girl anymore. My soul hath been trapped here in this rock for eons!"];
+                ["If there is such a thing as a little spirit girl, then that is what I am."];
+            }
+            key ("Chaos") {
+                TurnOff("Chaos");
+                ["My father says that Chaos is the True Path, and that the Chaos Serpent will lead us to a better life."];
+                ["Chaos is the strong limb, and it cannot be beaten. It is like a rope made of many strands, many yet unified."];
+                ["But we were defeated, here..."];
+            }
+            key ("Emotion") {
+                TurnOff("Emotion");
+                ["Emotion is the energy that drives the soul. There is both good and bad energy, combined chaotically."];
+                ["There is love and hatred, despair and joy. Without these, Men would cease to be Men."];
+                ["Without love, we could not live in peace. If we did not have joy, life would be pointless."];
+                ["Thus, Emotion is the most important of the Virtues."];
+            }
+            key ("Trapped?") {
+                TurnOff("Trapped?");
+                ["I was caught in a great battle. The powerful magic the soldiers unleashed left my soul caught here in this wall."];
+                TurnOn(<< "soldiers", "wall" >>);
+            }
+            key ("soldiers") {
+                TurnOff("soldiers");
+                ["They were led by the Master of Ethicality, and his magic wrecked the Temple. My parents were slain, and my brother taken prisoner."];
+                ["No one from the Temple survived to free me from my fate."];
+                ["But Balance was preserved -- from my place here in the wall, I watched as Soldiers of Chaos attacked to retake the Temple. All of the Soldiers of Ethicality were slain, to the last man."];
+                TurnOn("Temple");
+            }
+            key ("Temple") {
+                TurnOff("Temple");
+                ["This place is the Temple of Emotion. It is a structure consecrated to the Virtue of Emotion."];
+                ["We would come here yearly to hear the words of the Master of Emotion, and to drink of the Water of the Temple."];
+                TurnOn(<< "Water" >>);
+            }
+            key ("Water") {
+                TurnOff("Water");
+                ["It was such a wonderful ceremony! The old Master would pass from chamber to chamber, collecting the four Lodestones of Emotion..."];
+                ["One year I was chosen to sing in the chorus, and we followed behind him, tossing flower petals and singing the Hymns of Chaos."];
+                ["When the Master placed the four lodestones around the pond, however, we were all silent. For thus the ordinary water became the true and rightful Water of Emotion."];
+            }
+            key ("wall") {
+                TurnOff("wall");
+                ["I am trapped within this wall. My soul hath occupied this place for many, many years."];
+                ["Sometimes, I despair of ever being free to enter the Void."];
+                TurnOn(<< "free", "Void" >>);
+            }
+            key ("free") {
+                TurnOff("free");
+                ["If thou couldst smash the Pedestal of Love, that would release some of the ancient powers of the Temple. The Pedestal lies in the middle of this room. It looks like unto a broken column now, but that is because it is so old."];
+                ["I am sure that this would free me from the stone..."];
+                ["But it might kill thee! Or worse, thou mightest be trapped in this wall in my place!"];
+            }
+            key ("Void") {
+                TurnOff("Void");
+                ["Dost thou know nothing? When we die, our bodies are placed in the ground, but our souls rise to the Void."];
+                ["There, we shall unite with the Chaos Serpent. He too dwells in the Void between the Worlds."];
+                ["This is what my father taught me."];
+            }
+            key ("bye") {
+                Bark_i(0, "@Goodbye.@", _Avatar);
+                v1 = ~PostInFuture(5, << _aNO_HALT_i, _aBARK_i, "@Please help me!@" >>, item);
+                CloseSpeaker0_i();
+                CloseSpeaker1_i();
+                break;
+            }
+        }
+        clear_answers;
+    }
+}

@@ -1,0 +1,131 @@
+Routine AutoMessenger accepts a0 #locals(7) #uses(AutomatonUsable_i, ~LordOrLady, ~AvatarName, Bark_i, ~GiveItemsOrDrop_i) {
+    if ~GetItemFlag_i(_Zombie, item) {
+        AutomatonUsable_i();
+        terminate;
+    }
+    v0 = ~LordOrLady();
+    v1 = ~AvatarSex();
+    v2 = ~AvatarName();
+    if (event = _Converse) {
+        Item_bark("@Excuse me...@", _Avatar);
+        Bark_i(2, (("@At thy service, " + v0) + "!@"), _AutoMessenger);
+        SetWorkType(_Talk, _AutoMessenger);
+    }
+    if (event = _Bark) {
+        v3 = ~Random(6);
+        if (v3 = 1) {
+            Item_bark("@Please leave...@", _AutoMessenger);
+        }
+        if (v3 = 2) {
+            Item_bark("@Rangers!@", _AutoMessenger);
+        }
+        if (v3 = 3) {
+            Item_bark("@Leave!@", _AutoMessenger);
+        }
+        if (v3 = 4) {
+            Item_bark("@Beware!@", _AutoMessenger);
+        }
+        if (v3 = 5) {
+            Item_bark("@Do not touch that!@", _AutoMessenger);
+        }
+        if (v3 = 6) {
+            Item_bark("@Go quickly!@", _AutoMessenger);
+        }
+    }
+    if (event = _Talking) {
+        Npc_schedule(_AutoMessenger);
+        ClearBark_i(_AutoMessenger);
+        SetSpeaker0_i(0, _Forskis);
+        if not $rotoscrollone {
+            if $messgavescroll {
+                ["Again we meet, <v0>. My mistress hath dispatched me to see if thou hast yet read the scroll she sent?"];
+            } else {
+                ["Pardon, <v0>. I bring thee greetings from my mistress, the sorceress Rotoluncia. This scroll is from her."];
+                v4 = ~GiveItemsOrDrop_i(true, 18, 6, 31, 707, 1, _Avatar);
+                $messgavescroll = true;
+            }
+            TurnOn(<< "Rotoluncia", "scroll", "servant" >>);
+        } else {
+            v5 = ~GetCoord(item);
+            if ((v5::1 < 2498) and ((v5::1 > 2450) and ((v5::2 < 1872) and (v5::2 > 1792)))) {
+                ["This is the manor of the Enchantress Rotoluncia! Thou canst not enter without permission!"];
+                TurnOn(<< "Rotoluncia" >>);
+                if flag(234) {
+                    TurnOn(<< "kidnap", "Where is she?" >>);
+                }
+            } else {
+                ["I must be about my duties."];
+                Bark_i(0, "@Pardom me...@", item);
+                SetWorkType(_Wander, item);
+                terminate;
+            }
+        }
+        TurnOn("bye");
+        converse {
+            key ("Rotoluncia") {
+                TurnOff("Rotoluncia");
+                ["My mistress commands many powerful and strange magics, and sits upon the Council of Mages."];
+                if not flag(234) {
+                    ["She is terrible to her enemies, but tolerant of those who aid her."];
+                } else {
+                    ["As thou now knowest, she is most terrible to those who do not bend to her will."];
+                }
+            }
+            key ("kidnap") {
+                TurnOff("kidnap");
+                ["I am forbidden to discuss this subject with thee!"];
+                v6 = true;
+            }
+            key ("Where is she?") {
+                TurnOff("Where is she?");
+                ["I must not tell! In fact, thou shouldst leave here at once."];
+                v6 = true;
+            }
+            key ("scroll") {
+                ["'Tis not an ordinary scroll, but one of the magical variety. I assure thee that it is entirely free of harmful magic."];
+                TurnOff("scroll");
+            }
+            key ("servant") {
+                ["The Mages of Moonshade are quite powerful, and have found the way to acquire servants such as myself."];
+                ["My mistress says that automatons are more trustworthy, since we can neither be corrupted nor tortured."];
+                TurnOff("servant");
+            }
+            key ("bye") {
+                if flag(234) {
+                    $rotomanor = true;
+                }
+                if (not $rotoscrollone and not flag(234)) {
+                    CloseSpeaker0_i();
+                    Bark_i(0, "@Good day.@", _Avatar);
+                    Bark_i(2, "@Do not forget the scroll.@", _AutoMessenger);
+                } else {
+                    if (flag(234) and v6) {
+                        ["Thou dost look at me oddly... I think I have said too much!"];
+                        ["Now I must kill thee..."];
+                        Npc_setAlignment(_Chaotic, _AutoMessenger);
+                        Bark_i(0, "@Must kill!@", _AutoMessenger);
+                        SetWorkType(_Combat_0, _AutoMessenger);
+                        SetAttacker_i(_AutoMessenger, _Avatar);
+                        terminate;
+                    } else {
+                        ["If thou dost not leave quickly, I must call the Rangers!"];
+                        SetWorkType(_TendShop, _AutoMessenger);
+                    }
+                }
+                break;
+            }
+        }
+        clear_answers;
+    }
+    if ((event = _NearDeath) and ~GetItemFlag_i(_Tournament, item)) {
+        if (flag(234) and not ~GetItemFlag_i(_Dead, _Rotoluncia)) {
+            SetSpeaker0_i(0, _Forskis);
+            ["Rotoluncia shall avenge my loss..."];
+            $rotomanor = true;
+            Npc_setAlignment(_Chaotic, _Rotoluncia);
+            CloseSpeaker0_i();
+        }
+        ClearItemFlag_i(_Tournament, _AutoMessenger);
+        ReduceHits_i(0, 55, _AutoMessenger);
+    }
+}

@@ -1,0 +1,24 @@
+Routine Troll accepts a0 #locals(4) {
+    if (event = _NearDeath) {
+        v0 = ~GetNPCID_i(item);
+        if (v0 = 1) {
+            ClearItemFlag_i(_Tournament, item);
+            v1 = ~Item_create(_Unique_Key);
+            if v1 {
+                SetFrame(19, v1);
+                v2 = ~SetQuality(21, v1);
+                v2 = ~PopToNPC(item);
+                KillNPC_i(item);
+            }
+        }
+        if (v0 = 2) {
+            ClearItemFlag_i(_Tournament, item);
+            v3 = ~Item_create(_Artifacts);
+            if v3 {
+                SetFrame(8, v3);
+                v2 = ~PopToNPC(item);
+                KillNPC_i(item);
+            }
+        }
+    }
+}

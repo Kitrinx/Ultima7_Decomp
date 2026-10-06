@@ -1,0 +1,114 @@
+Routine Keg accepts a0 #locals(3) #uses(MemberBarks_i, PourKeg_i) {
+    if (event = _Converse) {
+        if ~Kernel_getNumProcesses(item) {
+            Kernel_resetRef(item);
+            MemberBarks_i("@'Tis about time!@");
+        } else {
+            PourKeg_i(item);
+        }
+    }
+    if (event = _Pathfind2) {
+        v0 = ~GetCoord(item);
+        v0::1 = (v0::1 - 2);
+        v0::2 = (v0::2 + 1);
+        v1 = ~GetContents(_All, _All, _Bucket, _Avatar);
+        if v1 {
+            v2 = ~Item_push(v1);
+            if v2 {
+                SetFrame(4, v1);
+                v2 = ~PopToMap(v0);
+            }
+        }
+        v2 = ~PostAction(<< _aFACE_i, _North, _aCONTINUE_i, _aBEND_FRAME_i >>, _Avatar);
+    }
+}
+
+Routine Cask accepts a0 #locals(3) #uses(MemberBarks_i, PourCask_i) {
+    if (event = _Converse) {
+        if ~Kernel_getNumProcesses(item) {
+            Kernel_resetRef(item);
+            MemberBarks_i("@'Tis about time!@");
+        } else {
+            PourCask_i(item);
+        }
+    }
+    if (event = _Pathfind2) {
+        v0 = ~GetCoord(item);
+        v0::1 = (v0::1 + 1);
+        v0::2 = (v0::2 - 1);
+        v1 = ~GetContents(_All, _All, _Bucket, _Avatar);
+        if v1 {
+            v2 = ~Item_push(v1);
+            if v2 {
+                SetFrame(3, v1);
+                v2 = ~PopToMap(v0);
+            }
+        }
+        v2 = ~PostAction(<< _aFACE_i, _North, _aCONTINUE_i, _aBEND_FRAME_i >>, _Avatar);
+    }
+}
+
+Routine PourKeg_i accepts a0 #locals(9) #uses(MemberBarks_i) {
+    v0 = ~Item_create(_Blood_Trails);
+    if v0 {
+        SetItemFlag_i(_IsTemporary_i, v0);
+        SetFrame(~rndRange(15, 12), v0);
+        v1 = ~GetCoord(item);
+        v2 = ~FindNearby_i(0, 2, _Bucket, item);
+        Foreach v5 in v2 {
+            v6 = ~GetCoord(v5);
+            if ((v6::1 = (v1::1 - 1)) and ((v6::2 = (v1::2 + 1)) and (v6::3 = v1::3))) && (~GetFrame(v5) = 0) {
+                SetFrame(4, v5);
+                Kernel_resetRef(item);
+                v7 = ~PostInFuture(16, << _aUSABLE_i, #PourKeg_i >>, item);
+                return;
+            }
+        }
+        v1::1 = (v1::1 - ~rndRange(3, 1));
+        v1::2 = (v1::2 + ~rndRange(2, 1));
+        v7 = ~PopToMap(v1);
+        v8 = ~rndRange(2, 1);
+        if (v8 = 1) {
+            MemberBarks_i("@Turn it off!@");
+        }
+        if (v8 = 2) {
+            MemberBarks_i("@Thou art wasting it!@");
+        }
+        if ~IsNPCNear_i(_Dupre) {
+            Item_bark("@That is perfectly good beer!@", _Dupre);
+        }
+        Kernel_resetRef(item);
+        v7 = ~PostInFuture(16, << _aUSABLE_i, #PourKeg_i >>, item);
+    }
+}
+
+Routine PourCask_i accepts a0 #locals(9) #uses(MemberBarks_i) {
+    v0 = ~Item_create(_Blood_Trails);
+    if v0 {
+        SetItemFlag_i(_IsTemporary_i, v0);
+        SetFrame(~rndRange(23, 20), v0);
+        v1 = ~GetCoord(item);
+        v2 = ~FindNearby_i(0, 2, _Bucket, item);
+        Foreach v5 in v2 {
+            v6 = ~GetCoord(v5);
+            if ((v6::1 = (v1::1 + 1)) and ((v6::2 = (v1::2 - 1)) and (v6::3 = v1::3))) && (~GetFrame(v5) = 0) {
+                SetFrame(3, v5);
+                Kernel_resetRef(item);
+                v7 = ~PostInFuture(16, << _aUSABLE_i, #PourCask_i >>, item);
+                return;
+            }
+        }
+        v1::1 = (v1::1 + ~rndRange(2, 1));
+        v1::2 = (v1::2 - ~rndRange(2, 0));
+        v7 = ~PopToMap(v1);
+        v8 = ~rndRange(2, 1);
+        if (v8 = 1) {
+            MemberBarks_i("@Turn it off!@");
+        }
+        if (v8 = 2) {
+            MemberBarks_i("@Thou art wasting it!@");
+        }
+        Kernel_resetRef(item);
+        v7 = ~PostInFuture(16, << _aUSABLE_i, #PourCask_i >>, item);
+    }
+}

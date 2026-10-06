@@ -1,0 +1,192 @@
+#	ENDGAME.EXE, the Serpent Isle ending
+#
+#	Borland C++ 2.0 with its MAKE and TLIB, and Turbo Assembler 2.51.  Run
+#	MAKE in this directory, the build directory.  The tree is self-contained.
+#
+#		make			compiler in C:\BORLANDC
+#		make -DBC=C:\BC20	compiler elsewhere
+#
+#	The options change from file to file, as a makefile gives them.  Each
+#	list of objects shares one set of options, which its name spells:
+#	EG_O1Pd is -O -1 -P -d in this directory; vi0 is -vi-.
+
+.autodepend
+
+!if !$d(BC)
+BC = C:\BORLANDC
+!endif
+
+CC = $(BC)\bcc +ENDGAME.CFG
+AS = tasm
+
+all: ENDGAME.CFG ENDGAME.EXE
+
+# One directory a line: BCC hangs on a long -I line.
+ENDGAME.CFG: MAKEFILE
+	copy &&|
+-c -mm
+-I.
+-Iinclude
+-Icommon
+-Imain
+-Imain\mem
+-Imain\palette
+-Imain\video
+-Imain\xmm
+-Isound
+-Izevent
+-I$(BC)\include
+| ENDGAME.CFG
+
+EG_1GPvi0 = endgame.obj display.obj doshandl.obj
+$(EG_1GPvi0):
+	$(CC) -1 -G -P -vi- $&.c
+
+EG_ASM = dacread.obj emsinit.obj emsmap.obj dosattr.obj flatmode.obj \
+	flatflag.obj xmsflat.obj flicbrun.obj flicclr.obj
+$(EG_ASM):
+	$(AS) /mx $&.asm
+
+EG_ASMm2 = emsalloc.obj emsstat.obj
+$(EG_ASMm2):
+	$(AS) /mx /m2 $&.asm
+
+EG_COMMON_1GPvi0 = easyfile.obj strfmt.obj chunknam.obj file.obj iff.obj
+$(EG_COMMON_1GPvi0):
+	$(CC) -1 -G -P -vi- common\$&.c
+
+EG_COMMON_ASM = lstrtok.obj
+$(EG_COMMON_ASM):
+	$(AS) /mx common\$&.asm
+
+EG_COMMON_O1P = fileio.obj linefile.obj memfile.obj
+$(EG_COMMON_O1P):
+	$(CC) -O -1 -P common\$&.c
+
+EG_MAIN_1GPdvi0 = endstats.obj options.obj
+$(EG_MAIN_1GPdvi0):
+	$(CC) -1 -G -P -d -vi- main\$&.c
+
+EG_MAIN_DOS_ASM = memmove.obj ptraddr.obj addrptr.obj dosread.obj \
+	doscreat.obj dosfile.obj dosseek.obj doswrite.obj
+$(EG_MAIN_DOS_ASM):
+	$(AS) /mx main\dos\$&.asm
+
+EG_MAIN_MEM_ASM = a20gate.obj
+$(EG_MAIN_MEM_ASM):
+	$(AS) /mx main\mem\$&.asm
+
+EG_MAIN_MEM_O1P = memmgr.obj
+$(EG_MAIN_MEM_O1P):
+	$(CC) -O -1 -P main\mem\$&.c
+
+EG_MAIN_MEM_O1Pd = memsys.obj farmem.obj emsmem.obj memrept.obj \
+	memsnap.obj nearmem.obj memhand.obj cachenod.obj cachelst.obj cache.obj
+$(EG_MAIN_MEM_O1Pd):
+	$(CC) -O -1 -P -d main\mem\$&.c
+
+EG_MAIN_MEM_OGP = errors.obj fatalerr.obj
+$(EG_MAIN_MEM_OGP):
+	$(CC) -O -G -P main\mem\$&.c
+
+EG_MAIN_MEM_OGPd = memhook.obj
+$(EG_MAIN_MEM_OGPd):
+	$(CC) -O -G -P -d main\mem\$&.c
+
+EG_MAIN_O1P = reporter.obj shutdown.obj fatal.obj message.obj
+$(EG_MAIN_O1P):
+	$(CC) -O -1 -P main\$&.c
+
+EG_MAIN_PALETTE_ASM = dacwrite.obj
+$(EG_MAIN_PALETTE_ASM):
+	$(AS) /mx main\palette\$&.asm
+
+EG_MAIN_PALETTE_O1Pd = palette.obj
+$(EG_MAIN_PALETTE_O1Pd):
+	$(CC) -O -1 -P -d main\palette\$&.c
+
+EG_MAIN_PALETTE_O1ZP = palstep.obj
+$(EG_MAIN_PALETTE_O1ZP):
+	$(CC) -O -1 -Z -P main\palette\$&.c
+
+EG_MAIN_VIDEO_1 = videomd.obj
+$(EG_MAIN_VIDEO_1):
+	$(CC) -1 main\video\$&.c
+
+EG_MAIN_VIDEO_1GPvi0 = flic.obj shapefnt.obj textwin.obj
+$(EG_MAIN_VIDEO_1GPvi0):
+	$(CC) -1 -G -P -vi- main\video\$&.c
+
+EG_MAIN_VIDEO_ASM = crtport.obj vretrace.obj flicdlta.obj
+$(EG_MAIN_VIDEO_ASM):
+	$(AS) /mx main\video\$&.asm
+
+EG_MAIN_VIDEO_O1Pd = view.obj scrview.obj
+$(EG_MAIN_VIDEO_O1Pd):
+	$(CC) -O -1 -P -d main\video\$&.c
+
+EG_MAIN_XMM_1GP = vooalloc.obj
+$(EG_MAIN_XMM_1GP):
+	$(CC) -1 -G -P main\xmm\$&.c
+
+EG_MAIN_XMM_ASM = framebnd.obj fillrect.obj clrview.obj drawxlat.obj \
+	copyview.obj drawfram.obj linear.obj emscheck.obj xmmblock.obj
+$(EG_MAIN_XMM_ASM):
+	$(AS) /mx main\xmm\$&.asm
+
+EG_MAIN_XMM_OG = xmmcheck.obj xmminit.obj xmmstale.obj
+$(EG_MAIN_XMM_OG):
+	$(CC) -O -G main\xmm\$&.c
+
+EG_O1P = dirdelta.obj vidrest.obj rowtable.obj biostext.obj dlist.obj \
+	strops.obj strbuf.obj ds1482.obj
+$(EG_O1P):
+	$(CC) -O -1 -P $&.c
+
+EG_O1Pd = box.obj
+$(EG_O1Pd):
+	$(CC) -O -1 -P -d $&.c
+
+EG_SOUND_1GPdvi0 = gsound.obj
+$(EG_SOUND_1GPdvi0):
+	$(CC) -1 -G -P -d -vi- sound\$&.c
+
+EG_SOUND_1GPvi0 = sounddrv.obj xmidi.obj digital.obj speech.obj
+$(EG_SOUND_1GPvi0):
+	$(CC) -1 -G -P -vi- sound\$&.c
+
+EG_ZEVENT_O1P = systimer.obj
+$(EG_ZEVENT_O1P):
+	$(CC) -O -1 -P zevent\$&.c
+
+# __FILE__ gives these their bare names, so they compile in their own directory.
+EG_MAIN_XMM_OWN_OG = freexmm.obj xmmhand.obj
+$(EG_MAIN_XMM_OWN_OG):
+	cd main\xmm
+	$(BC)\bcc -c -mm -I..\..\include;$(BC)\include -n..\.. -O -G $&.c
+	cd ..\..
+
+# Miles' AIL driver interface, assembled with his own options.
+ail.obj: ail.asm ail.inc ail.mac
+	$(AS) /m /w+ /ml ail.asm
+
+# FatalError links from a library: its data follows CM.LIB's.
+fatalerr.lib: fatalerr.obj
+	$(BC)\tlib fatalerr.lib -+fatalerr.obj
+
+# MAKE limits the length of a rule line, so ENDGAME.EXE depends on a few lists.
+all_1: $(EG_1GPvi0) $(EG_ASM) $(EG_ASMm2) $(EG_COMMON_1GPvi0) \
+	$(EG_COMMON_ASM) $(EG_COMMON_O1P) $(EG_MAIN_1GPdvi0) $(EG_MAIN_DOS_ASM) \
+	$(EG_MAIN_MEM_ASM) $(EG_MAIN_MEM_O1P)
+
+all_2: $(EG_MAIN_MEM_O1Pd) $(EG_MAIN_MEM_OGP) $(EG_MAIN_MEM_OGPd) \
+	$(EG_MAIN_O1P) $(EG_MAIN_PALETTE_ASM) $(EG_MAIN_PALETTE_O1Pd) \
+	$(EG_MAIN_PALETTE_O1ZP) $(EG_MAIN_VIDEO_1) $(EG_MAIN_VIDEO_1GPvi0) \
+	$(EG_MAIN_VIDEO_ASM) $(EG_MAIN_VIDEO_O1Pd) $(EG_MAIN_XMM_1GP)
+
+all_3: $(EG_MAIN_XMM_ASM) $(EG_MAIN_XMM_OG) $(EG_MAIN_XMM_OWN_OG) \
+	$(EG_O1P) $(EG_O1Pd) $(EG_SOUND_1GPdvi0) $(EG_SOUND_1GPvi0) \
+	$(EG_ZEVENT_O1P)
+
+ENDGAME.EXE: all_1 all_2 all_3 ail.obj fatalerr.lib ENDGAME.LNK
+	$(BC)\tlink /m /s /c /d /L$(BC)\lib @ENDGAME.LNK

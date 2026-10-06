@@ -1,0 +1,652 @@
+Routine Ducio accepts a0 #locals(9) #uses(~LordOrLady, ~AvatarName, DucioMakesWormGem_i, PartyFaces_i, Bark_i, ~AskYesNo, ~IsInInv, ~AskList, DucioSellsProvisions_i, MessengerBringsScroll_i) {
+    v0 = ~LordOrLady();
+    v1 = ~AvatarSex();
+    v2 = ~AvatarName();
+    v3 = ~GetTime();
+    v4 = false;
+    v5 = ~FindNearby_i(0, 30, _Firepit, _Ducio);
+    if ((v3 > 1) or (v3 < 6)) {
+        v3 = "day";
+    } else {
+        v3 = "evening";
+    }
+    if (event = _Pathfind1) {
+        DucioMakesWormGem_i(event);
+    }
+    if (event = _Converse) {
+        Item_bark("@Hello!@", _Avatar);
+        PartyFaces_i(65521);
+        Bark_i(2, (("@Good " + v3) + ".@"), _Ducio);
+        SetWorkType(_Talk, _Ducio);
+    }
+    if (event = _Talking) {
+        Npc_schedule(_Ducio);
+        ClearBark_i(_Ducio);
+        SetSpeaker0_i(0, _Ducio);
+        v6 = ~GetItemFlag_i(_Met, _Ducio);
+        if (v6 = false) {
+            ["I am Ducio, the Master Artisan."];
+            SetItemFlag_i(_Met, _Ducio);
+            TurnOn("Master Artisan");
+        } else {
+            if $BANES_RELEASED {
+                ["Thou art alive! Thou hast survived the holocaust! So many are dead..."];
+                TurnOn("holocaust");
+            } else {
+                ["Welcome back..."];
+                TurnOn("Master Artisan");
+            }
+        }
+        if v5 {
+            ["What is thy business?"];
+            TurnOn("business");
+        } else {
+            ["How may I be of use to thee?"];
+        }
+        if ($gotdaemonswordback and not flag(206)) {
+            TurnOn("Daemon Sword");
+        }
+        if ($ducioknowslab and not $knowlabitem) {
+            TurnOn("apparatus");
+        }
+        if ($knowwormgem = true) {
+            TurnOn("Worm Gem");
+        }
+        if ($ducioknowsring and not $knowengagementring) {
+            TurnOn("lost ring");
+        }
+        if (flag(234) and not ~GetItemFlag_i(_Dead, _Rotoluncia)) {
+            TurnOn("kidnap");
+        }
+        TurnOn(<< "bye" >>);
+        converse {
+            key ("kidnap") {
+                TurnOff("kidnap");
+                ["Do not involve me in such matters, stranger! Canst thou not see that I am a Mundane?"];
+                ["This matter smacks of wizardry, and I want no part of it!"];
+                Bark_i(0, "@No part!@", _Ducio);
+                terminate;
+            }
+            key ("holocaust") {
+                TurnOff("holocaust");
+                ["Thy companion Shamino did return to this place, and he was in a killing rage. Despite all efforts to stop him, he did murder everyone in our town, save for Torrissio, Andrio and myself."];
+            }
+            key ("Master Artisan") {
+                TurnOff("Master Artisan");
+                if $BANES_RELEASED {
+                    ["I have the talented hands that come from a long line of craftsmen. But I live in a world with no one but the dead to create for! A most funny joke, no?!"];
+                } else {
+                    ["I have an apprentice. I have automatons to help the work progress. That makes me a Master."];
+                    ["I am able to create or repair anything. I make what the Mages need. That makes me an Artisan."];
+                    ["If thou hast need of the Master, ask me. If not, ask Topo."];
+                    TurnOn(<< "automatons", "anything", "Topo" >>);
+                }
+            }
+            key ("automatons") {
+                TurnOff("automatons");
+                ["One that bakes. One that sews. One that smiths. All from Torrissio. They work hard... do not talk back like Topo."];
+                TurnOn("Torrissio");
+            }
+            key ("Torrissio") {
+                TurnOff("Torrissio");
+                ["Torrissio is an Adept. He makes automaton guards and servants. He does good work... almost like a Master Artisan. But he needs magic to make everything work."];
+                ["I gave him a good deal on the metal he needs. Now I've got three hard workers made of metal. Not a bad deal."];
+                TurnOn(<< "magic", "deal" >>);
+            }
+            key ("magic") {
+                TurnOff("magic");
+                ["Torrissio doth not ask about my work. I do not ask about his."];
+                ["All I know is that his spells are old. Not anything created by these Mages."];
+                ["Thou wishest to ask more, ask Torrissio... If he will speak with thee."];
+                TurnOn("old");
+            }
+            key ("old") {
+                TurnOff("old");
+                ["Very old. Maybe as old as the Serpent ruins, maybe not. I'm not a Mage."];
+                TurnOn("Serpent Ruins");
+            }
+            key ("Serpent Ruins") {
+                TurnOff("Serpent Ruins");
+                ["What dost thou think I am, a teacher like Fedabiblio?!"];
+                ["If thou wishest a history lesson, go to him like any novice. If thou wishest the work of a Master Artisan, stay."];
+                ["I do not have time for such questions!"];
+                TurnOn(<< "Fedabiblio", "novice" >>);
+            }
+            key ("Fedabiblio") {
+                TurnOff("Fedabiblio");
+                ["Fedabiblio teaches the young mages. He keeps the library of magic. He knows the history. Speak to him, do not bother me!"];
+            }
+            key ("novice") {
+                TurnOff("novice");
+                ["If thou seekest knowledge, thou art a novice. One who seeks to be taught. I am a Master. I do not teach. I do not need teaching. I am not a novice."];
+            }
+            key ("deal") {
+                TurnOff("deal");
+                ["Art thou a Master?"];
+                ["No. Then do not ask what deal I give to others. Bad manners."];
+            }
+            key ("anything") {
+                TurnOff("anything");
+                ["If the Mages can speak plain enough to explain what they need, I can make it."];
+                ["Magical apparatus. Swords. Whatever. I can make it. They enchant it. 'Tis fair."];
+                TurnOn(<< "Magical apparatus", "Swords" >>);
+            }
+            key ("Magical apparatus") {
+                TurnOff("Magical apparatus");
+                ["I make all the apparatus for the Mages. All different. Every Mage wants something a little different than the next."];
+                ["I can tell thee who a piece belongs to just by looking at it. I remember everything I've made."];
+                ["Dost thou have something thou wishest me to look at?"];
+                if (~AskYesNo() = true) {
+                    goto label_60;
+                } else {
+                    ["Fine."];
+                }
+            }
+            key ("apparatus") {
+                label_60:
+                TurnOff("apparatus");
+                if v5 {
+                    if ~IsInInv(1, 65177, _Al_App_1, 1, _Party) {
+                        ["Hmmmm. This is a piece of lab apparatus that the mages use. In fact, this one was one of my first masterpieces. I thought it had been destroyed."];
+                        ["I might ask how thou didst come by this. But I won't. I do not want to know. Vasculio hath been dead for years..."];
+                        v7 = true;
+                        TurnOn("Vasculio");
+                    } else {
+                        ["Thou hast no such object! Do not waste my time, for I am a busy man..."];
+                        Bark_i(0, "@Must work...@", _Ducio);
+                        SetWorkType(_Shy, _Ducio);
+                        terminate;
+                    }
+                } else {
+                    ["If thou wouldst bring the object to my shop, I would be glad to examine it there. I do not have my tools with me now."];
+                }
+            }
+            key ("Vasculio") {
+                TurnOff("Vasculio");
+                ["Not good, that one. Sought to reach beyond life and rule death. Not good."];
+                ["The Council killed him years ago. I thought they had destroyed all his equipment after they found the grave empty... But mayhaps Ensorcio took it."];
+                TurnOn(<< "grave empty", "Ensorcio" >>);
+            }
+            key ("grave empty") {
+                TurnOff("grave empty");
+                ["They say he rose from the dead. They think he is looking for revenge."];
+                ["I think the Council secretly decided to burn him. No one can bring back the dead from ashes."];
+            }
+            key ("Ensorcio") {
+                TurnOff("Ensorcio");
+                ["Ensorcio was Vasculio's apprentice. Too much like his Master, that one."];
+                ["Exiled now. Hear he spends his time drinking away his sorrows on another island."];
+            }
+            key ("Swords") {
+                TurnOff("Swords");
+                ["Do not have much call for them. Not magic ones anyway. But I have made a few."];
+                ["Unless it is a special order, mine automaton makes it. For something non-magic, talk to Topo. If it's magic, talk to me."];
+            }
+            key ("Topo") {
+                TurnOff("Topo");
+                ["Mine apprentice. Scrawny boy. Large ambitions. Big mouth."];
+                ["But he doth work hard... when I yell at him. Shows promise."];
+                ["Tends to be a bit lazy, though. Must teach him better. Make certain he learns as much as he thinks he knows."];
+            }
+            key ("business") {
+                TurnOff("business");
+                ["What dost thou need? To buy? To look? To talk?"];
+                v8 = ~AskList(<< "buy", "look", "talk" >>);
+                if (v8 = "buy") {
+                    TurnOn("buy");
+                    goto label_84;
+                }
+                if (v8 = "look") {
+                    ["Looking is free. Inspect the automaton-made goods."];
+                    ["I have everything from cloaks to baked goods. Ceramics to swords. And many things between."];
+                    ["Let me know if thou dost wish to buy anything."];
+                }
+                if (v8 = "talk") {
+                    ["Talk is free, too. But I'm a busy man."];
+                }
+            }
+            key ("buy") {
+                label_84:
+                if (v4 = false) {
+                    if $BANES_RELEASED {
+                        ["If thou seest something thou dost like, tell me. If thou desirest something I do not have, let me know. I can either make it for thee or direct thee to someone who can."];
+                    } else {
+                        ["If thou seest something thou dost like, tell Topo or me. If thou desirest something I do not have, let me know. I can either make it for thee or direct thee to someone who can."];
+                    }
+                    v4 = true;
+                }
+                DucioSellsProvisions_i();
+            }
+            key ("lost ring") {
+                TurnOff("lost ring");
+                if v5 {
+                    if ~IsInInv(0, 65177, _Ring, 1, _Party) {
+                        ["May I see it? Ah, thank thee..."];
+                        ["Too plain for a Mage... But wait, I remember this!"];
+                        ["I made it for a sailor from Fawn. I'll wager that it cost him half a year's wages. He wanted it for an engagement ring."];
+                        TurnOn(<< "Fawn", "sailor" >>);
+                    } else {
+                        ["So where is this ring? How can I tell thee anything about this ring, if thou dost not bring it to me?"];
+                    }
+                } else {
+                    ["If thou wouldst bring thy ring to my shop, I would be glad to examine it there. I do not have my tools with me now."];
+                }
+            }
+            key ("Fawn") {
+                TurnOff("Fawn");
+                ["Fawn is on the other island. Somewhere on the far side, I think. 'Tis a port. Filled with sailors."];
+                ["That is all I know."];
+            }
+            key ("sailor") {
+                TurnOff("sailor");
+                ["I remember the piece, not the man. Wasn't a Mage. Not worth recalling, I imagine."];
+                ["Ask in Fawn. He was proud enough about the ring. Someone will know who it belongs to."];
+            }
+            key ("Daemon Sword") {
+                TurnOff("Daemon Sword");
+                ["Magical swords are very difficult to deal with. In some cases, I can be of aid, but other cases require the assistance of a Mage."];
+                if ~IsInInv(65177, 65177, _Daemon_Sword, 1, _Party) {
+                    ["'Tis a magic sword, right enough. I'll take thy word about the Daemon..."];
+                    ["The structure of the blade is not damaged. It is not a problem that I can repair."];
+                    if ~GetItemFlag_i(_Dead, _Gustacio) {
+                        ["Thou must seek out a Mage to aid thee, if there are any left among the living..."];
+                        ["If Gustacio's flux analyzer had not been stolen, I would have sent thee to his lab. It was the only thing that might have helped thee."];
+                    } else {
+                        ["Thou mightest check with Gustacio. He might be able to help thee. I have heard that he is working on something called the flux analyzer. It might be of aid to thee."];
+                        $senttogustacio = true;
+                    }
+                } else {
+                    ["If thou wouldst bring me the sword, I could examine it for thee."];
+                }
+            }
+            key ("Worm Gem") {
+                TurnOff("Worm Gem");
+                if v5 {
+                    ["What a strange request... Yes, I can make thee a Worm Gem, if thou dost desire."];
+                    TurnOn("strange request");
+                    if ~IsInInv(10, 65177, _Reagents, 1, _Party) {
+                        if ~IsInInv(10, 65177, _Reagents, 3, _Party) {
+                            ["'Tis a simple matter, when thou dost know the secret..."];
+                            DucioMakesWormGem_i(event);
+                            terminate;
+                        } else {
+                            ["Thou must bring me three Worm Hearts -- no less!"];
+                            TurnOn("Worm Hearts");
+                        }
+                    } else {
+                        ["But first, thou must bring me the Hearts of three Ice Worms."];
+                        TurnOn("Worm Hearts");
+                    }
+                } else {
+                    ["I will make thee a Worm Gem if thou wilt come to my shop when I am there..."];
+                }
+            }
+            key ("strange request") {
+                TurnOff("strange request");
+                ["'Twas Torrissio who told me the secret of making these gems. He said he learned of it from ancient scrolls written in some strange runic lettering."];
+                ["For years, he hath been mine only customer for such gems. But then the stranger named Batlin asked me to craft some for him, and now thou dost request them..."];
+            }
+            key ("Worm Hearts") {
+                TurnOff("Worm Hearts");
+                ["Why, the hearts of Ice Worms, of course! Kill an Ice Worm, strip it of its heart, and kill another."];
+                ["The Ice Worms are found in the cold northern lands, I am told. I have not been there myself. Heard stories. Very cold."];
+            }
+            key ("bye") {
+                CloseSpeaker0_i();
+                Bark_i(0, "@Farewell!@", _Avatar);
+                Bark_i(2, "@Come again!@", _Ducio);
+                MessengerBringsScroll_i();
+                break;
+            }
+        }
+        clear_answers;
+    }
+}
+
+Routine DucioMakesWormGem_i accepts a0 #locals(6) #uses(~DirFrom_i, ~GiveItemsOrDrop_i) {
+    v1 = ~FindNearby_i(0, 50, _Firepit, _Ducio);
+    v2 = ~GetCoord(v1);
+    if (v0 = 9) && v1 {
+        PathfindNPC_i(true, #Ducio, ~NPCToItem_i(_Ducio), _Pathfind1, v2, _Ducio);
+        SetPathFailure_i(_Path_Failure, item, << 1039 >>);
+    }
+    if (v0 = 10) {
+        v3 = ~DirFrom_i(v2, _Ducio);
+        v4 = ~PostAction(<< _aNO_HALT_i, _aFACE_i, v3, _aCONTINUE_i, _aBEND_FRAME_i, _aWAIT_i, 2, _aRAISE1_FRAME_i, _aWAIT_i, 1, _aEXTEND1_FRAME_i, _aWAIT_i, 1, _aLOOP_i, 65530, 2 >>, _Ducio);
+        CreateSpriteOn_i(65535, 0, 0, 0, 65532, 65532, 21, _Ducio);
+        v5 = ~GetCoord(_Avatar);
+        SetSpeaker0_i(0, _Ducio);
+        ["Take thy gem!"];
+        v4 = ~TakeFromParty_i(0, 10, _All, _Reagents, 3);
+        v6 = ~GiveItemsOrDrop_i(true, 0, 0, 65177, 445, 1, _Avatar);
+        CloseSpeaker0_i();
+        Npc_schedule(_Ducio);
+    }
+}
+
+Usable DucioSellsProvisions_i #locals(20) #uses(~LordOrLady, ~AskOrdList, ~AskYesNo, ~DucioHaggles_i, ~SellItem_i, ~PartyUtters) {
+    v0 = ~LordOrLady();
+    v1 = ~rndRange(4, 1);
+    PushKeys();
+    v2 = true;
+    v3 = << "nothing", "cloak", "sword", "shovel", "torch", "pick", "bucket", "pitcher", "lamp", "cloth", "bread", "rolls", "cake" >>;
+    v4 = << 0, 227, 599, 625, 595, 624, 810, 824, 336, 851, 377, 377, 377 >>;
+    v5 = << 65177, 0, 0, 0, 0, 0, 0, 2, 2, v1, 1, 2, 4 >>;
+    v6 = << 0, 200, 350, 100, 10, 140, 28, 30, 12, 20, 8, 5, 10 >>;
+    v7 = << 0, 80, 160, 50, 5, 75, 14, 15, 6, 10, 4, 3, 5 >>;
+    v8 = 952;
+    v9 = << 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 >>;
+    v10 = << 0, 1, 0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1 >>;
+    if ~AvatarSex() {
+        v11 = "Milady";
+    } else {
+        v11 = "Milord";
+    }
+    ["What dost thou care to buy?"];
+    While v2 {
+        v12 = ~AskOrdList(v3);
+        if (v12 = 1) {
+            ["Perhaps another time, <v0>."];
+            v2 = false;
+        } else {
+            v13 = v6::v12;
+            v14 = 0;
+            v15 = ~rndRange(5, 1);
+            if (v15 = 1) {
+                v16 = "Dost thou accept?";
+            }
+            if (v15 = 2) {
+                v16 = "Dost thou find this price acceptable?";
+            }
+            if (v15 = 3) {
+                v16 = "Wilt thou pay my price?";
+            }
+            if (v15 = 4) {
+                v16 = (v11 + ", dost thou agree?");
+            }
+            if (v15 = 5) {
+                v16 = (v11 + ", is the price acceptable?");
+            }
+            if (v12 = 2) {
+                ["That will be <v13> guilders for a nice warm cloak."];
+                [<v16>"];
+                v17 = "cloaks";
+            }
+            if (v12 = 3) {
+                ["For <v13> guilders I can sell thee a very sharp sword."];
+                ["<v16>"];
+                v17 = "swords";
+            }
+            if (v12 = 4) {
+                ["<v13> guilders will buy thee a finely crafted shovel."];
+                ["<v16>"];
+                v17 = "shovels";
+            }
+            if (v12 = 5) {
+                ["I will sell thee a torch for <v13> guilders."];
+                ["<v16>"];
+                v17 = "torches";
+            }
+            if (v12 = 6) {
+                ["Mine automaton smith makes them. For <v13> guilders I can sell thee one."];
+                ["<v16>"];
+                v17 = "picks";
+            }
+            if (v12 = 7) {
+                ["My buckets sell for <v13> guilders."];
+                ["<v16>"];
+                v17 = "buckets";
+            }
+            if (v12 = 8) {
+                ["I can sell thee a pitcher for <v13> guilders."];
+                ["<v16>"];
+                v17 = "pitchers";
+            }
+            if (v12 = 9) {
+                ["I will sell thee a nice oil lamp for <v13> guilders."];
+                ["<v16>"];
+                v17 = "oil lamps";
+            }
+            if (v12 = 10) {
+                ["I can sell thee a bolt of dyed cloth for <v13> guilders."];
+                ["<v16>"];
+                v17 = "bolts of cloth";
+            }
+            if (v12 = 11) {
+                ["Hmmm... the bread baked by mine automaton baker is very good and filling. I will sell a loaf to thee for <v13> guilders."];
+                ["<v16>"];
+                v17 = "loaves of bread";
+            }
+            if (v12 = 12) {
+                ["The rolls are baked fresh daily. For <v13> guilders I will sell thee one."];
+                ["<v16>"];
+                v17 = "rolls";
+            }
+            if (v12 = 13) {
+                ["The cake is actually very good. Nice and sweet. For <v13> guilders thou canst have one."];
+                ["<v16>"];
+                v17 = "cakes";
+            }
+            if (v13 = v7::v12) {
+                if ~AskYesNo() {
+                    v18 = v13;
+                } else {
+                    v18 = 0;
+                }
+            } else {
+                v18 = ~DucioHaggles_i(v7::v12, v6::v12);
+            }
+            if (v18 > 0) {
+                if (v10::v12 = 1) {
+                    ["How many <v17> wouldst thou like?"];
+                    v14 = ~SellItem_i(false, 1, 10, v18, v8, 1, v5::v12, v4::v12);
+                } else {
+                    v14 = ~SellItem_i(false, 1, 0, v18, v8, 1, v5::v12, v4::v12);
+                }
+            }
+            if (v14 = 1) {
+                ["Enjoy thy purchase!"];
+            } else {
+                if (v14 = 2) {
+                    ["Thine hands are full!"];
+                } else {
+                    if (v14 = 3) {
+                        v19 = ~PartyUtters(false, 0, (("@But " + v0) + ", we do not have the guilders to purchase this.@"), 1);
+                        if (v19 <> 65180) {
+                            SetSpeaker0_i(0, _Ducio);
+                            ["Please leave if thou canst not pay."];
+                        } else {
+                            ["Thou dost not have enough guilders to purchase this..."];
+                        }
+                        if (31 < (~GetNPCID_i(_Ducio) + 6)) {
+                            SetNPCID_i(31, _Ducio);
+                        } else {
+                            SetNPCID_i((~GetNPCID_i(_Ducio) + 6), _Ducio);
+                        }
+                    } else {
+                    }
+                }
+            }
+            ["Dost thou care for something else?"];
+            v2 = ~AskYesNo();
+        }
+    }
+    PopKeys();
+}
+
+Function ~DucioHaggles_i accepts a0, a1 #locals(16) #uses(~LordOrLady, ~AskList, ~Haggle_i, ~AskYesNo) {
+    v2 = ~LordOrLady();
+    v3 = ~AvatarSex();
+    if ~AvatarSex() {
+        v4 = "Milady";
+    } else {
+        v4 = "Milord";
+    }
+    v5 = v1;
+    v6 = ((v0 / 3) * 2);
+    v7 = (15 - (~GetNPCID_i(_Ducio) / 2));
+    v8 = 0;
+    v9 = 1;
+    v10 = 0;
+    v11 = 2;
+    v12 = ~GetNPCID_i(_Ducio);
+    While v9 {
+        v13 = ~AskList(<< "yes", "no", "haggle" >>);
+        if (v13 = "no") {
+            return 0;
+        } else {
+            if (v13 = "yes") {
+                v14 = 0;
+                goto label_11;
+            }
+        }
+        v15 = ~Haggle_i(v8, v7, v10, v6, v11, v0, v5);
+        v10 = (v10 + 1);
+        v8 = v15::4;
+        v14 = v15::3;
+        v16 = v5;
+        v5 = v15::2;
+        v6 = v15::1;
+        label_11:
+        v17 = ~Random(3);
+        if (v14 < 2) {
+            if (v5 < (v0 + ((v1 - v0) / 4))) {
+                if (v17 = 1) {
+                    ["Thou art shrewd indeed, <v2>. Thou wouldst make a fine Master."];
+                }
+                if (v17 = 2) {
+                    ["<v4>, this is the fist time in years that I have actually lost money in a deal."];
+                }
+                if (v17 = 3) {
+                    ["Thou dost trade well, <v2>."];
+                }
+            } else {
+                if (v5 < (v0 + ((v1 - v0) / 3))) {
+                    if (v17 = 1) {
+                        ["Do not allow Topo to hear of this, <v2>! 'Tis not often I lower my prices such..."];
+                    }
+                    if (v17 = 2) {
+                        ["<v4>, I must be addled! I do not normally offer such a price..."];
+                    }
+                    if (v17 = 3) {
+                        ["Thou art honorable, <v2>, I can tell. For thee only will I offer such a price!"];
+                    }
+                } else {
+                    if (v5 < (v0 + ((v1 - v0) / 2))) {
+                        if (v17 = 1) {
+                            ["Thou wilt find that my prices are more than fair, <v2>, once thou hast travelled a bit."];
+                        }
+                        if (v17 = 2) {
+                            ["'Tis a pleasure to trade with thee, <v2>."];
+                        }
+                        if (v17 = 3) {
+                            ["Please come to see me whenever thou art in Moonshade again."];
+                        }
+                    } else {
+                        if (v17 = 1) {
+                            ["<v4>, thou art a fine customer!"];
+                        }
+                        if (v17 = 2) {
+                            ["Many thanks, <v2>!"];
+                        }
+                        if (v17 = 3) {
+                            ["I fear that I must charge more, now that my raw materials are so limited."];
+                        }
+                    }
+                }
+            }
+            ["Hast thou agreed to a price of <v5> guilders, <v2>?"];
+            if ~AskYesNo() {
+                if (v12 > 1) {
+                    SetNPCID_i((v12 - 2), _Ducio);
+                }
+                return v5;
+            } else {
+                if (v17 = 1) {
+                    ["'Tis poor form to argue once thou hast agreed on a price!"];
+                }
+                if (v17 = 2) {
+                    ["What of our bargain? I had expected better of thee..."];
+                }
+                if (v17 = 3) {
+                    ["Leave immediately! Thou dost not treat a Master so in Moonshade!"];
+                    terminate;
+                }
+                if (31 < (v12 + 10)) {
+                    SetNPCID_i(31, _Ducio);
+                } else {
+                    SetNPCID_i((v12 + 10), _Ducio);
+                }
+                return 0;
+            }
+        }
+        if (v8 = 1) {
+            if (v14 = 5) {
+                ["I said that <v5> was my final offer. Dost thou accept?"];
+                if (v12 < 28) {
+                    SetNPCID_i((v12 + 4), _Ducio);
+                }
+                if ~AskYesNo() {
+                    return v5;
+                }
+                v9 = 0;
+            } else {
+                ["<v5> guilders is my final offer."];
+                if (v12 < 30) {
+                    SetNPCID_i((v12 + 2), _Ducio);
+                }
+            }
+        } else {
+            if (v14 = 2) {
+                if (v17 = 1) {
+                    ["Thou art a worthy opponent, <v2>. How does <v5> guilders sound?"];
+                }
+                if (v17 = 2) {
+                    ["<v4>, I like thine honest face. How does <v5> guilders sound to thee?"];
+                }
+                if (v17 = 3) {
+                    ["My price is <v5> guilders, <v2>. Dost thou accept?"];
+                }
+            }
+            if (v14 = 3) {
+                if (v17 = 1) {
+                    ["I am not sure. Wouldst thou pay <v5> guilders?"];
+                }
+                if (v17 = 2) {
+                    ["Not likely... <v5> guilders?"];
+                }
+                if (v17 = 3) {
+                    ["I have so little raw material... Perhaps <v5> guilders?"];
+                }
+            }
+            if (v14 = 4) {
+                if (v17 = 1) {
+                    ["<v5> guilders is as low as I can go."];
+                    ["What dost thou say to this?"];
+                }
+                if (v17 = 2) {
+                    ["I cannot accept less than <v5> guilders. Thou must understand my position."];
+                }
+                if (v17 = 3) {
+                    ["<v5> guilders. I am not a charity."];
+                }
+            }
+            if (v14 = 5) {
+                v5 = v16;
+                if (v17 = 1) {
+                    ["My previous price stands, at <v5> guilders. I will not have it said that Master Ducio is so easily taken!"];
+                }
+                if (v17 = 2) {
+                    ["<v5> guilders, and no less! I have to feed that worthless Topo somehow!"];
+                }
+                if (v17 = 3) {
+                    ["I would rather become a Ranger than accept such an offer!"];
+                    ["<v5> guilders is as low as I will go!"];
+                }
+                if (v12 < 31) {
+                    SetNPCID_i((v12 + 1), _Ducio);
+                }
+            }
+        }
+    }
+}

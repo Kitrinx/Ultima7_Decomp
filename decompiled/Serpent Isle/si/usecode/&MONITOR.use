@@ -1,0 +1,565 @@
+Routine BloodTrailEgg_i accepts a0 #locals(8) #uses(CreateDeadGuard_i) {
+    if not $BANES_RELEASED {
+        terminate;
+    }
+    v0 = ~GetCoord(item);
+    v1 = ~GetQuality(item);
+    if (v1 > 100) {
+        v1 = (0 - (v1 - 100));
+    }
+    v2 = ~GetQuantity(0, item);
+    if (v2 > 100) {
+        v2 = (0 - (v2 - 100));
+    }
+    v3 = (v1 / 4);
+    v4 = (v2 / 4);
+    v5 = 0;
+    While (v5 < 4) {
+        v6 = ~Item_create(_Blood_Trails);
+        if v6 {
+            SetFrame(v5, v6);
+            v7 = ~PopToMap(<< (v0::1 + v1), (v0::2 + v2), 0 >>);
+            if not v7 {
+                PrintError_i(" failed to create blood");
+                terminate;
+            }
+        }
+        v1 = (v1 - v3);
+        v2 = (v2 - v4);
+        v5 = (v5 + 1);
+    }
+    CreateDeadGuard_i(v0);
+    Item_destroy(item);
+}
+
+Routine MadnessBodyEgg_i accepts a0 #locals(12) #uses(CreateDeadGuard_i) {
+    if not $BANES_RELEASED {
+        terminate;
+    }
+    v0 = ~GetCoord(item);
+    if (~GetQuality(item) = 13) {
+        v1 = << 0, 0, 65534, 2, 0 >>;
+        v2 = << 2, 65534, 0, 0, 0 >>;
+        v3 = 1;
+        Foreach v6 in v1 {
+            v7 = ~Item_create(_Flat_Burn_Mark);
+            if v7 {
+                SetFrame(v3, v7);
+                v8 = ~PopToMap(<< (v0::1 + v6), (v0::2 + v2::v3), v0::3 >>);
+                if not v8 {
+                    PrintError_i(" failed to create a burn mark!");
+                    terminate;
+                }
+            }
+            v3 = (v3 + 1);
+        }
+        v9 = ~Item_create(_Campfire);
+        if v9 {
+            v10 = ~rndRange(6, 4);
+            SetFrame(v10, v9);
+            v8 = ~PopToMap(v0);
+        }
+    }
+    v1 = << 3, 3, 3, 3, 3, 3, 2, 1, 0, 65535, 65534, 65534, 65534, 65534, 65534, 65534, 65535, 0, 1, 2 >>;
+    v2 = << 65535, 0, 1, 2, 3, 4, 4, 4, 4, 4, 4, 3, 2, 1, 0, 65535, 65535, 65535, 65535, 65535 >>;
+    v11 = ~rndRange(20, 1);
+    CreateDeadGuard_i(<< (v0::1 + v1::v11), (v0::2 + v2::v11), v0::3 >>);
+    Item_destroy(item);
+}
+
+Routine MonitorRuinsEgg_i accepts a0 #locals(47) #uses(~CreateItemAt_i) {
+    if (event = _Trigger) {
+        if $BANES_RELEASED {
+            v0 = ~GetQuality(item);
+            if (v0 = 1) {
+                v1 = ~FindNearby_i(0, 80, _Slate_1_Roof, item);
+                Foreach v4 in v1 {
+                    v5 = ~GetCoord(v4);
+                    if ((v5::1 = 999) and (v5::2 = 2575)) {
+                        Item_destroy(v4);
+                        v6 = ~Item_create(_Brk_Roof);
+                        if v6 {
+                            SetFrame(4, v6);
+                            v7 = ~PopToMap(v5);
+                        }
+                    }
+                    if ((v5::1 = 1003) and (v5::2 = 2575)) {
+                        Item_destroy(v4);
+                        v6 = ~Item_create(_Brk_Roof);
+                        if v6 {
+                            SetFrame(3, v6);
+                            v7 = ~PopToMap(v5);
+                        }
+                    }
+                    if ((v5::1 = 1007) and (v5::2 = 2575)) {
+                        Item_destroy(v4);
+                        v6 = ~Item_create(_Brk_Roof);
+                        if v6 {
+                            SetFrame(0, v6);
+                            v7 = ~PopToMap(v5);
+                        }
+                    }
+                    if ((v5::1 = 1007) and (v5::2 = 2571)) {
+                        Item_destroy(v4);
+                        v6 = ~Item_create(_Brk_Roof);
+                        if v6 {
+                            SetFrame(2, v6);
+                            v7 = ~PopToMap(v5);
+                        }
+                    }
+                    if ((v5::1 = 979) and (v5::2 = 2575)) {
+                        Item_destroy(v4);
+                        v6 = ~Item_create(_Brk_Roof);
+                        if v6 {
+                            SetFrame(4, v6);
+                            v7 = ~PopToMap(v5);
+                        }
+                    }
+                    if ((v5::1 = 983) and (v5::2 = 2575)) {
+                        Item_destroy(v4);
+                        v6 = ~Item_create(_Brk_Roof);
+                        if v6 {
+                            SetFrame(6, v6);
+                            v7 = ~PopToMap(v5);
+                        }
+                    }
+                    if ((v5::1 = 987) and (v5::2 = 2575)) {
+                        Item_destroy(v4);
+                        v6 = ~Item_create(_Brk_Roof);
+                        if v6 {
+                            SetFrame(3, v6);
+                            v7 = ~PopToMap(v5);
+                        }
+                    }
+                    if ((v5::1 = 991) and (v5::2 = 2575)) {
+                        Item_destroy(v4);
+                        v6 = ~Item_create(_Brk_Roof);
+                        if v6 {
+                            SetFrame(6, v6);
+                            v7 = ~PopToMap(v5);
+                        }
+                    }
+                }
+                v8 = ~FindNearby_i(0, 80, _I_2Cel_EW_Wall, item);
+                Foreach v11 in v8 {
+                    v5 = ~GetCoord(v11);
+                    if ((v5::1 = 1000) and (v5::2 = 2575)) {
+                        Item_destroy(v11);
+                        v12 = ~Item_create(_I_2Cel_EW_Wall);
+                        if v12 {
+                            SetFrame(8, v12);
+                            v7 = ~PopToMap(v5);
+                        }
+                    }
+                    if ((v5::1 = 1002) and (v5::2 = 2575)) {
+                        Item_destroy(v11);
+                        v12 = ~Item_create(_I_2Cel_EW_Wall);
+                        if v12 {
+                            SetFrame(13, v12);
+                            v7 = ~PopToMap(v5);
+                        }
+                    }
+                    if ((v5::1 = 1004) and (v5::2 = 2575)) {
+                        Item_destroy(v11);
+                        v12 = ~Item_create(_I_2Cel_EW_Wall);
+                        if v12 {
+                            SetFrame(9, v12);
+                            v7 = ~PopToMap(v5);
+                        }
+                    }
+                    if ((v5::1 = 1006) and (v5::2 = 2575)) {
+                        Item_destroy(v11);
+                        v12 = ~Item_create(_I_2Cel_EW_Wall);
+                        if v12 {
+                            SetFrame(10, v12);
+                            v7 = ~PopToMap(v5);
+                        }
+                    }
+                    if ((v5::1 = 978) and (v5::2 = 2575)) {
+                        Item_destroy(v11);
+                        v12 = ~Item_create(_I_2Cel_EW_Wall);
+                        if v12 {
+                            SetFrame(10, v12);
+                            v7 = ~PopToMap(v5);
+                        }
+                    }
+                    if ((v5::1 = 980) and (v5::2 = 2575)) {
+                        Item_destroy(v11);
+                        v12 = ~Item_create(_I_2Cel_EW_Wall);
+                        if v12 {
+                            SetFrame(13, v12);
+                            v7 = ~PopToMap(v5);
+                        }
+                    }
+                    if ((v5::1 = 986) and (v5::2 = 2575)) {
+                        Item_destroy(v11);
+                        v12 = ~Item_create(_I_2Cel_EW_Wall);
+                        if v12 {
+                            SetFrame(13, v12);
+                            v7 = ~PopToMap(v5);
+                        }
+                    }
+                    if ((v5::1 = 988) and (v5::2 = 2575)) {
+                        Item_destroy(v11);
+                        v12 = ~Item_create(_I_2Cel_EW_Wall);
+                        if v12 {
+                            SetFrame(8, v12);
+                            v7 = ~PopToMap(v5);
+                        }
+                    }
+                    if ((v5::1 = 990) and (v5::2 = 2575)) {
+                        Item_destroy(v11);
+                        v12 = ~Item_create(_I_2Cel_EW_Wall);
+                        if v12 {
+                            SetFrame(13, v12);
+                            v7 = ~PopToMap(v5);
+                        }
+                    }
+                }
+                v8 = ~FindNearby_i(0, 80, _I_2Cel_NS_Wall, item);
+                Foreach v11 in v8 {
+                    v5 = ~GetCoord(v11);
+                    if ((v5::1 = 1007) and (v5::2 = 2573)) {
+                        Item_destroy(v11);
+                        v12 = ~Item_create(_I_2Cel_NS_Wall);
+                        if v12 {
+                            SetFrame(12, v12);
+                            v7 = ~PopToMap(v5);
+                        }
+                    }
+                    if ((v5::1 = 1007) and (v5::2 = 2575)) {
+                        Item_destroy(v11);
+                        v12 = ~Item_create(_I_2Cel_NS_Wall);
+                        if v12 {
+                            v7 = ~PopToMap(v5);
+                            SetFrame(9, v12);
+                        }
+                    }
+                }
+                v15 = 0;
+                v16 = ~FindNearby_i(0, 10, _Desk_Items, item);
+                Foreach v19 in v16 {
+                    if (~GetQuality(v19) = 1) {
+                        v15 = 1;
+                    }
+                }
+                if (v15 = 0) {
+                    v7 = ~CreateItemAt_i(item, false, 1, 0, _Desk_Items);
+                    v20 = ~FindNearby_i(0, 80, _DDoor_EW, item);
+                    Foreach v23 in v20 {
+                        Item_destroy(v23);
+                    }
+                    v20 = ~FindNearby_i(0, 80, _Door_NS, item);
+                    Foreach v23 in v20 {
+                        Item_destroy(v23);
+                    }
+                    v26 = 1;
+                    v27 = << 976, 978, 980, 978, 984, 986, 988, 990, 986, 988, 982, 995, 1013, 1013, 1013, 987, 978, 1000, 1002, 1004, 1004, 1002 >>;
+                    v28 = << 2577, 2577, 2577, 2579, 2577, 2577, 2577, 2577, 2579, 2579, 2581, 2579, 2574, 2580, 2582, 2576, 2576, 2577, 2577, 2577, 2579, 2579 >>;
+                    v29 = << 3, 5, 4, 1, 3, 5, 5, 4, 1, 1, 0, 0, 0, 2, 1, 4, 6, 3, 5, 5, 1, 1 >>;
+                    While (v26 < 23) {
+                        v30 = ~Item_create(_Flat_Burn_Mark);
+                        if v30 {
+                            SetFrame(v29::v26, v30);
+                            v5 = << v27::v26, v28::v26, 0 >>;
+                            v7 = ~PopToMap(v5);
+                        }
+                        v26 = (v26 + 1);
+                    }
+                    v26 = 1;
+                    v27 = << 1013, 1012, 1003, 994, 988, 985, 978 >>;
+                    v28 = << 2581, 2573, 2576, 2578, 2576, 2576, 2576 >>;
+                    v29 = << 5, 4, 5, 6, 5, 6, 5 >>;
+                    While (v26 < 8) {
+                        v30 = ~Item_create(_Campfire);
+                        if v30 {
+                            SetFrame(v29::v26, v30);
+                            v5 = << v27::v26, v28::v26, 0 >>;
+                            v7 = ~PopToMap(v5);
+                        }
+                        v26 = (v26 + 1);
+                    }
+                }
+            }
+        }
+        if (v0 = 2) {
+            v31 = ~GetCoord(item);
+            v26 = 0;
+            While (v26 < 2) {
+                v32 = ~rndRange(40, 1);
+                v32 = ~rndRange(40, 1);
+                v33 = ~rndRange(40, 1);
+                v33 = ~rndRange(40, 1);
+                v34 = ~rndRange(15, 0);
+                v35 = ~Item_create(_B_Contain);
+                if v35 {
+                    SetFrame(v34, v35);
+                    v5 = << ((v31::1 - 40) + (v32 * 2)), ((v31::2 - 40) + (v33 * 2)), 0 >>;
+                    v36 = ~canExistAt(v34, _B_Contain, v5);
+                    if v36 {
+                        v7 = ~PopToMap(v5);
+                        v26 = (v26 + 1);
+                    }
+                }
+            }
+            v26 = 0;
+            While (v26 < 2) {
+                v32 = ~rndRange(40, 1);
+                v37 = ~rndRange(40, 1);
+                v33 = ~rndRange(40, 1);
+                v33 = ~rndRange(40, 1);
+                v34 = ~rndRange(31, 0);
+                v35 = ~Item_create(_Garbage_1);
+                if v35 {
+                    SetFrame(v34, v35);
+                    v5 = << ((v31::1 - 40) + (v32 * 2)), ((v31::2 - 40) + (v33 * 2)), 0 >>;
+                    v36 = ~canExistAt(v34, _Garbage_1, v5);
+                    if v36 {
+                        v7 = ~PopToMap(v5);
+                        v26 = (v26 + 1);
+                    }
+                }
+            }
+            v26 = 0;
+            While (v26 < 2) {
+                v32 = ~rndRange(40, 1);
+                v37 = ~rndRange(40, 1);
+                v33 = ~rndRange(40, 1);
+                v33 = ~rndRange(40, 1);
+                v35 = ~Item_create(_Flat_Burn_Mark);
+                if v35 {
+                    v5 = << ((v31::1 - 40) + (v32 * 2)), ((v31::2 - 40) + (v33 * 2)), 0 >>;
+                    v36 = ~canExistAt(0, _Flat_Burn_Mark, v5);
+                    if v36 {
+                        v7 = ~PopToMap(v5);
+                        v26 = (v26 + 1);
+                    }
+                }
+            }
+            v38 = ~GetAllInRegion(_Cooking_Utensils);
+            Foreach v7 in v38 {
+                Item_destroy(v7);
+            }
+            v41 = ~FindNearby_i(0, 80, _Chair, item);
+            Foreach v44 in v41 {
+                v5 = ~GetCoord(v44);
+                Item_destroy(v44);
+                if (~rndRange(3, 1) = 2) {
+                    v34 = ~rndRange(23, 20);
+                    v45 = ~Item_create(_Chair);
+                    if v45 {
+                        SetFrame(v34, v45);
+                        v7 = ~PopToMap(v5);
+                    }
+                }
+            }
+            v46 = ~rndRange(99, 0);
+            if (v46 < 33) {
+                v7 = ~Summon_i(item, _Bear);
+            }
+            if ((v46 > 33) and (v46 < 66)) {
+                v7 = ~Summon_i(item, _Wolf);
+            }
+            if (v46 > 66) {
+                v7 = ~Summon_i(item, _Leopard);
+            }
+            Item_destroy(item);
+        }
+    }
+}
+
+Routine SimonBottleHintEgg_i accepts a0 #locals(1) #uses(~PartyUtters) {
+    if $foundsimonbottle {
+        Item_destroy(item);
+    }
+    if $KNOWS_GOBLINS_HIDEOUT {
+        v0 = ~PartyUtters(true, "@This bottle could be a clue...@", "@Wait! A bottle!@", 1);
+    }
+}
+
+Routine ThoxaEgg_i accepts a0 #locals(1) #uses(Bark_i) {
+    if (not $AVATAR_GOT_SHORT_STICK or ($DUPRE_IS_TOAST or (~IsNPCNear_i(_Shamino) and (~IsNPCNear_i(_Dupre) and ~IsNPCNear_i(_Iolo))))) {
+        terminate;
+    }
+    v0 = ~ApproachAvatar_i(40, 80, _Thoxa);
+    Sfx(81);
+    Bark_i(5, "@Avatar!@", _Thoxa);
+    SetWorkType(_Talk, _Thoxa);
+}
+
+Routine TransformCaladin_i accepts a0 #locals(3) {
+    v0 = ~GetCoord(_Caladin);
+    if $temp1flag {
+        LightningBolt();
+        CreateSpriteOn_i(1, 0, 0, 0, 0, 0, 17, _Caladin);
+        Sfx(116);
+        $temp1flag = false;
+        $temp2flag = true;
+        v1 = ~PostAction(<< _aUSABLE_i, #TransformCaladin_i >>, _Avatar);
+        terminate;
+    }
+    if $temp2flag {
+        LightningBolt();
+        CreateSpriteOn_i(1, 3, 0, 0, 0, 0, 17, _Caladin);
+        Sfx(116);
+        $temp2flag = false;
+        $temp3flag = true;
+        v1 = ~PostAction(<< _aUSABLE_i, #TransformCaladin_i >>, _Avatar);
+        terminate;
+    }
+    if $temp3flag {
+        LightningBolt();
+        CreateSpriteOn_i(1, 0, 0, 0, 0, 0, 17, _Caladin);
+        CreateSpriteOn_i(1, 1, 0, 0, 0, 0, 17, _Caladin);
+        CreateSpriteOn_i(1, 2, 0, 0, 0, 0, 17, _Caladin);
+        Sfx(116);
+        $temp3flag = false;
+        $temp4flag = true;
+        v1 = ~PostAction(<< _aUSABLE_i, #TransformCaladin_i >>, _Avatar);
+        terminate;
+    }
+    if $temp4flag {
+        LightningBolt();
+        $temp4flag = false;
+        v0 = ~GetCoord(_Caladin);
+        RemoveNPC_i(_Caladin);
+        v2 = ~CreateCreature_i(v0, _Bear);
+        SetNPCID_i(15, v2);
+        SetItemFlag_i(_Tournament, v2);
+        SetWorkType(_Wander, v2);
+    }
+}
+
+Routine SummonToBanquet_i accepts a0 #locals(16) #uses(~GimmePathEgg, ~PartyUtters, Bark_i) {
+    if (item = ~GimmePathEgg(3, 1)) {
+        v0 = ~GetParty();
+        SetItemFlag_i(_DontMove_i, _Avatar);
+        ClearItemFlag_i(_Freeze, _Avatar);
+        EndConverse_i();
+        Sfx(130);
+        Foreach v3 in v0 {
+            CreateSpriteOn_i(65533, 15, 0, 0, 0, 0, 7, v3);
+        }
+        terminate;
+    }
+    if $FILBERCIO_BANQUET_WILL_HAPPEN {
+        FadePalette_i(0, 1, 12);
+        v4 = ~GetParty();
+        v5 = << 2319, 2322, 2328, 2325, 2325, 2328, 2331, 2331 >>;
+        v6 = << 1818, 1812, 1812, 1818, 1812, 1818, 1812, 1818 >>;
+        v7 = << 0, 4, 4, 0, 4, 0, 4, 0 >>;
+        v8 = << 2320, 1820, 0 >>;
+        v9 = 1;
+        Foreach v3 in v4 {
+            Item_move(<< v5::v9, v6::v9, 0 >>, v3);
+            createSprite(65535, 0, 0, 0, v6::v9, v5::v9, 7);
+            if (~GetCoord(v3) <> ~GetCoord(_Avatar)) {
+                SetNPCID_i(11, v3);
+                LeaveParty(v3);
+            }
+            v12 = ~PostAction(<< _aFACE_i, v7::v9, _aCONTINUE_i, _aSIT_FRAME_i >>, v3);
+            SetWorkType(_Wait, v3);
+            v9 = (v9 + 1);
+        }
+        Item_move(<< 2314, 1815, 0 >>, _Filbercio);
+        Item_move(<< 2316, 1818, 0 >>, _Frigidazzi);
+        Item_move(<< 2316, 1812, 0 >>, _Rotoluncia);
+        Item_move(<< 2319, 1812, 0 >>, _Gustacio);
+        Item_move(<< 2326, 1838, 0 >>, _Pothos);
+        v4 = << 65518, 65516, 65505, 65514, 65507 >>;
+        v7 = << 2, 0, 4, 4, 0 >>;
+        v9 = 1;
+        Foreach v3 in v4 {
+            SetWorkType(_Wait, v3);
+            v12 = ~PostAction(<< _aFACE_i, v7::v9, _aCONTINUE_i, _aSIT_FRAME_i >>, v3);
+            v9 = (v9 + 1);
+        }
+        v12 = ~PostInFuture(15, << _aNO_HALT_i, _aUSABLE_i, #FadeInArrival_i, _aSTAND_FRAME_i, _aRAISE2_FRAME_i, _aUSABLE_i, #Blue_Mage >>, _Filbercio);
+        terminate;
+    }
+    if flag(391) {
+        if ($FAWN_TRIAL_DONE or ($FAWN_TRIAL_RECESS or ~GetItemFlag_i(_DontMove_i, _Avatar))) {
+            terminate;
+        }
+        v12 = ~PostInFuture(~Random(750), << _aUSABLE_i, #SummonToBanquet_i >>, ~GimmePathEgg(4, 1));
+        v15 = ~PartyUtters(false, 0, 0, 1);
+        ClearBark_i(v15);
+        if (v15 = 65180) {
+            Bark_i(0, "@About time for the trial...@", _Avatar);
+            terminate;
+        }
+        Bark_i(0, "@Do not forget the trial!@", v15);
+        terminate;
+    }
+}
+
+Routine MonitorStub_i accepts a0 #locals(1) {
+    v0 = ~Item_getType(item);
+}
+
+Routine CreateDeadGuard_i accepts a0 #locals(5) #uses(~WhereAmI_i) {
+    v1 = ~WhereAmI_i();
+    switch v1 {
+        case 14 {
+            v2 = 400;
+            v3 = ~rndRange(19, 18);
+        }
+        case 13 {
+            if (~rndRange(4, 1) = 1) {
+                v2 = 414;
+                v3 = 4;
+            } else {
+                v2 = 402;
+                v3 = 11;
+            }
+        }
+        case 3 {
+            v2 = 414;
+            v3 = 17;
+        }
+        case 9 {
+            v2 = 400;
+            v3 = 6;
+        }
+        default {
+            return;
+        }
+    }
+    v4 = ~Item_create(v2);
+    if v4 {
+        SetFrame(v3, v4);
+        v5 = ~PopToMap(v0);
+    }
+}
+
+Usable AntiDupreKillsCaladin_i #locals(2) {
+    $temp1flag = true;
+    if flag(114) {
+        ["Caladin is already deceased!"];
+        terminate;
+    }
+    v0 = ~PostInFuture(8, << _aUSABLE_i, #TransformCaladin_i >>, _Avatar);
+    v1 = ~GetDirToward_i(_Caladin, _AntiDupre);
+    v0 = ~PostAction(<< _aFACE_i, v1, _aOUT_FRAME_i, _aUP_FRAME_i, _aOUT_FRAME_i, _aSFX_i, 64, _aTHRUST2_FRAME_i, _aWAIT_i, 2, _aSTAND_FRAME_i >>, _AntiDupre);
+    v0 = ~PostAction(<< _aNO_HALT_i, _aWAIT_i, 10 >>, _Caladin);
+    terminate;
+}
+
+Usable SayBanquetTime_i #locals(1) #uses(Bark_i) {
+    if (($gottattoo and ($gotcloak and $gavemeat)) and (not $AVATAR_IS_KNIGHT and ($RENOUNCED_BRITISH or not $TOLD_MARSTEN_SERVES_LORD_BRITISH))) {
+        v0 = ~Random(3);
+        if (v0 = 1) {
+            ["'Tis time for thy banquet, Avatar. Thou shouldst make haste."];
+        }
+        if (v0 = 2) {
+            ["I shall see thee at the Banquet Hall, Avatar. It is in the south part of town."];
+        }
+        if (v0 = 3) {
+            ["Forgive me, Avatar. I must prepare for thy banquet."];
+        }
+        Bark_i(0, "@The banquet!@", item);
+        SetWorkType(_Shy, item);
+        NewSchedule_i(<< 0, 0 >>, _Wander, 0, item);
+        terminate;
+    }
+}

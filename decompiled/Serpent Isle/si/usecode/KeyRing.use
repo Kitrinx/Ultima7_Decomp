@@ -1,0 +1,19 @@
+Routine KeyRing accepts a0 #locals(8) #uses(~PartyUtters) {
+    if (event = _Converse) {
+        v0 = << 522, 800, 270, 432, 376, 433, 516, 246, 225, 471 >>;
+        v1 = ~GetTarget();
+        v2 = ~Item_getType(v1);
+        if (v2 in v0) {
+            v3 = ~GetQuality(v1);
+            if ~IsOnKeyring_i(v3) {
+                v4 = ~SetQuality(v3, item);
+                v4 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #Unique_Key >>, v1);
+            } else {
+                FlashMouse_i(0);
+                v5 = << "@We don't have that key.@", "@It's not on the keyring.@" >>;
+                v6 = ~rndRange(2, 1);
+                v7 = ~PartyUtters(true, v5::v6, v5::v6, 1);
+            }
+        }
+    }
+}

@@ -1,0 +1,31 @@
+Routine Rudyoms_Wand accepts a0 #locals(4) #uses(~IsNPCNear) {
+    if (event = _Combat) {
+        v0 = item;
+    } else {
+        v0 = ~GetTarget();
+    }
+    if not $tookinventory {
+        return;
+    }
+    if v0 {
+        closeAllGumps();
+        if ~Item_isNpc(v0) {
+            v1 = v0;
+        } else {
+            v1 = 65180;
+        }
+        CreateSpriteOn_i(65535, 0, 0, 0, 65534, 65534, 9, v1);
+        v2 = ~Random(3);
+        if ((v2 = 1) or (v2 = 2)) {
+            v3 = ~PostInFuture(5, << _aNO_HALT_i, _aRAISE1_FRAME_i, _aBARK_i, "Ah... ah... CHOO!", _aBEND_FRAME_i, _aWAIT_i, 2, _aRAISE1_FRAME_i, _aSTAND_FRAME_i >>, v1);
+            if ((v1 = 65180) and (~IsNPCNear(_Shamino) and (~Random(2) = 1))) {
+                v3 = ~PostInFuture(12, << _aNO_HALT_i, _aBARK_i, "Gesundheit!" >>, _Shamino);
+            }
+        }
+        if (v2 = 3) {
+            v3 = ~PostInFuture(5, << _aNO_HALT_i, _aRAISE2_FRAME_i, _aBARK_i, "I am late again! Oh, no!", _aUP_FRAME_i, _aWAIT_i, 2, _aRAISE1_FRAME_i, _aSTAND_FRAME_i >>, v1);
+        }
+        Sfx(116);
+        LightningBolt();
+    }
+}

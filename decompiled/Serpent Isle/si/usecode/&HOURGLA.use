@@ -1,0 +1,43 @@
+Routine Hourglass accepts a0 #locals(10) #uses(~InRect_i, ~IsBodyNear_i, FaceAvatar_i, ~GimmePathEgg) {
+    if (event = _Converse) {
+        v0 = ~GetFrame(item);
+        if (v0 = 1) {
+            v1 = ~GetCoord(item);
+            if ~InRect_i(<< 2367, 415 >>, << 2320, 368 >>, v1) {
+                closeAllGumps();
+                Sfx(48);
+                CreateSpriteOn_i(65535, 0, 0, 0, 0, 0, 9, item);
+                terminate;
+            }
+            v2 = true;
+            v3 = ~FindNearby_i(4, 10, _All, _Avatar);
+            Foreach v6 in v3 {
+                v7 = ~GetWorkType(v6);
+                if (v7 = 0) {
+                    v2 = false;
+                }
+            }
+            if v2 {
+                if ~IsBodyNear_i() {
+                    v8 = ~GetCoord(_Avatar);
+                    Item_move(v8, _Thoxa);
+                    FaceAvatar_i(65325);
+                    SetWorkType(_Talk, _Thoxa);
+                    CreateSpriteOn_i(65535, 0, 0, 0, 0, 0, 7, _Thoxa);
+                    Sfx(81);
+                    v9 = ~GimmePathEgg(1, 2);
+                    if v9 {
+                        SetMusic(v9, 63);
+                    }
+                    closeAllGumps();
+                } else {
+                    Sfx(14);
+                    CreateSpriteOn_i(65535, 0, 0, 0, 0, 0, 13, item);
+                }
+            } else {
+                Sfx(48);
+                CreateSpriteOn_i(65535, 0, 0, 0, 0, 0, 9, item);
+            }
+        }
+    }
+}

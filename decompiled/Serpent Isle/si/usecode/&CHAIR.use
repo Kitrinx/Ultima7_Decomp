@@ -1,0 +1,162 @@
+Routine Chair_Imobile accepts a0 #locals(21) #uses(MemberSays_i, ~LoadBarge_i, SeatParty_i, ~NextThrone_i) {
+    if (event = _Converse) {
+        if ~GetBarge_i(item) {
+            v0 = ~FindNearby_i(0, 20, _Assim_Belt, item);
+            if v0 && ((~GetQuality(v0) = 1) and not $bargecheatflag) {
+                MemberSays_i("This is Filbercio's barge!");
+                terminate;
+            }
+            v1 = ~LoadBarge_i(item);
+        } else {
+            SeatParty_i(292, item);
+            v2 = (~GetDist(_Avatar, item) + 15);
+            v1 = ~PostInFuture(v2, << _aNO_HALT_i, _aUSABLE_i, #Chair_Imobile >>, item);
+        }
+    }
+    if (event = _Action) {
+        v3 = ~GetCoord(_Avatar);
+        v4 = << 2791, 2517, 2615, 2517, 2727, 2277, 2615, 2469 >>;
+        v5 = << 2775, 2181 >>;
+        v6 = 0;
+        if ((v3::1 = v5::1) and ((v3::2 = v5::2) and (flag(1) = false))) {
+            flag(1) = true;
+            v5::2 = (v5::2 + 2);
+            createSprite(1, 0, 0, 0, v5::2, v5::1, 17);
+            playSFX(item, 116);
+            LightningBolt();
+            v7 = ~Item_create(_Field_Fire);
+            if v7 {
+                SetItemFlag_i(_IsTemporary_i, v7);
+                v1 = ~PopToMap(v5);
+            }
+            terminate;
+        }
+        v8 = 1;
+        do {
+            if ((v3::1 = v4::v8) and (v3::2 = v4::(v8 + 1))) {
+                v8 = ~NextThrone_i(v8);
+                v6::1 = v4::v8;
+                v6::2 = v4::(v8 + 1);
+                break;
+            }
+            v8 = ~NextThrone_i(v8);
+        } while (v8 > 1);
+        if v6 {
+            v9 = ~GetParty();
+            v10 = << >>;
+            v11 = << >>;
+            v12 = << >>;
+            v13 = ~GetCoord(_Avatar);
+            v14 = 1;
+            Foreach v17 in v9 {
+                v18 = ~GetCoord(v17);
+                v10::v14 = (v13::1 - v18::1);
+                v11::v14 = (v13::2 - v18::2);
+                v12::v14 = ~GetFullFrame_i(v17);
+                v14 = (v14 + 1);
+            }
+            Item_move(v6, _Party);
+            v13 = ~GetCoord(_Avatar);
+            v14 = 1;
+            Foreach v17 in v9 {
+                Item_move(<< (v13::1 - v10::v14), (v13::2 - v11::v14), v13::3 >>, v17);
+                SetFullFrame_i(v12::v14, v17);
+                v14 = (v14 + 1);
+            }
+        }
+    }
+}
+
+Routine Chair accepts a0 #locals(1) #uses(SeatParty_i) {
+    if (event = _Converse) {
+        v0 = ~Item_getContainer(item);
+        if v0 {
+            return;
+        }
+        SeatParty_i(873, item);
+    }
+}
+
+Routine StartBarge_i accepts a0 #locals(3) #uses(~BargeType_i, LaunchShip_i) {
+    v0 = ~GetBarge_i(item);
+    if v0 {
+        v1 = ~BargeType_i(item);
+        if (v1 = 790) {
+            ClearItemFlag_i(20, _Avatar);
+            SetItemFlag_i(_OnMovingBarge_i, 1);
+            SetItemFlag_i(_ActiveBarge_i, ~GetBarge_i(_Avatar));
+        }
+        if (v1 = 199) {
+            v2 = ~GetItemFlag_i(20, _Avatar);
+            if v2 {
+                LaunchShip_i(v2);
+            }
+        }
+    }
+}
+
+Routine SeatParty_i accepts a0, a1 #locals(18) {
+    v2 = << >>;
+    v3 = ~FindNearby_i(0, 15, v0, _Avatar);
+    Foreach v6 in v3 {
+        v7 = 0;
+        v8 = 9999;
+        Foreach v11 in v3 {
+            v7 = (v7 + 1);
+            if ((v11 <> 0) and (v11 <> v1)) {
+                v12 = ~GetDist(v11, v1);
+                if (v12 < v8) {
+                    v8 = v12;
+                    v13 = v7;
+                }
+            }
+        }
+        v2 = (v2 & v3::v13);
+        v3::v13 = 0;
+    }
+    SitDown_i(v1, _Avatar);
+    v14 = ~ListSize_i(v2);
+    v15 = ~GetParty();
+    v7 = 2;
+    Foreach v18 in v15 {
+        if ((v7 - 1) > v14) {
+            break;
+        }
+        if not (~GetWorkType(v18) = _MajorSit) {
+            v19 = (v7 - 1);
+            SitDown_i(v2::v19, v18);
+        }
+        v7 = (v7 + 1);
+    }
+}
+
+Function ~NextThrone_i accepts a0 #locals(0) {
+    if (v0 < 5) {
+        v0 = (v0 + 2);
+        return v0;
+    }
+    if (v0 = 5) {
+        if flag(1) {
+            v0 = 7;
+        } else {
+            v0 = 1;
+        }
+        return v0;
+    }
+    if (v0 > 5) {
+        v0 = 1;
+        return v0;
+    }
+}
+
+Function ~BargeType_i accepts a0 #locals(6) {
+    v1 = ~FindNearby_i(0, 10, _All, v0);
+    v2 = << 790 >>;
+    Foreach v5 in v1 {
+        v6 = ~Item_getType(v5);
+        if (v6 in v2) {
+            return 790;
+        }
+    }
+    return 199;
+}

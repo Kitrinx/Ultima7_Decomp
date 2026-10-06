@@ -1,0 +1,999 @@
+Routine TRIAL accepts a0 #locals(0) {
+    PrintError_i("Obsolete routine TRIAL in conversation");
+}
+
+Routine OpenTrial_i accepts a0 #locals(4) #uses(~JailedNPC_i, PartyLooksSE_i, ~LordOrLady, Bark_i) {
+    if (v0 = 248) {
+        v1 = ~JailedNPC_i(true);
+        Item_move(<< 1031, 1657 >>, v1);
+        PathfindNPC_i(false, 2040, ~NPCToItem_i(v1), 13, << 1031, 1643 >>, v1);
+        PartyLooksSE_i();
+        LordOrLady(10, (("@" + ~Bark_i()) + "...@"), v1);
+        v1 = ~JailedNPC_i(false);
+        LordOrLady(5, (("@" + v1) + "!@"), _Avatar);
+        terminate;
+    }
+    if (v0 = 249) {
+        JoinParty(~JailedNPC_i(true));
+        v1 = ~GetParty_i();
+        Foreach v4 in v1 {
+            SetWorkType(15, v4);
+        }
+        v1 = ~CreateCreature_i(<< 1031, 1657 >>, 381);
+        PathfindNPC_i(false, 2040, v1, 13, << 1032, 1647 >>, v1);
+        terminate;
+    }
+    if (v0 = 250) {
+        SetWorkType(15, item);
+        v1 = ~PostAction(<< _aNO_HALT_i, _aWAIT_i, 2, _aBEND_FRAME_i >>, item);
+        v1 = ~PostInFuture(5, << _aUSABLE_i, 2040 >>, item);
+        terminate;
+    }
+    if (v0 = 251) {
+        v1 = ~Item_create(378);
+        if v1 {
+            SetFrame(5, v1);
+            Sfx(117);
+            v1 = ~PopToMap(<< 1032, 1646, 0 >>);
+        }
+        v1 = ~PostAction(<< _aNO_HALT_i, _aWAIT_i, 2, _aSTAND_FRAME_i, _aWAIT_i, 2, _aUSABLE_i, 2040 >>, item);
+        v1 = ~PostAction(<< _aBARK_i, "@This trial will now come to order.@", _aWAIT_i, 5, _aBEND_FRAME_i, _aWAIT_i, 2, _aSIT_FRAME_i >>, _Zulith);
+        terminate;
+    }
+    if (v0 = 252) {
+        v1 = ~GetCoord(item);
+        v1::1 = (v1::1 + 3);
+        PathfindNPC_i(false, 2040, item, 13, v1, item);
+        terminate;
+    }
+    if (v0 = 253) {
+        v1 = ~PostAction(<< _aNO_HALT_i, _aWAIT_i, 2, _aFACE_i, 4, _aCONTINUE_i, _aSTAND_FRAME_i >>, item);
+        if flag(368) {
+            v1 = ~PostAction(<< _aNO_HALT_i, _aBEND_FRAME_i, _aWAIT_i, 3, _aBARK_i, "@Hear ye!@", _aSTAND_FRAME_i, _aWAIT_i, 3, _aUP_FRAME_i, _aSFX_i, 30, _aWAIT_i, 3, _aOUT_FRAME_i, _aSFX_i, 30, _aWAIT_i, 3, _aSTAND_FRAME_i, _aSFX_i, 30, _aWAIT_i, 3, _aUSABLE_i, 2040 >>, _Kylista);
+        } else {
+            LordOrLady(15, "@Zulith...@", _Yelinda);
+            v1 = ~PostInFuture(10, << _aNO_HALT_i, _aBEND_FRAME_i, _aWAIT_i, 3, _aSTAND_FRAME_i, _aWAIT_i, 2, _aFACE_i, 4, _aWAIT_i, 2, _aUSABLE_i, 2040 >>, _Yelinda);
+        }
+        terminate;
+    }
+}
+
+Routine CloseTrial_i accepts a0 #locals(42) #uses(~AvatarName, ~JailedNPC_i, Bark_i, BarkIfNear_i, ~GimmePathEgg, SetDoorState_i, SetWorkTypeAt_i, ~GiveItemsOrDrop_i, GivePartyExp_i) {
+    v1 = ~AvatarName();
+    v2 = "his";
+    if ~AvatarSex() {
+        v2 = "her";
+    }
+    if $AUDIENCE_WITH_YELINDA {
+        if (v0 = 87) {
+            v3 = ~PostAction(<< _aFACE_i, _West, _aWAIT_i, 2, _aBEND_FRAME_i, _aWAIT_i, 2, _aSIT_FRAME_i >>, _Voldin);
+            ClearSpeakers_i();
+            SetSpeaker0_i(0, _Kylista);
+            ["I thank thee, Captain Voldin."];
+            v3 = ~JailedNPC_i(false);
+            ["We shall recess until tomorrow, and then return to hear <v3>'s defense. Dost thou agree with this course of action, Lady Yelinda?"];
+            SetSpeaker1_i(0, _Yelinda);
+            ["Oh... why, yes... of course. Make it so."];
+            CloseSpeaker1_i();
+            SetSpeakerSlot_i(0);
+            ["<v3>, know that thou mayest defend thyself or appoint any willing person to speak on thy behalf. Dost thou have a preference?"];
+            SetSpeaker1_i(0, ~JailedNPC_i(true));
+            ["Yes, I wish my friend -- <v1>, the Avatar -- to present my case. I have faith that I will be acquitted."];
+            CloseSpeaker1_i();
+            SetSpeakerSlot_i(0);
+            ["Very well, <v1> shall be thy champion. Guard, please take the defendant to his cell."];
+            EndConverse_i();
+            v4 = ~FindNearby_i(8, 10, _Fawn_Guard, _Avatar);
+            if v4 {
+                v3 = ~PostAction(<< _aNO_HALT_i, _aBARK_i, "@Yes, Priestess.@" >>, v4);
+                v5 = ~GetCoord(v4);
+                v5::1 = (v5::1 - 3);
+                PathfindNPC_i(false, #FawnTrialEgg_i, v4, _Path_Success, v5, v4);
+            }
+            terminate;
+        }
+        if (v0 = 88) {
+            v3 = ~PostAction(<< _aFACE_i, _North, _aWAIT_i, 2, _aBEND_FRAME_i, _aUSABLE_i, #FawnTrialEgg_i >>, item);
+            terminate;
+        }
+        if (v0 = 89) {
+            v3 = ~FindNearby_i(0, 5, _EW_Short_Fence, item);
+            if v3 {
+                Item_destroy(v3);
+                Sfx(117);
+                v3 = ~PostAction(<< _aNO_HALT_i, _aWAIT_i, 2, _aSTAND_FRAME_i, _aUSABLE_i, #FawnTrialEgg_i >>, item);
+            }
+            terminate;
+        }
+        if (v0 = 90) {
+            v3 = ~PostAction(<< _aNO_HALT_i, _aBARK_i, "@Come with me, prisoner.@" >>, item);
+            PathfindNPC_i(false, #FawnTrialEgg_i, item, _Path_Success, << 1031, 1657, 0 >>, item);
+            terminate;
+        }
+        if (v0 = 91) {
+            Item_destroy(item);
+            v3 = ~JailedNPC_i(true);
+            LeaveParty(v3);
+            PathfindNPC_i(false, #FawnTrialEgg_i, ~NPCToItem_i(v3), _Path_Success, << 1032, 1658, 0 >>, v3);
+            Bark_i(0, "@Goodbye...@", v3);
+            terminate;
+        }
+        if (v0 = 92) {
+            $FAWN_TRIAL_RECESS = true;
+            v3 = ~PostAction(<< _aBEND_FRAME_i, _aWAIT_i, 2, _aSTAND_FRAME_i, _aWAIT_i, 3, _aBARK_i, "@This trial is now in recess!@" >>, _Zulith);
+            v4 = ("" & ("@What a farce!@" & ("@What shall I do?@" & "@Woe is me...@")));
+            BarkIfNear_i(v4, _Avatar);
+            RemoveNPC_i(~JailedNPC_i(true));
+            PathfindNPC_i(false, #FawnTrialEgg_i, ~NPCToItem_i(_Avatar), _Path_Success, << 1031, 1677, 0 >>, _Avatar);
+            v3 = ~SetQuality(0, ~GimmePathEgg(2, 1));
+            v3 = ~PostInFuture(500, << _aNO_HALT_i, _aUSABLE_i, #Alyssand >>, ~GimmePathEgg(2, 1));
+            v3 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #FawnTrialEgg_i >>, ~GimmePathEgg(2, 1));
+            terminate;
+        }
+        if (v0 = 93) {
+            $AUDIENCE_WITH_YELINDA = false;
+            $FAWN_TRIAL_DONE = true;
+            v3 = ~GetParty_i();
+            Foreach v8 in v3 {
+                SetWorkType(_FollowAvt, v8);
+            }
+            ClearItemFlag_i(_DontMove_i, _Avatar);
+            ClearSpeakers_i();
+            v3 = (~FindNearby_i(0, 10, _DDoor_EW, item) & ~FindNearby_i(0, 10, _Door_EW, item));
+            Foreach v8 in v3 {
+                if (~GetQuality(v8) = 179) {
+                    SetDoorState_i(2, v8);
+                }
+            }
+            terminate;
+        }
+    } else {
+        if (v0 = 87) {
+            ClearSpeakers_i();
+            SetSpeaker0_i(0, _Yelinda);
+            ["Both sides have stated their facts, and called their witnesses. Let it not be said that there is no justice in Fawn!"];
+            v3 = ~JailedNPC_i(false);
+            ["Now, before the face of Beauty, I call for a verdict upon <v3>!"];
+            EndConverse_i();
+            v3 = ~PostAction(<< _aWAIT_i, 1, _aBEND_FRAME_i, _aWAIT_i, 2, _aSTAND_FRAME_i, _aBARK_i, "@All rise and face the Oracle!", _aWAIT_i, 1, _aFACE_i, _North >>, _Zulith);
+            v8 = ~GetParty_i();
+            Foreach v4 in v8 {
+                v3 = (7 + ~Random(3));
+                v3 = ~PostInFuture(v3, << _aNO_HALT_i, _aFACE_i, _North >>, v4);
+            }
+            v8 = << 65478, 65489, 65488, 65484 >>;
+            Foreach v4 in v8 {
+                v3 = ~PostInFuture((7 + ~Random(5)), << _aBEND_FRAME_i, _aWAIT_i, 2, _aSTAND_FRAME_i, _aWAIT_i, 1, _aFACE_i, _North >>, v4);
+            }
+            v8 = << 65487, 65486 >>;
+            Foreach v4 in v8 {
+                v3 = ~PostInFuture((7 + ~Random(5)), << _aBEND_FRAME_i, _aWAIT_i, 2, _aSTAND_FRAME_i, _aWAIT_i, 1, _aFACE_i, _West >>, v4);
+            }
+            v3 = ~PostInFuture(5, << _aNO_HALT_i, _aFACE_i, _East, _aSTAND_FRAME_i >>, _Yelinda);
+            v3 = ~PostInFuture(7, << _aNO_HALT_i, _aFACE_i, _North, _aSTAND_FRAME_i >>, _Zulith);
+            v3 = ~PostInFuture(20, << _aUSABLE_i, #FawnTrialEgg_i >>, item);
+            terminate;
+        }
+        if (v0 = 88) {
+            ClearSpeakers_i();
+            SetSpeaker0_i(0, _Smudge);
+            v3 = ~JailedNPC_i(false);
+            if $oraclesaysinnocent {
+                ["<v3> is innocent! <v1> and <v2> companions have no wish to destroy Beauty!"];
+                ["Free them at once!"];
+            }
+            if $ORACLE_SET_TO_CORRUPT {
+                ["<v3> is innocent! Set him and his companions free!"];
+                ["The true criminals are Priestess Kylista and Great Captain Voldin, who have conspired to convict this innocent man!"];
+            }
+            if (not $ORACLE_SET_TO_CORRUPT and not $oraclesaysinnocent) {
+                ["<v3> is guilty of associating with Daemons to destroy our Beauty! The fiend, <v1>, is also guilty!"];
+                ["Such offense to Beauty cannot go unpunished... The stain of their presence must be washed away with their blood."];
+                Bark_i(0, "@It cries for their blood...@", _Zulith);
+                Bark_i(3, "@Stone them!@", _Garth);
+                Bark_i(5, "@Behead the fiends!@", _Jendon);
+                Bark_i(1, "@What shall we do?@", ~JailedNPC_i(true));
+                Bark_i(5, "@Oh, my...@", _Yelinda);
+                EndConverse_i();
+                v3 = (~GetCoord(_Avatar) & (1 & 6));
+                v3 = ~FindNearby_i(16, 10, _Egg_Type, v3);
+                if v3 {
+                    v5 = ~GetCoord(v3);
+                    v5::2 = (v5::2 + 10);
+                    SetMusic(~GimmePathEgg(1, 5), 20);
+                    Item_move(v5, _Alyssand);
+                    PathfindNPC_i(false, #FawnTrialEgg_i, ~NPCToItem_i(_Alyssand), _Path_Success, << 1032, 1648, 0 >>, _Alyssand);
+                }
+            } else {
+                EndConverse_i();
+                v3 = ~SetQuality(98, ~GimmePathEgg(1, 1));
+                v3 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #FawnTrialEgg_i >>, _Yelinda);
+            }
+            terminate;
+        }
+        if (v0 = 89) {
+            ClearBark_i(_Alyssand);
+            Bark_i(0, "@Stop the proceedings!@", _Alyssand);
+            SetWorkType(_Wait, _Alyssand);
+            v3 = ~PostAction(<< _aNO_HALT_i, _aOUT_FRAME_i, _aWAIT_i, 2, _aUP_FRAME_i, _aWAIT_i, 2, _aSTAND_FRAME_i >>, _Alyssand);
+            v8 = ~GetParty_i();
+            Foreach v4 in v8 {
+                v3 = ~PostInFuture((2 + ~Random(3)), << _aFACE_i, _South >>, v4);
+            }
+            v8 = << 65478, 65489, 65488, 65487, 65486, 65484 >>;
+            Foreach v4 in v8 {
+                v3 = ~PostInFuture((4 + ~Random(4)), << _aBEND_FRAME_i, _aSTAND_FRAME_i, _aFACE_i, _West >>, v4);
+            }
+            v8 = << 65481, 65475 >>;
+            Foreach v4 in v8 {
+                v3 = ~PostInFuture((3 + ~Random(3)), << _aFACE_i, _East >>, v4);
+            }
+            v3 = (~GetCoord(_Avatar) & (1 & 6));
+            v3 = ~FindNearby_i(16, 10, _Egg_Type, v3);
+            if v3 {
+                v5 = ~GetCoord(v3);
+                v5::2 = (v5::2 + 10);
+                Item_move(v5, _Jorvin);
+                PathfindNPC_i(false, #FawnTrialEgg_i, ~NPCToItem_i(_Jorvin), _Path_Success, << 1030, 1648, 0 >>, _Jorvin);
+            }
+            terminate;
+        }
+        if (v0 = 90) {
+            ClearSpeakers_i();
+            SetSpeaker0_i(0, _Alyssand);
+            ["We have found the real traitors!"];
+            SetSpeaker1_i(0, _Yelinda);
+            ["What is this all about, Captain Jorvin?"];
+            CloseSpeaker1_i();
+            SetSpeakerSlot_i(0);
+            ["Now we know the truth about this town..."];
+            SetSpeaker1_i(0, _Jorvin);
+            ["I have grave news, dearest Lady. There have been foul deeds done in this Temple!"];
+            ClearBark_i(_Jorvin);
+            if ~GetItemFlag_i(_Dead, _Voldin) {
+                ["Acting upon information supplied by Alyssand, I did enter a secret room within this building. Here, I discovered Priestess Kylista manipulating some form of machine."];
+                Bark_i(0, "@Guards, send in the traitor!@", _Jorvin);
+            } else {
+                ["Acting upon information supplied by Alyssand, I did enter a secret room within this building. Here, I discovered Priestess Kylista and Great Captain Voldin manipulating some form of machine."];
+                Bark_i(0, "@Guards, send in the traitors!@", _Jorvin);
+            }
+            EndConverse_i();
+            v3 = ~PostAction(<< _aWAIT_i, 1, _aFACE_i, _East >>, _Jorvin);
+            v3 = ~PostAction(<< _aWAIT_i, 3, _aFACE_i, _North >>, _Alyssand);
+            v3 = (~GetCoord(_Avatar) & (1 & 6));
+            v3 = ~FindNearby_i(16, 10, _Egg_Type, v3);
+            if v3 {
+                v5 = ~GetCoord(v3);
+                v5::2 = (v5::2 + 10);
+                Item_move(v5, _Kylista);
+                PathfindNPC_i(false, #FawnTrialEgg_i, ~NPCToItem_i(_Kylista), _Path_Success, << 1032, 1650, 0 >>, _Kylista);
+                Bark_i(7, "@Don't shove me!@", _Kylista);
+            }
+            if ~GetItemFlag_i(_Dead, _Voldin) {
+                v3 = ~SetQuality(92, ~GimmePathEgg(1, 1));
+            }
+            terminate;
+        }
+        if (v0 = 91) {
+            v3 = (~GetCoord(_Avatar) & (1 & 6));
+            v3 = ~FindNearby_i(16, 10, _Egg_Type, v3);
+            if v3 {
+                v5 = ~GetCoord(v3);
+                v5::2 = (v5::2 + 10);
+                Item_move(v5, _Voldin);
+                PathfindNPC_i(false, #FawnTrialEgg_i, ~NPCToItem_i(_Voldin), _Path_Success, << 1030, 1650, 0 >>, _Voldin);
+                Bark_i(2, "@Save us, Lady Yelinda!@", _Voldin);
+            }
+            terminate;
+        }
+        if (v0 = 92) {
+            ClearSpeakers_i();
+            SetSpeaker0_i(0, _Alyssand);
+            ["Voldin and Kylista have played us all for fools! And we have followed blindly along..."];
+            if ~GetItemFlag_i(_Dead, _Voldin) {
+                SetSpeaker1_i(0, _Kylista);
+            } else {
+                SetSpeaker1_i(0, _Voldin);
+            }
+            ["Silence, chit! What dost thou know of these matters?"];
+            CloseSpeaker1_i();
+            SetSpeakerSlot_i(0);
+            ["I am certain that heaven built the levers in the secret room! Kylista, hath it been a great boon to thee, being a mouthpiece of the heavens?"];
+            SetSpeaker1_i(0, _Kylista);
+            ["Delin, take thy daughter in hand! She speaks out of turn."];
+            ["As for the levers -- why, they are prayer levers, by which I commune with Beauty! They are sacred, not to be profaned by doubters such as Alyssand."];
+            CloseSpeaker1_i();
+            SetSpeaker0_i(0, _Alyssand);
+            ["Then the outcome of the trial would not change, say, if I moved those prayer levers...?"];
+            ["Lady Yelinda, wouldst thou please call once again upon the Oracle, for its decision?"];
+            EndConverse_i();
+            ClearBark_i(_Kylista);
+            Bark_i(0, "@It hath already spoken!@", _Kylista);
+            Bark_i(2, "@See what it says now!@", _Alyssand);
+            v3 = ~PostInFuture(10, << _aNO_HALT_i, _aUSABLE_i, #FawnTrialEgg_i >>, _Yelinda);
+            terminate;
+        }
+        if (v0 = 93) {
+            ClearSpeakers_i();
+            SetSpeaker0_i(0, _Yelinda);
+            ["What can it hurt, Kylista, to speak again to the great Oracle?"];
+            v3 = ~JailedNPC_i(false);
+            ["Again, before the face of Beauty, I call for a verdict upon <v3>!"];
+            EndConverse_i();
+            v3 = ~PostAction(<< _aBARK_i, "@All rise and face the Oracle!", _aWAIT_i, 1, _aFACE_i, _North >>, _Zulith);
+            v8 = ~GetParty_i();
+            Foreach v4 in v8 {
+                v3 = (7 + ~Random(3));
+                v3 = ~PostInFuture(v3, << _aNO_HALT_i, _aFACE_i, _North >>, v4);
+            }
+            v8 = << 65478, 65489, 65488, 65484, 65485, 65482, 65490, 65483 >>;
+            Foreach v4 in v8 {
+                v3 = ~PostInFuture((7 + ~Random(5)), << _aFACE_i, _North >>, v4);
+            }
+            v8 = << 65487, 65486 >>;
+            Foreach v4 in v8 {
+                v3 = ~PostInFuture((7 + ~Random(5)), << _aFACE_i, _West >>, v4);
+            }
+            v3 = ~PostInFuture(5, << _aNO_HALT_i, _aFACE_i, _East, _aSTAND_FRAME_i >>, _Yelinda);
+            v3 = ~PostInFuture(7, << _aNO_HALT_i, _aFACE_i, _North, _aSTAND_FRAME_i >>, _Zulith);
+            v3 = ~PostInFuture(20, << _aUSABLE_i, #FawnTrialEgg_i >>, item);
+            terminate;
+        }
+        if (v0 = 94) {
+            ClearSpeakers_i();
+            SetSpeaker0_i(0, _Smudge);
+            ["Kylista and Voldin have defiled these proceedings! False evidence hath been offered! This trial is a farce!"];
+            v3 = ~JailedNPC_i(false);
+            ["<v3> is innocent! Set <v3> and his companions free!"];
+            SetSpeaker1_i(0, _Yelinda);
+            ["What doth this mean? The verdict hath changed..."];
+            CloseSpeaker0_i();
+            CloseSpeaker1_i();
+            SetSpeaker0_i(0, _Jorvin);
+            ["This means, dearest Lady, that the Oracle will proclaim any result which the secret levers request. I saw Alyssand instruct the Oracle to give this verdict, with my very own eyes!"];
+            SetSpeaker1_i(0, _Yelinda);
+            if ~GetItemFlag_i(_Dead, _Voldin) {
+                ["We are betrayed! Take Kylista from my sight! I shall deal with her perfidy later..."];
+            } else {
+                ["We are betrayed! Take them from my sight! I shall deal with their perfidy later..."];
+            }
+            EndConverse_i();
+            Bark_i(0, "@Come with me...@", _Jorvin);
+            v3 = (~GetCoord(_Avatar) & (1 & 6));
+            v3 = ~FindNearby_i(16, 10, _Egg_Type, v3);
+            if v3 {
+                v5 = ~GetCoord(v3);
+                v5::2 = (v5::2 + 10);
+                PathfindNPC_i(false, #FawnTrialEgg_i, ~NPCToItem_i(_Jorvin), _Path_Success, v5, _Jorvin);
+            }
+            terminate;
+        }
+        if (v0 = 95) {
+            Item_move(<< 0, 0, 0 >>, _Jorvin);
+            SetWorkType(_Wait, _Jorvin);
+            v3 = (~GetCoord(_Avatar) & (1 & 6));
+            v3 = ~FindNearby_i(16, 10, _Egg_Type, v3);
+            if v3 {
+                v5 = ~GetCoord(v3);
+                v5::2 = (v5::2 + 11);
+                PathfindNPC_i(false, #FawnTrialEgg_i, ~NPCToItem_i(_Kylista), _Path_Success, v5, _Kylista);
+                Bark_i(0, "@Vengeance shall be mine!@", _Kylista);
+                Bark_i(4, "@Truth shall prevail!@", _Alyssand);
+            }
+            terminate;
+        }
+        if (v0 = 96) {
+            SetWorkTypeAt_i(_TendShop, 1558, 988, _Kylista);
+            if ~GetItemFlag_i(_Dead, _Voldin) {
+                v3 = ~SetQuality(98, ~GimmePathEgg(1, 1));
+                v3 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #FawnTrialEgg_i >>, _Avatar);
+            } else {
+                v3 = (~GetCoord(_Avatar) & (1 & 6));
+                v3 = ~FindNearby_i(16, 10, _Egg_Type, v3);
+                if v3 {
+                    v5 = ~GetCoord(v3);
+                    v5::2 = (v5::2 + 10);
+                    PathfindNPC_i(false, #FawnTrialEgg_i, ~NPCToItem_i(_Voldin), _Path_Success, v5, _Voldin);
+                    Bark_i(0, "@She lied to me...@", _Voldin);
+                }
+            }
+            terminate;
+        }
+        if (v0 = 97) {
+            SetWorkTypeAt_i(_TendShop, 1559, 988, _Voldin);
+            v3 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #FawnTrialEgg_i >>, _Avatar);
+        }
+        if (v0 = 98) {
+            ClearSpeakers_i();
+            SetSpeaker0_i(0, _Yelinda);
+            v3 = ~JailedNPC_i(false);
+            ["<v3>, we have wronged thee. There is nothing I can do to erase our shame, but I would be pleased if thou wouldst accept a token of our regret."];
+            ["Here is the Crystal Rose of Love..."];
+            v3 = ~JailedNPC_i(true);
+            v3 = ~GiveItemsOrDrop_i(true, 0, 3, 65177, 649, 1, v3);
+            GivePartyExp_i(400);
+            if $ORACLE_SET_TO_CORRUPT {
+                v3 = (~GetCoord(_Avatar) & (1 & 6));
+                v3 = ~FindNearby_i(16, 10, _Egg_Type, v3);
+                if v3 {
+                    v5 = ~GetCoord(v3);
+                    v5::2 = (v5::2 + 10);
+                    SetMusic(~GimmePathEgg(1, 5), 20);
+                    Item_move(v5, _Alyssand);
+                    v5::2 = (v5::2 - 8);
+                    PathfindNPC_i(false, #FawnTrialEgg_i, ~NPCToItem_i(_Alyssand), _Path_Success, v5, _Alyssand);
+                }
+                EndConverse_i();
+                terminate;
+            } else {
+                v3 = ~SetQuality(102, ~GimmePathEgg(1, 1));
+                v0 = 101;
+            }
+        }
+        if (v0 = 99) {
+            ClearBark_i(_Alyssand);
+            Bark_i(0, "@Good news!@", _Alyssand);
+            SetWorkType(_Wait, _Alyssand);
+            v3 = ~PostAction(<< _aNO_HALT_i, _aOUT_FRAME_i, _aWAIT_i, 2, _aUP_FRAME_i, _aWAIT_i, 2, _aSTAND_FRAME_i >>, _Alyssand);
+            v8 = ~GetParty_i();
+            Foreach v4 in v8 {
+                v3 = ~PostInFuture((2 + ~Random(3)), << _aFACE_i, _South >>, v4);
+            }
+            v8 = << 65478, 65489, 65488, 65487, 65486, 65484 >>;
+            Foreach v4 in v8 {
+                v3 = ~PostInFuture((4 + ~Random(4)), << _aBEND_FRAME_i, _aSTAND_FRAME_i, _aFACE_i, _West >>, v4);
+            }
+            v8 = << 65481, 65475 >>;
+            Foreach v4 in v8 {
+                v3 = ~PostInFuture((3 + ~Random(3)), << _aFACE_i, _East >>, v4);
+            }
+            v3 = (~GetCoord(_Avatar) & (1 & 6));
+            v3 = ~FindNearby_i(16, 10, _Egg_Type, v3);
+            if v3 {
+                v5 = ~GetCoord(v3);
+                v5::2 = (v5::2 + 10);
+                Item_move(v5, _Jorvin);
+                PathfindNPC_i(false, #FawnTrialEgg_i, ~NPCToItem_i(_Jorvin), _Path_Success, << 1030, 1648, 0 >>, _Jorvin);
+            }
+            terminate;
+        }
+        if (v0 = 100) {
+            SetWorkType(_Wait, _Jorvin);
+            ClearSpeakers_i();
+            SetSpeaker0_i(0, _Jorvin);
+            if ~GetItemFlag_i(_Dead, _Voldin) {
+                ["We have captured the falsehearted traitor, Lady Yelinda! Kylista is in chains, and Great Captain Voldin hath been found dead..."];
+            } else {
+                ["We have captured the falsehearted traitors, Lady Yelinda! Kylista and Voldin are in chains."];
+            }
+            SetSpeaker1_i(0, _Yelinda);
+            ["Thou hast acted correctly, Jorvin -- the Oracle hath just denounced them..."];
+            CloseSpeaker1_i();
+            SetSpeakerSlot_i(0);
+            ["The Priestess of Beauty hath confessed to me that she and Great Captain Voldin were united in an evil conspiracy."];
+            ["By use of secret levers, they dared to control the utterings of the sacred Oracle! Only by the actions of the brave <v1> hath the Oracle been freed to utter the truth!"];
+            SetSpeaker1_i(0, _Alyssand);
+            ["Who knows how long this deception hath been practiced! Have the citizens of Fawn always been the victims of the Great Captains and the Priestess?"];
+            CloseSpeaker1_i();
+            SetSpeakerSlot_i(0);
+            ["I did mistrust thy words previously, Alyssand, but now that Kylista hath confessed... I know not what to believe."];
+            SetSpeaker1_i(0, _Yelinda);
+            if ~GetItemFlag_i(_Dead, _Voldin) {
+                ["Such perfidy makes my blood run cold. Have the Priestess jailed until I decide what fate she deserves!"];
+                ["As for Voldin's death -- that saves me the trouble of having him executed. Praise the deed!"];
+            } else {
+                ["Such perfidy makes my blood run cold. Have the traitors jailed until I decide what fate they deserve!"];
+                SetWorkTypeAt_i(_TendShop, 1559, 988, _Voldin);
+            }
+            v3 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #FawnTrialEgg_i >>, _Yelinda);
+            EndConverse_i();
+            SetWorkTypeAt_i(_TendShop, 1558, 988, _Kylista);
+            terminate;
+        }
+        if (v0 = 101) {
+            ClearSpeakers_i();
+            SetSpeaker0_i(0, _Yelinda);
+            v3 = ~JailedNPC_i(false);
+            ["I am sorry that we have delayed thee in thy quest, <v3>. Please forgive us."];
+            ["Thou mayest leave Fawn freely, and be assured of a warm welcome if thou shouldst return. Thou hast shown me that I have much to learn about being a ruler... And I thank thee."];
+            ["Guards, release <v3>."];
+            EndConverse_i();
+            v3 = (~GetCoord(_Avatar) & (1 & 6));
+            v3 = ~FindNearby_i(16, 10, _Egg_Type, v3);
+            if v3 {
+                v4 = ~FindNearby_i(8, 3, _Fawn_Guard, v3);
+                if v4 {
+                    v5 = ~GetCoord(v3);
+                    v5::2 = (v5::2 + 1);
+                    PathfindNPC_i(false, #FawnTrialEgg_i, v4, _Path_Success, v5, v4);
+                }
+            }
+            terminate;
+        }
+        if (v0 = 102) {
+            v3 = ~PostAction(<< _aFACE_i, _North, _aWAIT_i, 2, _aBEND_FRAME_i, _aUSABLE_i, #FawnTrialEgg_i >>, item);
+            terminate;
+        }
+        if (v0 = 103) {
+            v3 = ~FindNearby_i(0, 5, _EW_Short_Fence, item);
+            Foreach v8 in v3 {
+                if (~GetFrame(v8) = 5) {
+                    Sfx(117);
+                    Item_destroy(v8);
+                }
+            }
+            v3 = ~FindNearby_i(0, 50, _EW_Short_Fence, item);
+            Foreach v8 in v3 {
+                if (~GetFrame(v8) = 6) {
+                    Item_destroy(v8);
+                }
+            }
+            v3 = (~FindNearby_i(0, 50, _DDoor_NS, item) & ~FindNearby_i(0, 50, _Door_NS, item));
+            Foreach v8 in v3 {
+                if (~GetQuality(v8) = 40) {
+                    SetDoorState_i(0, v8);
+                }
+            }
+            v3 = ~PostAction(<< _aBEND_FRAME_i, _aWAIT_i, 2, _aSTAND_FRAME_i, _aUSABLE_i, #FawnTrialEgg_i >>, item);
+            terminate;
+        }
+        if (v0 = 104) {
+            v3 = (~GetCoord(_Avatar) & (1 & 6));
+            v3 = ~FindNearby_i(16, 10, _Egg_Type, v3);
+            if v3 {
+                v5 = ~GetCoord(v3);
+                v5::1 = (v5::1 + 3);
+                v5::2 = (v5::2 + 1);
+                PathfindNPC_i(false, #FawnTrialEgg_i, item, _Path_Success, v5, item);
+            }
+            terminate;
+        }
+        if (v0 = 105) {
+            ClearItemFlag_i(_DontMove_i, _Avatar);
+            ClearSpeakers_i();
+            SetWorkType(_Stand, item);
+            v3 = ~PostAction(<< _aBARK_i, "@This trial is now dismissed!@" >>, _Zulith);
+            v3 = << 65478, 65489, 65488, 65484, 65487, 65486, 65481, 65475, 65483, 65490 >>;
+            Foreach v4 in v3 {
+                Npc_schedule(v4);
+                v8 = ~Random(8);
+                v5 = << byte(35) >>;
+                While (v8 > 0) {
+                    v5 = (v5 & byte(97));
+                    v8 = (v8 - 1);
+                }
+                v8 = ~PostAction(v5, v4);
+            }
+            $DUPRE_ACCUSED = false;
+            $IOLO_ACCUSED = false;
+            $SHAMINO_ACCUSED = false;
+            $AUDIENCE_WITH_YELINDA = true;
+            if $oraclesaysinnocent {
+                Npc_schedule(_Kylista);
+                Npc_schedule(_Voldin);
+            }
+        }
+    }
+}
+
+Routine HearWitnesses_i accepts a0 #locals(12) #uses(~AvatarName, ~JailedNPC_i, Bark_i, PartyLooksNE_i, PartyLooksNW_i, ~GimmePathEgg, BarkIfNear_i, ~GetNPCName, CallWitness_i, ~AskOrdList, PartyLooksSE_i) {
+    v1 = ~AvatarName();
+    v2 = ~JailedNPC_i(false);
+    if (v0 = 20) {
+        if $AUDIENCE_WITH_YELINDA {
+            ClearSpeakers_i();
+            SetSpeaker0_i(0, _Kylista);
+            ["Let it be known that <v2>, companion of <v1>, doth stand accused of treason!"];
+            ["In blatant disregard for the law, <v2> hath sought to incite rebellion against Lady Yelinda."];
+            ["Worse yet, he doth admit allegiance to that archfiend, Beast British!"];
+            EndConverse_i();
+            v3 = ~PostAction(<< _aWAIT_i, 2, _aFACE_i, _West >>, _Kylista);
+            v3 = ~PostInFuture(15, << _aUSABLE_i, #FawnTrialEgg_i >>, item);
+            Bark_i(0, "@Not the Beast!@", _Delin);
+            Bark_i(3, "@Execute him!@", _Olon);
+            Bark_i(5, "@Blasphemy!@", _Voldin);
+            Bark_i(2, "@The lord of Britannia?@", _Leon);
+            Bark_i(4, "@Cleanse the Temple!@", _Zulith);
+        } else {
+            ClearSpeakers_i();
+            SetSpeaker0_i(0, _Yelinda);
+            ["Where is the Priestess of Beauty? And where is Great Captain Voldin?"];
+            SetSpeaker1_i(0, _Zulith);
+            ["Um... I am not sure, thy Ladyship. Nor is Jorvin to be found."];
+            CloseSpeaker1_i();
+            SetSpeakerSlot_i(0);
+            ["It is most improper that neither Voldin nor Kylista are here... But I shall not have justice detained."];
+            ["I shall continue in Kylista's place..."];
+            EndConverse_i();
+            PathfindNPC_i(false, #FawnTrialEgg_i, ~NPCToItem_i(_Yelinda), _Path_Success, << 1022, 1638, 6 >>, _Yelinda);
+        }
+        terminate;
+    }
+    if (v0 = 21) {
+        if $AUDIENCE_WITH_YELINDA {
+            ClearSpeakers_i();
+            SetSpeaker0_i(0, _Kylista);
+            ["Lady Yelinda, as thou dost rule this city, dost thou wish to conduct the questioning?"];
+            EndConverse_i();
+            v3 = ~PostInFuture(2, << _aNO_HALT_i, _aBEND_FRAME_i, _aWAIT_i, 2, _aSTAND_FRAME_i, _aBARK_i, "@No...@", _aWAIT_i, 7, _aUSABLE_i, #FawnTrialEgg_i >>, _Yelinda);
+        } else {
+            SetWorkType(_Wait, item);
+            v3 = ~PostAction(<< _aNO_HALT_i, _aBARK_i, "@Hail the Lady!@", _aBEND_FRAME_i, _aWAIT_i, 2, _aSTAND_FRAME_i, _aWAIT_i, 3, _aUSABLE_i, #FawnTrialEgg_i >>, _Zulith);
+        }
+        terminate;
+    }
+    if (v0 = 22) {
+        if $AUDIENCE_WITH_YELINDA {
+            ClearSpeakers_i();
+            SetSpeaker0_i(0, _Yelinda);
+            ["I fear that the witnesses might be tempted to spare my sensibilities, instead of reciting the bare facts."];
+            SetSpeaker1_i(0, _Kylista);
+            ["Wouldst thou wish one of thy Councillors to act in thy stead?"];
+            CloseSpeaker1_i();
+            SetSpeakerSlot_i(0);
+            ["Let it be so! As most senior of my Councillors, Voldin always doth have my best interests at heart."];
+            EndConverse_i();
+            v3 = ~PostAction(<< _aNO_HALT_i, _aBEND_FRAME_i, _aSIT_FRAME_i >>, _Yelinda);
+            v3 = ~PostAction(<< _aWAIT_i, 2, _aFACE_i, _North, _aCONTINUE_i, _aSTEP_RIGHT_FRAME_i, _aWAIT_i, 2, _aCONTINUE_i, _aSTAND_FRAME_i >>, _Kylista);
+            PartyLooksNE_i();
+            Bark_i(0, "@Dost thou accept?@", _Kylista);
+            v3 = ~PostInFuture(10, << _aNO_HALT_i, _aBEND_FRAME_i, _aSTAND_FRAME_i, _aBARK_i, "@Yes.@", _aWAIT_i, 1, _aBEND_FRAME_i, _aWAIT_i, 1, _aKNEEL_FRAME_i, _aWAIT_i, 1, _aBEND_FRAME_i, _aSTAND_FRAME_i, _aUSABLE_i, #FawnTrialEgg_i >>, _Voldin);
+        } else {
+            ClearSpeakers_i();
+            SetSpeaker0_i(0, _Zulith);
+            ["All hail the Lady Yelinda, who hath condescended to conduct this portion of the trial in person."];
+            EndConverse_i();
+            PartyLooksNE_i();
+            Bark_i(2, "@To the Lady!@", _Garth);
+            Bark_i(0, "@All hail!@", _Jendon);
+            Bark_i(5, "@Hail the Lady!@", _Delin);
+            Bark_i(9, "@Oh great Lady!@", _Delphynia);
+            Bark_i(15, "@Whatever...!@", _Olon);
+            v3 = ~PostInFuture(20, << _aNO_HALT_i, _aUP_FRAME_i, _aWAIT_i, 2, _aOUT_FRAME_i, _aWAIT_i, 2, _aLOOP_i, 65530, 2, byte(97), byte(85), 2040 >>, _Yelinda);
+        }
+        terminate;
+    }
+    if (v0 = 23) {
+        if $AUDIENCE_WITH_YELINDA {
+            ClearSpeakers_i();
+            SetSpeaker0_i(0, _Voldin);
+            ["It would be my pleasure to act on the Lady's behalf."];
+            SetSpeaker1_i(0, _Kylista);
+            ["We shall now hear the evidence against the traitor."];
+            EndConverse_i();
+            v3 = ~PostAction(<< _aWAIT_i, 2, _aFACE_i, _West, _aWAIT_i, 2, _aBEND_FRAME_i, _aWAIT_i, 2, _aSIT_FRAME_i >>, _Kylista);
+            PartyLooksNW_i();
+            v3 = ~PostAction(<< _aBARK_i, "@A moment...@", _aWAIT_i, 2, _aBEND_FRAME_i, _aWAIT_i, 2, _aSTAND_FRAME_i, _aWAIT_i, 2, _aUSABLE_i, #FawnTrialEgg_i >>, _Jorvin);
+        } else {
+            ClearSpeakers_i();
+            SetSpeaker0_i(0, _Yelinda);
+            ["<v2>'s representative, <v1>, shall now present the facts to defend his friend."];
+            ["<v1>, thou mayest call upon any citizen present in the Temple, and mayest ask any questions pertinent to this case."];
+            EndConverse_i();
+            PartyLooksNW_i();
+            v3 = ~PostAction(<< _aBARK_i, "@Pardon, Lady...@", _aWAIT_i, 2, _aBEND_FRAME_i, _aWAIT_i, 2, _aSTAND_FRAME_i, _aWAIT_i, 2, _aUSABLE_i, #FawnTrialEgg_i >>, _Zulith);
+        }
+        terminate;
+    }
+    if (v0 = 24) {
+        if $AUDIENCE_WITH_YELINDA {
+            ClearSpeakers_i();
+            SetSpeaker0_i(0, _Jorvin);
+            ["For the purpose of this trial, it hath been necessary to admit certain disreputable characters into the city --"];
+            ["Namely, those who belong to the organization called The Fellowship, which doth dare to preach contrary to Beauty."];
+            ["I would remind our Fellowship guests that they are here on sufferance, and that they should mind their manners."];
+            SetMusic(~GimmePathEgg(1, 5), 26);
+            SetSpeaker1_i(0, _Leon);
+            ["We shall behave ourselves, milord. The Fellowship is an enlightened brotherhood, not a group to be feared."];
+            CloseSpeaker1_i();
+            SetSpeakerSlot_i(0);
+            ["We shall see..."];
+            EndConverse_i();
+            v3 = ~PostInFuture(4, << _aNO_HALT_i, _aBEND_FRAME_i, _aWAIT_i, 2, _aSIT_FRAME_i >>, _Jorvin);
+            v4 = (~GetCoord(_Voldin) & (3 & 6));
+            v5 = ~FindNearby_i(16, 30, _Egg_Type, v4);
+            if v5 {
+                v6 = ~GetCoord(v5);
+                PathfindNPC_i(false, #FawnTrialEgg_i, ~NPCToItem_i(_Voldin), _Path_Success, v6, _Voldin);
+            }
+            PartyLooksNE_i();
+        } else {
+            ClearSpeakers_i();
+            SetSpeaker0_i(0, _Zulith);
+            ["Excuse me, Great Lady, but I must address a point of order."];
+            ["Since The Fellowship troublemakers were so disagreeable in our earlier meeting, they have been excluded from this session of the trial."];
+            EndConverse_i();
+            Bark_i(2, "@Avatar...@", _Zulith);
+            v3 = ~PostInFuture(7, << _aNO_HALT_i, _aUSABLE_i, #FawnTrialEgg_i >>, _Yelinda);
+            flag(374) = false;
+            flag(375) = false;
+            flag(376) = false;
+            flag(377) = false;
+            flag(378) = false;
+            flag(379) = false;
+            flag(380) = false;
+            $done7 = false;
+            flag(382) = false;
+            flag(383) = false;
+            flag(384) = false;
+            flag(385) = false;
+            flag(386) = false;
+        }
+        terminate;
+    }
+    if (v0 = 25) {
+        if $AUDIENCE_WITH_YELINDA {
+            v3 = ~PostAction(<< _aNO_HALT_i, _aREADY_FRAME_i, _aFACE_i, _South >>, _Voldin);
+        } else {
+            v3 = ~PostAction(<< _aNO_HALT_i, _aBARK_i, "@Avatar...@", _aREADY_FRAME_i >>, _Zulith);
+        }
+        v3 = ~PostInFuture(6, << _aUSABLE_i, #FawnTrialEgg_i >>, item);
+        terminate;
+    }
+    if (v0 = 26) {
+        if $AUDIENCE_WITH_YELINDA {
+            v7 = false;
+        } else {
+            v7 = << >>;
+        }
+        if not flag(385) {
+            if ($AUDIENCE_WITH_YELINDA and (((((((((((flag(374) + flag(375)) + flag(376)) + flag(377)) + flag(378)) + flag(380)) + $done7) + flag(382)) + flag(383)) + flag(384)) + flag(386)) > 3)) {
+                ClearSpeakers_i();
+                SetSpeaker0_i(0, _Voldin);
+                ["I call the Lady Yelinda to witness before the Oracle."];
+                EndConverse_i();
+                v3 = ~PostAction(<< _aBARK_i, "@Now wait, Voldin!@", _aBEND_FRAME_i, _aWAIT_i, 2, _aSTAND_FRAME_i, _aWAIT_i, 3, _aUSABLE_i, #ProsecuteTraitor_i >>, _Zulith);
+                v3 = ~SetQuality(52, ~GimmePathEgg(1, 1));
+                terminate;
+            }
+            if $FAWN_TRIAL_DONE {
+                v7 = (v7 & 65481);
+            }
+        }
+        if not flag(382) {
+            if ($AUDIENCE_WITH_YELINDA and ((((((((((((flag(374) + flag(375)) + flag(376)) + flag(377)) + flag(378)) + flag(380)) + $done7) + flag(382)) + flag(383)) + flag(384)) + flag(385)) + flag(386)) > 1)) {
+                v8 = << "@I have had enough!@", "@I'm off fer a drink.@" >>;
+                BarkIfNear_i(v8, _Olon);
+                v3 = ~SetQuality(46, ~GimmePathEgg(1, 1));
+                v3 = ~PostAction(<< _aNO_HALT_i, _aBEND_FRAME_i, _aSTAND_FRAME_i, _aUSABLE_i, #ProsecuteTraitor_i >>, _Olon);
+                terminate;
+            }
+            if $FAWN_TRIAL_DONE {
+                v7 = (v7 & 65478);
+            }
+        }
+        if not flag(386) {
+            if ($AUDIENCE_WITH_YELINDA and ~GetItemFlag_i(_Met, _Zulith)) {
+                v7 = 65475;
+            }
+            if $FAWN_TRIAL_DONE {
+                v7 = (v7 & 65475);
+            }
+        }
+        if (not flag(384) and (~GetItemFlag_i(_Met, _Scots) and (not ~GetItemFlag_i(_Dead, _Scots) and $AUDIENCE_WITH_YELINDA))) {
+            v7 = 65476;
+        }
+        if (not flag(374) and ~GetItemFlag_i(_Met, _Alyssand)) && $AUDIENCE_WITH_YELINDA {
+            v7 = 65490;
+        }
+        if not flag(377) {
+            if ($AUDIENCE_WITH_YELINDA and ~GetItemFlag_i(_Met, _Jendon)) {
+                v7 = 65484;
+            }
+            if $FAWN_TRIAL_DONE {
+                v7 = (v7 & 65484);
+            }
+        }
+        if (not flag(378) and ($AUDIENCE_WITH_YELINDA and ~GetItemFlag_i(_Met, _Jorvin))) {
+            v7 = 65483;
+        }
+        if (not flag(380) and (~GetItemFlag_i(_Met, _Kylista) and $AUDIENCE_WITH_YELINDA)) {
+            v7 = 65482;
+        }
+        if not flag(383) {
+            if ($AUDIENCE_WITH_YELINDA and (~GetItemFlag_i(_Met, _Ruggs) and not ~GetItemFlag_i(_Dead, _Ruggs))) {
+                v7 = 65477;
+            }
+            if $FAWN_TRIAL_DONE {
+                v7 = (v7 & 65487);
+            }
+        }
+        if not flag(375) {
+            if ($AUDIENCE_WITH_YELINDA and ~GetItemFlag_i(_Met, _Delin)) {
+                v7 = 65489;
+            }
+            if $FAWN_TRIAL_DONE {
+                v7 = (v7 & 65489);
+            }
+        }
+        if not $done7 {
+            if ($AUDIENCE_WITH_YELINDA and (~GetItemFlag_i(_Met, _Leon) and not ~GetItemFlag_i(_Dead, _Leon))) {
+                v7 = 65480;
+            }
+            if $FAWN_TRIAL_DONE {
+                v7 = (v7 & 65486);
+            }
+        }
+        if not flag(376) {
+            if ($AUDIENCE_WITH_YELINDA and ~GetItemFlag_i(_Met, _Delphynia)) {
+                v7 = 65488;
+            }
+            if $FAWN_TRIAL_DONE {
+                v7 = (v7 & 65488);
+            }
+        }
+        if (not flag(379) and v7) && ($AUDIENCE_WITH_YELINDA and ((((((((((((flag(374) + flag(375)) + flag(376)) + flag(377)) + flag(378)) + flag(380)) + $done7) + flag(382)) + flag(383)) + flag(384)) + flag(385)) + flag(386)) > 4)) {
+            v3 = ~SetQuality(34, ~GimmePathEgg(1, 1));
+            v3 = ~PostAction(<< _aNO_HALT_i, _aSTAND_FRAME_i >>, _Voldin);
+            v3 = ~PostAction(<< _aNO_HALT_i, _aBARK_i, "@If I may...@", _aBEND_FRAME_i, _aWAIT_i, 1, _aSTAND_FRAME_i, _aUSABLE_i, #ProsecuteTraitor_i >>, _Yelinda);
+            terminate;
+        }
+        if (v7 and $AUDIENCE_WITH_YELINDA) {
+            ClearSpeakers_i();
+            SetSpeaker0_i(0, _Voldin);
+            v9 = ~GetNPCName(v7);
+            ["I call <v9> to witness before the Oracle."];
+            EndConverse_i();
+            CallWitness_i(v7);
+            v3 = ~PostInFuture(5, << _aNO_HALT_i, _aSTAND_FRAME_i >>, _Voldin);
+            if (v7 = 65490) {
+                SetMusic(~GimmePathEgg(1, 5), 20);
+            }
+            if (v7 = 65489) {
+                SetMusic(~GimmePathEgg(1, 5), 12);
+            }
+            if (v7 = 65483) {
+                Bark_i(10, "@Yes, yes...@", _Jorvin);
+            }
+            if (v7 = 65482) {
+                Bark_i(14, "@Really, Voldin!@", _Kylista);
+            }
+            if (v7 = 65477) {
+                Bark_i(10, "@He is so ugly...@", _Yelinda);
+                Bark_i(14, "@Oh, my...@", _Alyssand);
+                SetMusic(~GimmePathEgg(1, 5), 10);
+            }
+            if (v7 = 65475) {
+                Bark_i(10, "@What!@", _Zulith);
+            }
+            terminate;
+        }
+        if ($AUDIENCE_WITH_YELINDA and not v7) {
+            SetMusic(~GimmePathEgg(1, 5), 19);
+            ClearSpeakers_i();
+            SetSpeaker0_i(0, _Voldin);
+            ["I have called my last witness, and have presented proof that <v2> is guilty of the crimes with which he is charged."];
+            ["I yield the floor to Priestess Kylista..."];
+            EndConverse_i();
+            v3 = ~PostAction(<< _aNO_HALT_i, _aBARK_i, "@Hear ye!@", _aBEND_FRAME_i, _aSTAND_FRAME_i, _aOUT_FRAME_i, _aCONTINUE_i, _aSFX_i, 30, _aUP_FRAME_i, _aCONTINUE_i, _aSFX_i, 30, _aSTAND_FRAME_i, _aCONTINUE_i, _aSFX_i, 30 >>, _Kylista);
+            v3 = ~SetQuality(87, ~GimmePathEgg(1, 1));
+            v4 = (~GetCoord(_Voldin) & (6 & 6));
+            v5 = ~FindNearby_i(16, 40, _Egg_Type, v4);
+            if v5 {
+                v6 = ~GetCoord(v5);
+                PathfindNPC_i(false, #FawnTrialEgg_i, ~NPCToItem_i(_Voldin), _Path_Success, v6, _Voldin);
+            }
+            terminate;
+        }
+        ClearSpeakers_i();
+        SetSpeaker0_i(0, _Zulith);
+        if ($FAWN_TRIAL_DONE and v7) {
+            ["Whom wouldst thou care to call before the Oracle?"];
+            v9 = ~AskOrdList((~GetNPCName_i(v7) & "no one"));
+            v10 = ~ListSize_i(v7);
+            if (v9 > ~ListSize_i(v7)) {
+                v7 = << >>;
+            } else {
+                v3 = ~GetNPCName_i(v7::v9);
+                ["I call <v3> to witness before the Oracle."];
+                CallWitness_i(v7::v9);
+                EndConverse_i();
+                terminate;
+            }
+        }
+        if ($FAWN_TRIAL_DONE and not v7) {
+            SetMusic(~GimmePathEgg(1, 5), 19);
+            v11 = (((((((((((flag(374) + flag(375)) + flag(376)) + flag(377)) + flag(378)) + flag(380)) + $done7) + flag(382)) + flag(383)) + flag(384)) + flag(385)) + flag(386));
+            if (v11 = 0) {
+                ["Thou hast not even called one person... No doubt thy trust in the Oracle's perception will be rewarded."];
+            }
+            if (v11 = 1) {
+                ["Thou hast called but one person... No doubt thy trust in the Oracle's perception will be rewarded."];
+            }
+            if ((v11 = 2) or (v11 = 3)) {
+                ["So few hast thou called... No doubt thy trust in the Oracle's perception will be rewarded."];
+            }
+            ["I yield the floor to Her Graciousness, the Lady Yelinda..."];
+            EndConverse_i();
+            v3 = ~SetQuality(87, ~GimmePathEgg(1, 1));
+            v3 = ~PostAction(<< _aNO_HALT_i, _aBEND_FRAME_i, _aSIT_FRAME_i >>, _Zulith);
+            Bark_i(3, "@Hear ye!@", _Yelinda);
+            v3 = ~PostInFuture(10, << _aNO_HALT_i, _aUSABLE_i, #FawnTrialEgg_i >>, _Yelinda);
+            terminate;
+        }
+    }
+    if (v0 = 27) {
+        v4 = (~GetCoord(item) & (1 & 6));
+        v5 = ~FindNearby_i(16, 20, _Egg_Type, v4);
+        if v5 {
+            v6 = ~GetCoord(v5);
+            v6::2 = (v6::2 + 5);
+            PathfindNPC_i(false, #FawnTrialEgg_i, item, _Path_Success, v6, item);
+        }
+        terminate;
+    }
+    if (v0 = 28) {
+        if (item = ~NPCToItem_i(_Alyssand)) {
+            v3 = ~SetQuality(30, ~GimmePathEgg(1, 1));
+        }
+        if (item = ~NPCToItem_i(_Delin)) {
+            v3 = ~SetQuality(31, ~GimmePathEgg(1, 1));
+            if $AUDIENCE_WITH_YELINDA {
+                v3 = ~PostAction(<< _aNO_HALT_i, _aFACE_i, _South, _aSTAND_FRAME_i >>, item);
+                PartyLooksSE_i();
+                v3 = ~PostInFuture(5, << _aUSABLE_i, #ProsecuteTraitor_i >>, item);
+                terminate;
+            }
+        }
+        if (item = ~NPCToItem_i(_Delphynia)) {
+            v3 = ~SetQuality(38, ~GimmePathEgg(1, 1));
+        }
+        if (item = ~NPCToItem_i(_Jendon)) {
+            v3 = ~SetQuality(39, ~GimmePathEgg(1, 1));
+        }
+        if (item = ~NPCToItem_i(_Jorvin)) {
+            v3 = ~SetQuality(40, ~GimmePathEgg(1, 1));
+        }
+        if (item = ~NPCToItem_i(_Kylista)) {
+            v3 = ~SetQuality(41, ~GimmePathEgg(1, 1));
+        }
+        if ((item = ~NPCToItem_i(_Leon)) or (item = ~NPCToItem_i(_Joth))) {
+            v3 = ~SetQuality(44, ~GimmePathEgg(1, 1));
+        }
+        if ((item = ~NPCToItem_i(_Ruggs)) or (item = ~NPCToItem_i(_Garth))) {
+            v3 = ~SetQuality(47, ~GimmePathEgg(1, 1));
+        }
+        if (item = ~NPCToItem_i(_Scots)) {
+            v3 = ~SetQuality(48, ~GimmePathEgg(1, 1));
+        }
+        if (item = ~NPCToItem_i(_Olon)) {
+            v3 = ~SetQuality(46, ~GimmePathEgg(1, 1));
+        }
+        if (item = ~NPCToItem_i(_Yelinda)) {
+            v3 = ~SetQuality(52, ~GimmePathEgg(1, 1));
+        }
+        if (item = ~NPCToItem_i(_Zulith)) {
+            v3 = ~SetQuality(51, ~GimmePathEgg(1, 1));
+        }
+        v3 = ~PostAction(<< _aNO_HALT_i, _aFACE_i, _North, _aSTAND_FRAME_i >>, item);
+        PartyLooksSE_i();
+        if $AUDIENCE_WITH_YELINDA {
+            v3 = ~PostInFuture(5, << _aUSABLE_i, #ProsecuteTraitor_i >>, item);
+        } else {
+            v3 = ~PostInFuture(5, << _aUSABLE_i, #DefendTraitor_i >>, item);
+        }
+        terminate;
+    }
+    if (v0 = 29) {
+        v6 = ~GetCoord(item);
+        if (v6::1 < 1031) {
+            v12 = 2;
+        } else {
+            v12 = 6;
+        }
+        v3 = ~PostAction(<< _aFACE_i, v12, _aWAIT_i, 3, _aBEND_FRAME_i, _aWAIT_i, 2, _aSIT_FRAME_i >>, item);
+        PartyLooksNE_i();
+        SetWorkType(_Wait, item);
+        v3 = ~SetQuality(25, ~GimmePathEgg(1, 1));
+        v3 = ~PostInFuture(5, << _aUSABLE_i, #FawnTrialEgg_i >>, _Voldin);
+        terminate;
+    }
+}
+
+Routine CallWitness_i accepts a0 #locals(3) {
+    v1 = << ", come forward!@", ", stand before the Oracle!@", ", step forward!@", ", please come forward.@", ", come on down!@", "...@" >>;
+    v2 = (("@" + ~GetNPCName_i(v0)) + v1::~Random(~ListSize_i(v1)));
+    v3 = ~PostAction(<< _aBEND_FRAME_i, _aWAIT_i, 2, _aSTAND_FRAME_i, _aWAIT_i, 3, _aBARK_i, v2, _aWAIT_i, 7, _aBEND_FRAME_i, _aWAIT_i, 2, _aSIT_FRAME_i >>, _Zulith);
+    v3 = ~PostAction(<< _aWAIT_i, 10, _aBEND_FRAME_i, _aWAIT_i, 3, _aSTAND_FRAME_i >>, v0);
+    v3 = ~PostInFuture(18, << _aNO_HALT_i, _aUSABLE_i, #FawnTrialEgg_i >>, v0);
+}

@@ -1,0 +1,363 @@
+Routine Luther accepts a0 #locals(18) #uses(~LordOrLady, ~AvatarName, ~OrderList_i, ~InListField_i, ChangeHits_i, DeclareWinner_i, NowSettleDownBoys, Bark_i, PartyFaces_i, SayBanquetTime_i, ~IsInInv, ~AskYesNo, LutherChallenges_i, ~PartyUtters, SayIfNear_i, ~AskList, LutherGivesShield_i, ~RemoveFromList_i) {
+    v0 = ~LordOrLady();
+    v1 = ~AvatarSex();
+    v2 = ~GetItemFlag_i(_Met, _Luther);
+    v3 = ~AvatarName();
+    if (event = _NearDeath) {
+        if $tournamentflag {
+            v4 = ~GetAttacker_i(_Luther);
+            v4 = (0 - v4);
+            if not v4 {
+                v4 = 65180;
+            }
+            if ((v4 <> 65180) and not (v4 in ~OrderList_i())) {
+                v0 = ~OrderList_i();
+                v0 = (v0 & 65180);
+                Foreach v7 in v0 {
+                    if ~InListField_i(v7) {
+                        goto label_11;
+                    }
+                }
+                v7 = 65180;
+                label_11:
+                Npc_setTarget(v7, _Luther);
+                Npc_setTarget(v7, v4);
+                ChangeHits_i(3, _Luther);
+                ChangeHits_i(3, v4);
+                return;
+            }
+            if not $temp1flag {
+                $temp1flag = true;
+                DeclareWinner_i(~NPCToItem_i(_Luther), ~NPCToItem_i(v4));
+                return;
+            }
+            NowSettleDownBoys(v4);
+            return;
+        } else {
+            v8 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #Paladin >>, item);
+        }
+    }
+    if (event = _Bark) && $tournamentflag {
+        v9 = ~rndRange(3, 1);
+        ClearBark_i(_Luther);
+        if (v9 = 1) {
+            Item_bark("@Coward!@", _Luther);
+        }
+        if (v9 = 2) {
+            Item_bark("@Pitiful excuse...@", _Luther);
+        }
+        if (v9 = 3) {
+            Item_bark("@Flay that stranger!@", _Luther);
+        }
+    }
+    if (event = _Action) {
+        SetSpeaker0_i(0, _Luther);
+        if $luthernowfriend {
+            ["I would love to converse with thee, friend Avatar. But this is the hour when Andral sculpts my likeness."];
+            Bark_i(0, "@Go on, Andral!@", _Luther);
+            Bark_i(3, "@Yes, milord.@", _Andral);
+            terminate;
+        } else {
+            ["What art thou, a moron? Canst thou not see that the artist is at work? Andral is sculpting me."];
+            ["When my bust is complete, then my fame will be perfect and they shall surely proclaim me Knight Champion!"];
+            Bark_i(0, "@Move on!@", _Luther);
+            terminate;
+        }
+    }
+    if (event = _Converse) {
+        Item_bark("@Sir Knight!@", _Avatar);
+        PartyFaces_i(65465);
+        Bark_i(0, "@Eh?@", _Luther);
+        if ((~GetWorkType(_Luther) = _MajorSit) and ~IsNPCNear_i(_Andral)) {
+            v8 = ~PostInFuture(5, << _aNO_HALT_i, _aUSABLE_i, #Luther >>, _Luther);
+        } else {
+            SetWorkType(_Talk, _Luther);
+        }
+    }
+    if (event = _Talking) {
+        Kernel_resetRef(_Luther);
+        Npc_schedule(_Luther);
+        SetSpeaker0_i(0, _Luther);
+        SayBanquetTime_i();
+        if not v2 {
+            ["Hmpf! Art thou a fighter? Thou dost not look like a fighter to me!"];
+            if ~AvatarSex() {
+                ["More like someone to cook Luther's meals! Har!"];
+            } else {
+                ["Thou dost look like someone to carry Luther's water buckets! Har!"];
+            }
+        } else {
+            if not $luthernowfriend {
+                if not $gottattoo {
+                    ["Hello, little fighter! Step on any ants today?"];
+                } else {
+                    ["Look at the new Knight! Thou dost certainly look fetching with thy tattoo. Hah!"];
+                }
+            } else {
+                ["Now that thou hast bested me on the field of battle, I am thy friend. What can I do for thee?"];
+                TurnOn("join");
+            }
+        }
+        TurnOn(<< "name", "duties" >>);
+        if ($celliagaveadvice and not $lutherbullymad) {
+            TurnOn("bully");
+        }
+        if ($lutherisbraggart and not $lutherbraggartmad) {
+            TurnOn("braggart");
+        }
+        if ($lucillasaidrepellant and not $lutherrepellantmad) {
+            TurnOn("repulsive");
+        }
+        if ($askluthermagicshield and not $HAS_DUPRE_SHIELD) {
+            TurnOn("new shield");
+        }
+        if ($foundsimonbottle and (~GetWorkType(_Simon) <> _Wait)) {
+            TurnOn("brown bottle");
+        }
+        if ($AVATAR_IS_KNIGHT and not ~GetItemFlag_i(_Dead, _Simon)) {
+            TurnOn("traitor");
+        }
+        TurnOn("bye");
+        converse {
+            key ("traitor") {
+                TurnOff("traitor");
+                ["The Goblins did not ambush that patrol without help. If Lord Marsten doth not recognize this, then he is blind as well as brainless."];
+                ["It doth not take a wizard to untangle this skein. Who among us acts strangely, doth do things in secret, and avoids his knightly duties?"];
+                ["Speak to Krayg the Provisioner. Force him to spill his filthy secrets. I would do it myself, but Marsten hath ordered me to stay away from that worm."];
+            }
+            key ("brown bottle") {
+                TurnOff("brown bottle");
+                ["So what do I care if thou didst find garbage in the woods?"];
+                if ~IsInInv(9, 65177, _Bottles, 1, _Party) {
+                    ["Place it not in my face! That bottle is filthy..."];
+                    ["Besides, I do not drink that brew. 'Tis Fawnish ale. A bitter brew!"];
+                }
+                ["No doubt the bottle belongs to that traitor, Krayg."];
+            }
+            key ("name") {
+                TurnOff("name");
+                ["I am Luther! I am a Bear and a trainer of unequalled strength. It is my destiny to become the next Knight Champion of Monitor!"];
+                SetItemFlag_i(_Met, _Luther);
+                TurnOn(<< "Knight Champion", "destiny" >>);
+            }
+            key ("Knight Champion") {
+                TurnOff("Knight Champion");
+                ["The Knight Champion is the bravest and toughest fighter in all the land. Now that Astrid hath met an untimely doom, the post is open for the taking!"];
+                ["Actually, she must have been fairly addlepated to let the Goblins ambush her like that. When I am Champion, the Goblins shall quake in fear!"];
+            }
+            key ("destiny") {
+                TurnOff("destiny");
+                ["I am the greatest fighter in Monitor! But I sense that thou art uncertain. Dost thou disagree?"];
+                if ~AskYesNo() {
+                    ["I shall gladly prove it to thee -- on the List Field! Meet me there in the morning,..."];
+                    ["...but not too early. I like my sleep. The ninth hour should be sufficient."];
+                } else {
+                    ["Good for thee."];
+                }
+            }
+            key ("duties") {
+                TurnOff("duties");
+                ["As a Knight of the Order of the Bear, I am charged with defending Monitor at all times."];
+                ["Often I am called upon by Caladin to lead patrols outside the\x09city walls, or to single-handedly scout the wilderness. I am very brave."];
+                TurnOn(<< "Bears", "brave", "Caladin" >>);
+            }
+            key ("Bears") {
+                TurnOff("Bears");
+                ["We are the hope of Monitor, the only defense against the Goblins. The Leopards are hopeless, and the Wolves too smart for their own good."];
+                if not $doneknightstest {
+                    ["If thou dost become a Knight of Monitor -- which is highly unlikely by the looks of thee -- thou shalt not be a Bear."];
+                    ["The Ashes of Gurnordir do not select puny weaklings for our Command."];
+                    TurnOn("Ashes of Gurnordir");
+                }
+            }
+            key ("Ashes of Gurnordir") {
+                TurnOff("Ashes of Gurnordir");
+                ["Ignorant oaf! The Ashes are consecrated to the ideal of Prowess -- to the biggest, strongest, bravest warriors!"];
+                if not $doneknightstest {
+                    ["In the Test of Knighthood, it is the Ashes which shall show thee thy totem animal. By the blood."];
+                    ["But why am I speaking of this to thee? If thou didst attempt the Test, it would surely kill thee."];
+                }
+            }
+            key ("brave") {
+                TurnOff("brave");
+                ["Many of the Knights tell stories about mine accomplishments. Thou shouldst especially speak with Lucilla -- she is very impressed with me..."];
+                if not ~AvatarSex() {
+                    ["...if thou knowest what I mean, aye?"];
+                }
+                if not $marstenarrested {
+                    ["One day I shall be Lord of the Bears, when Caladin is at last seen for the pathetic coward that he truly is."];
+                    ["Then I shall challenge the Goblins to a final battle, and use their pathetic skulls for the sharpening of my blade!"];
+                } else {
+                    ["Now that I am Lord of the Bears, Monitor is at last safe from invasion."];
+                }
+            }
+            key ("Caladin") {
+                TurnOff("Caladin");
+                ["Oftimes I am sent on the most dangerous types of patrols. Caladin, head of the Bear Command, likes to joke that he sends me on these patrols in the hopes that I do not return. But I know the truth. He sends me because he knows I am the only one who is tough enough."];
+            }
+            key ("bully") {
+                TurnOff("bully");
+                ["How darest thou call me a bully! That little whore Lydia must have put thee up to this..."];
+                if ~GetItemFlag_i(_Dead, _Lydia) {
+                    ["I am glad that she is dead, the bitch!"];
+                } else {
+                    ["So, thou and she are teaming against me, aye? Spreading lies and rumors? Poisoning my reputation?"];
+                }
+                $lutherbullymad = true;
+                LutherChallenges_i();
+                Bark_i(0, "@Damn thee!@", _Luther);
+                SetWorkType(_Shy, _Luther);
+            }
+            key ("braggart") {
+                TurnOff("braggart");
+                ["Braggart! Who art thou calling a braggart? Thou art a snivelling worm!"];
+                if not $spektorarrested {
+                    ["That cold fish Spektor must have coaxed thee to this. He hath been jealous of my manliness for many moons..."];
+                    ["He knows that the women prefer me to him, and he schemes against me!"];
+                }
+                ["Why, I should rip thine head off and feed it to the pigs!"];
+                $lutherbraggartmad = true;
+                LutherChallenges_i();
+                Bark_i(0, "@Curse thee!@", _Luther);
+                SetWorkType(_Shy, _Luther);
+            }
+            key ("repulsive") {
+                TurnOff("repulsive");
+                ["Lucilla said what?! She finds me repulsive? Thou dost lie, it is a filthy lie..."];
+                ["I will have thine head on a pike for spreading such tales!"];
+                $lutherrepellantmad = true;
+                LutherChallenges_i();
+                Bark_i(0, "@Blast thee!@", _Luther);
+                SetWorkType(_Shy, _Luther);
+            }
+            key ("found shield") {
+                TurnOff("found shield");
+                v10 = ~IsInInv(0, 65177, _Shield_Heirarchy, 1, _Party);
+                if $HAS_DUPRE_SHIELD {
+                    ["Many thanks for returning my shield to me, friend."];
+                } else {
+                    if v10 {
+                        ["No, that doth not look like my shield. I do not believe I have ever seen that shield before in my life."];
+                    } else {
+                        ["I have not lost my shield. Thou art mistaken."];
+                    }
+                    ["Besides, I have this new shield -- which, by the way, is a family heirloom. Thank thee very much."];
+                }
+            }
+            key ("new shield") {
+                TurnOff("new shield");
+                ["So, thou hast heard of my new shield! No one hath ever seen the like of it before. It is so light, yet blows seem to bounce off of it..."];
+                if ~IsNPCNear_i(_Dupre) {
+                    v11 = ~PartyUtters(false, 0, "@Look! He doth have my missing shield!@", 65535);
+                    SetSpeakerSlot_i(0);
+                } else {
+                    v11 = ~PartyUtters(false, "@Why I think that is Dupre's missing shield!@", "@Look! He doth have Dupre's missing shield!@", 1);
+                    SetSpeakerSlot_i(0);
+                }
+                if (($HAS_DUPRE_SHIELD = false) and $gotmonitorshield) {
+                    SayIfNear_i("@And that mystery shield we have must be his!@", v11);
+                    TurnOn("found shield");
+                    SetSpeakerSlot_i(0);
+                }
+                if (v11 <> 65180) {
+                    ["What did he say?!"];
+                } else {
+                    ["What didst thou say?!"];
+                }
+                v12 = ~AskList(<< "return our shield", "I will pay for that shield", "say nothing" >>);
+                if (v12 = "return our shield") {
+                    if $luthernowfriend {
+                        LutherGivesShield_i();
+                    } else {
+                        ["No, I will not! This is my shield, and it hath been mine since my father -- a great Knight of Monitor -- passed it on to me!"];
+                        ["If thou dost call me a thief again, then thou art calling me a liar -- and dishonoring the name of my father!"];
+                        ["If thou didst that, I would have to challenge thee to combat on the List Field! So if I were thee, I would think twice about speaking to me with such an insolent tone!"];
+                    }
+                }
+                if (v12 = "I will pay for that shield") {
+                    if $luthernowfriend {
+                        ["I could not accept money from a friend!"];
+                        LutherGivesShield_i();
+                    } else {
+                        ["Hah! A fine shield like this is not for sale. It is a family heirloom, after all."];
+                        ["The other Knights might grovel after money, but not I! I am no Spektor!"];
+                    }
+                }
+            }
+            key ("join") {
+                TurnOff("join");
+                v13 = ~RemoveFromList_i(~GetParty(), ~NPCToItem_i(_Avatar));
+                v14 = 1;
+                Foreach v17 in v13 {
+                    if (v14 = 1) {
+                        SayIfNear_i("@Avatar!@", ~ItemToNPC_i(v17));
+                    }
+                    if (v14 = 2) {
+                        SayIfNear_i("@Luther! Travelling with us?!@", ~ItemToNPC_i(v17));
+                    }
+                    if (v14 = 3) {
+                        SayIfNear_i("@I do not think this is a good idea...@", ~ItemToNPC_i(v17));
+                    }
+                    if (v14 = 4) {
+                        SayIfNear_i("@If he is coming, I am going!@", ~ItemToNPC_i(v17));
+                    }
+                    v14 = (v14 + 1);
+                }
+                SetSpeakerSlot_i(0);
+                ["Thou couldst use a warrior like myself, to guard thee against thine enemies. With me on hand, nothing could harm thee!"];
+                if ~GetItemFlag_i(_Dead, _GoblinKing) {
+                    ["But alas, my duty as a Knight keeps me here in Monitor. The Goblins are a constant threat, even though thou hast slain their king."];
+                } else {
+                    ["But alas, my duty as a Knight keeps me here in Monitor. The Goblins are a constant threat."];
+                }
+            }
+            key ("bye") {
+                if $luthernowfriend {
+                    Bark_i(2, "@Courage!@", _Luther);
+                } else {
+                    Bark_i(2, "@Slug!@", _Luther);
+                }
+                Bark_i(0, "@Bye!@", _Avatar);
+                break;
+            }
+        }
+        clear_answers;
+    }
+}
+
+Usable LutherGivesShield_i #locals(4) #uses(~GiveItemsOrDrop_i, ~IsInInv, ~PartyUtters) {
+    ["I shall certainly be sad to part with it, but if thou dost claim it, then I must give it to thee."];
+    v0 = ~TakeFromCont_i(0, 0, _All, _Dupre_S_Magic_Shield, 1, _Luther);
+    v0 = ~GiveItemsOrDrop_i(true, 0, 65177, 65177, 490, 1, _Avatar);
+    $HAS_DUPRE_SHIELD = true;
+    ["Now I shall have to find myself another shield..."];
+    if ($gotmonitorshield and ~IsInInv(0, 65177, _Shield_Heirarchy, 1, _Party)) {
+        v1 = ~PartyUtters(false, 0, "@But thou canst have this shield which we found!@", 1);
+        SetSpeakerSlot_i(0);
+        ["That is most gracious of thee! Yes, this is my shield which so strangely disappeared during that storm!"];
+        v0 = ~GiveToCont_i(18, 0, _All, _Shield_Heirarchy, 1, _Luther);
+        if v0 {
+            v0 = ~Item_create(_Shield_Heirarchy);
+            if v0 {
+                SetItemFlag_i(_IsTemporary_i, v0);
+                v2 = ~GetCoord(_Luther);
+                v3 = ~PopToMap(v2);
+            }
+        }
+    }
+}
+
+Usable LutherChallenges_i #locals(1) {
+    if not ($lutherbullymad or ($lutherbraggartmad or $lutherrepellantmad)) {
+        return;
+    }
+    ["That is it, goat! Meet me at the List Field! There I shall ram thy words down thy throat!"];
+    if $LUTHER_CHALLENGED {
+        return;
+    }
+    NewSchedule_i(<< 904, 2630, 986, 2694 >>, << 14, 27 >>, << 6, 0 >>, _Luther);
+    $LUTHER_CHALLENGED = true;
+    v0 = ~ChangeNPCStat_i(65518, _Str, _Luther);
+    v0 = ~ChangeNPCStat_i(65527, _Cbt, _Luther);
+    v0 = ~ChangeNPCStat_i(65528, _Dex, _Luther);
+}

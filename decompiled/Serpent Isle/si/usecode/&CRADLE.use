@@ -1,0 +1,67 @@
+Routine Baby accepts a0 #locals(3) #uses(~PartyUtters) {
+    if (event = _Converse) {
+        v0 = << "@'Tis tragic that one so young should perish in the dawn of life.@" >>;
+        v1 = << "@'Tis horrible to find one so young to have perished so early in life.@" >>;
+        v2 = ~PartyUtters(false, v1, v0, 65534);
+    }
+}
+
+Routine Diaper accepts a0 #locals(3) #uses(ConsumeOne_i, MemberBarks_i) {
+    if (event = _Converse) {
+        v0 = ~GetFrame(item);
+        if (v0 = 0) {
+            v1 = ~GetTarget();
+            v2 = ~Item_getType(v1);
+            if (v2 = 730) {
+                SetFrame(1, item);
+            } else {
+                if (~Item_getType(v1) = _Diaper) {
+                    if (~GetFrame(v1) = 2) {
+                        ConsumeOne_i(item);
+                    }
+                } else {
+                    MemberBarks_i("@Those are for infants.@");
+                }
+            }
+        }
+        if (v0 = 1) {
+            v1 = ~GetTarget();
+            if ~Item_isNpc(v1) {
+                SetWorkType(_Combat_0, v1);
+                SetAttackMode_i(_Fleeing, v1);
+                SetAttacker_i(_Avatar, v1);
+                ConsumeOne_i(item);
+            } else {
+                if (~Item_getType(v1) = _Diaper) && (~GetFrame(v1) = 2) {
+                    ConsumeOne_i(item);
+                }
+            }
+        }
+        if (v0 = 2) {
+            MemberBarks_i("@That is for dirty diapers.@");
+        }
+    }
+}
+
+Routine Full_Cradle_EW accepts a0 #locals(3) {
+    if (event = _Converse) {
+        v0 = ~GetFrame(item);
+        if ((v0 > 9) and (v0 < 16)) {
+            if not ~Kernel_getNumProcesses(item) {
+                v1 = << byte(70), 10, byte(70), 11, byte(70), 12, byte(88), 117, byte(70), 12, byte(70), 11, byte(70), 10, byte(70), 13, byte(70), 14, byte(88), 117, byte(70), 14, byte(70), 13, byte(70), 10 >>;
+                Kernel_resetRef(item);
+                v2 = ~PostAction((v1 & << byte(11), 65510, 2 >>), item);
+            }
+            terminate;
+        }
+        closeAllGumps();
+        if ((v0 > 65535) and (v0 < 5)) {
+            v1 = << byte(70), 0, byte(70), 1, byte(70), 2, byte(88), 117, byte(70), 2, byte(70), 1, byte(70), 0, byte(70), 3, byte(70), 4, byte(88), 117, byte(70), 4, byte(70), 3, byte(70), 0 >>;
+        } else {
+            if ((v0 > 4) and (v0 < 10)) {
+                v1 = << byte(70), 5, byte(70), 6, byte(70), 7, byte(88), 117, byte(70), 7, byte(70), 6, byte(70), 5, byte(70), 8, byte(70), 9, byte(88), 117, byte(70), 9, byte(70), 8, byte(70), 5 >>;
+            }
+        }
+        v2 = ~PostAction((v1 & << byte(11), 65510, 2 >>), item);
+    }
+}

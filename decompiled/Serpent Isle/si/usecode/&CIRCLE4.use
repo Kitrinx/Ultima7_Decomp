@@ -1,0 +1,259 @@
+Routine BlinkSpell_i accepts a0 #locals(1) {
+    if (event = _Converse) {
+        Kernel_resetRef(item);
+        Item_bark("@Rel Por@", item);
+        v0 = ~PostAction(<< _aNO_HALT_i, _aRAISE1_FRAME_i, _aEXTEND2_FRAME_i, _aRAISE1_FRAME_i, _aUSABLE_i, #FizzleSpell_i >>, item);
+    }
+}
+
+Routine DeterSpell_i accepts a0 #locals(9) #uses(~IsMagicOK_i, ~EnemyList_i) {
+    if (event = _Converse) {
+        Kernel_resetRef(item);
+        Item_bark("@An Xen Jux@", item);
+        if ~IsMagicOK_i() {
+            v0 = ~PostAction(<< _aNO_HALT_i, _aRAISE1_FRAME_i, _aTHRUST1_FRAME_i, _aTHRUST2_FRAME_i, _aEXTEND2_FRAME_i, _aSFX_i, 67 >>, item);
+            v1 = ~NPCToItem_i(_Avatar);
+            CreateSpriteOn_i(65535, 0, 0, 0, 65534, 65534, 7, v1);
+            v2 = 25;
+            v3 = ~EnemyList_i(v2);
+            Foreach v6 in v3 {
+                v2 = ~GetDist(v6, item);
+                v2 = ((v2 / 4) + 4);
+                if not (~rndRange(3, 1) = 1) {
+                    v0 = ~PostInFuture(v2, << _aNO_HALT_i, _aUSABLE_i, #DeterSpell_i >>, v6);
+                }
+            }
+        } else {
+            v0 = ~PostAction(<< _aNO_HALT_i, _aRAISE1_FRAME_i, _aTHRUST1_FRAME_i, _aTHRUST2_FRAME_i, _aEXTEND2_FRAME_i, _aUSABLE_i, #FizzleSpell_i >>, item);
+        }
+    }
+    if (event = _Action) {
+        v7 = ~ItemToNPC_i(item);
+        if not (v7 in << 65180 >>) {
+            v8 = ~Npc_getAlignment(_Avatar);
+            if v8 {
+                SetItemFlag_i(_Charmed, item);
+            } else {
+                ClearItemFlag_i(_Charmed, item);
+            }
+        }
+    }
+}
+
+Routine FlashSpell_i accepts a0 #locals(15) #uses(~IsMagicOK_i) {
+    v0 = ~GetCoord(_Avatar);
+    v1 = ~NPCToItem_i(_Avatar);
+    if (event = _Converse) {
+        Kernel_resetRef(item);
+        Item_bark("@In Vas Lor@", item);
+        if ~IsMagicOK_i() {
+            v2 = ~PostAction(<< _aNO_HALT_i, _aEXTEND2_FRAME_i, _aEXTEND1_FRAME_i, _aTHRUST2_FRAME_i, _aSFX_i, 67, _aUSABLE_i, #FlashSpell_i >>, item);
+            CreateSpriteOn_i(65535, 0, 0, 0, 65534, 65534, 7, v1);
+        } else {
+            v2 = ~PostAction(<< _aNO_HALT_i, _aEXTEND2_FRAME_i, _aEXTEND1_FRAME_i, _aTHRUST2_FRAME_i, _aUSABLE_i, #FizzleSpell_i >>, item);
+        }
+    }
+    if (event = _Action) {
+        CreateSpriteOn_i(65535, 0, 0, 0, 65534, 65534, 7, v1);
+        v3 = ~FindNearby_i(8, 40, _All, item);
+        v4 = ~GetParty();
+        v5 = 12;
+        v6 = ~GetItemFlag_i(_InParty_i, item);
+        Foreach v9 in v3 {
+            if (not v6 or not (v9 in v4)) {
+                v10 = 0;
+                v11 = "";
+                While (v10 < v5) {
+                    v12 = ~rndRange(8, 0);
+                    if (v12 = 0) {
+                        v13 = << byte(109), byte(108), byte(97) >>;
+                        v11 = << v11, v13 >>;
+                    }
+                    if (v12 = 1) {
+                        v13 = << byte(109), byte(97), byte(97) >>;
+                        v11 = << v11, v13 >>;
+                    }
+                    if (v12 = 2) {
+                        v13 = << byte(108), byte(110), byte(97) >>;
+                        v11 = << v11, v13 >>;
+                    }
+                    if (v12 = 3) {
+                        v13 = << byte(97), byte(97), byte(97) >>;
+                        v11 = << v11, v13 >>;
+                    }
+                    if (v12 = 4) {
+                        v13 = << byte(109), byte(100), byte(97) >>;
+                        v11 = << v11, v13 >>;
+                    }
+                    if (v12 = 5) {
+                        v13 = << byte(100), byte(109), byte(97) >>;
+                        v11 = << v11, v13 >>;
+                    }
+                    if (v12 = 6) {
+                        v14 = (byte(48) + (~rndRange(3, 0) * 2));
+                        v13 = << byte(89), v14, byte(108), byte(97) >>;
+                        v11 = << v11, v13 >>;
+                    }
+                    if (v12 = 7) {
+                        v14 = (byte(48) + (~rndRange(3, 0) * 2));
+                        v13 = << byte(89), v14, byte(109), byte(97) >>;
+                        v11 = << v11, v13 >>;
+                    }
+                    if (v12 = 8) {
+                        v14 = (byte(48) + (~rndRange(3, 0) * 2));
+                        v13 = << byte(89), v14, byte(100), byte(97) >>;
+                        v11 = << v11, v13 >>;
+                    }
+                    v10 = (v10 + 1);
+                }
+                Kernel_resetRef(v9);
+                v2 = ~PostAction(v11, v9);
+            }
+        }
+    }
+}
+
+Routine CreateSoulPrismSpell_i accepts a0 #locals(6) #uses(~DirFromAvatar_i, ~IsMagicOK_i) {
+    if (event = _Converse) {
+        v0 = ~GetTarget();
+        v1 = ~Item_getType(v0);
+        v2 = ~GetFrame(v0);
+        v3 = ~DirFromAvatar_i(item);
+        Kernel_resetRef(item);
+        Item_bark("@An Mani Ex@", item);
+        if (~IsMagicOK_i() and ((v1 = 445) and (v2 = 0))) {
+            v4 = ~PostAction(<< _aNO_HALT_i, _aTHRUST1_FRAME_i, _aSTAND_FRAME_i, _aTHRUST1_FRAME_i, _aSTAND_FRAME_i, _aSFX_i, 67 >>, item);
+            v4 = ~PostInFuture(6, << _aNO_HALT_i, _aUSABLE_i, #CreateSoulPrismSpell_i >>, v0);
+        } else {
+            v4 = ~PostAction(<< _aNO_HALT_i, _aTHRUST1_FRAME_i, _aSTAND_FRAME_i, _aTHRUST1_FRAME_i, _aSTAND_FRAME_i, _aUSABLE_i, #FizzleSpell_i >>, item);
+        }
+    }
+    if (event = _Action) {
+        v5 = ~GetCoord(item);
+        v4 = ~Item_push(item);
+        SetFrame(1, item);
+        ClearItemFlag_i(_IsTemporary_i, item);
+        v4 = ~PopToMap(v5);
+    }
+}
+
+Routine MassCurseSpell_i accepts a0 #locals(7) #uses(~IsMagicOK_i, ~EnemyList_i) {
+    if (event = _Converse) {
+        Kernel_resetRef(item);
+        Item_bark("@Vas Des Sanct@", item);
+        if ~IsMagicOK_i() {
+            CreateSpriteOn_i(65535, 0, 0, 0, 65534, 65534, 7, item);
+            v0 = ~PostAction(<< _aNO_HALT_i, _aUP_FRAME_i, _aSFX_i, 20, _aOUT_FRAME_i, _aUP_FRAME_i, _aTHRUST2_FRAME_i >>, item);
+            v1 = 30;
+            v2 = ~EnemyList_i(v1);
+            v3 = ~GetParty();
+            v3 = (v3 & 65180);
+            Foreach v6 in v2 {
+                if not (v6 in v3) && not (~rndRange(3, 1) = 1) {
+                    v1 = ~GetDist(v6, item);
+                    v1 = ((v1 / 3) + 5);
+                    v0 = ~PostInFuture(v1, << _aNO_HALT_i, _aUSABLE_i, #MassCurseSpell_i >>, v6);
+                }
+            }
+        } else {
+            v0 = ~PostAction(<< _aNO_HALT_i, _aUP_FRAME_i, _aOUT_FRAME_i, _aUP_FRAME_i, _aTHRUST2_FRAME_i, _aUSABLE_i, #FizzleSpell_i >>, item);
+        }
+    }
+    if (event = _Action) {
+        SetItemFlag_i(_Cursed, item);
+    }
+}
+
+Routine RevealSpell_i accepts a0 #locals(16) #uses(~IsMagicOK_i) {
+    if (event = _Converse) {
+        Kernel_resetRef(item);
+        v0 = ~GetCoord(_Avatar);
+        v1 = << >>;
+        Item_bark("@Wis Quas@", item);
+        if ~IsMagicOK_i() {
+            v2 = ~PostAction(<< _aNO_HALT_i, _aSFX_i, 130, _aRAISE1_FRAME_i, _aEXTEND1_FRAME_i, _aTHRUST1_FRAME_i >>, item);
+            v3 = ~GetCoord(item);
+            v4 = << 65521, 65521, 65521, 65531, 65531, 65531, 5, 5, 5, 15, 15, 15 >>;
+            v5 = << 65529, 2, 11, 65529, 2, 11, 65529, 2, 11, 65529, 2, 11 >>;
+            v6 = 7;
+            v7 = 0;
+            While (v7 <> 12) {
+                v7 = (v7 + 1);
+                v8 = (v0::1 + v4::v7);
+                v9 = (v0::2 + v5::v7);
+                v3 = << v8, v9, 0 >>;
+                v10 = ~FindNearby_i(32, v6, _All, v3);
+                Foreach v13 in v10 {
+                    if (~GetItemFlag_i(_Invisible, v13) and not (v13 in v1)) {
+                        v1 = (v1 & v13);
+                    }
+                }
+            }
+            if v1 {
+                Foreach v13 in v1 {
+                    v2 = ~PostInFuture(5, << _aNO_HALT_i, _aUSABLE_i, #RevealSpell_i >>, v13);
+                    CreateSpriteOn_i(65535, 0, 0, 0, 65535, 65535, 13, v13);
+                }
+            } else {
+                CreateSpriteOn_i(65535, 0, 0, 0, 65535, 65535, 13, item);
+            }
+        } else {
+            v2 = ~PostAction(<< _aNO_HALT_i, _aRAISE1_FRAME_i, _aEXTEND1_FRAME_i, _aTHRUST1_FRAME_i, _aUSABLE_i, #FizzleSpell_i >>, item);
+        }
+    }
+    if (event = _Action) {
+        ClearItemFlag_i(_Invisible, item);
+    }
+}
+
+Routine TranscribeSpell_i accepts a0 #locals(6) #uses(~DirFromAvatar_i, ~IsMagicOK_i) {
+    if (event = _Converse) {
+        v0 = ~GetTarget();
+        v1 = ~Item_getType(v0);
+        v2 = ~DirFromAvatar_i(item);
+        Kernel_resetRef(item);
+        v3 = ~FindItem(_All, _All, _Spellbook, _Party);
+        Item_bark("@Rel Ort Wis@", item);
+        if (~IsMagicOK_i() and ((v1 = 715) and v3)) {
+            v4 = ~PostAction(<< _aNO_HALT_i, _aFACE_i, v2, _aSFX_i, 67 >>, item);
+            v4 = ~PostInFuture(4, << _aREMOVE_i >>, v0::1);
+            v5 = ~GetQuality(v0);
+            v4 = ~AddSpell_i(v3, 0, v5);
+        } else {
+            v4 = ~PostAction(<< _aNO_HALT_i, _aFACE_i, v2, _aUSABLE_i, #FizzleSpell_i >>, item);
+        }
+    }
+}
+
+Routine UnlockMagicSpell_i accepts a0 #locals(8) #uses(~DirFromAvatar_i, ~IsMagicOK_i, SpringCellTrap_i) {
+    if (event = _Converse) {
+        v0 = ~GetTarget();
+        v1 = ~Item_getType(v0);
+        v2 = ~DirFromAvatar_i(item);
+        Kernel_resetRef(item);
+        v3 = << 270, 376, 432, 433, 845, 828 >>;
+        v4 = << 432, 433, 270, 376 >>;
+        Item_bark("@Ex Por@", item);
+        if ~IsMagicOK_i() {
+            if not (v1 in v3) {
+                goto label_7;
+            }
+            v5 = ~GetFrame(v0);
+            if not (((v5 + 1) modulo 4) = 0) {
+                goto label_7;
+            }
+            v6 = ~PostAction(<< _aNO_HALT_i, _aFACE_i, v2, _aEXTEND1_FRAME_i, _aRAISE1_FRAME_i, _aTHRUST1_FRAME_i, _aSFX_i, 67 >>, item);
+            v6 = ~PostInFuture(6, << _aNO_HALT_i, _aUSABLE_i, #UnlockMagicSpell_i >>, v0);
+            goto label_8;
+        }
+        label_7:
+        v6 = ~PostAction(<< _aNO_HALT_i, _aFACE_i, v2, _aEXTEND1_FRAME_i, _aRAISE1_FRAME_i, _aTHRUST1_FRAME_i, _aUSABLE_i, #FizzleSpell_i >>, item);
+    }
+    label_8:
+    if (event = _Action) {
+        v5 = ~GetFrame(item);
+        v7 = (v5 - 3);
+        SetFrame(v7, item);
+        SpringCellTrap_i();
+    }
+}

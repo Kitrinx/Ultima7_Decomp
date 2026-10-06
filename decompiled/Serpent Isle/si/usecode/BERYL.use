@@ -1,0 +1,242 @@
+Routine Beryl accepts a0 #locals(4) #uses(~LordOrLady, ~AvatarName, ~IsNPCNear, ~WhereAmI_i, ~GimmePathEgg, PartyFaces_i, Bark_i, ~AskYesNo, ~IsInInv) {
+    v0 = ~LordOrLady();
+    v1 = ~AvatarName();
+    v2 = ~IsNPCNear(_Draygan);
+    if (event = _Action) {
+        if ((~WhereAmI_i() <> 7) or (~GetItemFlag_i(_Dead, _Beryl) or (~GetItemFlag_i(_Dead, _Draygan) or not flag(702)))) {
+            terminate;
+        }
+        v3 = ~PostInFuture((20 + ~Random(50)), << _aNO_HALT_i, _aUSABLE_i, #Beryl >>, ~GimmePathEgg(1, 5));
+        if (~IsNPCNear_i(_Ivor) or (~IsNPCNear_i(_Draygan) or (~IsNPCNear_i(_Hurd) or ~IsNPCNear_i(_Morghrim)))) {
+            terminate;
+        }
+        v3 = ~ApproachAvatar_i(40, 120, _Beryl);
+        if v3 {
+            SetWorkType(_Talk, _Beryl);
+        }
+        terminate;
+    }
+    if (event = _Converse) {
+        Item_bark("@Hello.@", _Avatar);
+        PartyFaces_i(65381);
+        Bark_i(2, "@Speaking to me?@", _Beryl);
+        SetWorkType(_Talk, _Beryl);
+    }
+    if (event = _Talking) {
+        Npc_schedule(_Beryl);
+        SetSpeaker0_i(0, _Beryl);
+        SetItemFlag_i(_Met, _Beryl);
+        ClearBark_i(_Beryl);
+        if v2 {
+            ["My name is Beryl. I need thine help, but I cannot speak now..."];
+            SetSpeaker1_i(0, _Draygan);
+            ["What art thou saying to that stranger, Beryl?"];
+            CloseSpeaker1_i();
+            SetSpeakerSlot_i(0);
+            if flag(701) {
+                ["I shall meet thee as before. Now, go..."];
+                Bark_i(0, "@Nothing, Draygan...@", _Beryl);
+                flag(702) = true;
+            } else {
+                ["Nothing, Lord Draygan."];
+                Bark_i(0, "@Nothing.@", _Beryl);
+            }
+            SetWorkType(_Hound, _Draygan);
+            v3 = ~PostInFuture(50, << _aNO_HALT_i, _aUSABLE_i, #Beryl >>, ~GimmePathEgg(1, 5));
+            terminate;
+        } else {
+            if ~GetItemFlag_i(_Dead, _Draygan) {
+                if ~GetItemFlag_i(_Zombie, _Beryl) {
+                    ["I am content now, <v1>. There is such a peacefulness in my life, now that Morghrim doth care for me."];
+                    Bark_i(0, "@Good fortune!@", _Beryl);
+                    terminate;
+                } else {
+                    SetItemFlag_i(_Zombie, _Beryl);
+                    ["I am so glad that the tyrant is dead! Thanks to thee, <v1>."];
+                    ["Do not fear for me -- I can care for myself, now that Draygan cannot use his magical secrets to control me."];
+                    if ~IsNPCNear_i(_Morghrim) {
+                        SetSpeaker1_i(0, _Morghrim);
+                        ["Thou canst come and stay with me, woman, until thou art ready to return to thy kind. My camp is clean, and the forest animals enjoy thy company."];
+                        CloseSpeaker1_i();
+                        SetSpeakerSlot_i(0);
+                        ["I shall accept thy kind offer, Forest Master."];
+                        Bark_i(0, "@Stay with me.@", _Morghrim);
+                        Bark_i(5, "@I shall.@", _Beryl);
+                        NewSchedule_i(<< 689, 1654, 697, 1670, 705, 1709 >>, << 14, 7, 12 >>, << 0, 2, 6 >>, _Beryl);
+                        Npc_schedule(_Beryl);
+                        terminate;
+                    } else {
+                        ["I shall go to the Forest Master and beg for a place by his side. He is old, and doth need a help from time to time."];
+                        ["Thank thee Avatar for thine help. Thou hast given me back my life."];
+                        Bark_i(0, "@Fear not for me!@", _Beryl);
+                        Bark_i(0, "@Live long and prosper!@", _Avatar);
+                        NewSchedule_i(<< 689, 1654, 697, 1670, 705, 1709 >>, << 14, 7, 12 >>, << 0, 2, 6 >>, _Beryl);
+                        Npc_schedule(_Beryl);
+                        terminate;
+                    }
+                }
+            } else {
+                if (flag(703) and not ~GetItemFlag_i(_Dead, _Draygan)) {
+                    ["Why dost thou wait? Use the arrow! Use it to strike down the tyrant Draygan!"];
+                    ["Then we shall find the secret of his power, and he shall not stop me from obtaining my freedom."];
+                    Bark_i(0, "@Use the arrow!@", _Beryl);
+                    terminate;
+                }
+                if (flag(704) and not ~GetItemFlag_i(_Dead, _Draygan)) {
+                    ["Tell me -- hast thou prepared the arrow? To defeat the tyrant Draygan?"];
+                    if ~AskYesNo() {
+                        if ~IsInInv(65177, 65177, _Ts_Arrow, 1, _Party) {
+                            flag(703) = true;
+                            ["Then use it! Use it to numb the tyrant Draygan!"];
+                            ["Then we shall find the secret of his power, and prevent him from stopping mine escape."];
+                            Bark_i(0, "@Use the arrow!@", _Beryl);
+                            terminate;
+                        } else {
+                            ["Do not thou give me false hopes, stranger! I see no arrow..."];
+                            Bark_i(0, "@Bring the arrow...@", _Beryl);
+                            terminate;
+                        }
+                    } else {
+                        ["Thou must treat an arrow with the juices from the King's Savior plant."];
+                        Bark_i(0, "@Prepare the arrow!@", _Beryl);
+                        terminate;
+                    }
+                }
+                if flag(697) {
+                    ["Tell me -- hast thou obtained the plant which I told thee of? The King's Savior?"];
+                    if ~AskYesNo() {
+                        if (~IsInInv(0, 65177, _Magic_Plants, 1, _Party) or ~IsInInv(1, 65177, _Magic_Plants, 1, _Party)) {
+                            flag(704) = true;
+                            ["Very good. Now, thou must treat an arrow with the juices from the King's Savior plant. I have hidden some arrows away in my quarters. If thou dost need one, get one there."];
+                            Bark_i(0, "@Prepare the arrow!@", _Beryl);
+                            terminate;
+                        } else {
+                            if ~IsInInv(65177, 65177, _Ts_Arrow, 1, _Party) {
+                                flag(703) = true;
+                                ["And thou hast enchanted the arrow? Then use it -- use it to numb the tyrant Draygan!"];
+                                ["Then we shall find the secret of his power, and prevent him from stopping mine escape!"];
+                                Bark_i(0, "@Use the arrow!@", _Beryl);
+                                terminate;
+                            } else {
+                                ["Do not give me false hopes, stranger! I see no King's Savior."];
+                                ["I fear Draygan more each day..."];
+                                TurnOn(<< "afraid", "Draygan", "King's Savior" >>);
+                            }
+                        }
+                    } else {
+                        ["Then I despair! For without this herb, Draygan cannot be stopped. I am so afraid..."];
+                        TurnOn(<< "afraid", "Draygan", "King's Savior" >>);
+                    }
+                } else {
+                    flag(701) = true;
+                    flag(702) = false;
+                    ["My name is Beryl. I am so glad that thou hast met me privately. We cannot speak for long, lest Draygan or his minions find us."];
+                    ["I live in fear of Draygan and his terrible power."];
+                    TurnOn(<< "afraid", "Draygan" >>);
+                }
+            }
+        }
+        TurnOn(<< "bye" >>);
+        converse {
+            key ("afraid") {
+                TurnOff("afraid");
+                ["Of the two-score settlers who came to this place led by Draygan, only three of us survive! And the other two work for him!"];
+                ["Draygan burned the ship and left the others to die! I know he played a part in the death of mine husband, as well."];
+                PushKeys();
+                TurnOn(<< "other two", "burned ship", "dead husband", "change subject" >>);
+            }
+            key ("other two") {
+                TurnOff("other two");
+                ["Beware them! They follow Draygan's orders\x09unquestioningly! They would even kill at his word!"];
+            }
+            key ("burned ship") {
+                TurnOff("burned ship");
+                ["One of the settlers, Falcon, wanted to leave the settlement. Many others chose to go as well. I did not believe it when Draygan allowed Falcon's group to leave so easily."];
+                ["I discovered why. Draygan had the ship burned, leaving them all to be eaten by the wolves!"];
+                TurnOn(<< "settlement", "wolves" >>);
+            }
+            key ("dead husband") {
+                TurnOff("dead husband");
+                ["Mine husband, Carvell, died when Draygan took a group of men in search of gold. Only Draygan returned."];
+                ["He told a story of how they were attacked by the wolves, but he lied. I did not find the truth until a short while ago, when Draygan drunkenly boasted of killing Carvell and the others. That was when I ran away."];
+                TurnOn("ran away");
+            }
+            key ("ran away") {
+                TurnOff("ran away");
+                ["Yes, I could not stay here with the man who murdered mine husband! I went deep into the woods... but Draygan's lackeys found me and brought me back."];
+                ["Now they watch me closely -- but not closely enough!"];
+            }
+            key ("settlement") {
+                TurnOff("settlement");
+                ["A year ago, a group of us left by ship and came to the Northlands. We were in search of the gold and precious gems that are said to fill this land. Our original camp was to the south, but we had no luck there and we made our way to this place. Once here, Draygan seized control! We had to do his bidding or suffer the consequences."];
+                TurnOn("consequences");
+            }
+            key ("consequences") {
+                TurnOff("consequences");
+                ["There were beatings, and other things... I would rather not talk about that."];
+            }
+            key ("wolves") {
+                TurnOff("wolves");
+                ["Surely thou hast heard them! With every cry thou canst hear how they hunger for our flesh!"];
+            }
+            key ("Draygan") {
+                TurnOff("Draygan");
+                ["I feared that no one could save me from Draygan, for he is invincible!"];
+                PushKeys();
+                TurnOn(<< "save", "invincible", "change subject" >>);
+            }
+            key ("change subject") {
+                ["And what shall we speak of?"];
+                PopKeys();
+            }
+            key ("save") {
+                TurnOff("save");
+                ["But that is before thou didst come here! Thou must save me from this devil Draygan!"];
+            }
+            key ("invincible") {
+                TurnOff("invincible");
+                ["He cannot be harmed by blade or knife nor by any magic that I have seen. Whatever he and his expedition found, it hath given him unimaginable power."];
+                TurnOn("cannot be harmed");
+            }
+            key ("cannot be harmed") {
+                TurnOff("cannot be harmed");
+                ["I have been thinking about this for some time. Perhaps Draygan can be defeated by something that doth not actually bring harm to him. Thou couldst treat an arrow with the plant that is called King's Savior!"];
+                TurnOn(<< "arrow" >>);
+                if not flag(697) {
+                    TurnOn("King's Savior");
+                }
+            }
+            key ("arrow") {
+                TurnOff("arrow");
+                ["An arrow thusly treated would put anyone stricken by it in a deep sleep. Dost thou not see? The arrow would not harm him, but it would allow the herbal medicine to take effect!"];
+                ["This would give us the chance to find and steal the source of Draygan's power. Unless we do this, I am doomed to be his slave."];
+            }
+            key ("King's Savior") {
+                TurnOff("King's Savior");
+                ["According to legend, the plant is found in the deepest and most dangerous part of the forest."];
+                ["Only one man can help thee. The Forest Master could guide thee to King's Savior -- but beware him! He possesses strange powers."];
+                flag(697) = true;
+                PushKeys();
+                TurnOn(<< "Forest Master", "strange powers", "change subject" >>);
+            }
+            key ("Forest Master") {
+                TurnOff("Forest Master");
+                ["His name is Morghrim. His face is horribly scarred, yet I do not fear him the way I fear Draygan."];
+                ["Morghrim is a strange man, foreign in some way I cannot explain. But he is the only one who hath treated me kindly since Carvell was murdered. I stayed with him a short time after I ran away."];
+                ["His dwelling place lies far southwest of here, in a grove of silverleaf trees. Perhaps he shall deign to aid thee."];
+            }
+            key ("strange powers") {
+                TurnOff("strange powers");
+                ["I cannot say what they were, for he was careful to never let me see any such display. But thou wilt feel his power if thou dost meet him. Take care that thou dost not anger him."];
+            }
+            key ("bye") {
+                CloseSpeaker0_i();
+                CloseSpeaker1_i();
+                Bark_i(0, "@Go now. Be safe.@", _Avatar);
+                Bark_i(3, "@Do not forget me!@", _Beryl);
+                break;
+            }
+        }
+        clear_answers;
+    }
+}

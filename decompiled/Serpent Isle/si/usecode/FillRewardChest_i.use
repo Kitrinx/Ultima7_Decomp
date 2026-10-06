@@ -1,0 +1,19 @@
+Usable FillRewardChest_i #locals(11) {
+    v0 = ~FindNearby_i(176, 40, _Locked_Chest, item);
+    v1 = ~ListSize_i(v0);
+    if (v1 > 0) {
+        v2 = << 711, 604, 951, 952, 937, 605, 606, 556, 554, 549, 552, 629, 630, 648 >>;
+        v3 = << 0, 0, 250, 250, 0, 0, 0, 200, 200, 0, 0, 0, 0, 0 >>;
+        v4 = << 0, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 0 >>;
+        v5 = 0;
+        Foreach v8 in v2 {
+            v5 = (v5 + 1);
+            v9 = ~Item_create(v8);
+            if v9 {
+                v10 = ~SetQuality(v4::v5, v9);
+                v10 = ~SetQuantity(v3::v5, v9);
+                v10 = ~Item_popToEnd(v0::~rndRange(v1, 1));
+            }
+        }
+    }
+}

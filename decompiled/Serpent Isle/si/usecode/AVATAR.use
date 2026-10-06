@@ -1,0 +1,287 @@
+Routine Avatar accepts a0 #locals(28) #uses(DeclareWinner_i, NowSettleDownBoys, ~WhereAmI_i, ~IsContainer_i, AbortTournament_i, ~GimmePathEgg, ~GetStat, SetStat, RecallParty_i, ~PartyCompanions_i, Bark_i, ~InRect_i, ResetQuadrant_i, SaveDeathCoord_i, ~RemoveFromList_i, ~IsBaneQuestDone_i, ~MonkCoord_i, ~AskYesNo, ~PartyUtters) {
+    if (event = _Polymorph) {
+        if ~GetItemFlag_i(_Petra_i, _Avatar) {
+            Polymorph_i(_F_Automaton, _Avatar);
+        } else {
+            Polymorph_i(_Snake, _Avatar);
+        }
+    }
+    if (event = _NearDeath) {
+        if $tournamentflag {
+            v0 = ~GetAttacker_i(_Avatar);
+            v0 = (0 - v0);
+            if not $temp1flag {
+                $temp1flag = true;
+                DeclareWinner_i(~NPCToItem_i(_Avatar), ~NPCToItem_i(v0));
+                return;
+            }
+            NowSettleDownBoys(item);
+            return;
+        }
+        if ($MONITOR_BANQUET_STARTED and not $AVATAR_IS_KNIGHT) {
+            terminate;
+        }
+        v1 = ~WhereAmI_i();
+        if ((v1 = 20) and not ~GetItemFlag_i(_DontMove_i, _Avatar)) {
+            v2 = ~GetCoord(_Avatar);
+            if ((v2::1 > 2512) and ((v2::1 < 2554) and ((v2::2 > 800) and (v2::2 < 826)))) {
+                v0 = ~GetNPCStat_i(_Hits, _Avatar);
+                if (v0 < 0) {
+                    v0 = (3 - v0);
+                }
+                if (v0 = 0) {
+                    v0 = 3;
+                }
+                v0 = ~ChangeNPCStat_i(v0, _Hits, _Avatar);
+                terminate;
+            }
+            v3 = ~FindNearby_i(0, 20, _Batlin_Type, _Avatar);
+            v0 = ~GetDir(_Avatar, v3);
+            v0 = ~PostAction(<< _aNO_HALT_i, _aFACE_i, v0 >>, v3);
+            SetItemFlag_i(_DontMove_i, _Avatar);
+            SetWorkType(_Wait, _Avatar);
+            v0 = ~PostAction(<< _aNO_HALT_i, _aLIE_FRAME_i >>, _Avatar);
+            v2 = ~GetCoord(_Avatar);
+            v2::1 = (v2::1 + 1);
+            v0 = ~Item_create(_Blood_Trails);
+            if v0 {
+                v0 = ~PopToMap(v2);
+            }
+            v2::1 = (v2::1 - 2);
+            v0 = ~Item_create(_Blood_Trails);
+            if v0 {
+                v0 = ~PopToMap(v2);
+            }
+            v2::2 = (v2::2 + 1);
+            v0 = ~Item_create(_Blood_Trails);
+            if v0 {
+                v0 = ~PopToMap(v2);
+            }
+            Kernel_resetRef(v3);
+            SetWorkType(_Wait, v3);
+            v0 = ~PostInFuture(5, << _aNO_HALT_i, _aUSABLE_i, #Avatar >>, v3);
+        }
+        if (v1 = 31) {
+            FadePalette_i(0, 1, 12);
+            v4 = ~GetContents(_All, _All, _All, _Avatar);
+            Foreach v7 in v4 {
+                if not ((~Item_getType(v7) = _Serp_Bracers) or (~Item_getType(v7) = _Path)) {
+                    Item_destroy(v7);
+                }
+            }
+            v8 = 0;
+            v4 = ~GetContents(_All, _All, _All, _AUTO_3);
+            While (v8 < 2) {
+                Foreach v7 in v4 {
+                    if (~IsContainer_i(v7) or (v8 = 1)) {
+                        if not ~Item_push(v7) {
+                            AbortTournament_i(13, _Avatar);
+                        }
+                        if not ~Item_popToEnd(_Avatar) {
+                            AbortTournament_i(14, _Avatar);
+                        }
+                    }
+                }
+                v8 = (v8 + 1);
+                v4 = ~GetContents(_All, _All, _All, _AUTO_3);
+            }
+            SetMusic(~GimmePathEgg(1, 5), 22);
+            Item_move(<< 1460, 1618, 0 >>, _Avatar);
+            if (~GetStat(_Str, _Avatar) > ~GetStat(_Hits, _Avatar)) {
+                v0 = (~GetStat(_Str, _Avatar) - ~GetStat(_Hits, _Avatar));
+                SetStat(v0, _Hits, _Avatar);
+            }
+            RecallParty_i(item);
+            v4 = ~PartyCompanions_i();
+            Foreach v7 in v4 {
+                ClearItemFlag_i(_Asleep, v7);
+                SetWorkType(_FollowAvt, v7);
+                v0 = ~PostAction(<< _aNO_HALT_i, _aSTAND_FRAME_i >>, v7);
+            }
+            if v7 {
+                Bark_i(14, "@What dreams!@", v7);
+            }
+            v13 = ~GimmePathEgg(1, 2);
+            v0 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #FadeInArrival_i >>, v13);
+        }
+        if ((v1 = 32) and not flag(623)) {
+            v14 = ~GetCoord(_Avatar);
+            if ~InRect_i(<< 2559, 2815 >>, << 2304, 2560 >>, v14) {
+                v4 = << 65180 >>;
+                v15 = true;
+                Foreach v3 in v4 {
+                    Kernel_resetRef(v3);
+                    ClearBark_i(v3);
+                    if not ~GetItemFlag_i(_Zombie, v3) {
+                        SetWorkType(_FollowAvt, v3);
+                    }
+                    SetTemperature_i(0, v3);
+                    ClearItemFlag_i(_Asleep, v3);
+                    ClearItemFlag_i(_Charmed, v3);
+                    ClearItemFlag_i(_Cursed, v3);
+                    ClearItemFlag_i(_Dead, v3);
+                    ClearItemFlag_i(5, v3);
+                    ClearItemFlag_i(_Paralyzed, v3);
+                    ClearItemFlag_i(_Poisoned, v3);
+                    ClearItemFlag_i(_DontMove_i, v3);
+                    if (~GetStat(_Str, v3) > ~GetStat(_Hits, v3)) {
+                        v0 = (~GetStat(_Str, v3) - ~GetStat(_Hits, v3));
+                        SetStat(v0, _Hits, v3);
+                    }
+                    v0 = ~GetStat(_FoodLevel, v3);
+                    v0 = (31 - v0);
+                    SetStat(v0, _FoodLevel, v3);
+                    flag(623) = true;
+                    ResetQuadrant_i();
+                    v18 = ~GimmePathEgg(4, 0);
+                    v0 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #ClearRevived_i >>, v18);
+                    terminate;
+                }
+            } else {
+                v18 = ~GimmePathEgg(1, 0);
+                v0 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #ReviveAtSerpentsFang_i >>, v18);
+                flag(623) = true;
+            }
+        }
+        if ((v1 <> 20) and ((v1 <> 31) and ((v1 <> 32) and not flag(623)))) {
+            SaveDeathCoord_i();
+            SetItemFlag_i(_DontMove_i, _Avatar);
+            FadePalette_i(0, 1, 12);
+            ClearItemFlag_i(_Freeze, _Avatar);
+            v4 = ~PartyCompanions_i();
+            v4 = << 65180, v4 >>;
+            v2 = << 2407, 1148, 0 >>;
+            v19 = << 0, 65535, 1, 0, 65535, 1, 0, 65535, 1 >>;
+            v20 = << 65535, 65535, 65535, 0, 1, 1, 1, 0, 0 >>;
+            v7 = 1;
+            createSprite(65535, 0, 0, 0, v2::2, v2::1, 7);
+            Sfx(81);
+            Foreach v3 in v4 {
+                Kernel_resetRef(v3);
+                ClearBark_i(v3);
+                if not ~GetItemFlag_i(_Zombie, v3) {
+                    SetWorkType(_FollowAvt, v3);
+                }
+                SetTemperature_i(0, v3);
+                ClearItemFlag_i(_Asleep, v3);
+                ClearItemFlag_i(_Charmed, v3);
+                ClearItemFlag_i(_Cursed, v3);
+                ClearItemFlag_i(_Dead, v3);
+                ClearItemFlag_i(5, v3);
+                ClearItemFlag_i(_Paralyzed, v3);
+                ClearItemFlag_i(_Poisoned, v3);
+                ClearItemFlag_i(_DontMove_i, v3);
+                if (~GetStat(_Str, v3) > ~GetStat(_Hits, v3)) {
+                    v0 = (~GetStat(_Str, v3) - ~GetStat(_Hits, v3));
+                    SetStat(v0, _Hits, v3);
+                }
+                v0 = ~GetStat(_FoodLevel, v3);
+                v0 = (31 - v0);
+                SetStat(v0, _FoodLevel, v3);
+                v0 = << (v2::1 + v19::v7), (v2::2 + v20::v7), v2::3 >>;
+                Item_move(v0, v3);
+                v0 = ~PostAction(<< _aSTAND_FRAME_i, _aFACE_i, _North >>, v3);
+                v7 = (v7 + 1);
+            }
+            v2 = << >>;
+            v19 = << >>;
+            v20 = << >>;
+            v0 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #FadeInArrival_i >>, item);
+            v23 = << 65329, 65325, 65327, 65324, 65323, 65322, 65328, 65326 >>;
+            if not $hawksailedtomoonshade {
+                v23 = ~RemoveFromList_i(v23, 65327);
+            }
+            if ~IsBaneQuestDone_i() {
+                v23 = (v23 & 65321);
+            }
+            v0 = ~SetQuality(3, ~GimmePathEgg(1, 5));
+            v0 = ~PostInFuture(200, << _aNO_HALT_i, _aUSABLE_i, #Monk, 0 >>, ~GimmePathEgg(1, 5));
+            Foreach v3 in v23 {
+                Item_move(~MonkCoord_i(3, v3), v3);
+                NewSchedule_i(~MonkCoord_i(3, v3), _MajorSit, 0, v3);
+                Npc_schedule(v3);
+                if (v3 = 65329) {
+                    ClearItemFlag_i(_Asleep, v3);
+                    ClearItemFlag_i(_Charmed, v3);
+                    ClearItemFlag_i(_Cursed, v3);
+                    ClearItemFlag_i(_Dead, v3);
+                    ClearItemFlag_i(5, v3);
+                    ClearItemFlag_i(_Paralyzed, v3);
+                    ClearItemFlag_i(_Poisoned, v3);
+                    ClearItemFlag_i(_DontMove_i, v3);
+                    SetNPCID_i(0, _Karnax);
+                    SetWorkType(_Talk, _Karnax);
+                    v0 = ~PostAction(<< _aFACE_i, _South, _aSTAND_FRAME_i, _aUP_FRAME_i, _aOUT_FRAME_i >>, _Karnax);
+                } else {
+                    v0 = ~PostAction(<< _aFACE_i, _North, _aSTAND_FRAME_i, _aUP_FRAME_i, _aSIT_FRAME_i >>, v3);
+                }
+            }
+            SetItemFlag_i(_DontMove_i, _Avatar);
+            flag(623) = true;
+        }
+    }
+    if (event = _Action) {
+        if $batlininethicality {
+            SetWorkType(_Combat_0, item);
+            SetSpeaker0_i(0, _Cindy);
+            SetItemFlag_i(_DontMove_i, _Avatar);
+            SetWorkType(_Wait, item);
+            ["Thou art nearly dead, Avatar!"];
+            ["Yield to me, and perhaps I shall spare thy life! Dost thou yield?"];
+            if ~AskYesNo() {
+                ["I always knew that thou wert a coward!"];
+                v0 = ~PostInFuture(1, << _aNO_HALT_i, _aTHRUST1_FRAME_i, _aNO_HALT_i, _aTHRUST2_FRAME_i, _aNO_HALT_i, _aTHRUST1_FRAME_i >>, item);
+                v0 = ~ChangeNPCStat_i(10, _Hits, _Avatar);
+                v0 = ~PostInFuture(10, << _aNO_HALT_i, _aUSABLE_i, #LeaveEthicalTest_i >>, ~GimmePathEgg(1, 5));
+                Bark_i(0, "@Die, fool!@", item);
+            } else {
+                Bark_i(0, "@Damn thee!@", item);
+                v0 = ~ChangeNPCStat_i(10, _Hits, _Avatar);
+                $passedbatlintest = true;
+                v0 = ~PostInFuture(10, << _aNO_HALT_i, _aUSABLE_i, #LeaveEthicalTest_i >>, _Avatar);
+                $batlininethicality = false;
+            }
+            terminate;
+        }
+        if (~WhereAmI_i() = 3) {
+            if $temp1flag {
+                v0 = ~GetHour();
+                if (v0 > 10) {
+                    v3 = (10 + (24 - v0));
+                } else {
+                    v3 = (10 - v0);
+                }
+                v0 = ((1500 * v3) + (25 * (60 - ~GetMinute_i())));
+                AdvanceTime_i(v0);
+                FadePalette_i(1, 1, 12);
+                SetWorkType(_FollowAvt, _Avatar);
+                ClearItemFlag_i(_DontMove_i, _Avatar);
+                $temp1flag = false;
+            } else {
+                $temp1flag = true;
+                v4 = ~GetParty();
+                Foreach v3 in v4 {
+                    v0 = ~PostAction(<< _aSTAND_FRAME_i >>, v3);
+                    SetWorkType(_FollowAvt, v3);
+                }
+                flag(391) = true;
+                v0 = ~Item_create(_Unique_Key);
+                if v0 {
+                    v0 = ~SetQuality(11, v0);
+                    v0 = ~PopToMap(<< 929, 1785, 8 >>);
+                }
+                v0 = ~Item_create(_Scroll);
+                if v0 {
+                    v0 = ~SetQuality(12, v0);
+                    v0 = ~PopToMap(<< 929, 1783, 8 >>);
+                }
+                v0 = ~PostInFuture(300, << _aUSABLE_i, #SummonToBanquet_i >>, ~GimmePathEgg(4, 1));
+                v0 = ~PartyUtters(true, 0, 0, 1);
+                Bark_i(4, "@Wake up!@", v0);
+                v0 = ~PostAction(<< _aNO_HALT_i, _aFACE_i, _North, _aLIE_FRAME_i, _aLIE_FRAME_i, _aLIE_FRAME_i, _aLIE_FRAME_i, _aLIE_FRAME_i, _aLIE_FRAME_i, _aLIE_FRAME_i, _aBARK_i, "@Oh, mine head...@" >>, _Avatar);
+                v0 = ~PostInFuture(5, << _aNO_HALT_i, _aUSABLE_i, #Avatar >>, _Avatar);
+                terminate;
+            }
+        }
+    }
+}

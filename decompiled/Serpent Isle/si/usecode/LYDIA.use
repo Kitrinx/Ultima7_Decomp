@@ -1,0 +1,261 @@
+Routine Lydia accepts a0 #locals(17) #uses(~AvatarName, ~LordOrLady, ~PartyNoAutomatons_i, ~IsNPCNear, Bark_i, ~GimmePathEgg, ~WhereAmI_i, ~PartyUtters, PartyFaces_i, ~AskList, SetWorkTypeAt_i, AttackAvatar_i) {
+    v0 = ~AvatarName();
+    v1 = ~LordOrLady();
+    v2 = ~AvatarSex();
+    v3 = ~GetItemFlag_i(_Met, _Lydia);
+    v4 = ~PartyNoAutomatons_i();
+    v5 = ~FindNearby_i(0, 20, _Throne, _Lydia);
+    v6 = ~IsNPCNear(_Dupre);
+    if ((event = _NearDeath) and ~GetItemFlag_i(_Tournament, _Lydia)) {
+        SetSpeaker0_i(0, _Lydia);
+        if not $LYDIA_CONFESSES {
+            ["So! Thou hast discovered me!"];
+            ["Yes, I poisoned thee, but I will not say who did instruct me to do so!"];
+            if not $CURED_LYDIA_POISON {
+                ["There is no antidote, so thou canst look forward to a long and painful death!"];
+            }
+        }
+        ["I spit upon thee, pawn of the Demon British!"];
+        ClearItemFlag_i(_Tournament, _Lydia);
+        ReduceHits_i(0, 50, _Lydia);
+        Bark_i(2, "@Whew!@", _Avatar);
+        terminate;
+    }
+    if (event = _Action) {
+        if (~GetItemFlag_i(_Zombie, _Lydia) and (item = ~GimmePathEgg(2, 5))) {
+            if (~GetItemFlag_i(_DontMove_i, _Avatar) or (~WhereAmI_i() = 31)) {
+                v7 = ~GimmePathEgg(2, 5);
+                v8 = ~PostInFuture(100, << _aNO_HALT_i, _aUSABLE_i, #Lydia >>, v7);
+                terminate;
+            }
+            ClearItemFlag_i(_Zombie, _Lydia);
+            v9 = ~PartyUtters(false, 0, 0, 65534);
+            if ((v9 <> 65180) and ~IsNPCNear(v9)) {
+                SetSpeaker0_i(0, v9);
+                ["Thou dost look terrible, <v0>. I think thou hast been struck by some terrible malady."];
+                Bark_i(0, "@Thou needest a healer!@", v9);
+                terminate;
+            }
+            terminate;
+        }
+        if (~GetItemFlag_i(_Poisoned, _Avatar) and (item = ~GimmePathEgg(2, 5))) {
+            v9 = ~PartyUtters(true, "@Oh...@", "@Art thou all right?@", 65534);
+            if (v9 <> 65180) {
+                SetItemFlag_i(_Zombie, _Lydia);
+                v7 = ~GimmePathEgg(2, 5);
+                v8 = ~PostInFuture(5, << _aNO_HALT_i, _aUSABLE_i, #Lydia >>, v7);
+            }
+        }
+        if ((item = ~GimmePathEgg(1, 5)) and not $CURED_LYDIA_POISON) {
+            if not ~GetItemFlag_i(_Poisoned, _Avatar) && (~WhereAmI_i() <> 31) {
+                flag(194) = true;
+                SetItemFlag_i(_Poisoned, _Avatar);
+                v7 = ~GimmePathEgg(2, 5);
+                v8 = ~PostInFuture(20, << _aNO_HALT_i, _aUSABLE_i, #Lydia >>, v7);
+            }
+            v7 = ~GimmePathEgg(1, 5);
+            v8 = ~PostInFuture(1000, << _aNO_HALT_i, _aUSABLE_i, #Lydia >>, v7);
+        }
+    }
+    if (event = _Converse) {
+        Item_bark("@Hello, there.@", _Avatar);
+        PartyFaces_i(65464);
+        SetWorkType(_Talk, _Lydia);
+        Bark_i(2, "@Hello.@", _Lydia);
+        ClearBark_i(_Lydia);
+    }
+    if (event = _Talking) {
+        Npc_schedule(_Lydia);
+        v10 = false;
+        if (~GetWorkType(_Lydia) = _TendShop) {
+            v10 = true;
+        }
+        SetSpeaker0_i(0, _Lydia);
+        if not $doneknightstest {
+            ["Begone with thee, stranger. No one who hath not passed the Test of Knighthood is worthy of my time."];
+            Bark_i(0, "@Good day.@", _Lydia);
+            terminate;
+        } else {
+            if not v3 {
+                ["I am Lydia. What can I do for thee, <v1>?"];
+                SetItemFlag_i(_Met, _Lydia);
+            } else {
+                ["Hello, <v1>."];
+            }
+        }
+        TurnOn(<< "duties" >>);
+        if ($doneknightstest and not $gottattoo) {
+            TurnOn("tattoo");
+        }
+        if ($AVATAR_IS_KNIGHT and not ~GetItemFlag_i(_Dead, _Simon)) {
+            TurnOn("traitor");
+        }
+        if $CAN_ASK_LYDIA_ABOUT_POISON {
+            TurnOn("poison");
+        }
+        TurnOn("bye");
+        converse {
+            key ("traitor") {
+                TurnOff("traitor");
+                ["As loathsome as Luther is, perhaps he doth have a point. Krayg doth indeed take long walks in the woods, most strangely..."];
+                if $KNOWS_GOBLINS_HIDEOUT {
+                    ["Yet if he hath told thee of a Goblin rendezvous site, then thou shouldst examine the site. There might be evidence there to convict the traitor, whomever he might be."];
+                } else {
+                    ["But a man cannot be convicted simply for strange habits! We must have evidence..."];
+                }
+            }
+            key ("duties") {
+                TurnOff("duties");
+                if v10 {
+                    ["Look around thee! Dost thou see the needles, the vials of ink, and the sketches!"];
+                    ["Look closer. Dost thou see the patterns which adorn my body, the swirls of color? Each doth have its meaning..."];
+                    ["I am the artist who creates tattoos."];
+                } else {
+                    ["Thou art new to this city, or thou wouldst have heard of me by now. Mine is the art of using needles and ink to create harmonious patterns."];
+                    ["I am Lydia, the tattoo artist."];
+                }
+                TurnOn(<< "artist", "patterns" >>);
+            }
+            key ("artist") {
+                TurnOff("artist");
+                ["I learned the trade from my father. Counting myself, there have been twelve generations of tattooists in our family."];
+                ["As the tattooist, it is my privilege to grant the first tattoo to any warrior who completes the Test of Knighthood."];
+                ["Lord Marsten sometimes authorizes me to give additional tattoos, but only when the recipient hath earned them through Courage or Valor."];
+                TurnOn(<< "tradition", "special tattoos" >>);
+            }
+            key ("tradition") {
+                TurnOff("tradition");
+                ["Artistry is something that one is born with -- it cannot be learned or imitated. As I was born with the talent, I could not deny my duty."];
+                ["As thou canst see, I have had much practice on myself. As the tattooist, I can have as many tattoos as I desire..."];
+                ["My body is covered with tattoos! My mother tattooed my back and other spots I could not reach comfortably."];
+                TurnOn(<< "mother", "spots?" >>);
+            }
+            key ("mother") {
+                TurnOff("mother");
+                ["She was a courageous Knight! I miss her very much..."];
+                ["Others will tell thee that my mother died in a battle with road bandits, but I know better. She had lost the will to live!"];
+                ["Her heart was broken, ever since that Warlock from Moonshade stole her oldest daughter!"];
+                TurnOn(<< "Moonshade", "Warlock", "daughter" >>);
+            }
+            key ("Moonshade") {
+                TurnOff("Moonshade");
+                ["That is the City of Mages, to the east on the Isle of Beyond. It is a depraved, indulgent, undisciplined place."];
+                ["No warrior could ever feel comfortable in such a setting. They care nothing for Duty and Courage -- only pleasure!"];
+            }
+            key ("Warlock") {
+                TurnOff("Warlock");
+                ["I do not know his name. The evil wizard travels throughout the Serpent Isle, in search of children to steal for the mage school."];
+                ["Any infant with potential is taken in the dead of night, and a white stone is left in its place."];
+            }
+            key ("daughter") {
+                TurnOff("daughter");
+                ["My sister Selene was a very beautiful girl. She was four years older than I, and I thought she was so mature!"];
+                ["She was only twelve when she was taken, so she never had the chance to pass the Test of Knighthood... Selene doth have no tattoos."];
+                ["I have often wondered about her life among the Mages, learning spells and bewitching her enemies. I would give anything to see her again!"];
+                v11 = true;
+            }
+            key ("spots?") {
+                TurnOff("spots?");
+                ["Well, thou knowest... private places!"];
+                if v6 {
+                    SetSpeaker1_i(0, _Dupre);
+                    ["Milady, I would be very interested in seeing all of thy tattoos. Perhaps we could step into..."];
+                    CloseSpeaker1_i();
+                    SetSpeakerSlot_i(0);
+                    ["I am not on display, sir! Thou shouldst not think that any lout can see the entire gallery."];
+                    SetSpeaker1_i(0, _Dupre);
+                    ["Sorry, milady."];
+                    CloseSpeaker1_i();
+                    SetSpeakerSlot_i(0);
+                    ["Later, perhaps... handsome stranger."];
+                }
+            }
+            key ("special tattoos") {
+                TurnOff("special tattoos");
+                ["Only Lord Marsten can approve one for a Tattoo of Valor. They are won for great deeds done on the field of battle."];
+                ["Our bravest warriors have many tattoos. Caladin and Brendann, rivals in all things, have more tattoos than anyone else in Monitor!"];
+                ["Caladin wears his on those brawny arms of his, while Brendann's are kept in more discreet locations..."];
+            }
+            key ("patterns") {
+                TurnOff("patterns");
+                ["These swirls and dots may seem random, but each has its meaning. A trained artist can read thy past by thy tattoos."];
+                ["Do not stare so closely at my tattoos! I wish my secrets to be mine own."];
+            }
+            key ("tattoo") {
+                TurnOff("tattoo");
+                if v5 {
+                    ["Thou hast earned the right to wear the Knight's Tattoo. Without it, one cannot be inducted into one's Knighthood."];
+                    ["Since thou didst slay the Wolf in the Test, thou art slated to receive the Mark of the Wolf."];
+                    ["Art thou ready to obtain thy tattoo?"];
+                    v12 = ~AskList(<< "Yes", "No", "Will it hurt?" >>);
+                    if (v12 = "Yes") {
+                        ["We shall now begin the process. This will hurt, but as a warrior, thou art accustomed to suffering."];
+                        Bark_i(0, "@Be seated.@", _Lydia);
+                        Foreach v15 in v4 {
+                            SetWorkTypeAt_i(_MajorSit, 0, 65535, v15);
+                        }
+                        SetItemFlag_i(_DontMove_i, _Avatar);
+                        EndConverse_i();
+                        v16 = ~GetCoord(v5);
+                        v16::1 = (v16::1 + 1);
+                        SetNPCID_i(0, _Lydia);
+                        PathfindNPC_i(false, #Blonde_Mage, item, _Action, v16, _Avatar);
+                        SetPathFailure_i(_Path_Failure, item, #Blonde_Mage);
+                        SetMusic(~GimmePathEgg(1, 5), 29);
+                        SetWorkType(_Wait, _Lydia);
+                        terminate;
+                    } else {
+                        if (v12 = "Will it hurt?") {
+                            ["Will it hurt! Thou art not fit to be a Knight of Monitor."];
+                            if v2 {
+                                ["Thou dost shame all womankind by thy cowardice."];
+                            } else {
+                                ["Come back when thou art ready to be a man!"];
+                            }
+                            Bark_i(0, "@Away!@", _Lydia);
+                            terminate;
+                        } else {
+                            ["Then perhaps later."];
+                        }
+                    }
+                } else {
+                    ["If thou wilt come to my shop when I am at work, I shall be happy to grant thee thy Mark of Knighthood."];
+                }
+            }
+            key ("poison") {
+                ["So! Thou hast discovered me!"];
+                ["Yes, I poisoned thee, but I will not say at whose insistence it was done!"];
+                if not $CURED_LYDIA_POISON {
+                    ["There is no antidote, so thou canst look forward to a long and painful death!"];
+                }
+                ["I spit upon thee, pawn of the Demon British!"];
+                v9 = ~PartyUtters(false, 0, (("@Thou hast poisoned " + v0) + " for the sake of Lord British?@"), 65534);
+                if (v9 <> 65180) {
+                    CloseSpeaker1_i();
+                    SetSpeakerSlot_i(0);
+                    ["Yes, Fiend British!"];
+                }
+                ["I hate that monster! He represents all that is evil!"];
+                if $CURED_LYDIA_POISON {
+                    ["Since the poison hath not killed thee, I see that I must do the job myself!"];
+                } else {
+                    ["Thou canst not take me to the dungeons without a fight!"];
+                }
+                $LYDIA_CONFESSES = true;
+                ClearBark_i(_Lydia);
+                Bark_i(0, "@En garde!@", _Lydia);
+                Bark_i(2, "@Stop her!@", _Iolo);
+                SetWorkTypeAt_i(_Combat_0, 0, 65535, _Lydia);
+                AttackAvatar_i(_Lydia);
+                terminate;
+            }
+            key ("bye") {
+                CloseSpeaker0_i();
+                Bark_i(0, "@So long...@", _Avatar);
+                Bark_i(2, "@Good day!@", _Lydia);
+                break;
+            }
+        }
+        clear_answers;
+    }
+}

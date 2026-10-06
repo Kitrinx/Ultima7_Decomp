@@ -1,0 +1,268 @@
+Routine Cantra accepts a0 #locals(8) #uses(~LordOrLady, BatlinFightsCantra_i, Bark_i, ~GimmePathEgg, SetWorkTypeAt_i, PartyFaces_i, ~WhereAmI_i) {
+    v0 = ~FindNearby_i(0, 30, _Batlin_Type, _Cantra);
+    v1 = ~GetItemFlag_i(_Met, _Cantra);
+    v2 = ~LordOrLady();
+    if ($cantravision and ((event = _Bark) and not $BATLIN_FLED_SHAMINOS_KEEP)) {
+        SetNPCID_i((~GetNPCID_i(_Cantra) + 1), _Cantra);
+        if (~GetNPCID_i(_Cantra) = 5) {
+            BatlinFightsCantra_i();
+        }
+        if (~GetNPCID_i(_Cantra) = 4) {
+            Bark_i(2, "@Never!@", _Cantra);
+            Bark_i(0, "@Give me thy powers!@", v0);
+        }
+        if (~GetNPCID_i(_Cantra) = 3) {
+            Bark_i(2, "@I am only a little girl...@", _Cantra);
+            Bark_i(0, "@I know thee!@", v0);
+        }
+        if (~GetNPCID_i(_Cantra) = 2) {
+            Bark_i(0, "@Leave me alone!@", _Cantra);
+            Bark_i(2, "@Stop, fiend!@", v0);
+        }
+        if (~GetNPCID_i(_Cantra) = 1) {
+            FadePalette_i(1, 1, 12);
+            Bark_i(0, "@Help!@", _Cantra);
+            SetMusic(~GimmePathEgg(1, 5), 52);
+            if v0 {
+                SetWorkType(_Patrol, v0);
+            }
+            SetAmbientLight_i(0);
+        }
+        terminate;
+    }
+    if ($cantravision and ((event = _Action) and not $BATLIN_FLED_SHAMINOS_KEEP)) {
+        SetAmbientLight_i(1);
+        SetTimePalette_i();
+        FadePalette_i(0, 1, 12);
+        Camera_setCenterOn(_Avatar);
+        $cantravision = false;
+        Npc_schedule(_Hench1);
+        Npc_schedule(_Hench2);
+        Npc_schedule(_Hench3);
+        Npc_schedule(_DBeyer);
+        RemoveNPC_i(_Cantra);
+        if ($harnnasaidcrystalball and not $takencantraquest) {
+            Item_move(<< 837, 2699, 0 >>, _Harnna);
+            SetWorkTypeAt_i(_Wait, 65535, 65535, _Harnna);
+            ClearItemFlag_i(_Asleep, _Harnna);
+            v3 = ~PostAction(<< _aNO_HALT_i, _aFACE_i, _East >>, _Harnna);
+            v3 = ~PostInFuture(30, << _aNO_HALT_i, _aUSABLE_i, #Harnna >>, _Harnna);
+        }
+        v3 = ~PostInFuture(30, << _aNO_HALT_i, _aUSABLE_i, #FadeInArrival_i >>, ~GimmePathEgg(1, 5));
+        ClearItemFlag_i(_DontMove_i, _Avatar);
+        ClearSpeakers_i();
+        SetNPCID_i(0, _Cantra);
+        $USING_FAR_SIGHT_MAGIC = false;
+    }
+    if ((event = _Bark) and (~GetWorkType(_Cantra) = _Hound)) {
+        if (~Random(10) < 7) {
+            terminate;
+        }
+        v4 = << "@Hello, there!@", "@May I watch?@", "@Art thou a hero?@", "@Where are we going?@", "@May I come?@", "@I'm a warrior, too.@" >>;
+        Bark_i(0, v4::~Random(6), _Cantra);
+    }
+    if (event = _Converse) {
+        if ~GetItemFlag_i(_Zombie, _Cantra) {
+            Bark_i(0, "Hello, Cantra.", _Avatar);
+            v5 = ~Random(6);
+            if (v5 = 1) {
+                v6 = "@I want thy flesh!@";
+            }
+            if (v5 = 2) {
+                v6 = "@I want thy blood!@";
+            }
+            if (v5 = 3) {
+                v6 = "@Come pleasure me!@";
+            }
+            if (v5 = 4) {
+                v6 = "@How hungry I am!@";
+            }
+            if (v5 = 5) {
+                v6 = "@Blood! Blood everywhere!@";
+            }
+            if (v5 = 6) {
+                v6 = "@I desire thee!@";
+            }
+            Bark_i(2, v6, _Cantra);
+            terminate;
+        }
+        if not v1 {
+            Bark_i(0, "Hello, little girl.", _Avatar);
+            Bark_i(2, "@Zounds!@", _Cantra);
+        } else {
+            Bark_i(0, "Hello, Cantra.", _Avatar);
+            Bark_i(2, "@Glad to see thee!@", _Cantra);
+        }
+        PartyFaces_i(65472);
+        SetWorkType(_Talk, _Cantra);
+    }
+    if (event = _Talking) {
+        Npc_schedule(_Cantra);
+        ClearBark_i(_Cantra);
+        SetSpeaker0_i(0, _Cantra);
+        if not v1 {
+            ["I am not as young as I look! Dost thou know how hard it is to be small for one's age? I am fourteen years old, nearly old enough to be a Knight of Monitor. But everyone thinks that I'm a little girl..."];
+            ["Um, sorry. I mean, welcome to Monitor! My name is Cantra."];
+            SetItemFlag_i(_Met, _Cantra);
+        } else {
+            if $cantraresurrected {
+                ["I feel tired, but I am all right! My mind was full of awful dreams. Thou hast saved me! I shall remember thee always!"];
+            } else {
+                ["Hast thou decided to become a Knight yet? It is so exciting! I am practicing to become one myself."];
+            }
+        }
+        TurnOn(<< "Knight" >>);
+        if ($TOLD_MARSTEN_SERVES_LORD_BRITISH and not $RENOUNCED_BRITISH) {
+            TurnOn("Marsten");
+        }
+        TurnOn("bye");
+        converse {
+            key ("Marsten") {
+                TurnOff("Marsten");
+                if $marstenarrested {
+                    ["I am amazed to hear that Marsten hath betrayed us. I cannot believe it."];
+                }
+                if (($needspermission = false) and ($marstenarrested = false)) {
+                    ["To become a Knight of Monitor, thou must first ask permission of the Lord of Monitor."];
+                    $needspermission = true;
+                }
+                if not $marstenarrested {
+                    ["Marsten is the Lord of Monitor. One day he will give a banquet in mine honor to celebrate my becoming a Knight."];
+                }
+            }
+            key ("permission") {
+                TurnOff("permission");
+                ["If thou dost wish to take Knight's Test, thou must ask Lord Marsten for his permission."];
+                $needspermission = true;
+            }
+            key ("Knight") {
+                TurnOff("Knight");
+                ["I have trained for a long time to become a Knight. There is nothing in the world so wonderful as being a Knight!"];
+                ["My father was a Knight, and a very good one. But he is dead now."];
+                ["When I turn fifteen, I can take the Test of Knighthood and become a grand warrior!"];
+                TurnOn(<< "father", "training", "Test of Knighthood" >>);
+            }
+            key ("father") {
+                TurnOff("father");
+                ["Everyone says that he might be alive, but it hath been weeks since he disappeared. I am old enough to face the truth."];
+                ["He was on patrol near Monitor. He told the pikemen that he had found something suspicious, and he went to look... and he never returned."];
+                ["It must have been the Goblins! I refuse to weep. But I vow that the first dozen Goblins I slay shall be for him!"];
+            }
+            key ("training") {
+                TurnOff("training");
+                ["I am strong. I am ready. The Goblins will be no match for me! I have trained well."];
+                ["If thou dost need a trainer, I can recommend one. Everyone says that Shazzana is the best trainer, but she is such a tyrant!"];
+                ["Ever since my father died, Caladin hath been my trainer. He is big and loud, and sometimes dumb, but he doth have a good heart."];
+                $askcaladintrain = true;
+            }
+            key ("Test of Knighthood") {
+                TurnOff("Test of Knighthood");
+                PushKeys();
+                ["I have been training for the Test for mine entire life! Anything that thou needest to know, I can tell thee."];
+                ["It truly isn't so dangerous if thou dost know the secrets. And Shmed is nothing to worry about."];
+                ["What wouldst thou like to know?"];
+                TurnOn(<< "location", "secrets", "Shmed", "nothing more" >>);
+                if not $permissionfortest {
+                    TurnOn("permission");
+                }
+            }
+            key ("location") {
+                TurnOff("location");
+                ["The Test of Knighthood takes place in the Knight Mountains, just north of the city. Thou must follow the trail that leads west from the highway."];
+                ["But beware of Goblins! They come ever closer to the city of late. Even the bravest warrior can be slain if ambushed..."];
+            }
+            key ("secrets") {
+                TurnOff("secrets");
+                ["These actually are not secrets, since everyone in Monitor knows how Knight's Test doth operate. To become a Knight, thou must survive the dungeon there. Simply remember these tips:"];
+                ["Do not look back, or the explosions will overcome thee. Move swiftly at first."];
+                ["Look upwards, as well as from side to side. There are clues that would otherwise escape thee. Be prepared to climb."];
+                ["Timing is essential. The fiery missiles can be outrun, if thou dost watch carefully."];
+                ["Use thine hands to search as well as thine eyes, for some things are invisible."];
+                ["The last chamber is kept a secret! But I would wager that it is as easy as the rest of the dungeon, if thou dost keep a calm head and steady nerves."];
+            }
+            key ("Shmed") {
+                TurnOff("Shmed");
+                ["Oh, he is the old man who administers the Test. I do not like him much. He looks at me oddly sometimes..."];
+                ["He will not let thee into the dungeon until thou dost give him the password. Only Lord Marsten can give the password to thee."];
+                ["Shmed also disarms thee, since thou canst only enter the Knight's Test with a mace and leather armour. And no companions may accompany thee."];
+            }
+            key ("nothing more") {
+                TurnOff("nothing more");
+                ["Very well!"];
+                PopKeys();
+            }
+            key ("bye") {
+                Bark_i(0, "@Farewell!@", _Avatar);
+                if $cantraresurrected {
+                    Bark_i(2, "@Bless thee!@", _Cantra);
+                } else {
+                    ["Oh, I hope that thou dost attempt the Knight's Test! And when thou dost, please come back to tell me about it!"];
+                    Bark_i(2, "@Slay a Goblin!@", _Cantra);
+                }
+                if (~GetWorkType(_Cantra) = _Hound) {
+                    SetWorkType(_Shy, _Cantra);
+                }
+                break;
+            }
+        }
+        clear_answers;
+    }
+    if (event = _NearDeath) {
+        if $cantraresurrected {
+            ClearItemFlag_i(_Tournament, _Cantra);
+            terminate;
+        }
+        if $cantrataken {
+            v3 = 0;
+        } else {
+            SetAttackMode_i(_Fleeing, _Cantra);
+        }
+    }
+    if (event = _Trigger) {
+        v7 = ~WhereAmI_i();
+        if ((v7 = 31) and ($doneknightstest = true)) {
+            SetSpeaker0_i(0, _Cantra);
+            ["Iieeeee.... Help me, Avatar! Help me! I can't escape... It will catch me and devour me!" *"Heelllp!"];
+            CloseSpeaker0_i();
+            terminate;
+        }
+    }
+}
+
+Usable BatlinFightsCantra_i #locals(2) {
+    v0 = ~FindNearby_i(0, 30, _Batlin_Type, _Cantra);
+    ClearSpeakers_i();
+    SetSpeaker0_i(0, _Cantra);
+    ["Leave me alone, mage. I am but a little girl."];
+    SetSpeaker1_i(0, _Cindy);
+    ["I know what thou art, Bane of Chaos. That body is but a shell that thou dost wear."];
+    CloseSpeaker1_i();
+    SetSpeakerSlot_i(0);
+    ["I can escape thee! My powers dwarf thine..."];
+    SetSpeaker1_i(0, _Cindy);
+    ["Thy powers have dwindled due to thine imprisonment. Thou art no match for me, now..."];
+    CloseSpeaker1_i();
+    CloseSpeaker0_i();
+    v1 = ~PostInFuture(60, << _aNO_HALT_i, _aUSABLE_i, #Cantra >>, _Cantra);
+    if v0 {
+        SetItemFlag_i(_Tournament, v0);
+        Npc_setAlignment(_Evil, v0);
+        v1 = ~GiveToCont_i(18, _All, 3, _Fire_Bolt, 1, v0);
+        v1 = ~GiveToCont_i(18, _All, 3, _M_Lightning, 1, v0);
+        v1 = ~GiveToCont_i(18, _All, 1, _M_Swordstrike, 1, v0);
+        v1 = ~GiveToCont_i(18, _All, 6, _Sp_Zap, 1, v0);
+        SetWorkType(_Combat_0, v0);
+        SetAttacker_i(_Cantra, v0);
+        Npc_setTarget(_Cantra, v0);
+    }
+    Npc_setAlignment(_Good, _Cantra);
+    v1 = ~GiveToCont_i(18, _All, 5, _M_Poison, 1, _Cantra);
+    v1 = ~GiveToCont_i(18, _All, 2, _Dragon_Breath, 1, _Cantra);
+    v1 = ~GiveToCont_i(18, _All, 5, _Sp_Bang, 1, _Cantra);
+    v1 = ~GiveToCont_i(18, _All, 1, _M_Dea_Bolt, 1, _Cantra);
+    SetWorkType(_Combat_0, _Cantra);
+    SetAttacker_i(v0, _Cantra);
+    Npc_setTarget(v0, _Cantra);
+    EndConverse_i();
+    terminate;
+}

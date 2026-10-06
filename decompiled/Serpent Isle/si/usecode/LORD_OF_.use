@@ -1,0 +1,24 @@
+Routine LordOfDiscipl accepts a0 #locals(2) #uses(AutomatonUsable_i, ~LordOrLady, ~AvatarName, PartyFaces_i, Bark_i) {
+    if ~GetItemFlag_i(_Zombie, item) {
+        AutomatonUsable_i();
+    }
+    v0 = ~LordOrLady();
+    v1 = ~AvatarName();
+    if (event = _Converse) {
+        Item_bark("@Speak, automaton!@", _Avatar);
+        PartyFaces_i(65454);
+        Bark_i(2, "@Obedience... Failed...@", _LordOfDiscipl);
+        SetWorkType(_Talk, _LordOfDiscipl);
+    }
+    if (event = _Talking) {
+        Npc_schedule(_LordOfDiscipl);
+        ClearBark_i(_LordOfDiscipl);
+        SetSpeaker0_i(0, _Forskis);
+        ["Unfinished... Discipline..."];
+        ["Master... Punishment... No Order..."];
+        ["Alcoves... Pain... Cannot succeed..."];
+        ["Failed... Duty... Punishment..."];
+        CloseSpeaker0_i();
+        terminate;
+    }
+}

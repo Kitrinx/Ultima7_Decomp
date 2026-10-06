@@ -1,0 +1,421 @@
+Routine Dragon accepts a0 #locals(17) #uses(~LordOrLady, ~AvatarName, ~IsNPCNear, PartyFaces_i, ~AskList, ~AskYesNo, AskLiarsRiddle_i, AskEarringsRiddle_i, AskLongtoothRiddle_i, AskClothRiddle_i, ~PartyUtters, Bark_i) {
+    v0 = ~GetNPCID_i(item);
+    v1 = ~LordOrLady();
+    v2 = ~AvatarName();
+    v3 = ~LordOrLady();
+    v4 = ~IsNPCNear(_Iolo);
+    v5 = ~IsNPCNear(_Dupre);
+    v6 = ~IsNPCNear(_Shamino);
+    v7 = false;
+    v8 = false;
+    v9 = false;
+    v10 = false;
+    if (event = _Converse) {
+        PartyFaces_i(item);
+        SetWorkType(_Talk, item);
+    }
+    if (event = _Talking) {
+        SetSpeaker0_i(0, 65226);
+        if (v0 = false) {
+            ["A human. How interesting. What dost thou want?"];
+            TurnOn(<< "Who art thou?", "bye" >>);
+        } else {
+            ["Greetings, <v2>. How may I be of service to thee?"];
+            TurnOn(<< "information", "riddles", "bye" >>);
+        }
+        converse {
+            key ("Who art thou?") {
+                TurnOff("Who art thou?");
+                ["My, what an impudent hatchling. Thou hast the gall to march into my home, walk up to my presence on thy tiny, ridiculous legs, and dare to ask my name?!"];
+                ["I think that I shall be the one to ask the questions. We shall begin by asking thee what thou art called and why thou hast come to my domain."];
+                v11 = ~AskList(<< "I am the Avatar", ("I am " + v2) >>);
+                if (v11 = "I am the Avatar") {
+                    ["How interesting."];
+                    SetNPCID_i(1, item);
+                }
+                if (v11 = ("I am " + v2)) {
+                    ["I see."];
+                    SetNPCID_i(1, item);
+                }
+                ["Thou dost not look like those humans who call themselves Ophidians, but I canst smell their spore upon thee."];
+                ["Art thou an official envoy from Serpent's Fang?"];
+                v12 = ~AskYesNo();
+                if v12 {
+                    ["Hmmm. I suppose I can tolerate thy presence for a few moments."];
+                } else {
+                    ["I thought as much! Thou dost not have that irrational look in thy eyes as do those ill-mannered Ophidians."];
+                }
+                ["Now then, why hast thou come to my domain?"];
+                v13 = ~AskList(<< "No reason", "I'm looking for something", "I'm lost" >>);
+                if (v13 = "No reason") {
+                    ["I see. Well then, <v3> <v2>, it hath been many years since one of thy kind hath dared to enter my domain."];
+                }
+                if (v13 = "I'm looking for something") {
+                    ["Yes, well... are not we all. Ahem. I suppose that I should not bore thee with my sophomoric philosophy."];
+                    ["Well, I won't ask thee what it is that thou are searching for. However, if thou art willing to stay a while I might be inclined to help thee find whatever it is thou dost seek."];
+                    TurnOn("help");
+                }
+                if (v13 = "I'm lost") {
+                    ["I'm sorry to hear that. I myself rarely venture far from my domain."];
+                    TurnOn("rarely");
+                }
+                ["Now that I know something about thee, it is only fair that I tell thee that my name is Draxinar. My friends, however, call me 'Stumpy'."];
+                ["If thou dost desire to stay for a while I shall not prevent thee. Indeed, thy company would be most welcome."];
+                ["And perhaps if thou art willing, I shall puzzle thee with my riddles."];
+                ["Now then, how may I help thee?"];
+                TurnOn(<< "riddles", "information", "company", "Stumpy?" >>);
+            }
+            key ("riddles") {
+                PushKeys();
+                TurnOff("riddles");
+                if v7 {
+                    ["As I have said before, I am very good at riddles. Art thou sure that thou doth want to play?"];
+                } else {
+                    ["I don't like to boast, but I daresay there is no better riddlemaster than myself! Art thou sure thou doth want to play?"];
+                    v7 = true;
+                }
+                if ~AskYesNo() {
+                    if (not $SOLVED_LIARS_RIDDLE and (not $SOLVED_EARRINGS_RIDDLE and (not $SOLVED_LONGTOOTH_RIDDLE and not $SOLVED_CLOTH_RIDDLE))) {
+                        ["Excellent! We shall start with a simple riddle."];
+                        ["If thou dost answer it correctly I shall give thee a more dificult riddle."];
+                        AskLiarsRiddle_i();
+                    }
+                    if ($SOLVED_LIARS_RIDDLE and (not $SOLVED_EARRINGS_RIDDLE and (not $SOLVED_LONGTOOTH_RIDDLE and not $SOLVED_CLOTH_RIDDLE))) {
+                        ["Thou didst solve my first riddle. Shall I tell thee a slightly more dificult riddle?"];
+                        if ~AskYesNo() {
+                            AskEarringsRiddle_i();
+                        } else {
+                            ["So be it. Perhaps thou wilt enjoy a riddle later."];
+                            TurnOn("bye");
+                        }
+                    }
+                    if ($SOLVED_LIARS_RIDDLE and ($SOLVED_EARRINGS_RIDDLE and (not $SOLVED_LONGTOOTH_RIDDLE and not $SOLVED_CLOTH_RIDDLE))) {
+                        ["Thou didst solve my first two riddles. Dost thou want to hear another riddle?"];
+                        if ~AskYesNo() {
+                            AskLongtoothRiddle_i();
+                        } else {
+                            ["So be it. Perhaps thou wilt enjoy a riddle later."];
+                            TurnOn("bye");
+                        }
+                    }
+                    if ($SOLVED_LIARS_RIDDLE and ($SOLVED_EARRINGS_RIDDLE and ($SOLVED_LONGTOOTH_RIDDLE and not $SOLVED_CLOTH_RIDDLE))) {
+                        ["Thou hath solved my first three riddles. Doth thou wish to try a more dificult one?"];
+                        if ~AskYesNo() {
+                            ["Very well. See if thou canst solve my last riddle!"];
+                            AskClothRiddle_i();
+                        } else {
+                            ["So be it. Perhaps thou wilt enjoy a riddle later."];
+                        }
+                    }
+                    if ($SOLVED_LIARS_RIDDLE and ($SOLVED_EARRINGS_RIDDLE and ($SOLVED_LONGTOOTH_RIDDLE and $SOLVED_CLOTH_RIDDLE))) {
+                        ["Thou hath solved all of mine riddles. Doth thou wish to hear them again?"];
+                        if ~AskYesNo() {
+                            ["As thy wish. I shall start again with Rhys..."];
+                            $SOLVED_LIARS_RIDDLE = false;
+                            $SOLVED_EARRINGS_RIDDLE = false;
+                            $SOLVED_LONGTOOTH_RIDDLE = false;
+                            $SOLVED_CLOTH_RIDDLE = false;
+                            AskLiarsRiddle_i();
+                        } else {
+                            ["I understand perfectly. Why wouldst thou, who hast already solved my riddles, want to hear them again?"];
+                        }
+                    }
+                } else {
+                    ["That is unfortunate. I had hoped to stump thee with my riddles. Later, perhaps, thou wilt change thy mind."];
+                    TurnOn("bye");
+                }
+                PopKeys();
+            }
+            key ("information") {
+                TurnOff("information");
+                ["And what dost thou wish to know?"];
+                TurnOn(<< "people", "places", "things" >>);
+            }
+            key ("Stumpy?") {
+                TurnOff("Stumpy?");
+                if (v8 = true) {
+                    ["As thou hast probably guessed by now, my friends started calling me 'Stumpy' because I loved to stump them with my riddles."];
+                    v14 = ~PartyUtters(false, 0, 0, 1);
+                    if ((v14 = 65533) or ((v14 = 65534) or (v14 = 65535))) {
+                        v15 = "@That is one of the worst nicknames I have ever\x0D\n\x09\x09\x09\x09\x09\x09heard!@";
+                        v14 = ~PartyUtters(false, 0, v15, v14);
+                        SetSpeakerSlot_i(0);
+                    }
+                } else {
+                    ["Tis my nickname. Perhaps when I know thee better, I shall tell thee the reason I was given this nickname..."];
+                }
+            }
+            key ("company") {
+                TurnOff("company");
+                ["It hath been years since I last talked with anyone. Thou wouldst not believe how lonely the life of a dragon can be."];
+                TurnOn("lonely");
+            }
+            key ("lonely") {
+                TurnOff("lonely");
+                ["Everyone fears us. Dragons, that is. In the process of defending myself from countless attacks I have killed many men. Those who have come before thee let their weapons do the talking."];
+            }
+            key ("help") {
+                TurnOff("help");
+                ["Indeed. I know that I do not look it, but I am several centuries old. Although I have lived in this area a mere dozen decades, I have managed to learn quite a few things..."];
+            }
+            key ("rarely") {
+                TurnOff("rarely");
+                ["My cave hast grown comfortable. I see little reason to traipse about the hinterlands like some hatchling, especially when one considers the many hazards in this area."];
+                TurnOn("hazards");
+            }
+            key ("hazards") {
+                TurnOff("hazards");
+                if (v9 = true) {
+                    ["I have already mentioned the Opidian civil war, but I don't think thou art aware of the the liche known as Aram-Dol."];
+                    TurnOn("Aram-Dol");
+                } else {
+                    ["Truly thou art not from these parts if thou art not aware of the civil war the Ophidians wage against each other, or the perils of Aram-Dol's domain!"];
+                    TurnOn(<< "civil war", "Aram-Dol" >>);
+                }
+            }
+            key ("Ophidians") {
+                TurnOff("Ophidians");
+                ["Yes, I have heard of these people and I don't particularly care for them."];
+                TurnOn("don't care for them");
+            }
+            key ("The Fiend") {
+                TurnOff("The Fiend");
+                ["I have heard a tale about a mad human who is known as 'The Fiend'. Apparently he is very dangerous."];
+                ["Doesn't it strike\x09thee as odd that the most evil creatures in these caverns are humans?"];
+                v14 = ~PartyUtters(false, 0, 0, 1);
+                if ((v14 = 65533) or ((v14 = 65534) or (v14 = 65535))) {
+                    v15 = "@I suppose there has never been a dragon that was evil, eh?!@";
+                    v14 = ~PartyUtters(false, 0, v15, v14);
+                    SetSpeakerSlot_i(0);
+                    Bark_i(0, "@Bloody Wyrm!@", v14);
+                }
+            }
+            key ("civil war") {
+                TurnOff("civil war");
+                if (v9 = true) {
+                    ["I have mentioned this war to thee already. Shall I repeat what I said?"];
+                    if ~AskYesNo() {
+                        ["Very well."];
+                        ["The tribe of humans known as the Ophidians wage war upon one another. I do not know much about these humans."];
+                        ["They seem to worship the powers of Order and Chaos."];
+                    }
+                } else {
+                    ["Aye. The tribe of humans known as the Ophidians wage war upon one another. I do not know much about these humans. They seem to worship the powers of Order and Chaos."];
+                    v9 = true;
+                }
+            }
+            key ("Aram-Dol") {
+                TurnOff("Aram-Dol");
+                if (v10 = true) {
+                    ["I have already told described the liche to thee. Shall I tell thee about the liche again?"];
+                    if ~AskYesNo() {
+                        ["A more evil or cunning creature thou wilt not find! Fortunately, the liche rarely ventures from its lair.];
+                        ["If thou art fond of thy life I would advise against venturing into Aram-Dol's domain."];
+                        v14 = ~PartyUtters(false, 0, 0, 1);
+                        if ((v14 = 65533) or ((v14 = 65534) or (v14 = 65535))) {
+                            v15 = "@The Avatar has fought the undead before and triumphed!@";
+                            v14 = ~PartyUtters(false, 0, v15, v14);
+                            SetSpeakerSlot_i(0);
+                            Bark_i(0, "@<PCName> is not afraid!@", v14);
+                        }
+                        ["Aram-Dol is not easily reached. The liche hath surrounded his lair with many creatures."];
+                        ["If I were thee, I would avoid his domain... Although, I have heard that the liche possesses two fabulous treasures."];
+                        TurnOn(<< "fabulous treasures", "creatures" >>);
+                    } else {
+                        ["Very well. What shall we discuss next?"];
+                    }
+                } else {
+                    ["A more evil or cunning creature thou wilt not find! Fortunately, the liche rarely ventures from its lair.];
+                    ["If thou art fond of thy life I would advise against venturing into Aram-Dol's domain."];
+                    v14 = ~PartyUtters(false, 0, 0, 1);
+                    if ((v14 = 65533) or ((v14 = 65534) or (v14 = 65535))) {
+                        v15 = "@The Avatar has fought the undead before and triumphed!@";
+                        v14 = ~PartyUtters(false, 0, v15, v14);
+                        SetSpeakerSlot_i(0);
+                        Bark_i(0, "@<PCName> is not afraid!@", v14);
+                    }
+                    ["Aram-Dol is not easily reached. The liche hath surrounded his lair with many creatures."];
+                    ["If I were thee, I would avoid his domain... Although, I have heard that the liche possesses two fabulous treasures."];
+                }
+                TurnOn(<< "fabulous treasures", "creatures" >>);
+            }
+            key ("Longtooth") {
+                TurnOff("Longtooth");
+                ["Longtooth is my aunt's son. A sorrier\x09dragon thou shalt never find! Of course, what happened to him was not his fault."];
+                TurnOn("what happened?");
+            }
+            key ("what happened?") {
+                TurnOff("what happened?");
+                ["Longtooth was once smart, handsome, and very fierce. Many hatchlings looked up to Longtooth, and many females wanted to mate with him. Then one day some iron-plated human warrior came along and tried to kill him."];
+                ["Longtooth thought the idea of a human challenging him, a prime example of dragonkind, was funny. So Longtooth obliged the human and the fight began."];
+                ["What my cousin was not aware of was that the human had friends who were hiding. When Longtooth had the warrior pinned, the jackals struck from ambush. Longtooth managed to escape, but he's never been the same since."];
+                ["Why, he can't even out riddle a goblin!"];
+            }
+            key ("fabulous treasures") {
+                TurnOff("fabulous treasures");
+                ["One of these treasures, I have heard tell, is a weapon -- an axe, I believe -- of unimagineable power. The other treasure is a pair of gauntlets that purportedly once belonged to some thief known\x09as 'Karas the Quick'."];
+                ["I have not heard what power the gauntlets possess."];
+            }
+            key ("creatures") {
+                TurnOff("creatures");
+                ["The liche uses dead humans that he has reanimated as guardians. To reach Aram-Dol, one must traverse a veritable gauntlet of undead creatures."];
+                ["There are also the abominations called the 'Arachnians'."];
+                TurnOn("Arachnians");
+            }
+            key ("Arachnians") {
+                TurnOff("Arachnians");
+                ["In years past, Aram-Dol took many humans as prisoners. By means of the blackest sorcery, Aram-Dol fused the torsos of men with the bulbous bodies of giant spiders."];
+                ["These creatures are fiercesome fighters. They are cunning and evil. Pray to whatever gods thou doth worship if thou art caught by the Arachnians. They eat their prey alive..."];
+                v14 = ~PartyUtters(false, 0, 0, 1);
+                if ((v14 = 65533) or ((v14 = 65534) or (v14 = 65535))) {
+                    v15 = "@By the virtues! Such foul creatures should be exterminated!@";
+                    v14 = ~PartyUtters(false, 0, v15, v14);
+                    SetSpeakerSlot_i(0);
+                    Bark_i(0, "@Eaten alive. Yuch!@", v14);
+                }
+            }
+            key ("treasure") {
+                TurnOff("treasure");
+                ["It hath been many years since one of thy kind ventured into my domain. Those who came before thought they could slay me with their bits of iron and steal my tresure!];
+                ["They were wrong. They paid for their foolishness and greed with their lives."];
+                ["Aye, tis true. I have a treasure. What self-respecting dragon doesn't have a treasure horde?"];
+                ["Of course, there is my aunt's son Longtooth. A sorrier dragon thou shalt never find! Of course, what happened to him was not his fault."];
+                TurnOn("Longtooth");
+            }
+            key ("people") {
+                TurnOff("people");
+                ["People! Hrrmphh. Thou dost realize, I hope, that not every sentient creature likes to be characterized in human terminology."];
+                v14 = ~PartyUtters(false, 0, 0, 1);
+                if ((v14 = 65533) or ((v14 = 65534) or (v14 = 65535))) {
+                    v15 = "@Thou art an insufferable wyrm!@";
+                    v14 = ~PartyUtters(false, 0, v15, v14);
+                    SetSpeakerSlot_i(0);
+                    Bark_i(0, "@What arrogance!@", v14);
+                }
+                ["To answer thy question, however, I know, or have heard of, many 'people'. Who, in particular, wert thou interested in?"];
+                TurnOn(<< "Ophidians", "The Fiend", "Aram-Dol", "Longtooth" >>);
+            }
+            key ("not human") {
+                TurnOff("not human");
+                ["Aye. This new commander is some sort of magical construct. I believe the Ophidians call these creatures 'automatons'. I daresay that it is probably an improvement..."];
+                TurnOn("automatons");
+                v14 = ~PartyUtters(false, 0, 0, 1);
+                if ((v14 = 65533) or ((v14 = 65534) or (v14 = 65535))) {
+                    v15 = "@Now see here! There is no cause to be insulting!@";
+                    v14 = ~PartyUtters(false, 0, v15, v14);
+                    SetSpeakerSlot_i(0);
+                    Bark_i(0, "@Insolent dragon!@", v14);
+                }
+                if (v14 = 65508) {
+                    v15 = "@I'll take that as a compliment!@";
+                    v14 = ~PartyUtters(false, 0, v15, v14);
+                    SetSpeakerSlot_i(0);
+                }
+            }
+            key ("places") {
+                TurnOff("places");
+                ["What place art thou interested in?"];
+                TurnOn(<< "Serpent's Fang", "The Maze", "home" >>);
+            }
+            key ("home") {
+                TurnOff("home");
+                ["I am quite familiar with my own cave, although I doubt that thou wouldst find it quite as charming as I do..." Art thou really interested in learning about my humble domicile?"];
+                v16 = ~AskYesNo();
+                if v16 {
+                    ["Thou art a most unusual human."];
+                    ["I moved to this cave one hundred and twelve years ago. It was not\x09easy finding the perfect cave -- I have my standards, afterall. And thou wouldst not believe how dificult it is to find a good cave."];
+                    ["Anyway, I had spent weeks searching and was about to give up the search when, quite by accident, I wandered into this cavern."];
+                    TurnOn("cavern");
+                } else {
+                    ["I understand. I can not blame thee for not being interested. It is not a particularly fascinating topic."];
+                }
+            }
+            key ("Serpent's Fang") {
+                TurnOff("Serpent's Fang");
+                ["Serpent's Fang is what the Ophidians call that Keep of theirs. I don't really know much about the place except that the commander of the few humans that are left is not human."];
+                ["Frankly, I do not\x09care to know much about that place."];
+                ["As long as those humans stay out of my domain I shall reciprocate by not trespassing upon theirs."];
+                TurnOn("not human");
+            }
+            key ("things") {
+                TurnOff("things");
+                ["My goodness! Thou art a curious one! I suppose that I should inform thee of the numerous hazards that are found within our subterranean realm."];
+                TurnOn("hazards");
+            }
+            key ("automatons") {
+                TurnOff("automatons");
+                ["I have heard that these constructs are absolutely obedient to their Ophidian masters, that they never tire, and that they do not need food!"];
+            }
+            key ("don't care for them") {
+                TurnOff("don't care for them");
+                ["The Ophidians are the ill-mannered humans who built the large Keep not far from this cavern. Only a few of them are left in that Keep, however."];
+                TurnOn(<< "ill-mannered", "Keep" >>);
+            }
+            key ("Keep") {
+                TurnOff("Keep");
+                ["The Ophidians call their keep 'Serpent's Fang'. I don't really know much about the place except that the commander of the few humans that are left is not human."];
+                ["Frankly, I do not\x09care to know much about that place."];
+                ["As long as those humans stay out of my domain I shall reciprocate by not trespassing upon theirs."];
+                TurnOn("not human");
+            }
+            key ("ill-mannered") {
+                TurnOff("ill-mannered");
+                ["Before the Ophidians came to these caverns there existed a natural balance\x09amongst the creatures that lived here. There was conflict, to be sure, but there existed a rythym to life."];
+                ["There was space and food enough for everyone. The Ophidians arrival disrupted the balance. They forced many creatures from their homes. And now they wage a war amongst themselves."];
+                ["Truly. I think I shall never understand humans."];
+                TurnOn("civil-war");
+            }
+            key ("civil-war") {
+                TurnOff("civil-war");
+                ["Aye, these snake-lovers took up arms against one another. They have taken to slaughtering one another as easily as a hatchling takes to breathing fire..."];
+                ["They have been fighting for at least a year I think."];
+                TurnOn(<< "why", "snake-lovers" >>);
+            }
+            key ("why") {
+                TurnOff("why");
+                ["I cannot say why you humans do the things you do: you are peculiar creatures, with odd customs and strange rituals."];
+                ["All I know is that these Ophidians starting slaughtering each other about one year ago."];
+            }
+            key ("snake-lovers") {
+                TurnOff("snake-lovers");
+                ["As I have said, I know little of your human rituals, but I do know that these Ophidians worship snakes."];
+                ["Now that I think about it, I remember hearing that they worship the forces of Order and Chaos, albeit in the forms of snakes."];
+                TurnOn("Order and Chaos?");
+            }
+            key ("Order and Chaos?") {
+                TurnOff("Order and Chaos?");
+                ["Tis a silly philosophy if thou dost ask me. The Ophidians, however, believe in their doctrines so well that they have taken up arms against one another!"];
+            }
+            key ("cavern") {
+                TurnOff("cavern");
+                ["These caverns are fairly large, a fact that suited me because I myself am fairly large."];
+                ["This cave was perfect for me. I could come and go as I pleased, at least until Aram-Dol started expanding his territory."];
+                TurnOn("territory");
+            }
+            key ("territory") {
+                TurnOff("territory");
+                ["Many years ago Aram-Dol created the Arachnian creatures. The liche released these creatures into these caverns. The foul beasts killed everything within their path. The vile creatures even managed to attack me in mass! I was very nearly slain. Fortunately for me, the Arachnians have a weakness."];
+                TurnOn(<< "weakness", "Arachnians" >>);
+            }
+            key ("weakness") {
+                TurnOff("weakness");
+                ["Aye, the bugs have a weakness: they are especially vulnerable to fire. I fried dozens of the monsters before they broke ranks and ran!"];
+                ["After that battle I caved-in some of the passageways near my cave and moved large boulders to block other entrances into my cave."];
+                ["The tactic seems to have worked because I have had little trouble from the creatures since I erected the barriers."];
+            }
+            key ("The Maze") {
+                TurnOff("The Maze");
+                ["The Ophidians built other structures within these caverns besides that Keep of theirs. One of these structures is a maze. Although I have not been there, I have heard that it is extremely dificult."];
+                ["I don't mean any offense to thee, but I think that any maze devised by the mind of man could easily be solved by any sensible dragon!"];
+            }
+            key ("bye") {
+                CloseSpeaker0_i();
+                Bark_i(0, "@So long!@", _Avatar);
+                Bark_i(2, "@Fare thee well!@", item);
+                SetWorkType(_Loiter, item);
+                terminate;
+            }
+        }
+        clear_answers;
+    }
+}

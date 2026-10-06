@@ -1,0 +1,14 @@
+Routine FawnNecklaceEgg_i accepts a0 #locals(3) {
+    if ((event = _Trigger) and $BANES_RELEASED) {
+        v0 = ~GetCoord(item);
+        v1 = ~Item_create(_Amulet);
+        if v1 {
+            Sfx(77);
+            SetFrame(5, v1);
+            v2 = ~PopToMap(v0);
+            if v2 {
+                Item_destroy(item);
+            }
+        }
+    }
+}

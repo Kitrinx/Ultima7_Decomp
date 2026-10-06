@@ -1,0 +1,116 @@
+Routine Rabindrinath accepts a0 #locals(8) #uses(~LordOrLady, ~AvatarName, ~IsInInv, Bark_i, PartyFaces_i, RabindrinathCasts_i, RabindrinathTeleports_i) {
+    v0 = ~LordOrLady();
+    v1 = ~AvatarSex();
+    v2 = ~AvatarName();
+    v3 = ~IsInInv(1, 65177, _Magic_Helm, 1, _Party);
+    v4 = ~IsInInv(3, 65177, _Artifacts, 1, _Party);
+    v5 = ~IsInInv(11, 65177, _Artifacts, 1, _Party);
+    v6 = ~GetNPCID_i(_Rabindrinath);
+    if (event = _Action) {
+        if ((v6 = 1) or ((v6 = 7) or (v6 = 8))) {
+            if (v6 = 1) {
+                SetNPCID_i(0, _Rabindrinath);
+            }
+            if (v6 = 7) {
+                SetNPCID_i(5, _Rabindrinath);
+            }
+            if (v6 = 8) {
+                SetNPCID_i(6, _Rabindrinath);
+            }
+            Sfx(41);
+            CreateSpriteOn_i(65535, 0, 0, 0, 0, 0, 1, _Avatar);
+            v7 = ~PostInFuture(12, << _aNO_HALT_i, _aHIT_i, 50, 0 >>, _Avatar);
+        } else {
+            Sfx(48);
+            CreateSpriteOn_i(65535, 0, 0, 0, 0, 0, 9, _Avatar);
+            SetWorkType(_Talk, _Rabindrinath);
+            v7 = ~PostAction(<< _aEXTEND1_FRAME_i, _aRAISE1_FRAME_i, _aRAISE2_FRAME_i, _aSTAND_FRAME_i, _aEXTEND1_FRAME_i, _aRAISE1_FRAME_i, _aRAISE2_FRAME_i, _aSTAND_FRAME_i >>, _Rabindrinath);
+        }
+    }
+    if (event = _Converse) {
+        Bark_i(0, "@Excuse me...@", _Avatar);
+        Bark_i(2, "@Who art thou?@", _Rabindrinath);
+        v7 = ~PostAction(<< _aNOP_i >>, _Rabindrinath);
+        SetWorkType(_Talk, _Rabindrinath);
+        PartyFaces_i(65355);
+    }
+    if (event = _Talking) {
+        Npc_schedule(_Rabindrinath);
+        ClearBark_i(_Rabindrinath);
+        SetSpeaker0_i(0, _Rabindrinath);
+        if (v6 = 0) {
+            ["Hast thou seen the firebird's death or followed thy dreams to seek power? Canst thou touch the face of a dream that clutches thee with bony claws? How wouldst thou know the power that leaps from dream to dream, devouring death as it went?"];
+            SetItemFlag_i(_Met, _Rabindrinath);
+            ["Dost thou have the protection of Courage to face thy dreams? Can thine helm face the power and kiss the lips of sweet death?"];
+            if (v3 = true) {
+                SetNPCID_i(2, _Rabindrinath);
+            } else {
+                SetNPCID_i(1, _Rabindrinath);
+            }
+            RabindrinathCasts_i();
+            terminate;
+        }
+        if (v6 = 2) {
+            if (v3 = true) {
+                ["Curse the pot metal protection that thou dost call Courage! Thou hast not danced with the maker of dreams upon the cold stone grave of power..."];
+            }
+            SetNPCID_i(5, _Rabindrinath);
+            RabindrinathTeleports_i(1479, 2918);
+            terminate;
+        }
+        if (v6 = 5) {
+            ["Dost thou have the glass petals of Love to bind thy dreams? Canst thou swim the seas of death and come forth the father of power?"];
+            if (v4 = true) {
+                SetNPCID_i(3, _Rabindrinath);
+            } else {
+                SetNPCID_i(7, _Rabindrinath);
+            }
+            RabindrinathCasts_i();
+            terminate;
+        }
+        if (v6 = 3) {
+            if (v4 = true) {
+                ["A thousand plagues upon the putrid flower thou dost call Love! Thou canst not walk amongst the clouds of dreams and reap the withered souls of weaklings..."];
+            }
+            SetNPCID_i(6, _Rabindrinath);
+            RabindrinathTeleports_i(1428, 2874);
+            terminate;
+        }
+        if (v6 = 6) {
+            ["Dost thou have the reflection of Truth to make thy dreams real? Canst thou mirror the ride of the spiraling serpent of death down to the peak of moonlit dreams?"];
+            if (v5 = true) {
+                SetNPCID_i(4, _Rabindrinath);
+            } else {
+                SetNPCID_i(8, _Rabindrinath);
+            }
+            RabindrinathCasts_i();
+            terminate;
+        }
+        if (v6 = 4) {
+            if (v5 = true) {
+                ["Damnation to the false reflection that thou dost call Truth! Thou didst not fly to the vaulted tombs of vilified saints to grasp at the reins of the sun..."];
+                ["Nooooo!"];
+                Earthquake_i(5);
+                KillNPC_i(_Rabindrinath);
+            }
+        } else {
+            SetNPCID_i(1, _Rabindrinath);
+            RabindrinathCasts_i();
+        }
+    }
+}
+
+Usable RabindrinathCasts_i #locals(2) #uses(~GimmePathEgg) {
+    v0 = ~GetDir(_Avatar, _Rabindrinath);
+    v1 = ~PostAction(<< _aFACE_i, v0, _aRAISE2_FRAME_i, _aRAISE1_FRAME_i, _aEXTEND1_FRAME_i, _aUP_FRAME_i, _aOUT_FRAME_i, _aTHRUST2_FRAME_i, _aSTAND_FRAME_i >>, _Rabindrinath);
+    v1 = ~PostInFuture(10, << _aUSABLE_i, #Rabindrinath >>, ~GimmePathEgg(1, 0));
+}
+
+Routine RabindrinathTeleports_i accepts a0, a1 #locals(1) {
+    v2 = ~GetCoord(_Rabindrinath);
+    createSprite(65535, 0, 0, 0, v2::2, v2::1, 17);
+    createSprite(65535, 0, 0, 0, v2::2, v2::1, 21);
+    Item_move(<< v1, v0, 0 >>, _Rabindrinath);
+    NewSchedule_i(<< v1, v0 >>, _TendShop, 0, _Rabindrinath);
+    Npc_schedule(_Rabindrinath);
+}

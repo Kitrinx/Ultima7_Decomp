@@ -1,0 +1,14 @@
+Routine Statues2 accepts a0 #locals(1) #uses(~GimmePathEgg, Bark_i) {
+    if (event = _Action) {
+        SetMusic(~GimmePathEgg(1, 5), 44);
+        v0 = ~GetCoord(item);
+        Item_destroy(item);
+        Item_move(v0, _Fedabiblio);
+        NewSchedule_i(<< 2361, 2074, 2384, 2083, 2471, 2021, 2371, 2101, 2384, 2083 >>, << 14, 21, 21, 26, 21 >>, << 0, 2, 4, 5, 6 >>, _Fedabiblio);
+        NewSchedule_i(<< 2383, 2093, 2416, 2067, 2371, 2100, 2401, 2066 >>, << 1, 2, 23, 2 >>, << 0, 3, 5, 6 >>, _Serv11);
+        Npc_schedule(_Serv11);
+        SetWorkType(_Talk, _Fedabiblio);
+        Bark_i(0, "@Much better...@", _Fedabiblio);
+        $andriofreed = true;
+    }
+}

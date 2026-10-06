@@ -1,0 +1,192 @@
+Routine Winch_EW accepts a0 #locals(0) #uses(WinchUsable_i) {
+    closeAllGumps();
+    WinchUsable_i(event, item);
+}
+
+Routine Winch_NS accepts a0 #locals(0) #uses(WinchUsable_i) {
+    if (~GetQuality(item) = 10) && ($IOLO_ACCUSED or ($DUPRE_ACCUSED or $SHAMINO_ACCUSED)) {
+        terminate;
+    }
+    closeAllGumps();
+    WinchUsable_i(event, item);
+}
+
+Routine TurnWinch_i accepts a0 #locals(7) #uses(~ToggleDrawbridges_i, OpenGateWithWinch_i) {
+    if (event = _Pathfind1) {
+        v0 = ~GetQuality(item);
+        v1 = ~FindNearby_i(0, 15, _Drawbridge, item);
+        v2 = ~FindNearby_i(0, 15, _Closed_Drawbridge, item);
+        v1 = (v1 & v2);
+        v2 = << >>;
+        Foreach v5 in v1 {
+            if (~GetQuality(v5) = v0) {
+                v2 = (v2 & v5);
+            }
+        }
+        if ~ToggleDrawbridges_i(v2) {
+            v6 = ~PostAction(<< _aFRAME, 1, _aNEXT_FRAME, _aLOOP_i, 65535, 4 >>, item);
+            v6 = ~PostAction(<< _aFACE_i, _West, _aCONTINUE_i, _aBEND_FRAME_i, _aSTAND_FRAME_i, _aLOOP_i, 65534, 2 >>, _Avatar);
+            if (v0 = 181) {
+                $mortegrofreed = true;
+            }
+            return;
+        }
+        OpenGateWithWinch_i(true, item);
+    }
+    if (event = _Action) {
+        OpenGateWithWinch_i(true, item);
+    }
+}
+
+Routine LightningStrikesAvatar_i accepts a0 #locals(4) #uses(~PartyUtters) {
+    v0 = ~GetCoord(item);
+    v0::1 = (v0::1 - (v0::3 / 2));
+    v0::2 = (v0::2 - (v0::3 / 2));
+    createSprite(65535, 0, 0, 0, v0::2, v0::1, 42);
+    createSprite(65535, 0, 0, 0, v0::2, v0::1, 9);
+    CreateSpriteOn_i(65535, 0, 0, 0, 0, 0, 42, _Avatar);
+    Sfx(116);
+    LightningBolt();
+    SetWorkType(_Wait, _Avatar);
+    v1 = ~PartyUtters(true, 0, "@Oh, no!@", 1);
+    SetItemFlag_i(_DontMove_i, _Avatar);
+    v2 = ~PostAction(<< _aNO_HALT_i, _aBARK_i, "@Arggh!@", _aBEND_FRAME_i, _aKNEEL_FRAME_i, _aLIE_FRAME_i >>, _Avatar);
+    v3 = ~PostInFuture(10, << _aNO_HALT_i, _aUSABLE_i, #StrandAvatar_i >>, _Avatar);
+}
+
+Routine StrandAvatar_i accepts a0 #locals(6) #uses(~GimmePathEgg, BarkIfNear_i) {
+    SetWeather_i(_Clear);
+    v0 = ~GetParty_i();
+    v1 = 2357;
+    Foreach v4 in v0 {
+        if (v4 <> ~NPCToItem_i(_Avatar)) {
+            LeaveParty(v4);
+            NewSchedule_i(<< v1, 1506 >>, _Wander, 0, v4);
+            Item_move(<< v1, 1506 >>, v4);
+            Npc_schedule(v4);
+            v1 = (v1 + 2);
+        }
+    }
+    FadePalette_i(0, 1, 12);
+    Item_move(<< 2333, 1596 >>, _Avatar);
+    SetWorkType(_FollowAvt, _Avatar);
+    ClearItemFlag_i(_DontMove_i, _Avatar);
+    v5 = ~PostInFuture(30, << _aNO_HALT_i, _aUSABLE_i, #FadeInArrival_i >>, ~GimmePathEgg(1, 5));
+    v5 = ("" & ("@Oh...@" & ("@Mine head doth ache!@" & "@Where am I?@")));
+    BarkIfNear_i(v5, _Avatar);
+}
+
+Routine WinchUsable_i accepts a0, a1 #locals(7) #uses(PathToItem_i, ~ToggleDrawbridges_i, OpenGateWithWinch_i) {
+    if (v0 = 1) {
+        if ~Kernel_getNumProcesses(v1) {
+            return;
+        }
+        PathToItem_i(10, v1, #TurnWinch_i, 65535, 65534, 65534, v1);
+    }
+    if (v0 = 2) {
+        v2 = ~GetQuality(item);
+        v3 = ~FindNearby_i(0, 15, _Drawbridge, item);
+        v4 = ~FindNearby_i(0, 15, _Closed_Drawbridge, item);
+        v3 = (v3 & v4);
+        v4 = << >>;
+        Foreach v7 in v3 {
+            if (~GetQuality(v7) = v2) {
+                v4 = (v4 & v7);
+            }
+        }
+        if ~ToggleDrawbridges_i(v4) {
+            v8 = ~PostAction(<< _aFRAME, 1, _aNEXT_FRAME, _aLOOP_i, 65535, 4 >>, item);
+            return;
+        }
+        OpenGateWithWinch_i(false, item);
+    }
+}
+
+Routine LockDoorsNear_i accepts a0 #locals(5) #uses(~SwingDoor_i) {
+    v1 = ~FindNearby_i(0, 20, _Door_NS, v0);
+    Foreach v4 in v1 {
+        v5 = ~SwingDoor_i(7, 0, 0, 2, _Door_EW, v4);
+    }
+}
+
+Routine OpenDoorsNear_i accepts a0 #locals(5) #uses(~SwingDoor_i) {
+    v1 = ~FindNearby_i(0, 20, _Door_EW, v0);
+    Foreach v4 in v1 {
+        v5 = ~SwingDoor_i(7, 0, 0, 1, _Door_NS, v4);
+    }
+}
+
+Routine OpenGateWithWinch_i accepts a0, a1 #locals(14) #uses(~TogglePortcullises_i, ~PartyUtters, LockDoorsNear_i, OpenDoorsNear_i, ~IsNPCNear) {
+    v2 = (~GetAllInRegion(_NS_Portcullis) & ~GetAllInRegion(_EW_Portcullis));
+    v3 = false;
+    Foreach v6 in v2 {
+        if (~GetQuality(v6) = ~GetQuality(v1)) {
+            v7 = ~TogglePortcullises_i();
+            v7 = ~PostAction(<< _aFRAME, 1, _aNEXT_FRAME, _aLOOP_i, 65535, 6 >>, v1);
+            v3 = true;
+        }
+    }
+    if not v3 {
+        v8 = ~GetQuality(v1);
+        if ((v8 >= 200) and (v8 <= 204)) {
+            v3 = true;
+            v7 = ~PostAction(<< _aFRAME, 1, _aNEXT_FRAME, _aLOOP_i, 65535, 6 >>, v1);
+            if (v8 = 200) {
+                v9 = ~PostInFuture(10, << _aNO_HALT_i, _aBARK_i, "@Nothing is happening.@" >>, _Avatar);
+                v10 = ~PartyUtters(false, 0, 0, 1);
+                if (v10 <> 65180) {
+                    v9 = ~PostInFuture(15, << _aNO_HALT_i, _aBARK_i, "@Perhaps it requires something.@" >>, v10);
+                }
+            }
+            if (v8 = 201) {
+                v9 = ~SetQuality(202, v1);
+                SetWeather_i(_Rain);
+                v10 = ~PartyUtters(false, 0, 0, 1);
+                if (v10 <> 65180) {
+                    v9 = ~PostInFuture(10, << _aNO_HALT_i, _aBARK_i, "@The sky doth threaten rain.@" >>, v10);
+                }
+                v9 = ~PostInFuture(20, << _aNO_HALT_i, _aBARK_i, "@Even as Gustacio said.@" >>, _Avatar);
+                LockDoorsNear_i(v1);
+            }
+            if (v8 = 202) {
+                if ($seenredlightning and ($SEEN_YELLOW_LIGHTNING and $SEEN_GREEN_LIGHTNING)) {
+                    v11 = ~FindNearby_i(0, 20, _Magic_Orbs, v1);
+                    Foreach v14 in v11 {
+                        if (~GetFrame(v14) = 2) {
+                            v15 = ~GetCoord(v14);
+                            createSprite(65535, 0, 0, 0, (v15::2 - 6), (v15::1 - 6), 1);
+                            Sfx(41);
+                            Item_destroy(v14);
+                            flag(227) = true;
+                        }
+                    }
+                    v9 = ~SetQuality(200, v1);
+                    v9 = ~PostInFuture(10, << _aNO_HALT_i, _aUSABLE_i, #LightningStrikesAvatar_i >>, _Avatar);
+                } else {
+                    SetWeather_i(_Clear);
+                    v9 = ~SetQuality(201, v1);
+                }
+                OpenDoorsNear_i(v1);
+            }
+            if (v8 = 203) {
+                v9 = ~SetQuality(204, v1);
+                SetWeather_i(_Rain);
+                if ~IsNPCNear(_Iolo) {
+                    v9 = ~PostInFuture(10, << _aNO_HALT_i, _aBARK_i, "It doth storm again!" >>, _Iolo);
+                }
+                if ~IsNPCNear(_Shamino) {
+                    v9 = ~PostInFuture(20, << _aNO_HALT_i, _aBARK_i, "I should have brought a kite." >>, _Shamino);
+                }
+                LockDoorsNear_i(v1);
+            }
+            if (v8 = 204) {
+                SetWeather_i(_Clear);
+                v9 = ~SetQuality(203, v1);
+                OpenDoorsNear_i(v1);
+            }
+        }
+    }
+    if (v3 and v0) {
+        v7 = ~PostAction(<< _aFACE_i, _West, _aCONTINUE_i, _aBEND_FRAME_i, _aSTAND_FRAME_i, _aLOOP_i, 65534, 4 >>, _Avatar);
+    }
+}

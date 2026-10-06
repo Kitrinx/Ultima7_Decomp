@@ -1,0 +1,655 @@
+Routine Argus accepts a0 #locals(17) #uses(~LordOrLady, ~AvatarName, ~IsNPCNear, PartyFaces_i, Bark_i, AttackAvatar_i, ArgusSellsFood_i, ArgusSellsDrink_i, ~AskYesNo, ~GiveItemsOrDrop_i) {
+    v0 = ~LordOrLady();
+    v1 = ~AvatarSex();
+    v2 = ~AvatarName();
+    v3 = ~IsNPCNear(_Devra);
+    v4 = false;
+    v5 = false;
+    if (event = _Converse) {
+        Item_bark("@Hello!@", _Avatar);
+        PartyFaces_i(65498);
+        Bark_i(2, (("@Yes, " + v0) + "?@"), _Argus);
+        SetWorkType(_Talk, _Argus);
+    }
+    if (event = _Bark) {
+        v6 = ~Random(6);
+        if (v6 = 1) {
+            Item_bark("@Dost thou want a drink?@", _Argus);
+        }
+        if (v6 = 2) {
+            Item_bark("@Art thou hungry?@", _Argus);
+        }
+        if (v6 = 3) {
+            if ~IsNPCNear(_Byrin) {
+                Item_bark("@Sing us a song, Byrin!@", _Argus);
+            } else {
+                Item_bark("@Have some ale.@", _Argus);
+            }
+        }
+        if (v6 = 4) {
+            Item_bark("@Dost thou want a room?@", _Argus);
+        }
+        if (v6 = 5) {
+            Item_bark("@No brawls!@", _Argus);
+        }
+        if (v6 = 6) {
+            Item_bark("@Do not break the chairs!@", _Argus);
+        }
+    }
+    if (event = _Talking) {
+        Npc_schedule(_Argus);
+        ClearBark_i(_Argus);
+        SetSpeaker0_i(0, _Argus);
+        v7 = ~GetItemFlag_i(_Met, _Argus);
+        if (v7 = false) {
+            if ($gottattoo = true) {
+                ["Greetings, fellow Pikeman!" ~"Come in outta them strange storms and rest a bit..." *"This be the Inn of the Sleeping Bull." *"And I be Argus, the innkeeper."];
+            } else {
+                ["Greetings, stranger." *"Come in outta them strange storms and rest a bit..." *"This be the Inn of the Sleeping Bull." *"And I be Argus, the innkeeper."];
+            }
+            SetItemFlag_i(_Met, _Argus);
+        } else {
+            ["Welcome back, <v2>."];
+        }
+        TurnOn(<< "storms", "Sleeping Bull", "food", "drink", "room", "bye" >>);
+        if ($wilfredsaidbribe = true) {
+            TurnOn(<< "duel", "bribes" >>);
+        }
+        converse {
+            key ("storms") {
+                ["These ain't natural storms... Or I was never a Wolf Captain." *"If thou wert to ask me, living all these years across from Moonshade, I'd say they were magic born. And I'm afeard they'll drive us out of business if they last too long."];
+                TurnOff("storms");
+                TurnOn(<< "Wolf Captain", "Moonshade", "out of business" >>);
+            }
+            key ("Wolf Captain") {
+                if ($gottattoo = true) {
+                    ["I see that thou'rt also of the Wolf Command, though I must confess I can't recall having seen thee." *"Until my father disappeared six months ago, I was a Captain in the Monitor Wolf Command." *"Now, however, I am the innkeeper and I'll not stand by the formalities of rank. Thou'rt welcome here."];
+                } else {
+                    ["I am sorry, <v0>. I did not realize that thou wert not from hereabouts."];
+                    if (v3 = true) {
+                        SetSpeaker1_i(0, _Devra);
+                        ["Ha! Thou wert fishin' for a way to tell thy tales!" *"I thought I broke thee of lying when thou wert a lad..." *"Mind thee... Captain... I can still warm thy backside if I've a mind to."];
+                        CloseSpeaker1_i();
+                        SetSpeakerSlot_i(0);
+                        ["And I do not doubt that she could... and would!"];
+                    }
+                    ["Until my father disappeared six months ago, I was a Captain in the Monitor Wolf Command."];
+                }
+                TurnOff("Wolf Captain");
+                TurnOn(<< "father disappeared", "Monitor", "Wolf Command" >>);
+            }
+            key ("father disappeared") {
+                ["Aye, Angus disappeared... And not during one of those storms neither. We could have understood that." *"And mother... er, Devra... Said that one of our guests disappeared the very same evening."];
+                TurnOff("father disappeared");
+                TurnOn("one of our guests");
+            }
+            key ("one of our guests") {
+                ["Thou must needs ask mother what she remembers of that night. I weren't here." *"Mother was understandably aggrieved by the time she called me home." *"She had hoped that Lord Wilfred would come to run the inn as father had hoped, but I came instead..." *"And I don't recall if she mentioned the guest's name, to be honest."];
+                TurnOff("one of our guests");
+                TurnOn("Lord Wilfred");
+            }
+            key ("Lord Wilfred") {
+                ["Blast! Did I call him that? Old habits die hard..." *"I'd thank thee not to repeat that in Devra's hearing for she'd have mine ears for sure." *"Wilfred is my younger brother. And, like most brothers, we have our share of spats."];
+                TurnOff("Lord Wilfred");
+                TurnOn("spats");
+            }
+            key ("spats") {
+                ["I grew up here in the inn, scrubbing pots and whatever else were needed." *"But I dreamed of seeing more of the world. I went wandering when I was a young lad..." *"And Angus, our father, raised Wilfred using me as the bad example. But instead of making Wilfred hold to his wishes, Angus drove Wilfred into my footsteps, determined to best anything I did."];
+                TurnOff("spats");
+                TurnOn(<< "bad example", "best" >>);
+            }
+            key ("bad example") {
+                ["Father said I were too much like my great-grandfather, Silverpate.\x09He never thought I'd amount to much, even after I'd made Captain."];
+                ["It like to broke his heart when Wilfred ran away to Monitor. That's where the \@Lord\@ Wilfred hies from..."];
+                ["He acts like a swaggering noble, with all his self-important ambition."];
+                TurnOff("bad example");
+                TurnOn("Silverpate");
+            }
+            key ("Silverpate") {
+                ["Silverpate were a pirate, I'll make no bones about it. He built this inn when he retired from the sea." *"His son, Donal -- my father's father -- took over when Silverpate disappeared. Some think he might have gone back to the sea. Others say that his evil past caught up to him... No one ever saw him again. But there've been plenty wantin' to hunt for his treasure."];
+                TurnOff("Silverpate");
+                TurnOn("treasure");
+            }
+            key ("treasure") {
+                ["Family legend doth say that Silverpate used part of his treasure to build the inn. Everyone seems to think that he hid whatever was left somewhere around here before he disappeared." *"But I'll tell thee, there ain't no treasure. And I should know..."];
+                if (v3 = true) {
+                    SetSpeaker1_i(0, _Devra);
+                    ["Aye, indeed! Thou and thy friends didst pry into everything and dug holes from here to Monitor when thou wert young! I never stopped thee... I thought thy father had done the same when he was young." *"But I whaled thee good when I caught thee digging in me garden!"];
+                    SetSpeakerSlot_i(0);
+                    ["Aye... I stood up to dinner that night. I remember."];
+                    CloseSpeaker1_i();
+                }
+                TurnOff("treasure");
+            }
+            key ("best") {
+                ["I became a Captain in Monitor, but that was not good enough for Wilfred. He had to be a knight... and a Bear at that." *"'Tis sad to see the likes of him and his friends making a mockery of Monitor's ideals."];
+                TurnOff("best");
+                TurnOn("ideals");
+            }
+            key ("ideals") {
+                if ($gottattoo = true) {
+                    ["Thou hast seen the changes, I'm sure..."];
+                } else {
+                    ["'Tis sad to say, <v0>..."];
+                }
+                ["Courage and Valor have become so debased that Knights like Wilfred are little more than braggarts and mercenaries! Where once the pinnacle of honor was a Monitorian knight, now people see them as vain bullies." *"It sickens me... I had nearly decided to renounce my commission when mother sent word of father's disappearance."];
+                TurnOff("ideals");
+            }
+            key ("Monitor") {
+                if ($gottattoo = true) {
+                    ["What can I tell thee that thou dost not already know?"];
+                } else {
+                    ["Where to start?"];
+                }
+                ["Monitor is a city to the south of here. 'Tis dedicated to Courage and Valor. Monitorian soldiers are called the Pikemen and wear a tattoo on their faces."];
+                ["There are three Pikemen Commands -- the wolves, the leopards, and the bears. I am a Captain in the Wolf Command. Each Command runs the city for a portion of the year."];
+                TurnOff("Monitor");
+                TurnOn("runs the city");
+            }
+            key ("runs the city") {
+                ["The senior officer of the Command becomes Lord of Monitor for that Command's portion of the year. This ensures the continuing balance of Commands."];
+                ["'Twas meant to keep the battling for supremacy between the Commands at a minimum." *"If each Command knows that it will have a chance to control the city during the year, more attention is given to the military functions of the Command rather than the political."];
+                TurnOff("runs the city");
+            }
+            key ("Wolf Command") {
+                if ($gottattoo = true) {
+                    ["A hardy bunch, are we not? Not as hot-headed as those Bears, and much more tightly knit than those Leopards."];
+                } else {
+                    ["We are a hardy bunch, <v0>. Not as hot-headed as those Bears, and much more tightly knit than those Leopards."];
+                }
+                TurnOff("Wolf Command");
+            }
+            key ("Moonshade") {
+                ["I've ne'er been there myself, not being overly fond of wizards and their feuds. But if thou desirest spells or items of enchantment, that is the place to go." *"If thou art looking to go to the City of Mages, thou wilt need a boat."];
+                TurnOff("Moonshade");
+                TurnOn(<< "wizard feuds", "boat" >>);
+            }
+            key ("wizard feuds") {
+                ["There isn't a sorcerer alive what doesn't scheme to become MageLord of that city! The whole place is split into rival factions that bicker constantly with each other."];
+                TurnOff("wizard feuds");
+            }
+            key ("boat") {
+                ["The Magic Storms have wrecked every boat on this coast except one. That vessel belongs to Captain Hawk."];
+                TurnOff("boat");
+                TurnOn("Captain Hawk");
+            }
+            key ("Captain Hawk") {
+                ["'Tis no use to think of hiring him. He was in a fracas here, broke things up a bit." *"The Pikemen dragged Hawk away when he took a swing at their commander. He's being held at Bull Tower until he pays their fine."];
+                if (v3 = true) {
+                    SetSpeaker1_i(0, _Devra);
+                    ["Fine! More like ransom, I'd call it! Thou knowest as well as I, Argus, that Hawk can't pay..." *"Not if he doesn't put out from here. And he swore he wouldn't until these storms stop."];
+                    CloseSpeaker1_i();
+                    SetSpeakerSlot_i(0);
+                }
+                flag(461) = true;
+                TurnOff("Captain Hawk");
+                TurnOn("Pikemen");
+            }
+            key ("Pikemen") {
+                ["I didn't call them, <v0>. I've known Hawk since I was a boy and, being a Pikeman myself, I have little to worry about with him."];
+                ["To be sure, he can put up a mighty fight and break things... But he always pays for the damages when he wakes. Someone else must have pulled them in after him."];
+                TurnOff("Pikemen");
+                TurnOn("someone else");
+            }
+            key ("someone else") {
+                ["I'd wager my sword that it was that merchant, Flindo. He was mightily put out when Hawk refused to sail to Moonshade until the storms eased up."];
+                TurnOff("someone else");
+            }
+            key ("out of business") {
+                ["Aye, few people care to stray too far from shelter these days." *"Even Hawk put in here and refused to budge because of the storms... Though his passengers are less than thrilled with his decision." *"And all our help ran off to the cities, hoping that it would be safer around all those buildings."];
+                TurnOff("out of business");
+                TurnOn("passengers");
+            }
+            key ("passengers") {
+                ["Hawk hath two passengers staying here until he puts out again -- if he ever pays the Pikemen, that is. One of them is the fellow with the parrot. Kane, I think his name is. The other is an arrogant fellow named Flindo. He's a merchant." *"I was glad to have them, being as we only have four other guests."];
+                TurnOff("passengers");
+                TurnOn("guests");
+            }
+            key ("guests") {
+                ["Yes... There be Ensorcio. He's an exiled mage from Moonshade." *"There be Selina, who hath not been here very long. She is very afraid of these storms..."];
+                if (v3 = true) {
+                    SetSpeaker1_i(0, _Devra);
+                    ["Bah! She's no more afraid of those storms than thou art! She follows thee about right well enough, storm or no!"];
+                    CloseSpeaker1_i();
+                    SetSpeakerSlot_i(0);
+                    ["Mother!"];
+                }
+                ["Byrin's here, which is a blessing. 'Tis good to have a gleeman to pass the weary hours between storms. And then there be that new fellow, Miggim. I don't know too much about him... He hath only been here a few days and is rarely out of his room."];
+                TurnOff("guests");
+            }
+            key ("Sleeping Bull") {
+                ["'Tis an uncommon name, to be sure. It doth have something to do with the village that once was here. According to family tales, this land once belonged to a mage who hated all people. This mage created a huge stone bull to kill trespassers on his land."];
+                ["'Twas the bull's defeat that gave the village its name... And, in turn, became the name of the inn itself."];
+                TurnOff("Sleeping Bull");
+                TurnOn("bull's defeat");
+            }
+            key ("bull's defeat") {
+                ["One day the mage heard a local noble's son claim that he could defeat the bull. The mage told the boy he was welcome to try, but death would be the reward of failure."];
+                ["When the boy asked what would reward his success, the mage wagered his land. That night the boy stole the ring from the bull's nose, turning it back to inanimate stone."];
+                ["The village was named after the huge stone bull that once stood in the center of the market square. I do not know what happened to the bull, if ever there was one, for I searched for it as a lad and never found it."];
+                TurnOff("bull's defeat");
+            }
+            key ("duel") {
+                ["I will not lie to thee... I did, indeed, kill a man in a duel of honor. As I called the duel, it was he who named the conditions." *"He were equally trained and armed as myself, else I would have demanded to cross swords with his seconds. And I would have asked him to yield, but my blow glanced off his hilt and took him square in the throat."];
+                TurnOff("duel");
+                TurnOn("called the duel");
+            }
+            key ("called the duel") {
+                ["He likened me to my forefather, Silverpate -- loudly, and in public. I asked for his apology, and when he further heaped filth upon my name... I called him to duel before witnesses."];
+                TurnOff("called the duel");
+            }
+            key ("bribes") {
+                PushKeys();
+                ["By the stone bull's horns! I'd like to know who insists on telling these false tales! I was cleared of all allegations by my commander and I'll have thine apology for spreading such a lie!"];
+                ["Wilt thou apologize? Or shall I take my recompense from thine hide?"];
+                TurnOn(<< "apologize", "don't apologize" >>);
+            }
+            key ("apologize") {
+                ["I accept thine apology..." *"Thou art wise, for I had no wish to do thee harm. But I shall not stand by while my name is abused. Forgive me, but I must withdraw until I am more sure of my temper."];
+                terminate;
+            }
+            key ("don't apologize") {
+                ["So be it then!" ~"Prepare thyself to be thrashed!"];
+                AttackAvatar_i(_Argus);
+                terminate;
+            }
+            key ("food") {
+                if ((~GetWorkType(_Argus) = _TendShop) or (~GetWorkType(_Argus) = _Waiter)) {
+                    if not v5 {
+                        ["Mother doth do all the cooking here... and she is very good."];
+                        if (v3 = true) {
+                            SetSpeaker1_i(0, _Devra);
+                            ["What a nice son! He compliments me so!"];
+                            CloseSpeaker1_i();
+                            SetSpeakerSlot_i(0);
+                            ["It IS true."];
+                        }
+                        v5 = true;
+                    }
+                    ArgusSellsFood_i();
+                } else {
+                    ["Return when we be open, and I will sell thee a meal!"];
+                    TurnOff("food");
+                }
+            }
+            key ("drink") {
+                if ((~GetWorkType(_Argus) = _TendShop) or (~GetWorkType(_Argus) = _Waiter)) {
+                    ["I am certain our selection will please thee, <v0>."];
+                    ArgusSellsDrink_i();
+                } else {
+                    ["If thou wilt return when we are open, I will sell thee a drink!"];
+                    TurnOff("drink");
+                }
+            }
+            key ("room") {
+                ["The cost is 8 gold coins per person. Wouldst thou like a room for the night?"];
+                if ~AskYesNo() {
+                    v8 = ~GetParty();
+                    v9 = 0;
+                    Foreach v12 in v8 {
+                        v9 = (v9 + 1);
+                    }
+                    v13 = (v9 * 8);
+                    v14 = ~CountItem(_All, _All, _Gold_Coins, _Party);
+                    if (v14 >= v13) {
+                        ["Here is the key to room number 3."];
+                        v15 = ~TakeFromParty_i(0, _All, _All, _Gold_Coins, v13);
+                        v16 = ~GiveItemsOrDrop_i(true, 0, 9, 3, 641, 1, _Avatar);
+                        ["The rooms are upstairs."];
+                    } else {
+                        ["I do believe thou dost not have enough gold coins for a room."];
+                    }
+                } else {
+                    ["Some other time, then."];
+                }
+                TurnOff("room");
+            }
+            key ("bye") {
+                CloseSpeaker0_i();
+                Bark_i(0, "@Farewell!@", _Avatar);
+                Bark_i(2, "@Come again!@", _Argus);
+                break;
+            }
+        }
+        clear_answers;
+    }
+}
+
+Usable ArgusSellsFood_i #locals(16) #uses(~LordOrLady, ~AskOrdList, ~AskYesNo, ~ArgusHaggles_i, ~SellItem_i, ~PartyUtters) {
+    v0 = ~LordOrLady();
+    PushKeys();
+    v1 = true;
+    v2 = << "nothing", "ham", "mutton", "trout", "cheese", "pastry" >>;
+    v3 = << 0, 377, 377, 377, 377, 377 >>;
+    v4 = << 65177, 11, 8, 12, 27, 6 >>;
+    v5 = << 0, 20, 22, 10, 12, 8 >>;
+    v6 = << 0, 12, 14, 6, 7, 4 >>;
+    v7 = 644;
+    v8 = << 0, 1, 1, 1, 1, 1 >>;
+    v9 = << 0, 1, 1, 1, 1, 1 >>;
+    ["What wouldst thou like, <v0>?"];
+    While v1 {
+        v10 = ~AskOrdList(v2);
+        if (v10 = 1) {
+            ["Perhaps another time, then."];
+            v1 = false;
+        } else {
+            v11 = v5::v10;
+            v12 = 0;
+            if (v10 = 2) {
+                ["<v11> gold coins is the price. Dost thou accept?"];
+                v13 = "haunches of ham";
+            }
+            if (v10 = 3) {
+                ["That will be <v11> gold coins. Dost thou find this acceptable?"];
+                v13 = "joints of mutton";
+            }
+            if (v10 = 4) {
+                ["We serve the best fish around! <v11> gold coins is the price. Dost thou agree?"];
+                v13 = "trout";
+            }
+            if (v10 = 5) {
+                ["That will be <v11> gold coins. Dost thou accept?"];
+                v13 = "wedges of cheese";
+            }
+            if (v10 = 6) {
+                ["Ah, Devra makes a fine pastry that will melt in thy mouth! For <v11> gold coins I will sell thee one. Dost thou agree?"];
+                v13 = "pastries";
+            }
+            if (v11 = v6::v10) {
+                if (~AskYesNo() = true) {
+                    v14 = v11;
+                } else {
+                    v14 = 0;
+                }
+            } else {
+                v14 = ~ArgusHaggles_i(v6::v10, v5::v10);
+            }
+            if (v14 > 0) {
+                if (v9::v10 = 1) {
+                    ["How many <v13> wouldst thou like?"];
+                    v12 = ~SellItem_i(false, 1, 20, v14, v7, v8::v10, v4::v10, v3::v10);
+                } else {
+                    v12 = ~SellItem_i(false, 1, 0, v14, v7, v8::v10, v4::v10, v3::v10);
+                }
+            }
+            if (v12 = 1) {
+                ["Enjoy thy meal, <v0>."];
+            } else {
+                if (v12 = 2) {
+                    ["Thou canst not carry so much, <v0>."];
+                } else {
+                    if (v12 = 3) {
+                        v15 = ~PartyUtters(false, 0, (("@But " + v0) + ", we have not the coins to pay for this.@"), 1);
+                        if (31 < (~GetNPCID_i(_Argus) + 6)) {
+                            SetNPCID_i(31, _Argus);
+                        } else {
+                            SetNPCID_i((~GetNPCID_i(_Argus) + 6), _Argus);
+                        }
+                    } else {
+                    }
+                }
+            }
+            ["Wouldst thou care for more?"];
+            v1 = ~AskYesNo();
+        }
+    }
+    PopKeys();
+}
+
+Usable ArgusSellsDrink_i #locals(16) #uses(~LordOrLady, ~AvatarName, ~AskOrdList, ~AskYesNo, ~ArgusHaggles_i, ~SellItem_i) {
+    v0 = ~LordOrLady();
+    v1 = ~AvatarName();
+    PushKeys();
+    v2 = true;
+    v3 = << "nothing", "wine", "mead", "ale" >>;
+    v4 = << 0, 616, 616, 616 >>;
+    v5 = << 65177, 5, 1, 3 >>;
+    v6 = << 0, 8, 15, 5 >>;
+    v7 = << 0, 5, 9, 2 >>;
+    v8 = 644;
+    v9 = << 0, 1, 1, 1 >>;
+    v10 = << 0, 1, 1, 1 >>;
+    ["What wouldst thou like to quench thy thirst, <v0>?"];
+    While v2 {
+        v11 = ~AskOrdList(v3);
+        if (v11 = 1) {
+            ["Our cellars are full, if thou dost change thy mind!"];
+            v2 = false;
+        } else {
+            v12 = v6::v11;
+            v13 = 0;
+            if (v11 = 2) {
+                ["Ah, that will be <v12> gold coins. We have very little left." ~"Dost thou accept?"];
+                v14 = "bottles of wine";
+            }
+            if (v11 = 3) {
+                ["At <v12>, wilt thou try some?"];
+                v14 = "bottles of mead";
+            }
+            if (v11 = 4) {
+                ["<v12> is the price. Dost thou find that acceptable?"];
+                v14 = "mugs of ale";
+            }
+            if (v12 = v7::v11) {
+                if ~AskYesNo() {
+                    v15 = v12;
+                } else {
+                    v15 = 0;
+                }
+            } else {
+                v15 = ~ArgusHaggles_i(v7::v11, v6::v11);
+            }
+            if (v15 > 0) {
+                if (v10::v11 = 1) {
+                    ["How many <v14> wouldst thou like?"];
+                    v13 = ~SellItem_i(false, 1, 20, v15, v8, v9::v11, v5::v11, v4::v11);
+                } else {
+                    v13 = ~SellItem_i(false, 1, 0, v15, v8, v9::v11, v5::v11, v4::v11);
+                }
+            }
+            if (v13 = 1) {
+                ["Drink in health, <v0>!"];
+            } else {
+                if (v13 = 2) {
+                    ["Thou canst not carry so many bottles, <v0>!"];
+                } else {
+                    if (v13 = 3) {
+                        ["I am afraid thou dost not have the money to pay, <v0>."];
+                        if (31 < (~GetNPCID_i(_Argus) + 6)) {
+                            SetNPCID_i(31, _Argus);
+                        } else {
+                            SetNPCID_i((~GetNPCID_i(_Argus) + 6), _Argus);
+                        }
+                        terminate;
+                    }
+                }
+            }
+            ["Wouldst thou care for more?"];
+            v2 = ~AskYesNo();
+        }
+    }
+    PopKeys();
+}
+
+Function ~ArgusHaggles_i accepts a0, a1 #locals(15) #uses(~LordOrLady, ~AskList, ~Haggle_i, ~IsNPCNear, ~AskYesNo, SayIfNear_i) {
+    v2 = ~LordOrLady();
+    v3 = ~AvatarSex();
+    v4 = v1;
+    v5 = ((v0 / 3) * 2);
+    v6 = (15 - (~GetNPCID_i(_Argus) / 2));
+    v7 = 0;
+    v8 = 1;
+    v9 = 0;
+    v10 = 2;
+    v11 = ~GetNPCID_i(_Argus);
+    While v8 {
+        v12 = ~AskList(<< "yes", "no", "haggle" >>);
+        if (v12 = "no") {
+            return 0;
+        } else {
+            if (v12 = "yes") {
+                v13 = 0;
+                goto label_8;
+            }
+        }
+        v14 = ~Haggle_i(v7, v6, v9, v5, v10, v0, v4);
+        v9 = (v9 + 1);
+        v7 = v14::4;
+        v13 = v14::3;
+        v15 = v4;
+        v4 = v14::2;
+        v5 = v14::1;
+        label_8:
+        v16 = ~Random(3);
+        if (v13 < 2) {
+            if (v4 < (v0 + ((v1 - v0) / 4))) {
+                if (v16 = 1) {
+                    ["Do not tell Devra... She will think her son hath gone soft in the head for giving thee a price like this."];
+                    if ~IsNPCNear(_Devra) {
+                        SetSpeaker1_i(0, _Devra);
+                        ["Thou woolly-headed wolf! Thine head is fine. 'Tis thine heart that is soft..."];
+                        CloseSpeaker1_i();
+                        SetSpeakerSlot_i(0);
+                    }
+                }
+                if (v16 = 2) {
+                    ["Thou dost drive a hard bargain, <v2>!"];
+                }
+                if (v16 = 3) {
+                    ["Thou hast a shrewd tongue, <v2>! It hath been some time since I was beaten at this game!"];
+                }
+            } else {
+                if (v4 < (v0 + ((v1 - v0) / 3))) {
+                    if (v16 = 1) {
+                        ["Our prices are honest here at the Sleeping Bull!"];
+                    }
+                    if (v16 = 2) {
+                        ["Thou hast found me in a generous mood, <v2>! 'Tis not every day I sell goods at these prices!"];
+                    }
+                    if (v16 = 3) {
+                        ["Thou art a shrewd bargainer, <v2>!"];
+                    }
+                } else {
+                    if (v4 < (v0 + ((v1 - v0) / 2))) {
+                        if (v16 = 1) {
+                            ["Fair enough, if I do say so myself."];
+                        }
+                        if (v16 = 2) {
+                            ["With customers such as thou, I shall never make a profit..."];
+                        }
+                        if (v16 = 3) {
+                            ["With these troubled times, I must charge higher prices..."];
+                        }
+                    } else {
+                        if (v16 = 1) {
+                            ["'Tis a pleasure to bargain with thee, <v2>!"];
+                        }
+                        if (v16 = 2) {
+                            ["Thou art most generous with thy money, <v2>!"];
+                        }
+                        if (v16 = 3) {
+                            ["'Tis a shame I must charge high prices like this."];
+                        }
+                    }
+                }
+            }
+            ["Dost thou agree on a price of <v4>,\x09<v2>?"];
+            if ~AskYesNo() {
+                if (v11 > 1) {
+                    SetNPCID_i((v11 - 2), _Argus);
+                }
+                return v4;
+            } else {
+                if (v16 = 1) {
+                    ["I thought we had an agreement!"];
+                }
+                if (v16 = 2) {
+                    ["I have no time for this!"];
+                }
+                if (v16 = 3) {
+                    ["Dost thou take me for a fool?" ~"I do not have all day to stand and argue!"];
+                }
+                if (31 < (v11 + 10)) {
+                    SetNPCID_i(31, _Argus);
+                } else {
+                    SetNPCID_i((v11 + 10), _Argus);
+                }
+                return 0;
+            }
+        }
+        if (v7 = 1) {
+            if (v13 = 5) {
+                ["<v4> is my final offer." ~"Dost thou accept?"];
+                if (v11 < 28) {
+                    SetNPCID_i((v11 + 4), _Argus);
+                }
+                if ~AskYesNo() {
+                    return v4;
+                }
+                v8 = 0;
+            } else {
+                ["Very well. <v4> is my final offer."];
+                if (v11 < 30) {
+                    SetNPCID_i((v11 + 2), _Argus);
+                }
+            }
+        } else {
+            if (v13 = 2) {
+                if (v16 = 1) {
+                    ["'Tis a good offer. How doth <v4> sound?"];
+                }
+                if (v16 = 2) {
+                    ["Thou art a shrewd bargainer, <v2>. Have we agreed on <v4> gold coins?"];
+                }
+                if (v16 = 3) {
+                    ["My price is <v4>. Dost thou accept?"];
+                }
+            }
+            if (v13 = 3) {
+                if (v16 = 1) {
+                    ["These are perilous times and supplies are low. Wilt thou accept <v4>?"];
+                }
+                if (v16 = 2) {
+                    ["I do not know..." ~"Wouldst thou consider <v4>?"];
+                }
+                if (v16 = 3) {
+                    ["I am not certain... What sayest thou to <v4>?"];
+                }
+            }
+            if (v13 = 4) {
+                if (v16 = 1) {
+                    ["<v4> is as low as I can go. What sayest thou?"];
+                }
+                if (v16 = 2) {
+                    ["Surely thou canst see that I can accept no less than <v4>."];
+                }
+                if (v16 = 3) {
+                    ["I deserve no less than <v4> gold coins, <v2>!"];
+                }
+            }
+            if (v13 = 5) {
+                v4 = v15;
+                if (v16 = 1) {
+                    ["Mother, come and hear this! The customer jests with me!"];
+                    if ~IsNPCNear(_Devra) {
+                        SayIfNear_i((((("@" + v2) + " we cannot possibly accept less than ") + v4) + " gold coins.@"), 65495);
+                        SetSpeaker0_i(0, _Argus);
+                    } else {
+                        ["<v4>  gold coins is as low as I can go."];
+                    }
+                    ["What dost thou say to this?"];
+                }
+                if (v16 = 2) {
+                    ["Thou art not bargaining with a fool, <v2>! <v4>, and no less!"];
+                }
+                if (v16 = 3) {
+                    ["If I accepted such a price as this, I could not call myself an innkeeper! <v4> is where I stand!"];
+                }
+                if (v11 < 31) {
+                    SetNPCID_i((v11 + 1), _Argus);
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,100 @@
+Routine Jukebox accepts a0 #locals(18) #uses(Bark_i) {
+    if (event = _Action) {
+        v0 = ~FindNearby_i(8, 60, _All, item);
+        Foreach v3 in v0 {
+            if not ~GetItemFlag_i(_InParty_i, v3) {
+                Npc_schedule(v3);
+                ClearBark_i(v3);
+            }
+        }
+        terminate;
+    }
+    v4 = ~AskBarInput(0, 1, 8, 0);
+    ClearBark_i(_Party);
+    if (v4 = 0) {
+        SetMusic(item, 255);
+        v0 = ~FindNearby_i(8, 40, _All, item);
+        Foreach v3 in v0 {
+            if not ~GetItemFlag_i(_InParty_i, v3) {
+                Npc_schedule(v3);
+            }
+        }
+    }
+    if (v4 = 1) {
+        Bark_i(2, "@Ahhh, Stones!@", _Iolo);
+        Bark_i(10, "@Not Stones again...@", _Shamino);
+        SetMusic(item, 13);
+        v0 = ~FindNearby_i(8, 40, _All, item);
+        Foreach v3 in v0 {
+            if not ~GetItemFlag_i(_InParty_i, v3) {
+                SetWorkType(_EatAtInn, v3);
+                ClearItemFlag_i(_Asleep, v3);
+            }
+        }
+    }
+    if (v4 = 2) {
+        Bark_i(3, "@This is familiar...@", _Dupre);
+        Bark_i(20, "@Let us hear a real tune...@", _Shamino);
+        SetMusic(item, 17);
+    }
+    if (v4 = 3) {
+        Bark_i(5, "@Ahh, my favorite tune...@", _Shamino);
+        SetMusic(item, 19);
+    }
+    if (v4 = 4) {
+        Bark_i(2, "@Ahhh, pretty.@", _Avatar);
+        Bark_i(17, "@I do think I am sleepy...@", _Iolo);
+        SetMusic(item, 31);
+        v0 = ~FindNearby_i(8, 40, _All, item);
+        Foreach v3 in v0 {
+            if not ~GetItemFlag_i(_InParty_i, v3) {
+                SetWorkType(_MajorSit, v3);
+                ClearItemFlag_i(_Asleep, v3);
+            }
+        }
+    }
+    if (v4 = 5) {
+        SetMusic(item, 23);
+        Bark_i(2, "@Another tune!@", _Miggim);
+        Bark_i(10, "@This tune is most dark...@", _Iolo);
+    }
+    if (v4 = 6) {
+        Bark_i(3, "@Perchance a game of darts?@", _Shamino);
+        Bark_i(10, "@Too slow...@", _Avatar);
+        Bark_i(15, "@Another song perhaps...@", _Dupre);
+        SetMusic(item, 21);
+        v0 = ~FindNearby_i(8, 40, _All, item);
+        Foreach v3 in v0 {
+            if not ~GetItemFlag_i(_InParty_i, v3) {
+                SetWorkType(_Wander, v3);
+                ClearItemFlag_i(_Asleep, v3);
+            }
+        }
+    }
+    if (v4 = 7) {
+        SetMusic(item, 12);
+        Bark_i(3, "@Not 'Sea Shanty!'@", _Avatar);
+        Bark_i(10, "@Cease!@", _Iolo);
+        v0 = ~FindNearby_i(8, 40, _All, item);
+        Foreach v3 in v0 {
+            if not ~GetItemFlag_i(_InParty_i, v3) {
+                SetWorkType(_Combat_0, v3);
+                ClearItemFlag_i(_Asleep, v3);
+            }
+        }
+    }
+    if (v4 = 8) {
+        Bark_i(0, "@Everyone dance!@", _Avatar);
+        SetMusic(item, 16);
+        v0 = ~FindNearby_i(8, 40, _All, item);
+        Foreach v3 in v0 {
+            if not ~GetItemFlag_i(_InParty_i, v3) {
+                SetWorkType(_Dance, v3);
+                ClearItemFlag_i(_Asleep, v3);
+            }
+        }
+    }
+    Npc_schedule(_Ale);
+    v17 = ~PostInFuture(32, << _aNO_HALT_i, _aUSABLE_i, #Jukebox >>, item);
+    terminate;
+}

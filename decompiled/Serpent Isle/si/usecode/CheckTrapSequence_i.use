@@ -1,0 +1,50 @@
+Routine CheckTrapSequence_i accepts a0 #locals(3) #uses(GivePartyExp_i, RemoveForceWalls_i, SpringFireTrap_i) {
+    v0 = ~GetQuality(item);
+    if (v0 = 201) && (~GetFrame(item) = 7) {
+        if (flag(747) and flag(748)) {
+            GivePartyExp_i(100);
+            Sfx(67);
+            CreateSpriteOn_i(65535, 0, 0, 0, 0, 0, 21, _Avatar);
+            flag(746) = true;
+            v1 = ~FindNearby_i(16, 10, _Trap_Type, item);
+            Item_destroy(v1);
+            v2 = ~FindNearby_i(0, 10, _Field_Fire, item);
+            Item_destroy(v2);
+            RemoveForceWalls_i();
+        } else {
+            SpringFireTrap_i();
+        }
+    }
+    if (v0 = 202) {
+        if (~GetFrame(item) = 7) {
+            if (flag(748) and not flag(746)) {
+                GivePartyExp_i(100);
+                flag(747) = true;
+                Sfx(67);
+                CreateSpriteOn_i(65535, 0, 0, 0, 0, 0, 21, _Avatar);
+                v1 = ~FindNearby_i(16, 10, _Trap_Type, item);
+                Item_destroy(v1);
+                v2 = ~FindNearby_i(0, 10, _Field_Fire, item);
+                Item_destroy(v2);
+            }
+        } else {
+            SpringFireTrap_i();
+        }
+    }
+    if (v0 = 203) {
+        if (~GetFrame(item) = 9) {
+            if (not flag(747) and not flag(746)) {
+                GivePartyExp_i(100);
+                flag(748) = true;
+                Sfx(67);
+                CreateSpriteOn_i(65535, 0, 0, 0, 0, 0, 21, _Avatar);
+                v1 = ~FindNearby_i(16, 10, _Trap_Type, item);
+                Item_destroy(v1);
+                v2 = ~FindNearby_i(0, 10, _Field_Fire, item);
+                Item_destroy(v2);
+            }
+        } else {
+            SpringFireTrap_i();
+        }
+    }
+}

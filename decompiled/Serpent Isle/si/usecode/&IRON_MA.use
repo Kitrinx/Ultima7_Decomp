@@ -1,0 +1,94 @@
+Routine Iron_Maiden accepts a0 #locals(14) #uses(PathToItem_i, UnfreezeAvatar_i) {
+    if (event = _Converse) {
+        v0 = ~FindNearby_i(16, 5, _Egg_Type, item);
+        Foreach v3 in v0 {
+            v4 = ~GetQuality(v3);
+            v5 = ~GetFrame(v3);
+            if (v5 = 7) && (v4 = 200) {
+                $USED_IRON_MAIDEN = true;
+                v6 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #EnterIronMaiden_i >>, item);
+            }
+        }
+        v7 = ~GetFrame(item);
+        if (v7 = 1) {
+            SetFrame(0, item);
+            terminate;
+        }
+        if (v7 = 0) && ($USED_IRON_MAIDEN = false) {
+            PathToItem_i(10, item, #Iron_Maiden, 65535, << 0, 1 >>, << 1, 0 >>, item);
+            terminate;
+        }
+    }
+    if (event = _Pathfind1) {
+        SetItemFlag_i(_DontMove_i, _Avatar);
+        Polymorph_i(_Blank_Type, _Avatar);
+        SetFrame(1, item);
+        v6 = ~PostInFuture(25, << _aNO_HALT_i, _aUSABLE_i, #Iron_Maiden >>, item);
+        v6 = ~PostInFuture(2, << _aNO_HALT_i, _aBARK_i, "@AAAAAHHHHH!!!!!!@" >>, item);
+        terminate;
+    }
+    if ((event = _Action) and ($temp1flag = false)) {
+        v7 = ~GetFrame(item);
+        if (v7 = 0) {
+            v6 = ~PostAction(<< _aNO_HALT_i, _aBARK_i, "@...uunnhhhh...@" >>, item);
+        }
+        if (v7 = 1) {
+            v8 = 0;
+            While (v8 < 15) {
+                v9 = ~Item_create(_Blood_Trails);
+                if v9 {
+                    SetItemFlag_i(_IsTemporary_i, v9);
+                    v10 = ~rndRange(3, 0);
+                    SetFrame(v10, v9);
+                    v11 = ~rndRange(2, 65534);
+                    v12 = ~rndRange(2, 1);
+                    v13 = ~GetCoord(item);
+                    v6 = ~PopToMap(<< (v13::1 + v11), (v13::2 + v12), v13::3 >>);
+                }
+                v8 = (v8 + 1);
+            }
+            SetFrame(0, item);
+            v13 = ~GetCoord(item);
+            v13::2 = (v13::2 + 2);
+            Item_move(v13, _Avatar);
+            Polymorph_i(_Avatar_Type, _Avatar);
+            v6 = ~PostInFuture(5, << _aNO_HALT_i, _aLIE_FRAME_i, _aWAIT_i, 15 >>, _Avatar);
+            v6 = ~PostInFuture(15, << _aNO_HALT_i, _aUSABLE_i, #Iron_Maiden >>, item);
+            $temp1flag = true;
+            terminate;
+        }
+        if (v7 = 2) {
+            v13 = ~GetCoord(item);
+            createSprite(65535, 0, 15, 15, (v13::2 - 6), (v13::1 - 6), 17);
+            terminate;
+        }
+    }
+    if ((event = _Action) and ($temp1flag = true)) {
+        UnfreezeAvatar_i();
+        $temp1flag = false;
+        v6 = ~GetNPCStat_i(_Hits, _Avatar);
+        ReduceHits_i(0, v6, _Avatar);
+    }
+}
+
+Routine Rack accepts a0 #locals(1) #uses(~PartyUtters, Bark_i) {
+    v0 = ~PartyUtters(true, 0, "@Who wants this?@", 65180);
+    if ~IsNPCNear_i(_Iolo) {
+        Bark_i(8, "@I do!@", _Iolo);
+    }
+    if ~IsNPCNear_i(_Shamino) {
+        Bark_i(12, "@I shall do it!@", _Shamino);
+    }
+    if ~IsNPCNear_i(_Dupre) {
+        Bark_i(16, "@Me! Me! Me!@", _Dupre);
+    }
+}
+
+Routine Thumbscrews accepts a0 #locals(0) #uses(Bark_i) {
+    if ~IsNPCNear_i(_Iolo) {
+        Bark_i(0, "@Iolo, about that gold...@", _Avatar);
+        Bark_i(16, "@thou dost owe me...@", _Avatar);
+        Bark_i(32, "@Avatar, what gold?@", _Iolo);
+        Bark_i(48, "@Just kidding...@", _Avatar);
+    }
+}

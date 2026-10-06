@@ -1,0 +1,19 @@
+Routine HelmOfMonitorEgg_i accepts a0 #locals(1) #uses(~IsInInv, GivePartyExp_i) {
+    if (event = _Trigger) {
+        v0 = ~IsInInv(1, 65177, _Magic_Helm, 1, _Party);
+        if v0 {
+            $gothelmofmonitor = true;
+            GivePartyExp_i(600);
+            Item_destroy(item);
+        }
+    }
+}
+
+Routine RemoveLightsEgg_i accepts a0 #locals(4) {
+    if (event = _Trigger) {
+        v0 = ~FindNearby_i(128, 15, _Ambient_Light, item);
+        Foreach v3 in v0 {
+            Item_destroy(v3);
+        }
+    }
+}

@@ -1,0 +1,389 @@
+Routine Ruggs accepts a0 #locals(24) #uses(~LordOrLady, ~AvatarName, ~IsNPCNear, Bark_i, PartyFaces_i, ~AskYesNo, ~GiveItemsOrDrop_i, ~IsInInv, ~PartyUtters, BarkIfNear_i) {
+    v0 = ~LordOrLady();
+    v1 = ~AvatarName();
+    v2 = ~AvatarSex();
+    v3 = ~IsNPCNear(_Iolo);
+    v4 = ~IsNPCNear(_Dupre);
+    v5 = ~IsNPCNear(_Shamino);
+    v6 = ~FindNearby_i(0, 20, _Fawn_Guard, _Ruggs);
+    v7 = << 1034, 2025, 0 >>;
+    if (event = _NearDeath) {
+        v8 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #Green_Noble >>, item);
+    }
+    if ((event = _Bark) or (event = _Path_Failure)) {
+        Npc_schedule(_Ruggs);
+        Bark_i(2, "@I must work...@", _Ruggs);
+    }
+    if (event = _Converse) {
+        Item_bark("@Excuse me, friend.@", _Avatar);
+        PartyFaces_i(65477);
+        Bark_i(2, "@How may I be of service?@", _Ruggs);
+        SetWorkType(_Talk, _Ruggs);
+    }
+    if (event = _Talking) {
+        ClearBark_i(_Ruggs);
+        Npc_schedule(_Ruggs);
+        SetSpeaker0_i(0, _Ruggs);
+        v9 = ~GetItemFlag_i(_Met, _Ruggs);
+        v10 = ~GetItemFlag_i(_Met, _Delphynia);
+        if ((flag(360) = false) and v6) {
+            SetItemFlag_i(_Met, _Ruggs);
+            flag(360) = true;
+            ClearItemFlag_i(_DontMove_i, _Avatar);
+            NewSchedule_i(<< 1145, 1899, 1212, 1857, 1145, 1899, 1181, 1874 >>, << 26, 6, 26, 14 >>, << 2, 5, 6, 7 >>, _Ruggs);
+            Npc_schedule(_Ruggs);
+            ["Oh, please, <v0>, a favor!"];
+            if (v9 = false) {
+                ["My name is Ruggs. I am a poor sailor whose visage offends the good people of Fawn, and I have been forbidden entry into the city."];
+            } else {
+                ["My visage offends the good people of Fawn, and I have been forbidden entry into the city."];
+            }
+            ["I have not heard from the lady I love since mine exile, and I can find no one willing to carry her word of my continuing devotion."];
+            ["Please, <v0>, I beg of thee, wouldst thou take this letter to her for me?"];
+            if (~AskYesNo() = true) {
+                ["Oh, I knew by the nobility of thy face that thou wouldst take pity on a wretch such as myself!"];
+                ["Take this to Delphynia, the herbalist. Thou mayest find her at the greenhouse."];
+                ["If thou shouldst bring a return message, I will introduce thee to my shipmate, Scots, who makes maps."];
+                ["Perhaps his cartography would be of aid to thee."];
+                v8 = ~GiveItemsOrDrop_i(true, false, 5, 4, 797, 1, _Avatar);
+                flag(338) = true;
+                v11 = ~FindNearby_i(0, 20, _Fawn_Guard, _Avatar);
+                Foreach v14 in v11 {
+                    if (~GetNPCID_i(v14) = 1) {
+                        SetWorkType(_Talk, v14);
+                    }
+                }
+                PathfindNPC_i(false, #Ruggs, item, _Bark, v7, _Ruggs);
+                terminate;
+            } else {
+                ["I have searched all my life for a woman who would overlook my deformity and learn to love me. Somehow I will find a way to tell Delphynia of my love..."];
+                if (v3 = true) {
+                    SetSpeaker1_i(0, _Iolo);
+                    ["How can thine heart be so hard, Avatar? Thou wouldst search every corner of the land and sea to help me find Gwenno."];
+                    ["Wilt thou reconsider and aid this poor soul's search for love?"];
+                    if (~AskYesNo() = true) {
+                        SetSpeakerSlot_i(0);
+                        ["There may be hope after all... Here is the scroll."];
+                        v8 = ~GiveItemsOrDrop_i(true, false, 5, 4, 797, 1, _Avatar);
+                        ["Take this to Delphynia, the herbalist. Thou mayest find her at the greenhouse."];
+                        ["If thou shouldst bring a return message, I will introduce thee to my shipmate, Scots, who makes maps."];
+                        ["Perhaps his cartography would be of aid to thee."];
+                        flag(338) = true;
+                        v11 = ~FindNearby_i(0, 20, _Fawn_Guard, _Avatar);
+                        Foreach v14 in v11 {
+                            if (~GetNPCID_i(v14) = 1) {
+                                SetWorkType(_Talk, v14);
+                            }
+                        }
+                        PathfindNPC_i(false, #Ruggs, item, _Bark, v7, _Ruggs);
+                        terminate;
+                    } else {
+                        ["I am sure that thou hast thy reasons, Avatar. But I am sorely disappointed."];
+                        CloseSpeaker1_i();
+                        SetSpeakerSlot_i(0);
+                        ["The Avatar! Forgive me... unlike these local folk, I know whom thou art!"];
+                        ["I am certain that thy business is far more urgent."];
+                        $refusedruggsletter = true;
+                        v11 = ~FindNearby_i(0, 20, _Fawn_Guard, _Avatar);
+                        Foreach v14 in v11 {
+                            if (~GetNPCID_i(v14) = 1) {
+                                SetWorkType(_Talk, v14);
+                            }
+                        }
+                        PathfindNPC_i(false, #Ruggs, item, _Bark, v7, _Ruggs);
+                        terminate;
+                    }
+                }
+                if (v4 = true) {
+                    SetSpeaker1_i(0, _Dupre);
+                    ["Have a drink or two... Thou wilt soon forget her."];
+                    CloseSpeaker1_i();
+                    SetSpeakerSlot_i(0);
+                }
+                if (v5 = true) {
+                    SetSpeaker1_i(0, _Shamino);
+                    ["Oh, no... Why is it that everyone expects the Avatar to help with their love life?"];
+                    CloseSpeaker1_i();
+                    SetSpeakerSlot_i(0);
+                    ["Why... I..."];
+                    if (v3 = true) {
+                        SetSpeaker1_i(0, _Iolo);
+                        ["Thou wouldst not be so hard, Shamino, if thou hadst lost thy love!"];
+                        CloseSpeaker1_i();
+                        SetSpeakerSlot_i(0);
+                    }
+                }
+                $refusedruggsletter = true;
+                PathfindNPC_i(false, #Ruggs, item, _Bark, v7, _Ruggs);
+                v11 = ~FindNearby_i(0, 20, _Fawn_Guard, _Avatar);
+                Foreach v14 in v11 {
+                    if (~GetNPCID_i(v14) = 1) {
+                        SetWorkType(_Talk, v14);
+                    }
+                }
+                terminate;
+            }
+            SetItemFlag_i(_Met, _Ruggs);
+            flag(360) = true;
+            ClearItemFlag_i(_DontMove_i, _Avatar);
+        } else {
+            if (v9 = false) {
+                if ($gottattoo = true) {
+                    ["Greetings, good Knight! The sight of thee and thy companions is always heartening, for the Goblins fear such as thee."];
+                    ["I am Ruggs, a poor sailor from Britannia.\x09How may I serve thee today?"];
+                } else {
+                    ["I am Ruggs, a poor sailor exiled from Britannia and from Fawn. How may I serve thee today?"];
+                }
+                SetItemFlag_i(_Met, _Ruggs);
+            } else {
+                if $BANES_RELEASED {
+                    ["All is lost, Avatar! All is lost!"];
+                } else {
+                    ["'Tis always a pleasure to see another Britannian at Fawn, Avatar. How may I serve thee today?"];
+                }
+            }
+            if not $BANES_RELEASED {
+                TurnOn(<< "Britannia", "Fawn" >>);
+            } else {
+                TurnOn(<< "Where is everyone?", "What happened?" >>);
+            }
+            if ((~IsInInv(0, 27, _Scroll, 1, _Party) and not flag(423)) and not $BANES_RELEASED) {
+                TurnOn("letter");
+            }
+        }
+        TurnOn("bye");
+        converse {
+            key ("Where is everyone?") {
+                TurnOff("Where is everyone?");
+                ["All dead! Hast thou not seen their bodies heaped about the desolate buildings?"];
+                ["I do not remember it clearly, for my sanity was lost when I found Delphynia's body."];
+                ["Lady Yelinda was also spared, but she hath gone into the swamps of Gorlab. I should have gone after her, but I did not. I alone remain in Fawn."];
+                TurnOn(<< "Delphynia", "Lady Yelinda" >>);
+            }
+            key ("What happened?") {
+                TurnOff("What happened?");
+                ["What fell companion didst thou harbor, <v0>? The Bard Iolo did come here, and he hath turned Fawn into a mockery..."];
+                TurnOn(<< "Iolo", "mockery" >>);
+            }
+            key ("Iolo") {
+                TurnOff("Iolo");
+                ["Mad Iolo, he doth call himself now! His eyes are all afire, and he doth act like a man possessed."];
+                ["Such cruel acts did he commit, that I cannot relate them lest my soul shrivel and die."];
+                ["Yet Mad Iolo did laugh the entire time..."];
+            }
+            key ("mockery") {
+                TurnOff("mockery");
+                ["There is nothing thou canst do -- all is done for, all is lost!"];
+                ["The City of Beauty hath become the City of Blood and Ruin. Only I am left alive."];
+                ["Dost thou not see the irony? Only I, the ugliest of all, yet remain to dwell in Fawn!"];
+            }
+            key ("Britannia") {
+                ["Our ship was hired by Batlin to transport scholars to explore a new land and spread word of The Fellowship."];
+                ["Now, even if we wanted to return without Batlin, we cannot venture onto the sea for fear of these terrible storms."];
+                TurnOff("Britannia");
+                TurnOn(<< "Batlin", "storms" >>);
+            }
+            key ("Batlin") {
+                ["Thou hast not heard of Batlin? He was the founder of The Fellowship movement, in Britannia."];
+                ["He is a pious and worthy man, for all that he doth have strange companions."];
+                v21 = ~PartyUtters(false, 0, "@His description doth not much fit the Batlin we know, doth it, Avatar?@", 1);
+                if (v21 <> 65180) {
+                    SetSpeakerSlot_i(0);
+                }
+                TurnOff("Batlin");
+                TurnOn("companions");
+            }
+            key ("companions") {
+                ["Batlin bade Leon stay and preach to the populace of Fawn and left the ship with three companions: Palos, Brunt and Deadeye."];
+                ["We have not seen them since. Although they promised to return soon."];
+                TurnOff("companions");
+                PushKeys();
+                TurnOn(<< "Leon", "Palos", "Brunt", "Deadeye", "change subject" >>);
+            }
+            key ("change subject") {
+                ["Very well..."];
+                PopKeys();
+            }
+            key ("Leon") {
+                ["Leon was especially chosen by Batlin to come and bring the hope of The Fellowship to this land."];
+                ["He hath been the only thing that hath kept us all sane since we have been stranded here."];
+                ["I strive to emulate him, in mine own humble way."];
+                TurnOff("Leon");
+                TurnOn("emulate");
+            }
+            key ("emulate") {
+                ["Leon hath shown me that, by speaking well, people may see beyond my deformity and respect me. I cannot change the way I look, but I can change my speech."];
+                ["And, as Leon sows the seeds of The Fellowship, I sow seeds in the soil. Gardening distracts my thoughts from being trapped ashore."];
+                TurnOff("emulate");
+            }
+            key ("Palos") {
+                TurnOff("Palos");
+                ["I do not know much about him. Most of the time he remained below or went about heavily cloaked. I do not think that he was of the race of Men..."];
+                ["We were all very thankful that he was so strong, I tell thee that."];
+                TurnOn("strong");
+            }
+            key ("strong") {
+                TurnOff("strong");
+                ["Palos was fearfully strong, <v0>."];
+                ["During a storm, the main mast was struck by lightning and came crashing down,\x09jamming the winch that operated the sea anchor."];
+                ["Without the sea anchor, we would have been quickly lost to the angry waves. But Palos strode across the deck and shoved the mast aside to free the winch... All by himself."];
+            }
+            key ("Brunt") {
+                ["Brunt is little more than a common mercenary, <v0>."];
+                ["I suspect that Batlin hired him to act as a personal guard in this foreign land. He is not fit for much else."];
+                TurnOff("Brunt");
+                TurnOn("not fit");
+            }
+            key ("not fit") {
+                ["Brunt is no seaman, 'tis true."];
+                ["If I had not seen his face the day he boarded, I would have thought him a Daemon. He was so green."];
+                TurnOff("not fit");
+                TurnOn("green");
+            }
+            key ("green") {
+                ["He was seasick the entire voyage, <v0>! I have never seen anyone worse."];
+                ["And what a temper! 'Tis to be hoped he is better mannered on land."];
+                TurnOff("green");
+            }
+            key ("Deadeye") {
+                ["Deadeye is the only one of Batlin's companions that I truly know. I cannot say that I'm happy about the association, either."];
+                TurnOff("Deadeye");
+                TurnOn("association");
+            }
+            key ("association") {
+                ["I served with Deadeye on another ship, several years back. He used to bully the crew by telling them that white eye of his could curse a man."];
+                ["Deadeye liked to provoke a fight and dare the other man to hit him. No one would, for fear of that eye."];
+                ["Sailors are a superstitious lot, I fear, <v0>."];
+                TurnOff("association");
+            }
+            key ("storms") {
+                TurnOff("storms");
+                ["I've been a seafarin' man for more than twenty years, <v0>. And I cannot recall a time that I've seen storms as strange as these."];
+                ["I've seen lightning that jumps from cloud to cloud. I've seen lightning that shoots down like a pitchfork from the heavens. And I've seen lightning that dances across the masts of a ship."];
+                ["But I've never seen lightning that changes a man into a rock, or makes a ship disappear before thy very eyes."];
+                PushKeys();
+                TurnOn(<< "changes a man", "ship disappear", "change subject" >>);
+            }
+            key ("changes a man") {
+                ["I saw it happen, <v0>!"];
+                ["I was holding the door open for one of the crew who was running for shelter when one of those storms hit."];
+                ["There was this bright flash and a deafening crash... And when mine eyes cleared, Geof was gone and a chicken stood gawking at me in the very spot Geof had been in."];
+                TurnOff("changes a man");
+            }
+            key ("ship disappear") {
+                ["With my very own eyes, I saw it!"];
+                ["I was on the Fawn docks chatting with a salt named Olon, in the days before I was banned\x09from the city."];
+                ["All of a sudden one of those storms hit and Olon and I dove for cover under a rowboat."];
+                ["We saw the ship that had just put out be hit by the lightning and it just... disappeared! Never found a trace of it or her crew."];
+                TurnOff("ship disappear");
+            }
+            key ("Lady Yelinda") {
+                TurnOff("Lady Yelinda");
+                $KNOW_YELINDAS_DIAMOND_NECKLACE = true;
+                ["The Great Lady did flee Fawn in a terrible hurry, due to the Curse. All she left behind was her Diamond Necklace."];
+                ["She hath been made as disfigured as I am. Imagine, to plummet from Beauty to Ugliness!"];
+                ["It hath driven her insane."];
+                TurnOn("Diamond Necklace");
+            }
+            key ("Diamond Necklace") {
+                TurnOff("Diamond Necklace");
+                ["I did find the necklace lying in the throne room."];
+                ["But I did not take it, for it belongs to the Lady. And the rats shall not disturb it."];
+            }
+            key ("Delphynia") {
+                TurnOff("Delphynia");
+                if $BANES_RELEASED {
+                    ["I found her pitiful body dumped in the street, with her insides... twisted... torn out..."];
+                    ["She was long dead..."];
+                    ["I brought her body to where it is now. I could not leave my love to lie in the open, for the rats to gnaw."];
+                } else {
+                    if (flag(360) = false) {
+                        ["Delphynia is the most beautiful of all women! Pray, forgive me, <v0>. I speak with the tongue of a man bound by the chains of love."];
+                        ["Delphynia is Fawn's horticulturist and healer, of late. I met her when I accompanied Batlin into town for supplies."];
+                    } else {
+                        if ($refusedruggsletter = true) {
+                            ["Delphynia is Fawn's horticulturist and healer, of late. I met her when I accompanied Batlin into town for supplies."];
+                            ["Thou wilt understand why I love her, if thou shouldst meet her."];
+                        }
+                        if (flag(338) and (v10 = false)) {
+                            ["Delphynia is Fawn's horticulturist and healer, of late. I met her when I accompanied Batlin into town for supplies."];
+                            ["To me, she is the most beautiful woman in Fawn. When thou dost meet her, I'm sure that thou wilt agree with me."];
+                        } else {
+                            ["Thou hast met her... Delphynia is the most beautiful woman in all Fawn, to\x09me."];
+                            ["She is also a fine horticulturist and healer.\x09I met her when I accompanied Batlin into town for supplies."];
+                        }
+                    }
+                }
+            }
+            key ("Fawn") {
+                ["'Tis the city over there, <v0>. They claim to honor Beauty, which my face naturally offends."];
+                ["They are hard pressed, what with the Goblins and all."];
+                TurnOff("Fawn");
+                TurnOn("Goblins");
+            }
+            key ("Goblins") {
+                TurnOff("Goblins");
+                if ($AUDIENCE_WITH_YELINDA and ($FAWN_TRIAL_DONE and not $oraclesaysinnocent)) {
+                    ["It is such a relief to be able to shelter behind the walls of Fawn. I think the goblins cannot reach us here."];
+                } else {
+                    if ($gottattoo = true) {
+                        if ($fawntowerretaken = false) {
+                            ["Now that the Goblins hold thy Pikemen tower, Fawn doth have little hope of withstanding a determined attack."];
+                            ["I fear that my companions and I will be the next delicacy in the Goblin stewpot without thy protection."];
+                            ["We do not have city gates to hide behind."];
+                        } else {
+                            ["'Tis a blessing that thou and thine honored Pikemen companions did wrest the Fawn tower from the Goblins."];
+                            ["Fawn could not have long resisted a determined attack. And my companions and I would have been the next delicacy in the Goblin stewpot, I fear."];
+                            ["We have no city gates to hide behind."];
+                        }
+                    } else {
+                        if ($fawntowerretaken = false) {
+                            ["Now that the Goblins hold the Pikemen tower, Fawn doth have little hope of withstanding a determined attack."];
+                            ["I fear that my companions and I will be the next delicacy in the Goblin stewpot."];
+                            ["We do not have city gates to hide behind."];
+                        } else {
+                            ["'Tis a blessing that the honored Pikemen ripped the Fawn tower from them Goblins."];
+                            ["Fawn could not have long resisted a determined attack. And my companions and I would have been the next delicacy in the Goblin stewpot, I fear."];
+                            ["We have no city gates to hide behind."];
+                        }
+                    }
+                }
+            }
+            key ("letter") {
+                v22 = ~TakeFromParty_i(false, 0, 27, _Scroll, 1);
+                ["Oh, blessings upon thee, <v0>!"];
+                ["Delphynia knows of my love, though she is unsure of her feelings for me."];
+                ["As long as she hath not rejected me out of hand, I will be content to wait. Thy good deed hath given me reason to live!"];
+                ["As promised, I will send thee to my shipmate, Scots."];
+                v23 = true;
+                TurnOff("letter");
+                TurnOn("Scots");
+            }
+            key ("Scots") {
+                ["Scots is a fine fellow, though he often seems a bit distracted. He is a cartographer."];
+                ["Perhaps his maps will aid thee, though they are not as accurate as he wishes."];
+                ["Thou mayest find him somewhere within our camp."];
+                TurnOff("Scots");
+                TurnOn("not as accurate");
+            }
+            key ("not as accurate") {
+                ["Since we dare not stray too far from shelter, Scots cannot explore and map."];
+                ["He hath worked from existing maps that he received from the Fawn fishermen, so he is only sure of the accuracy of the coastline."];
+                ["Scots often complains that we cannot even explore by ship. None of us are happy to be stranded here."];
+                TurnOff("not as accurate");
+            }
+            key ("bye") {
+                CloseSpeaker0_i();
+                Bark_i(0, "@Goodbye, Ruggs.@", _Avatar);
+                if $BANES_RELEASED {
+                    v8 = ("" & ("@Woe is me...@" & "@My love is slain!@"));
+                    BarkIfNear_i(v8, _Ruggs);
+                } else {
+                    Bark_i(5, "@Fair weather to thee.@", _Ruggs);
+                }
+                break;
+            }
+        }
+        clear_answers;
+    }
+}

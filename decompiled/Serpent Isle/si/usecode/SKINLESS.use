@@ -1,0 +1,169 @@
+Routine Skinless accepts a0 #locals(7) #uses(~LordOrLady, ~AvatarName, ~WhereAmI_i, ~IsInInv, ~AskYesNo, RestoreYelinda_i, Bark_i, ~PartyUtters) {
+    v0 = ~LordOrLady();
+    v1 = ~AvatarSex();
+    v2 = ~AvatarName();
+    v3 = ~WhereAmI_i();
+    v4 = false;
+    v5 = false;
+    if (event = _Action) {
+        Npc_schedule(item);
+        ClearBark_i(item);
+        SetSpeaker0_i(0, _GargPrisoner);
+        if ($BANES_RELEASED = false) {
+            terminate;
+        }
+        if ~GetItemFlag_i(_Zombie, item) {
+            ["I told thee, <v2>, there is nothing left for me... Without the Comb of Beauty there is no hope in the world!"];
+            if ~IsInInv(0, 65177, _Artifacts, 1, _Party) {
+                ["Thou hast the Comb of Beauty! Wilt thou give me the Comb? I will grant thee Fawn's greatest treasure, as I promised the heavens."];
+                if ~AskYesNo() {
+                    ["In this one thing, at least, I can fulfill mine obligation."];
+                    RestoreYelinda_i();
+                } else {
+                    ["Such is the story of my life... Then I shall remain here, within this fetid swamp -- where I belong!"];
+                    CloseSpeaker0_i();
+                    Bark_i(0, "@Leave me!@", item);
+                    terminate;
+                }
+            } else {
+                ["Leave me to die in peace! I have nothing left... nothing..."];
+                CloseSpeaker0_i();
+                Bark_i(0, "@Go away!@", item);
+                terminate;
+            }
+        } else {
+            ["Look what thy mad companion, Iolo, hath done to me! He told me to tell thee that only thou couldst prove whether Beauty was skin deep."];
+            ["Thou must have some way to remove this foul enchantment! But... What have I to live for? My very heart hath been torn asunder! My people are dead! There is nothing left for me!"];
+            TurnOn(<< "prove", "heart", "people" >>);
+        }
+        TurnOn("bye");
+        converse {
+            key ("bye") {
+                Bark_i(0, "@Keep faith!@", _Avatar);
+                Bark_i(2, "@I am cursed!@", item);
+                break;
+            }
+            key ("prove") {
+                TurnOff("prove");
+                ["How would I know the mind of a madman?!"];
+                ["Perhaps he thought that thou didst have some magic with which to counter his cruelty."];
+                TurnOn("magic");
+            }
+            key ("magic") {
+                TurnOff("magic");
+                ["I am no mage, to tell thee such things!"];
+                ["No one can restore the life to my people..."];
+                ["Should I selfishly ask that mine own Beauty be restored when the life's blood of Fawn -- the city of Beauty -- lies dead in the streets?!"];
+                ["If only the Comb of Beauty had not been stolen! Everything changed in Fawn after it was taken... Perhaps it was some token of the heavens. And this is my punishment for losing it!"];
+                if not v4 {
+                    TurnOn("Comb of Beauty");
+                }
+            }
+            key ("Comb of Beauty") {
+                TurnOff("Comb of Beauty");
+                ["I thought it nothing more than a trinket... Passed down from the Lady Fawn herself, granted, but a bauble nonetheless."];
+                ["Only now do I see that it was the tradition, the duty, that I tossed aside as worthless. And now it is lost forever!"];
+                ["I would give Fawn's greatest treasure if only I could find the Comb of Beauty!"];
+                if ~IsInInv(0, 65177, _Artifacts, 1, _Party) {
+                    v6 = ~PartyUtters(false, "@I wonder... What about Columna's comb?!@", "@Avatar, what about the comb thou didst take from Columna?@", 1);
+                    SetSpeakerSlot_i(0);
+                    TurnOn("Columna");
+                }
+                v4 = true;
+                TurnOn("treasure");
+            }
+            key ("Columna") {
+                TurnOff("Columna");
+                ["I recall a Lady Columna visiting Fawn a number of years ago! Now that I think of it... It wasn't long after that that I discovered the Comb missing!"];
+                ["Yes, yes! It all fits now! She admired it greatly, and seemed a bit offended when I did not offer it to her..."];
+                ["Of course she took it! Wilt thou give me the Comb? I will grant thee Fawn's greatest treasure, as I promised the heavens."];
+                v5 = true;
+                if ~AskYesNo() {
+                    RestoreYelinda_i();
+                } else {
+                    ["Such is the story of my life... Then I shall remain here, within this fetid swamp -- where I belong!"];
+                    CloseSpeaker0_i();
+                    Bark_i(0, "@Leave me!@", item);
+                    terminate;
+                }
+            }
+            key ("treasure") {
+                TurnOff("treasure");
+                ["It is an ancient piece of armour that was found near the Serpent ruin around which the palace is built."];
+                ["I do not know its significance, but we have treasured it ever since... as a sign of Fawn's strength."];
+                if not v5 {
+                    ["What a farce! Leave me, <v2>! Without the Comb of Beauty I will remain here, within this fetid swamp -- where I belong!"];
+                    CloseSpeaker0_i();
+                    Bark_i(0, "@Leave me!@", item);
+                    SetItemFlag_i(_Zombie, item);
+                    terminate;
+                }
+            }
+            key ("heart") {
+                TurnOff("heart");
+                ["Jorvin is dead! My love, mine heart's true desire!"];
+                ["But... Perhaps it is for the best -- That he never see the depths to which mine ignorance hath plunged our city, or the mark of the guilt that weighs upon my features..."];
+                TurnOn("ignorance");
+            }
+            key ("ignorance") {
+                TurnOff("ignorance");
+                ["Criminal ignorance! I listened to those who would mislead me! I let their compliments turn mine head... And never felt Love for the city that was in my charge!"];
+                ["Even as I let the Comb of Beauty slip from the city, I have let all of Fawn slip into lifeless darkness!"];
+                if not v4 {
+                    TurnOn("Comb of Beauty");
+                }
+            }
+            key ("people") {
+                TurnOff("people");
+                ["The storms grew worse and worse! Food was scarce... And a strange sickness crept through the city like some silent predator."];
+                ["One by one they fell... And there was nothing I could do! My pleas to the heavens were in vain!"];
+                ["The only other living soul is one I turned away -- One I deemed unworthy of Fawn's Beauty!"];
+                TurnOn(<< "sickness", "living soul" >>);
+            }
+            key ("sickness") {
+                TurnOff("sickness");
+                ["There was no fever. It seemed as if they were sleeping..."];
+                ["It came without warning... Until, at last, no one was left to care for them. Many never woke from where they fell. And I was powerless! Powerless!"];
+            }
+            key ("living soul") {
+                TurnOff("living soul");
+                ["Hahaha! What cruel joke the heavens have had at mine expense!"];
+                ["I listened to the words of traitors and turned out good men, barring them from my protection!"];
+                ["And now only the one called Ruggs lives... To taunt me with an empty city and my ruined Beauty!"];
+            }
+        }
+        clear_answers;
+    }
+}
+
+Usable RestoreYelinda_i #locals(4) #uses(~GiveItemsOrDrop_i, Bark_i, ~GimmePathEgg) {
+    v0 = ~TakeFromParty_i(true, 0, 0, _Artifacts, 1);
+    ClearItemFlag_i(_Zombie, item);
+    ["Thank thee, Avatar! Thank thee for returning to me the Comb of Beauty. Take this key..."];
+    v1 = ~GiveItemsOrDrop_i(true, 0, 2, 15, 641, 1, _Avatar);
+    ["...And go to the southeast corner of the Throne Room. Seek the illusionary wall -- it will reveal the path to the treasure thou dost seek."];
+    ["The key will allow thee to open the gate to the Treasury Room. The armour that I did promise thee is stored there."];
+    $RETURNED_COMB_OF_BEAUTY = false;
+    CloseSpeaker0_i();
+    Bark_i(0, "@A thousand thanks!@", item);
+    v2 = ~GetCoord(item);
+    v2::1 = (v2::1 - (v2::3 / 2));
+    v2::2 = (v2::2 - (v2::3 / 2));
+    createSprite(65535, 0, 0, 0, v2::2, v2::1, 21);
+    v3 = ~Item_getType(~NPCToItem_i(_Yelinda));
+    Polymorph_i(v3, _Yelinda);
+    NewSchedule_i(<< 1078, 1737, 941, 1757, 1031, 1883 >>, << 14, 5, 12 >>, << 0, 3, 4 >>, _Yelinda);
+    createSprite(65535, 0, 0, 0, (v2::2 + 2), (v2::1 + 2), 13);
+    Item_move(<< (v2::1 + 2), (v2::2 + 2), 0 >>, _Braccus);
+    SetWorkType(_Wait, _Braccus);
+    SetWorkType(_Wait, _Yelinda);
+    SetItemFlag_i(_DontMove_i, _Avatar);
+    EndConverse_i();
+    v1 = ~PostInFuture(10, << _aNO_HALT_i, _aSTAND_FRAME_i, _aUSABLE_i, #Braccus >>, _Braccus);
+    $RETURNED_COMB_OF_BEAUTY = true;
+    CloseSpeaker0_i();
+    Bark_i(2, "@I am restored!@", _Yelinda);
+    Sfx(81);
+    SetMusic(~GimmePathEgg(1, 5), 63);
+    terminate;
+}

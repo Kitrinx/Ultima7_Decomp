@@ -1,0 +1,266 @@
+Routine Ghost_0151 accepts a0 #locals(23) #uses(~RemoveFromList_i, PartyFaces_i, ~IsInInv, ~PartyUtters, Bark_i) {
+    v0 = ~GetNPCID_i(item);
+    if (event = _Bark) {
+        if ((v0 < 1) or (v0 > 4)) {
+            terminate;
+        }
+        v1 = ~FindNearby_i(0, 25, _Ghost_337, item);
+        v1 = ~RemoveFromList_i(v1, item);
+        if (v0 = 1) {
+            v2 = ~GetTemperature_i(item);
+            if (v2 < 30) {
+                v2 = (v2 + 1);
+            } else {
+                v2 = 0;
+                Foreach v5 in v1 {
+                    SetWorkType(_Wander, v5);
+                }
+            }
+            SetTemperature_i(v2, item);
+            if ((v2 = 4) or ((v2 = 8) or (v2 = 12))) {
+                v6 = false;
+                Foreach v5 in v1 {
+                    if ((~GetWorkType(v5) <> _Patrol) and not v6) {
+                        SetWorkType(_Patrol, v5);
+                        v6 = true;
+                    }
+                }
+            }
+            v9 = << "@I am not sure...@", "@Death is no reward...@", "@Seek death, friends!@", "@Chaos hath no answers.@", "@Was Order wrong?@", "@I have no faith.@" >>;
+            v10 = << "@None of us are.@", "@The Void is the reward!@", "@But we are Death.@", "@I have no questions.@", "@Imbalance was wrong.@", "@Do not despair, old friend.@" >>;
+        }
+        if (v0 = 2) {
+            v9 = << "@Chaos shall triumph!@", "@The Void is my reward.@", "@I am not a ghost.@", "@Remember the Hierophant's words.@", "@The war is never over.@", "@Still, the Great One slumbers...@" >>;
+            v10 = << "@All is ashes.@", "@The Void is nothing.@", "@Then what are we?@", "@Empty words.@", "@Sad, but true.@", "@Hush, he listens now...@" >>;
+        }
+        if (v0 = 3) {
+            v9 = << "@A Champion shall arise...@", "@We shall be released soon.@", "@Have faith, friends.@", "@Do not doubt.@", "@Someone comes!@", "@Listen to the Void...@" >>;
+            v10 = << "@Promises...@", "@It hath been too long!@", "@We shall try.@", "@'Tis hard to believe.@", "@I do not see...@", "@Yes, it sings to me!@" >>;
+        }
+        if (v0 = 4) {
+            v9 = << "@Kill the offenders!@", "@Chaos must triumph!@", "@There is no compromise.@", "@The battle is now!@", "@I despise Order...@", "@I am so tired!@" >>;
+            v10 = << "@All are dead, friend.@", "@Chaos remains alone.@", "@We must agree!@", "@There are no enemies.@", "@Order is not evil, friend.@", "@We are ancient souls.@" >>;
+        }
+        v11 = ~Random(6);
+        ClearBark_i(item);
+        v12 = ~PostAction(<< _aNO_HALT_i, _aBARK_i, v9::v11 >>, item);
+        if v1 {
+            v13 = v1::~Random(~ListSize_i(v1));
+            ClearBark_i(v13);
+            v12 = ~PostInFuture(5, << _aNO_HALT_i, _aBARK_i, v10::v11 >>, item);
+        }
+    }
+    if ((event = _Converse) and (v0 <> 0)) {
+        Item_bark("@Pardon me...@", _Avatar);
+        PartyFaces_i(item);
+        if (v0 <> 5) {
+            v12 = ~PostInFuture(0, << _aNO_HALT_i, _aBARK_i, "@Yesss?@" >>, item);
+            SetWorkType(_Talk, item);
+        } else {
+            if not ~IsInInv(75, 0, _Serp_Book, 1, _Party) {
+                v14 = ~FindNearby_i(0, 25, _Serp_Book, item);
+                v15 = false;
+                Foreach v18 in v14 {
+                    if (~GetQuality(v18) = 75) {
+                        v15 = true;
+                    }
+                }
+                if not v15 {
+                    SetWorkType(_Talk, item);
+                } else {
+                    SetWorkType(_Shy, item);
+                }
+            }
+        }
+    }
+    if (event = _Talking) {
+        if (v0 < 5) {
+            SetWorkType(_Patrol, item);
+        } else {
+            SetWorkType(_Shy, item);
+        }
+        if (v0 = 1) {
+            SetSpeaker0_i(0, _SmithzHorse);
+            ["I can only be disturbed for a moment, as the others will miss me. We must continue our Dirge."];
+            TurnOn(<< "name", "others", "Dirge" >>);
+        }
+        if (v0 = 2) {
+            SetSpeaker0_i(0, _SmithzHorse);
+            ["How darest thou interrupt the Ceremony! Dost thou not recognize the influence of Chaos in this place?"];
+            TurnOn(<< "name", "Ceremony", "Chaos" >>);
+        }
+        if (v0 = 3) {
+            SetSpeaker0_i(0, _SmithzHorse);
+            ["At last, a stranger! Oh, but have we met before? This existence is confusing..."];
+            TurnOn(<< "name", "met", "existence" >>);
+        }
+        if (v0 = 4) {
+            SetSpeaker0_i(0, _SmithzHorse);
+            ["Art thou a spy? Come, friends, we must kill the spy sent by the Hierophant of Order!"];
+            TurnOn(<< "spy", "Hierophant", "Order" >>);
+        }
+        if (v0 = 5) {
+            v19 = ~GetCoord(item);
+            v18 = ~Item_create(_Serp_Book);
+            if v18 {
+                SetFrame(0, v18);
+                v20 = ~SetQuality(75, v18);
+                ClearItemFlag_i(_IsTemporary_i, v18);
+                v12 = ~PopToMap(v19);
+            }
+            v12 = ~PostAction(<< _aNO_HALT_i, _aBARK_i, "@Oh!@" >>, item);
+            v21 = ~PartyUtters(true, "@A book...@", "@Look! A book...@", 1);
+            terminate;
+        }
+        if (v0 = 6) {
+            SetSpeaker0_i(0, _SmithzHorse);
+            ["Canst thou not see that we are trying to help thee! Everything that we say hath meaning. Thou must vanquish the foe..."];
+            TurnOn(<< "help", "we?", "foe" >>);
+        }
+        if (v0 <> 0) {
+            TurnOn("bye");
+        }
+        converse {
+            key ("name") {
+                TurnOff("name");
+                if (v0 = 1) {
+                    ["I am afraid that I have forgotten. Thou must understand, I have been dead a very long time."];
+                    ["Death whispers most sweetly, but my soul is not allowed to respond. I do not desire to persist in this life."];
+                    if (~Random(6) > 3) {
+                        label_60:
+                        ["I must be going. The others are waiting..."];
+                        v12 = ~PostInFuture(0, << _aNO_HALT_i, _aBARK_i, "@Begin again!@" >>, item);
+                        terminate;
+                    }
+                }
+                if (v0 = 2) {
+                    ["Quake at my words, for I am Sesyntho, Scribe to the Hierophant of Chaos! The others say that I am dead, but I am no ghost."];
+                    ["Canst thou not see that this is merely a time of waiting, before our ascension into the Void? So it cannot be called Death."];
+                    if (~Random(6) > 3) {
+                        goto label_60;
+                    }
+                }
+                if (v0 = 3) {
+                    ["In life, I was Sansalys, the keeper of the Library of Chaos. Alas, the books are taken, except for a few."];
+                    ["There is another who awaits thee there. She would aid thee, but of necessity her aid will be strange to thee."];
+                    ["There is a law which forbids us from directly helping thee. I know that thou art our hope, yet my tongue is ensnared! I cannot speak the truth clearly."];
+                    if (~Random(6) > 3) {
+                        goto label_60;
+                    }
+                }
+            }
+            key ("others") {
+                TurnOff("others");
+                ["There are four of us here, doomed to perform the same lines over and over 'til eternity dawns."];
+                ["One was a priest, another a librarian, and the last was a soldier. I was something once, but I do not recall."];
+                if (~Random(6) > 3) {
+                    goto label_60;
+                }
+            }
+            key ("Dirge") {
+                TurnOff("Dirge");
+                ["We must mourn the fate of Chaos, for surely it hath been destroyed in this land. Order hath won."];
+                ["Yet, I doubt if there can be any victory. How can Imbalance be victory? We are opposites, not enemies."];
+                ["Oh, I speak blasphemy! But I cannot take back my words..."];
+                if (~Random(6) > 3) {
+                    goto label_60;
+                }
+            }
+            key ("Ceremony") {
+                TurnOff("Ceremony");
+                ["Stay and listen to our words, for we are performing a great Ode in honor of the Serpent of Chaos. He shall hear and reward us."];
+                ["While the Great One yet slumbers, the Chaos Serpent hath the power to prevail over Order. I will have faith, unlike these others."];
+                if (~Random(6) > 3) {
+                    goto label_60;
+                }
+            }
+            key ("Chaos") {
+                TurnOff("Chaos");
+                ["Oh, the beauty of pure Chaos! 'Tis the unity of all the discordant elements of Nature, without pattern or order."];
+                ["We are Chaos -- it is our belief, and we are its adherents. We are followers of the Red Serpent."];
+                if (~Random(6) > 3) {
+                    goto label_60;
+                }
+            }
+            key ("met") {
+                TurnOff("met");
+                ["I am sorry, but if we have met before, I cannot recall. It seems that we live the same moments repeatedly, and the interruptions fade so quickly away."];
+                ["Life as a spectral being is so tedious. Once, I was a woman in the prime of my life. Now I merely exist..."];
+                ["I miss the flesh! There were pains and sorrow, but it was far better than this joyless life."];
+                if (~Random(6) > 3) {
+                    goto label_60;
+                }
+            }
+            key ("existence") {
+                TurnOff("existence");
+                ["We are locked into this existence, ghosts endlessly reciting the same arguments, as if our doom is somehow tied to the greater cycle."];
+                ["If the War of Imbalance doth finally end, if Chaos is victorious or Order doth take the win, then we shall be freed to enter the Void."];
+                ["I cannot help but think that thou art connected with our fate. How, I cannot say."];
+                if (~Random(6) > 3) {
+                    goto label_60;
+                }
+            }
+            key ("spy") {
+                TurnOff("spy");
+                ["One sent by the Soldiers of Order, to break our wills and stop the Ode to Chaos. Why else dost thou listen so attentively?"];
+                if not ~GetItemFlag_i(_Dead, _Vasculio) {
+                    ["I predict this: I see thee lying dead at the feet of one who prowls this labyrinth."];
+                    if not ~IsInInv(65177, 65177, _Magebane, 1, _Party) {
+                        ["Thou hast not the weapon to defeat him! His powers overwhelm thee, and thou dost die!"];
+                    }
+                } else {
+                    ["Thou hast slain the lurker of these depths, but others await thee! Thou shalt not prevail, stranger."];
+                }
+                if (~Random(6) > 3) {
+                    goto label_60;
+                }
+            }
+            key ("Hierophant") {
+                TurnOff("Hierophant");
+                ["His words were the Words of Chaos. He communed with the Serpent, and wore his armour upon his breast. He was our Serpent Father."];
+                ["They have slain him, and there is none to replace him. I do not know his burial spot. I weep for him."];
+                if (~Random(6) > 3) {
+                    goto label_60;
+                }
+            }
+            key ("Order") {
+                TurnOff("Order");
+                ["To speak of Order is to defile my lips! They are opposite to rightfulness, they are wrongfulness, they are anathema."];
+                ["I despise pattern, and disrespect all laws, and I prize mine individuality above all else!"];
+                if (~Random(6) > 3) {
+                    goto label_60;
+                }
+            }
+            key ("help") {
+                TurnOff("help");
+                ["I cannot... it is not permitted... words cannot be spoken..."];
+                ["'Tis forbidden to help thee directly, stranger. Thou must discern things for thyself."];
+            }
+            key ("we?") {
+                TurnOff("we?");
+                ["We are the Souls of Chaos, the spirits condemned to prowl these corridors until Chaos is restored."];
+                ["In life, we were victims of the Soldiers of Order. I was burned alive."];
+            }
+            key ("foe") {
+                TurnOff("foe");
+                ["The intruder is thine enemy, and is not one with us. He doth not comprehend Chaos. If thou wilt listen to the others, they can aid thee."];
+            }
+            key ("bye") {
+                Bark_i(0, "@Thanks!@", _Avatar);
+                if (v0 < 5) {
+                    v12 = ~PostInFuture(5, << _aNO_HALT_i, _aBARK_i, "@Begin again!@" >>, item);
+                }
+                if (v0 = 6) {
+                    v12 = ~PostInFuture(0, << _aNO_HALT_i, _aBARK_i, "@Goodbye...@" >>, item);
+                    ReduceHits_i(0, 55, item);
+                    v22 = ~GetCoord(item);
+                    v22::1 = (v22::1 - (v22::3 / 2));
+                    v22::2 = (v22::2 - (v22::3 / 2));
+                    createSprite(65535, 0, 0, 0, v22::2, v22::1, 21);
+                }
+                break;
+            }
+        }
+        clear_answers;
+    }
+}

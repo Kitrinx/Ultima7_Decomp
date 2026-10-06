@@ -1,0 +1,43 @@
+Function ~AddLists_i accepts a0, a1, a2 #locals(1) {
+    v3 = 0;
+    do {
+        v3 = (v3 + 1);
+        v2::v3 = (v2::v3 + v1::v3);
+    } while not (v3 = v0);
+    return v2;
+}
+
+Function ~NegateList_i accepts a0, a1 #locals(1) {
+    v2 = 0;
+    do {
+        v2 = (v2 + 1);
+        v1::v2 = (v1::v2 * 65535);
+    } while not (v2 = v0);
+    return v1;
+}
+
+Function ~IsPlankBlocked_i accepts a0, a1, a2, a3 #locals(5) #uses(~AbsValue_i) {
+    v4 = ~FindNearby_i(32, ~AbsValue_i(v1), _All, v3);
+    Foreach v7 in v4 {
+        v8 = ~GetCoord(v7);
+        if ((v8::1 <= v2::1) and ((v8::1 >= (v2::1 + v1)) and ((v8::2 <= v2::2) and ((v8::2 >= (v2::2 + v1)) and ((v8::3 <= 2) and (not (v7 = v3) and (not (~Item_getType(v7) in v0) and ~GetItemFlag_i(24, v3)))))))) {
+            return true;
+        }
+    }
+    return false;
+}
+
+Function ~NewPlankCoord_i accepts a0, a1, a2 #locals(0) #uses(~NegateList_i, ~AddLists_i) {
+    if (v0 = 781) {
+        v1 = ~NegateList_i(3, v1);
+        v2 = ~AddLists_i(3, v1, v2);
+    }
+    if (v0 = 150) {
+        v2 = ~AddLists_i(3, v1, v2);
+    }
+    return v2;
+}
+
+Routine RemoveSelf_i accepts a0 #locals(0) {
+    Item_destroy(item);
+}

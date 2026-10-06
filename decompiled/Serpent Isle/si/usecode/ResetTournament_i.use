@@ -1,0 +1,124 @@
+Routine ResetTournament_i accepts a0 #locals(24) #uses(~TournamentDoor_i, ~SwingDoor_i, SwingPartner_i, SetDoorState_i, SayDoorBlocked_i, ~InListField_i, UnfreezeAvatar_i) {
+    v0 = ~TournamentDoor_i(45, _Door_EW, item);
+    if v0 {
+        if ~SwingDoor_i(7, 0, 0, 0, _Door_NS, v0) {
+            SwingPartner_i(5, 3, 0, 0, _DDoor_NS, 1, 1, _DDoor_EW, v0);
+            playSFX(v0, 31);
+            SetDoorState_i(2, v0);
+        } else {
+            SayDoorBlocked_i();
+        }
+    }
+    v1 = ~FindNearby_i(0, 60, _Chest, item);
+    Foreach v4 in v1 {
+        if (~GetQuality(v4) = 235) {
+            Item_setType(_Locked_Chest, v4);
+        }
+    }
+    v5 = ~FindNearby_i(4, 45, 65535, _Avatar);
+    Foreach v0 in v5 {
+        if (~GetNPCID_i(v0) = 13) {
+            JoinParty(v0);
+            SetNPCID_i(0, v0);
+        }
+    }
+    v5 = << 65473, 65457, 65462, 65465, 65386 >>;
+    Foreach v0 in v5 {
+        if ~InListField_i(v0) {
+            ClearItemFlag_i(_Dead, v0);
+            SetNPCID_i(0, v0);
+            Npc_schedule(v0);
+        }
+    }
+    if (item <> ~NPCToItem_i(_Avatar)) {
+        SetNPCID_i(0, item);
+    }
+    Npc_setAlignment(_Good, item);
+    if not (item = ~NPCToItem_i(_Avatar)) {
+        Camera_setCenterOn(~NPCToItem_i(_Avatar));
+        SetWorkType(_FollowAvt, item);
+    }
+    v5 = ~FindNearby_i(0, 35, _Pikeman, item);
+    Foreach v0 in v5 {
+        if (~GetNPCID_i(v0) = 9) {
+            goto label_29;
+        }
+    }
+    goto label_30;
+    label_29:
+    ClearBark_i(v0);
+    PathfindNPC_i(true, #Pikeman, v0, _Path_Success, << 1019, 2679, 6 >>, v0);
+    label_30:
+    v5 = ~FindNearby_i(0, 45, _Locked_Chest, item);
+    Foreach v0 in v5 {
+        if (~GetQuality(v0) = 235) {
+            v14 = v0;
+            goto label_36;
+        }
+    }
+    goto label_47;
+    label_36:
+    v5 = ~GetContents(_All, _All, _All, v14);
+    if v5 {
+        v5 = ~GetContents(_All, _All, _All, item);
+        Foreach v0 in v5 {
+            if not ((~Item_getType(v0) = _Serp_Bracers) or (~Item_getType(v0) = _Path)) {
+                Item_destroy(v0);
+            }
+        }
+    }
+    v5 = ~GetContents(_All, _All, _All, v14);
+    Foreach v0 in v5 {
+        if ~Item_push(v0) {
+            v1 = ~Item_popToEnd(item);
+        }
+    }
+    label_47:
+    UnfreezeAvatar_i();
+    SetSpeaker0_i(0, _Hazard);
+    v19 = ~GetCoord(item);
+    v20 = v19::1;
+    v21 = v19::3;
+    v19 = v19::2;
+    v22 = (0 - ~ItemToNPC_i(item));
+    v23 = ~GetHour();
+    ["Failed out of tournament code at hour <v23> gametime. Npc #<v22> was training, and he was at coord (<v20>,<v19>,<v21>)."];
+    if $temp1flag {
+        ["$Temp1Flag was set to true."];
+    }
+    if $temp2flag {
+        ["$Temp2Flag was set to true."];
+    }
+    if $temp3flag {
+        ["$Temp3Flag was set to true."];
+    }
+    if $temp4flag {
+        ["$Temp4Flag was set to true."];
+    }
+    if $LEAVING_LIST_FIELD {
+        ["We had just finished the tournament and were on our way to the list field door."];
+    }
+    if $TRAINING_FLAG_SET {
+        ["The training flag was set."];
+    }
+    if $tournamentflag {
+        ["And, of course, the tournament flag was set."];
+    }
+    if ~InListField_i(item) {
+        ["Moreover, the student was in the list fields."];
+    }
+    if ~InListField_i(item) {
+        Item_move(<< 1016, 2685, 6 >>, item);
+        ["All right, thy time is over!"];
+    } else {
+        ["Ummm.... I cannot seem to find my keys. Thou mightest return later."];
+    }
+    CloseSpeaker0_i();
+    $temp1flag = false;
+    $temp2flag = false;
+    $temp3flag = false;
+    $temp4flag = false;
+    $LEAVING_LIST_FIELD = false;
+    $TRAINING_FLAG_SET = false;
+    $tournamentflag = false;
+}

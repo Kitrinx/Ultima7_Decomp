@@ -1,0 +1,54 @@
+Routine Gilwoyai accepts a0 #locals(1) #uses(PartyFaces_i, Bark_i) {
+    if (event = _Converse) {
+        Item_bark("@Hail, Gwani hunter!@", _Avatar);
+        PartyFaces_i(65383);
+        Bark_i(3, "@Noo Koomba!@", _Gilwoyai);
+        SetWorkType(_Talk, _Gilwoyai);
+    }
+    if (event = _Talking) {
+        NewSchedule_i(<< 934, 863, 934, 863, 934, 863 >>, << 14, 5, 12 >>, << 0, 3, 4 >>, _Gilwoyai);
+        Npc_schedule(_Gilwoyai);
+        ClearBark_i(_Gilwoyai);
+        SetSpeaker0_i(0, _Gilwoyai);
+        v0 = ~GetItemFlag_i(_Met, _Gilwoyai);
+        if v0 {
+            ["Greetings again."];
+        } else {
+            ["Beware claws of Ice Dragon!"];
+        }
+        TurnOn(<< "name", "Ice Dragon", "bye" >>);
+        converse {
+            key ("name") {
+                TurnOff("name");
+                if v0 {
+                    ["Am still Gilwoyai."];
+                } else {
+                    ["Am Gilwoyai, means \@Of the Wind\@."];
+                    SetItemFlag_i(_Met, _Gilwoyai);
+                }
+            }
+            key ("Ice Dragon") {
+                TurnOff("Ice Dragon");
+                ["We tried to kill Ice Dragon, to bring its blood and cure Neyobi. We failed. It hit with claws, I smash into cave wall. I need Baiyanda to heal."];
+                TurnOn(<< "claws", "cave" >>);
+            }
+            key ("claws") {
+                TurnOff("claws");
+                ["Vicious beast! This Ice Dragon is mother protecting its babies."];
+            }
+            key ("cave") {
+                TurnOff("cave");
+                ["To find Ice Dragon lair walk north. Take ice raft to cross channel. Beware front opening!"];
+            }
+            key ("bye") {
+                CloseSpeaker0_i();
+                CloseSpeaker1_i();
+                SetWorkType(_Shy, item);
+                Bark_i(0, "@Go home now!@", _Avatar);
+                Bark_i(3, "@Kill Ice Dragon!@", _Gilwoyai);
+                terminate;
+            }
+        }
+        clear_answers;
+    }
+}

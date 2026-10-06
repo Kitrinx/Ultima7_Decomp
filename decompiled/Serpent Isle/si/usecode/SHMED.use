@@ -1,0 +1,291 @@
+Routine Shmed accepts a0 #locals(33) #uses(~AvatarName, ~WhereAmI_i, PartyFaces_i, Bark_i, AttackAvatar_i, SayIfNear_i, ~AskYesNo, SetWorkTypeAt_i, ~PartyUtters, ~IsContainer_i, ~DoorState_i, SetDoorState_i, BarkIfNear_i) {
+    v0 = ~AvatarName();
+    v1 = ~WhereAmI_i();
+    if (event = _Converse) {
+        Item_bark("@Greetings, Guard!@", _Avatar);
+        PartyFaces_i(65461);
+        if $BANES_RELEASED {
+            SetSpeaker0_i(0, _Shmed);
+            ["It was horrible! I was a wolf! I know I was! I saw myself in a reflection on a puddle of water!"];
+            SetAttackMode_i(_Fleeing, _Shmed);
+            Bark_i(0, "@Aieee!!@", _Shmed);
+            terminate;
+        } else {
+            if not $doneknightstest {
+                Bark_i(2, "@Greetings!@", _Shmed);
+            } else {
+                Bark_i(2, "@It cannot be!@", _Shmed);
+            }
+            SetWorkType(_Talk, _Shmed);
+        }
+    }
+    if ((event = _NearDeath) and ~GetItemFlag_i(_Tournament, _Shmed)) {
+        ClearBark_i(_Shmed);
+        if not flag(197) {
+            SetSpeaker0_i(0, _Shmed);
+            ["But I don't understand. How didst thou survive the Knight's Test? We fixed the place with traps to be absolutely fatal!"];
+            ["I did not want to do it. She seduced me into trying to kill thee! Yet even now, I cannot betray her..."];
+        }
+        ClearItemFlag_i(_Tournament, _Shmed);
+        Bark_i(0, "@My love!@", _Shmed);
+        Bark_i(5, "@Die with dishonor!@", _Avatar);
+        ReduceHits_i(0, 55, _Shmed);
+        terminate;
+    }
+    if (event = _Talking) {
+        Npc_schedule(_Shmed);
+        ClearBark_i(_Shmed);
+        v2 = false;
+        if (v1 = 12) {
+            v2 = true;
+        }
+        SetSpeaker0_i(0, _Shmed);
+        if $doneknightstest {
+            ["But I don't understand. How didst thou survive the Knight's Test? We fixed the place with traps to be absolutely fatal!"];
+            ["I did not want to do it. She seduced me into trying to kill thee! Yet even now, I cannot betray her..."];
+            AttackAvatar_i(_Shmed);
+            SetItemFlag_i(_Tournament, _Shmed);
+            Bark_i(0, "@Take this!@", _Shmed);
+            flag(197) = true;
+            terminate;
+        }
+        v3 = ~GetItemFlag_i(_Met, _Shmed);
+        if v3 {
+            ["Hello again."];
+        } else {
+            ["My name is Shmed. I am a Knight of Monitor, at thy service..."];
+            SetItemFlag_i(_Met, _Shmed);
+            v4 = false;
+        }
+        if $knowknightstest {
+            TurnOn("the Test");
+        }
+        TurnOn(<< "duties", "bye" >>);
+        converse {
+            key ("duties") {
+                TurnOff("duties");
+                if $doneknightstest {
+                    ["But thou already knowest!"];
+                }
+                ["I am the Knight in charge of the Test of the Knights."];
+                if v2 {
+                    ["The Test takes place here, beyond that locked door."];
+                }
+                if not v4 {
+                    TurnOn("the Test");
+                }
+            }
+            key ("the Test") {
+                v4 = true;
+                TurnOff("the Test");
+                if not $doneknightstest {
+                    ["All Monitorians must pass the Test before they can be granted their Knighthood."];
+                    ["The Test of the Knights is a challenge which only one stout of heart, keen of mind and strong of arm can pass. It is specially designed to test thy might, thy fleetness, thy courage and thy wits. If thou dost complete the test thou shouldst follow the directions of the words contained in the scrolls that thou wilt find. Thy totem animal will then appear. Slay it and take it back to town. Cellia will take its skin to make a cloak for thee. Lucilla will cook its meat. All the Knights will have a banquet in thine honor -- if thou dost pass the test."];
+                    if (~ListSize_i(~GetParty()) > 1) {
+                        ["It is a test which one must endure alone, without companions."];
+                        if ~GetItemFlag_i(_InParty_i, _Selina) {
+                            SayIfNear_i((("@But not before finishing our quest, " + v0) + "!@"), 65492);
+                            SetSpeakerSlot_i(0);
+                        }
+                    }
+                    if not $permissionfortest {
+                        ["If thou dost wish to take the Test, thou must speak with Lord Marsten and obtain his permission."];
+                        $needspermission = true;
+                    } else {
+                        if v2 {
+                            ["Dost thou wish to test thy mettle by taking the Test of Knighthood?"];
+                            v5 = ~AskYesNo();
+                            if v5 {
+                                v6 = ~GetCoord(_Shmed);
+                                v7 = v6::1;
+                                v8 = v6::2;
+                                if not ((v7 > 793) and ((v7 < 839) and ((v8 > 2237) and (v8 < 2274)))) {
+                                    SetSpeaker0_i(0, _Shmed);
+                                    ["Come to the building just south of the entrance to Knight's Test. There I can properly attend to thee before the test."];
+                                    CloseSpeaker0_i();
+                                    CloseSpeaker1_i();
+                                    Item_bark("@Farewell.@", _Avatar);
+                                    Bark_i(2, "@See thee there...@", _Shmed);
+                                    terminate;
+                                }
+                                SetSpeaker0_i(0, _Shmed);
+                                ["Pray tell, what be the password?"];
+                                SetSpeaker1_i(0, _Avatar);
+                                SetSpeakerSlot_i(1);
+                                ["Courage is the Soul of Life."];
+                                CloseSpeaker1_i();
+                                SetSpeakerSlot_i(0);
+                                ["Steel thyself! If thou dost make it through to the other side, then all will know that thou art worthy to be a Knight of Monitor."];
+                                if (~ListSize_i(~GetParty()) > 1) {
+                                    ["Thy friends must wait for thee here."];
+                                    if ~GetItemFlag_i(_InParty_i, _Selina) {
+                                        SayIfNear_i("@Then he cannot take this Test! I refuse to leave!@", 65492);
+                                        SetSpeakerSlot_i(0);
+                                        ["I cannot change the rules of the Test. Therefore, I cannot admit thee, stranger."];
+                                        Bark_i(0, "@Good-bye.@", _Shmed);
+                                        terminate;
+                                    }
+                                    $begunknightstest = true;
+                                    SetWorkTypeAt_i(_Loiter, 0, 65535, _Shmed);
+                                    v9 = ~PartyUtters(false, 0, "@Couldn't we wait at the pub in town?@", 65535);
+                                    if (v9 <> 65180) {
+                                        if (~ListSize_i(~GetParty()) > 2) {
+                                            v10 = v9;
+                                            While (v10 = v9) {
+                                                v10 = ~PartyUtters(false, 0, 0, 1);
+                                            }
+                                            v10 = ~PartyUtters(false, 0, (("@Of course not. We shall wait faithfully for thee here, " + v0) + ".@"), v10);
+                                        }
+                                        SetSpeakerSlot_i(0);
+                                    }
+                                    v11 = ~GetParty_i();
+                                    if v11 {
+                                        Foreach v14 in v11 {
+                                            if not (~ItemToNPC_i(v14) = 65180) {
+                                                LeaveParty(v14);
+                                                v15 = << 802, 2266 >>;
+                                                NewSchedule_i(v15, _Loiter, 0, v14);
+                                                Npc_schedule(v14);
+                                            }
+                                        }
+                                    }
+                                }
+                                ClearItemFlag_i(_Invisible, _Avatar);
+                                v16 = ~FindNearby_i(0, 100, _Locked_Chest, _Shmed);
+                                v17 = 0;
+                                Foreach v20 in v16 {
+                                    if (~GetQuality(v20) = 72) {
+                                        Item_setType(_Chest, v20);
+                                        v17 = v20;
+                                    }
+                                }
+                                if (v17 = 0) {
+                                    v21 = ~Item_create(_Chest);
+                                    if v21 {
+                                        v22 = ~SetQuality(72, v21);
+                                        v22 = ~PopToMap(~GetCoord(item));
+                                        v17 = v21;
+                                    } else {
+                                        PrintError_i("backup chest creation failed.");
+                                    }
+                                }
+                                ["For now I will take thy things and keep them safe. Thou art only permitted to wear leather armour and to carry no other weapon but a simple mace when thou art taking the Knight's Test of Monitor."];
+                                v23 = 0;
+                                v24 = ~GetContents(_All, _All, _All, _Avatar);
+                                While (v23 < 2) {
+                                    Foreach v27 in v24 {
+                                        if (~IsContainer_i(v27) or (v23 = 1)) {
+                                            v28 = ~Item_getType(v27);
+                                            if not ((v28 = 486) or ((v28 = 607) or (v28 = 485))) {
+                                                if not ~Item_push(v27) {
+                                                    PrintError_i(" failed the push!");
+                                                    terminate;
+                                                }
+                                                if not ~Item_popToEnd(v17) {
+                                                    PrintError_i(" failed the pop!");
+                                                    terminate;
+                                                }
+                                            }
+                                        }
+                                    }
+                                    v23 = (v23 + 1);
+                                    v24 = ~GetContents(_All, _All, _All, _Avatar);
+                                }
+                                v21 = ~GiveToCont_i(false, 0, _All, _Mace, 1, _Avatar);
+                                v21 = ~GiveToCont_i(false, 0, _All, _Leath_Armour, 1, _Avatar);
+                                PathfindNPC_i(true, #EnterKnightsTest_i, _Avatar, _NearDeath, << 825, 2263, 0 >>, _Shmed);
+                                Bark_i(2, "@Follow me...@", _Shmed);
+                                Bark_i(5, "@Lead onwards...@", _Avatar);
+                                SetItemFlag_i(_DontMove_i, _Avatar);
+                                EndConverse_i();
+                                terminate;
+                            } else {
+                                ["Harrumph! Perhaps when thou hast found a bit of courage!"];
+                                Bark_i(3, "@Be on thy way then!@", _Shmed);
+                                terminate;
+                            }
+                        } else {
+                            ["If thou dost meet me at the Place of the Test, thou canst take the Test of Knighthood."];
+                            ["Follow the Kings' Road north of Monitor, then take the trail leading west."];
+                            ["I can be found there everyday, from dawn until late in the afternoon."];
+                        }
+                    }
+                }
+            }
+            key ("bye") {
+                CloseSpeaker0_i();
+                CloseSpeaker1_i();
+                Bark_i(0, "@Farewell.@", _Avatar);
+                Bark_i(2, "@On thy way, then.@", _Shmed);
+                goto label_95;
+            }
+        }
+        clear_answers;
+    }
+    if (event = _Action) {
+        v29 = ~FindNearby_i(176, 10, _Door_EW, _Avatar);
+        Foreach v32 in v29 {
+            if (~GetQuality(v32) = 72) && (~DoorState_i(v32) = 2) {
+                SetDoorState_i(0, v32);
+                BarkIfNear_i(<< "There thou dost go...", "Thou mayest begin." >>, item);
+            }
+        }
+    }
+    label_95:
+}
+
+Routine EnterKnightsTest_i accepts a0 #locals(9) #uses(Bark_i, ~CreateItemAt_i) {
+    if (event = _Path_Failure) {
+        ClearItemFlag_i(_DontMove_i, _Avatar);
+        ClearSpeakers_i();
+        Bark_i(0, "@I can do this...@", _Avatar);
+        Bark_i(16, "@I changed my mind...@", _Avatar);
+        terminate;
+    }
+    if (event = _Bark) {
+        PathfindNPC_i(true, #EnterKnightsTest_i, _Shmed, _Trigger, << 825, 2244, 0 >>, _Shmed);
+        Bark_i(0, "@To the test!@", _Avatar);
+        terminate;
+    }
+    if (event = _NearDeath) {
+        PathfindNPC_i(true, #EnterKnightsTest_i, _Avatar, _Bark, << 823, 2263, 0 >>, _Avatar);
+        terminate;
+    }
+    if (event = _Trigger) {
+        PathfindNPC_i(true, #EnterKnightsTest_i, _Avatar, _Pathfind1, << 823, 2241, 0 >>, _Avatar);
+        v0 = ~PostAction(<< _aFACE_i, _West >>, _Avatar);
+        SetWorkType(_Stand, _Shmed);
+        Bark_i(0, "@To the test!@", _Shmed);
+        terminate;
+    }
+    if (event = _Pathfind1) {
+        v1 = ~FindNearby_i(0, 10, _Door_EW, _Avatar);
+        Foreach v4 in v1 {
+            v5 = ~GetCoord(v4);
+            Item_destroy(v4);
+            Sfx(32);
+            v6 = ~CreateItemAt_i(v5, true, 72, 14, _Door_NS);
+        }
+        Bark_i(0, "@heh, heh...@", _Shmed);
+        v6 = ~PostInFuture(3, << _aNO_HALT_i, _aUSABLE_i, #EnterKnightsTest_i >>, item);
+        terminate;
+    }
+    if (event = _Action) {
+        PathfindNPC_i(true, #EnterKnightsTest_i, _Avatar, _Pathfind2, << 823, 2234, 0 >>, _Avatar);
+    }
+    if (event = _Pathfind2) {
+        v1 = ~FindNearby_i(0, 10, _Door_NS, _Avatar);
+        Foreach v4 in v1 {
+            if (~GetQuality(v4) = 72) {
+                v5 = ~GetCoord(v4);
+                Item_destroy(v4);
+                Sfx(31);
+                v6 = ~CreateItemAt_i(v5, false, 72, 14, _Door_EW);
+            }
+            ClearItemFlag_i(_DontMove_i, _Avatar);
+            ClearSpeakers_i();
+            Bark_i(7, "@I have a bad feeling...@", _Avatar);
+        }
+        PathfindNPC_i(true, #EnterKnightsTest_i, _Avatar, _Pathfind2, << 823, 2241, 0 >>, _Avatar);
+    }
+}

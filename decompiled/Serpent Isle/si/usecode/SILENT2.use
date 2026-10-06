@@ -1,0 +1,19 @@
+Routine Silent2 accepts a0 #locals(2) #uses(~RemoveFromList_i, Bark_i) {
+    if (event = _Converse) {
+        SetWorkType(_Shy, _Silent2);
+        v0 = ~FindNearby_i(0, 10, _Monk, _Silent2);
+        if (~NPCToItem_i(_Silent1) in v0) {
+            v0 = ~RemoveFromList_i(v0, ~NPCToItem_i(_Silent1));
+        }
+        if (~NPCToItem_i(_Silent2) in v0) {
+            v0 = ~RemoveFromList_i(v0, ~NPCToItem_i(_Silent2));
+        }
+        if (~NPCToItem_i(_Silent3) in v0) {
+            v0 = ~RemoveFromList_i(v0, ~NPCToItem_i(_Silent3));
+        }
+        if v0 {
+            v1 = v0::~Random(~ListSize_i(v0));
+            Bark_i(0, "@She hath made a vow.@", v1);
+        }
+    }
+}

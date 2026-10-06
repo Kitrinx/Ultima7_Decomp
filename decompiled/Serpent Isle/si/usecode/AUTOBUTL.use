@@ -1,0 +1,46 @@
+Routine Butler accepts a0 #locals(4) #uses(AutomatonUsable_i, Bark_i, ~PartyUtters, ~AskYesNo, ~GiveItemsOrDrop_i) {
+    if ~GetItemFlag_i(_Zombie, item) {
+        AutomatonUsable_i();
+        terminate;
+    }
+    if (event = _Converse) {
+        if flag(589) {
+            SetSpeaker0_i(0, _Forskis);
+            ["Thou dost have the sceptre. My work is complete. I must rest. I have waited for thee for so long..."*];
+            v0 = ~PostInFuture(15, << _aNO_HALT_i, _aHIT_i, 50, 0 >>, _Butler);
+            terminate;
+        } else {
+            Item_bark("@Hold there, Automaton!@", _Avatar);
+            Bark_i(3, "@I would speak with thee...@", item);
+            SetWorkType(_Talk, item);
+        }
+    }
+    if (event = _Talking) {
+        Npc_schedule(item);
+        ClearBark_i(item);
+        SetSpeaker0_i(0, _Forskis);
+        ["Hierophant! Thou hast returned!"];
+        ["But, thou art not the Hierophant. Pardon, mine energy is low."];
+        ["I have been waiting since all of the citizens of this city left through the Wall of Lights for their new world. Since that time\x09I have been carefully attending thy belongings..." *"Pardon. I mean, the Hierophant's belongings." *"Before he led the people through the Wall of Lights, he gave me an item of extreme importance, the Serpent Sceptre."* "I have been guarding it for centuries now."];
+        v1 = << "@This machine did mistake thee for the Hierophant, Avatar.@" >>;
+        v2 = << "@By the Virtues, it thought I was this Hierophant person.@" >>;
+        v0 = ~PartyUtters(false, v2, v1, 65534);
+        SetSpeaker0_i(0, _Forskis);
+        ["Pardon, but did I just hear thou art the Hierophant? Is it true thou art the Hierophant of Order?"];
+        v3 = ~AskYesNo();
+        if v3 {
+            ["At long last thou hast returned! I have kept it safe for all the centuries since thou wert last here!"];
+            ["Hierophant, here is thy Serpent Sceptre!"];
+            flag(589) = true;
+            v0 = ~GiveItemsOrDrop_i(true, 0, 0, 65177, 926, 1, _Avatar);
+            ["It is good that I successfully carried out mine instructions." *"Now, I must rest..."];
+            v0 = ~PostInFuture(15, << _aNO_HALT_i, _aHIT_i, 50, 0 >>, _Butler);
+            SetWorkType(_Shy, _Butler);
+            terminate;
+        } else {
+            ["Error! I have waited centuries for the Hierophant and to have almost given the Serpent Sceptre to a total stranger!"* "Error! To almost let the key to the Great Library fall into the wrong hands! I should have my works examined..."* "Begone! Thou art a hazard to the safety of the Great Library." *"Now what was it that the Hierophant wanted...?"];
+            SetWorkType(_Shy, _Butler);
+            terminate;
+        }
+    }
+}

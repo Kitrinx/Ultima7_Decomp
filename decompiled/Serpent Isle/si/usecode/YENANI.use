@@ -1,0 +1,154 @@
+Routine Yenani accepts a0 #locals(8) #uses(~IsInInv, PartyFaces_i, Bark_i, ~GiveItemsOrDrop_i) {
+    v0 = ~IsInInv(2, 65177, _Brk_Items, 1, _Party);
+    if (event = _Converse) {
+        Item_bark("@Hail there, Gwani person.@", _Avatar);
+        PartyFaces_i(65388);
+        Bark_i(3, "@Hello there, Avatar!@", _Yenani);
+        SetWorkType(_Talk, _Yenani);
+    }
+    if (event = _Talking) {
+        Npc_schedule(_Yenani);
+        ClearBark_i(_Yenani);
+        SetSpeaker0_i(0, _Yenani);
+        v1 = ~IsInInv(2, 9, _Bucket, 1, _Party);
+        v2 = ~GetItemFlag_i(_Met, _Yenani);
+        TurnOn(<< "name", "bye" >>);
+        if v1 {
+            TurnOn("got blood");
+        }
+        if v2 {
+            ["It is thee again!"];
+        } else {
+            ["Thou must be one Gwenno spoke of!"];
+            TurnOn("Gwenno");
+        }
+        if ($HOUND_TRACKED_BATLIN and $gavedragonblood) {
+            TurnOn("valuable secret");
+        }
+        if $BANES_RELEASED && not $hazarddead {
+            TurnOn("Where are the other Gwani?");
+        }
+        if (v0 and not $gotsunrisetooth) {
+            TurnOn("Here is the amulet.");
+        }
+        converse {
+            key ("Here is the amulet.") {
+                TurnOff("Here is the amulet.");
+                ["Many thanks for returning this, Avatar."];
+                ["Here something to reward good deed."];
+                v3 = ~TakeFromParty_i(false, 2, _All, _Brk_Items, 1);
+                v4 = ~GiveItemsOrDrop_i(true, false, 0, 65177, 559, 1, _Avatar);
+                $gotsunrisetooth = true;
+            }
+            key ("name") {
+                ["I am Yenani, mate of Myauri, mother of Neyobi and Kapyundi, leader of Gwani people and teller of Gwani history."];
+                SetItemFlag_i(_Met, _Yenani);
+                TurnOff("name");
+                TurnOn(<< "Myauri", "Neyobi", "Kapyundi", "history" >>);
+            }
+            key ("history") {
+                TurnOff("history");
+                ["Many years ago the Gwani ruled these icy lands with the Great Horn of the Gwani. It was a powerful tool of balance that could make the ice dance. But we lost the Great Horn of the Gwani when it was stolen from us by a stranger who came in the night. He took the Horn to the place men call Skullcrusher. We have since found that we Gwani do not need it to live in balance with the universe. May it go to whoever has the good fortune of finding it."];
+            }
+            key ("Myauri") {
+                ["Long have Gwani been led by my wisdom, and hunting skills of mate Myauri. Together we are heart and soul of Gwani people."];
+                TurnOff("Myauri");
+            }
+            key ("Kapyundi") {
+                ["He is proud and skilled hunter."];
+                TurnOff("Kapyundi");
+            }
+            key ("Neyobi") {
+                TurnOff("Neyobi");
+                v5 = ~GetItemFlag_i(_Zombie, _Neyobi);
+                if v5 {
+                    ["My daughter have severe fever. She dying and only thou canst save her!"];
+                    TurnOn("save Neyobi");
+                } else {
+                    ["I thank thee for bringing the one thing that could save daughter."];
+                    if $HOUND_TRACKED_BATLIN {
+                        ["To reward thee I can shall give thee a valuable secret."];
+                        TurnOn("valuable secret");
+                    } else {
+                        ["Remember that the Gwani people are in thy debt. Perhaps we shall be able to reward thee one day."];
+                    }
+                }
+            }
+            key ("save Neyobi") {
+                ["Talk to Baiyanda, healer of our people. She will know what to do."];
+                TurnOff("save Neyobi");
+            }
+            key ("valuable secret") {
+                if $gavedragonblood {
+                    ["For thy aid to my people, I present to thee this gift of knowledge. Here is the secret for travelling through Skullcrusher Mountains -- When thou dost reach this place, remember the phrase: \@Isal Sal Cra Gaas Iskar.\@ Skullcrusher is south of\x09our village. At mountains go westward and follow all way round. There is a cave like any other there. But inside are five pillars and five serpent runestones and a man of metal guards this place."];
+                    $KNOW_SKULLCRUSHER_PASSWORD = true;
+                } else {
+                    ["I shall give to thee the secret for passing through the mountains of Skullcrusher, which is what one must do to reach the lands farther to the north."];
+                }
+                TurnOff("valuable secret");
+            }
+            key ("Gwenno") {
+                v6 = ~GetWorkType(_Gwenno);
+                if (v6 = 15) {
+                    ["Gwenno was good friend to us. She spent weeks teaching me human language. Over time I slowly teaching others.\x09Many days we have mourned death of good woman Gwenno. She horribly killed by men of one we call The Trapper. She spoke of thee often."];
+                    $knowgwennodead = true;
+                    TurnOn(<< "Spoke of me?" >>);
+                } else {
+                    ["We of Gwani overjoyed to learn Gwenno's resurrection."];
+                }
+                TurnOff("Gwenno");
+            }
+            key ("Spoke of me?") {
+                TurnOff("Spoke of me?");
+                ["She spoke of one called the Avatar. She said one called the Avatar would come and return her to her mate. She also said Avatar would save Gwani from extinction."];
+            }
+            key ("Gwani") {
+                ["We are peaceful people and chose to live apart from races of goblins and humanity."];
+                TurnOn(<< "goblins", "humanity" >>);
+                TurnOff("Gwani");
+            }
+            key ("goblins") {
+                ["Goblins hunt us without mercy. Hatred for us almost greater than hatred for humans."];
+                TurnOff("goblins");
+            }
+            key ("humanity") {
+                ["Humans also hunt us, although fewer of them than goblins. Still, one human menaces us and being greatest single threat to our race.  This is man we know only as the Trapper."];
+                TurnOff("humanity");
+                TurnOn("The Trapper");
+            }
+            key ("got blood") {
+                TurnOff("got blood");
+                ["Thou brought blood of Ice Dragon! I must have!"];
+                v7 = ~TakeFromParty_i(false, 2, 9, _Bucket, 1);
+                if v7 {
+                    ["Daughter can be saved! I thank thee."];
+                    if $HOUND_TRACKED_BATLIN {
+                        ["Now, as I promised I reward thee with a valuable secret."];
+                        TurnOn("valuable secret");
+                    }
+                    $gavedragonblood = true;
+                    ClearItemFlag_i(_Zombie, _Neyobi);
+                } else {
+                    ["Thou must give me the blood of an ice dragon so I save daughter."];
+                }
+            }
+            key ("The Trapper") {
+                ["He is human called Hazard. He lives in cave north on Ice Plains. I fear he not stop hunt us until he hunt us to extinction."];
+                TurnOff("The Trapper");
+            }
+            key ("Where are the other Gwani?") {
+                TurnOff("Where are the other Gwani?");
+                ["We were attacked by the Trapper! All of our tribe dead except Myauri, Neyobi and myself. I want to give thee magical serpent tooth, but it in amulet of Baiyanda. Amulet is now with the Trapper. Thou find his lair north, in cave along mountains."];
+                flag(609) = true;
+            }
+            key ("bye") {
+                CloseSpeaker0_i();
+                CloseSpeaker1_i();
+                Bark_i(1, "@Be safe, my friend.@", _Avatar);
+                Bark_i(5, "@And thee, as well.@", _Yenani);
+                break;
+            }
+        }
+        clear_answers;
+    }
+}

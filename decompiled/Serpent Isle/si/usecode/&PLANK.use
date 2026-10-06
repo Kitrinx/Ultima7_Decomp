@@ -1,0 +1,70 @@
+Routine Plank_2 accepts a0 #locals(0) #uses(MemberSays_i, ~SwingPlank_i) {
+    if (event = _Converse) {
+        if $hawkintransit {
+            terminate;
+        }
+        if ~GetItemFlag_i(_OnMovingBarge_i, item) {
+            MemberSays_i("@The sails must be furled before the planks are raised.@");
+        } else {
+            if not ~SwingPlank_i(item) {
+                MemberSays_i("@I believe the gangplank is blocked.@");
+            } else {
+                if ~InGumpMode_i() {
+                    closeAllGumps();
+                }
+            }
+        }
+    }
+}
+
+Routine Plank_Closed accepts a0 #locals(0) #uses(MemberSays_i, ~SwingPlank_i) {
+    if (event = _Converse) {
+        if $hawkintransit {
+            terminate;
+        }
+        if ~GetItemFlag_i(_OnMovingBarge_i, item) {
+            MemberSays_i("@The sails must be furled before the planks can be lowered.@");
+        } else {
+            if not ~SwingPlank_i(item) {
+                MemberSays_i("@I believe the gangplank is blocked.@");
+            }
+        }
+    }
+}
+
+Function ~SwingPlank_i accepts a0 #locals(10) #uses(~IsPlankBlocked_i, ~NewPlankCoord_i) {
+    v1 = << 65533, 0, 1, 0 >>;
+    v2 = << 0, 65533, 0, 1 >>;
+    v3 = << 150, 150, 781, 781 >>;
+    v4 = << 680 >>;
+    v5 = ~Item_getType(v0);
+    v6 = ~GetFrame(v0);
+    v7 = ~GetCoord(v0);
+    v8 = v3::(v6 + 1);
+    v9::1 = v1::(v6 + 1);
+    v9::2 = v2::(v6 + 1);
+    v9::3 = 1;
+    if (v5 = v8) {
+        if ~IsPlankBlocked_i(v4, 65533, v7, v0) {
+            return false;
+        }
+        v7 = ~NewPlankCoord_i(v5, v9, v7);
+    } else {
+        v7 = ~NewPlankCoord_i(v5, v9, v7);
+        if ~IsPlankBlocked_i(v4, 65533, v7, v0) {
+            return false;
+        }
+    }
+    if (v5 = 150) {
+        Item_setType(_Plank_Closed, v0);
+    } else {
+        Item_setType(_Plank_2, v0);
+    }
+    v10 = ~Item_push(v0);
+    if v10 {
+        v10 = ~PopToMap(v7);
+        return true;
+    } else {
+        return false;
+    }
+}

@@ -1,0 +1,26 @@
+Routine CaptivesBark_i accepts a0 #locals(10) #uses(Bark_i, ~GimmePathEgg) {
+    if $passedshaminoclonetest {
+        terminate;
+    }
+    v0 = ~GetCoord(_Avatar);
+    if ((event = _Action) and ((v0::1 > 16) and ((v0::1 < 79) and ((v0::2 > 1632) and (v0::2 < 1658))))) {
+        v1 = false;
+        v2 = << 304, 766, 469, 888 >>;
+        if not (~GetWorkType(_Sex02) = _Dance) {
+            v2 = (v2 & 652);
+        }
+        v3 = << "@Help us!@", "@Press the right button!@", "@Free us with the right button!@", "@Be kind...@", "@Do not force us!@", "@Damn the buttons!@" >>;
+        Foreach v6 in v2 {
+            v7 = ~FindNearby_i(0, 20, v6, _Avatar);
+            if v7 {
+                Bark_i(~Random(10), v3::~Random(~ListSize_i(v3)), v7);
+                v1 = true;
+            }
+        }
+        if v1 {
+            v8 = ~rndRange(80, 40);
+            v7 = ~GimmePathEgg(1, 0);
+            v9 = ~PostInFuture(v8, << _aNO_HALT_i, _aUSABLE_i, #CaptivesBark_i >>, v7);
+        }
+    }
+}

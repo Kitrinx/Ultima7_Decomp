@@ -1,0 +1,120 @@
+Routine Baking_Stuff accepts a0 #locals(13) #uses(MemberSays_i, Bark_i, MemberBarks_i) {
+    if (event = _Converse) {
+        v0 = ~GetFrame(item);
+        if (v0 = 0) {
+            v1 = ~GetTarget();
+            v2 = ~GetCoord(v1);
+            v3 = ~Item_getType(v1);
+            v4 = 65535;
+            if (v3 = 1018) {
+                v4 = (v2::1 - ~rndRange(3, 0));
+                v5 = v2::2;
+                v6 = (v2::3 + 2);
+            }
+            if (v3 = 1003) {
+                v4 = v2::1;
+                v5 = (v2::2 - ~rndRange(2, 0));
+                v6 = (v2::3 + 2);
+            }
+            if (v4 = 65535) {
+                MemberSays_i("@Do not pour flour on that!@");
+            } else {
+                v7 = ~Item_create(_Baking_Stuff);
+                if v7 {
+                    SetItemFlag_i(_IsTemporary_i, v7);
+                    SetFrame(16, v7);
+                    v8 = ~PopToMap(<< v4, v5, v6 >>);
+                }
+            }
+        }
+        if ((v0 = 8) or (v0 = 9)) {
+            v1 = ~GetTarget();
+            if (~Item_getType(v1) = _Baking_Stuff) {
+                if (~GetFrame(v1) = 18) {
+                    SetFrame(17, v1);
+                }
+            } else {
+                Bark_i(0, "@Zounds! That did hurt!@", v1);
+            }
+        }
+        if ((v0 = 13) or (v0 = 14)) {
+            SetFrame(0, item);
+        }
+        if ((v0 = 17) or (v0 = 18)) {
+            v1 = ~GetTarget();
+            v9 = ~Item_getType(v1);
+            if (v9 = 831) {
+                v8 = ~Item_push(item);
+                if v8 {
+                    v2 = ~GetCoord(v1);
+                    v2::1 = (v2::1 - ~rndRange(2, 1));
+                    v2::3 = (v2::3 + 1);
+                    v8 = ~PopToMap(v2);
+                    if v8 {
+                        v8 = ~PostInFuture(60, << _aNO_HALT_i, _aUSABLE_i, #Baking_Stuff >>, item);
+                        if (~rndRange(2, 1) = 1) {
+                            MemberBarks_i("@Do not thou overcook it!@");
+                        }
+                    }
+                }
+            }
+        }
+    }
+    if (event = _Action) {
+        v2 = ~GetCoord(item);
+        v10 = ~FindNearby_i(0, 2, _B_Hearth, item);
+        if (~ListSize_i(v10) > 0) {
+            Item_destroy(item);
+            v11 = ~Item_create(_Food);
+            if v11 {
+                SetItemFlag_i(_IsTemporary_i, v11);
+                SetFrame(0, item);
+                v8 = ~PopToMap(v2);
+                if v8 {
+                    v12 = ~rndRange(3, 1);
+                    if (v12 = 1) {
+                        MemberBarks_i("@I believe the bread is ready.@");
+                    }
+                    if (v12 = 2) {
+                        MemberBarks_i("@Mmm... 'Tis a wonderful aroma.@");
+                    }
+                }
+            }
+        }
+    }
+}
+
+Routine BakeBread_i accepts a0 #locals(7) #uses(MemberBarks_i) {
+    if (event = _Trigger) {
+        v0 = ~FindNearby_i(0, 0, _Baking_Stuff, item);
+        v1 = ~GetFrame(v0);
+        if ((v1 > 15) and (v1 < 19)) {
+            v2 = ~PostInFuture(60, << _aNO_HALT_i, _aUSABLE_i, #BakeBread_i >>, v0);
+            if (~rndRange(2, 1) = 1) {
+                MemberBarks_i("@Do not thou overcook it!@");
+            }
+        }
+    }
+    if (event = _Action) {
+        v3 = ~GetCoord(item);
+        v4 = ~FindNearby_i(0, 2, _B_Hearth, item);
+        if (~ListSize_i(v4) > 0) {
+            Item_destroy(item);
+            v5 = ~Item_create(_Food);
+            if v5 {
+                SetItemFlag_i(_IsTemporary_i, v5);
+                SetFrame(0, item);
+                v2 = ~PopToMap(v3);
+                if v2 {
+                    v6 = ~rndRange(3, 1);
+                    if (v6 = 1) {
+                        MemberBarks_i("@I believe the bread is ready.@");
+                    }
+                    if (v6 = 2) {
+                        MemberBarks_i("@Mmm... 'Tis a wonderful aroma.@");
+                    }
+                }
+            }
+        }
+    }
+}

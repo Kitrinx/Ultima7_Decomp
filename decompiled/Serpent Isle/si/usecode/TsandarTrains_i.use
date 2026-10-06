@@ -1,0 +1,75 @@
+Usable TsandarTrains_i #locals(15) #uses(~AvatarName, ~AskList, ~PartyNoAutomatons_i, ~AskOrdList, ~CanTrain, ~GetStat, CombatTrain_i, StrTrain) {
+    v0 = ~AvatarName();
+    v1 = 644;
+    v2 = << 0, 4 >>;
+    v3 = 200;
+    ["I charge 200 gold coins to instruct students in the ways of war. Dost thou agree?"];
+    v4 = ~AskList(<< "Yes", "No" >>);
+    if (v4 = "No") {
+        ["I knew thou didst lack Discipline!"];
+        terminate;
+    }
+    if (v4 = "Yes") {
+        ["Whom dost thou wish to train?"];
+        v5 = ~PartyNoAutomatons_i();
+        v5 = (0 & v5);
+        v6 = << "Nobody" >>;
+        Foreach v9 in v5 {
+            if not (v9 = 0) {
+                v6 = (v6 & ~GetNPCName_i(v9));
+            }
+        }
+        v10 = ~AskOrdList(v6);
+        v10 = v5::v10;
+        v11 = ~ItemToNPC_i(v10);
+        v12 = ~GetNPCName_i(v10);
+        if (v10 = 0) {
+            ["Thou wilt never be warrior with such weak resolve!"];
+        } else {
+            v13 = ~CanTrain(2, v11, v3, v1, v2);
+            if (~GetStat(_TrainingPoints, v10) < 2) {
+                v13 = 0;
+            }
+            if (v13 = 0) {
+                if (v11 = 65180) {
+                    ["Thou art not ready to learn yet!"];
+                } else {
+                    ["<v12> is not ready to learn yet!"];
+                }
+            }
+            if (v13 = 1) {
+                ["Thou dost not have 200 gold coins! I am not so easily cheated!];
+                ["Speak with me again when thou art serious about learning the secrets of combat."];
+                terminate;
+            }
+            if (v13 = 2) {
+                if (~GetStat(_Cbt, v10) < 30) {
+                    goto label_27;
+                }
+                if (~GetStat(_Str, v10) < 30) {
+                    goto label_27;
+                }
+                if (v11 = 65180) {
+                    ["Thou dost already possess more skill than I could teach thee!"];
+                } else {
+                    ["<v12> doth already possess more skill than I could ever teach!"];
+                }
+            }
+            if (v13 = 3) {
+                label_27:
+                ["Hold thy weapon at ready... Now swing... Again.];
+                ["I think I can see thy problem, <v12>. Thou dost hold thy weapon too tightly.];
+                ["If thou dost clutch it so thou shalt never have the proper fluidness to meet a foe's attack.];
+                ["Here, hold it like so. Seest thou? Thou hast sacrificed nothing of control, and have gained much in speed.];
+                ["I know this feels awkward. Practice with this and thou wilt see no loss of accuracy."];
+                v14 = ~TakeFromParty_i(true, _All, _All, v1, v3);
+                if (~GetStat(_Cbt, v10) < 30) {
+                    CombatTrain_i(1, v10);
+                }
+                if (~GetStat(_Str, v10) < 30) {
+                    StrTrain(1, v10);
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,37 @@
+Routine Winepress accepts a0 #locals(14) #uses(~PartyUtters, ~CreateItemAt_i) {
+    if (event = _Converse) {
+        v0 = ~GetFrame(item);
+        v1 = false;
+        v2 = ~FindNearby_i(0, 20, _Bucket, item);
+        Foreach v5 in v2 {
+            v6 = ~GetCoord(v5);
+            v7 = ~GetFrame(v5);
+            if ((v6::1 = 2178) and ((v6::2 = 1876) and ((v7 = 0) and (v0 = 0)))) {
+                Sfx(74);
+                Sfx(130);
+                SetFrame(1, item);
+                v8 = ~PostAction(<< _aNO_HALT_i, _aFRAME, 2, _aFRAME, 3, _aFRAME, 4, _aFRAME, 5, _aUSABLE_i, #Winepress >>, item);
+                terminate;
+            }
+        }
+        v9 = << "@Methinks thou shouldst place an empty bucket at its base, Avatar.@" >>;
+        v10 = << "@Hummmm. I'll wager I could fill an empty bucket if I placed one at its base...@" >>;
+        v8 = ~PartyUtters(false, v10, v9, 65534);
+    }
+    if (event = _Action) {
+        v2 = ~FindNearby_i(0, 10, _Bucket, item);
+        Foreach v5 in v2 {
+            v7 = ~GetFrame(v5);
+            v6 = ~GetCoord(v5);
+            if ((v6::1 = 2178) and ((v6::2 = 1876) and (v7 = 0))) {
+                SetFrame(3, v5);
+                Sfx(74);
+                Sfx(7);
+                v8 = ~PostAction(<< _aNO_HALT_i, _aFRAME, 6, _aFRAME, 7, _aFRAME, 8, _aFRAME, 9, _aFRAME, 10, _aFRAME, 11, _aFRAME, 12, _aFRAME, 13, _aFRAME, 0 >>, item);
+            } else {
+                v13 = ~CreateItemAt_i(<< 2178, 1876, 0 >>, false, 0, ~rndRange(23, 20), _Blood_Trails);
+                SetFrame(0, item);
+            }
+        }
+    }
+}

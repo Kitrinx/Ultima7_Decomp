@@ -1,0 +1,22 @@
+Routine KarnaxAppearsEgg_i accepts a0 #locals(3) #uses(~IsInInv, SetWorkTypeAt_i, ~GimmePathEgg, Bark_i) {
+    if (event = _Trigger) {
+        if $PLANTED_SILVER_SEED {
+            Item_destroy(item);
+            terminate;
+        } else {
+            if ~IsInInv(12, 65177, _Artifacts, 1, _Party) {
+                v0 = ~GetCoord(item);
+                Item_move(v0, _Karnax);
+                SetWorkTypeAt_i(_Wait, v0::2, v0::1, _Karnax);
+                createSprite(65535, 0, 0, 0, v0::2, v0::1, 26);
+                Sfx(81);
+                v1 = ~GimmePathEgg(1, 0);
+                SetMusic(v1, 63);
+                v2 = ~PostInFuture(2, << _aNO_HALT_i, _aUSABLE_i, #FaceAvatar_i >>, _Karnax);
+                Bark_i(3, "@Avatar...@", _Karnax);
+                v2 = ~PostInFuture(6, << _aNO_HALT_i, _aUSABLE_i, #PartyFaces_i >>, _Avatar);
+                v2 = ~PostInFuture(13, << _aNO_HALT_i, _aUSABLE_i, #Karnax >>, _Karnax);
+            }
+        }
+    }
+}

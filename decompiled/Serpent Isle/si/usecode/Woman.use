@@ -1,0 +1,268 @@
+Routine Woman accepts a0 #locals(4) #uses(~LordOrLady, ~AvatarName, PartyFaces_i, Bark_i, ~IsNPCNear, ~AskList, ElissaSellsSpells_i, ElissaTrains_i) {
+    v0 = ~LordOrLady();
+    v1 = ~AvatarName();
+    if (event = _Converse) {
+        Item_bark("@Might I speak with thee?@", _Avatar);
+        PartyFaces_i(item);
+        Bark_i(2, (("@Certainly, " + v0) + ".@"), item);
+        SetWorkType(_Talk, item);
+    }
+    if (event = _Talking) {
+        SetWorkType(_Stand, item);
+        ClearBark_i(item);
+        SetSpeaker0_i(0, 65229);
+        v2 = ~GetNPCID_i(item);
+        if ($HAVE_SILVER_SEED or $PLANTED_SILVER_SEED) {
+            ["I am pleased to see thee, Champion of Balance.];
+            ["How might I be of service to thee?"];
+            TurnOn("service");
+        } else {
+            if (v2 = false) {
+                ["I do not believe I have had the pleasure of meeting thee, <v0>. I think it would be wise for thee to prove that thou art not a foul Chaos spy.];
+                ["Make no untoward moves, I warn thee, for I am Elissa, Order Mage of the First Rank."];
+                SetNPCID_i(2, item);
+                TurnOn(<< "prove", "Chaos spy", "Mage of the First Rank" >>);
+            } else {
+                if (v2 = 2) {
+                    if $MET_ISSTANAR {
+                        ["Ah, thou hast spoken with our Commander! Very good. What can I do for thee?"];
+                        SetNPCID_i(1, item);
+                        TurnOn("service");
+                    } else {
+                        ["Begone from my sight, miscreant!"];
+                        terminate;
+                    }
+                } else {
+                    ["How good it is to see thee again, <v1>! How might I be of service to thee this day?"];
+                    TurnOn("service");
+                }
+            }
+        }
+        TurnOn("bye");
+        converse {
+            key ("prove") {
+                TurnOff("prove");
+                ["Unless thou canst prove to me that thou dost not mean harm to DeathWatch, I shall have to turn thee over to Isstanar.  Thou wouldst find the experience most unpleasant."];
+                TurnOn(<< "DeathWatch", "Isstanar" >>);
+            }
+            key ("DeathWatch") {
+                TurnOff("DeathWatch");
+                ["'Tis not what our High Command calls it, but then they are not here. To them this is the Serpent's Fang keep. To those of us who have held back the mindless hordes of Chaos, this is DeathWatch keep...];
+                ["Or, now that the war has passed us by, perhaps we should call it DeathWait.];
+                ["But I must have assurances of thy identity, <v0>, or things will go badly for thee."];
+                TurnOn("assurances");
+            }
+            key ("assurances") {
+                TurnOff("assurances");
+                ["Thou must have some proof of thy identity..."];
+                if (not ~IsNPCNear(_Iolo) or (not ~IsNPCNear(_Shamino) or not ~IsNPCNear(_Dupre))) {
+                    TurnOn(<< "I need no proof!", "I am the Avatar!", "Amulet" >>);
+                } else {
+                    if ~IsNPCNear(_Iolo) {
+                        SetSpeaker1_i(0, _Iolo);
+                        ["<v1> is the Avatar! Thou dost not need any further proof than the fact that the Amulet didst bring us here!"];
+                        CloseSpeaker1_i();
+                        Item_bark("@Nosey biddy!@", _Iolo);
+                        SetSpeakerSlot_i(0);
+                    }
+                    if ~IsNPCNear(_Shamino) {
+                        SetSpeaker1_i(0, _Shamino);
+                        ["What about the Amulet that Karnax didst give thee, Avatar? It brought us here. Perhaps this Mage would recognize it."];
+                        CloseSpeaker1_i();
+                        if ~IsNPCNear(_Iolo) {
+                            Item_bark("@Mind thy manners, Iolo!@", _Shamino);
+                        } else {
+                            Item_bark("@I am sick of these rules!@", _Shamino);
+                        }
+                        SetSpeakerSlot_i(0);
+                    }
+                    if ~IsNPCNear(_Dupre) {
+                        SetSpeaker1_i(0, _Dupre);
+                        ["Beware how thou dost speak to the Avatar!];
+                        ["Avatar, let us use the Amulet to return to where we were. We have enough to worry with on this quest without such presumptuous women!"];
+                        CloseSpeaker1_i();
+                        Item_bark("@Arrogant wench!@", _Dupre);
+                        SetSpeakerSlot_i(0);
+                    }
+                    ["I have no idea what it is that thy friends speak of, <v0>. I mean no disrespect, but I have never heard of \@the Avatar\@ before.];
+                    ["But if I might see the Amulet that they speak about, perhaps I can end this questioning now."];
+                    TurnOn(<< "Amulet", "questioning" >>);
+                }
+            }
+            key ("I need no proof!") {
+                TurnOff(<< "I need no proof!", "I am the Avatar!" >>);
+                ["Art thou a member of the High Command? Art thou a Hierophant? I think not!];
+                ["Thine attitude dost seriously endanger thy freedom. I suggest that thou change it quickly."];
+            }
+            key ("I am the Avatar!") {
+                TurnOff(<< "I am the Avatar!", "I need no proof!" >>);
+                ["I mean no disrespect, but I have never heard of \@the Avatar\@ before."];
+            }
+            key ("Amulet") {
+                TurnOff(<< "Amulet", "I am the Avatar!", "I need no proof!" >>);
+                ["No, it cannot be! There has not been a Champion of Balance since before Ssithnos was murdered!];
+                ["I can scarcely believe my eyes! But the item is authentic, that much I am sure of...];
+                ["Forgive my doubts, <v1>. I gave little credit to the stories. I thought that they were no more than folk tales born on the eve of war. I did not mean to offend thee."];
+                SetNPCID_i(1, item);
+                TurnOn(<< "Champion of Balance", "Ssithnos", "stories" >>);
+            }
+            key ("Champion of Balance") {
+                TurnOff("Champion of Balance");
+                ["Law required that the Great Hierophant remain an impartial judge of the people. No matter what the offense, he could not raise his hand to dispense justice.];
+                ["Only four times in history was there any who dared to defy the word of the Great Hierophant. As these people lived outside of Order and Chaos, neither group could act upon them without usurping the power of Balance.];
+                ["So it fell to the Great Hierophant to choose one among his Acolytes to go and battle these unlawful ones. The Champion was given all the power of Balance and never failed to restore harmony to the land."];
+            }
+            key ("Ssithnos") {
+                TurnOff("Ssithnos");
+                ["Ssithnos was the last Great Hierophant of Balance. But he was foully murdered by the followers of Chaos.];
+                ["He was unable to choose a Champion, but only the Great Hierophant knew the location of the Amulet. Even though thou art ignorant of thy duty, thou art certainly the Champion of Balance."];
+            }
+            key ("stories") {
+                TurnOff("stories");
+                ["With the death of the Great Hierophant, the land soon fell into confusion. Order vowed vengeance upon Chaos, and those followers of Chaos fled in panic into much of the countryside.];
+                ["During that time, the people began telling of the coming of a Champion of Balance who would see justice done and restore Balance to the world.];
+                ["I thought that it was the prattling of cowards who wished to avoid the coming war. But now that I have seen thee and the Amulet, I am uncertain."];
+            }
+            key ("questioning") {
+                TurnOff("questioning");
+                ["If thou wilt not answer to me, I shall be forced to bespell thee and take thee to the Commander of the keep.];
+                if ~IsNPCNear(_Iolo) {
+                    SetSpeaker1_i(0, _Iolo);
+                    ["Thou dost take too much upon thyself, woman!"];
+                    CloseSpeaker1_i();
+                    SetSpeakerSlot_i(0);
+                }
+                if ~IsNPCNear(_Shamino) {
+                    SetSpeaker1_i(0, _Shamino);
+                    ["I doubt it shall be as easy as thou dost imagine. Thou dost not speak to an ordinary warrior...];
+                    ["This is the Avatar thou dost question!"];
+                    CloseSpeaker1_i();
+                    SetSpeakerSlot_i(0);
+                }
+                if ~IsNPCNear(_Dupre) {
+                    SetSpeaker1_i(0, _Dupre);
+                    ["If she tries anything, Avatar, I shall gladly lop her head off for the effort!"];
+                    CloseSpeaker1_i();
+                    SetSpeakerSlot_i(0);
+                }
+                ["This is a time of war! Thou canst not think to wander about unchallenged. 'Twould be a breach of duty if I did not stop and question thee."];
+                if ~IsNPCNear(_Iolo) {
+                    SetSpeaker1_i(0, _Iolo);
+                    ["I am sorry, good Mage. Thou art quite right."];
+                    CloseSpeaker1_i();
+                    Item_bark("@My apologies.@", _Iolo);
+                    SetSpeakerSlot_i(0);
+                }
+                if ~IsNPCNear(_Shamino) {
+                    SetSpeaker1_i(0, _Shamino);
+                    ["We are strangers here. Thou dost well in questioning us. We wrong thee with our demands to be unaccountable."];
+                    CloseSpeaker1_i();
+                    Item_bark("@Remain vigilant.@", _Shamino);
+                    SetSpeakerSlot_i(0);
+                }
+                if ~IsNPCNear(_Dupre) {
+                    SetSpeaker1_i(0, _Dupre);
+                    ["Thou must honor thy duty. I apologize for speaking ill of a honorable warrior such as thyself."];
+                    CloseSpeaker1_i();
+                    Item_bark("@Duty is our honor...@", _Dupre);
+                    SetSpeakerSlot_i(0);
+                }
+            }
+            key ("Isstanar") {
+                TurnOff("Isstanar");
+                ["Thou wouldst know him, if thou hadst met him. He is the ultimate Order warrior! Nothing touches him. He is bound only by his duty."];
+                TurnOn(<< "ultimate warrior", "nothing touches him" >>);
+            }
+            key ("ultimate warrior") {
+                TurnOff("ultimate warrior");
+                ["Isstanar is invincible! He cannot die. He does not need food or rest. His strength makes even a weapon unnecessary.];
+                ["What army, if filled with warriors such as Isstanar, could not march easily to victory? Soon this accursed war will be over, and I shall retire to a life of research.];
+                ["Who knows, perhaps some day -- once I am sure that I would still have the use of my magic -- I shall make the final sacrifice and become one such as Isstanar."];
+                TurnOn(<< "How can this be?", "final sacrifice" >>);
+            }
+            key ("How can this be?") {
+                TurnOff("How can this be?");
+                ["Oh, no! Even if I knew how this was accomplished, which I do not, I would not tell thee!];
+                ["My honor is worth more than that! I shall not have it said that I betrayed Order!"];
+            }
+            key ("final sacrifice") {
+                TurnOff("final sacrifice");
+                ["To forsake the needs and desires of the body, what more dost thou ask?];
+                ["I know nothing further than what I have told thee. I have not yet attained that level."];
+            }
+            key ("nothing touches him") {
+                TurnOff("nothing touches him");
+                ["Isstanar has transcended the restraints of the body. All that remains is his iron will and the fine Logic of his mind.];
+                ["Nothing can distract him from his duty. He does not fear, he does not worry. Unlike the rest of us here, he is not consumed by boredom or impatience. He just... is."];
+            }
+            key ("Chaos spy") {
+                TurnOff("Chaos spy");
+                ["Everyone knows that the tides of battle have turned since the High Command unleashed our secret weapon. Chaos would do anything to learn how to neutralize our advantage."];
+                TurnOn(<< "secret weapon", "neutralize" >>);
+            }
+            key ("secret weapon") {
+                TurnOff("secret weapon");
+                ["If thou art observant, thou wilt know the answer to thy question. If not, I shall not aid thee... No matter who thou art."];
+            }
+            key ("neutralize") {
+                TurnOff("neutralize");
+                ["The only secret that spies need learn is that there is no way to neutralize our advantage. Order cannot fail now... The sooner that those wretched Chaos followers realize this, the sooner this war shall end!"];
+            }
+            key ("Mage of the First Rank") {
+                TurnOff("Mage of the First Rank");
+                ["Thou canst always tell the quality of a Mage by how rank he is... Thou canst smell his superiority for leagues!];
+                ["But I should not jest so... Thou art a stranger and may mistake me. In truth, a Mage's rank reflects his ability.];
+                ["Those of the First Rank have mastered all spells. Those of the Second Rank have mastered the next lowest level of spells, and so on.];
+                ["Although our titles are different, I am equal in rank to SubCommander Tsandar."];
+                TurnOn("SubCommander Tsandar");
+            }
+            key ("SubCommander Tsandar") {
+                TurnOff("SubCommander Tsandar");
+                ["Tsandar is now Isstanar's aide, though he commanded the garrison after Commander Ardiniss' death. Tsandar did not take his replacement very well, I fear.];
+                ["Tsandar's devotion to Order is strong, to be sure. But how could he expect to command now that Isstanar is here?"];
+                TurnOn("Commander Ardiniss");
+            }
+            key ("Commander Ardiniss") {
+                TurnOff("Commander Ardiniss");
+                ["Ardiniss was an old man, <v0>. It was he who founded this keep. He was a loyal servant of Order, but he did not keep Discipline as he should have.];
+                ["Fortunately, he was honored by a clean death in battle before anyone could question the strictness of his command."];
+            }
+            key ("service") {
+                TurnOff("service");
+                ["I have little to do these days. I do not know if I long to be at the front, or if I simply yearn for reassignment elsewhere. It is quite depressing being in a nearly deserted keep.];
+                if $gotspellbook {
+                    ["I canst tell thou art a Mage, though I cannot perceive what Rank. If thou desirest, I will teach thee a few spells... for a small fee, of course.];
+                    ["Or, if thou dost not desire spells, perhaps I could train thee in the use of magic... for a small fee, naturally. It will help pass the time."];
+                    ["What dost thou desire?"];
+                    v3 = ~AskList(<< "Nothing", "Spells", "Training" >>);
+                    if (v3 = "Nothing") {
+                        ["Another time, perhaps. I should go and make my rounds now anyway..."];
+                        CloseSpeaker0_i();
+                        Item_bark("@Until later...@", item);
+                        terminate;
+                    }
+                    if (v3 = "Spells") {
+                        ElissaSellsSpells_i();
+                    }
+                    if (v3 = "Training") {
+                        ElissaTrains_i();
+                    }
+                } else {
+                    ["If thou wert a Mage, I would have been willing to teach thee a few spells. Or I could have trained thee in the use of magic... All for a small fee, naturally. It would have helped to pass the time.];
+                    ["Ah well, I shall have to content myself with making rounds. I suppose it would be too much to hope for that I might encounter a Chaos monster this time..."];
+                    CloseSpeaker0_i();
+                    Item_bark("@Duty calls!@", item);
+                    terminate;
+                }
+            }
+            key ("bye") {
+                CloseSpeaker0_i();
+                Bark_i(0, "@Goodbye!@", _Avatar);
+                Bark_i(2, "@Farewell!@", item);
+                SetWorkType(_Lab, item);
+                break;
+            }
+        }
+        clear_answers;
+    }
+}

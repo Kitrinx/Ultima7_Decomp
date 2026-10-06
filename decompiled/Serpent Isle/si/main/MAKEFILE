@@ -1,0 +1,452 @@
+#	SI.EXE, Ultima VII Part Two: Serpent Isle (with The Silver Seed)
+#
+#	Borland C++ 2.0 with its MAKE, and Turbo Assembler 2.51.  Run MAKE in
+#	this directory, the build directory:
+#
+#		make			compiler in C:\BORLANDC
+#		make -DBC=C:\BC20	compiler elsewhere
+#
+#	Each list of objects shares one set of options, which its name spells:
+#	MAIN_OGPd is -O -G -P -d in this directory; b0 is -b-, vi0 is -vi-.
+#	Written by .agents/tools/si_makefile.py from the sources and the trial link.
+
+.autodepend
+
+!if !$d(BC)
+BC = C:\BORLANDC
+!endif
+
+CC = $(BC)\bcc +SI.CFG
+AS = tasm
+
+all: SI.CFG SUB.CFG SI.EXE
+
+# Options every C module shares, one -I per folder (one long -I hangs BCC); the
+# compiler's own headers come last.
+SI.CFG: MAKEFILE
+	copy &&|
+-c -mm -y
+-I..\common
+-I..\inter
+-I..\main
+-I..\main\combat
+-I..\main\mem
+-I..\main\palette
+-I..\main\schedule
+-I..\main\sound
+-I..\main\video
+-I..\main\xmm
+-I..\sound
+-I..\zevent
+-I..\include
+-I$(BC)\include
+| SI.CFG
+
+# The same, for a source compiled inside a folder below main.
+SUB.CFG: MAKEFILE
+	copy &&|
+-c -mm -y
+-I..\..\common
+-I..\..\inter
+-I..\..\main
+-I..\..\main\combat
+-I..\..\main\mem
+-I..\..\main\palette
+-I..\..\main\schedule
+-I..\..\main\sound
+-I..\..\main\video
+-I..\..\main\xmm
+-I..\..\sound
+-I..\..\zevent
+-I..\..\include
+-I$(BC)\include
+| SUB.CFG
+
+MAIN_OG = oops.obj ovlnull.obj rmhook.obj videomd.obj
+$(MAIN_OG):
+	$(CC) -O -G $&.c
+
+MAIN_OGP = action.obj actitem.obj actmove.obj actqueue.obj actutil.obj \
+	appts.obj bltshape.obj bodies.obj bogus.obj camera.obj collide.obj \
+	combgump.obj death.obj debug.obj eggspawn.obj endstats.obj equip.obj \
+	errors.obj explode.obj flexvoo.obj frameflg.obj getpick.obj gtimer.obj \
+	gumps.obj itable.obj itemcmd.obj jawgump.obj legalmov.obj lunch.obj main.obj \
+	mainctrl.obj makemojo.obj movepath.obj nocando.obj operate.obj partymov.obj \
+	powder.obj script.obj scrlgump.obj search.obj selweap.obj slime.obj \
+	special.obj speed.obj spell.obj spellini.obj sprite2.obj sysusage.obj \
+	tools.obj trigger.obj trigger2.obj u7.obj u7coords.obj u7font.obj u7ibuf.obj \
+	u7map.obj u7npc2.obj u7reload.obj use.obj voolook.obj wihh.obj
+$(MAIN_OGP):
+	$(CC) -O -G -P $&.c
+
+MAIN_OGPY = bark.obj cast.obj init.obj philbert.obj sprite.obj vitem.obj \
+	warmth.obj weather.obj
+$(MAIN_OGPY):
+	$(CC) -O -G -P -Y $&.c
+
+MAIN_OGPYb0 = colbuf.obj
+$(MAIN_OGPYb0):
+	$(CC) -O -G -P -Y -b- $&.c
+
+MAIN_OGPb0 = chkfile.obj
+$(MAIN_OGPb0):
+	$(CC) -O -G -P -b- $&.c
+
+MAIN_OGPd = cheat.obj cheat_ov.obj console.obj dirpack.obj initwp.obj look.obj \
+	lookat.obj savegame.obj u7npc.obj voonpc.obj
+$(MAIN_OGPd):
+	$(CC) -O -G -P -d $&.c
+
+MAIN_OGPdY = chngsche.obj keyring.obj npcpath.obj party.obj polymorp.obj \
+	text.obj vstring.obj
+$(MAIN_OGPdY):
+	$(CC) -O -G -P -d -Y $&.c
+
+MAIN_OGPdYb0 = preload.obj
+$(MAIN_OGPdYb0):
+	$(CC) -O -G -P -d -Y -b- $&.c
+
+MAIN_OGPdb0 = u7manage.obj
+$(MAIN_OGPdb0):
+	$(CC) -O -G -P -d -b- $&.c
+
+MAIN_OP = controls.obj gamegump.obj itemdrag.obj jawg_ov.obj scrlg_ov.obj \
+	shapegen.obj signgump.obj slider.obj
+$(MAIN_OP):
+	$(CC) -O -P $&.c
+
+MAIN_OPY = combg_ov.obj gumpmgr.obj gumpmgr2.obj gumpmgr3.obj lsgump.obj
+$(MAIN_OPY):
+	$(CC) -O -P -Y $&.c
+
+MAIN_OPYZ = contgump.obj
+$(MAIN_OPYZ):
+	$(CC) -O -P -Y -Z $&.c
+
+MAIN_OPd = convgump.obj spellbk.obj
+$(MAIN_OPd):
+	$(CC) -O -P -d $&.c
+
+MAIN_OPdY = convmgr.obj
+$(MAIN_OPdY):
+	$(CC) -O -P -d -Y $&.c
+
+MAIN_ASM = collgrid.obj keybios.obj
+$(MAIN_ASM):
+	$(AS) /mx $&.asm
+
+COMMON_OG = coord.obj falloc.obj memusage.obj strfmt.obj type.obj typedim.obj \
+	typeflag.obj
+$(COMMON_OG):
+	$(CC) -O -G ..\common\$&.c
+
+COMMON_OGP = barge.obj bitarray.obj cacheent.obj datanode.obj dcache.obj \
+	flex.obj flxcach.obj flxwrite.obj itembuf.obj maps.obj npcref.obj occlude.obj \
+	randseed.obj schedit.obj target.obj weight.obj xformtbl.obj
+$(COMMON_OGP):
+	$(CC) -O -G -P ..\common\$&.c
+
+COMMON_OGPY = sche.obj
+$(COMMON_OGPY):
+	$(CC) -O -G -P -Y ..\common\$&.c
+
+COMMON_OGPZ = item.obj itemovr1.obj itemovr2.obj mapview.obj
+$(COMMON_OGPZ):
+	$(CC) -O -G -P -Z ..\common\$&.c
+
+COMMON_OGPb0 = cullmask.obj
+$(COMMON_OGPb0):
+	$(CC) -O -G -P -b- ..\common\$&.c
+
+COMMON_OGPd = easyfile.obj fileutil.obj
+$(COMMON_OGPd):
+	$(CC) -O -G -P -d ..\common\$&.c
+
+COMMON_OGPdZ = loadreg.obj rescache.obj
+$(COMMON_OGPdZ):
+	$(CC) -O -G -P -d -Z ..\common\$&.c
+
+COMMON_OGZ = egg.obj
+$(COMMON_OGZ):
+	$(CC) -O -G -Z ..\common\$&.c
+
+COMMON_OWN_OGP = chunk.obj sche_ov1.obj
+$(COMMON_OWN_OGP):
+	cd ..\common
+	$(BC)\bcc +..\main\SI.CFG -n..\main -O -G -P $&.c
+	cd ..\main
+
+COMMON_OWN_OGPZ = sortitem.obj
+$(COMMON_OWN_OGPZ):
+	cd ..\common
+	$(BC)\bcc +..\main\SI.CFG -n..\main -O -G -P -Z $&.c
+	cd ..\main
+
+COMMON_OWN_OGPd = manager.obj
+$(COMMON_OWN_OGPd):
+	cd ..\common
+	$(BC)\bcc +..\main\SI.CFG -n..\main -O -G -P -d $&.c
+	cd ..\main
+
+COMMON_ASM = depthbuf.obj lstrtok.obj random.obj
+$(COMMON_ASM):
+	$(AS) /mx ..\common\$&.asm
+
+INTER_OG = debugint.obj ucctrl.obj
+$(INTER_OG):
+	$(CC) -O -G ..\inter\$&.c
+
+INTER_OGP = farstr.obj uccomm7.obj ucintrin.obj ucstack.obj ucvalue.obj
+$(INTER_OGP):
+	$(CC) -O -G -P ..\inter\$&.c
+
+INTER_OP = routine.obj uccomm1.obj uccomm10.obj uccomm11.obj uccomm12.obj \
+	uccomm13.obj uccomm14.obj uccomm2.obj uccomm5.obj uccomm6.obj uccomm8.obj \
+	uccomm9.obj
+$(INTER_OP):
+	$(CC) -O -P ..\inter\$&.c
+
+INTER_OPY = keywords.obj uccomm4.obj uclist.obj
+$(INTER_OPY):
+	$(CC) -O -P -Y ..\inter\$&.c
+
+INTER_OWN_OGP = inter.obj
+$(INTER_OWN_OGP):
+	cd ..\inter
+	$(BC)\bcc +..\main\SI.CFG -n..\main -O -G -P $&.c
+	cd ..\main
+
+INTER_OWN_OGPY = flags.obj
+$(INTER_OWN_OGPY):
+	cd ..\inter
+	$(BC)\bcc +..\main\SI.CFG -n..\main -O -G -P -Y $&.c
+	cd ..\main
+
+INTER_OWN_OPY = usehook.obj
+$(INTER_OWN_OPY):
+	cd ..\inter
+	$(BC)\bcc +..\main\SI.CFG -n..\main -O -P -Y $&.c
+	cd ..\main
+
+INTER_OWN_OPd = uccomm3.obj
+$(INTER_OWN_OPd):
+	cd ..\inter
+	$(BC)\bcc +..\main\SI.CFG -n..\main -O -P -d $&.c
+	cd ..\main
+
+COMBAT_OGP = combat.obj combstat.obj daze.obj randstat.obj
+$(COMBAT_OGP):
+	$(CC) -O -G -P combat\$&.c
+
+COMBAT_OGPY = ammo.obj armor.obj cbattack.obj crimeov1.obj equipdat.obj \
+	missile.obj monsters.obj ready.obj weapons.obj
+$(COMBAT_OGPY):
+	$(CC) -O -G -P -Y combat\$&.c
+
+COMBAT_OWN_OGP = attack.obj combatai.obj combaux.obj combmode.obj combpick.obj \
+	damage.obj misstrac.obj
+$(COMBAT_OWN_OGP):
+	cd combat
+	$(BC)\bcc +..\SUB.CFG -n.. -O -G -P $&.c
+	cd ..
+
+COMBAT_OWN_OGPY = combwpn.obj crime.obj
+$(COMBAT_OWN_OGPY):
+	cd combat
+	$(BC)\bcc +..\SUB.CFG -n.. -O -G -P -Y $&.c
+	cd ..
+
+DOS_OG = dosnull.obj
+$(DOS_OG):
+	$(CC) -O -G dos\$&.c
+
+DOS_ASM = addrptr.obj doscreat.obj dosfile.obj dosread.obj dosseek.obj \
+	doswrite.obj fileread.obj filewrit.obj flatbits.obj memfill.obj memmove.obj \
+	normptr.obj ptraddr.obj shppack.obj
+$(DOS_ASM):
+	$(AS) /mx dos\$&.asm
+
+MEM_OG = inthook.obj memapi.obj memhook.obj memmgr.obj memstat.obj
+$(MEM_OG):
+	$(CC) -O -G mem\$&.c
+
+MEM_OGP = memfree.obj
+$(MEM_OGP):
+	$(CC) -O -G -P mem\$&.c
+
+MEM_OGPvi0 = drawbuf.obj screen.obj
+$(MEM_OGPvi0):
+	$(CC) -O -G -P -vi- mem\$&.c
+
+MEM_ASM = a20gate.obj fadeprep.obj fadestep.obj palrange.obj
+$(MEM_ASM):
+	$(AS) /mx mem\$&.asm
+
+OVERLAY_OGPvi0 = ovrdump.obj
+$(OVERLAY_OGPvi0):
+	$(CC) -O -G -P -vi- overlay\$&.c
+
+OVERLAY_ASM = ovrprof.obj
+$(OVERLAY_ASM):
+	$(AS) /mx overlay\$&.asm
+
+PALETTE_OG = paldata2.obj palnull1.obj palnull2.obj
+$(PALETTE_OG):
+	$(CC) -O -G palette\$&.c
+
+PALETTE_OGP = crawpal.obj creeper.obj crgbpal.obj palctrl.obj palfade.obj \
+	redscrn.obj rgbstep.obj worldpal.obj
+$(PALETTE_OGP):
+	$(CC) -O -G -P palette\$&.c
+
+PALETTE_ASM = paldata1.obj redtimer.obj
+$(PALETTE_ASM):
+	$(AS) /mx palette\$&.asm
+
+SCHEDULE_OG = schewait.obj
+$(SCHEDULE_OG):
+	$(CC) -O -G schedule\$&.c
+
+SCHEDULE_OGP = schealch.obj schearch.obj schearea.obj schebake.obj \
+	schedanc.obj schedesk.obj scheeat.obj schefarm.obj schefenc.obj schefill.obj \
+	scheflee.obj schefood.obj scheforg.obj schegraz.obj schehand.obj schehoun.obj \
+	schekids.obj schelght.obj scheloit.obj schemine.obj schepace.obj schepath.obj \
+	schepatr.obj scheprac.obj scheprch.obj scheread.obj scheresp.obj scheserv.obj \
+	schesew.obj scheshop.obj scheshut.obj schesit.obj schesit2.obj scheslep.obj \
+	schestnd.obj schetag.obj schetalk.obj schethef.obj schewand.obj schewatr.obj
+$(SCHEDULE_OGP):
+	$(CC) -O -G -P schedule\$&.c
+
+MAINSOUND_ASM_M_W_ML = ail.obj
+$(MAINSOUND_ASM_M_W_ML):
+	$(AS) /m /w+ /ml /isound sound\$&.asm
+
+VIDEO_OG = colormap.obj vidmode.obj
+$(VIDEO_OG):
+	$(CC) -O -G video\$&.c
+
+VIDEO_OGP = colorreg.obj modecolr.obj
+$(VIDEO_OGP):
+	$(CC) -O -G -P video\$&.c
+
+VIDEO_ASM = crtport.obj farptrs.obj vretrace.obj
+$(VIDEO_ASM):
+	$(AS) /mx video\$&.asm
+
+XMM_OG = shapehit.obj vooalloc.obj xmmcheck.obj xmminit.obj xmmstale.obj
+$(XMM_OG):
+	$(CC) -O -G xmm\$&.c
+
+XMM_OGPvi0 = shapehgt.obj shapewid.obj
+$(XMM_OGPvi0):
+	$(CC) -O -G -P -vi- xmm\$&.c
+
+XMM_OWN_OG = freexmm.obj xmmhand.obj
+$(XMM_OWN_OG):
+	cd xmm
+	$(BC)\bcc +..\SUB.CFG -n.. -O -G $&.c
+	cd ..
+
+XMM_ASM = copyview.obj drawblnd.obj drawfram.obj drawmirr.obj drawtile.obj \
+	drawxlat.obj emscheck.obj encframe.obj frameadr.obj framebnd.obj framecnt.obj \
+	linear.obj mirrblnd.obj mirrxlat.obj movflat.obj remapvw.obj restfram.obj \
+	restrect.obj rowaddr.obj savefram.obj saverect.obj xmmblock.obj xmsnull.obj
+$(XMM_ASM):
+	$(AS) /mx xmm\$&.asm
+
+XMM_ASM_M2 = drawline.obj fillrect.obj
+$(XMM_ASM_M2):
+	$(AS) /mx /m2 xmm\$&.asm
+
+SOUND_OGP = cspeech.obj
+$(SOUND_OGP):
+	$(CC) -O -G -P ..\sound\$&.c
+
+SOUND_OGPdb0 = gsound.obj
+$(SOUND_OGPdb0):
+	$(CC) -O -G -P -d -b- ..\sound\$&.c
+
+SOUND_OWN_OGP = cflxcach.obj sounds.obj
+$(SOUND_OWN_OGP):
+	cd ..\sound
+	$(BC)\bcc +..\main\SI.CFG -n..\main -O -G -P $&.c
+	cd ..\main
+
+SOUND_OWN_OGPdY = voice.obj
+$(SOUND_OWN_OGPdY):
+	cd ..\sound
+	$(BC)\bcc +..\main\SI.CFG -n..\main -O -G -P -d -Y $&.c
+	cd ..\main
+
+SOUND_OWN_OGPdb0 = u7sound.obj
+$(SOUND_OWN_OGPdb0):
+	cd ..\sound
+	$(BC)\bcc +..\main\SI.CFG -n..\main -O -G -P -d -b- $&.c
+	cd ..\main
+
+ZEVENT_OG = cursor.obj
+$(ZEVENT_OG):
+	$(CC) -O -G ..\zevent\$&.c
+
+ZEVENT_OGP = dbgfont.obj mevent.obj msclick.obj u7event.obj
+$(ZEVENT_OGP):
+	$(CC) -O -G -P ..\zevent\$&.c
+
+ZEVENT_OGPY1 = systimer.obj
+$(ZEVENT_OGPY1):
+	$(CC) -O -G -P -Y -1 ..\zevent\$&.c
+
+ZEVENT_OGPd = u7point.obj
+$(ZEVENT_OGPd):
+	$(CC) -O -G -P -d ..\zevent\$&.c
+
+ZEVENT_OWN_OGP = mouse.obj
+$(ZEVENT_OWN_OGP):
+	cd ..\zevent
+	$(BC)\bcc +..\main\SI.CFG -n..\main -O -G -P $&.c
+	cd ..\main
+
+ZEVENT_ASM = getfont.obj mouseint.obj syskey.obj
+$(ZEVENT_ASM):
+	$(AS) /mx ..\zevent\$&.asm
+
+all_main: $(MAIN_OG) $(MAIN_OGP) $(MAIN_OGPY) $(MAIN_OGPYb0) $(MAIN_OGPb0) \
+	$(MAIN_OGPd) $(MAIN_OGPdY) $(MAIN_OGPdYb0) $(MAIN_OGPdb0) $(MAIN_OP) \
+	$(MAIN_OPY) $(MAIN_OPYZ) $(MAIN_OPd) $(MAIN_OPdY) $(MAIN_ASM)
+
+all_combat: $(COMBAT_OGP) $(COMBAT_OGPY) $(COMBAT_OWN_OGP) $(COMBAT_OWN_OGPY)
+
+all_dos: $(DOS_OG) $(DOS_ASM)
+
+all_mem: $(MEM_OG) $(MEM_OGP) $(MEM_OGPvi0) $(MEM_ASM)
+
+all_overlay: $(OVERLAY_OGPvi0) $(OVERLAY_ASM)
+
+all_palette: $(PALETTE_OG) $(PALETTE_OGP) $(PALETTE_ASM)
+
+all_schedule: $(SCHEDULE_OG) $(SCHEDULE_OGP)
+
+all_mainsound: $(MAINSOUND_ASM_M_W_ML)
+
+all_video: $(VIDEO_OG) $(VIDEO_OGP) $(VIDEO_ASM)
+
+all_xmm: $(XMM_OG) $(XMM_OGPvi0) $(XMM_OWN_OG) $(XMM_ASM) $(XMM_ASM_M2)
+
+all_common: $(COMMON_OG) $(COMMON_OGP) $(COMMON_OGPY) $(COMMON_OGPZ) \
+	$(COMMON_OGPb0) $(COMMON_OGPd) $(COMMON_OGPdZ) $(COMMON_OGZ) \
+	$(COMMON_OWN_OGP) $(COMMON_OWN_OGPZ) $(COMMON_OWN_OGPd) $(COMMON_ASM)
+
+all_inter: $(INTER_OG) $(INTER_OGP) $(INTER_OP) $(INTER_OPY) $(INTER_OWN_OGP) \
+	$(INTER_OWN_OGPY) $(INTER_OWN_OPY) $(INTER_OWN_OPd)
+
+all_sound: $(SOUND_OGP) $(SOUND_OGPdb0) $(SOUND_OWN_OGP) $(SOUND_OWN_OGPdY) \
+	$(SOUND_OWN_OGPdb0)
+
+all_zevent: $(ZEVENT_OG) $(ZEVENT_OGP) $(ZEVENT_OGPY1) $(ZEVENT_OGPd) \
+	$(ZEVENT_OWN_OGP) $(ZEVENT_ASM)
+
+# MAKE limits the length of a rule line, so SI.EXE depends on one list per directory.
+SI.EXE: all_main all_combat all_dos all_mem all_overlay all_palette \
+	all_schedule all_mainsound all_video all_xmm all_common all_inter all_sound \
+	all_zevent SI.LNK
+	$(BC)\tlink /m /s /c /d /L$(BC)\lib @SI.LNK

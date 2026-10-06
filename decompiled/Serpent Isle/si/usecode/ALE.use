@@ -1,0 +1,56 @@
+Routine Ale accepts a0 #locals(7) #uses(~GimmePathEgg, ~IsNPCNear, ~PartyUtters, Bark_i) {
+    v0 = ~GetWorkType(_Ale);
+    if (event = _Action) {
+        FadePalette_i(0, 1, 12);
+        SetWeather_i(_Clear);
+        Camera_setCenterOn(_Avatar);
+        v1 = ~PostInFuture(30, << _aNO_HALT_i, _aUSABLE_i, #FadeInArrival_i >>, ~GimmePathEgg(1, 5));
+        ClearItemFlag_i(_DontMove_i, _Avatar);
+        ClearSpeakers_i();
+        SetNPCID_i(0, _Edrin);
+        NewSchedule_i(<< 2471, 2039 >>, _Wander, 0, _Ale);
+        Npc_schedule(_Ale);
+        $USING_FAR_SIGHT_MAGIC = false;
+    }
+    if (event = _Bark) && (v0 = 29) {
+        v2 = ~FindNearby_i(16, 2, _Path, _Ale);
+        v3 = ~GetQuality(v2);
+        if (v3 = 15) {
+            SetWorkType(_Wait, _Ale);
+            v1 = ~PostAction(<< _aNO_HALT_i, _aGO_S, _aGO_W, _aGO_S, _aGO_S >>, item);
+            v4 = ~GetNPCID_i(_Hawk);
+            v4 = (v4 + 1);
+            SetNPCID_i(v4, _Hawk);
+        }
+    }
+    if ((event = _Converse) or ((event = _Bark) and (~GetWorkType(item) = _Hound))) {
+        v5 = ~Random(6);
+        if (v5 = 1) {
+            Item_bark("@Awk!@", _Ale);
+        }
+        if (v5 = 2) {
+            Item_bark("@See nor hear. See nor hear. Squawk!@", _Ale);
+        }
+        if (v5 = 3) {
+            Item_bark("@Cracker!@", _Ale);
+        }
+        if (v5 = 4) {
+            Item_bark("@Walla Walla!@", _Ale);
+        }
+        if (v5 = 5) {
+            if ~IsNPCNear(_Kane) {
+                Item_bark("@Leave the bird alone!@", _Kane);
+            } else {
+                v6 = ~PartyUtters(true, 0, "@Cute bird.@", 1);
+            }
+        }
+        if (v5 = 6) {
+            Item_bark("@Squawk!@", _Ale);
+        }
+    }
+    if (event = _NearDeath) {
+        Bark_i(0, "@Skreee!@", _Ale);
+        SetAttacker_i(_Ale, _Avatar);
+        SetAttackMode_i(_Fleeing, _Ale);
+    }
+}

@@ -1,0 +1,18 @@
+Routine Berry_Bush accepts a0 #locals(3) #uses(~PartyUtters) {
+    closeAllGumps();
+    v0 = ~GetFrame(item);
+    if (event = _Converse) {
+        if (v0 = 3) {
+            v1 = ~PartyUtters(true, "@No more berries...@", "@It hath been picked clean.@", 1);
+        } else {
+            v2 = ~GiveToCont_i(18, 4, 0, _Mage_Food, 1, _Avatar);
+            if not v2 {
+                SetFrame((v0 + 1), item);
+                Sfx(12);
+                v1 = ~PartyUtters(true, "@I have a berry!@", "@Thou hast plucked a berry!@", 1);
+            } else {
+                v1 = ~PartyUtters(true, "@I have no room for berries...@", "@But thine hands are full!@", 1);
+            }
+        }
+    }
+}

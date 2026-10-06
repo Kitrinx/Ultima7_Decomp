@@ -1,0 +1,62 @@
+Routine ContinueAloneEgg_i accepts a0 #locals(18) #uses(Bark_i, SetWorkTypeAt_i, ~IsContainer_i) {
+    if (event = _Action) {
+        ClearItemFlag_i(_DontMove_i, _Avatar);
+        terminate;
+    }
+    if (event = _Trigger) {
+        v0 = ~GetParty_i();
+        v1 = ~NPCToItem_i(_Avatar);
+        v2 = false;
+        Foreach v5 in v0 {
+            if (v5 <> v1) {
+                v2 = true;
+                v6 = << "@I'm not going in there!@", "@I shall wait here...@", "@Thou must continue alone, Avatar.@", "@Good luck, Avatar!@", "@I will stay here, Avatar.@", "@Be brave, Avatar!@" >>;
+                Bark_i(2, v6::~Random(~ListSize_i(v6)), v5::~Random(~ListSize_i(v5)));
+                LeaveParty(v5);
+                SetNPCID_i(31, v5);
+                v7 = ~GetCoord(v5);
+                SetWorkType(_Patrol, v5);
+                SetWorkTypeAt_i(_Patrol, v7::2, v7::1, v5);
+            }
+        }
+        if v2 {
+            SetItemFlag_i(_DontMove_i, _Avatar);
+            v8 = ~PostInFuture(50, << _aNO_HALT_i, _aUSABLE_i, #ContinueAloneEgg_i >>, _Avatar);
+        }
+        v9 = false;
+        v10 = ~FindNearby_i(0, 50, _Holotree, item);
+        if (v10 <> 0) {
+            Foreach v13 in v10 {
+                v9 = v13;
+            }
+        } else {
+            v14 = ~Item_create(_Chest);
+            ClearItemFlag_i(_IsTemporary_i, v14);
+            SetFrame(4, v14);
+            v8 = ~PopToMap(<< 2571, 2740, 0 >>);
+            v9 = v14;
+        }
+        if v9 {
+            ClearItemFlag_i(_Invisible, _Avatar);
+            v15 = 0;
+            v10 = ~GetContents(_All, _All, _All, _Avatar);
+            While (v15 < 2) {
+                Foreach v13 in v10 {
+                    if (~IsContainer_i(v13) or (v15 = 1)) {
+                        v8 = ~Item_getType(v13);
+                        if not ((v8 = 486) or (v8 = 607)) {
+                            if not ~Item_push(v13) {
+                                PrintError_i("Tell Team Error 1");
+                            }
+                            if not ~Item_popToEnd(v9) {
+                                PrintError_i("Tell Team Error 2");
+                            }
+                        }
+                    }
+                }
+                v15 = (v15 + 1);
+                v10 = ~GetContents(_All, _All, _All, _Avatar);
+            }
+        }
+    }
+}

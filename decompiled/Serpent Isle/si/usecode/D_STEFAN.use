@@ -1,0 +1,18 @@
+Routine DStefano accepts a0 #locals(1) {
+    if (event = _NearDeath) {
+        SetSpeaker0_i(0, _Stefano);
+        ["Why dost thou interrupt my dreaming? Canst thou not see that I have important matters to attend to?" *"Argh! I am waking..."];
+        CloseSpeaker0_i();
+        v0 = ~GetCoord(item);
+        Sfx(119);
+        createSprite(65535, 0, 0, 0, v0::2, v0::1, 7);
+        RemoveNPC_i(_DStefano);
+    }
+    if (event = _Converse) {
+        SetSpeaker0_i(0, _Stefano);
+        ["Ah, Avatar!" ~"This is as it should be... The food is good, the wine is sweet and the company is warm! Wouldst thou care to join me?"];
+        ["Still bound by thy quest, I see." ~"Well, if thou dost change thy mind, thou art welcome here any time." *"Oh, and Avatar?" ~"Thou shouldst honestly relax a bit..."];
+        CloseSpeaker0_i();
+        terminate;
+    }
+}

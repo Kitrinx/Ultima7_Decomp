@@ -1,0 +1,593 @@
+Routine Pikeman accepts a0 #locals(37) #uses(~LordOrLady, ElsiWorksGate_i, Bark_i, ~InListField_i, ~AskYesNo, ElsiWorksGate_i, SetWorkTypeAt_i, ~IsInInv, ~PartyUtters, ~GiveItemsOrDrop_i, ~AskOrdList, ~PartyNoAutomatons_i, TrainAtListField_i, StartTournament) {
+	v0 = ~GetNPCID_i(item);
+	if (v0 = 0) {
+		SetNPCID_i(~rndRange(12, 10), item);
+		v0 = ~GetNPCID_i(item);
+	}
+	v1 = ~LordOrLady();
+	if (v0 = 14) {
+		if ((event = _NearDeath) and not flag(201)) {
+			ClearItemFlag_i(29, item);
+			ReduceHits_i(0, 50, item);
+			flag(201) = true;
+			terminate;
+		}
+		if ~GetItemFlag_i(0, item) {
+			Sfx(48);
+			ClearItemFlag_i(0, item);
+			v2 = ~PostInFuture(~Random(6), << _aNO_HALT_i, _aUSABLE_i, #Pikeman, 0 >>, item);
+		} else {
+			Sfx(57);
+			v3 = ~GetCoord(item);
+			createSprite(65535, 0, 0, 0, v3::2, v3::1, 9);
+			SetItemFlag_i(0, item);
+			v2 = ~PostInFuture(2, << _aNO_HALT_i, _aUSABLE_i, #Pikeman, 0 >>, item);
+		}
+		terminate;
+	}
+	if (v0 = 30) && ((event = _Pathfind1) or (event = _Action)) {
+		ElsiWorksGate_i#1(event);
+		terminate;
+	}
+	if (event = _Converse) {
+		Item_bark("@Pikeman!@", _Avatar);
+		Bark_i(2, "@Yes?@", item);
+		if (v0 = 9) {
+			if ~InListField_i(_Avatar) {
+				ClearBark_i(item);
+				if (~rndRange(2, 1) = 1) {
+					Bark_i(1, "@Fight!@", item);
+				} else {
+					Bark_i(1, "@Don't be a coward!@", item);
+				}
+				terminate;
+			}
+			flag(7) = true;
+			v2 = ~PostInFuture(6, << _aNO_HALT_i, _aUSABLE_i, #Pikeman, 0 >>, item);
+			terminate;
+		}
+		if (v0 = 30) {
+			ClearBark_i(item);
+			SetSpeaker0_i(0, _Elsi);
+			["I suppose thou dost wish me to operate the gate?"];
+			if ~AskYesNo() {
+				if not flag(72) {
+					SetSpeaker0_i(0, _Elsi);
+					["Stand back while I crank the winch. 'Tis heavy and dangerous. Thou dost never know when it might come down upon thine head."];
+					event = _Talking;
+					ElsiWorksGate_i#5(event);
+					terminate;
+				} else {
+					SetSpeaker0_i(0, _Elsi);
+					["Gladly I will for a fellow Knight. Have a pleasant day and may goblin blood stain thy sword soon."];
+					event = _Talking;
+					ElsiWorksGate_i#5(event);
+					terminate;
+				}
+			} else {
+				SetSpeaker0_i(0, _Elsi);
+				["Then bother me not! I must be about my duty!"];
+				Bark_i(2, "@Watch out for goblins...@", item);
+				terminate;
+			}
+		}
+		SetWorkType(3, item);
+	}
+	if (event = _Path_Success) {
+		SetWorkType(15, item);
+		v2 = ~PostInFuture(5, << _aNO_HALT_i, _aUSABLE_i, #Pikeman, 0 >>, item);
+		return;
+	}
+	if (event = _Action) {
+		if flag(7) {
+			flag(7) = false;
+			v4 = ~GetCoord(_Avatar);
+			v5 = ~GetCoord(item);
+			if ((~GetDist(_Avatar, item) < 5) and (v4::3 = v5::3)) {
+				goto label_141;
+			} else {
+				ClearBark_i(item);
+				Item_bark("@Please step forward.@", item);
+			}
+			terminate;
+		}
+		if ((~GetFrame(item) <> 10) and not flag(131)) {
+			SetWorkType(16, item);
+		}
+		return;
+	}
+	if (event = _Bark) {
+		v6 = ~rndRange(8, 0);
+		if (v6 = 1) {
+			Item_bark("@Do not tarry here!@", item);
+		}
+		if (v6 = 2) {
+			Item_bark("@Pay the tariff.@", item);
+		}
+		if (v6 = 3) {
+			Item_bark("@Move along.@", item);
+		}
+		if (v6 = 4) {
+			Item_bark("@Beware of Goblins.@", item);
+		}
+		if (v6 = 5) {
+			Item_bark("@Is it meal time yet?@", item);
+		}
+		if (v6 = 6) {
+			if flag(72) {
+				Item_bark("@Greetings, Knight!@", item);
+			} else {
+				Item_bark("@Knave!@", item);
+			}
+		}
+		terminate;
+	}
+	if ((event = _Talking) and (v0 = 10)) {
+		SetWorkType(12, item);
+		SetSpeaker0_i(0, _Henchman_271);
+		["Why dost thou interrupt? I am a Pikeman of Monitor."];
+		["I must return to my duties lest the goblin horde take us."];
+		CloseSpeaker0_i();
+		Bark_i(0, "@Farewell!@", _Avatar);
+		Bark_i(2, "@Be vigilant!@", item);
+	}
+	if ((event = _Talking) and (v0 = 11)) {
+		SetWorkType(12, item);
+		SetSpeaker0_i(0, _Hazard);
+		["I would have words with thee but my duties call."];
+		["Please consult me when I am not on duty."];
+		CloseSpeaker0_i();
+		Bark_i(0, "@Farewell!@", _Avatar);
+		Bark_i(2, "@Be vigilant!@", item);
+	}
+	if ((event = _Talking) and (v0 = 12)) {
+		SetWorkType(12, item);
+		SetSpeaker0_i(0, _Elsi);
+		["Greetings. I'm a Pikeman of Monitor."];
+		["The Goblins are dangerous. Watch out for them. As for me, I must return to my duties now."];
+		CloseSpeaker0_i();
+		Bark_i(0, "@Farewell!@", _Avatar);
+		Bark_i(2, "@Be vigilant!@", item);
+	}
+	if ((event = _Talking) and (v0 = 3)) {
+		SetWorkType(9, item);
+		SetSpeaker0_i(0, _Hazard);
+		if not ~GetItemFlag_i(28, _Marsten) {
+			["I will not discuss matters with a stranger to Monitor. Thou shouldst speak with Lord Marsten."];
+		} else {
+			if not flag(72) {
+				["Thou art not a Knight. Only warriors are welcome here. Move along before thou dost feel the cold steel of mine halberd."];
+				SetWorkType(12, item);
+			} else {
+				["Welcome, Knight. I must be about my duties."];
+				SetWorkType(12, item);
+			}
+		}
+		CloseSpeaker0_i();
+		Bark_i(2, "@Move along!@", item);
+	}
+	if ((event = _Talking) and (v0 = 5)) {
+		v7 = ~FindNearby_i(0, 30, 228, item);
+		Foreach v10 in v7 {
+			SetWorkType(20, v10);
+			Bark_i(~Random(20), "@Find the traitor!@", v10);
+		}
+		SetSpeaker0_i(0, _Henchman_271);
+		if ~IsNPCNear_i(_Caladin) {
+			["Thou didst call, Lord Caladin?"];
+			SetSpeaker1_i(0, _Caladin);
+			["Send thy men to arrest Lord Marsten! I have evidence that he is our traitor!"];
+			SetSpeakerSlot_i(0);
+			["Arrest... Lord Marsten?"];
+			SetSpeakerSlot_i(1);
+			["Look, man, thou art a Bear like myself! Obey me now, and all will be right."];
+			SetSpeakerSlot_i(0);
+			["Yes, milord."];
+			Bark_i(0, "@On thy way, then!@", _Caladin);
+			Bark_i(3, "@Yes, milord.@", item);
+		} else {
+			["Avatar, I am pleased to report that my men are scouring the city for that traitor Marsten."];
+			Bark_i(0, "@Find Marsten!@", item);
+		}
+		terminate;
+	}
+	if ((event = _Talking) and (v0 = 15)) {
+		SetWorkType(9, item);
+		SetSpeaker0_i(0, _Hazard);
+		["Please spare me! I shall do anything! I do not want to be roasted over a goblin's fire..."];
+		["Oh, er, hello there. My name is Johnson. Pardon mine outburst, but I thought thou mightest be a goblin. I was attempting to scare them, surprise them, before I rushed them."];
+		["Thou art most fortunate. I might have accidentally killed thee had I not recognized thee as being from Monitor. I was going to kill as many of those green devils as I could before making my way back."];
+		["Let us return to Monitor! We will be greeted with a hero's welcome for we will be the first to have survived, I mean, braved the goblin's lair."];
+		CloseSpeaker0_i();
+		Bark_i(5, "@To Monitor!@", item);
+		SetNPCID_i(16, item);
+	}
+	if ((event = _Converse) and (v0 = 16)) {
+		SetWorkType(9, item);
+		SetSpeaker0_i(0, _Hazard);
+		["There is no time for small talk! We must be on our way back to Monitor!" *"Thou wouldst not want us to be eaten before we have the chance to become heroes, wouldst thou?" *" Of course not! Let us be on our way!"];
+		CloseSpeaker0_i();
+		Bark_i(5, "@I shan't fear goblins...@", item);
+	}
+	if ((event = _Talking) and (v0 = 13)) {
+		SetNPCID_i(3, item);
+		SetWorkType(12, item);
+		v11 = ~FindNearby_i(0, 20, 228, item);
+		Foreach v14 in v11 {
+			SetWorkType(12, v14);
+		}
+		terminate;
+	}
+	if ((event = _Talking) and (v0 = 1)) {
+		SetWorkType(7, item);
+		SetSpeaker0_i(0, _Henchman_271);
+		["This is the Bull Tower, knave. State thy business or be gone. We have no time for idle chit-chat with Goblins about."];
+		TurnOn(<< "Goblins", "pikeman", "Bull Tower" >>);
+		if (flag(461) and not flag(465)) {
+			TurnOn("Captain Hawk");
+		}
+		if (flag(461) and not flag(462)) {
+			SetNPCID_i(1, _Hawk);
+		}
+		v15 = (~GetNPCID_i(_Hawk) * 100);
+		if (flag(462) and not flag(465)) {
+			TurnOn("pay fine");
+		}
+		TurnOn("bye");
+		converse {
+			key ("Goblins") {
+				TurnOff("Goblins");
+				["Yes, that entire vile race is the scourge of all men of the Serpent Isle."];
+			}
+			key ("pikeman") {
+				TurnOff("pikeman");
+				["I received my training on the List Fields by the finest knights and trainers in all of Monitor. Now my duty is to protect the travelling citizenry from all manner of harm. Goblins, thieves and the like."];
+			}
+			key ("Bull Tower") {
+				TurnOff("Bull Tower");
+				["The Bull Tower was erected to protect the people of Sleeping Bull from Goblin attack. I dare say since it was built they have seldom dared to challenge it."];
+			}
+			key ("Captain Hawk") {
+				TurnOff("Captain Hawk");
+				["So, thou art a friend of that criminal? His ransom is a mere <v15> Monetari."];
+				["We also accept other precious items..."];
+				if not flag(462) {
+					SetWorkTypeAt_i(3, 2239, 1287, _Selina);
+				}
+				flag(462) = true;
+				TurnOn("pay fine");
+			}
+			key ("pay fine") {
+				["Dost thou wish to pay Captain Hawk's fine?"];
+				if ~AskYesNo() {
+					["I do not believe that a rogue like thyself hast the riches to buy Hawk's freedom! What canst thou give us?"];
+					PushKeys();
+					if ~IsInInv(2, _All, 646, 1, _Party) {
+						TurnOn("gold bars");
+					}
+					TurnOn(<< "jewels", "Monetari", "guilders", "Fawn money", "magic items", "nothing" >>);
+				} else {
+					Bark_i(0, "@Thou dost waste my time!@", item);
+					terminate;
+				}
+			}
+			key ("jewels") {
+				TurnOff("jewels");
+				["Don't take jewels. Thou mightest cheat us by telling us they was worth more than they was!"];
+				["Gold or silver, yeah. Jewels, no."];
+			}
+			key ("Monetari") {
+				TurnOff("Monetari");
+				["Now that's something we like! How much dost thou have?"];
+				v16 = ~CountItem(_All, _All, 951, _Party);
+				v17 = ~PartyUtters(false, (("@I've got " + v16) + " Monetari.@"), (("@We've got " + v16) + " Monetari, sir.@"), 65534);
+				SetSpeakerSlot_i(0);
+				if (v16 > v15) {
+					["'Tis not enough!"];
+					v17 = ~PartyUtters(false, (("@But thou didst say the ransom was " + v15) + " Monetari!@"), (("@But thou didst say the ransom was " + v15) + " Monetari!@"), 1);
+					SetSpeakerSlot_i(0);
+					v15 = (((v16 / 100) + ~Random(5)) * 100);
+					if (v15 < 3000) {
+						v0 = (v15 / 100);
+						SetNPCID_i(v0, _Hawk);
+						v15 = (v0 * 100);
+						["Well, we changed our minds. Now we want <v15> Monetari!"];
+						v17 = ~PartyUtters(false, 0, "@They are thieves!@", 1);
+						if (v17 <> _Avatar) {
+							SetSpeakerSlot_i(0);
+							CloseSpeaker1_i();
+						}
+					} else {
+						["'Tis not enough. Bring us more!"];
+						SetNPCID_i(31, _Hawk);
+					}
+					PopKeys();
+				} else {
+					["Only <v16>? 'Tis not enough!"];
+					Bark_i(0, "@Remove thyself!@", item);
+					terminate;
+				}
+			}
+			key ("guilders") {
+				TurnOff("guilders");
+				["Thou dost mean the strange glowing money that the mages use?"];
+				["Bah! Take that to Bull and exchange it for true money -- like Monetari!!!"];
+			}
+			key ("Fawn money") {
+				TurnOff("Fawn money");
+				["Ha ha ha!!! Very funny. Take those little silver coins to Bull, and exchange them for true coin!"];
+			}
+			key ("magic items") {
+				TurnOff("magic items");
+				["Pwah! Monitorians do not need magic -- especially not magic weapons!"];
+			}
+			key ("gold bars") {
+				TurnOff("gold bars");
+				["All right, thou canst have him. Here be the key."];
+				v18 = true;
+				While (v18 = true) {
+					v18 = ~TakeFromParty_i(0, _All, _All, _Gold_Bar, 1);
+				}
+				flag(465) = true;
+				v2 = ~GiveItemsOrDrop_i(true, 0, 1, 79, 641, 1, _Avatar);
+				SetNPCID_i(0, _Hawk);
+				Bark_i(0, "@Thanks for the gold!@", item);
+				terminate;
+			}
+			key ("nothing") {
+				["I did not think thou didst have any money!"];
+				PopKeys();
+			}
+			key ("bye") {
+				CloseSpeaker0_i();
+				Bark_i(0, "@Goodbye!@", _Avatar);
+				Bark_i(2, "@Farewell!@", item);
+				terminate;
+			}
+		}
+		clear_answers;
+	}
+	if ((event = _Talking) and (v0 = 9)) {
+		// Proximity and service events share this entry.
+		label_141:
+		ClearBark_i(item);
+		if ~GetItemFlag_i(0, _Avatar) {
+			Item_bark("@What!!?@", item);
+			Bark_i(8, "@Who said that?!@", item);
+			terminate;
+		}
+		SetSpeaker0_i(0, _Hazard);
+		if flag(131) {
+			["Sorry, but we have too many people in there already."];
+		} else {
+			v4 = ~GetCoord(item);
+			if ((~GetFrame(item) <> 10) or ((v4::1 <> 1016) or ((v4::2 <> 2679) or (v4::3 <> 6)))) {
+				["Sorry, but I cannot help thee until I return to my desk. All the paperwork that I have to fill out is there."];
+				PathfindNPC_i(true, #Pikeman, item, 13, << 1019, 2679, 6 >>, item);
+			} else {
+				["My, what a fine-looking warrior! How might I be of service to thee?"];
+				v19 = ~AskOrdList(<< "nothing", "fight", "train" >>);
+				if (v19 = 1) {
+					["Maybe when thou dost feel more brave, then."];
+				} else {
+					if ((~GetHour() < 9) or (~GetHour() > 17)) {
+						["The business hours are from 9am to 6pm. Return then."];
+					} else {
+						if (v19 = 2) {
+							["Merely a spar then? All right, good enough...."];
+							["Which of you dost wish to fight?"];
+						}
+						if (v19 = 3) {
+							["Which of you dost wish to train?"];
+						}
+						v20 = ~PartyNoAutomatons_i();
+						v20 = (0 & v20);
+						v21 = << "nobody" >>;
+						Foreach v10 in v20 {
+							if not (v10 = 0) {
+								v21 = (v21 & ~GetNPCName_i(v10));
+							}
+						}
+						v24 = ~AskOrdList(v21);
+						v24 = v20::v24;
+						if (v24 = 0) {
+							["Well, mayhap some other time, then."];
+						} else {
+							v24 = ~NPCToItem_i(v24);
+							v10 = ~GetCoord(v24);
+							v21 = ~GetCoord(item);
+							if ((~GetDist(item, v24) > 8) or ((v10::3 <> v21::3) or ~GetItemFlag_i(0, v24))) {
+								["Where is he, anyway? Tell him to step forward before bothering me again."];
+							} else {
+								v20 = << _Caladin, _Luther, _Templar >>;
+								Foreach v1 in v20 {
+									if ((~GetHour() > 8) and (~GetHour() < 12)) && (not ~InListField_i(v1) and not ~GetItemFlag_i(4, v1)) {
+										Item_move(<< 980, 2700, 0 >>, v1);
+									}
+								}
+								v20 = << _Shazzana, _Templar >>;
+								Foreach v1 in v20 {
+									if ((~GetHour() > 11) and (~GetHour() < 15)) && (not ~InListField_i(v1) and not ~GetItemFlag_i(4, v1)) {
+										Item_move(<< 980, 2700, 0 >>, v1);
+									}
+								}
+								if ((~GetHour() > 14) and (~GetHour() < 18)) && (not ~InListField_i(_Brendann) and not ~GetItemFlag_i(4, v1)) {
+									Item_move(<< 980, 2700, 0 >>, _Brendann);
+								}
+								if not (~InListField_i(_Caladin) or (~InListField_i(_Shazzana) or (~InListField_i(_Brendann) or ~InListField_i(_Luther)))) {
+									["Sorry lad, but no one is around for thee to spar with. Come back some other time."];
+								} else {
+									if (v19 = 3) {
+										// Ask again when the selected trainer is unavailable.
+										label_182:
+										["With whom dost thou wish to train?"];
+										v20 = << 0, _Caladin, _Shazzana, _Brendann, _Luther >>;
+										v29 = << "nobody", "Caladin", "Shazzana", "Brendann", "Luther" >>;
+										v30 = << "invalid time", "9am and noon", "noon and 3pm", "3pm and 6pm", "9am and noon" >>;
+										v31 = ~AskOrdList(v29);
+										if (v31 = 1) {
+											["Then why art thou wasting my time?"];
+											goto label_194;
+										}
+										v32 = v20::v31;
+										if (v32 = _Shazzana) {
+											v33 = "She's";
+										} else {
+											v33 = "He's";
+										}
+										if not ~InListField_i(v32) {
+											v34 = v29::v31;
+											v35 = v30::v31;
+											["Sorry, but <v34> is not around. <v33> is usually here between <v35>. Thou mightest return then."];
+											goto label_182;
+										}
+										v36 = v29::v31;
+										["Training costs 50 Monetari. All right?"];
+										if ~AskYesNo() {
+											["Oh, <v36>, this here warrior wants to train with ye!"];
+											CloseSpeaker0_i();
+											SetNPCID_i(0, _Brendann);
+											SetNPCID_i(0, _Templar);
+											SetNPCID_i(0, _Caladin);
+											SetNPCID_i(0, _Shazzana);
+											SetNPCID_i(0, _Luther);
+											TrainAtListField_i(v24, v32);
+										} else {
+											["Return when thou art ready."];
+											goto label_194;
+										}
+									}
+									if (v19 = 2) {
+										StartTournament(v24);
+										terminate;
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	// Cancelled training and refused payment leave the routine.
+	label_194:
+}
+
+Routine PikemanEgg_i accepts a0 #locals(4) {
+    if ((event = _Trigger) and ($BANES_RELEASED = false)) {
+        v0 = ~GetQuality(item);
+        v1 = ~GetCoord(item);
+        v2 = ~CreateCreature_i(v1, _Pikeman);
+        Npc_setAlignment(_Neutral, v2);
+        v3 = ~GiveToCont_i(true, 0, 0, _Halberd, 1, v2);
+        v3 = ~GiveToCont_i(true, 0, 0, _Chain_Armour, 1, v2);
+        v3 = ~GiveToCont_i(true, 0, 0, _Shield_Heirarchy, 1, v2);
+        v3 = ~GiveToCont_i(true, 0, 0, _Chain_Coif, 1, v2);
+        SetWorkType(_Loiter, v2);
+        if (v0 = 1) {
+            SetWorkType(_MajorSit, v2);
+        }
+        if (v0 = 2) {
+            SetWorkType(_Patrol, v2);
+        }
+        if (v0 = 3) {
+            SetWorkType(_HorPace, v2);
+        }
+        if (v0 = 4) {
+            SetWorkType(_VerPace, v2);
+        }
+        if (v0 = 5) {
+            SetWorkType(_Sleep, v2);
+        }
+        if (v0 = 6) {
+            SetWorkType(_Combat_0, v2);
+        }
+        if (v0 > 6) {
+            SetWorkType(_Wander, v2);
+        }
+    }
+}
+
+Routine FawnTowerPikemanEgg_i accepts a0 #locals(8) {
+    if ((event = _Trigger) and (($BANES_RELEASED = false) and ($fawntowerretaken = true))) {
+        v0 = ~GetQuality(item);
+        v1 = ~GetCoord(item);
+        v2 = ~FindNearby_i(0, 50, _Garbage_1, item);
+        Foreach v5 in v2 {
+            Item_destroy(v5);
+        }
+        v6 = ~CreateCreature_i(v1, _Pikeman);
+        Npc_setAlignment(_Neutral, v6);
+        v7 = ~GiveToCont_i(true, 0, 0, _Halberd, 1, v6);
+        v7 = ~GiveToCont_i(true, 0, 0, _Chain_Armour, 1, v6);
+        v7 = ~GiveToCont_i(true, 0, 0, _Chain_Coif, 1, v6);
+        v7 = ~GiveToCont_i(true, 0, 0, _Shield_Heirarchy, 1, v6);
+        SetWorkType(_Loiter, v6);
+        if (v0 = 1) {
+            SetWorkType(_MajorSit, v6);
+        }
+        if (v0 = 2) {
+            SetWorkType(_Patrol, v6);
+        }
+        if (v0 = 3) {
+            SetWorkType(_HorPace, v6);
+        }
+        if (v0 = 4) {
+            SetWorkType(_VerPace, v6);
+        }
+        if (v0 = 5) {
+            SetWorkType(_Sleep, v6);
+        }
+        if (v0 = 6) {
+            SetWorkType(_Combat_0, v6);
+        }
+        if (v0 > 6) {
+            SetWorkType(_Wander, v6);
+        }
+    }
+}
+
+Routine ElsiWorksGate_i accepts a0 #locals(12) #uses(Bark_i, ~TogglePortcullises_i) {
+    v1 = ~FindNearby_i(0, 20, _Winch_EW, item);
+    if (v0 = 9) {
+        Bark_i(0, "@Stand back...@", item);
+        if v1 {
+            v2 = << 1125, 2460, 0 >>;
+            PathfindNPC_i(true, #Pikeman, item, _Pathfind1, v2, item);
+        }
+    }
+    if (v0 = 10) {
+        v3 = (~GetAllInRegion(_NS_Portcullis) & ~GetAllInRegion(_EW_Portcullis));
+        v4 = false;
+        Foreach v7 in v3 {
+            v8 = ~TogglePortcullises_i();
+            v8 = ~PostAction(<< _aFRAME, 1, _aNEXT_FRAME, _aLOOP_i, 65535, 6 >>, v1);
+            v4 = true;
+        }
+        v8 = ~PostAction(<< _aFACE_i, _West, _aCONTINUE_i, _aBEND_FRAME_i, _aSTAND_FRAME_i, _aLOOP_i, 65534, 4 >>, item);
+        v8 = ~PostInFuture(20, << _aNO_HALT_i, _aUSABLE_i, #Pikeman, 0 >>, v3);
+    }
+    if (v0 = 2) {
+        Bark_i(12, "@Oooh, my back...@", item);
+        v9 = ~FindNearby_i(0, 20, _NS_Portcullis, item);
+        if v9 {
+            if ~IsNPCNear_i(v9) {
+                v8 = ~PostInFuture(20, << _aNO_HALT_i, _aUSABLE_i, #Pikeman, 0 >>, v9);
+            } else {
+                v10 = ~GetCoord(v9);
+                v8 = ~Item_push(v9);
+                if v8 {
+                    v10::3 = 0;
+                    v8 = ~PopToMap(v10);
+                }
+            }
+        }
+    }
+    v9 = ~FindNearby_i(0, 20, _NS_Portcullis, item);
+    Foreach v8 in v9 {
+        v10 = ~GetCoord(v9);
+        if ((v10::1 = 1129) and (v10::2 = 2456)) {
+            v8 = ~SetQuality(75, v9);
+        }
+    }
+}

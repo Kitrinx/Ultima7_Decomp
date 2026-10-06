@@ -1,0 +1,229 @@
+Routine DreamScenesEgg_i accepts a0 #locals(27) #uses(Bark_i, FaceAvatar_i, RemoveContents_i, RemoveAll_i, ~CreateItemAt_i) {
+    if (event = _Trigger) {
+        v0 = ~AvatarSkin_i();
+        v1 = ~AvatarSex();
+        v2 = ~GetQuality(item);
+        v3 = ~GetCoord(item);
+        if (v2 = 1) {
+            v4 = ~FindNearby_i(0, 20, _Pikeman, item);
+            if v4 {
+                SetNPCID_i(15, v4);
+            }
+            terminate;
+        }
+        if (v2 = 222) {
+            v4 = ~FindNearby_i(0, 20, _Pikeman, item);
+            if v4 {
+                ClearBark_i(v4);
+                SetSpeaker0_i(0, _Hazard);
+                ["Aaargh! I cannot keep pace with thee! My chest feels as though it shall soon explode!"];
+                v5 = ~PostInFuture(8, << _aNO_HALT_i, _aHIT_i, 50, 0 >>, v4);
+                Bark_i(1, "@Mine heart!!!@", v4);
+            }
+            terminate;
+        }
+        if (v2 = 2) {
+            Sfx(81);
+            createSprite(65533, 12, 0, 0, v3::2, v3::1, 26);
+            Item_move(v3, _CloneIolo);
+            SetWorkType(_Stand, _CloneIolo);
+            Bark_i(1, "@Avatar!@", _CloneIolo);
+            v5 = ~PostInFuture(8, << _aNO_HALT_i, _aUSABLE_i, #Iolo >>, item);
+            v5 = ~SetQuality(255, item);
+            FaceAvatar_i(65358);
+        }
+        if (v2 = 3) {
+            Item_destroy(item);
+            v3 = << 97, 1604, 0 >>;
+            SetWorkType(_Shy, _CloneIolo);
+            Item_move(v3, _CloneIolo);
+        }
+        if (v2 = 4) {
+            Sfx(81);
+            createSprite(65533, 12, 0, 0, v3::2, v3::1, 7);
+            Item_move(v3, _Thoxa);
+            SetWorkType(_Stand, _Thoxa);
+            FaceAvatar_i(65325);
+            Bark_i(1, "@Avatar!@", _Thoxa);
+            v5 = ~PostInFuture(10, << _aNO_HALT_i, _aUSABLE_i, #Gwanni_Child >>, item);
+            v5 = ~SetQuality(255, item);
+        }
+        if (v2 = 5) {
+            RemoveNPC_i(_Thoxa);
+            Item_destroy(item);
+        }
+        if (v2 = 6) {
+            SetWorkType(_Talk, _DEnsorcio);
+            v5 = ~SetQuality(255, item);
+        }
+        if (v2 = 7) {
+            RemoveNPC_i(_DEnsorcio);
+            RemoveNPC_i(_DFilbert);
+            Item_destroy(item);
+        }
+        if (v2 = 8) {
+            v6 = ~CreateCreature_i(v3, _Batlin_Type);
+            SetWorkType(_Combat_0, v6);
+            Npc_setAlignment(_Chaotic, v6);
+            RemoveContents_i(v6);
+            v7 = << (v3::1 + 9), v3::2, v3::3 >>;
+            v8 = ~CreateCreature_i(v7, _Bear);
+            SetWorkType(_Combat_0, v8);
+            Npc_setAlignment(_Evil, v8);
+            RemoveContents_i(v8);
+            SetAttacker_i(v8, v6);
+            SetAttacker_i(v6, v8);
+            Npc_setTarget(v8, v6);
+            Npc_setTarget(v6, v8);
+            SetItemFlag_i(_Tournament, v6);
+            SetItemFlag_i(_Tournament, v8);
+            Polymorph_i(_Avatar_Type, v8);
+            Sfx(81);
+            createSprite(65533, 12, 0, 0, v3::2, v3::1, 26);
+            createSprite(65533, 12, 0, 0, v7::2, v7::1, 7);
+            v5 = ~PostInFuture(30, << _aNO_HALT_i, _aUSABLE_i, #Batlin_Type >>, item);
+            v5 = ~SetQuality(255, item);
+            v5 = ~GiveToCont_i(false, 0, 0, _Unique_Sword, 1, v6);
+        }
+        if (v2 = 16) {
+            v9 = ~FindNearby_i(0, 40, _Bear, item);
+            Foreach v12 in v9 {
+                v13 = ~GetCoord(v12);
+                Polymorph_i(_Bear, v12);
+                RemoveAll_i(v12);
+                v14 = 400;
+                v15 = 1;
+                v16 = ~FindNearby_i(0, 20, _Batlin_Type, item);
+                Foreach v19 in v16 {
+                    Npc_setAlignment(_Good, v19);
+                    SetWorkType(_Dance, v19);
+                }
+                if v1 {
+                    if (v0 = 0) {
+                        v14 = 400;
+                        v15 = 2;
+                    }
+                    if (v0 = 1) {
+                        v14 = 414;
+                        v15 = 31;
+                    }
+                    if (v0 > 1) {
+                        v14 = 414;
+                        v15 = 29;
+                    }
+                } else {
+                    if (v0 = 0) {
+                        v14 = 400;
+                        v15 = 1;
+                    }
+                    if (v0 = 1) {
+                        v14 = 414;
+                        v15 = 30;
+                    }
+                    if (v0 > 1) {
+                        v14 = 414;
+                        v15 = 28;
+                    }
+                }
+                v5 = ~CreateItemAt_i(v13, true, 0, v15, v14);
+            }
+            Bark_i(3, "@Die, Avatar!@", v19);
+            Bark_i(20, "@Nothing can stop me now!@", v19);
+            Bark_i(32, "@The universe is mine!@", v19);
+            v5 = ~SetQuality(9, item);
+            v5 = ~PostInFuture(40, << _aNO_HALT_i, _aUSABLE_i, #DreamScenesEgg_i >>, item);
+        }
+        if (v2 = 9) {
+            v16 = ~FindNearby_i(0, 30, _Batlin_Type, item);
+            Foreach v19 in v16 {
+                v3 = ~GetCoord(v19);
+                RemoveAll_i(v19);
+                createSprite(65535, 0, 0, 0, v3::2, v3::1, 26);
+                Sfx(130);
+            }
+            v22 = ~FindNearby_i(0, 20, _NPC2_Bodies, item);
+            Foreach v12 in v22 {
+                v3 = ~GetCoord(v12);
+                RemoveAll_i(v12);
+                Sfx(76);
+                createSprite(65535, 0, 0, 0, v3::2, v3::1, 26);
+            }
+            v22 = ~FindNearby_i(0, 20, _NPC1_Bodies, item);
+            Foreach v12 in v22 {
+                v3 = ~GetCoord(v12);
+                RemoveAll_i(v12);
+                Sfx(119);
+                createSprite(65535, 0, 0, 0, v3::2, v3::1, 26);
+            }
+            Item_destroy(item);
+        }
+    }
+}
+
+Routine JestersEgg_i accepts a0 #locals(5) {
+    if (event = _Trigger) && ($BANES_RELEASED and not ~IsDead(_AntiIolo)) {
+        v0 = ~GetQuality(item);
+        v1 = ~GetCoord(item);
+        v2 = ~CreateCreature_i(v1, _Jester);
+        SetWorkType(_Combat_0, v2);
+        Npc_setAlignment(_Evil, v2);
+        SetAttacker_i(v2, _Avatar);
+        v3 = ~rndRange(30, 0);
+        v4 = ~GiveToCont_i(false, v3, 0, _Garbage_1, 1, v2);
+        createSprite(65535, 0, 0, 0, v1::2, v1::1, 30);
+        Sfx(41);
+        if (v0 > 0) {
+            v4 = ~PostInFuture(15, << _aNO_HALT_i, _aUSABLE_i, #JestersEgg_i >>, item);
+            v0 = (v0 - 1);
+            v4 = ~SetQuality(v0, item);
+        } else {
+            Item_destroy(item);
+        }
+    }
+}
+
+Routine DreamWeirdnessEgg_i accepts a0 #locals(10) {
+    if (event = _Action) {
+        Item_destroy(item);
+    }
+    if (event = _Trigger) {
+        v0 = ~GetCoord(item);
+        v1 = false;
+        v2 = ~GetQuality(item);
+        if (v2 = 0) && (~rndRange(6, 1) > 1) {
+            v3 = ~FindNearby_i(16, 3, _Weird_Dream_Realm_Stuff, item);
+            Foreach v6 in v3 {
+                v1 = true;
+            }
+            if not v1 {
+                v7 = ~Item_create(_Weird_Dream_Realm_Stuff);
+                if v7 {
+                    ClearItemFlag_i(_IsTemporary_i, v7);
+                    SetFrame(~rndRange(26, 0), v7);
+                    v8 = ~PopToMap(v0);
+                }
+            }
+        }
+        if (v2 = 1) {
+            v7 = ~Item_create(_W_Snow);
+            if v7 {
+                ClearItemFlag_i(_IsTemporary_i, v7);
+                Sfx(106);
+                if (~rndRange(4, 1) > 2) {
+                    SetFrame(9, v7);
+                    v8 = ~PopToMap(v0);
+                    if v8 {
+                        v9 = ~PostAction(<< _aNO_HALT_i, _aWAIT_i, 1, _aFRAME, 10, _aWAIT_i, 1, _aFRAME, 11, _aWAIT_i, 1, _aFRAME, 12, _aWAIT_i, 1, _aFRAME, 13, _aWAIT_i, 1, _aUSABLE_i, #DreamWeirdnessEgg_i >>, v7);
+                        terminate;
+                    }
+                }
+            }
+            SetFrame(14, v7);
+            v8 = ~PopToMap(v0);
+            if v8 {
+                v9 = ~PostAction(<< _aNO_HALT_i, _aWAIT_i, 1, _aFRAME, 15, _aWAIT_i, 1, _aFRAME, 16, _aWAIT_i, 1, _aFRAME, 17, _aWAIT_i, 1, _aFRAME, 18, _aWAIT_i, 1, _aUSABLE_i, #DreamWeirdnessEgg_i >>, v7);
+                terminate;
+            }
+        }
+    }
+}

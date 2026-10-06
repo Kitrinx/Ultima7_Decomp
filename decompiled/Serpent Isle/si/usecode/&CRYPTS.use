@@ -1,0 +1,130 @@
+Routine AlarmBellEgg_i accepts a0 #locals(1) #uses(MemberBarks_i) {
+    v0 = ~PostAction(<< _aNO_HALT_i, _aSFX_i, 30, _aWAIT_i, 15, _aLOOP_i, 65532, 3 >>, item);
+    MemberBarks_i(<< "@An alarm bell!", "They know that we are here.@" >>);
+}
+
+Routine BlackrockDoorsEgg_i accepts a0 #locals(7) #uses(SetDoorState_i, ~SwingSDoorNS_i, ~SwingSDoorEW_i) {
+    v0 = ~FindNearby_i(0, 2, _Brserp, item);
+    event = 1;
+    if v0 {
+        v0 = ~FindNearby_i(0, 25, _SDoor_NS, item);
+        Foreach v3 in v0 {
+            SetDoorState_i(0, v3);
+            v4 = ~SwingSDoorNS_i(v3);
+        }
+        v0 = ~FindNearby_i(0, 25, _SDoor_EW, item);
+        Foreach v3 in v0 {
+            SetDoorState_i(0, v3);
+            v4 = ~SwingSDoorEW_i(v3);
+        }
+    }
+}
+
+Routine BlackrockTeleportEgg_i accepts a0 #locals(0) #uses(~IsInInv) {
+    if ~IsInInv(2, 65177, _Brserp, 1, _Party) {
+        Item_move(<< 434, 941, 0 >>, _Party);
+    }
+}
+
+Routine CarvingLockEgg_i accepts a0 #locals(23) #uses(~DoorState_i, Door_EW, Door_NS, DDoor_NS, DDoor_EW, SetDoorState_i) {
+    v0 = false;
+    v1 = ~FindNearby_i(0, 2, _Snakecrv, item);
+    if v1 {
+        Foreach v4 in v1 {
+            if (~GetFrame(v4) = 4) {
+                v0 = true;
+            }
+        }
+    }
+    if not v0 {
+        event = 1;
+        v4 = ~FindNearby_i(0, 20, _Door_EW, item);
+        Foreach v7 in v4 {
+            if (~DoorState_i(v7) = 1) {
+                Door_EW(v7);
+            }
+        }
+        v4 = ~FindNearby_i(0, 20, _Door_NS, item);
+        Foreach v7 in v4 {
+            if (~DoorState_i(v7) = 1) {
+                Door_NS(v7);
+            }
+        }
+        v4 = ~FindNearby_i(0, 20, _DDoor_NS, item);
+        Foreach v7 in v4 {
+            if (~DoorState_i(v7) = 1) {
+                DDoor_NS(v7);
+            }
+        }
+        v4 = ~FindNearby_i(0, 20, _DDoor_EW, item);
+        Foreach v7 in v4 {
+            if (~DoorState_i(v7) = 1) {
+                DDoor_EW(v7);
+            }
+        }
+        v4 = (~FindNearby_i(0, 20, _Door_EW, item) & (~FindNearby_i(0, 20, _Door_NS, item) & (~FindNearby_i(0, 20, _DDoor_NS, item) & ~FindNearby_i(0, 20, _DDoor_EW, item))));
+        Foreach v7 in v4 {
+            SetDoorState_i(2, v7);
+        }
+    } else {
+        v4 = (~FindNearby_i(0, 20, _Door_EW, item) & (~FindNearby_i(0, 20, _Door_NS, item) & (~FindNearby_i(0, 20, _DDoor_NS, item) & ~FindNearby_i(0, 20, _DDoor_EW, item))));
+        Foreach v7 in v4 {
+            if (~DoorState_i(v7) = 2) {
+                SetDoorState_i(0, v7);
+            }
+        }
+    }
+    v18 = ~FindNearby_i(176, 60, _Trap_Type, item);
+    Foreach v21 in v18 {
+        if (~GetFrame(v21) = 1) {
+            if not v0 {
+                v22 = ~PostAction(<< _aSET_EGG_i, _AvatarNear, 20 >>, v21);
+            } else {
+                v22 = ~PostAction(<< _aSET_EGG_i, _External, 0 >>, v21);
+            }
+        }
+    }
+}
+
+Routine ScrollTeleportEgg_i accepts a0 #locals(13) {
+    v0 = false;
+    v1 = ~FindNearby_i(0, 10, _Snakecrv, item);
+    if v1 {
+        Foreach v4 in v1 {
+            if (~GetFrame(v4) = 4) {
+                v5 = ~GetCoord(v4);
+                v6 = ~GetCoord(item);
+                if ((v6::2 = v5::2) and ((v6::1 + 8) = v5::1)) {
+                    v0 = true;
+                }
+            }
+        }
+        if v0 {
+            v1 = ~FindNearby_i(0, 3, _Serp_Scroll, item);
+            Foreach v4 in v1 {
+                if (~GetQuality(v4) = 61) {
+                    v9 = ~GetParty();
+                    Foreach v12 in v9 {
+                        Item_move(<< 211, 878, 0 >>, v12);
+                    }
+                }
+            }
+        }
+    }
+}
+
+Routine MummyEgg_i accepts a0 #locals(3) #uses(AttackAvatar_i) {
+    if (event = _Trigger) {
+        v0 = ~GetCoord(item);
+        v1 = ~CreateCreature_i(v0, _Mummy);
+        AttackAvatar_i(v1);
+        v2 = ~GiveToCont_i(true, 2, 61, _Serp_Scroll, 1, v1);
+    }
+}
+
+Routine CryptsTeleportEgg_i accepts a0 #locals(1) {
+    v0 = << 293, 951, 0 >>;
+    Item_move(v0, _Party);
+    Sfx(130);
+    CreateSpriteOn_i(65535, 1, 0, 0, 0, 0, 32, _Avatar);
+}

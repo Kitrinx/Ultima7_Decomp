@@ -1,0 +1,226 @@
+Routine F_Goblin accepts a0 #locals(27) #uses(~IsInInv, TakeAllFromParty_i, ~DoorState_i, SetDoorState_i, FuseReagents_i, ThrowSceneSwitch_i, ThrowDoorSwitch_i, ShowTemptation_i) {
+    v0 = ~GetQuality(item);
+    if (v0 = 1) {
+        v1 = ~FindNearby_i(0, 20, _Chaos_Male, item);
+        if v1 {
+            Kernel_resetRef(v1);
+            ClearBark_i(v1);
+        }
+        v2 = ~FindNearby_i(0, 30, _Field_Fire, item);
+        Foreach v5 in v2 {
+            v6 = ~PostAction(<< _aNO_HALT_i, _aREMOVE_i >>, v5);
+        }
+        $passedfiretest = true;
+        if v1 {
+            v7 = ~GetCoord(item);
+            PathfindNPC_i(false, #Switch, item, _NearDeath, v7, _ManInFire);
+            v6 = ~PostInFuture(10, << _aNO_HALT_i, _aBARK_i, "@Thou didst risk thy life...@" >>, v1);
+            v6 = ~PostInFuture(26, << _aNO_HALT_i, _aBARK_i, "@Thou art truly ethical!@" >>, v1);
+            SetNPCID_i(5, _ManInFire);
+        }
+        terminate;
+    }
+    if (v0 = 2) {
+        v8 = false;
+        v9 = << 948, 952, 951, 644, 645, 646, 760 >>;
+        Foreach v12 in v9 {
+            if ~IsInInv(65177, 65177, v12, 1, _Avatar) {
+                v8 = true;
+            }
+        }
+        v13 = ~IsInInv(4, 65177, _Snakecrv, 1, _Avatar);
+        if v13 {
+            v14 = ~FindNearby_i(0, 160, _Chest, item);
+            Foreach v17 in v14 {
+                if not ~IsInInv(4, 65177, _Snakecrv, 1, v17) {
+                    v18 = ~Item_create(_Snakecrv);
+                    if v18 {
+                        SetFrame(4, v18);
+                        v6 = ~PopToNPC(v17);
+                    }
+                }
+            }
+            TakeAllFromParty_i(_Snakecrv);
+            v8 = true;
+        }
+        if (v8 = false) {
+            $passedmoneytest = true;
+        }
+        v6 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #LeaveEthicalTest_i >>, _Avatar);
+        v19 = ~FindNearby_i(16, 160, _Trap_Type, item);
+        Foreach v22 in v19 {
+            v6 = ~PostAction(<< _aNO_HALT_i, _aSET_EGG_i, _External, 5 >>, v22);
+        }
+        terminate;
+    }
+    if (v0 = 116) {
+        v23 = ~FindNearby_i(176, 20, _Door_EW, _Avatar);
+        v23 = (v23 & ~FindNearby_i(176, 20, _Door_NS, _Avatar));
+        v23 = (v23 & ~FindNearby_i(176, 20, _DDoor_NS, _Avatar));
+        v23 = (v23 & ~FindNearby_i(176, 20, _DDoor_EW, _Avatar));
+        Foreach v26 in v23 {
+            if (~GetQuality(v26) = 116) && (~DoorState_i(v26) = 2) {
+                SetDoorState_i(0, v26);
+            }
+        }
+        terminate;
+    }
+    if ((v0 = 145) and (flag(596) = false)) {
+        v6 = ~PostInFuture(1, << _aNO_HALT_i, _aUSABLE_i, #Palos >>, item);
+        terminate;
+    }
+    if ((v0 = 145) and ($palosspoketoavatar = false)) {
+        terminate;
+    }
+    if ((v0 = 146) and (flag(595) = false)) {
+        v6 = ~PostInFuture(1, << _aNO_HALT_i, _aUSABLE_i, #Brunt >>, item);
+        terminate;
+    }
+    if ((v0 = 146) and ($bruntspoketoavatar = false)) {
+        terminate;
+    }
+    if ((v0 = 147) and (flag(597) = false)) {
+        v6 = ~PostInFuture(1, << _aNO_HALT_i, _aUSABLE_i, #Deadeye >>, item);
+        terminate;
+    }
+    if ((v0 = 147) and ($deadeyespoketoavatar = false)) {
+        terminate;
+    }
+    if (v0 = 10) {
+        FuseReagents_i();
+    }
+    if ((v0 > 20) and (v0 <= 100)) {
+        ThrowSceneSwitch_i(v0);
+    }
+    if ((v0 > 100) and (v0 < 200)) {
+        ThrowDoorSwitch_i(v0);
+    }
+    if (v0 = 200) {
+        ShowTemptation_i(item);
+    }
+    if ((v0 >= 201) and (v0 <= 203)) {
+        v6 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #CheckTrapSequence_i >>, item);
+    }
+    if (v0 = 210) {
+        v6 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #MoveCask_i >>, item);
+    }
+}
+
+Routine Switch accepts a0 #locals(14) #uses(PathToItem_i, ~DirFrom_i, ~ToggleDrawbridges_i, ToggleSliders_i, TeleportBySwitch_i) {
+    if (event = _Converse) {
+        closeAllGumps();
+        v0 = 65535;
+        v1 = 65535;
+        v2 = 65533;
+        PathToItem_i(10, item, #Switch, v2, v1, v0, item);
+    }
+    if ((event = _Pathfind1) or (event = _Action)) {
+        if (event <> _Action) {
+            v3 = ~DirFrom_i(item, _Avatar);
+            v4 = ~PostAction(<< _aFACE_i, v3, _aCONTINUE_i, _aTHRUST1_FRAME_i, _aSTAND_FRAME_i >>, _Avatar);
+        }
+        v5 = ~GetFrame(item);
+        v6 = v5;
+        if ((v5 modulo 2) = 0) {
+            SetFrame((v5 + 1), item);
+        } else {
+            SetFrame((v5 - 1), item);
+        }
+        playSFX(item, 70);
+        v7 = ~GetQuality(item);
+        if ((v6 > 5) and (v6 < 12)) {
+            if (v6 < 10) {
+                v4 = ~PostInFuture(1, << _aNO_HALT_i, _aUSABLE_i, #F_Goblin >>, item);
+            } else {
+                v4 = ~PostInFuture(1, << _aNO_HALT_i, _aUSABLE_i, #CheckLevers_i >>, item);
+            }
+        } else {
+            v8 = ~FindNearby_i(0, 15, _Drawbridge, item);
+            v9 = ~FindNearby_i(0, 15, _Closed_Drawbridge, item);
+            v8 = (v8 & v9);
+            v9 = << >>;
+            Foreach v12 in v8 {
+                if (~GetQuality(v12) = v7) {
+                    v9 = (v9 & v12);
+                }
+            }
+            v4 = ~ToggleDrawbridges_i(v9);
+            ToggleSliders_i(65177, item);
+            if ((v7 >= 201) and (v7 <= 217)) {
+                v13 = << 135, 1730, 1 >>;
+                if ~FindItem(0, 220, _Switch, v13) {
+                    flag(480) = true;
+                }
+                if ~FindItem(1, 220, _Switch, v13) {
+                    flag(480) = false;
+                }
+                if (flag(480) = true) {
+                    TeleportBySwitch_i(v7);
+                }
+            }
+        }
+    }
+}
+
+Usable SwitchDrawbridges_i #locals(7) #uses(~ToggleDrawbridges_i, ToggleSliders_i) {
+    v0 = ~FindNearby_i(0, 15, _Drawbridge, item);
+    v1 = ~FindNearby_i(0, 15, _Closed_Drawbridge, item);
+    v0 = (v0 & v1);
+    v1 = << >>;
+    v2 = ~GetQuality(item);
+    Foreach v5 in v0 {
+        if (~GetQuality(v5) = v2) {
+            v1 = (v1 & v5);
+        }
+    }
+    v6 = ~ToggleDrawbridges_i(v1);
+    ToggleSliders_i(65177, item);
+}
+
+Routine TeleportBySwitch_i accepts a0 #locals(2) {
+    if (v0 = 201) {
+        v1 = << 123, 1723, 0 >>;
+    }
+    if (v0 = 202) {
+        v1 = << 135, 1723, 0 >>;
+    }
+    if (v0 = 203) {
+        v1 = << 147, 1723, 0 >>;
+    }
+    if (v0 = 204) {
+        v1 = << 123, 1748, 0 >>;
+    }
+    if (v0 = 205) {
+        v1 = << 135, 1748, 0 >>;
+    }
+    if (v0 = 206) {
+        v1 = << 147, 1748, 0 >>;
+    }
+    if (v0 = 207) {
+        v1 = << 149, 1735, 0 >>;
+    }
+    if (v0 = 211) {
+        v1 = << 1298, 2208, 6 >>;
+    }
+    if (v0 = 212) {
+        v1 = << 1281, 2194, 6 >>;
+    }
+    if (v0 = 213) {
+        v1 = << 1284, 2210, 6 >>;
+    }
+    if (v0 = 214) {
+        v1 = << 1268, 2231, 6 >>;
+    }
+    if (v0 = 215) {
+        v1 = << 1266, 2247, 6 >>;
+    }
+    if (v0 = 216) {
+        v1 = << 1282, 2247, 6 >>;
+    }
+    if (v0 = 217) {
+        v1 = << 1298, 2247, 6 >>;
+    }
+    FadePalette_i(0, 1, 12);
+    Item_move(v1, _Party);
+    v2 = ~PostInFuture(3, << _aNO_HALT_i, _aUSABLE_i, #FadeInArrival_i >>, _Avatar);
+}

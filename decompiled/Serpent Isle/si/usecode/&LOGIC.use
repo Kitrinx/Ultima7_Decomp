@@ -1,0 +1,155 @@
+Routine LogicDoorsEgg_i accepts a0 #locals(20) #uses(SetDoorState_i) {
+    if (event = _Trigger) {
+        v0 = false;
+        v1 = false;
+        v2 = false;
+        v3 = false;
+        v4 = ~FindNearby_i(0, 8, _Stones_Colored, item);
+        Foreach v7 in v4 {
+            v8 = ~GetFrame(v7);
+            v9 = ("I see f " + v8);
+            if (v8 = 25) {
+                v0 = v7;
+            }
+            if (v8 = 21) {
+                v1 = v7;
+            }
+            if (v8 = 23) {
+                v2 = v7;
+            }
+            if (v8 = 24) {
+                v3 = v7;
+            }
+        }
+        if (v0 and (v1 and (v2 and v3))) {
+            v10 = ~GetCoord(v0);
+            v11 = ~GetCoord(v1);
+            v12 = ~GetCoord(v2);
+            v13 = ~GetCoord(v3);
+            v9 = (((((((" B=" + v10::1) + " C=") + v11::1) + " O=") + v12::1) + " W=") + v13::1);
+            v14 = v10::2;
+            v15 = v10::2;
+            if (v11::2 < v15) {
+                v15 = v11::2;
+            }
+            if (v12::2 < v15) {
+                v15 = v12::2;
+            }
+            if (v13::2 < v15) {
+                v15 = v13::2;
+            }
+            if (v11::2 > v14) {
+                v14 = v11::2;
+            }
+            if (v12::2 > v14) {
+                v14 = v12::2;
+            }
+            if (v13::2 > v14) {
+                v14 = v13::2;
+            }
+            v16 = (v14 - v15);
+            if ((v10::1 < v11::1) and ((v11::1 < v12::1) and ((v12::1 < v13::1) and (v16 < 2)))) {
+                v17 = ~FindNearby_i(0, 8, _Door_EW, item);
+                if v17 {
+                    SetDoorState_i(0, v17);
+                }
+                v18 = ~FindNearby_i(0, 8, _DDoor_EW, item);
+                if v18 {
+                    SetDoorState_i(0, v18);
+                    v19 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #DDoor_EW >>, v18);
+                }
+            }
+        }
+    }
+}
+
+Routine LogicFieldEgg_i accepts a0 #locals(12) #uses(~CoordMatches_i, ~RemoveNth_i, ConsumeOne_i) {
+    if (event = _Trigger) {
+        v0 = ~FindNearby_i(0, 3, _Stones_Colored, item);
+        v1 = ~GetCoord(item);
+        v2 = << 0, 0, 65534, 2, 0, 0 >>;
+        v3 = << 0, 0, 0, 0, 65534, 2 >>;
+        Foreach v6 in v0 {
+            v7 = ~GetFrame(v6);
+            if (v7 = 2) {
+                v8 = ~GetCoord(v6);
+                v8::1 = (v8::1 - v1::1);
+                v8::2 = (v8::2 - v1::2);
+                v9 = ~CoordMatches_i(v3, v2, v8);
+                if v9 {
+                    v2 = ~RemoveNth_i(v2, v9::1);
+                    v3 = ~RemoveNth_i(v3, v9::1);
+                }
+            }
+        }
+        v10 = ~ListSize_i(v2);
+        v10 = (v10 + ~ListSize_i(v3));
+        if (v10 = 0) {
+            v11 = ~FindNearby_i(0, 4, _Field_Energy, item);
+            if v11 {
+                ConsumeOne_i(v11);
+            }
+        }
+    }
+}
+
+Routine ColorStepEgg_i accepts a0 #locals(1) #uses(ResetLogicSteps_i, CompleteLogicSteps_i) {
+    if (event = _Trigger) {
+        v0 = ~GetQuality(item);
+        if (v0 = 0) {
+            if (not flag(558) and (not flag(560) and (not flag(561) and (not flag(559) and not flag(562))))) {
+                flag(558) = true;
+                CreateSpriteOn_i(65535, 0, 0, 0, 0, 0, 21, _Avatar);
+            } else {
+                if (flag(558) and (flag(560) and (flag(561) and (not flag(559) and not flag(562))))) {
+                    flag(559) = true;
+                    CreateSpriteOn_i(65535, 0, 0, 0, 0, 0, 21, _Avatar);
+                } else {
+                    ResetLogicSteps_i();
+                }
+            }
+        }
+        if (v0 = 1) {
+            if (flag(558) and (not flag(560) and (not flag(561) and (not flag(559) and not flag(562))))) {
+                flag(560) = true;
+                CreateSpriteOn_i(65535, 0, 0, 0, 0, 0, 21, _Avatar);
+            } else {
+                ResetLogicSteps_i();
+            }
+        }
+        if (v0 = 2) {
+            if (flag(558) and (flag(560) and (not flag(561) and (not flag(559) and not flag(562))))) {
+                flag(561) = true;
+                CreateSpriteOn_i(65535, 0, 0, 0, 0, 0, 21, _Avatar);
+            } else {
+                ResetLogicSteps_i();
+            }
+        }
+        if (v0 = 3) {
+            if (flag(558) and (flag(560) and (flag(561) and (flag(559) and not flag(562))))) {
+                flag(562) = true;
+                CompleteLogicSteps_i();
+            } else {
+                ResetLogicSteps_i();
+            }
+        }
+    }
+}
+
+Usable ResetLogicSteps_i #locals(0) {
+    flag(558) = false;
+    flag(559) = false;
+    flag(560) = false;
+    flag(561) = false;
+    flag(562) = false;
+    CreateSpriteOn_i(65535, 0, 0, 0, 0, 0, 17, _Avatar);
+}
+
+Usable CompleteLogicSteps_i #locals(0) {
+    flag(558) = false;
+    flag(559) = false;
+    flag(560) = false;
+    flag(561) = false;
+    flag(562) = false;
+    Item_move(<< 2743, 148, 0 >>, _Party);
+}

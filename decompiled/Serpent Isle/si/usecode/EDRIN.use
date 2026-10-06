@@ -1,0 +1,269 @@
+Routine Edrin accepts a0 #locals(17) #uses(~LordOrLady, ~AvatarName, Bark_i, ~GimmePathEgg, ~IsNPCNear, MessengerBringsScroll_i) {
+    v0 = ~LordOrLady();
+    v1 = ~AvatarSex();
+    v2 = ~AvatarName();
+    v3 = ~GetTime();
+    if ((v3 > 1) or (v3 < 6)) {
+        v3 = "day";
+    } else {
+        v3 = "evening";
+    }
+    if ($SAW_EDRIN_TRANSFORM and ((event = _Bark) and not $RESTORED_EDRIN)) {
+        SetNPCID_i((~GetNPCID_i(_Edrin) + 1), _Edrin);
+        if (~GetNPCID_i(_Edrin) = 8) {
+            Sfx(116);
+            v4 = ~GetCoord(_Edrin);
+            createSprite(65535, 0, 0, 0, v4::2, v4::1, 43);
+            v5 = ~PostInFuture(3, << _aNO_HALT_i, _aUSABLE_i, #Edrin >>, _Edrin);
+        }
+        if (~GetNPCID_i(_Edrin) = 7) {
+            Bark_i(0, "@Oh, no!@", _Edrin);
+            Sfx(116);
+            v4 = ~GetCoord(_Edrin);
+            v4::1 = (v4::1 - 4);
+            v4::2 = (v4::2 - 3);
+            createSprite(65535, 0, 0, 0, v4::2, v4::1, 40);
+        }
+        if (~GetNPCID_i(_Edrin) = 6) {
+            Bark_i(0, "@Must hide...@", _Edrin);
+            Sfx(116);
+            v4 = ~GetCoord(_Edrin);
+            v4::1 = (v4::1 + 17);
+            createSprite(65535, 0, 0, 0, v4::2, v4::1, 41);
+        }
+        if (~GetNPCID_i(_Edrin) = 5) {
+            Bark_i(0, "@Teleport storm!@", _Edrin);
+            Sfx(116);
+            v4 = ~GetCoord(_Edrin);
+            v4::1 = (v4::1 + 12);
+            v4::2 = (v4::2 + 7);
+            createSprite(65535, 0, 0, 0, v4::2, v4::1, 42);
+        }
+        if (~GetNPCID_i(_Edrin) = 4) {
+            SetWeather_i(_Sparkle);
+            Bark_i(3, "@'Tis so windy!@", _Edrin);
+            v6 = 583;
+            v7 = ~FindNearby_i(0, 10, v6, _Edrin);
+            if v7 {
+                Item_destroy(v7);
+            }
+        }
+        if (~GetNPCID_i(_Edrin) = 3) {
+            Bark_i(0, "@I should fetch my belongings.@", _Edrin);
+            v6 = 801;
+            v7 = ~FindNearby_i(0, 10, v6, _Edrin);
+            if v7 {
+                Item_destroy(v7);
+            }
+        }
+        if (~GetNPCID_i(_Edrin) = 2) {
+            FadePalette_i(1, 1, 12);
+            SetMusic(~GimmePathEgg(1, 5), 12);
+            Bark_i(0, "@It doth foretell a storm...@", _Edrin);
+        }
+        if (~GetNPCID_i(_Edrin) = 1) {
+            Sfx(116);
+            SetWeather_i(_Rain);
+            v8 = ~FindNearby_i(16, 20, _Path, _Edrin);
+            v9 = ~Item_create(_Campfire);
+            if v9 {
+                SetItemFlag_i(_IsTemporary_i, v9);
+                v5 = ~PopToMap(v4);
+            }
+            Foreach v12 in v8 {
+                if (~GetFrame(v12) = 2) {
+                    v6 = 801;
+                }
+                if (~GetFrame(v12) = 3) {
+                    v6 = 583;
+                }
+                if ((~GetFrame(v12) = 2) or (~GetFrame(v12) = 3)) {
+                    v4 = ~GetCoord(v12);
+                    v4::2 = (v4::2 + 1);
+                    v9 = ~Item_create(v6);
+                    if v9 {
+                        SetItemFlag_i(_IsTemporary_i, v9);
+                        v5 = ~PopToMap(v4);
+                    }
+                }
+            }
+        }
+        terminate;
+    }
+    if ($SAW_EDRIN_TRANSFORM and ((event = _Action) and not $RESTORED_EDRIN)) {
+        SetWorkType(_Wander, _Ale);
+        Bark_i(2, "@Awk!@", _Ale);
+        Camera_setCenterOn(_Ale);
+        RemoveNPC_i(_Edrin);
+        Polymorph_i(_Parrot, _Ale);
+        v5 = ~PostInFuture(5, << _aNO_HALT_i, _aUSABLE_i, #Ale >>, _Ale);
+    }
+    if (event = _Converse) {
+        Item_bark("@Excuse me...@", _Avatar);
+        Bark_i(2, "@But of course!@", _Edrin);
+        SetWorkType(_Talk, _Edrin);
+    }
+    if (event = _Talking) {
+        Npc_schedule(_Edrin);
+        SetSpeaker0_i(0, _Edrin);
+        ClearBark_i(_Edrin);
+        v13 = ~GetItemFlag_i(_Met, _Edrin);
+        if (v13 = false) {
+            SetItemFlag_i(_Met, _Edrin);
+            ["I am a man! I am a man! I cannot tell thee how miserable it is to be a bird."];
+            TurnOn("bird");
+            SetClock(5);
+        } else {
+            ["I am forever in thy debt, <v0>. How may ol' Edrin be of aid to thee?"];
+            TurnOn("aid");
+            if (~GetClock(5) >= 3) {
+                v14 = true;
+            }
+        }
+        TurnOn(<< "name", "bye" >>);
+        converse {
+            key ("name") {
+                ["My name is Edrin."];
+                TurnOff("name");
+            }
+            key ("aid") {
+                TurnOff("aid");
+                if ~AvatarSex() {
+                    v15 = "woman";
+                } else {
+                    v15 = "man";
+                }
+                ["Well, <v0>, 'tis the least I can do for the <v15> who made me once again a man. I can but hope thou wilt never experience the misery of being a bird!"];
+                TurnOn("bird");
+            }
+            key ("bird") {
+                TurnOff("bird");
+                if v14 {
+                    v16 = "However,@ he appears sad, @I am still without passage home";
+                    TurnOn("still without");
+                } else {
+                    v16 = "Of course, first I must locate passage aboard a ship";
+                    TurnOn("passage");
+                }
+                ["'Twas terrible, <v0>! Well, I should say, flying was rather exciting and all, but I never became accustomed to the worms. Were it not for my dreams, I would surely have lost sanity! But now, thanks to thee, I have no want but to return to my flock. <v16>."];
+                TurnOn(<< "dreams", "flock" >>);
+            }
+            key ("dreams") {
+                TurnOff("dreams");
+                if not $EDRIN_DREAMS_OF_SIRANUSH {
+                    ["'Twas the most unusual thing I have ever known. Well, save being a bird. When I would dream, I would envision this maiden -- fair as summer's day. She called herself Siranush. Oftimes I would only see her from afar, bathing in a spring or basking in the sun. And other times, we would be together, swimming, gardening, walking..."];
+                    ["Oh, I beg thy pardon, <v0>, I did forget myself for a bit."];
+                    $EDRIN_DREAMS_OF_SIRANUSH = true;
+                } else {
+                    if not $sirhascrystal {
+                        ["Yes, yes, <v0>. I told thee about the lovely maiden, Siranush. If only she were real," he sighs.];
+                    } else {
+                        [He smiles. "Yes, <v0>. I had forgotten to offer thee my thanks. Thou hast provided for me the opportunity to learn my visions were real. Now, however, I will have not the opportunity to lay eyes upon my lovely Siranush again..."];
+                    }
+                }
+            }
+            key ("flock") {
+                TurnOff("flock");
+                ["Indeed, <v0>. I am a shepherd, caretaker of sheep. I have never known another life. Well, excepting my time as a bird, of course! But, like one of mine own sheep lost in the wild, I long for a way to return home."];
+            }
+            key ("passage") {
+                TurnOff("passage");
+                ["Why, yes. After I find my brother we will return home, if possible. It will be much safer to travel by ship."];
+                TurnOn(<< "brother", "safer" >>);
+            }
+            key ("still without") {
+                TurnOff("still without");
+                ["Aye. My brother says that he was told we can find safe passage aboard a ship here. But all we've seen is Captain Hawk."];
+                TurnOn(<< "brother", "safe", "Hawk" >>);
+            }
+            key ("Hawk") {
+                TurnOff("Hawk");
+                ["He is the captain of the... the... what is the name of that ship?"];
+                if ~IsNPCNear(_Kane) {
+                    SetSpeaker1_i(0, _Kane);
+                    ["The Arabella."];
+                    CloseSpeaker1_i();
+                    SetSpeaker0_i(0, _Edrin);
+                    ["Ah, yes, now I remember. I thank thee."];
+                    SetSpeaker1_i(0, _Kane);
+                    ["Thou art welcome."];
+                    CloseSpeaker1_i();
+                    SetSpeakerSlot_i(0);
+                } else {
+                    ["Oh, well, I cannot remember."];
+                }
+                if ~GetItemFlag_i(_Dead, _Hawk) {
+                    ["Anyway, now that he hath been killed, I know not what we'll do. I suppose we must await the arrival of another ship."];
+                    TurnOn("killed");
+                } else {
+                    ["Anyway, for some reason he doth refuse to sail again. I do wish he would change his mind, or that another ship would arrive."];
+                }
+            }
+            key ("killed") {
+                ["I did not see anything..."];
+                if ~IsNPCNear(_Kane) {
+                    SetSpeaker1_i(0, _Kane);
+                    ["Nor did I!"];
+                    CloseSpeaker1_i();
+                    SetSpeakerSlot_i(0);
+                }
+                ["Nor did Kane. However, he was in the tavern when Hawk scuffled with a man named Flindo. We can only guess the outcome, <v0>."];
+            }
+            key ("safer", "safe") {
+                TurnOff(<< "safe", "safer" >>);
+                ["Well, I suppose a ship would offer only a little more protection, but anything would be better than travelling in the open, what with the storms and all."];
+                TurnOn("storms");
+            }
+            key ("storms") {
+                TurnOff("storms");
+                ["They are most unusual, <v0>. The thunder and lightning I have seen before, but the suddenness with which they strike would be unbelievable had I not experienced one firsthand. The storm had barely begun, when there was a flash of lightning and a clap of thunder. And the next thing I knew, I was flapping wings instead of waving arms. My memory is weak after that, but I do remember hearing Kane's shouts."];
+            }
+            key ("brother") {
+                TurnOff("brother");
+                ["Kane is my brother. He is a few years my junior, but certainly an able shepherd. I know how worried he must have been while I was a parrot."];
+                if v14 {
+                    ["I'm glad he met Mistress Devra."];
+                    TurnOn("Devra");
+                } else {
+                    ["I wonder how he will react to seeing me again. I hope he hath not strayed too far from home."];
+                    TurnOn("home");
+                }
+            }
+            key ("home") {
+                TurnOff("home");
+                ["Well, we live on the mainland. Since I spy the Mountains of Freedom off in the distance, I know that this is not the mainland. And I have seen little goblin activity."];
+                TurnOn(<< "Mountains of Freedom", "Goblin activity" >>);
+            }
+            key ("Mountains of Freedom") {
+                TurnOff("Mountains of Freedom");
+                ["I know nothing about them, save for that they follow the coastline in an upside down `U' shape -- there are no mountain ranges like that near my farm."];
+            }
+            key ("Goblin activity") {
+                TurnOff("Goblin activity");
+                ["Yes, in the forest near our farm there are a terrible number of Goblins. They often come to raid us on the way to the city."];
+                TurnOn(<< "raid", "city" >>);
+            }
+            key ("city") {
+                TurnOff("city");
+                ["Aye, <v0>. We tend our sheep south of Fawn. Excellent grazing pastures there."];
+            }
+            key ("raid") {
+                TurnOff("raid");
+                ["Well, they rarely set upon us, <v0>, though sometimes a few will steal our sheep. Sometimes they are worse than wolves, I think. And much meaner!"];
+            }
+            key ("Devra") {
+                TurnOff("Devra");
+                ["She is the owner of the inn at Sleeping Bull. Kane tells me that she helped him find a place to stay while waiting for Captain Hawk. Of course, now it is time for us to head home."];
+                TurnOn("home");
+            }
+            key ("bye") {
+                CloseSpeaker0_i();
+                Bark_i(0, "@Fare thee well!@", _Avatar);
+                Bark_i(2, "@Goodbye!@", _Edrin);
+                MessengerBringsScroll_i();
+                break;
+            }
+        }
+        clear_answers;
+    }
+}

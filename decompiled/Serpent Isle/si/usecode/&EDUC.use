@@ -1,0 +1,101 @@
+Routine ShaminoHintEgg_i accepts a0 #locals(9) #uses(~GimmePathEgg, ~AvatarName, ~LordOrLady, ~IsNPCNear, ~IsInInv) {
+    v0 = ~GetQuality(item);
+    if (event = _Trigger) {
+        if (v0 = 7) {
+            flag(675) = true;
+        } else {
+            if (v0 = 5) {
+                v1 = ~PostInFuture(~rndRange(200, 100), << _aUSABLE_i, #ShaminoHintEgg_i >>, ~GimmePathEgg(1, 0));
+            } else {
+                v2 = (("@" + ~AvatarName()) + "...@");
+                v3 = (("@" + ~LordOrLady()) + "...@");
+                v4 = << "@Avatar...@", v2, v3, "@Pardon thou me...@", "@If I may...@", "@See!@" >>;
+                Item_bark(v4::~Random(~ListSize_i(v4)), _Shamino);
+                v5 = 4;
+                v6 = false;
+                While (v5 > 0) {
+                    if (~GetQuality(~GimmePathEgg(v5, 5)) = 0) {
+                        v6 = ~GimmePathEgg(v5, 5);
+                    }
+                    v5 = (v5 - 1);
+                }
+                if v6 {
+                    v1 = ~SetQuality(v0, v6);
+                    v1 = ~PostInFuture(4, << _aNO_HALT_i, _aUSABLE_i, #ShaminoHintEgg_i >>, v6);
+                }
+            }
+        }
+        Item_destroy(item);
+    }
+    if (event = _Action) {
+        if (item = ~GimmePathEgg(1, 0)) {
+            if (~IsNPCNear(_Shamino) and not flag(675)) {
+                SetSpeaker0_i(0, _Shamino);
+                v7 = ~GetCoord(_Avatar);
+                if ((v7::1 > 657) and ((v7::1 < 683) and ((v7::2 > 2641) and (v7::2 < 2654)))) {
+                    ["We did pass through an illusionary wall to enter. Might there be another leading from this place to somewhere else?"];
+                } else {
+                    ["We did pass through an illusionary wall to enter that cave. Might there be another leading deeper inside the mountain?"];
+                }
+            }
+        } else {
+            v1 = ~SetQuality(0, item);
+            if ~IsNPCNear(_Shamino) {
+                ClearBark_i(_Shamino);
+                SetSpeaker0_i(0, _Shamino);
+                if ((v0 < 0) or ((v0 > 6) or (v0 = 5))) {
+                    PrintError_i(("Tell Bill Qual is " + v0));
+                }
+                if (v0 = 1) {
+                    if ~IsInInv(65177, 65177, _Bed_Roll, 1, _Party) {
+                        ["Thou wert wise to pick up that bedroll. Now we can sleep well anywhere."];
+                    } else {
+                        ["A bedroll! With this, thou wilt sleep well anywhere."];
+                    }
+                }
+                if (v0 = 2) {
+                    v1 = ~FindNearby_i(0, 20, _Locked_Chest, _Avatar);
+                    if v1 {
+                        if ~IsInInv(65177, 65177, _Lockpick, 1, _Party) {
+                            ["I'll wager that chest is locked. Thou shouldst try thy lockpicks on it."];
+                            ["Lockpicks work on locked doors, too. Of course, we only use them for virtuous reasons -- the Avatar is no common thief!"];
+                        } else {
+                            ["I'll wager that chest is locked. If we had lockpicks, however, we could open it!"];
+                            ["They work on locked doors, too. Of course, we only use them for virtuous reasons -- the Avatar is no common thief!"];
+                        }
+                    } else {
+                        ["Nice day we're having, isn't it."];
+                    }
+                }
+                if (v0 = 3) {
+                    v1 = ~FindNearby_i(0, 20, _Scroll, _Avatar);
+                    if v1 {
+                        ["I see a scroll. Perhaps it contains clues about this place, or counsel for our future adventurings."];
+                    } else {
+                        ["Thou wert wise to collect that scroll, Avatar. It probably contains clues which will be useful to us later."];
+                    }
+                }
+                if (v0 = 4) {
+                    if not ~FindNearby_i(0, 10, _Torch, _Avatar) {
+                        ["Thou wert wise to pick up that torch! We need all that we can find, for they do not burn for long."];
+                        ["No doubt we shall be in many strange dungeons before our adventure is over..."];
+                    } else {
+                        ["Let us take that torch! We need all that we can find, for they do not burn for long."];
+                        ["No doubt we shall be in many strange dungeons before our adventure is over..."];
+                    }
+                }
+                if (v0 = 6) {
+                    v1 = ~FindNearby_i(0, 30, _Magic_Bow, _Avatar);
+                    if v1 {
+                        v8 = ~AvatarName();
+                        ["That seems alike to the bow I did lose to the magical storm!"];
+                        ["And we are carrying an animal's skull, given to us by the strange storm -- it must have changed places with my bow!"];
+                        ["<v8>, it is a clue! If we find where the other strange items came from, we shall find our lost possessions!"];
+                    } else {
+                        ["Look at the size of that skeleton! Perhaps that skull thou hast doth match to these bones."];
+                    }
+                }
+            }
+        }
+    }
+}

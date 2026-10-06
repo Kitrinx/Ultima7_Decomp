@@ -1,0 +1,40 @@
+Routine FawnGuardEgg_i accepts a0 #locals(4) {
+    if ((event = _Trigger) and ($BANES_RELEASED = false)) {
+        v0 = ~GetQuality(item);
+        v1 = ~GetCoord(item);
+        v2 = ~CreateCreature_i(v1, _Fawn_Guard);
+        Npc_setAlignment(_Neutral, v2);
+        v3 = ~GiveToCont_i(true, 0, 0, _Leath_Leggings, 1, v2);
+        v3 = ~GiveToCont_i(true, 0, 0, _Leath_Armour, 1, v2);
+        v3 = ~GiveToCont_i(true, 0, 0, _Leath_Boots, 1, v2);
+        if (~rndRange(10, 1) > 5) {
+            v3 = ~GiveToCont_i(true, 0, 0, _Whip, 1, v2);
+            v3 = ~GiveToCont_i(true, ~rndRange(8, 0), 0, _Food, ~rndRange(3, 1), v2);
+        } else {
+            v3 = ~GiveToCont_i(true, 0, 0, _Sword, 1, v2);
+            v3 = ~GiveToCont_i(true, 5, 0, _Fawn_Money, ~rndRange(15, 5), v2);
+        }
+        SetWorkType(_Loiter, v2);
+        if (v0 = 1) {
+            SetWorkType(_Loiter, v2);
+        }
+        if (v0 = 2) {
+            SetWorkType(_Patrol, v2);
+        }
+        if (v0 = 3) {
+            SetWorkType(_HorPace, v2);
+        }
+        if (v0 = 4) {
+            SetWorkType(_VerPace, v2);
+        }
+        if (v0 = 5) {
+            SetWorkType(_Sleep, v2);
+        }
+        if (v0 = 6) {
+            SetWorkType(_Duel, v2);
+        }
+        if (v0 > 6) {
+            SetWorkType(_Eat, v2);
+        }
+    }
+}

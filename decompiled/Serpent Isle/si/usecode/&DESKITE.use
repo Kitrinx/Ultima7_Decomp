@@ -1,0 +1,263 @@
+Routine Desk_Items accepts a0 #locals(44) #uses(Bark_i, ~AvatarReachableSpot_i, PathToItem_i) {
+    if (event = _Converse) {
+        ClearBark_i(_Avatar);
+        v0 = ~GetFrame(item);
+        if (v0 = 0) {
+            v1 = ~GetTarget();
+            playSFX(item, 56);
+            if ~Item_isNpc(v1) {
+                Item_bark("@Yipe! Thou didst strike me!@", v1);
+                return;
+            }
+            if (~Item_getType(v1) = _Desk_Items) && (~GetFrame(v1) = 10) {
+                v2 = ~PostAction(<< _aNO_HALT_i, _aBARK_i, "@Dost thou truly think@" >>, v1);
+                v2 = ~PostInFuture(16, << _aNO_HALT_i, _aBARK_i, "@that would work@" >>, v1);
+                v2 = ~PostInFuture(32, << _aNO_HALT_i, _aBARK_i, "@this time, Avatar?@" >>, v1);
+                v2 = ~PostInFuture(48, << _aNO_HALT_i, _aBARK_i, "@Think again!@" >>, v1);
+            }
+        }
+        if (v0 = 10) {
+            v3 = ~rndRange(7, 1);
+            if (v3 = 1) {
+                v2 = ~PostAction(<< _aNO_HALT_i, _aBARK_i, "@Squawk!@" >>, item);
+            }
+            if (v3 = 2) {
+                v2 = ~PostAction(<< _aNO_HALT_i, _aBARK_i, "@Polly want a cracker?@" >>, item);
+            }
+            if ((v3 = 3) or (v3 = 4)) {
+                v2 = ~PostAction(<< _aNO_HALT_i, _aBARK_i, "@I know where@" >>, item);
+                v2 = ~PostInFuture(16, << _aNO_HALT_i, _aBARK_i, "@the treasure is!@" >>, item);
+            }
+            if (v3 = 5) {
+                v2 = ~PostAction(<< _aNO_HALT_i, _aBARK_i, "@Gimmee a cracker!@" >>, item);
+            }
+            if ((v3 = 6) or (v3 = 7)) {
+                v2 = ~PostAction(<< _aNO_HALT_i, _aBARK_i, "@Pretty bird!@" >>, item);
+                if ~IsNPCNear_i(_Shamino) {
+                    v2 = ~PostInFuture(16, << _aNO_HALT_i, _aBARK_i, "@Ugly Bird!@" >>, ~NPCToItem_i(_Shamino));
+                    v2 = ~PostInFuture(32, << _aNO_HALT_i, _aBARK_i, "@Speak for thyself!@" >>, item);
+                    v2 = ~PostInFuture(48, << _aNO_HALT_i, _aBARK_i, "@Hey!!@" >>, ~NPCToItem_i(_Shamino));
+                }
+            }
+        }
+        if ((v0 = 17) or ((v0 = 18) or (v0 = 19))) && not ~Kernel_getNumProcesses(item) {
+            v2 = ~PostAction(<< _aSFX_i, 117, _aFRAME, 17, _aSFX_i, 118, _aFRAME, 19, _aLOOP_i, 65528, 12, byte(70), 18 >>, item);
+            if ~IsNPCNear_i(_Spektor) {
+                Bark_i(5, "@That is truly strange!@", _Spektor);
+            }
+        }
+        if (v0 = 11) {
+            v4 = ~ListSize_i(~GetParty());
+            if (v4 > 1) {
+                v5 = "we";
+            } else {
+                v5 = "I";
+            }
+            v6 = ~CountItem(_All, _All, _Gold_Coins, _Party);
+            v7 = ~CountItem(_All, _All, _Monitor_Money, _Party);
+            v8 = ~CountItem(_All, _All, _Fawn_Money, _Party);
+            v9 = ~CountItem(_All, _All, _Moon_Money, _Party);
+            v10 = ~CountItem(_All, _All, _Gems, _Party);
+            v11 = ~CountItem(_All, _All, _Gold_Nugget, _Party);
+            v12 = ~CountItem(_All, _All, _Garg_Jewelery, _Party);
+            v13 = ~CountItem(_All, _All, _Gold_Bar, _Party);
+            v14 = "gold coins";
+            if (v6 = 1) {
+                v14 = "gold coin";
+            }
+            v15 = "gems";
+            if (v10 = 1) {
+                v15 = "gem";
+            }
+            v16 = "pieces of jewelry";
+            if (v12 = 1) {
+                v16 = "piece of jewelry";
+            }
+            v17 = "guilders";
+            if (v9 = 1) {
+                v17 = "guilder";
+            }
+            v18 = "bars of gold";
+            if (v13 = 1) {
+                v18 = "bar of gold";
+            }
+            v19 = "gold nuggets";
+            if (v11 = 1) {
+                v19 = "gold nugget";
+            }
+            if (v6 or (v7 or (v8 or (v9 or (v10 or (v11 or (v12 or v13))))))) {
+                SetSpeaker0_i(0, _Avatar);
+                ["Let's see... <v5> have -- <v7> monetari, <v6> <v14>, <v9> <v17>, <v8> filari, <v11> <v19>, <v10> <v15>, <v12> <v16>, and <v13> <v18>!"];
+                CloseSpeaker0_i();
+            } else {
+                Item_bark("No money in party!", item);
+            }
+        }
+        if (v0 = 16) {
+            v20 = ~GetItemFlag_i(_InParty_i, _Shamino);
+            v21 = ~GetItemFlag_i(_InParty_i, _Iolo);
+            v22 = ~GetItemFlag_i(_InParty_i, _Dupre);
+            v23 = "him";
+            v24 = "he";
+            v25 = "himself";
+            v26 = "handsome";
+            if ~AvatarSex() {
+                v23 = "her";
+                v24 = "she";
+                v25 = "herself";
+                v26 = "beautiful";
+            }
+            SetSpeaker0_i(0, _Avatar);
+            ["Hmm... not bad looking!"];
+            CloseSpeaker0_i();
+            if v20 {
+                SetSpeaker0_i(0, _Shamino);
+                ["Thou art truly <v26>, Avatar!"];
+                if v22 {
+                    SetSpeaker1_i(0, _Dupre);
+                    ["As thou art not!"];
+                    SetSpeaker0_i(0, _Shamino);
+                    ["Thou art dung, Dupre!"];
+                    CloseSpeaker1_i();
+                }
+                CloseSpeaker0_i();
+            }
+            if v21 {
+                SetSpeaker0_i(0, _Iolo);
+                ["Avatar, let us proceed. Cease this dallying!"];
+                if v20 {
+                    SetSpeaker1_i(0, _Shamino);
+                    ["Oh, let <v23> be, old man -- <v24> is only admiring <v25>!"];
+                    CloseSpeaker1_i();
+                }
+                CloseSpeaker0_i();
+            }
+            if v22 {
+                SetSpeaker0_i(0, _Dupre);
+                ["Let us press on, Avatar!"];
+                if v20 {
+                    SetSpeaker1_i(0, _Shamino);
+                    ["Thou dost not want <v23> to show precisely how ugly thou art!"];
+                    CloseSpeaker1_i();
+                    SetSpeaker0_i(0, _Dupre);
+                    ["Thou impudent snot!"];
+                }
+                CloseSpeaker0_i();
+            }
+        }
+        if (v0 = 20) {
+            v27 = << 1, 1, 1, 0, 0, 65535, 65535, 65535 >>;
+            v28 = << 1, 0, 65535, 1, 65535, 1, 9, 65535 >>;
+            v29 = 65530;
+            if not ~AvatarReachableSpot_i(v29, v28, v27, item) {
+                FlashMouse_i(0);
+            } else {
+                PathToItem_i(10, item, #Desk_Items, v29, v28, v27, item);
+            }
+        }
+        if (v0 = 21) {
+            v30 = ~GetHour();
+            v31 = "am";
+            if (v30 > 12) {
+                v30 = (v30 - 12);
+                v31 = "pm";
+            }
+            if (v30 = 12) {
+                v31 = "pm";
+            }
+            if (v30 = 0) {
+                v30 = 12;
+                v31 = "am";
+            }
+            v32 = ~GetMinute_i();
+            if (v32 <= 9) {
+                v32 = ("0" + v32);
+            }
+            v33 = ((((" " + v30) + ":") + v32) + v31);
+            if ~InGumpMode_i() {
+                v33 = ((((" " + v30) + ":") + v32) + v31);
+                BarkInGump_i(v33, item);
+            } else {
+                v33 = ((((("@" + v30) + ":") + v32) + v31) + "@");
+                Item_bark(v33, _Avatar);
+            }
+        }
+        if (v0 = 22) {
+            closeAllGumps();
+            v3 = ~rndRange(12, 1);
+            Bark_i(1, "The magic orb reads:", _Avatar);
+            if ((v3 = 1) or (v3 = 2)) {
+                Bark_i(16, "@My sources say yes.@", _Avatar);
+            }
+            if ((v3 = 3) or (v3 = 4)) {
+                Bark_i(16, "@I must reply no.@", _Avatar);
+            }
+            if ((v3 = 5) or (v3 = 6)) {
+                Bark_i(16, "@Answer hazy. Thou shouldst try again later.@", _Avatar);
+            }
+            if ((v3 = 7) or (v3 = 8)) {
+                Bark_i(16, "@I would not count on it.@", _Avatar);
+            }
+            if ((v3 = 9) or (v3 = 10)) {
+                Bark_i(16, "@Ask at another time.@", _Avatar);
+            }
+            if (v3 = 11) {
+                Bark_i(16, "@Trust thy friends not.@", _Avatar);
+                Bark_i(32, "@Slay them instead, Avatar.@", _Avatar);
+            }
+            if (v3 = 12) {
+                Bark_i(16, "@Batlin is thy friend.@", _Avatar);
+                Bark_i(32, "@Do his bidding, Avatar.@", _Avatar);
+            }
+        }
+        if ((v0 = 23) or ((v0 = 24) or (v0 = 25))) {
+            ClearBark_i(_Avatar);
+            v34 = ~GetQuality(item);
+            v35 = (v34 + 1);
+            v36 = ~FindNearby_i(0, 20, _Desk_Items, item);
+            Foreach v39 in v36 {
+                if ((~GetFrame(v39) > 22) and (~GetFrame(v39) < 26)) {
+                    v2 = ~SetQuality(v35, v39);
+                }
+            }
+            if (v35 = 1) {
+                Bark_i(1, "Origin presents...", _Avatar);
+                Bark_i(16, "The few...", _Avatar);
+                Bark_i(32, "The proud...", _Avatar);
+                Bark_i(48, "The well-armed...", _Avatar);
+                Bark_i(64, "Strike Commander!", _Avatar);
+            }
+            if (v35 = 2) {
+                Bark_i(1, "Even during war,", _Avatar);
+                Bark_i(16, "some people still", _Avatar);
+                Bark_i(32, "make a profit...", _Avatar);
+                Bark_i(48, "Privateer", _Avatar);
+            }
+            if (v35 = 3) {
+                Bark_i(1, "Ultima 8?", _Avatar);
+                Bark_i(16, "Pagan?", _Avatar);
+                Bark_i(32, "This omen doth not", _Avatar);
+                Bark_i(48, "bode well...", _Avatar);
+            }
+            if (v35 = 4) {
+                v2 = ~PostInFuture(1, << _aNO_HALT_i, _aBARK_i, "Curse that Stokes!" >>, _Avatar);
+                v36 = ~FindNearby_i(0, 30, _Desk_Items, _Avatar);
+                Foreach v39 in v36 {
+                    if ((~GetFrame(v39) > 22) and (~GetFrame(v39) < 26)) {
+                        v42 = ~GetCoord(v39);
+                        Item_destroy(v39);
+                        createSprite(65535, 0, 0, 0, v42::2, v42::1, 4);
+                        Sfx(42);
+                    }
+                }
+            }
+        }
+    }
+    if ((v0 = 26) or (v0 = 27)) {
+        Bark_i(1, "I cannot read this.", _Avatar);
+        Bark_i(18, "This book is ruined.", _Avatar);
+    }
+    if (event = _Pathfind1) && (~GetFrame(item) = 20) {
+        v43 = ~PostAction(<< _aSFX_i, 28, _aWAIT_i, 5, _aLOOP_i, 65532, 4 >>, item);
+    }
+}

@@ -1,0 +1,396 @@
+/* Serpent Isle SI.EXE, overlay segment 329 (file offsets 0x094f10 to 0x095f69, 4185 bytes).
+ * Borland C++ 2.0 -mm -O -P -Z -Y rebuilds it byte for byte as C++.
+ */
+
+#include <dos.h>
+#include "u7manage.h"
+#include "item.h"
+#include "colbuf.h"
+#include "gumpmgr.h"
+#include "itable.h"
+#include "u7event.h"
+#include "oops.h"
+#include "bltshape.h"
+#include "bogus.h"
+#include "cast.h"
+#include "itemovr1.h"
+#include "text.h"
+#include "use.h"
+#include "type.h"
+#include "npcref.h"
+
+#define TYPE(p) ((p)->typeFrame & 0x3ff)
+#define FRAME(p) (((p)->typeFrame & 0x7c00) >> 10)
+#define TYPE_CLASS(p) (gItemTypeInfo[TYPE(p)].typeClass)
+#define CLASS_FLAGS(p) (ItemTypeClassFlags[TYPE_CLASS(p)])
+
+void *operator new(unsigned);
+void operator delete(void *);
+
+struct View;
+
+struct PointOffset { int x, y; };
+/* each kind of container's close button, from its corner */
+PointOffset far CloseButtonOffsets[] = {
+	{ 23, 96 },
+	{ 23, 52 },
+	{ 23, 63 },
+	{ 23, 52 },
+	{ 23, 44 },
+	{ 0, 0 },
+	{ 23, 51 },
+	{ 23, 35 },
+	{ 26, 115 },
+	{ 23, 84 },
+	{ 23, 36 },
+};
+
+struct RectangleOffset { int x, y, x1, y1; };
+/* each kind of container's contents area, from its corner */
+RectangleOffset far ContainerContentAreas[] = {
+	{ 69, 26, 92, 60 },
+	{ 49, 19, 117, 61 },
+	{ 50, 50, 120, 86 },
+	{ 44, 40, 118, 79 },
+	{ 43, 32, 119, 58 },
+	{ 0, 0, 0, 0 },
+	{ 52, 18, 139, 51 },
+	{ 39, 20, 102, 58 },
+	{ 22, 20, 90, 73 },
+	{ 31, 11, 120, 91 },
+	{ 42, 15, 109, 48 },
+};
+
+void ContainerGump::initialize()
+{
+	int x = 0, y = 0;
+	int width, height;
+	switch (TYPE(ITEM(displayed.off))) {
+	case 802: kind = 1; shape = 1432; break;    /* bag */
+	case 801: kind = 3; shape = 1433; break;    /* backpack */
+	case 803: kind = 4; shape = 1434; break;    /* basket */
+	case 804: kind = 6; shape = 1424; break;    /* crate */
+	case 297: kind = 0; shape = 1487; break;
+	case 800: kind = 7; shape = 1441; break;    /* chest */
+	case 819: kind = 8; shape = 1431; break;    /* barrel */
+	case 405: kind = 9; shape = 1444; break;    /* ship's hold */
+	case 283: case 406: case 407: case 416: case 679:   /* desk, nightstand, drawers */
+		kind = 10; shape = 1445; break;
+	default: kind = 2; shape = 1471; break;
+	}
+	gShapeManager.getShapeSize(&width, &height, shape);
+	bounds.set(0, 0, width, height);
+	add(&contents);
+	add(&closeButton);
+	contents.initialize(displayed, x + ContainerContentAreas[kind].x,
+		y + ContainerContentAreas[kind].y, x + ContainerContentAreas[kind].x1,
+		y + ContainerContentAreas[kind].y1);
+	closeButton.show();
+	contents.show();
+	int mx = MouseState_getX(GetLastMouseState());
+	int my = GetLastMouseState()->y;
+	if (mx + width > 319) mx = 319 - width;
+	if (my + height > 199) my = 199 - height;
+	moveTo(mx, my);
+	Panel::show();
+}
+
+unsigned char ContainerGump::handle(MouseState *state)
+{
+	unsigned char result, hit;
+	if (bounds.contains(MouseState_getX(state), state->y)) {
+		if ((result = contents.handle(state)) != 0) return result;
+		if ((result = closeButton.handle(state)) != 0) {
+			switch (result) {
+			case BUTTON_CLICKED: return GUMP_CLOSE;
+			default: return result;
+			}
+		}
+		hit = gShapeManager.isCursorInBounds(shape, 0, bounds,
+			Point(MouseState_getX(state), state->y));
+		if (hit != 0) {
+			if (state->action == MOUSE_CLICK) return GUMP_MOVE;
+			if (state->action == MOUSE_RELEASE) return GUMP_NO_DROP;
+		}
+	}
+	return 0;
+}
+
+void ContainerGump::draw(View *target)
+{
+	if (visible) ShapeManager_draw(&gShapeManager, target, bounds.x, bounds.y, shape, 0, 0, 0);
+}
+
+void ContainerGump::moveTo(int x, int y)
+{
+	bounds.moveTo(x, y);
+	closeButton.moveTo(x + CloseButtonOffsets[kind].x, y + CloseButtonOffsets[kind].y);
+	contents.moveTo(x + ContainerContentAreas[kind].x, y + ContainerContentAreas[kind].y);
+}
+
+unsigned char ContainerGump::accepts(objref moved, int x, int y)
+{
+	objref owner;
+	owner = GetOuterContainer(object(), moved);
+	if (Item_isOkayToTake(&owner) || NPCRef(owner).isBody()) {
+		MarkItemOkayToTake(moved);
+		Item_clearTemporary(&moved);
+	}
+	if (!contents.accepts(moved, x - contents.offsetX, y - contents.offsetY)) return 0;
+	return 1;
+}
+
+objref ContainerGump::selected() { return contents.selectedItem; }
+
+int ContainerGump::dragX() { return contents.offsetX; }
+
+int ContainerGump::dragY() { return contents.offsetY; }
+
+void ContainerGump::setDragX(int n) { contents.offsetX = n; }
+
+void ContainerGump::setDragY(int n) { contents.offsetY = n; }
+
+int ContainerGump::mouseX() { return contents.clickX; }
+
+int ContainerGump::mouseY() { return contents.clickY; }
+
+void ContainerGump::refresh(char force)
+{
+	if (dirty || force) {
+		contents.refresh();
+		dirty = 0;
+	}
+}
+
+unsigned char ContainerGump::findPosition(objref item, int *x, int *y)
+{
+	ItemNode *node = 0;
+	while (List_stepForward(&contents.items, (DoubleLink **)&node)) {
+		if (node->object == item) {
+			*x = contents.region.x + node->x;
+			*y = contents.region.y + node->y;
+			return 1;
+		}
+	}
+	return 0;
+}
+
+void ItemList::append(objref item, unsigned char x, unsigned char y)
+{
+	ItemNode *node = new ItemNode;
+	if (!node) ReportOutOfNearMemory();
+	node->object = item;
+	node->x = x;
+	node->y = y;
+	node->active = 1;
+	List_insertAtTail(this, node);
+}
+
+void ItemList::prepend(objref item, unsigned char x, unsigned char y)
+{
+	ItemNode *node = new ItemNode;
+	if (!node) ReportOutOfNearMemory();
+	node->object = item;
+	node->x = x;
+	node->y = y;
+	node->active = 1;
+	List_insertAtHead(this, node);
+}
+
+void ItemList::markStale()
+{
+	ItemNode *node = 0;
+	while (List_stepForward(this, (DoubleLink **)&node)) node->active = 0;
+}
+
+ItemNode *ItemList::find(objref item)
+{
+	ItemNode *node = 0;
+	while (List_stepBackward(this, (DoubleLink **)&node)) {
+		if (node->object == item) break;
+	}
+	return node;
+}
+
+void ItemList::removeStale()
+{
+	ItemNode *node = 0;
+	while (List_stepForward(this, (DoubleLink **)&node)) {
+		if (!node->active) {
+			List_removeAndDestroy(this, node);
+			node = 0;
+		}
+	}
+}
+
+objref ItemGrid::object()
+{
+	objref empty(0);
+	return empty;
+}
+
+void ItemGrid::initialize(objref item, unsigned char x, unsigned char y, unsigned char x1, unsigned char y1)
+{
+	region.set(x, y, x1, y1);
+	container = item;
+	build(container);
+}
+
+void ItemGrid::refresh() { build(container); }
+
+void ItemGrid::place(objref item, unsigned char *x, unsigned char *y, unsigned char *reset)
+{
+	static int column, row, rowHeight, inset;
+	int height, width;
+	if (*reset) {
+		inset = 0;
+		column = rowHeight = 0;
+		row = 0;
+		*reset = 0;
+	}
+	gShapeManager.getFrameSize(&width, &height, TYPE(ITEM(item.off)), FRAME(ITEM(item.off)));
+	if (width < 0 || height < 0)
+		width = height = 0;
+	if (region.width() <= width || region.height() <= height) {
+		*x = width;
+		*y = height;
+	} else {
+		for (;;) {
+			*x = column + width + inset;
+			*y = row + height + inset;
+			if (region.width() < *x) {
+				*x = width;
+				row += rowHeight;
+				*y = row + height;
+				rowHeight = 0;
+			}
+			if (region.height() >= *y) break;
+			row = 0;
+			column = 0;
+			rowHeight = 0;
+			inset += 8;
+			if (inset > region.height() || inset > region.width()) inset = 0;
+		}
+		if (*y > rowHeight) rowHeight = *y;
+	}
+	column = *x;
+}
+
+void ItemGrid::build(objref item)
+{
+	unsigned char x, y;
+	objref current;
+	ItemNode *node = 0;
+	unsigned char reset = 1;
+	container = item;
+	current = GetContainedItem(&container);
+	items.markStale();
+	List_stepForward(&items, (DoubleLink **)&node);
+	while (current.valid()) {
+		if (node) {
+			if (node->object == current) {
+				Item_setQuantity(current, (unsigned char)Item_getQuantity(&current), 1);
+				node->active = 1;
+				place(node->object, &x, &y, &reset);
+			} else {
+				place(node->object, &x, &y, &reset);
+				List_stepForward(&items, (DoubleLink **)&node);
+				continue;
+			}
+			List_stepForward(&items, (DoubleLink **)&node);
+		} else {
+			place(current, &x, &y, &reset);
+			items.append(current, x, y);
+		}
+		current = current.next();
+	}
+	items.removeStale();
+}
+
+ItemNode *ItemGrid::find(int x, int y)
+{
+	ItemNode *node = 0;
+	while (List_stepBackward(&items, (DoubleLink **)&node)) {
+		if (gShapeManager.isCursorInBounds(TYPE(ITEM(node->object.off)), FRAME(ITEM(node->object.off)),
+			Point(region.x + node->x, region.y + node->y), Point(x, y))) return node;
+	}
+	return 0;
+}
+
+unsigned char ItemGrid::handle(MouseState *state)
+{
+	ItemNode *node;
+	if (region.contains(MouseState_getX(state), state->y)) {
+		if (state->action == MOUSE_CLICK || state->action == MOUSE_DOUBLE_CLICK) {
+			node = find(MouseState_getX(state), state->y);
+			if (node && node->object.valid()) {
+				selectedItem = node->object;
+				offsetX = MouseState_getX(state) - (region.x + node->x);
+				offsetY = state->y - (region.y + node->y);
+				if (PickingItem && state->action == MOUSE_CLICK) return GUMP_SELECT_ITEM;
+				if (state->action == MOUSE_DOUBLE_CLICK) {
+					if (Item_canBeOpened(selectedItem)) return GUMP_OPEN_ITEM;
+					return GUMP_USE_ITEM;
+				}
+				clickX = MouseState_getX(state);
+				clickY = state->y;
+				if (WaitForClick(*state)) return GUMP_SELECT_ITEM;
+				List_removeAndDestroy(&items, node);
+				return GUMP_DRAG_ITEM;
+			}
+		} else if (state->action == MOUSE_RELEASE) return GUMP_DROP_HERE;
+	}
+	return 0;
+}
+
+void ItemGrid::moveTo(int x, int y) { region.moveTo(x, y); }
+
+void ItemGrid::draw(View *target)
+{
+	ItemNode *node = 0;
+	int width, height;
+	if (visible) {
+		while (List_stepForward(&items, (DoubleLink **)&node)) {
+			gShapeManager.getFrameSize(&width, &height, TYPE(ITEM(node->object.off)), FRAME(ITEM(node->object.off)));
+			ShapeManager_drawItem(&gShapeManager, region.x + node->x, region.y + node->y, node->object, target);
+		}
+	}
+}
+
+unsigned char ItemGrid::accepts(objref moved, int x, int y)
+{
+	objref destination = container;
+	ItemNode *node = 0;
+	unsigned char nested = 0;
+	int result;
+	node = find(x + offsetX, y + offsetY);
+	if (node && node->object.valid()) {
+		objref target = node->object;
+		if (CanStackWith(&target, moved)) {
+			Item_setQuantity(moved,
+				(unsigned char)Item_getQuantity(&target) + (unsigned char)Item_getQuantity(&moved), 0);
+			Item_setQuantity(target, 0, 0);
+			PlaceDraggedInContainer(&moved, destination);
+			List_unlink(&items, node);
+			List_insertAtTail(&items, node);
+			node->object = objref(moved.off);
+			return 1;
+		}
+		if ((unsigned char)(CLASS_FLAGS(ITEM(target.off)) & CLASS_CONTENTS)) {
+			destination = target;
+			nested = 1;
+		}
+	}
+	result = TryToPlaceItem(destination, nested, 0);
+	switch (result) {
+	case 0:
+		if (container == destination) items.append(moved, x - region.x, y - region.y);
+		return 1;
+	case 1: ReportNoCanDo(4); break;
+	case 2: case 3: ReportNoCanDo(0); break;
+	case 4: ReportNoCanDo(5); break;
+	}
+	return 0;
+}
+
+ProportionalTextPrinter StatsTextPrinter;

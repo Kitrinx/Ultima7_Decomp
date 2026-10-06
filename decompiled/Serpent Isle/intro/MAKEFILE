@@ -1,0 +1,192 @@
+#	INTRO.EXE, the Serpent Isle introduction
+#
+#	Borland C++ 2.0 with its MAKE and TLIB, and Turbo Assembler 2.51.  Run
+#	MAKE in this directory, the build directory.  The tree is self-contained.
+#
+#		make			compiler in C:\BORLANDC
+#		make -DBC=C:\BC20	compiler elsewhere
+#
+#	The options change from file to file, as a makefile gives them.  Each
+#	list of objects shares one set of options, which its name spells:
+#	IN_O1Pd is -O -1 -P -d in this directory; vi0 is -vi-.
+
+.autodepend
+
+!if !$d(BC)
+BC = C:\BORLANDC
+!endif
+
+CC = $(BC)\bcc +INTRO.CFG
+AS = tasm
+
+all: INTRO.CFG INTRO.EXE
+
+# One directory a line: BCC hangs on a long -I line.
+INTRO.CFG: MAKEFILE
+	copy &&|
+-c -mm
+-I.
+-Iinclude
+-Icommon
+-Imain
+-Imain\mem
+-Imain\palette
+-Imain\video
+-Imain\xmm
+-Isound
+-Izevent
+-I$(BC)\include
+| INTRO.CFG
+
+IN_1GPvi0 = intro.obj display.obj doshandl.obj
+$(IN_1GPvi0):
+	$(CC) -1 -G -P -vi- $&.c
+
+IN_ASM = dacread.obj emsinit.obj emsmap.obj dosattr.obj flatmode.obj \
+	flatflag.obj xmsflat.obj flicbrun.obj flicclr.obj
+$(IN_ASM):
+	$(AS) /mx $&.asm
+
+IN_ASMm2 = emsalloc.obj emsstat.obj
+$(IN_ASMm2):
+	$(AS) /mx /m2 $&.asm
+
+IN_COMMON_1GPvi0 = easyfile.obj strfmt.obj chunknam.obj file.obj iff.obj
+$(IN_COMMON_1GPvi0):
+	$(CC) -1 -G -P -vi- common\$&.c
+
+IN_COMMON_ASM = lstrtok.obj
+$(IN_COMMON_ASM):
+	$(AS) /mx common\$&.asm
+
+IN_COMMON_O1P = fileio.obj linefile.obj memfile.obj
+$(IN_COMMON_O1P):
+	$(CC) -O -1 -P common\$&.c
+
+IN_MAIN_1 = videomd.obj
+$(IN_MAIN_1):
+	$(CC) -1 main\$&.c
+
+IN_MAIN_1GPdvi0 = endstats.obj options.obj
+$(IN_MAIN_1GPdvi0):
+	$(CC) -1 -G -P -d -vi- main\$&.c
+
+IN_MAIN_DOS_ASM = memmove.obj ptraddr.obj addrptr.obj dosread.obj \
+	doscreat.obj dosfile.obj dosseek.obj doswrite.obj
+$(IN_MAIN_DOS_ASM):
+	$(AS) /mx main\dos\$&.asm
+
+IN_MAIN_MEM_ASM = a20gate.obj
+$(IN_MAIN_MEM_ASM):
+	$(AS) /mx main\mem\$&.asm
+
+IN_MAIN_MEM_O1P = memmgr.obj
+$(IN_MAIN_MEM_O1P):
+	$(CC) -O -1 -P main\mem\$&.c
+
+IN_MAIN_MEM_O1Pd = memsys.obj farmem.obj emsmem.obj memrept.obj \
+	memsnap.obj nearmem.obj memhand.obj cachenod.obj cachelst.obj cache.obj
+$(IN_MAIN_MEM_O1Pd):
+	$(CC) -O -1 -P -d main\mem\$&.c
+
+IN_MAIN_MEM_OGP = errors.obj fatalerr.obj
+$(IN_MAIN_MEM_OGP):
+	$(CC) -O -G -P main\mem\$&.c
+
+IN_MAIN_MEM_OGPd = memhook.obj
+$(IN_MAIN_MEM_OGPd):
+	$(CC) -O -G -P -d main\mem\$&.c
+
+IN_MAIN_O1P = reporter.obj shutdown.obj fatal.obj message.obj
+$(IN_MAIN_O1P):
+	$(CC) -O -1 -P main\$&.c
+
+IN_MAIN_PALETTE_ASM = dacwrite.obj
+$(IN_MAIN_PALETTE_ASM):
+	$(AS) /mx main\palette\$&.asm
+
+IN_MAIN_PALETTE_O1Pd = palette.obj
+$(IN_MAIN_PALETTE_O1Pd):
+	$(CC) -O -1 -P -d main\palette\$&.c
+
+IN_MAIN_PALETTE_O1ZP = palstep.obj
+$(IN_MAIN_PALETTE_O1ZP):
+	$(CC) -O -1 -Z -P main\palette\$&.c
+
+IN_MAIN_VIDEO_1GPvi0 = flic.obj shapefnt.obj textwin.obj
+$(IN_MAIN_VIDEO_1GPvi0):
+	$(CC) -1 -G -P -vi- main\video\$&.c
+
+IN_MAIN_VIDEO_ASM = crtport.obj vretrace.obj flicdlta.obj
+$(IN_MAIN_VIDEO_ASM):
+	$(AS) /mx main\video\$&.asm
+
+IN_MAIN_VIDEO_O1Pd = view.obj scrview.obj
+$(IN_MAIN_VIDEO_O1Pd):
+	$(CC) -O -1 -P -d main\video\$&.c
+
+IN_MAIN_XMM_1GP = vooalloc.obj
+$(IN_MAIN_XMM_1GP):
+	$(CC) -1 -G -P main\xmm\$&.c
+
+IN_MAIN_XMM_ASM = framebnd.obj fillrect.obj clrview.obj drawxlat.obj \
+	copyview.obj drawfram.obj linear.obj emscheck.obj xmmblock.obj
+$(IN_MAIN_XMM_ASM):
+	$(AS) /mx main\xmm\$&.asm
+
+IN_MAIN_XMM_OG = xmmcheck.obj xmminit.obj xmmstale.obj
+$(IN_MAIN_XMM_OG):
+	$(CC) -O -G main\xmm\$&.c
+
+IN_O1P = dirdelta.obj vidrest.obj rowtable.obj biostext.obj dlist.obj \
+	strops.obj strbuf.obj ds1482.obj
+$(IN_O1P):
+	$(CC) -O -1 -P $&.c
+
+IN_O1Pd = box.obj
+$(IN_O1Pd):
+	$(CC) -O -1 -P -d $&.c
+
+IN_SOUND_1GPdvi0 = gsound.obj
+$(IN_SOUND_1GPdvi0):
+	$(CC) -1 -G -P -d -vi- sound\$&.c
+
+IN_SOUND_1GPvi0 = sounddrv.obj xmidi.obj digital.obj speech.obj
+$(IN_SOUND_1GPvi0):
+	$(CC) -1 -G -P -vi- sound\$&.c
+
+IN_ZEVENT_O1P = systimer.obj
+$(IN_ZEVENT_O1P):
+	$(CC) -O -1 -P zevent\$&.c
+
+# __FILE__ gives these their bare names, so they compile in their own directory.
+IN_MAIN_XMM_OWN_OG = freexmm.obj xmmhand.obj
+$(IN_MAIN_XMM_OWN_OG):
+	cd main\xmm
+	$(BC)\bcc -c -mm -I..\..\include;$(BC)\include -n..\.. -O -G $&.c
+	cd ..\..
+
+# Miles' AIL driver interface, assembled with his own options.
+ail.obj: ail.asm ail.inc ail.mac
+	$(AS) /m /w+ /ml ail.asm
+
+# FatalError links from a library: its data follows CM.LIB's.
+fatalerr.lib: fatalerr.obj
+	$(BC)\tlib fatalerr.lib -+fatalerr.obj
+
+# MAKE limits the length of a rule line, so INTRO.EXE depends on a few lists.
+all_1: $(IN_1GPvi0) $(IN_ASM) $(IN_ASMm2) $(IN_COMMON_1GPvi0) \
+	$(IN_COMMON_ASM) $(IN_COMMON_O1P) $(IN_MAIN_1) $(IN_MAIN_1GPdvi0) \
+	$(IN_MAIN_DOS_ASM) $(IN_MAIN_MEM_ASM) $(IN_MAIN_MEM_O1P)
+
+all_2: $(IN_MAIN_MEM_O1Pd) $(IN_MAIN_MEM_OGP) $(IN_MAIN_MEM_OGPd) \
+	$(IN_MAIN_O1P) $(IN_MAIN_PALETTE_ASM) $(IN_MAIN_PALETTE_O1Pd) \
+	$(IN_MAIN_PALETTE_O1ZP) $(IN_MAIN_VIDEO_1GPvi0) $(IN_MAIN_VIDEO_ASM) \
+	$(IN_MAIN_VIDEO_O1Pd) $(IN_MAIN_XMM_1GP)
+
+all_3: $(IN_MAIN_XMM_ASM) $(IN_MAIN_XMM_OG) $(IN_MAIN_XMM_OWN_OG) \
+	$(IN_O1P) $(IN_O1Pd) $(IN_SOUND_1GPdvi0) $(IN_SOUND_1GPvi0) \
+	$(IN_ZEVENT_O1P)
+
+INTRO.EXE: all_1 all_2 all_3 ail.obj fatalerr.lib INTRO.LNK
+	$(BC)\tlink /m /s /c /d /i /L$(BC)\lib @INTRO.LNK

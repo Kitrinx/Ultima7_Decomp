@@ -1,0 +1,70 @@
+Routine serpgate accepts a0 #locals(10) #uses(PathToItem_i, ~GimmePathEgg) {
+    if (event = _Converse) {
+        if $temp1flag {
+            PrintError_i("WARNING: $Temp1Flag is set!!! Report at what point in the game you are in.");
+            $temp1flag = false;
+        }
+        if $temp2flag {
+            PrintError_i("WARNING: $Temp2Flag is set!!! Report at what point in the game you are in.");
+            $temp2flag = false;
+        }
+        if $temp3flag {
+            PrintError_i("WARNING: $Temp3Flag is set!!! Report at what point in the game you are in.");
+            $temp3flag = false;
+        }
+        if $temp4flag {
+            PrintError_i("WARNING: $Temp4Flag is set!!! Report at what point in the game you are in.");
+            $temp4flag = false;
+        }
+        if $BANES_RELEASED {
+            v0 = << 65474, 65386, 65456, 65473, 65471, 65462, 65468, 65465, 65464, 65461, 65458, 65457, 65467, 65459, 65466, 65523, 65496, 65514, 65512, 65513, 65506, 65504, 65507, 65509, 65518, 65516, 65494, 65493, 65515, 65520, 65522, 65490, 65489, 65487, 65486, 65485, 65484, 65483, 65482, 65488, 65480, 65479, 65478, 65476, 65475, 65455, 65498, 65497, 65495, 65393, 65392, 65391, 65383, 65382 >>;
+            Foreach v3 in v0 {
+                if ((~GetWorkType(v3) <> _Wait) and not ~GetItemFlag_i(_Dead, v3)) {
+                    PrintError_i((("NPC #" + v3) + " is moving - get his schedule!"));
+                    PrintError_i(("His current activity is #" + ~GetWorkType(v3)));
+                    PrintError_i("Save game, and report to Brendann NOW!");
+                }
+            }
+        }
+        v0 = ~FindNearby_i(16, 8, _Egg_Type, item);
+        Foreach v6 in v0 {
+            if (~GetQuality(v6) and (~GetFrame(v6) = 6)) {
+                v7 = ~GetContents(_All, _All, _Jawbone, _Avatar);
+                if v7 && ~GetContents(_All, _All, _Teeth, v7) {
+                    PathToItem_i(10, v6, #serpgate, 65535, 65535, 65535, v6);
+                }
+            }
+        }
+    }
+    if (event = _Pathfind1) {
+        v8 = ~PostAction(<< _aNO_HALT_i, _aWAIT_i, 2, _aFACE_i, _South, _aWAIT_i, 2, _aBEND_FRAME_i, _aWAIT_i, 2, _aKNEEL_FRAME_i, _aWAIT_i, 2, _aUSABLE_i, #FadeThroughGate_i, _aKNEEL_FRAME_i, _aLOOP_i, 65535, 10 >>, _Avatar);
+        v9 = ~GimmePathEgg(4, 0);
+        v8 = ~PostAction(<< _aNO_HALT_i, _aWAIT_i, 18, _aUSABLE_i, #TravelSerpentGate_i >>, v9);
+    }
+}
+
+Routine FadeThroughGate_i accepts a0 #locals(9) #uses(~WhereAmI_i, ~GimmePathEgg, ~MonkCoord_i, ~MonkWorkType_i) {
+    if ((~Item_getType(item) = _Avatar_Type) or (~Item_getType(item) = _Avatar_Female)) {
+        Sfx(102);
+        FadePalette_i(0, 1, 12);
+    } else {
+        if (~WhereAmI_i() = 2) {
+            v0 = << 2420, 1136, 0 >>;
+            v1 = << 65329, 65325, 65327, 65324, 65323, 65322, 65328, 65326 >>;
+            if ~GetItemFlag_i(_Met, _XenkaMonk_215) {
+                v1 = (v1 & 65321);
+            }
+            v2 = ~Random(8);
+            v3 = ~GimmePathEgg(1, 5);
+            v4 = ~SetQuality(v2, v3);
+            v4 = ~PostInFuture(30, << _aNO_HALT_i, _aUSABLE_i, #Monk, 0 >>, v3);
+            Foreach v7 in v1 {
+                Item_move(~MonkCoord_i(v2, v7), v7);
+                NewSchedule_i(~MonkCoord_i(v2, v7), ~MonkWorkType_i(v2, v7), 0, v7);
+                Npc_schedule(v7);
+            }
+        }
+        v8 = ~PostAction(<< _aNO_HALT_i, _aKNEEL_FRAME_i, _aWAIT_i, 2, _aBEND_FRAME_i, _aWAIT_i, 2, _aSTAND_FRAME_i, _aWAIT_i, 2 >>, _Avatar);
+        FadePalette_i(1, 1, 12);
+    }
+}

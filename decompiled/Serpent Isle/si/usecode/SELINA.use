@@ -1,0 +1,605 @@
+Routine Selina accepts a0 #locals(36) #uses(~LordOrLady, ~AvatarName, PartyFaces_i, Bark_i, ~WhereAmI_i, SelinaReturnsBelongings_i, ~AskYesNo, ~RemoveFromList_i, ~PartyUtters, ~GimmePathEgg, ~GiveItemsOrDrop_i, ~IsInInv, ConsumeOne_i, ~ListCount_i) {
+    v0 = ~LordOrLady();
+    v1 = ~AvatarName();
+    v2 = << 1268, 2232 >>;
+    v3 = << 1268, 2232 >>;
+    v4 = << 1268, 2232 >>;
+    if (event = _Converse) {
+        if ~AvatarSex() {
+            Item_bark("@Hello.@", _Avatar);
+        } else {
+            Item_bark("@Excuse me, miss...@", _Avatar);
+        }
+        PartyFaces_i(65492);
+        Bark_i(2, (("@Yes, " + v0) + "?@"), _Selina);
+        SetWorkType(_Talk, _Selina);
+    }
+    if (event = _Talking) {
+        SetSpeaker0_i(0, _Selina);
+        ClearBark_i(_Selina);
+        if (~WhereAmI_i() = 24) {
+            ["I want to be alone."];
+            terminate;
+        }
+        if ~GetItemFlag_i(_InParty_i, _Selina) {
+            SetWorkType(_FollowAvt, _Selina);
+            TurnOn("leave");
+        } else {
+            Npc_schedule(_Selina);
+            if (~GetWorkType(_Selina) = _Talk) {
+                RevertSchedule_i(_Selina);
+                Npc_schedule(_Selina);
+            }
+        }
+        if (not ~GetItemFlag_i(_InParty_i, _Selina) and flag(462)) {
+            if flag(485) {
+                ["If thou hast the stomach to face great danger, then perhaps we can resume the quest for the lost gold."];
+                TurnOn(<< "resume quest" >>);
+            } else {
+                if not ~GetItemFlag_i(_Met, _Selina) {
+                    ["Allow me to introduce myself. My name is Selina. And I have heard that thou art in need of... finances, shall we say."];
+                    ["I believe that I can be of help..."];
+                    SetItemFlag_i(_Met, _Selina);
+                } else {
+                    ["I have heard that thou art in need of... finances, shall we say."];
+                    ["I believe that I can be of help..."];
+                }
+                TurnOn(<< "finances", "help" >>);
+            }
+        } else {
+            if not ~GetItemFlag_i(_Met, _Selina) {
+                if ~AvatarSex() {
+                    ["'Tis a pleasure to meet thee, <v0>. I am Selina."];
+                    ["It is so wonderful that a woman such as thyself hath come to our land!"];
+                    ["There is so much that thou canst teach us."];
+                    TurnOn("teach");
+                } else {
+                    ["Pardon me, <v0>...\x09My name is Selina."];
+                    ["Thou dost look to be brave and trustworthy."];
+                    ["I need thy protection."];
+                    TurnOn("protection");
+                }
+                SetItemFlag_i(_Met, _Selina);
+            } else {
+                if not ~GetItemFlag_i(_InParty_i, _Selina) {
+                    ["So, we meet again, <v1>!"];
+                    ["It seems we are fated to be together..."];
+                    if ~AvatarSex() {
+                        ["I'm glad thou art returned."];
+                        ["Thou still hast much to teach us."];
+                        TurnOn("teach");
+                    } else {
+                        ["I'm glad thou art returned."];
+                        ["I would still be grateful for thy protection."];
+                        TurnOn("protection");
+                    }
+                } else {
+                    ["What dost thou wish to speak about, <v1>?"];
+                }
+            }
+        }
+        if ($shmedconfessed = true) {
+            TurnOn("fishnet stockings");
+        }
+        if ($gotmoonsilkstockings and not $knowmoonsilkstockings) {
+            TurnOn("Moonsilk stockings");
+        }
+        if ($gotengagementring and not $knowengagementring) {
+            TurnOn("lost ring");
+        }
+        if ($gotfurcap and not $knowfurcap) {
+            TurnOn("fur cap");
+        }
+        if ($gotstoneheart and not $knowstoneheart) {
+            TurnOn("Stoneheart");
+        }
+        if ($SELINA_HAS_BELONGINGS and (not ~GetItemFlag_i(_InParty_i, _Selina) and ~GetContents(_All, _All, _All, _Selina))) {
+            TurnOn("belongings");
+        }
+        if (~GetItemFlag_i(_InParty_i, _Selina) and not flag(486)) {
+            TurnOn("Are we there yet?");
+        }
+        TurnOn("bye");
+        converse {
+            key ("Are we there yet?") {
+                TurnOff("Are we there yet?");
+                v5 = << 1744, 1894, 0 >>;
+                v6 = ~GetCoord(_Selina);
+                v7 = (v5::2 - v6::2);
+                v8 = (v5::1 - v6::1);
+                v9 = v7;
+                if (v7 < 0) {
+                    v9 = (v9 * 65535);
+                }
+                v10 = v8;
+                if (v8 < 0) {
+                    v10 = (v10 * 65535);
+                }
+                v11 = (v10 + v9);
+                if (v10 > v9) {
+                    if (v8 > 0) {
+                        v12 = 2;
+                        v13 = "east";
+                    } else {
+                        v12 = 6;
+                        v13 = "west";
+                    }
+                } else {
+                    if (v7 > 0) {
+                        v12 = 4;
+                        v13 = "south";
+                    } else {
+                        v12 = 0;
+                        v13 = "north";
+                    }
+                }
+                if (v11 > 500) {
+                    ["We still have a long way to travel."];
+                } else {
+                    if (v11 < 50) {
+                        ["This is the place!"];
+                        Bark_i(0, "@We should find the gold!@", _Selina);
+                        terminate;
+                    } else {
+                        ["We are very close!"];
+                    }
+                }
+                if ((v6::1 < 1427) and (v6::2 > 1859)) {
+                    v12 = 0;
+                    ["We must follow the coast north, and then turn east."];
+                } else {
+                    ["We must go further <v13>. Is not this adventure exciting, <v1>?"];
+                }
+                v14 = ~PostAction(<< _aNO_HALT_i, _aFACE_i, v12, _aTHRUST2_FRAME_i, _aBARK_i, "@This way!@" >>, item);
+                terminate;
+            }
+            key ("belongings") {
+                TurnOff("belongings");
+                SelinaReturnsBelongings_i();
+            }
+            key ("finances") {
+                TurnOff("finances");
+                ["I will simply say that a little birdie told me that thou dost need desperately to sail to Moonshade."];
+                ["Now, with Captain Hawk a prisoner of the Tower guards, thou must certainly be trying to scrape together a ransom sufficient to sate those greedy ruffians."];
+                ["It is all so obvious, if one thinks about it just so..."];
+            }
+            key ("leave") {
+                TurnOff("leave");
+                ["But we agreed to be partners. From now on, thou and I are inseparable!"];
+            }
+            key ("help") {
+                TurnOff("help");
+                ["Not long ago, one of those strange storms took the lighthouse that was up the coast, north and east of here."];
+                ["In its place is a strange building, locked tight and reportedly filled with hideous monsters and great treasure!"];
+                ["One I thought of as my beloved found a key on a creature outside of the building. He gave this key to me for certain... favors... and promised to meet me here so we could seek the treasure together."];
+                TurnOn(<< "beloved", "key" >>);
+            }
+            key ("beloved") {
+                TurnOff("beloved");
+                ["He is not here, and shows no signs of keeping his word. Men!"];
+                if ~AvatarSex() {
+                    ["Frankly, we would do best if we were to rid ourselves of Men entirely! What a sisterhood we should make..."];
+                } else {
+                    ["I feel terrible, for this time I had given away mine heart, and now 'tis broken..."];
+                }
+            }
+            key ("resume quest", "key") {
+                TurnOff(<< "key", "resume quest" >>);
+                flag(463) = true;
+                if flag(485) {
+                    ["Dost thou pledge to go directly to the site of the gold this time?"];
+                } else {
+                    ["If thou art willing to allow me to join thee, I can lead thee to treasure enough for both of us."];
+                    ["I have the key and the instructions, but I am no match for what may lie ahead. Wilt thou join me in seeking the treasure?"];
+                }
+                if (~AskYesNo() = true) {
+                    if flag(485) {
+                        ["I shall hold thee to thy word!"];
+                    } else {
+                        ["I knew that thou wouldst be interested!"];
+                    }
+                    if (~ListSize_i(~GetParty_i()) > 1) {
+                        ["Judging from what I've been told, it would be best if only two went. The danger to any more than two is great. Wilt thou leave thy companions here for their safety?"];
+                        if (~AskYesNo() = true) {
+                            ["Thou art a true friend to them, <v1>! Thou canst salve their wounded pride with some of the treasure that we bring back."];
+                            v14 = ~RemoveFromList_i(~GetParty_i(), ~NPCToItem_i(_Avatar));
+                            Foreach v17 in v14 {
+                                LeaveParty(v17);
+                                NewSchedule_i(<< v2, v3, v4 >>, << 14, 26, 7 >>, << 0, 2, 3 >>, v17);
+                                Npc_schedule(v17);
+                            }
+                            Bark_i(2, "@I need a drink!@", v17);
+                        } else {
+                            ["I hope that thou dost not live to regret thy decision, <v1>. They are thy friends and will not thank thee if thou dost lead them to their deaths..."];
+                        }
+                    }
+                    if (~ListSize_i(~GetParty_i()) > 4) {
+                        v14 = ~PartyUtters(false, 0, 0, 1);
+                        SetSpeaker1_i(0, v14);
+                        ["This group is getting a little large for my tastes. I think I'll stay at the Inn for a while..."];
+                        LeaveParty(v14);
+                        NewSchedule_i(<< v2, v3, v4 >>, << 14, 26, 7 >>, << 0, 2, 3 >>, v14);
+                        SetWorkType(_Wander, v14);
+                        Bark_i(0, "@So long...@", v14);
+                        CloseSpeaker1_i();
+                        SetSpeakerSlot_i(0);
+                        ["We'll be fine without that troublemaker, <v1>!"];
+                    }
+                    JoinParty(_Selina);
+                    $SELINA_HAS_BELONGINGS = true;
+                    v14 = ~PostInFuture(25, << _aNO_HALT_i, _aUSABLE_i, #Selina >>, ~GimmePathEgg(1, 5));
+                    Bark_i(0, "@Onward!@", _Selina);
+                    if not flag(485) {
+                        ["Here is the key I promised."];
+                        v14 = ~GiveItemsOrDrop_i(true, 0, 3, 117, 641, 1, _Avatar);
+                    }
+                    flag(485) = true;
+                    v14 = ~FindItem(2, _All, _Magic_Rings, _Selina);
+                    if v14 {
+                        v14 = ~Item_push(v14);
+                        v14 = ~PopToNPC(_Selina);
+                    }
+                    terminate;
+                } else {
+                    if flag(485) {
+                        ["But how shall I gain the gold, if thou dost not aid me?"];
+                        Bark_i(0, "@Oh!@", _Selina);
+                        SetWorkType(_Shy, _Selina);
+                        terminate;
+                    } else {
+                        ["I had thought thou wouldst be interested! Oh, well, 'tis his loss for buying my... favors so cheaply! And thy loss for not joining me!" *"But, I will not hold it against thee, <v1>. If thou art still here and in need of money when I return... Perhaps I will lend thee some!"];
+                    }
+                }
+            }
+            key ("teach") {
+                ["In Monitor, women may be warriors... But at the cost of their femininity."];
+                ["In Fawn, women are valued for their beauty... At the cost of their independence and intelligence."];
+                ["And in Moonshade, women may be mages... But the true power lies in the hands of men."];
+                ["So, thou seest... Thou art brave, intelligent and beautiful. Thou art not one nor the other... Thou art all these things at once."];
+                TurnOff("teach");
+                TurnOn(<< "Monitor", "Fawn", "Moonshade" >>);
+            }
+            key ("Monitor") {
+                ["Monitor is just south of here... It is controlled by Pikemen who place fighting prowess above all else." *"Few there value beauty and even fewer possess intelligence. They would do well with a dose of humility."];
+                TurnOff("Monitor");
+                TurnOn("Pikemen");
+            }
+            key ("Pikemen") {
+                if ($gottattoo = true) {
+                    ["If the only Pikemen I had ever had the pleasure of encountering were thou and Argus, I would say differently. But many of the Pikemen I have seen are vain braggarts who delight in bullying anyone weaker than they are." *"And their idea of honor is bought cheaply in ransom and \@tolls\@ on the travellers they are sworn to protect! I'm sorry, <v1>, but I think the Pikemen are, on the whole, contemptible!"];
+                } else {
+                    ["If the only Pikeman I had ever had the pleasure of encountering was Argus, I would say differently. But many of the Pikemen I have seen are vain braggarts who delight in bullying anyone weaker than they are." *"And their idea of honor is bought cheaply in ransom and \@tolls\@ on the travellers they are sworn to protect! The Pikemen are, Argus excepted, contemptible!"];
+                }
+                TurnOff("Pikemen");
+            }
+            key ("Fawn") {
+                ["Fawn is northwest of here... They have a woman for a ruler, but she rules in name alone." *"The Great Captains and money control the city in truth, and give lip service to Beauty only when it's convenient. It would serve them right if the women revolted and went to Monitor to learn how to fight."];
+                TurnOff("Fawn");
+                TurnOn("Great Captains");
+            }
+            key ("Great Captains") {
+                ["I have never been to Fawn, <v1>, so I can only repeat what I have heard or have been told. The Great Captains keep the Lady of Fawn in ignorance, preferring a pretty figurehead to an intelligent ruler!"];
+                TurnOff("Great Captains");
+            }
+            key ("Moonshade") {
+                ["Moonshade is east of here, on another island... They are ruled by Adepts, but shun normal people as below their notice." *"Each mage doth have his or her own version of reality to such an extent that thou shouldst sift everything they say for a kernel of truth. I sometimes wish the mages could find themselves on the decks of Fawn's fishing fleet and work for an honest living for just a few days... Maybe then they'd learn who the important people truly are."];
+                TurnOff("Moonshade");
+                TurnOn("Adepts");
+            }
+            key ("Adepts") {
+                ["From what I've heard, being an Adept is as much a result of an accident of birth, rather than any great training. Each Adept specializes in some skill or another..." *"So a mage that could kill everyone in his mansion with a single spell, might well be unable to fetch his slippers from in front of the fire with even a series of spells! The Adepts are entirely too full of themselves, <v1>."];
+                TurnOff("Adepts");
+            }
+            key ("protection") {
+                TurnOff("protection");
+                ["Yes, protection... People are disappearing around here." *"I do not know if it's those mysterious storms, or if there's something more sinister at work. All I know is that I'm afraid."];
+                PushKeys();
+                TurnOn(<< "people disappearing", "mysterious storms", "change subject" >>);
+            }
+            key ("change subject") {
+                PopKeys();
+                ["We can discuss whatever thou dost wish to discuss, <v0>!"];
+            }
+            key ("people disappearing") {
+                ["First there was someone they call Silverpate... And now Angus is gone." *"One built the inn and the other was the innkeeper here... And those others disappearing doth cause me to wonder if this place is cursed or something!"];
+                TurnOff("people disappearing");
+                TurnOn("others");
+            }
+            key ("others") {
+                ["Well, Ensorcio told me that Theron, one of the servants, disappeared not long ago. And then, on the night that Angus disappeared, two guests disappeared as well."];
+                TurnOff("others");
+                TurnOn(<< "Ensorcio", "two guests" >>);
+            }
+            key ("Ensorcio") {
+                ["He is the mage who's staying here... He doth seem sinister, but he's nice to me. Not as nice as Argus... But nice, for a mage." *"He seems to drink a lot. And he doth have a bad temper, too."];
+                TurnOff("Ensorcio");
+                TurnOn("Argus");
+            }
+            key ("Argus") {
+                ["Argus is very nice to me. He compliments me on my dress or mine hair, even though I know I look a mess." *"He's much nicer when Devra isn't around... I do not think she likes me."];
+                TurnOff("Argus");
+                TurnOn("Devra");
+            }
+            key ("Devra") {
+                ["She's always watching me... It doth make me nervous. Mayhap I shall be the next one to disappear." *"If she were not so old, I might think that she had something to do with those people disappearing. Or maybe she knows more than she doth admit..."];
+                TurnOff("Devra");
+            }
+            key ("two guests") {
+                ["I did not meet them, but Ensorcio told me about them. He said something about one of them being a mage, and the other being a very large man." *"So now thou dost understand why I am so worried... If something could happen to a mage, or a big, strong man, what chance do I have?"];
+                TurnOff("two guests");
+            }
+            key ("mysterious storms") {
+                ["Everyone knows that these are not natural storms, <v1>! Why even the mages of Moonshade are worried..." *"Old Gustacio is practically pulling out what little hair he doth have trying to discover what's causing them. And if the mages are worried, <v1>, people such as we should be very wary indeed."];
+                TurnOff("mysterious storms");
+                TurnOn("Gustacio");
+            }
+            key ("Gustacio") {
+                ["Gustacio specializes in weather magic, <v1>. 'Tis all very confusing, if thou dost ask me..." *"I know that the Council of Mages questioned him closely after these storms began. But they seemed to think that he had no hand in them and set him the task of trying to stop them."];
+                TurnOff("Gustacio");
+                TurnOn("Council of Mages");
+            }
+            key ("Council of Mages") {
+                ["The Council of Mages oversees all of the mages in Moonshade. I don't know much more about them than that." *"Thou shouldst ask Ensorcio if thou dost wish to know more."];
+                TurnOff("Council of Mages");
+            }
+            key ("fishnet stockings") {
+                if ~IsInInv(1, 65177, _Stockings, 1, _Party) {
+                    ["Oh, look! How quaint... Fishnet stockings! I've heard that some people find them attractive, but they're much too rough for my taste. I would never wear anything like that."];
+                } else {
+                    ["They sound quaint, <v1>. Perhaps thou couldst show them to me some time."];
+                }
+                TurnOff("fishnet stockings");
+            }
+            key ("Moonsilk stockings") {
+                if ~IsInInv(0, 65177, _Stockings, 1, _Party) {
+                    if ~AvatarSex() {
+                        ["Moonsilk stockings! Oh, how I have longed for a pair of my very own!"];
+                        ["Thou dost not need to enhance thy beauty, <v1>... Wouldst thou give them to me?"];
+                        if (~AskYesNo() = true) {
+                            ["Marvelous! I knew that another woman would understand!"];
+                            v14 = ~TakeFromParty_i(true, 0, _All, _Stockings, 1);
+                        } else {
+                            ["Sigh... Thou canst not blame a girl for dreaming, <v1>."];
+                        }
+                    } else {
+                        ["Moonsilk stockings! Oh, how I have longed for a pair of my very own!"];
+                        ["Wouldst thou give them to me, <v1>? I would cherish them forever..."];
+                        if (~AskYesNo() = true) {
+                            ["Thou art wonderful! I will think of thee every time I wear them!"];
+                            v14 = ~TakeFromParty_i(true, 0, _All, _Stockings, 1);
+                        } else {
+                            ["Sigh... Thou canst not blame a girl for dreaming, <v1>."];
+                        }
+                    }
+                } else {
+                    ["The stockings sound wonderful, <v1>. If thou dost find any more like them, remember me."];
+                }
+                TurnOff("Moonsilk stockings");
+            }
+            key ("lost ring") {
+                if ~IsInInv(0, 65177, _Ring, 1, _Party) {
+                    if ~AvatarSex() {
+                        ["An engagement ring!"];
+                        ["Congratulations, <v1>! Who is the lucky man?"];
+                        if not ~GetItemFlag_i(_InParty_i, _Selina) {
+                            v18 = ~PartyUtters(false, "@It isn't mine...@", "@Indeed, young lady!@", 1);
+                            SetSpeakerSlot_i(0);
+                        }
+                        ["Forgive me, <v1>... I made an assumption before examining the ring."];
+                        ["I should have realized that it was not thine.\x09See how crude the tracery is, and how ill the stones fit?"];
+                        ["It is clearly an unacceptable piece of inferior quality. It looks like it may have come from one of the lesser artisans in Moonshade."];
+                    } else {
+                        ["An engagement ring!"];
+                        ["I suppose it would be too much to hope that it was for me..."];
+                        if not ~GetItemFlag_i(_InParty_i, _Selina) {
+                            v18 = ~PartyUtters(false, "@It isn't mine...@", "@Honestly, young lady!@", 1);
+                            SetSpeakerSlot_i(0);
+                        }
+                        ["Forgive me, <v1>.\x09I was merely jesting...\x09I should have realized that it was not thine, <v1>!"];
+                        ["See how crude the tracery is, and how ill the stones fit? It is clearly an unacceptable piece of inferior quality."];
+                        ["It looks like it may have come from one of the lesser artisans in Moonshade."];
+                    }
+                } else {
+                    ["If thou dost find it again, <v1>, I would love to see it."];
+                }
+                TurnOff("lost ring");
+            }
+            key ("fur cap") {
+                if ~IsInInv(4, 65177, _Leath_Helm, 1, _Party) {
+                    ["How cute! But dost thou not think it is a bit warm here for a fur cap?" "And... I don't know... But it seems a bit small for thee..."];
+                } else {
+                    ["Perhaps thou wouldst show it to me later."];
+                }
+                TurnOff("fur cap");
+            }
+            key ("Stoneheart") {
+                if ~IsInInv(15, 65177, _Reagents, 1, _Party) {
+                    ["I... um... I don't know about... uh... rocks, <v1>. Put it away... please."* "Thou shouldst find someone else to ask."];
+                } else {
+                    ["I know nothing about rocks, <v1>. Thou shouldst find someone else to ask."];
+                }
+                TurnOff("Stoneheart");
+                TurnOn("someone else");
+            }
+            key ("someone else") {
+                ["Thou couldst ask a scholar or some such... Perhaps even a mage might be able to help. I don't know."];
+                TurnOff("someone else");
+            }
+            key ("bye") {
+                CloseSpeaker0_i();
+                Bark_i(0, "@Farewell, Selina!@", _Avatar);
+                Bark_i(2, "@Until we meet again...@", _Selina);
+                terminate;
+            }
+        }
+        clear_answers;
+    }
+    if (event = _Action) {
+        v19 = ~GetNPCID_i(_Selina);
+        if (v19 = 0) {
+            if not ~GetItemFlag_i(_InParty_i, _Selina) {
+                terminate;
+            }
+            v5 = ~GetCoord(_Selina);
+            if ((v5::1 < 1145) or (v5::2 > 2265)) {
+                SetSpeaker0_i(0, _Selina);
+                if not flag(487) {
+                    ["Now look here, <v1>. Thou didst pledge to take me to the treasure, but this is the wrong direction!"];
+                    ["Wilt thou take me to the treasure, or no?"];
+                    if ~AskYesNo() {
+                        ["Much better."];
+                        Bark_i(0, "@To the gold!@", _Selina);
+                        flag(487) = true;
+                        v14 = ~PostInFuture(50, << _aNO_HALT_i, _aUSABLE_i, #Selina >>, ~GimmePathEgg(1, 5));
+                        terminate;
+                    } else {
+                        ["Then I'm leaving!"];
+                        LeaveParty(_Selina);
+                        Bark_i(0, "@Fool!@", _Selina);
+                        SelinaReturnsBelongings_i();
+                        RevertSchedule_i(_Selina);
+                        Npc_schedule(_Selina);
+                        flag(487) = false;
+                        terminate;
+                    }
+                } else {
+                    ["Thou still goest the wrong way. I'm leaving!"];
+                    LeaveParty(_Selina);
+                    Bark_i(0, "@Fool!@", _Selina);
+                    SelinaReturnsBelongings_i();
+                    RevertSchedule_i(_Selina);
+                    Npc_schedule(_Selina);
+                    flag(487) = false;
+                    terminate;
+                }
+            } else {
+                v14 = ~PostInFuture(50, << _aNO_HALT_i, _aUSABLE_i, #Selina >>, ~GimmePathEgg(1, 5));
+                flag(487) = false;
+            }
+        }
+        if (v19 = 1) {
+            v14 = ~NPCToItem_i(_Palos);
+            if v14 {
+                Polymorph_i(_Cyclops, v14);
+                SetNPCID_i(0, v14);
+            }
+            v14 = ~NPCToItem_i(_Deadeye);
+            if v14 {
+                Polymorph_i(_Cyclops, v14);
+                SetNPCID_i(0, v14);
+            }
+            v14 = ~NPCToItem_i(_Brunt);
+            if v14 {
+                Polymorph_i(_Cyclops, v14);
+                SetNPCID_i(0, v14);
+            }
+        }
+        if (v19 = 2) {
+            Polymorph_i(_Garg_Wingless, _Palos);
+            Polymorph_i(_M_Pirate, _Deadeye);
+            Polymorph_i(_Black_Fighter, _Brunt);
+            SetSpeaker0_i(0, _Selina);
+            ["Gloat if thou wilt! Even if thou slayest me here thou hast not truly defeated me!"];
+            ["Even as we speak, Batlin is opening the Wall of Lights in the next room! With the Guardian's help he and I shall meet in the Eternal Void to conquer new realms together!"];
+            ["Batlin! Guardian! I await thee in the Void!"];
+            CloseSpeaker0_i();
+            v20 = ~FindNearby_i(0, 60, _Field_Energy, item);
+            Foreach v23 in v20 {
+                v5 = ~GetCoord(v23);
+                ConsumeOne_i(v23);
+            }
+            v14 = 0;
+            v24 = ~Item_create(_Magic_Scroll);
+            if v24 {
+                SetFrame(0, v24);
+                v14 = ~SetQuality(33, v24);
+                ClearItemFlag_i(_IsTemporary_i, v24);
+                v14 = ~PopToNPC(item);
+            }
+            if v14 {
+                ClearItemFlag_i(_Tournament, _Selina);
+                ReduceHits_i(0, 50, _Selina);
+            }
+        }
+    }
+    if (event = _NearDeath) {
+        if flag(590) {
+            v25 = ~GetItemFlag_i(_Dead, _Palos);
+            v26 = ~GetItemFlag_i(_Dead, _Deadeye);
+            v27 = ~GetItemFlag_i(_Dead, _Brunt);
+            if (v25 and (v26 and v27)) {
+                if (~GetNPCID_i(_Selina) = 1) {
+                    SetNPCID_i(2, _Selina);
+                    v28 = ~NPCToItem_i(_Selina);
+                    v14 = ~PostInFuture(25, << _aNO_HALT_i, _aUSABLE_i, #Selina >>, v28);
+                }
+            } else {
+                v29 = ~GetParty();
+                v30 = ~rndRange(~ListCount_i(v29), 1);
+                v31 = v29::v30;
+                v14 = ~SetAttack_i(_Fire_Wand, v31, item);
+                CreateSpriteOn_i(65535, 0, 0, 0, 0, 0, 33, v31);
+            }
+        } else {
+            if $selinafinalbattle {
+                terminate;
+            }
+            v32 = ~IsInInv(2, 65177, _Magic_Rings, 1, _Selina);
+            v33 = ~IsInInv(2, 65177, _Gold_Bar, 1, _Party);
+            v34 = ~IsInInv(3, 117, _Unique_Key, 1, _Party);
+            if v32 {
+                v35 = ~GetAttacker_i(_Selina);
+                if ~GetItemFlag_i(_InParty_i, v35) {
+                    SetSpeaker0_i(0, _Selina);
+                    ["Thou shalt not find me such easy prey, mighty Avatar!"];
+                    ["When thou dost least expect it, thou shalt find me a worthy opponent!"];
+                } else {
+                    SetSpeaker0_i(0, _Selina);
+                    ["I must retreat to the safety of the Sleeping Bull. Do not worry -- we shall meet again, Avatar!"];
+                }
+                CloseSpeaker0_i();
+                Bark_i(0, "@We shall meet again!@", _Selina);
+                v5 = ~GetCoord(_Selina);
+                While (v5::3 > 0) {
+                    v5::1 = (v5::1 - 1);
+                    v5::2 = (v5::2 - 1);
+                    v5::3 = (v5::3 - 2);
+                }
+                createSprite(65535, 0, 0, 0, v5::2, v5::1, 33);
+                createSprite(65535, 0, 0, 0, v5::2, v5::1, 26);
+                if ~GetItemFlag_i(_InParty_i, _Selina) {
+                    LeaveParty(_Selina);
+                }
+                RemoveNPC_i(_Selina);
+                RevertSchedule_i(_Selina);
+                Npc_schedule(_Selina);
+            }
+        }
+    }
+}
+
+Usable SelinaReturnsBelongings_i #locals(1) #uses(~AskYesNo, ~ReturnBelongings_i) {
+    if ~GetContents(_All, _All, _All, _Selina) {
+        ["I have many items in my possession which may aid thee. Wouldst thou like to have them?"];
+        if ~AskYesNo() {
+            ["Here they are."];
+            $SELINA_HAS_BELONGINGS = false;
+            v0 = ~ReturnBelongings_i(65492);
+            if (v0::1 <> 0) {
+                ["Thy companions will have to help thee carry some of these things."];
+            }
+            if (v0::2 > 0) {
+                v0 = v0::2;
+                ["Thou art encumbered like a pack mule!"];
+                if (v0 > 1) {
+                    ["Since thou canst not carry these remaining <v0> items, they shall go at thy feet."];
+                } else {
+                    ["Since thou dost not have enough room for this last item, it shall go at thy feet."];
+                }
+            }
+        } else {
+            $SELINA_HAS_BELONGINGS = true;
+            ["If that is what thou dost want, so be it."];
+        }
+    }
+}

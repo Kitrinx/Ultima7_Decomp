@@ -1,0 +1,36 @@
+Routine Levitation_Wand accepts a0 #locals(10) #uses(~DoorState_i, SetDoorState_i, Door_NS, Door_EW, DDoor_NS, DDoor_EW) {
+    v0 = ~GetTarget();
+    if (~Item_getType(v0) = _Staff_Serp) {
+        v1 = ~FindNearby_i(176, 10, _Door_EW, _Avatar);
+        v1 = (v1 & ~FindNearby_i(176, 10, _Door_NS, _Avatar));
+        Foreach v4 in v1 {
+            if (~GetQuality(v4) = 219) && (~DoorState_i(v4) = 2) {
+                SetDoorState_i(0, v4);
+                if (~Item_getType(v4) = _Door_NS) {
+                    Door_NS(v4);
+                }
+                if (~Item_getType(v4) = _Door_EW) {
+                    Door_EW(v4);
+                }
+                if (~Item_getType(v4) = _DDoor_NS) {
+                    DDoor_NS(v4);
+                }
+                if (~Item_getType(v4) = _DDoor_EW) {
+                    DDoor_EW(v4);
+                }
+            }
+        }
+    } else {
+        v5 = ~Item_getWeight(v0);
+        if ((v5 < 2) and (v5 > 0)) {
+            closeAllGumps();
+            Sfx(67);
+            v6 = ~GetCoord(v0);
+            v7 = v6::3;
+            v8 = ~AskBarInput(0, 1, 14, 0);
+            v9 = ~PostAction(<< _aUSABLE_i, #RaiseLevel_i, _aLOOP_i, 65533, (v8 - v7) >>, v0);
+        } else {
+            Sfx(48);
+        }
+    }
+}

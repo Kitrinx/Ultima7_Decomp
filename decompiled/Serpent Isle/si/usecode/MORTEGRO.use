@@ -1,0 +1,647 @@
+Routine Mortegro accepts a0 #locals(14) #uses(~LordOrLady, ~AvatarName, ~WhereAmI_i, ~IsInInv, PartyFaces_i, FaceAvatar_i, Bark_i, ~GiveItemsOrDrop_i, ~AskYesNo, ~PartyUtters, ~GimmePathEgg, BarkIfNear_i, MortegroSellsSpells_i, MessengerBringsScroll_i) {
+    v0 = ~LordOrLady();
+    v1 = ~AvatarSex();
+    v2 = ~AvatarName();
+    v3 = ~WhereAmI_i();
+    v4 = ~IsInInv(5, 0, _Leath_Boots, 1, _Party);
+    v5 = ~IsInInv(0, 0, _Creeping_Limb, 1, _Party);
+    if ((event = _NearDeath) and ~GetItemFlag_i(_Tournament, item)) {
+        v6 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #Black_Mage >>, item);
+    }
+    if ((event = _Action) and ((v3 = 22) and not $mortegrofreed)) {
+        event = 9;
+    }
+    if (event = _Converse) {
+        Item_bark("@Ho, mage!@", _Avatar);
+        PartyFaces_i(65510);
+        v6 = ~FindNearby_i(0, 20, _Drawbridge, item);
+        Foreach v9 in v6 {
+            if (~GetQuality(v9) = 181) {
+                $mortegrofreed = true;
+            }
+        }
+        if ((v3 = 22) and not $mortegrofreed) {
+            FaceAvatar_i(item);
+            Bark_i(2, "@Help!", _Mortegro);
+            v6 = ~PostInFuture(7, << _aNO_HALT_i, _aUSABLE_i, #Mortegro >>, _Mortegro);
+        } else {
+            Bark_i(5, "@What dost thou wish?@", _Mortegro);
+            SetWorkType(_Talk, _Mortegro);
+        }
+    }
+    if (event = _Bark) {
+        if ((v3 = 22) and not $mortegrofreed) {
+            v10 = ~Random(6);
+            if (v10 = 1) {
+                Item_bark("@Another spell failed!@", _Mortegro);
+            }
+            if (v10 = 2) {
+                Item_bark("@Help! Someone help me!@", _Mortegro);
+            }
+            if (v10 = 3) {
+                Item_bark("@Lower the drawbridge!@", _Mortegro);
+            }
+            if (v10 = 4) {
+                Item_bark("@Release me, please!@", _Mortegro);
+            }
+            if (v10 = 5) {
+                Item_bark("@Why will my spells not work?@", _Mortegro);
+            }
+            if (v10 = 6) {
+                Item_bark("@How did I arrive here?@", _Mortegro);
+            }
+        } else {
+            v10 = ~Random(6);
+            if (v10 = 1) {
+                Item_bark("@How shall I return home?@", _Mortegro);
+            }
+            if (v10 = 2) {
+                Item_bark("@I am so lost...@", _Mortegro);
+            }
+            if (v10 = 3) {
+                Item_bark("@Where am I?@", _Mortegro);
+            }
+            if (v10 = 4) {
+                Item_bark("@How did I arrive here?@", _Mortegro);
+            }
+            if (v10 = 5) {
+                Item_bark("@I am so cold...@", _Mortegro);
+                SetWorkType(_Dance, _Mortegro);
+            }
+            if (v10 = 6) {
+                Item_bark("@Perhaps this direction...@", _Mortegro);
+                SetWorkType(_HorPace, _Mortegro);
+            }
+        }
+    }
+    if (event = _Talking) {
+        ClearBark_i(_Mortegro);
+        if ~GetItemFlag_i(_InParty_i, _Mortegro) {
+            SetWorkType(_FollowAvt, _Mortegro);
+            TurnOn("leave");
+        } else {
+            Npc_schedule(_Mortegro);
+        }
+        SetSpeaker0_i(0, _Mortegro);
+        v11 = ~GetItemFlag_i(_Met, _Mortegro);
+        if (($mortegrofreed = true) and not flag(534)) {
+            flag(534) = true;
+            ["Many thanks, <v2>. Now I shall reward thee, as promised!"];
+            ["I shall give thee a scroll, which contains the spell of Shade Summoning. Thou wouldst be wise to copy it to thy spellbook at the first opportunity."];
+            ["Here it is."];
+            v6 = ~GiveItemsOrDrop_i(true, 0, 0, 38, 715, 1, _Avatar);
+        } else {
+            if ((v3 = 22) and not $mortegrofreed) {
+                if (flag(532) = true) {
+                    ["Thou hast returned! Wilt thou release me from this forsaken island?"];
+                    if (~AskYesNo() = true) {
+                        ["Wonderful!"];
+                        ["Perhaps if thou dost search the building, thou wilt find a way to lower the drawbridge..."];
+                    } else {
+                        ["Suit thyself..."];
+                        ["Perhaps I can find another way to escape before I starve to death."];
+                        flag(532) = true;
+                        SetWorkType(_Shy, _Mortegro);
+                        Bark_i(0, "@So cold...@", _Mortegro);
+                        terminate;
+                    }
+                } else {
+                    if (v11 = false) {
+                        ["Excuse me, <v0>! My name is Mortegro, mage of Moonshade."];
+                        SetItemFlag_i(_Met, _Mortegro);
+                    } else {
+                        ["Avatar! I am glad to see thee!"];
+                    }
+                    ["I was caught in one of those bizarre storms, and seem to be trapped here on this island. If thou wouldst be so kind as to help me free of this place I would be willing to teach thee a spell or two... Or provide thee with a suitable spell scroll if thou art unable to handle spells of such a level."];
+                }
+                TurnOn(<< "trapped", "spell" >>);
+            } else {
+                if (v11 = false) {
+                    ["Hello, there! I am Mortegro, the Necromage of Moonshade."];
+                    SetItemFlag_i(_Met, _Mortegro);
+                } else {
+                    ["Hello once again, <v2>."];
+                }
+            }
+        }
+        if ($magesknowapparati and not $knowlabitem) {
+            TurnOn("apparatus");
+        }
+        if ($magesknowslippers and not $knowslippers) {
+            TurnOn("slippers");
+        }
+        if ($mortegroknowsbloodyhand and not $knowbloodyhand) {
+            TurnOn("the bloody hand");
+        }
+        if (v3 = 14) {
+            TurnOn("Moonshade");
+        }
+        if flag(306) {
+            TurnOn("seance");
+        }
+        if (flag(319) and not ~GetItemFlag_i(_Dead, _Rotoluncia)) {
+            TurnOn("accuse");
+        }
+        TurnOn(<< "Necromage", "learn spells" >>);
+        TurnOn("bye");
+        converse {
+            key ("apparatus") {
+                TurnOff("apparatus");
+                if ~IsInInv(1, 65177, _Al_App_1, 1, _Party) {
+                    ["It is some Mage's lab apparatus, <v0>. I regret that I cannot be of help to thee. It is not a design I recognize. Thou shalt have to ask another Mage."];
+                } else {
+                    ["It sounds like it is some Mage's lab apparatus, <v0>. I regret that I cannot be of help to thee. It is not a design I recognize. Thou shalt have to ask another Mage."];
+                }
+            }
+            key ("slippers") {
+                TurnOff("slippers");
+                if v4 {
+                    ["Those slippers look most comfortable. They must belong in a place of comfort. The most comfortable place I know is the Inn of the Sleeping Bull. Perhaps that is where they are from."];
+                } else {
+                    ["Perhaps if I could see the slippers I could tell thee more about them..."];
+                }
+            }
+            key ("the bloody hand") {
+                TurnOff("the bloody hand");
+                if v5 {
+                    ["This is obviously the handiwork of a powerful mage. And there is only one who would produce something as vile as this. The Mad Mage! I can say no more of this."];
+                } else {
+                    ["Art thou absolutely certain that this thing was a living severed hand? I doubt it is so. Perhaps if thou didst have it to show to me..."];
+                }
+            }
+            key ("accuse") {
+                TurnOff("accuse");
+                ["So! Thou dost suspect me of kidnapping thy friend!"];
+                ["Mine interest lies with dead beings, not with living persons. I do not have thy friend, nor do I know who doth have him."];
+                ["Thine impudence is beyond belief! Always, 'tis the superstitious and the jealous who persecute the Necromancer..."];
+                v12 = ~GetCoord(_Mortegro);
+                createSprite(65535, 0, 0, 0, v12::2, v12::1, 26);
+                Sfx(130);
+                Item_move(<< 1134, 2437, 0 >>, _Mortegro);
+                v6 = ~PartyUtters(true, "@Shazzam!@", "@Where did he go?@", 1);
+                terminate;
+            }
+            key ("leave") {
+                TurnOff("leave");
+                ["But thou didst promise to bring me home to Moonshade! A promise is a promise, <v0>."];
+            }
+            key ("Necromage") {
+                TurnOff("Necromage");
+                ["Yes, that is a special sort of mage who specializes in magics that deal with dead things, as well as with the spirits of the dead themselves."];
+                TurnOn(<< "dead things", "spirits of dead" >>);
+            }
+            key ("dead things") {
+                TurnOff("dead things");
+                ["Actually, that is rather unpleasant work. A bit discourteous to talk about it in mixed company, if thou dost know what I mean."];
+            }
+            key ("spirits of dead") {
+                TurnOff("spirits of dead");
+                ["Yes, as a Necromage I can commune with the spirits of the dead. I learn the secrets of the dead as well as the occasional portent of the future. But these seances are unpredictable in their results."];
+                if not flag(306) {
+                    flag(306) = true;
+                    TurnOn("seance");
+                }
+            }
+            key ("Moonshade") {
+                TurnOff("Moonshade");
+                ["It is a city of Mages, run by Mages and that is the way we mages like it. We are even governed by our own Council of Mages, chaired by Filbercio, Gustacio and Rotoluncia."];
+                TurnOn(<< "Filbercio", "Gustacio", "Rotoluncia" >>);
+            }
+            key ("Filbercio") {
+                TurnOff("Filbercio");
+                ["He is the supreme MageLord of the city of Moonshade."];
+            }
+            key ("Gustacio") {
+                TurnOff("Gustacio");
+                ["Gustacio and I are engaged in studies of the strange teleport storms that have been afflicting our land."];
+            }
+            key ("Rotoluncia") {
+                TurnOff("Rotoluncia");
+                ["She is a powerful mage. Her only real weakness is that she is most unpleasant when she is thwarted in her desires."];
+            }
+            key ("seance") {
+                TurnOff("seance");
+                if (~GetWorkType(_Mortegro) = _Lab) {
+                    if ((~GetClock(6) < 12) and flag(297)) {
+                        ["Speaking with the spirits of the dead doth fatigue me. We must wait another day before I can muster the energies required."];
+                    } else {
+                        SetClock(6);
+                        SetMusic(~GimmePathEgg(1, 5), 56);
+                        ["It is time for the seance to begin. I have already prepared all of the elaborate reagents and incantations necessary to open my mind, as a portal through which the spirits of the dead may speak. What thou shalt see are not dreams or hallucinations, but actual ghosts who will join with us in communion. Do not be afraid."];
+                        ["I summon you, ghosts! Come join us here and speak with us. Share with us thy visions of this world and the next."];
+                        if not flag(297) {
+                            SetSpeaker1_i(0, _SmithzHorse);
+                            ["I have heard thy call, Mortegro! In life I was Christopher, blacksmith of Trinsic. My time here is short and I wish to have words with the one who is called the Avatar."];
+                            ["Avatar, I thank thee for protecting my son and for breaking The Fellowship's evil grip over Britannia. But I also bring thee a warning. Many are the spirits in this realm who await thee, and there is but one thing on their mind -- to have their revenge against thee! There is one thing... that thou must... always... remember..."];
+                            CloseSpeaker1_i();
+                            SetSpeakerSlot_i(0);
+                            ["Oh! I have lost contact with the spirit! Forgive me, but with a contact that intense, the length of time that I can maintain is always shorter."];
+                            flag(297) = true;
+                        } else {
+                            if (~IsNPCNear_i(_Iolo) and not flag(305)) {
+                                SetSpeaker1_i(1, _SmithzHorse);
+                                ["My darling husband, Iolo, although I am dead I must tell thee that my love for thee shall never die. Always remember me. Farewell."];
+                                CloseSpeaker1_i();
+                                SetSpeakerSlot_i(0);
+                                ["I have lost the contact -- there are strange forces connected with this spirit!"];
+                                SetSpeaker1_i(0, _Iolo);
+                                ["No! It cannot be true! She cannot be dead! I refuse to believe it!"];
+                                v6 = ("@Gwenno!@" & "@Come back to me!@");
+                                BarkIfNear_i(v6, _Iolo);
+                                Bark_i(5, "@Spirits do not lie.@", _Mortegro);
+                                flag(305) = true;
+                                terminate;
+                            } else {
+                                SetSpeaker0_i(0, _Mortegro);
+                                ["Once again I call out to the spirit of Edrin, brother of Kane. If thou canst hear me, Edrin, please contact us. Thy brother Kane dost need to know if thou hast perished. Thou hast been missing for so long that even thy brother dost think that he shall never see thee again. If thou canst hear my words, please contact us."];
+                                v13 = ~PartyUtters(false, "@There is no reply.@", "@There seems to be no reply.@", 1);
+                                SetSpeakerSlot_i(0);
+                                ["This is a favorable sign for Kane. It may well mean that his brother is not in the realm of ghosts."];
+                            }
+                        }
+                    }
+                } else {
+                    if flag(226) {
+                        ["Ahem, once I have gotten back to Moonshade I will be glad to oblige thee."];
+                    } else {
+                        ["I must first prepare the proper materials. Thou shouldst come to my manor after midnight, and we shall then conjure spectres."];
+                    }
+                }
+            }
+            key ("trapped") {
+                TurnOff("trapped");
+                ["Well, I hesitate to admit that an Adept such as myself could be caught in such a manner... But none of my magics have worked to free me from this island."];
+                TurnOn("magics");
+            }
+            key ("magics") {
+                TurnOff("magics");
+                ["Although I am not an expert in it, I can do simple teleports and fetches. But nothing I have tried has worked. I think, perhaps, that this is a null magic area."];
+                TurnOn("null magic area");
+            }
+            key ("null magic area") {
+                TurnOff("null magic area");
+                ["There are such areas where magic cannot be used. I think that this... place... may be one of them." *"Or, perhaps, common magic --  if thou wilt -- cannot function here. Whatever the case, I cannot escape by magical means."];
+            }
+            key ("learn spells") {
+                TurnOff("learn spells");
+                if (flag(226) and not $mortegrofreed) {
+                    ["How can I concentrate on teaching thee spells when I am freezing to death by the moment?"];
+                } else {
+                    if ($mortegrofreed = true) {
+                        ["As thou didst free me, I can offer my spells to thee at a discount. Say, perhaps half the normal price? Yes, that is what I will sell my spells for -- half cost!"];
+                        MortegroSellsSpells_i();
+                    } else {
+                        if $gotspellbook {
+                            ["I can teach thee spells... for a fee."];
+                            MortegroSellsSpells_i();
+                        } else {
+                            ["Thou art not a Mage, so teaching thee spells would be a waste of both our times."];
+                            ["If thou art serious about mastering magic, perhaps thou shouldst speak with Master Fedabiblio at the Seminarium."];
+                            ["But I think thou art too old to learn spell-casting..."];
+                        }
+                    }
+                }
+            }
+            key ("spell") {
+                TurnOff("spell");
+                ["Thou canst consider me a Necromancer, although I do not reanimate the dead. Specifically, I seek information from the dead. Thou wouldst no doubt find the Summon Shade spell useful."];
+                TurnOn(<< "information", "Summon Shade" >>);
+            }
+            key ("information") {
+                TurnOff("information");
+                ["I am usually commissioned by one of the other mages when they are seeking lost information. I, myself, am not conducting any research at the moment. I was working with Gustacio on an experiment when I suddenly found myself here."];
+                TurnOn("experiment");
+            }
+            key ("experiment") {
+                TurnOff("experiment");
+                ["I allowed Gustacio to convince me to help him with his plan to divert the teleportation storms."];
+                ["Perhaps it was not the wisest of things to have done... As I am trapped here and have no idea how to return to Moonshade."];
+                ["I believe I exchanged places with an altar of some sort. I am sure it rather surprised old Gustacio when I disappeared. He is no doubt wondering about whatever is now in his work area."];
+                TurnOn("altar");
+            }
+            key ("altar") {
+                TurnOff("altar");
+                ["Yes, there are marks here on the island that suggest that something was here until recently."];
+                ["Given the architecture, this must be one of the old Serpent temples. So I assume that this may have been where the altar once stood."];
+            }
+            key ("Summon Shade") {
+                TurnOff("Summon Shade");
+                ["It is quite a handy spell, actually. It allows thee to question the shade of a dead person... As long as thou dost possess some item that the person had valued in life. Of course, it doth have its drawbacks..."];
+                TurnOn("drawbacks");
+            }
+            key ("drawbacks") {
+                TurnOff("drawbacks");
+                ["If thou dost summon a shade from its resting place without the appropriate item, the shade may well attack thee. And the spell doth use an inordinate amount of reagents... But thou dost learn such interesting things!"];
+                TurnOn("reagents");
+            }
+            key ("reagents") {
+                ["It doth require Sulphurous Ash, Blood Moss, Mandrake Root, Nightshade and Spider's Silk. Quite costly, so thou shouldst use this spell sparingly. And remember that thou must have an item belonging to that person to call them forth."];
+                TurnOff("reagents");
+            }
+            key ("bye") {
+                if (flag(534) and not ~GetItemFlag_i(_InParty_i, _Mortegro)) {
+                    ["Wouldst thou allow me to accompany thee back to Moonshade? I am afraid that I do not know where I am."];
+                    if (~ListSize_i(~GetParty_i()) > 4) {
+                        v13 = ~PartyUtters(false, 0, "@We do not have room for another to travel with us, Avatar.@", 1);
+                        goto label_154;
+                    }
+                    if (~AskYesNo() = true) {
+                        ["I do not believe I could return home without thy guidance... For all that I am an Adept."];
+                        JoinParty(_Mortegro);
+                        Bark_i(0, "@Thank thee!@", _Mortegro);
+                        terminate;
+                    } else {
+                        label_154:
+                        ["Well, perhaps I can find my way home on mine own... I am an Adept, after all."];
+                        Bark_i(0, "@What lies this way?@", _Mortegro);
+                        SetWorkType(_Wander, _Mortegro);
+                        terminate;
+                    }
+                }
+                CloseSpeaker0_i();
+                if ((v3 = 22) and not $mortegrofreed) {
+                    Bark_i(0, "@Stay calm.@", _Avatar);
+                    Bark_i(5, "@Please help me!@", _Mortegro);
+                } else {
+                    Bark_i(0, "@Thanks for thine help.@", _Avatar);
+                    Bark_i(5, (("@Fare thee well, " + v0) + ".@"), _Mortegro);
+                }
+                if (~WhereAmI_i() = 14) {
+                    MessengerBringsScroll_i();
+                }
+                break;
+            }
+        }
+        clear_answers;
+    }
+}
+
+Usable MortegroSellsSpells_i #locals(14) #uses(~AskOrdList, ~AskYesNo, ~SellSpell_i, ~MortegroHaggles_i) {
+    PushKeys();
+    v0 = true;
+    ["I will accept only guilders in exchange for teaching thee spells."];
+    While v0 {
+        ["In which circle art thou interested?"];
+        v1 = ~AskOrdList(<< "nothing", "First", "Second", "Third", "Fourth", "Fifth", "Sixth", "Seventh", "Eighth", "Ninth" >>);
+        v1 = (v1 - 1);
+        if (v1 = 0) {
+            break;
+        }
+        switch v1 {
+            case 1 {
+                v2 = << "nothing", "Telekinesis" >>;
+                v3 = << 0, 7 >>;
+                v4 = << 0, 40 >>;
+                v5 = << 0, 25 >>;
+            }
+            case 2 {
+                v2 = << "nothing", "Cold Blast" >>;
+                v3 = << 0, 11 >>;
+                v4 = << 0, 150 >>;
+                v5 = << 0, 100 >>;
+            }
+            case 3 {
+                v2 = << "nothing", "Curse", "Paralyze" >>;
+                v3 = << 0, 17, 21 >>;
+                v4 = << 0, 120, 140 >>;
+                v5 = << 0, 70, 85 >>;
+            }
+            case 4 {
+                v2 = << "nothing", "Blink", "Mass Curse" >>;
+                v3 = << 0, 24, 28 >>;
+                v4 = << 0, 200, 175 >>;
+                v5 = << 0, 130, 100 >>;
+            }
+            case 5 {
+                v2 = << "nothing", "Erstam's Surprise" >>;
+                v3 = << 0, 39 >>;
+                v4 = << 0, 240 >>;
+                v5 = << 0, 170 >>;
+            }
+            case 6 {
+                v2 = << "nothing", "Cause Fear" >>;
+                v3 = << 0, 42 >>;
+                v4 = << 0, 300 >>;
+                v5 = << 0, 210 >>;
+            }
+            case 7 {
+                v2 = << "nothing", "Mass Might" >>;
+                v3 = << 0, 51 >>;
+                v4 = << 0, 350 >>;
+                v5 = << 0, 240 >>;
+            }
+            case 8 {
+                v2 = << "nothing", "Mind Blast", "Invoke Serpent", "Serpent Bond" >>;
+                v3 = << 0, 57, 60, 61 >>;
+                v4 = << 0, 400, 425, 450 >>;
+                v5 = << 0, 285, 325, 350 >>;
+            }
+            case 9 {
+                v2 = << "nothing", "Death Vortex", "Mass Death", "Imbalance" >>;
+                v3 = << 0, 64, 65, 71 >>;
+                v4 = << 0, 500, 600, 1200 >>;
+                v5 = << 0, 500, 600, 1200 >>;
+            }
+            default {
+            }
+        }
+        ["What spell dost thou wish to purchase?"];
+        v6 = ~AskOrdList(v2);
+        if (v6 = 1) {
+            ["As thou wishest..."];
+        } else {
+            v7 = v3::v6;
+            v8 = v4::v6;
+            v9 = v5::v6;
+            v10 = v2::v6;
+            v11 = 952;
+            if ($mortegrofreed = true) {
+                v8 = (v4::v6 / 2);
+                v9 = (v5::v6 / 2);
+            }
+            if (v8 = v9) {
+                ["I will sell thee <v10> for <v8> guilders. Dost thou accept?"];
+                v12 = 0;
+                if (~AskYesNo() = true) {
+                    v12 = ~SellSpell_i(v8, v11, v7);
+                }
+            } else {
+                ["I will sell thee <v10> for <v8> guilders. Dost thou accept?"];
+                v13 = ~MortegroHaggles_i(v9, v8);
+                v12 = 0;
+                if (v13 > 0) {
+                    v12 = ~SellSpell_i(v13, v11, v7);
+                }
+            }
+            if (v12 = 1) {
+                ["The spell <v10> is thine!"];
+            } else {
+                if (v12 = 2) {
+                    ["Thou dost need a spellbook!"];
+                    v0 = false;
+                    break;
+                }
+                if (v12 = 3) {
+                    ["Thou dost not have enough guilders to buy <v10>!"];
+                } else {
+                    if (v12 = 4) {
+                        ["Thou dost already have that spell!"];
+                    } else {
+                    }
+                }
+            }
+        }
+        ["Perhaps another spell?"];
+        v0 = ~AskYesNo();
+    }
+    PopKeys();
+}
+
+Function ~MortegroHaggles_i accepts a0, a1 #locals(12) #uses(~AskList, ~Haggle_i, ~AskYesNo) {
+    v2 = v1;
+    v3 = ((v0 / 3) * 2);
+    v4 = 5;
+    v5 = 0;
+    v6 = 1;
+    v7 = 0;
+    v8 = 2;
+    While v6 {
+        v9 = ~AskList(<< "yes", "no", "haggle" >>);
+        if (v9 = "no") {
+            return 0;
+        } else {
+            if (v9 = "yes") {
+                v10 = 0;
+                goto label_8;
+            }
+        }
+        v11 = ~Haggle_i(v5, v4, v7, v3, v8, v0, v2);
+        v7 = (v7 + 1);
+        v5 = v11::4;
+        v10 = v11::3;
+        v12 = v2;
+        v2 = v11::2;
+        v3 = v11::1;
+        label_8:
+        v13 = ~Random(3);
+        if (v10 < 2) {
+            if (v2 < (v0 + ((v1 - v0) / 4))) {
+                if (v13 = 1) {
+                    ["Thou dost bargain well, my friend."];
+                }
+                if (v13 = 2) {
+                    ["It pains me to agree... But what else can I do?"];
+                }
+                if (v13 = 3) {
+                    ["I must be spending too much time speaking with the dead. I cannot believe that I am agreeing to this!"];
+                }
+            } else {
+                if (v2 < (v0 + ((v1 - v0) / 3))) {
+                    if (v13 = 1) {
+                        ["I have little enough business these days. I shall have to accept."];
+                    }
+                    if (v13 = 2) {
+                        ["Thou hast a talent for bargaining. I will accept this price."];
+                    }
+                    if (v13 = 3) {
+                        ["I should retire from magery. I am losing mine edge."];
+                    }
+                } else {
+                    if (v2 < (v0 + ((v1 - v0) / 2))) {
+                        if (v13 = 1) {
+                            ["Only <v2>??! I suppose it is the best I can hope for."];
+                        }
+                        if (v13 = 2) {
+                            ["A modest amount. Not bad..."];
+                        }
+                        if (v13 = 3) {
+                            ["There is simply no profit in selling spells..."];
+                        }
+                    } else {
+                        if (v13 = 1) {
+                            ["I accept thine offer!"];
+                        }
+                        if (v13 = 2) {
+                            ["It is a pleasure doing business with thee!"];
+                        }
+                        if (v13 = 3) {
+                            ["Thou art most generous! I accept."];
+                        }
+                    }
+                }
+            }
+            ["So, have we agreed on the price of <v2>?"];
+            if (~AskYesNo() = true) {
+                return v2;
+            } else {
+                if (v13 = 1) {
+                    ["Then why didst thou go to such trouble?!"];
+                }
+                if (v13 = 2) {
+                    ["I shall remember this outrage!"];
+                }
+                if (v13 = 3) {
+                    ["All this time spent for nothing?! Thou art mad!"];
+                }
+                return 0;
+            }
+        }
+        if (v5 = 1) {
+            if (v10 = 5) {
+                ["I said that <v2> is my final offer. Dost thou agree?"];
+                if (~AskYesNo() = true) {
+                    return v2;
+                }
+                v6 = 0;
+            } else {
+                ["<v2> is my final offer. I could make more profit from a shade..."];
+            }
+        } else {
+            if (v10 = 2) {
+                if (v13 = 1) {
+                    ["How doth <v2> sound? I like thee..."];
+                }
+                if (v13 = 2) {
+                    ["I can trust thee with my spells, surely. How doth <v2> sound?"];
+                }
+                if (v13 = 3) {
+                    ["Thou art worthy of my knowledge. I offer thee <v2>."];
+                }
+            }
+            if (v10 = 3) {
+                if (v13 = 1) {
+                    ["Hmmm.... Possibly <v2>?"];
+                }
+                if (v13 = 2) {
+                    ["I must consider this... <v2>?"];
+                }
+                if (v13 = 3) {
+                    ["What wouldst thou say to <v2>? I must be able to buy reagents..."];
+                }
+            }
+            if (v10 = 4) {
+                if (v13 = 1) {
+                    ["Thief! Better that thou shouldst steal it from me! <v2>, no less."];
+                }
+                if (v13 = 2) {
+                    ["My knowledge is worth more than that! I can go no lower than <v2>."];
+                }
+                if (v13 = 3) {
+                    ["This spell is worth at least <v2>."];
+                }
+            }
+            if (v10 = 5) {
+                v2 = v12;
+                if (v13 = 1) {
+                    ["Thou must not want this spell... My previous offer stands, at <v2>."];
+                }
+                if (v13 = 2) {
+                    ["Dost thou dare to insult me?! <v2>, no less."];
+                }
+                if (v13 = 3) {
+                    ["Mine offer stands at <v2>. Thou art a fool if thou dost not agree."];
+                }
+            }
+        }
+    }
+}

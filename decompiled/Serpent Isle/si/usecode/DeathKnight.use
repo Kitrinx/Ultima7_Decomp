@@ -1,0 +1,13 @@
+Routine DeathKnight accepts a0 #locals(0) #uses(Bark_i) {
+    if ((event = _NearDeath) and ~GetItemFlag_i(_Tournament, _DeathKnight)) {
+        ClearItemFlag_i(_Tournament, _DeathKnight);
+        ReduceHits_i(0, 50, _DeathKnight);
+        if ~GetItemFlag_i(_InParty_i, _Stefano) {
+            SetWorkType(_FollowAvt, _Stefano);
+        } else {
+            NewSchedule_i(<< 2471, 1912, 2247, 1812, 2463, 1935, 2238, 1799, 2230, 1804 >>, << 14, 26, 12, 26, 4 >>, << 0, 4, 5, 6, 7 >>, _Stefano);
+            SetWorkType(_Talk, _Stefano);
+        }
+        Bark_i(0, "@I am saved!@", _Stefano);
+    }
+}

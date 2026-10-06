@@ -1,0 +1,34 @@
+Routine InvisibleWeaponUsable_i accepts a0 #locals(2) #uses(DrayganCallsBeasts_i) {
+    v0 = ~Item_getContainer(item);
+    if not (v0 = 0) {
+        v1 = ~ItemToNPC_i(v0);
+        if (v1 = 65380) {
+            DrayganCallsBeasts_i();
+        }
+    }
+}
+
+Usable DrayganCallsBeasts_i #locals(6) #uses(~AbsValue_i, ~CreateAttacker_i) {
+    if (event = _Converse) {
+        v0 = ~GetCoord(_Draygan);
+        CreateSpriteOn_i(65535, 0, 0, 0, 0, 0, 12, _Draygan);
+        v1 = ~PostAction(<< _aUSABLE_i, #Plaque >>, item);
+    }
+    if (event = _Action) {
+        v2 = ~rndRange(5, 1);
+        v3 = << 865, 537, 302, 329, 877 >>;
+        v4 = << "Spiders", "Wolves", "Bears", "Boars", "Doom" >>;
+        Item_bark((("Morghrim, send me " + v4::v2) + "."), _Draygan);
+        v5 = ~rndRange(~AbsValue_i((v2 - 5)), 1);
+        While (v5 > 0) {
+            v1 = ~CreateAttacker_i(v3::v2);
+            if not (v1 = 0) {
+                v5 = (v5 - 1);
+            } else {
+                if ~rndRange(10, 1) {
+                    v5 = 0;
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,196 @@
+Routine Headless accepts a0 #locals(10) #uses(~ListCount_i, ConsumeOne_i) {
+    if (event = _Polymorph) {
+        v0 = << 528, 337, 533, 501, 883, 514, 661, 706 >>;
+        v1 = ~ListCount_i(v0);
+        v2 = ~GetNPCID_i(item);
+        Polymorph_i(v0::v2, item);
+    }
+    if (event = _NearDeath) {
+        v3 = ~GetCoord(item);
+        if (~GetNPCID_i(item) > 0) {
+            v4 = ~ChangeNPCStat_i(1, _Hits, item);
+            v5 = ~rndRange(10, 1);
+            if (v5 <= 5) {
+                v3::1 = (1713 + ~rndRange(45, 0));
+                v3::2 = (1873 + ~rndRange(29, 0));
+                Item_move(v3, item);
+            }
+            if ((v5 > 5) and (v5 <= 9)) {
+                v0 = << 528, 337, 533, 501, 883, 514, 661, 706 >>;
+                v1 = ~ListCount_i(v0);
+                v2 = ~rndRange(v1, 1);
+                v6 = ~FindNearby_i(0, 60, _Headless, _Avatar);
+                Foreach v9 in v6 {
+                    if ~GetNPCID_i(v9) {
+                        ClearItemFlag_i(_Polymorph_i, v9);
+                        SetNPCID_i(v2, v9);
+                    }
+                }
+                Polymorph_i(v0::v2, item);
+                SetNPCID_i(v2, item);
+            }
+            if (v5 = 10) {
+                ClearItemFlag_i(_Tournament, item);
+                ConsumeOne_i(item);
+            }
+        }
+    }
+}
+
+Routine TeleportMemberEgg_i accepts a0 #locals(18) #uses(~ListCount_i, Bark_i) {
+    if (event = _Trigger) {
+        v0 = ~GetQuality(item);
+        v1 = << >>;
+        v2 = << >>;
+        if (v0 = 1) {
+            v1 = << 1713, 1873 >>;
+            v2 = << 45, 29 >>;
+        }
+        if (v0 = 2) {
+            v1 = << 2032, 1855 >>;
+            v2 = << 26, 23 >>;
+        }
+        v3 = << 0, 0, 0 >>;
+        v4 = ~GetParty();
+        v5 = ~rndRange(~ListCount_i(v4), 1);
+        v6 = v4::v5;
+        v3 = ~GetCoord(v6);
+        v7 = true;
+        While v7 {
+            v3::1 = (v1::1 + ~rndRange(v2::1, 0));
+            v3::2 = (v1::2 + ~rndRange(v2::2, 0));
+            if ~canExistAt(0, _Avatar_Type, v3) {
+                v7 = false;
+            }
+        }
+        Item_move(v3, v6);
+        v8 = << "@Whoa!@", "@Huh?@", "@What happened?@", "@Magic!@", "@Whoops...@", "@Watch out!@", "@Help!@" >>;
+        v9 = v8::~Random(~ListSize_i(v8));
+        Bark_i(20, v9, v6);
+        createSprite(65535, 0, 0, 0, v3::2, v3::1, 26);
+        v10 = ~FindNearby_i(16, 30, _Egg_Type, item);
+        if v10 {
+            Foreach v13 in v10 {
+                if (~GetQuality(v13) = v0) {
+                    v3::1 = (v1::1 + ~rndRange(v2::1, 0));
+                    v3::2 = (v1::2 + ~rndRange(v2::2, 0));
+                    createSprite(65535, 0, 0, 0, v3::2, v3::1, 47);
+                    Sfx(48);
+                    Item_move(v3, v13);
+                }
+            }
+        }
+        if (v0 = 1) {
+            v14 = ~GetAllInRegion(_Headless);
+            v15 = ~ListSize_i(v14);
+            if (v15 < 3) {
+                v3::1 = (v1::1 + ~rndRange(v2::1, 0));
+                v3::2 = (v1::2 + ~rndRange(v2::2, 0));
+                v16 = ~CreateCreature_i(v3, _Headless);
+                Npc_setAlignment(_Evil, v16);
+                SetWorkType(_Combat_0, v16);
+                SetAttacker_i(~NPCToItem_i(_Avatar), v16);
+                SetItemFlag_i(_Tournament, v16);
+                SetItemFlag_i(_IsTemporary_i, v16);
+                SetNPCID_i(1, v16);
+                v17 = ~GetNPCStat_i(_Hits, v16);
+                v7 = ~ChangeNPCStat_i((1 - v17), _Hits, v16);
+                v17 = ~GetNPCStat_i(_Str, v16);
+                v7 = ~ChangeNPCStat_i((0 - v17), _Str, v16);
+                v17 = ~GetNPCStat_i(_Dex, v16);
+                v7 = ~ChangeNPCStat_i((5 - v17), _Dex, v16);
+            }
+        }
+    }
+}
+
+Routine TowerPikemenEgg_i accepts a0 #locals(10) {
+    v0 = ~GetAllInRegion(_Pikeman);
+    if (~ListSize_i(v0) > 0) {
+        terminate;
+    }
+    v1 = 1217;
+    v2 = 1230;
+    v3 = 2113;
+    v4 = 2126;
+    v5 = ~GetCoord(_Avatar);
+    v6 = ~GetCoord(item);
+    if ((v5::1 > v1) and ((v5::1 < v2) and ((v5::2 > v3) and (v5::2 < v4)))) {
+        v6::2 = (v6::2 + 30);
+    }
+    v7 = false;
+    v8 = 0;
+    While (v8 < 8) {
+        if (v8 < 3) {
+            v9 = ~CreateCreature_i(<< (v6::1 + v8), (v6::2 + v8), 0 >>, _Pikeman);
+            SetItemFlag_i(_IsTemporary_i, v9);
+            SetWorkType(_TendShop, v9);
+        } else {
+            if (v8 < 5) {
+                if v7 {
+                    v9 = ~CreateCreature_i(<< 1226, 2118, 6 >>, _Pikeman);
+                } else {
+                    v9 = ~CreateCreature_i(<< 1225, 2124, 6 >>, _Pikeman);
+                    v7 = true;
+                }
+                SetItemFlag_i(_IsTemporary_i, v9);
+                SetWorkType(_Sleep, v9);
+            } else {
+                v9 = ~CreateCreature_i(<< (v6::1 - (v8 / 2)), (v6::2 - (v8 / 2)), 0 >>, _Pikeman);
+                SetItemFlag_i(_IsTemporary_i, v9);
+                SetWorkType(_Wander, v9);
+            }
+        }
+        SetNPCID_i(1, v9);
+        v8 = (v8 + 1);
+    }
+}
+
+Routine SelinaAmbushEgg_i accepts a0 #locals(11) #uses(SelinaDropsBelongings_i, ~IsInInv, ~GimmePathEgg, Bark_i, AttackAvatar_i, SetWorkTypeAt_i) {
+    v0 = ~GetItemFlag_i(_InParty_i, _Selina);
+    if flag(490) {
+        if v0 {
+            SetSpeaker0_i(0, _Selina);
+            ["We are attacked again! Now that we have the gold, I think that it is time for me to use my Blink Ring to escape."];
+            ["I shall see thee at the inn!"];
+            v1 = ~GetCoord(_Selina);
+            createSprite(65535, 0, 0, 0, v1::2, v1::1, 7);
+            LeaveParty(_Selina);
+            SelinaDropsBelongings_i();
+            RemoveNPC_i(_Selina);
+        }
+        NewSchedule_i(<< 1302, 2295, 1271, 2252, 1293, 2230, 1302, 2210, 1271, 2252 >>, << 14, 26, 7, 12, 26 >>, << 0, 3, 4, 5, 7 >>, _Wilfred);
+        Npc_schedule(_Wilfred);
+        terminate;
+    }
+    v2 = ~IsInInv(2, 65177, _Gold_Bar, 1, _Party);
+    v3 = ~FindNearby_i(0, 30, _Headless, _Selina);
+    if v2 {
+        flag(486) = true;
+    }
+    if (v2 and v0) {
+        if (~Item_getType(item) = _Egg_Type) {
+            Item_destroy(item);
+        }
+        if v3 {
+            v4 = ~PostInFuture(33, << _aNO_HALT_i, _aUSABLE_i, #SelinaAmbushEgg_i >>, ~GimmePathEgg(1, 5));
+        } else {
+            v5 = ~GetCoord(_Avatar);
+            v5::2 = (v5::2 - 20);
+            v6 = ~CreateCreature_i(v5, _Headless);
+            if v6 {
+                Polymorph_i(_Headless, v6);
+                ReduceHits_i(0, 50, v6);
+            }
+            Bark_i(0, "@Oh, my!@", _Selina);
+            flag(490) = true;
+            v4 = ~PostInFuture(7, << _aNO_HALT_i, _aUSABLE_i, #SelinaAmbushEgg_i >>, ~GimmePathEgg(1, 5));
+            v7 = << 65315, 65313, 65312, 65311, 65310, 65309 >>;
+            Foreach v10 in v7 {
+                v4 = ~ApproachAvatar_i(40, 120, v10);
+                AttackAvatar_i(v10);
+                SetWorkTypeAt_i(_Combat_0, 0, 65535, v10);
+            }
+        }
+    }
+}

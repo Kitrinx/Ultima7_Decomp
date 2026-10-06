@@ -1,0 +1,50 @@
+Routine SurroundBatlin_i accepts a0 #locals(11) #uses(Bark_i) {
+    if (event = _Action) {
+        SetSpeaker0_i(0, _Avatar);
+        ["Quickly! Surround Batlin!"];
+        CloseSpeaker0_i();
+        v0 = ~FindNearby_i(0, 20, _Batlin_Type, _Avatar);
+        if v0 {
+            Bark_i(10, "@Stay back!@", v0);
+        }
+        v1 = ~FindNearby_i(16, 40, _Path, _Avatar);
+        v2 = 0;
+        Foreach v5 in v1 {
+            v6 = ~GetFrame(v5);
+            if (v6 = 20) {
+                v7 = ~GetDist(v5, _Avatar);
+                PathfindNPC_i(true, #SurroundBatlin_i, v5, _Pathfind1, ~GetCoord(v5), _Avatar);
+                v8 = ~PostInFuture((v7 + 2), << _aNO_HALT_i, _aFACE_i, byte(50) >>, _Avatar);
+            }
+            if (v6 = 21) {
+                v7 = ~GetDist(v5, _Iolo);
+                PathfindNPC_i(true, #SurroundBatlin_i, v5, _Pathfind1, ~GetCoord(v5), _Iolo);
+                v8 = ~PostInFuture((v7 + 2), << _aNO_HALT_i, _aFACE_i, byte(48) >>, _Iolo);
+            }
+            if (v6 = 22) {
+                v7 = ~GetDist(v5, _Shamino);
+                PathfindNPC_i(true, #SurroundBatlin_i, v5, _Pathfind1, ~GetCoord(v5), _Shamino);
+                v8 = ~PostInFuture((v7 + 2), << _aNO_HALT_i, _aFACE_i, byte(48) >>, _Shamino);
+            }
+            if (v6 = 23) {
+                v7 = ~GetDist(v5, _Dupre);
+                PathfindNPC_i(true, #SurroundBatlin_i, v5, _Pathfind1, ~GetCoord(v5), _Dupre);
+                v8 = ~PostInFuture((v7 + 2), << _aNO_HALT_i, _aFACE_i, byte(54) >>, _Dupre);
+            }
+            if (v7 > v2) {
+                v2 = v7;
+            }
+        }
+        v8 = ~PostInFuture((v2 + 25), << _aNO_HALT_i, _aUSABLE_i, #ReleaseBanesEgg_i >>, _Avatar);
+        terminate;
+    }
+    if ((event = _Pathfind1) or (event = _Path_Failure)) {
+        v9 = ~GetCoord(item);
+        Sfx(130);
+        Sfx(116);
+        createSprite(65535, 0, 0, 0, v9::2, v9::1, 17);
+        createSprite(65535, 0, 0, 0, v9::2, v9::1, 26);
+        v10 = << "@I'm frozen!@", "@I can't move!@", "@What's wrong?@" >>;
+        Item_bark(v10::~rndRange(3, 1), item);
+    }
+}

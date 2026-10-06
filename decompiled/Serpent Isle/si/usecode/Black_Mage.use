@@ -1,0 +1,17 @@
+Routine Black_Mage accepts a0 #locals(3) #uses(Bark_i, ~PartyUtters) {
+    if $BANES_RELEASED {
+        ClearItemFlag_i(_Tournament, item);
+        ClearBark_i(item);
+        Bark_i(0, "@No! It must work!@", item);
+        CreateSpriteOn_i(65535, 0, 0, 0, 0, 0, 9, item);
+        Sfx(43);
+        terminate;
+    }
+    v0 = ~ChangeNPCStat_i(5, _Hits, item);
+    v1 = ~GetCoord(item);
+    createSprite(65535, 0, 0, 0, v1::2, v1::1, 26);
+    Sfx(130);
+    RemoveNPC_i(item);
+    SetWorkType(_Dance, item);
+    v2 = ~PartyUtters(3, "@Gone!@", "@What happened?@", 1);
+}

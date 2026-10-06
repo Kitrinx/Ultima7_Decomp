@@ -1,0 +1,31 @@
+Routine Stove_NS accepts a0 #locals(2) {
+    if (event = _Converse) {
+        v0 = ~GetFrame(item);
+        if (v0 = 0) {
+            Sfx(25);
+            SetFrame(1, item);
+            v1 = ~PostAction(<< _aNO_HALT_i, _aWAIT_i, 20, _aUSABLE_i, #Stove_NS >>, item);
+            terminate;
+        }
+    }
+    if (event = _Action) {
+        SetFrame(0, item);
+        Sfx(255);
+    }
+}
+
+Routine Stove accepts a0 #locals(2) {
+    if (event = _Converse) {
+        v0 = ~GetFrame(item);
+        if (v0 = 0) {
+            Sfx(97);
+            SetFrame(1, item);
+            v1 = ~PostAction(<< _aNO_HALT_i, _aWAIT_i, 20, _aUSABLE_i, #Stove >>, item);
+            terminate;
+        }
+    }
+    if (event = _Action) {
+        SetFrame(0, item);
+        Sfx(255);
+    }
+}

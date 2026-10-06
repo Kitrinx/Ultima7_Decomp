@@ -1,0 +1,23 @@
+Routine drum accepts a0 #locals(2) #uses(Bark_i) {
+    ClearBark_i(_Avatar);
+    v0 = ~GetFrame(item);
+    if ((v0 = 1) or (v0 = 2)) {
+        v1 = ~GetTarget();
+        if ~Item_isNpc(v1) {
+            Sfx(56);
+            Item_bark("@Take that!@", _Avatar);
+            Bark_i(65534, "@Oooww!@", v1);
+            terminate;
+        }
+        if ((~Item_getType(v1) = _Drum) and (~GetFrame(v1) = 0)) {
+            Sfx(60);
+            Bark_i(1, "@Listen...@", _Avatar);
+            terminate;
+        }
+        if ((~Item_getType(v1) = _Drum) and (~GetFrame(v1) = 3)) {
+            Sfx(122);
+            Item_bark("@Troll drum, nice...@", _Avatar);
+            terminate;
+        }
+    }
+}

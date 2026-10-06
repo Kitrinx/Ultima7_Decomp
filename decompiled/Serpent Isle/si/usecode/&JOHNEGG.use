@@ -1,0 +1,861 @@
+Routine Nightmare accepts a0 #locals(1) #uses(RemoveAll_i) {
+    if (event = _Talking) {
+        SetSpeaker0_i(0, 65240);
+        ["Avatar! How good it is to see thee! How long hath it been since we last met?"];
+        SetSpeaker1_i(0, _Avatar);
+        ["Ahhhh... Errrr... Well...."];
+        CloseSpeaker1_i();
+        SetSpeaker0_i(0, 65240);
+        ["Do not tell me that thou dost not recognize me? Come now, Avatar, it hath not been that long."];
+        SetSpeaker1_i(0, _Avatar);
+        ["Welll... Maybe..."];
+        CloseSpeaker1_i();
+        SetSpeaker0_i(0, 65240);
+        ["It is I! Smith the Horse! Only the finest steed in all of Britannia."* "Oh, I suppose thou wouldst not recognize me such as I am. This is the appearance I take here at the Realm of Dreams."* "Ah, this is the life. Mine own keep, as much hay as I could want, no insects to bother me... Who could ask for more?" *"Where are my wits! Avatar, I have something important to tell thee. But what was it?"];
+        ["Oh, yes! Avatar, thou must take Rudyom's wand to the Isle of the Avatar!"* "There thou wilt find a monolith made of blackrock that Batlin is using to create a gateway to bring the Guardian into our world!"* "The future of Britannia doth lie in thine hands, Avatar!"];
+        SetSpeaker1_i(0, _Avatar);
+        ["Ahh, Smith, the Guardian hath been stopped. Everything is safe."];
+        CloseSpeaker1_i();
+        SetSpeaker0_i(0, 65240);
+        ["Oh..." *"I feel like I have made a mule of myself. Never mind..." *"Now I remember! Thou hast left Britannia and hast journeyed to the Serpent Isle in search of Batlin!" *"Poor Iolo, he must be distraught to have found that Gwenno left on that voyage with that fiend. I hope that thou wilt find her before that evil man doth do something to her. She, at least, hath always been kind to me." *"Wait! Avatar, I do have some information thou canst use!" *"Batlin and his band of hired swords are waiting for thee at..." *"Yummie! Here comes someone with more hay..."];
+        CloseSpeaker0_i();
+        v0 = ~GetCoord(item);
+        createSprite(65535, 0, 0, 0, v0::2, v0::1, 21);
+        Item_destroy(item);
+        Sfx(76);
+    }
+    if (event = _Action) {
+        ClearItemFlag_i(_DontMove_i, _Avatar);
+        ClearItemFlag_i(_Tournament, item);
+        v0 = ~GetCoord(item);
+        createSprite(65535, 0, 0, 0, (v0::2 - 1), (v0::1 - 1), 4);
+        createSprite(3, 2, 0, 0, (v0::2 - 1), (v0::1 - 1), 17);
+        createSprite(65535, 0, 0, 0, (v0::2 - 2), (v0::1 - 2), 17);
+        Sfx(42);
+        LightningBolt();
+        RemoveAll_i(item);
+    }
+}
+
+Routine FreedomEgg_i accepts a0 #locals(17) #uses(UnfreezeAvatar_i, ToothSliderEgg_i, GrievingHusbandEgg_i, JailerGreetsEgg_i, FiresBurnOutEgg_i, LorthondoKillsGuardEgg_i, PlaceSabrinaEgg_i, ShiftPartyNS_i, LorthondoAmbushEgg_i, RatMenEgg_i, SabrinaFollowsEgg_i, PartyLightningEgg_i, SabrinaWakesNightmareEgg_i, ~UnleashFighters_i, ~UnleashTrolls_i, RabbitRewardEgg_i, TeldronoTalksEgg_i) {
+    if (event = _Path_Failure) {
+        UnfreezeAvatar_i();
+        event = 10;
+        if (~Item_getType(item) = _Ranger_M) {
+            v0 = << 2569, 1370, 0 >>;
+            Item_move(v0, item);
+        }
+    }
+    if (event = _Trigger) {
+        if not ~GetQuality(item) {
+            ToothSliderEgg_i();
+            goto label_90;
+        }
+        v1 = ~GetCoord(_Avatar);
+        if (v1::3 >= 6) {
+            terminate;
+        }
+        if (~GetQuality(item) = 1) {
+            GrievingHusbandEgg_i();
+        }
+        if (~GetQuality(item) = 2) {
+            JailerGreetsEgg_i();
+        }
+        if (~GetQuality(item) = 3) {
+            FiresBurnOutEgg_i();
+        }
+        if (~GetQuality(item) = 4) {
+            LorthondoKillsGuardEgg_i();
+        }
+        if (~GetQuality(item) = 5) {
+            PlaceSabrinaEgg_i();
+        }
+        if (~GetQuality(item) = 6) {
+            ShiftPartyNS_i(0);
+        }
+        if (~GetQuality(item) = 7) {
+            ShiftPartyNS_i(1);
+        }
+        if (~GetQuality(item) = 8) {
+            LorthondoAmbushEgg_i();
+        }
+        if (~GetQuality(item) = 9) {
+            RatMenEgg_i();
+            v0 = << 2584, 1350, 0 >>;
+            goto label_121;
+        }
+        if (~GetQuality(item) = 10) {
+            SabrinaFollowsEgg_i();
+        }
+        if (~GetQuality(item) = 11) {
+            PartyLightningEgg_i();
+        }
+        if (~GetQuality(item) = 12) {
+            SabrinaWakesNightmareEgg_i();
+        }
+        if (~GetQuality(item) = 13) {
+            GrievingHusbandEgg_i();
+        }
+        if (~GetQuality(item) = 14) && ~UnleashFighters_i() {
+            v0 = << 2550, 1385, 0 >>;
+            goto label_121;
+        }
+        if (~GetQuality(item) = 15) && ~UnleashTrolls_i() {
+            v0 = << 2568, 1342, 0 >>;
+            goto label_121;
+        }
+        if (~GetQuality(item) = 16) {
+            RabbitRewardEgg_i();
+        }
+        if (~GetQuality(item) = 17) {
+            GrievingHusbandEgg_i();
+        }
+        if (~GetQuality(item) = 18) {
+            TeldronoTalksEgg_i();
+        }
+        v0 = false;
+        if (~GetQuality(item) = 200) {
+            v2 = ~FindNearest_i(3, _Teleport_Platform, item);
+            if (~GetFrame(v2) = 1) {
+                v0 = ~GetCoord(_Avatar);
+                v3 = ~CreateCreature_i(v0, _Fawn_Guard);
+                v4 = ~Item_push(v3);
+                Polymorph_i(_Fawn_Guard, v3);
+                ClearItemFlag_i(_Tournament, v3);
+                v0 = << 2422, 1383, 0 >>;
+            }
+        }
+        if (~GetQuality(item) = 201) {
+            v0 = << 2270, 1487, 0 >>;
+        }
+        if (~GetQuality(item) = 202) {
+            v2 = ~FindNearest_i(3, _Teleport_Platform, item);
+            if (~GetFrame(v2) = 1) {
+                v0 = << 2190, 1407, 0 >>;
+            }
+        }
+        if (~GetQuality(item) = 203) {
+            FiresBurnOutEgg_i();
+            terminate;
+        }
+        if (~GetQuality(item) = 204) {
+            v0 = << 2342, 1380, 1 >>;
+        }
+        if (~GetQuality(item) = 205) {
+            v0 = << 2440, 1527, 1 >>;
+        }
+        if (~GetQuality(item) = 206) {
+            v0 = << 2584, 1542, 0 >>;
+        }
+        if (~GetQuality(item) = 207) {
+            v0 = << 2359, 1842, 1 >>;
+        }
+        if (~GetQuality(item) = 208) {
+            v0 = << 2155, 1534, 1 >>;
+        }
+        if (~GetQuality(item) = 209) && (v1::3 > 1) {
+            v0 = << 2607, 1688, 0 >>;
+        }
+        if (~GetQuality(item) = 210) {
+            v0 = << 2614, 1607, 0 >>;
+        }
+        if (~GetQuality(item) = 211) {
+            v0 = << 2600, 1735, 1 >>;
+        }
+        if (~GetQuality(item) = 212) {
+            v5 = ~GetParty();
+            Foreach v8 in v5 {
+                v4 = ~PostAction(<< _aWAIT_i, 3 >>, v8);
+                v0 = << 3000, 714, 1 >>;
+                v9 = ~GetCoord(v8);
+                v10 = ~GetCoord(item);
+                if (v9::1 > v10::1) {
+                    v0::1 = (v0::1 + (v9::1 - v10::1));
+                } else {
+                    v0::1 = (v0::1 - (v10::1 - v9::1));
+                }
+                if (v9::2 > v10::2) {
+                    v0::2 = (v0::2 + (v9::2 - v10::2));
+                } else {
+                    v0::2 = (v0::2 - (v10::2 - v9::2));
+                }
+                v0::3 = v9::3;
+                Item_move(v0, v8);
+            }
+            terminate;
+        }
+        if (~GetQuality(item) = 213) {
+            v0 = << 2581, 1367, 0 >>;
+        }
+        if v0 {
+            if ((~GetQuality(item) = 207) and ((flag(569) = false) and ~GetItemFlag_i(_InParty_i, _Stefano))) {
+                Item_move(v0, _Party);
+                createSprite(65535, 0, 0, 0, (v0::2 - 1), (v0::1 - 1), 7);
+                Sfx(83);
+                flag(569) = true;
+                ClearItemFlag_i(_Tournament, _Stefano);
+                $temp1flag = true;
+                v11 = ~PostInFuture(15, << _aNO_HALT_i, _aUSABLE_i, #Stefano >>, _Avatar);
+            } else {
+                Item_move(v0, _Party);
+                createSprite(65535, 0, 0, 0, (v0::2 - 1), (v0::1 - 1), 7);
+                Sfx(130);
+                terminate;
+            }
+        }
+    }
+    label_90:
+    if (event = _Action) {
+        if ((~Item_getType(item) = _Field_Fire) or (~Item_getType(item) = _Flat_Burn_Mark)) {
+            FiresBurnOutEgg_i();
+        }
+        if (~Item_getType(item) = _Chaos_Male) {
+            LorthondoKillsGuardEgg_i();
+        }
+        if (~Item_getType(item) = _Fawn_Guard) {
+            LorthondoKillsGuardEgg_i();
+        }
+        if ((~Item_getType(item) = _Avatar_Type) or (~Item_getType(item) = _Avatar_Female)) {
+            LorthondoKillsGuardEgg_i();
+        }
+        if (~Item_getType(item) = _Ranger_M) {
+            GrievingHusbandEgg_i();
+        }
+        if (~Item_getType(item) = _NPC1_Bodies) {
+            GrievingHusbandEgg_i();
+        }
+        if (~Item_getType(item) = _Lever) {
+            GrievingHusbandEgg_i();
+        }
+        if (~Item_getType(item) = _Skeleton) {
+            GrievingHusbandEgg_i();
+        }
+        if (~Item_getType(item) = _Nightmare) {
+            SabrinaWakesNightmareEgg_i();
+        }
+        if (~Item_getType(item) = _Food) {
+            SabrinaWakesNightmareEgg_i();
+        }
+        if (~Item_getType(item) = _Rabbit) {
+            RabbitRewardEgg_i();
+        }
+    }
+    if (event = _Pathfind1) {
+        if (~Item_getType(item) = ~Item_getType(_Sabrina)) {
+            SabrinaWakesNightmareEgg_i();
+        }
+        if (~Item_getType(item) = _Ranger_M) {
+            GrievingHusbandEgg_i();
+        }
+        if (~Item_getType(item) = _NPC1_Bodies) {
+            GrievingHusbandEgg_i();
+        }
+    }
+    terminate;
+    label_121:
+    if v0 {
+        v12 = (v0 & << 65177, 0 >>);
+        v13 = ~FindNearby_i(16, 5, _Egg_Type, v12);
+        Foreach v16 in v13 {
+            Item_destroy(v16);
+        }
+        Item_destroy(item);
+    }
+}
+
+Routine FadeScreen_i accepts a0 #locals(0) {
+    if ~Item_isNpc(item) {
+        FadePalette_i(1, 1, 12);
+    } else {
+        FadePalette_i(0, 1, 12);
+    }
+}
+
+Usable ToothSliderEgg_i #locals(16) {
+    v0 = ~FindNearest_i(2, _NS_C_Slider, item);
+    if not v0 {
+        v0 = ~FindNearest_i(2, _EW_C_Slider, item);
+        if not v0 {
+            v0 = ~FindNearest_i(2, _NS_Slider, item);
+            if not v0 {
+                v0 = ~FindNearest_i(2, _EW_Slider, item);
+                if not v0 {
+                    terminate;
+                }
+            }
+        }
+    }
+    v1 = ~Item_getType(v0);
+    v2 = ~GetQuality(v0);
+    if (v2 <= 26) {
+        v3 = ~GetContents(_All, _All, _Jawbone, _Avatar);
+        v4 = ~GetContents(_All, _All, _Teeth, v3);
+        if v3 {
+            v5 = ~ListSize_i(v4);
+            v6 = 0;
+            if not v4 {
+                goto label_32;
+            }
+            Foreach v9 in v4 {
+                v10 = (~GetFrame(v9) + 1);
+                v6 = (v6 + 1);
+                if ((v2 = 19) and ((v10 = 2) or (v10 = 3))) {
+                    goto label_24;
+                }
+                if ((v2 = 20) and ((v10 = 4) or (v10 = 5))) {
+                    goto label_24;
+                }
+                if ((v2 = 21) and ((v10 = 10) or ((v10 = 11) or ((v10 = 12) or (v10 = 13))))) {
+                    goto label_24;
+                }
+                if ((v2 = 22) and ((v10 = 6) or ((v10 = 7) or ((v10 = 8) or (v10 = 9))))) {
+                    goto label_24;
+                }
+                if ((v2 = 23) and ((v10 = 14) or (v10 = 15))) {
+                    goto label_24;
+                }
+                if ((v2 = 24) and ((v10 = 17) or (v10 = 18))) {
+                    goto label_24;
+                }
+                if (v10 = v2) {
+                    label_24:
+                    v11 = false;
+                    if (v1 = 303) {
+                        v12 = 936;
+                        v11 = true;
+                    }
+                    if (v1 = 876) {
+                        v12 = 935;
+                        v11 = true;
+                    }
+                    if v11 {
+                        v13 = ~PostAction(<< _aWAIT_i, 1, _aFRAME, 13, _aWAIT_i, 1, _aFRAME, 12, _aWAIT_i, 1, _aFRAME, 11, _aWAIT_i, 1, _aFRAME, 10, _aWAIT_i, 1, _aUSABLE_i, v12 >>, v0);
+                        Sfx(89);
+                    }
+                    terminate;
+                }
+                if (v6 = v5) {
+                    label_32:
+                    v11 = false;
+                    if (v1 = 936) {
+                        v11 = true;
+                        v14 = ~Item_create(_NS_C_Slider);
+                    }
+                    if (v1 = 935) {
+                        v11 = true;
+                        v14 = ~Item_create(_EW_C_Slider);
+                    }
+                    if v11 {
+                        v15 = ~GetCoord(v0);
+                        SetFrame(10, v14);
+                        v13 = ~SetQuality(v2, v14);
+                        Item_destroy(v0);
+                        v13 = ~PopToMap(v15);
+                        v13 = ~PostAction(<< _aWAIT_i, 1, _aFRAME, 11, _aWAIT_i, 1, _aFRAME, 12, _aWAIT_i, 1, _aFRAME, 13, _aWAIT_i, 1, _aFRAME, 14 >>, v14);
+                        Sfx(88);
+                    }
+                    terminate;
+                }
+            }
+        }
+    }
+}
+
+Usable GrievingHusbandEgg_i #locals(16) #uses(RemoveAll_i, UnfreezeAvatar_i, PathToItem_i) {
+    if (event = _Trigger) {
+        if (~GetQuality(item) = 1) {
+            v0 = ~FindNearby_i(8, 3, _Ranger_M, item);
+            if v0 {
+                SetWorkType(_Wait, v0);
+                Npc_setAlignment(_Neutral, v0);
+                SetNPCID_i(2, v0);
+                v1 = ~PostAction(<< _aFACE_i, _West, _aKNEEL_FRAME_i, _aUSABLE_i, #FreedomEgg_i >>, v0);
+            }
+        }
+        if (~GetQuality(item) = 13) {
+            v0 = ~FindNearby_i(8, 5, _Ranger_M, item);
+            if v0 {
+                Item_destroy(item);
+                v2 = (~GetCoord(v0) & << 65177, 21 >>);
+                v3 = ~FindNearby_i(0, 5, _NPC1_Bodies, v2);
+                if v3 {
+                    ClearBark_i(v0);
+                    Item_bark("@She loved flowers so...@", v0);
+                } else {
+                    Item_bark("@If I had flowers...@", v0);
+                    Npc_setAlignment(_Neutral, v0);
+                }
+            }
+        }
+        if (~GetQuality(item) = 17) {
+            v0 = ~FindNearby_i(8, 20, _Ranger_M, item);
+            if v0 {
+                v3 = ~FindNearby_i(0, 10, _NPC1_Bodies, item);
+                if v3 {
+                    v4 = ~FindNearby_i(0, 10, _Potted_Plants, item);
+                    if v4 {
+                        ClearBark_i(v0);
+                        Kernel_resetRef(v0);
+                        v5 = ~GetDirToward_i(_Avatar, v0);
+                        v1 = ~PostAction(<< _aWAIT_i, 2, _aBEND_FRAME_i, _aWAIT_i, 2, _aSTAND_FRAME_i, _aBARK_i, "@I shall repay thy kindness.@", _aFACE_i, v5 >>, v0);
+                        v1 = ~PostAction(<< _aWAIT_i, 18, _aUSABLE_i, #FreedomEgg_i >>, v3);
+                    }
+                } else {
+                    Item_bark("@If I had flowers...@", v0);
+                    Npc_setAlignment(_Neutral, v0);
+                }
+            }
+        }
+    }
+    if (event = _Action) {
+        if (~Item_getType(item) = _Ranger_M) {
+            v6 = ~rndRange(5, 1);
+            if (v6 = 1) {
+                v7 = "@Oh, my love.@";
+            }
+            if (v6 = 2) {
+                v7 = "@What have they done?@";
+            }
+            if (v6 = 3) {
+                v7 = "@They shall pay!@";
+            }
+            if (v6 = 4) {
+                v7 = "@I'll never forget thee.@";
+            }
+            if (v6 = 5) {
+                v7 = "@Thy life was my life.@";
+            }
+            v6 = ~rndRange(15, 0);
+            v1 = ~PostInFuture((20 + v6), << _aNO_HALT_i, _aBARK_i, v7, _aWAIT_i, 15, _aUSABLE_i, #FreedomEgg_i >>, item);
+        }
+        if (~Item_getType(item) = _NPC1_Bodies) {
+            v0 = ~FindNearby_i(8, 20, _Ranger_M, item);
+            if v0 {
+                v5 = ~GetDirToward_i(v0, _Avatar);
+                v1 = ~PostAction(<< _aFACE_i, v5 >>, _Avatar);
+                SetWorkType(_Wait, v0);
+                v8 = << 2569, 1370, 0 >>;
+                PathfindNPC_i(true, #FreedomEgg_i, v0, _Pathfind1, v8, v0);
+                terminate;
+            }
+        }
+        if (~Item_getType(item) = _Lever) {
+            if (~GetQuality(item) = 163) {
+                v0 = ~FindNearby_i(8, 5, _Ranger_M, item);
+                if v0 {
+                    Sfx(70);
+                    v1 = ~SetQuality(157, item);
+                    v1 = ~PostAction(<< _aWAIT_i, 5, _aBEND_FRAME_i, _aWAIT_i, 3, _aSTAND_FRAME_i, _aWAIT_i, 3, _aREADY_FRAME_i >>, v0);
+                    Item_bark("@Now I can rest!@", v0);
+                    v1 = ~PostAction(<< _aWAIT_i, 15, _aUSABLE_i, #FreedomEgg_i >>, item);
+                }
+            } else {
+                v0 = ~FindNearby_i(8, 15, _Ranger_M, item);
+                if v0 {
+                    v8 = ~GetCoord(v0);
+                    v9 = ~GetFullFrame_i(v0);
+                    RemoveAll_i(v0);
+                    v10 = ~CreateCreature_i(v8, _Skeleton);
+                    SetWorkType(_Wait, v10);
+                    SetFullFrame_i(v9, v10);
+                    v1 = ~PostAction(<< _aREADY_FRAME_i, _aWAIT_i, 2, _aBEND_FRAME_i, _aWAIT_i, 2, _aKNEEL_FRAME_i, _aWAIT_i, 2, _aLIE_FRAME_i, _aWAIT_i, 10, _aUSABLE_i, #FreedomEgg_i >>, v10);
+                }
+            }
+        }
+        if (~Item_getType(item) = _Skeleton) {
+            UnfreezeAvatar_i();
+            v8 = ~GetCoord(item);
+            createSprite(65535, 0, 0, 0, (v8::2 - 1), (v8::1 - 1), 9);
+            Sfx(33);
+            RemoveAll_i(item);
+            terminate;
+        }
+    }
+    if (event = _Pathfind1) && (~Item_getType(item) = _Ranger_M) {
+        v0 = ~FindNearby_i(8, 30, _Ranger_M, item);
+        v2 = (~GetCoord(item) & (163 & 65177));
+        v11 = ~FindNearby_i(0, 30, _Lever, v2);
+        v2 = (~GetCoord(item) & (152 & 65177));
+        v12 = ~FindNearby_i(0, 30, _Lever, v2);
+        if (v0 and (v11 and v12)) {
+            ClearBark_i(v0);
+            v5 = ~GetDirToward_i(v11, v0);
+            v1 = ~PostAction(<< _aWAIT_i, 7, _aBARK_i, "@I will fix this lever.@", _aFACE_i, v5, _aWAIT_i, 2, _aBEND_FRAME_i, _aWAIT_i, 2, _aKNEEL_FRAME_i >>, v0);
+            v1 = ~PostAction(<< _aWAIT_i, 20, _aUSABLE_i, #FreedomEgg_i >>, v11);
+            v13 = 1;
+            v14 = 65533;
+            v15 = 0;
+            PathToItem_i(11, v0, #FreedomEgg_i, v15, v14, v13, v12);
+            SetPathFailure_i(_Pathfind2, v0, #FreedomEgg_i);
+        }
+    }
+}
+
+Usable JailerGreetsEgg_i #locals(2) {
+    $temp1flag = false;
+    $temp2flag = false;
+    $temp3flag = false;
+    $temp4flag = false;
+    SetItemFlag_i(_Tournament, _Prison2);
+    SetItemFlag_i(_Tournament, _Lorthondo);
+    SetItemFlag_i(_Tournament, _Teldrono);
+    SetWorkType(_Wait, _Teldrono);
+    v0 = ~FindNearest_i(20, _M_Automaton, item);
+    if v0 {
+        Item_bark("@Good morning.@", v0);
+        v1 = ~PostAction(<< _aWAIT_i, 12, _aUSABLE_i, #Jail01 >>, v0);
+    }
+}
+
+Usable FiresBurnOutEgg_i #locals(7) {
+    if (event = _Trigger) {
+        if (~GetQuality(item) = 3) {
+            v0 = ~FindNearby_i(0, 10, _Field_Fire, item);
+            Foreach v3 in v0 {
+                v4 = ~PostInFuture(~rndRange(10, 5), << _aNO_HALT_i, _aFINISH_i, _aSFX_i, 33, _aREMOVE_i >>, v3);
+            }
+        }
+        if (~GetQuality(item) = 203) {
+            v0 = ~FindNearby_i(0, 10, _Field_Fire, item);
+            if not v0 {
+                v5 = ~FindNearest_i(10, _Flat_Burn_Mark, item);
+                if v5 {
+                    v6 = ~GetCoord(_Avatar);
+                    createSprite(65535, 0, 0, 0, (v6::2 - 1), (v6::1 - 1), 31);
+                    Sfx(42);
+                    v4 = ~PostAction(<< _aWAIT_i, 6, _aUSABLE_i, #FadeScreen_i, _aWAIT_i, 6, _aUSABLE_i, #FreedomEgg_i >>, v5);
+                    v4 = ~PostAction(<< _aWAIT_i, 14 >>, _Avatar);
+                    terminate;
+                }
+            }
+        }
+    }
+    if (event = _Action) {
+        if (~Item_getType(item) = _Field_Fire) {
+            v6 = ~GetCoord(item);
+            Item_destroy(item);
+            createSprite(65535, 0, 0, 0, (v6::2 - 1), (v6::1 - 1), 9);
+            Sfx(33);
+            terminate;
+        }
+        if (~Item_getType(item) = _Flat_Burn_Mark) {
+            v6 = << 2439, 1527, 0 >>;
+            Item_move(v6, _Party);
+            v4 = ~PostAction(<< _aUSABLE_i, #FadeScreen_i >>, _Avatar);
+            createSprite(65535, 0, 0, 0, (v6::2 - 1), (v6::1 - 1), 7);
+            Sfx(130);
+            terminate;
+        }
+    }
+}
+
+Usable LorthondoKillsGuardEgg_i #locals(11) #uses(PathToItem_i) {
+    if (event = _Trigger) {
+        v0 = << 2298, 1375, 1 >>;
+        Item_move(v0, _Lorthondo);
+        SetWorkType(_Wait, _Lorthondo);
+        SetWorkType(_Wait, item);
+        v1 = ~FindNearby_i(8, 0, _Fawn_Guard, item);
+        v2 = (~GetCoord(v1) & (65177 & 0));
+        v3 = ~FindNearby_i(0, 0, _Egg_Type, v2);
+        if v1 {
+            v4 = ~PostAction(<< _aFACE_i, _West, _aWAIT_i, 3, _aBARK_i, "@Forgive me, master Lorthondo.@", _aWAIT_i, 2, _aBEND_FRAME_i, _aWAIT_i, 2, _aKNEEL_FRAME_i >>, v1);
+            v4 = ~PostAction(<< _aFACE_i, _East, _aSIT_FRAME_i, _aWAIT_i, 2, _aWAIT_i, 1, _aWAIT_i, 2, _aWAIT_i, 3, _aWAIT_i, 10, _aUSABLE_i, #FreedomEgg_i >>, _Lorthondo);
+        }
+    }
+    if (event = _Action) {
+        if ((~Item_getType(item) = _Avatar_Type) or (~Item_getType(item) = _Avatar_Female)) {
+            v2 = (~GetCoord(_Avatar) & (4 & 7));
+            v5 = ~FindNearby_i(16, 40, _Egg_Type, v2);
+            if v5 {
+                SetItemFlag_i(_DontMove_i, _Avatar);
+                v6 = 6;
+                v7 = 0;
+                v8 = 0;
+                PathToItem_i(10, item, #FreedomEgg_i, v8, v7, v6, v5);
+                SetPathFailure_i(_Pathfind1, item, #FreedomEgg_i);
+            }
+        }
+        if (~Item_getType(item) = _Chaos_Male) {
+            v1 = ~FindNearby_i(8, 10, _Fawn_Guard, item);
+            v4 = ~PostAction(<< _aWAIT_i, 1, _aWAIT_i, 4, _aWAIT_i, 4, _aBEND_FRAME_i, _aWAIT_i, 2, _aSTAND_FRAME_i, _aWAIT_i, 3, _aUSABLE_i, #FreedomEgg_i >>, v1);
+            v4 = ~PostAction(<< _aBARK_i, "@Thou hast failed me for the last time.@", _aWAIT_i, 3, _aBEND_FRAME_i, _aWAIT_i, 3, _aSTAND_FRAME_i, _aWAIT_i, 3, _aOUT_FRAME_i, _aWAIT_i, 3, _aUP_FRAME_i, _aWAIT_i, 5, _aOUT_FRAME_i, _aWAIT_i, 3, _aSTAND_FRAME_i >>, item);
+        }
+        if (~Item_getType(item) = _Fawn_Guard) {
+            v0 = ~GetCoord(item);
+            createSprite(65535, 0, 0, 0, (v0::2 - 1), (v0::1 - 1), 17);
+            createSprite(65535, 0, 0, 0, (v0::2 - 1), (v0::1 - 1), 30);
+            Sfx(116);
+            Item_destroy(item);
+            v9 = ~Item_create(_Field_Fire);
+            if v9 {
+                SetFrame(0, v9);
+            }
+            v10 = ~Item_create(_Corpses);
+            if v10 {
+                SetFrame(0, v10);
+                v4 = ~PopToMap(v0);
+                v4 = ~PostAction(<< _aBARK_i, "@NOOOooooo!!!@", _aWAIT_i, 21, _aUSABLE_i, #Lorthondo >>, v10);
+            }
+            if v9 {
+                v0::3 = (v0::3 + 1);
+                v4 = ~PopToMap(v0);
+                v4 = ~PostAction(<< _aWAIT_i, 22, _aREMOVE_i >>, v9);
+            }
+        }
+    }
+}
+
+Usable PlaceSabrinaEgg_i #locals(3) {
+    SetWorkType(_Wait, _Sabrina);
+    v0 = << 2584, 1359, 1 >>;
+    Item_move(v0, _Sabrina);
+    v1 = ~PostAction(<< _aFACE_i, _West, _aCONTINUE_i, _aLIE_FRAME_i >>, _Sabrina);
+    v2 = ~FindNearby_i(0, 25, _Nightmare, item);
+    if v2 {
+        SetItemFlag_i(_Tournament, v2);
+    }
+    Item_destroy(item);
+}
+
+Routine ShiftPartyNS_i accepts a0 #locals(5) {
+    v1 = ~GetParty();
+    Foreach v4 in v1 {
+        v5 = ~GetCoord(v4);
+        if not v0 {
+            v5::2 = (v5::2 - 16);
+        } else {
+            v5::2 = (v5::2 + 16);
+        }
+        Item_move(v5, v4);
+    }
+    terminate;
+}
+
+Usable LorthondoAmbushEgg_i #locals(10) {
+    v0 = ~GetCoord(item);
+    if not ((v0::1 = 2495) and ((v0::2 = 1770) and (v0::3 = 0))) {
+        terminate;
+    }
+    v1 = (~GetCoord(item) & << 65177, 6 >>);
+    v2 = ~FindNearby_i(16, 30, _Egg_Type, v1);
+    Foreach v5 in v2 {
+        v0 = ~GetCoord(v5);
+        v6 = false;
+        if (~GetQuality(v5) = 0) {
+            ClearItemFlag_i(_Dead, _Lorthondo);
+            SetWorkType(_Wait, _Lorthondo);
+            Item_move(v0, _Lorthondo);
+            createSprite(65535, 0, 0, 0, (v0::2 - 1), (v0::1 - 1), 7);
+            Sfx(130);
+            v7 = ~GetDirToward_i(_Avatar, _Lorthondo);
+            v8 = ~PostAction(<< _aBARK_i, "@Prepare to die...@", _aFACE_i, v7, _aUP_FRAME_i, _aWAIT_i, 4, _aOUT_FRAME_i, _aWAIT_i, 3, _aSTAND_FRAME_i, _aUSABLE_i, #Lorthondo >>, _Lorthondo);
+        }
+        if (~GetQuality(v5) = 100) {
+            Item_destroy(v5);
+            v6 = ~Item_create(_Outcropping);
+            SetFrame(9, v6);
+        }
+        if (~GetQuality(v5) = 150) {
+            Item_destroy(v5);
+            v6 = ~Item_create(_Outcropping);
+            SetFrame(3, v6);
+        }
+        if (~GetQuality(v5) = 200) {
+            Item_destroy(v5);
+            v6 = ~Item_create(_Outcropping);
+            SetFrame(3, v6);
+        }
+        if v6 {
+            v8 = ~PopToMap(v0);
+            if v8 {
+                v9 = ~rndRange(3, 1);
+                v8 = ~PostAction(<< _aWAIT_i, v9, _aNEXT_FRAME, _aWAIT_i, v9, _aLOOP_i, 65533, 4 >>, v6);
+            }
+        }
+    }
+    Earthquake_i(1);
+    v8 = ~PostInFuture(57, << _aNO_HALT_i, _aUSABLE_i, #Daemon_sword >>, _Avatar);
+}
+
+Usable RatMenEgg_i #locals(8) #uses(AttackAvatar_i) {
+    v0 = ~FindNearby_i(8, 10, _Rat, item);
+    v1 = 0;
+    Foreach v4 in v0 {
+        v1 = (v1 + 9);
+        v5 = ~GetCoord(v4);
+        Item_destroy(v4);
+        Sfx(65);
+        createSprite(65535, 0, 0, 0, (v5::2 - 1), (v5::1 - 1), 6);
+        v6 = ~CreateCreature_i(v5, _Rat_Man);
+        AttackAvatar_i(v6);
+        v7 = ~PostInFuture(v1, << _aNO_HALT_i, _aBARK_i, "@Fresh flesh!@" >>, v4);
+    }
+    Sfx(97);
+}
+
+Usable SabrinaFollowsEgg_i #locals(8) {
+    v0 = (~GetCoord(_Sabrina) & (65177 & 7));
+    v1 = ~FindNearby_i(16, 5, _Egg_Type, v0);
+    v1 = (v1 & ~FindNearby_i(128, 5, _Pool_Of_Light, _Sabrina));
+    Foreach v4 in v1 {
+        Item_destroy(v4);
+    }
+    v5::1 = (v0::1 + 1);
+    v5::2 = (v0::2 + 1);
+    v5::3 = 0;
+    Item_move(v5, _Sabrina);
+    v6 = ~GetDirToward_i(_Avatar, _Sabrina);
+    v7 = ~PostAction(<< _aSTEP_RIGHT_FRAME_i, _aFACE_i, v6, _aWAIT_i, 2, _aBARK_i, "@Please... Help me...@", _aWAIT_i, 15, _aBARK_i, "@Lead me to my nightmare.@" >>, _Sabrina);
+    v7 = ~PostAction(<< _aWAIT_i, 3 >>, _Avatar);
+    Npc_setAlignment(_Neutral, _Sabrina);
+    SetWorkType(_Hound, _Sabrina);
+}
+
+Usable PartyLightningEgg_i #locals(6) {
+    v0 = ~GetCoord(_Avatar);
+    v0::1 = (v0::1 - (v0::3 / 2));
+    v0::2 = (v0::2 - (v0::3 / 2));
+    createSprite(65535, 0, 0, 0, (v0::2 - 1), (v0::1 - 1), 17);
+    createSprite(65535, 0, 0, 0, (v0::2 - 1), (v0::1 - 1), 1);
+    LightningBolt();
+    Sfx(42);
+    v1 = ~GetParty();
+    Foreach v4 in v1 {
+        v5 = ~DamageItem_i(v4, 3, 30, ~GetNPCStat_i(_Str, v4));
+    }
+}
+
+Usable SabrinaWakesNightmareEgg_i #locals(8) #uses(PathNPCToItem_i) {
+    if (event = _Trigger) {
+        v0 = ~FindNearby_i(0, 12, _Nightmare, item);
+        if v0 {
+            SetWorkType(_Wait, _Sabrina);
+            v1 = 65535;
+            v2 = 65535;
+            v3 = 65533;
+            PathNPCToItem_i(true, _Pathfind1, ~NPCToItem_i(_Sabrina), #FreedomEgg_i, v3, v2, v1, item, _Sabrina);
+            SetPathFailure_i(_Pathfind1, ~NPCToItem_i(_Sabrina), #FreedomEgg_i);
+        }
+    }
+    if (event = _Pathfind1) {
+        SetWorkType(_Stand, item);
+        v0 = ~FindNearby_i(0, 10, _Nightmare, item);
+        if v0 {
+            SetItemFlag_i(_DontMove_i, _Avatar);
+            v4 = ~GetDirToward_i(v0, item);
+            v5 = ~PostAction(<< _aBARK_i, "@Wake up, girl!@", _aFACE_i, v4, _aWAIT_i, 15, _aBARK_i, "@Dost thou crave a carrot?@" >>, item);
+            v6 = ~GetDirToward_i(item, v0);
+            v5 = ~PostAction(<< _aWAIT_i, 10, _aSTAND_FRAME_i, _aWAIT_i, 6, _aFACE_i, v6, _aWAIT_i, 12, _aUSABLE_i, #FreedomEgg_i >>, v0);
+        }
+    }
+    if (event = _Action) {
+        if (~Item_getType(item) = _Nightmare) {
+            v7 = ~GetContents(18, _All, _Food, _Sabrina);
+            if v7 {
+                v5 = ~PostAction(<< _aWAIT_i, 5, _aREADY_FRAME_i, _aWAIT_i, 1, _aRAISE1_FRAME_i, _aWAIT_i, 1, _aEXTEND1_FRAME_i, _aWAIT_i, 1, _aTHRUST1_FRAME_i, _aWAIT_i, 1, _aSTAND_FRAME_i >>, item);
+                v5 = ~PostAction(<< _aWAIT_i, 12, _aUSABLE_i, #FreedomEgg_i >>, v7);
+            }
+        }
+        if (~Item_getType(item) = _Food) {
+            v0 = ~FindNearby_i(0, 10, _Nightmare, item);
+            if v0 {
+                KillNPC_i(_Sabrina);
+                ClearItemFlag_i(_Dead, v0);
+                v5 = ~PostAction(<< _aWAIT_i, 5, _aUSABLE_i, #Nightmare >>, v0);
+            }
+        }
+    }
+}
+
+Function ~UnleashFighters_i #locals(9) #uses(AttackAvatar_i) {
+    v0 = (~GetCoord(item) & << 155, 0 >>);
+    if ~FindNearby_i(0, 10, _NS_Slider, v0) {
+        v1 = ~FindNearby_i(8, 30, _Skeleton, item);
+        v2 = 0;
+        Foreach v5 in v1 {
+            v2 = (v2 + 6);
+            v6 = ~GetCoord(v5);
+            Item_destroy(v5);
+            Sfx(65);
+            createSprite(65535, 0, 0, 0, (v6::2 - 1), (v6::1 - 1), 18);
+            v7 = ~CreateCreature_i(v6, _Pikeman);
+            AttackAvatar_i(v7);
+            v8 = ~PostInFuture(v2, << _aNO_HALT_i, _aBARK_i, "@I obey, master!@" >>, v5);
+        }
+        return true;
+    }
+    return false;
+}
+
+Function ~UnleashTrolls_i #locals(7) {
+    v0 = 0;
+    v1 = (~GetCoord(item) & << 159, 0 >>);
+    if ~FindNearby_i(0, 10, _EW_Slider, v1) {
+        v2 = ~FindNearby_i(8, 30, _IceTroll, item);
+        Foreach v5 in v2 {
+            v0 = (v0 + 7);
+            Npc_setAlignment(_Evil, v5);
+            SetWorkType(_Combat_0, v5);
+            v6 = ~PostInFuture(v0, << _aNO_HALT_i, _aBARK_i, "@I kill thee!@" >>, v5);
+        }
+        return true;
+    }
+    return false;
+}
+
+Usable RabbitRewardEgg_i #locals(8) #uses(UnfreezeAvatar_i) {
+    if (event = _Trigger) {
+        v0 = (~GetCoord(item) & (65177 & 18));
+        v1 = ~FindNearby_i(0, 6, _Food, v0);
+        if v1 {
+            v2 = ~FindNearby_i(8, 10, _Rabbit, item);
+            if v2 {
+                Item_destroy(item);
+                v3 = ~GetCoord(v1);
+                Item_destroy(v1);
+                createSprite(65535, 0, 0, 0, v3::2, v3::1, 13);
+                Sfx(130);
+                v3 = ~GetCoord(v2);
+                Polymorph_i(_Wench, v2);
+                createSprite(65535, 0, 0, 0, v3::2, v3::1, 9);
+                SetFrame(18, v2);
+                v4 = ~PostInFuture(30, << _aNO_HALT_i, _aUSABLE_i, #FreedomEgg_i >>, v2);
+                v5 = ~Item_create(_EW_I_Glass_Wall);
+                if v5 {
+                    SetFrame(5, v5);
+                    v4 = ~PopToMap(v3);
+                    v4 = ~PostAction(<< _aBARK_i, "@I thank thee...@", _aWAIT_i, 15, _aBARK_i, "@...and here is thy reward.@" >>, v5);
+                }
+                v6 = ~FindNearby_i(16, 0, _Egg_Type, v2);
+                if v6 {
+                    Item_destroy(v6);
+                }
+            }
+        }
+    }
+    if (event = _Action) {
+        v3 = ~GetCoord(item);
+        createSprite(65535, 0, 0, 0, (v3::2 - 1), (v3::1 - 1), 9);
+        Polymorph_i(_Rabbit, item);
+        SetWorkType(_Graze, item);
+        v7 = ~Item_create(_Potted_Plants);
+        if v7 {
+            SetFrame(4, v7);
+            v3::1 = (v3::1 + 1);
+            v3::2 = (v3::2 + 1);
+            v4 = ~PopToMap(v3);
+        }
+        createSprite(65535, 0, 0, 0, v3::2, v3::1, 13);
+        Sfx(130);
+        v5 = ~FindNearby_i(0, 10, _EW_I_Glass_Wall, item);
+        if v5 {
+            Item_destroy(v5);
+        }
+        UnfreezeAvatar_i();
+    }
+}
+
+Usable TeldronoTalksEgg_i #locals(0) {
+    SetWorkType(_Talk, _Teldrono);
+}

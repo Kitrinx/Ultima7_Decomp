@@ -1,0 +1,218 @@
+#	MAINMENU.EXE, the Serpent Isle main menu
+#
+#	Borland C++ 2.0 with its MAKE and TLIB, and Turbo Assembler 2.51.  Run
+#	MAKE in this directory, the build directory.  The tree is self-contained.
+#
+#		make			compiler in C:\BORLANDC
+#		make -DBC=C:\BC20	compiler elsewhere
+#
+#	The options change from file to file, as a makefile gives them.  Each
+#	list of objects shares one set of options, which its name spells:
+#	MM_O1Pd is -O -1 -P -d in this directory; vi0 is -vi-.
+
+.autodepend
+
+!if !$d(BC)
+BC = C:\BORLANDC
+!endif
+
+CC = $(BC)\bcc +MAINMENU.CFG
+AS = tasm
+
+all: MAINMENU.CFG MAINMENU.EXE
+
+# One directory a line: BCC hangs on a long -I line.
+MAINMENU.CFG: MAKEFILE
+	copy &&|
+-c -mm
+-I.
+-Iinclude
+-Icommon
+-Imain
+-Imain\mem
+-Imain\palette
+-Imain\video
+-Imain\xmm
+-Isound\drv
+-Izevent
+-I$(BC)\include
+| MAINMENU.CFG
+
+MM_ASM = xmsflat.obj setdac.obj flatmode.obj cpumode.obj emsinit.obj \
+	emsmap.obj
+$(MM_ASM):
+	$(AS) /mx $&.asm
+
+MM_COMMON_ASM = lstrtok.obj
+$(MM_COMMON_ASM):
+	$(AS) /mx common\$&.asm
+
+MM_COMMON_O1P = dlist.obj
+$(MM_COMMON_O1P):
+	$(CC) -O -1 -P common\$&.c
+
+MM_COMMON_O1Pdvi0 = easyfile.obj strfmt.obj
+$(MM_COMMON_O1Pdvi0):
+	$(CC) -O -1 -P -d -vi- common\$&.c
+
+MM_COMMON_O1Pvi0 = fadecol.obj farbuf.obj textfile.obj rgbpal.obj \
+	fadepal.obj flex.obj
+$(MM_COMMON_O1Pvi0):
+	$(CC) -O -1 -P -vi- common\$&.c
+
+MM_MAIN_DOS_ASM = ptraddr.obj addrptr.obj delay.obj memmove.obj \
+	doswrite.obj dosread.obj dosfile.obj doscreat.obj fileread.obj \
+	filewrit.obj dosseek.obj
+$(MM_MAIN_DOS_ASM):
+	$(AS) /mx main\dos\$&.asm
+
+MM_MAIN_MEM_ASM = a20gate.obj
+$(MM_MAIN_MEM_ASM):
+	$(AS) /mx main\mem\$&.asm
+
+MM_MAIN_MEM_OG = inthook.obj memapi.obj memmgr.obj memstat.obj \
+	drawbuf.obj
+$(MM_MAIN_MEM_OG):
+	$(CC) -O -G main\mem\$&.c
+
+MM_MAIN_MEM_OGP = screen.obj errors.obj
+$(MM_MAIN_MEM_OGP):
+	$(CC) -O -G -P main\mem\$&.c
+
+MM_MAIN_MEM_OGPd = memhook.obj
+$(MM_MAIN_MEM_OGPd):
+	$(CC) -O -G -P -d main\mem\$&.c
+
+MM_MAIN_O1 = videomd.obj oops.obj rmhook.obj
+$(MM_MAIN_O1):
+	$(CC) -O -1 main\$&.c
+
+MM_MAIN_O1P = device.obj timerdev.obj
+$(MM_MAIN_O1P):
+	$(CC) -O -1 -P main\$&.c
+
+MM_MAIN_O1Pvi0 = fontprn.obj flexprn.obj controls.obj textspr.obj \
+	shapebnd.obj scroll.obj install.obj itable.obj
+$(MM_MAIN_O1Pvi0):
+	$(CC) -O -1 -P -vi- main\$&.c
+
+MM_MAIN_OG = vidmode.obj
+$(MM_MAIN_OG):
+	$(CC) -O -G main\$&.c
+
+MM_MAIN_OGPb0 = chkfile.obj
+$(MM_MAIN_OGPb0):
+	$(CC) -O -G -P -b- main\$&.c
+
+MM_MAIN_PALETTE_ASM = palfade.obj
+$(MM_MAIN_PALETTE_ASM):
+	$(AS) /mx main\palette\$&.asm
+
+MM_MAIN_VIDEO_ASM = crtport.obj vretrace.obj
+$(MM_MAIN_VIDEO_ASM):
+	$(AS) /mx main\video\$&.asm
+
+MM_MAIN_VIDEO_OG = colormap.obj
+$(MM_MAIN_VIDEO_OG):
+	$(CC) -O -G main\video\$&.c
+
+MM_MAIN_VIDEO_OGP = colorreg.obj modecolr.obj
+$(MM_MAIN_VIDEO_OGP):
+	$(CC) -O -G -P main\video\$&.c
+
+MM_MAIN_XMM_ASM = drawtile.obj rowaddr.obj linear.obj copyview.obj \
+	framebnd.obj framecnt.obj restfram.obj restrect.obj savefram.obj \
+	saverect.obj drawfram.obj drawblnd.obj emscheck.obj xmmblock.obj
+$(MM_MAIN_XMM_ASM):
+	$(AS) /mx main\xmm\$&.asm
+
+MM_MAIN_XMM_OG = xmmcheck.obj xmminit.obj xmmstale.obj
+$(MM_MAIN_XMM_OG):
+	$(CC) -O -G main\xmm\$&.c
+
+MM_MAIN_XMM_OGP = shapehgt.obj shapewid.obj
+$(MM_MAIN_XMM_OGP):
+	$(CC) -O -G -P main\xmm\$&.c
+
+MM_MAIN_XMM_OGPd = vooalloc.obj
+$(MM_MAIN_XMM_OGPd):
+	$(CC) -O -G -P -d main\xmm\$&.c
+
+MM_O1P = sounddev.obj keyqueue.obj dosmem.obj fade.obj dirdelta.obj \
+	modebyte.obj
+$(MM_O1P):
+	$(CC) -O -1 -P $&.c
+
+MM_O1Pdvi0 = mainmenu.obj credits.obj
+$(MM_O1Pdvi0):
+	$(CC) -O -1 -P -d -vi- $&.c
+
+MM_O1Pvi0 = menu.obj menuent.obj textfld.obj textbox.obj inttrap.obj \
+	music.obj
+$(MM_O1Pvi0):
+	$(CC) -O -1 -P -vi- $&.c
+
+MM_SOUND_DRV_ASM = vocirq.obj
+$(MM_SOUND_DRV_ASM):
+	$(AS) /mx sound\drv\$&.asm
+
+# With line numbers (-y) BCC keeps the shipped branch ends instead of merging them.
+MM_SOUND_DRV_O1Pdvi0y = midiplay.obj
+$(MM_SOUND_DRV_O1Pdvi0y):
+	$(CC) -O -1 -P -d -vi- -y sound\drv\$&.c
+
+MM_SOUND_DRV_O1Pvi0 = specard.obj
+$(MM_SOUND_DRV_O1Pvi0):
+	$(CC) -O -1 -P -vi- sound\drv\$&.c
+
+MM_SOUND_O1Pdvi0b0 = gsound.obj
+$(MM_SOUND_O1Pdvi0b0):
+	$(CC) -O -1 -P -d -vi- -b- sound\$&.c
+
+MM_SOUND_O1Pvi0 = cflxcach.obj specache.obj
+$(MM_SOUND_O1Pvi0):
+	$(CC) -O -1 -P -vi- sound\$&.c
+
+MM_ZEVENT_ASM = mouseint.obj getfont.obj sysclk.obj syskey.obj
+$(MM_ZEVENT_ASM):
+	$(AS) /mx zevent\$&.asm
+
+MM_ZEVENT_O1P = dbgfont.obj
+$(MM_ZEVENT_O1P):
+	$(CC) -O -1 -P zevent\$&.c
+
+MM_ZEVENT_O1Pvi0 = u7point.obj mevent.obj mouse.obj cursor.obj \
+	systimer.obj
+$(MM_ZEVENT_O1Pvi0):
+	$(CC) -O -1 -P -vi- zevent\$&.c
+
+# __FILE__ gives these their bare names, so they compile in their own directory.
+MM_MAIN_XMM_OWN_OG = freexmm.obj xmmhand.obj
+$(MM_MAIN_XMM_OWN_OG):
+	cd main\xmm
+	$(BC)\bcc -c -mm -I..\..\include;$(BC)\include -n..\.. -O -G $&.c
+	cd ..\..
+
+# VIDMODE.ASM shares vidmode.c's name, so its object stays in its folder.
+main\video\vidmode.obj: main\video\vidmode.asm
+	$(AS) /mx main\video\vidmode.asm, main\video\vidmode.obj
+
+# MAKE limits the length of a rule line, so MAINMENU.EXE depends on a few lists.
+all_1: $(MM_ASM) $(MM_COMMON_ASM) $(MM_COMMON_O1P) $(MM_COMMON_O1Pdvi0) \
+	$(MM_COMMON_O1Pvi0) $(MM_MAIN_DOS_ASM) $(MM_MAIN_MEM_ASM) \
+	$(MM_MAIN_MEM_OG) $(MM_MAIN_MEM_OGP) $(MM_MAIN_MEM_OGPd)
+
+all_2: $(MM_MAIN_O1) $(MM_MAIN_O1P) $(MM_MAIN_O1Pvi0) $(MM_MAIN_OG) \
+	$(MM_MAIN_OGPb0) $(MM_MAIN_PALETTE_ASM) $(MM_MAIN_VIDEO_ASM) \
+	$(MM_MAIN_VIDEO_OG) $(MM_MAIN_VIDEO_OGP) $(MM_MAIN_XMM_ASM)
+
+all_3: $(MM_MAIN_XMM_OG) $(MM_MAIN_XMM_OGP) $(MM_MAIN_XMM_OGPd) \
+	$(MM_MAIN_XMM_OWN_OG) $(MM_O1P) $(MM_O1Pdvi0) $(MM_O1Pvi0) \
+	$(MM_SOUND_DRV_ASM) $(MM_SOUND_DRV_O1Pdvi0y) $(MM_SOUND_DRV_O1Pvi0) \
+	$(MM_SOUND_O1Pdvi0b0) $(MM_SOUND_O1Pvi0) $(MM_ZEVENT_ASM) \
+	$(MM_ZEVENT_O1P)
+
+all_4: $(MM_ZEVENT_O1Pvi0)
+
+MAINMENU.EXE: all_1 all_2 all_3 all_4 main\video\vidmode.obj MAINMENU.LNK
+	$(BC)\tlink /m /s /c /d /i /L$(BC)\lib @MAINMENU.LNK

@@ -1,0 +1,405 @@
+Routine Anti_Shamino accepts a0 #locals(5) #uses(Bark_i, ~GimmePathEgg, BarkIfNear_i) {
+    v0 = ~GetNPCID_i(_AntiSham);
+    if (flag(556) and ((event = _Bark) and not flag(557))) {
+        SetNPCID_i((~GetNPCID_i(item) + 1), item);
+        v1 = ~FindNearby_i(0, 5, _Mad_Iolo, item);
+        v2 = ~FindNearby_i(0, 5, _Snake_Dupre, item);
+        if (~GetNPCID_i(item) = 6) {
+            Bark_i(0, "@The world shall die...@", item);
+            SetWorkType(_Wait, item);
+            v3 = ~PostAction(<< _aNO_HALT_i, _aFACE_i, _East, _aBEND_FRAME_i, _aSIT_FRAME_i, _aWAIT_i, 10, _aUSABLE_i, #Anti_Shamino >>, item);
+        }
+        if (~GetNPCID_i(item) = 5) {
+            Bark_i(0, "@The Banes are united!@", item);
+        }
+        if (~GetNPCID_i(item) = 4) {
+            Bark_i(0, "@Chaos shall reign!@", item);
+        }
+        if (~GetNPCID_i(item) = 3) {
+            Bark_i(0, "@...of the White Dragon!@", item);
+        }
+        if (~GetNPCID_i(item) = 2) {
+            Bark_i(0, "@in the abandoned castle...@", item);
+        }
+        if (~GetNPCID_i(item) = 1) {
+            FadePalette_i(1, 1, 12);
+            Bark_i(0, "@We shall never be found...@", item);
+            v3 = ~PostAction(<< _aNO_HALT_i, _aFACE_i, _East >>, _AntiIolo);
+            v3 = ~PostAction(<< _aNO_HALT_i, _aFACE_i, _East >>, _AntiDupre);
+            SetMusic(~GimmePathEgg(1, 5), 51);
+        }
+        if ((~GetNPCID_i(_AntiIolo) = 0) and v1) {
+            SetSpeaker0_i(0, _Brenda);
+            ClearSpeakers_i();
+            ["Now that we are together, my brothers in Chaos, no one in the world may stand before us! We shall crush that insignificant Avatar... as we have killed all the others!"];
+            SetSpeaker1_i(0, _Brax);
+            ["Together... together... until the fiery, peaceful end! Now enemies... once friends!"];
+            ["Twist and turn and twine about... What was wrong is right, and what was in, is out..."];
+            ["Hide! Hide! For the Avatar seeks!"];
+            v3 = ("@Hide!@" & ("@Then we strike!@" & "@What fun!@"));
+            BarkIfNear_i(v3, _AntiIolo);
+            EndConverse_i();
+            SetNPCID_i(1, _AntiIolo);
+            PathfindNPC_i(true, #Mad_Iolo, ~NPCToItem_i(_AntiIolo), _Path_Success, << 2456, 105, 1 >>, _AntiIolo);
+        }
+        if ((~GetNPCID_i(_AntiIolo) = 1) and v2) {
+            SetSpeaker0_i(0, _Brenda);
+            ClearSpeakers_i();
+            ["Those who followed now lead! Those who were master are now slave! The world shall return to its natural course... once we have rid ourselves of that cursed Avatar!"];
+            SetSpeaker1_i(0, _Watson);
+            ["Let us bring this world to its knees! Let these pitiful mortals worship us... even as they die!"];
+            ["And I have special plans for the Avatar...!"];
+            v3 = ("@Blood!@" & ("@More blood!@" & "@Bleed to death!@"));
+            BarkIfNear_i(v3, _AntiDupre);
+            EndConverse_i();
+            SetNPCID_i(2, _AntiIolo);
+            PathfindNPC_i(true, #Snake_Dupre, ~NPCToItem_i(_AntiDupre), _Path_Success, << 2456, 117, 1 >>, _AntiDupre);
+        }
+        terminate;
+    }
+    if (flag(556) and ((event = _Action) and not flag(557))) {
+        FadePalette_i(0, 1, 12);
+        Camera_setCenterOn(_Avatar);
+        v3 = ~PostInFuture(10, << _aNO_HALT_i, _aUSABLE_i, #FadeInArrival_i >>, ~GimmePathEgg(1, 5));
+        ClearItemFlag_i(_DontMove_i, _Avatar);
+        ClearSpeakers_i();
+        SetNPCID_i(0, item);
+        SetNPCID_i(0, _AntiIolo);
+        SetNPCID_i(0, _AntiDupre);
+        flag(557) = true;
+        $USING_FAR_SIGHT_MAGIC = false;
+        terminate;
+    }
+    if (event = _NearDeath) {
+        if not flag(206) {
+            terminate;
+        }
+        if $daemoninsword {
+            terminate;
+        }
+        if (~GetAttacker_i(item) = 0) && (~GetWeapon_i(_Avatar) = _Daemon_Sword) {
+            SetSpeaker0_i(0, _Brenda);
+            ["I shall not forget that thou hast beaten me, vile human!"];
+            CloseSpeaker0_i();
+            v4 = ~GetCoord(item);
+            SetWorkType(_Wait, item);
+            Npc_setTarget(1, _Avatar);
+            Item_move(<< 142, 46, 0 >>, item);
+            ClearItemFlag_i(_Dead, _Shamino);
+            Item_move(v4, _Shamino);
+            SetItemFlag_i(_Zombie, _Shamino);
+            ClearItemFlag_i(_Tournament, _Shamino);
+            ReduceHits_i(0, 55, _Shamino);
+            $anarchybaneinsword = true;
+            $antishaminodead = true;
+        }
+    }
+    if (event = _Action) {
+        SetSpeaker0_i(0, _Brenda);
+        ["Stop!"];
+        CloseSpeaker0_i();
+    }
+}
+
+Routine Shamino accepts a0 #locals(14) #uses(~LordOrLady, ~AvatarName, DeclareWinner_i, NowSettleDownBoys, ~WhereAmI_i, ~GetStat, SetStat, ~GiveItemsOrDrop_i, PartyFaces_i, Bark_i, SetGotFlags_i, UnfreezeAvatar_i, ~GimmePathEgg, ShaminoReturnsBelongings_i, SayIfNear_i, ChooseMeetingPlace_i) {
+    v0 = ~GetNPCID_i(_Shamino);
+    v1 = ~LordOrLady();
+    v2 = ~AvatarSex();
+    v3 = ~AvatarName();
+    v4 = ~GetTime();
+    if ((event = _NearDeath) and ~GetItemFlag_i(_Tournament, _Shamino)) {
+        if $tournamentflag {
+            v5 = ~GetAttacker_i(_Shamino);
+            v5 = (0 - v5);
+            if not $temp1flag {
+                $temp1flag = true;
+                DeclareWinner_i(~NPCToItem_i(_Shamino), ~NPCToItem_i(v5));
+                return;
+            }
+            NowSettleDownBoys(item);
+            return;
+        } else {
+            if $BEATRIX_PROTECTION {
+                if ((~WhereAmI_i() <> 16) and (not $BANES_RELEASED and (~WhereAmI_i() <> 24))) {
+                    SetSpeaker0_i(0, _XenkaMonk_286);
+                    ["Do not die, my sweet King..."];
+                    SetSpeaker1_i(0, _Shamino);
+                    ["Beatrix, is that thee?"];
+                    CloseSpeaker1_i();
+                    SetSpeakerSlot_i(0);
+                    ["I forgive thee for deserting us, King Shamino. To prove that my love for thee is stronger than eternity, I shall heal thee of thy wounds."];
+                    ["Keep this book as a keepsake between us. Now I must go into the Void, but remember me always..."];
+                    v6 = ~GetStat(_Str, _Shamino);
+                    v7 = ~GetStat(_Hits, _Shamino);
+                    v8 = (v6 - v7);
+                    SetStat(v8, _Hits, _Shamino);
+                    v9 = ~GiveItemsOrDrop_i(true, 0, 0, 63, 642, 1, _Shamino);
+                    $BEATRIX_PROTECTION = false;
+                    $BEATRIX_FORGAVE_SHAMINO = true;
+                    ClearItemFlag_i(_Tournament, _Shamino);
+                } else {
+                    ClearItemFlag_i(_Tournament, _Shamino);
+                    ReduceHits_i(0, 50, _Shamino);
+                }
+            }
+        }
+    }
+    if (event = _Converse) {
+        Item_bark("Shamino...", _Avatar);
+        PartyFaces_i(65534);
+        if not ~GetItemFlag_i(_Zombie, _Shamino) {
+            Bark_i(2, (("@Yes, " + v3) + "?"), _Shamino);
+            SetWorkType(_Talk, _Shamino);
+        } else {
+            v10 = ~rndRange(4, 1);
+            if (v10 = 1) {
+                Bark_i(2, "@Backward, not forward!@", _Shamino);
+            }
+            if (v10 = 2) {
+                Bark_i(2, "@Free thyselves!@", _Shamino);
+            }
+            if (v10 = 3) {
+                Bark_i(2, "@Chaos reigns!@", _Shamino);
+            }
+            if (v10 = 4) {
+                Bark_i(2, "@Take from the rich!@", _Shamino);
+            }
+        }
+    }
+    if (event = _Talking) {
+        ClearBark_i(_Shamino);
+        if ~GetItemFlag_i(_InParty_i, _Shamino) {
+            SetWorkType(_FollowAvt, _Shamino);
+            TurnOn("leave");
+        } else {
+            Npc_schedule(_Shamino);
+            TurnOn("join");
+        }
+        SetSpeaker0_i(0, _Shamino);
+        if ($tookinventory and not $shamsaidtelevale) {
+            ["Avatar! Art thou all right? I heard what sounded like the explosions of a volcano -- and look at all the fire here..."];
+            ["I have been searching all over for thee! That storm hath left me quite disconcerted. I can find neither Iolo nor Dupre."];
+            ["And, to make matters worse, nothing remains of the equipment that Lord British gave us! It hath all been replaced by strange items that I do not recognize."];
+            ["Perhaps thou shouldst inspect thine equipment as well! I shall make a list of what we have."];
+            v9 = ~GiveItemsOrDrop_i(true, 0, 0, 189, 797, 1, _Avatar);
+            SetGotFlags_i();
+            $shamsaidtelevale = true;
+            Bark_i(0, "@Such strangeness!@", _Shamino);
+            UnfreezeAvatar_i();
+            JoinParty(_Shamino);
+            $SHAMINO_HAS_BELONGINGS = true;
+            NewSchedule_i(<< 2428, 1124 >>, _EatAtInn, 0, _Shamino);
+            terminate;
+        }
+        if (v0 = 30) {
+            ["Thou hast escaped the foul mages' prison swiftly, indeed. Most wonderful!"];
+            ["Of course, I never doubted that thou wouldst return..."];
+            ["I also have news, <v1>. I bear a message, as well as two presents."];
+            v11 = false;
+            v12 = false;
+            TurnOn(<< "message", "presents" >>);
+            if not $AFTER_FREEDOM_NEWS {
+                TurnOn("news");
+            }
+            if $SHAMINO_TELEPORTED_BY_MONKS {
+                TurnOn("How didst thou arrive?");
+            }
+            if $SHAMINO_RESURRECTED_BY_MONKS {
+                TurnOn("death");
+            }
+            TurnOff("join");
+            goto label_47;
+            label_35:
+            JoinParty(_Shamino);
+            $SHAMINO_HAS_BELONGINGS = true;
+            SetNPCID_i(0, _Shamino);
+            v9 = ~PostInFuture(10, << _aNO_HALT_i, _aUSABLE_i, #Ring >>, ~GimmePathEgg(4, 5));
+            Bark_i(0, "@Welcome back!@", _Shamino);
+            terminate;
+        } else {
+            ["I am ready to provide whatever aid I can, <v1>."];
+        }
+        if (~GetNPCID_i(_Dupre) = 30) {
+            TurnOn("Dupre's whereabouts");
+        }
+        if (~GetNPCID_i(_Iolo) = 30) {
+            TurnOn("Iolo's whereabouts");
+        }
+        if (~GetNPCID_i(_Boydon) = 30) {
+            TurnOn("Boydon's whereabouts");
+        }
+        if (not ~GetItemFlag_i(_InParty_i, _Shamino) and (~GetContents(_All, _All, _All, _Shamino) and ($SHAMINO_HAS_BELONGINGS = true))) {
+            TurnOn("belongings");
+        }
+        TurnOn(<< "bye" >>);
+        label_47:
+        converse {
+            key ("belongings") {
+                TurnOff("belongings");
+                ShaminoReturnsBelongings_i();
+            }
+            key ("How didst thou arrive?") {
+                TurnOff("How didst thou arrive?");
+                ["The monks came and brought me here, saying that it was vitally important for me to be here."];
+                ["The one called Karnax said that I must fulfill my purpose, or the world itself would be in jeopardy..."];
+                if (v11 and v12) {
+                    goto label_35;
+                }
+            }
+            key ("death") {
+                TurnOff("death");
+                ["That is right, I was dead when last we saw one another. However, the good monks found my body and returned life to me."];
+                if (v11 and v12) {
+                    goto label_35;
+                }
+            }
+            key ("news") {
+                TurnOff("news");
+                if ~GetItemFlag_i(_InParty_i, _Iolo) {
+                    ["To be honest, this is not my news -- it belongs to our good friend, the Bard. Thou shouldst ask Iolo."];
+                } else {
+                    if (~GetNPCID_i(_Iolo) = 30) {
+                        ["Quickly, let us find Iolo. He can tell thee all about the discovery!"];
+                    } else {
+                        ["The Mages of this place are not friendly toward outsiders, but thy survival shall surely impress them."];
+                        ["Particularly, I am sure that the one known as Gustacio will be inclined to help us now. Let us seek him out."];
+                        $AFTER_FREEDOM_NEWS = true;
+                    }
+                }
+                if (v11 and v12) {
+                    goto label_35;
+                }
+            }
+            key ("message") {
+                TurnOff("message");
+                v11 = true;
+                if v2 {
+                    ["I have had the chance to spend a few hours in the company of the Mage Frigidazzi, on whose account thou hast been imprisoned."];
+                    ["She asked me to convey her apologies to thee, and to present thee with three gifts."];
+                } else {
+                    ["The Sorceress Frigidazzi met secretly with me, and expressed her sorrow at what had been done to thee."];
+                    ["I think she likes thee, <v1>. But with that MageLord around, she doth not dare to see thee again!"];
+                    ["As a sign of her regret for what hath happened -- jail and all -- she sent three gifts to thee."];
+                }
+                if (v11 and v12) {
+                    goto label_35;
+                }
+            }
+            key ("presents") {
+                TurnOff("presents");
+                v12 = true;
+                if v2 {
+                    ["These earrings are of ancient devising, and I was told that they would be most flattering to thee."];
+                    ["Note that they are engraved with serpentine runes, milady."];
+                    ["There is also a magic scroll, upon which is inscribed a spell to protect against heat. This we shall need ere we venture into the subterranean passageways."];
+                } else {
+                    ["I bear three gifts from thine admirer -- a magic scroll, an earring, and a note."];
+                    ["The scroll bears a spell of protection against heat, and should be most useful."];
+                    ["As for the earring, it is inscribed with serpentine runes of ancient design."];
+                }
+                ["Lastly, there is a note, but its contents are not known to me."];
+                ["Here they are..."];
+                v9 = ~GiveItemsOrDrop_i(true, 0, 0, 65177, 635, 1, _Avatar);
+                v9 = ~GiveItemsOrDrop_i(true, 0, 6, 205, 797, 1, _Avatar);
+                v9 = ~GiveItemsOrDrop_i(true, 0, 0, 16, 715, 1, _Avatar);
+                $HAVE_CHILL_SPELL = true;
+                if (v11 and v12) {
+                    goto label_35;
+                }
+            }
+            key ("join") {
+                if ($begunknightstest and not $doneknightstest) {
+                    ["And disregard the rules of the Test of Knighthood? <v1>, I am shocked."];
+                    SayIfNear_i("@Thou must go alone.@", 65461);
+                    Bark_i(0, "@Alone!@", _Shmed);
+                    Bark_i(2, "@Shocked!@", _Shamino);
+                    terminate;
+                }
+                TurnOff("join");
+                if (~ListSize_i(~GetParty_i()) < 5) {
+                    TurnOn("leave");
+                    ["Most gratefully!"];
+                    JoinParty(_Shamino);
+                    $SHAMINO_HAS_BELONGINGS = true;
+                } else {
+                    ["I would join with thee, old friend, but I can see that thou already hast a large party."];
+                    ["A woodsman like myself would feel uncomfortable travelling with such a large group. I will remain here, instead."];
+                }
+            }
+            key ("leave") {
+                TurnOff("leave");
+                if not $tookinventory {
+                    ["But we have barely begun, Avatar! How can I stand idly here while the adventure awaits?"];
+                } else {
+                    TurnOn("join");
+                    ["If that is what thou dost wish..."];
+                    LeaveParty(_Shamino);
+                    ShaminoReturnsBelongings_i();
+                    ChooseMeetingPlace_i(_Shamino);
+                }
+            }
+            key ("Dupre's whereabouts") {
+                TurnOff("Dupre's whereabouts");
+                ["Thou knowest our good friend! He hath deposited himself at the Blue Boar Inn, and hath been trying out the local brews!"];
+            }
+            key ("Iolo's whereabouts") {
+                TurnOff("Iolo's whereabouts");
+                ["Iolo hath struck up a friendship with the Mage Gustacio, from whom he is learning much about the storms which plague this land."];
+                ["I expect we could find him at Gustacio's manor."];
+            }
+            key ("Boydon's whereabouts") {
+                TurnOff("Boydon's whereabouts");
+                ["Why, that magical creation doth have a budding romance with the shopgirl from the Canton!"];
+                ["If the shop is open when we arrive there, Boydon will almost certainly be there."];
+            }
+            key ("bye") {
+                CloseSpeaker0_i();
+                Bark_i(0, "@Thanks!@", _Avatar);
+                Bark_i(2, "@Any time.@", _Shamino);
+                break;
+            }
+        }
+        clear_answers;
+    }
+    if (event = _Trigger) {
+        v13 = ~WhereAmI_i();
+        if (v13 = 22) {
+            SetSpeaker0_i(0, _Iolo);
+            ["We are beset by dragons, Avatar! We must slay them quickly!"];
+            CloseSpeaker0_i();
+            Bark_i(2, "@I hate dragons!@", _Shamino);
+            terminate;
+        }
+        if (v13 = 16) {
+            SetSpeaker0_i(0, _Shamino);
+            ["It hath been so long I barely recognize this place, like somewhere from a dream. I do recall that there is an illusory door west of the castle gates near a big tree."];
+            CloseSpeaker0_i();
+            Bark_i(3, "@Somewhere around here...@", _Shamino);
+        }
+    }
+}
+
+Usable ShaminoReturnsBelongings_i #locals(1) #uses(~AskYesNo, ~ReturnBelongings_i) {
+    if ~GetContents(_All, _All, _All, _Shamino) {
+        ["I am carrying many items, some of which may be of use to thee. Wouldst thou care to have these back?"];
+        if ~AskYesNo() {
+            ["Here they are."];
+            $SHAMINO_HAS_BELONGINGS = false;
+            v0 = ~ReturnBelongings_i(65534);
+            if (v0::1 <> 0) {
+                ["Thy friends will have to help carry these things."];
+            }
+            if (v0::2 > 0) {
+                v0 = v0::2;
+                if (v0 > 1) {
+                    ["Since thou canst not carry these remaining <v0> items, I will place them at thy feet."];
+                } else {
+                    ["Since thou dost not have enough room for this last item, I will place it at thy feet."];
+                }
+            }
+        } else {
+            $SHAMINO_HAS_BELONGINGS = true;
+            ["If thou changest thy mind, thou hast but to return and ask again."];
+        }
+    }
+}

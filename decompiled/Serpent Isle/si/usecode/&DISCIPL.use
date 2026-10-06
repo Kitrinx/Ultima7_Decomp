@@ -1,0 +1,392 @@
+Routine DNG_Floor accepts a0 #locals(15) #uses(PathToItem_i, ~AvatarName, ~GimmePathEgg, ~AvatarBodyType_i) {
+    if (event = _Action) {
+        if (not $temp1flag and (not $temp2flag and (not $temp3flag and not $temp4flag))) {
+            PathToItem_i(10, item, #DNG_Floor, 65535, 0, 0, item);
+        }
+        if $temp1flag {
+            v0 = ~AvatarName();
+            SetItemFlag_i(_DontMove_i, _Avatar);
+            EndConverse_i();
+            v1 = (("@" + v0) + ", I am afraid.@");
+            Item_bark(v1, _Petra);
+            v2 = ~GetDirToward_i(_Petra, _Avatar);
+            v3 = ~GetDirToward_i(_Avatar, _Petra);
+            Kernel_resetRef(_Avatar);
+            v4 = ~PostInFuture(14, << _aNO_HALT_i, _aBARK_i, "@Don't worry,@", _aWAIT_i, 14, _aUSABLE_i, #DNG_Floor >>, _Avatar);
+            $temp1flag = false;
+            $temp2flag = true;
+            return;
+        }
+        if $temp2flag {
+            Kernel_resetRef(_Avatar);
+            v4 = ~PostAction(<< _aNO_HALT_i, _aBARK_i, "@Everything should@", _aWAIT_i, 12, _aUSABLE_i, #DNG_Floor >>, _Avatar);
+            $temp2flag = false;
+            $temp3flag = true;
+            return;
+        }
+        if $temp3flag {
+            Kernel_resetRef(_Avatar);
+            Kernel_resetRef(_Petra);
+            Polymorph_i(_Neck_Man, _Petra);
+            SetWorkType(_Wait, _Petra);
+            SetItemFlag_i(_Petra_i, _Avatar);
+            v5 = ~GetCoord(_Petra);
+            v6 = ~GetCoord(_Avatar);
+            v2 = ~GetDirToward_i(_Petra, _Avatar);
+            v3 = ~GetDirToward_i(_Avatar, _Petra);
+            v4 = ~PostAction(<< _aNO_HALT_i, _aBARK_i, "@...be fine...@" >>, _Avatar);
+            v4 = ~PostAction(<< _aNO_HALT_i, _aWAIT_i, 4, _aUSABLE_i, #DNG_Floor >>, _Petra);
+            v7 = ~GetCoord(_Petra);
+            createSprite(65535, 1, 0, 0, v7::2, v7::1, 43);
+            Sfx(116);
+            LightningBolt();
+            SetMusic(0, 53);
+            v8 = ~GimmePathEgg(1, 1);
+            v4 = ~SetQuality(1, v8);
+            $temp3flag = false;
+            $temp4flag = true;
+            return;
+        }
+        if $temp4flag {
+            Kernel_resetRef(_Avatar);
+            Kernel_resetRef(_Petra);
+            v8 = ~GimmePathEgg(1, 1);
+            v9 = ~GetQuality(v8);
+            v10 = ~AvatarSex();
+            v11 = ~AvatarSkin_i();
+            if (v9 = 1) {
+                v4 = ~PostInFuture(12, << _aNO_HALT_i, _aUSABLE_i, #DNG_Floor >>, _Avatar);
+            } else {
+                v7 = ~GetCoord(item);
+                v12 = ~rndRange(2, 1);
+                if ~rndRange(1, 0) {
+                    createSprite(65535, v12, 0, 0, v7::2, v7::1, 43);
+                } else {
+                    createSprite(65533, v12, 0, 0, v7::2, v7::1, 43);
+                }
+                LightningBolt();
+                Sfx(116);
+            }
+            if (v9 = 2) {
+                if (v11 = 2) {
+                    Polymorph_i(~AvatarBodyType_i(0, 1), _Avatar);
+                } else {
+                    Polymorph_i(~AvatarBodyType_i(0, 2), _Avatar);
+                }
+                v4 = ~PostInFuture(5, << _aNO_HALT_i, _aUSABLE_i, #DNG_Floor >>, _Petra);
+            }
+            if (v9 = 3) {
+                Polymorph_i(_F_Automaton, _Petra);
+                v4 = ~PostInFuture(4, << _aNO_HALT_i, _aUSABLE_i, #DNG_Floor >>, _Avatar);
+            }
+            if (v9 = 4) {
+                Polymorph_i(~AvatarBodyType_i(v10, v11), _Avatar);
+                v4 = ~PostInFuture(4, << _aNO_HALT_i, _aUSABLE_i, #DNG_Floor >>, _Petra);
+            }
+            if (v9 = 5) {
+                Polymorph_i(~AvatarBodyType_i(v10, v11), _Petra);
+                v4 = ~PostInFuture(4, << _aNO_HALT_i, _aUSABLE_i, #DNG_Floor >>, _Petra);
+            }
+            if (v9 = 6) {
+                if (v11 = 2) {
+                    Polymorph_i(~AvatarBodyType_i(1, 0), _Petra);
+                } else {
+                    Polymorph_i(~AvatarBodyType_i(1, 2), _Petra);
+                }
+                v4 = ~PostInFuture(4, << _aNO_HALT_i, _aUSABLE_i, #DNG_Floor >>, _Petra);
+            }
+            if (v9 = 7) {
+                if (v11 = 1) {
+                    Polymorph_i(~AvatarBodyType_i(1, 0), _Petra);
+                } else {
+                    Polymorph_i(~AvatarBodyType_i(1, 1), _Petra);
+                }
+                v4 = ~PostInFuture(3, << _aNO_HALT_i, _aUSABLE_i, #DNG_Floor >>, _Avatar);
+                v7 = ~GetCoord(_Avatar);
+                v12 = ~rndRange(3, 0);
+                createSprite(1, v12, 0, 0, v7::2, v7::1, 43);
+                if (v11 = 1) {
+                    Polymorph_i(~AvatarBodyType_i(0, 0), _Avatar);
+                } else {
+                    Polymorph_i(~AvatarBodyType_i(0, 1), _Avatar);
+                }
+            }
+            if (v9 = 8) {
+                Polymorph_i(~AvatarBodyType_i(v10, v11), _Avatar);
+                v4 = ~PostInFuture(2, << _aNO_HALT_i, _aUSABLE_i, #DNG_Floor >>, _Petra);
+            }
+            if (v9 = 9) {
+                Polymorph_i(_Neck_Man, _Petra);
+                v4 = ~PostInFuture(2, << _aNO_HALT_i, _aUSABLE_i, #DNG_Floor >>, _Petra);
+            }
+            if (v9 = 10) {
+                Polymorph_i(~AvatarBodyType_i(1, v11), _Petra);
+                v4 = ~PostInFuture(2, << _aNO_HALT_i, _aUSABLE_i, #DNG_Floor >>, _Petra);
+                Polymorph_i(_M_Automaton, _Avatar);
+                v7 = ~GetCoord(_Avatar);
+                v12 = ~rndRange(3, 0);
+                createSprite(1, v12, 0, 0, v7::2, v7::1, 43);
+            }
+            if (v9 = 11) {
+                Polymorph_i(_F_Automaton, _Petra);
+                v4 = ~PostInFuture(1, << _aNO_HALT_i, _aUSABLE_i, #DNG_Floor >>, _Avatar);
+            }
+            if (v9 = 12) {
+                Polymorph_i(_Neck_Man, _Avatar);
+                v4 = ~PostInFuture(1, << _aNO_HALT_i, _aUSABLE_i, #DNG_Floor >>, _Avatar);
+            }
+            if (v9 = 13) {
+                Polymorph_i(~AvatarBodyType_i(v10, v11), _Avatar);
+                v4 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #DNG_Floor >>, _Petra);
+            }
+            if (v9 = 14) {
+                Polymorph_i(_Avatar_Type, _Petra);
+                v4 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #DNG_Floor >>, _Avatar);
+            }
+            if (v9 = 15) {
+                v4 = ~PostInFuture(1000, << _aUSABLE_i, #SwapBodiesBack_i >>, v8);
+                Polymorph_i(_F_Automaton, _Avatar);
+                ClearItemFlag_i(_DontMove_i, _Avatar);
+                ClearSpeakers_i();
+                SetItemFlag_i(_Tournament, _Petra);
+                $temp4flag = false;
+                if not v10 {
+                    $avatarwasmale = true;
+                    v4 = ~ChangeNPCStat_i(0, _Sex, _Petra);
+                    v4 = ~ChangeNPCStat_i(1, _Sex, _Avatar);
+                }
+                SetMusic(0, 64);
+                return;
+            }
+            v4 = ~SetQuality((v9 + 1), v8);
+        }
+    }
+    if (event = _Pathfind1) {
+        v13 = ~GetDirToward_i(_Petra, _Avatar);
+        v14 = ~GetDirToward_i(_Avatar, _Petra);
+        $temp1flag = true;
+        v4 = ~PostAction(<< _aFACE_i, v13, _aUSABLE_i, #DNG_Floor >>, _Avatar);
+        v4 = ~PostAction(<< _aFACE_i, v14 >>, _Petra);
+    }
+}
+
+Routine DisciplineGuardEgg_i accepts a0 #locals(6) #uses(SetWorkTypeAt_i) {
+    if (event = _Path_Failure) {
+        SetWorkType(_Wander, item);
+    }
+    if (event = _Path_Success) {
+        SetWorkType(_Wait, _Guard1);
+        v0 = ~GetCoord(item);
+        createSprite(65535, 0, 0, 0, v0::2, v0::1, 7);
+        Item_move(<< 1826, 627, 0 >>, _Guard1);
+        createSprite(65533, 15, 0, 0, 627, 1826, 7);
+    }
+    if (event = _Action) {
+        v0 = ~GetCoord(item);
+        if ((~GetWorkType(item) = _Wait) or (~GetWorkType(item) = _Special)) {
+            terminate;
+        }
+        SetWorkType(_Wait, _Guard1);
+        createSprite(65535, 0, 0, 0, v0::2, v0::1, 7);
+        Item_move(<< 1826, 627, 0 >>, _Guard1);
+        createSprite(65533, 15, 0, 0, 627, 1826, 7);
+    }
+    if (event = _Trigger) {
+        v1 = ~FindNearby_i(0, 12, _Serp4_NS, _Avatar);
+        Foreach v4 in v1 {
+            if (~GetFrame(v4) = 10) {
+                goto label_15;
+            }
+        }
+        v4 = false;
+        label_15:
+        if v4 {
+            Item_destroy(v4);
+            if flag(553) {
+                if flag(554) {
+                    if ((~GetWorkType(_Guard1) <> _Wait) or ~GetItemFlag_i(_Zombie, _Guard1)) {
+                        terminate;
+                    }
+                    SetNPCID_i(13, _Guard1);
+                    v0 = ~GetCoord(_Guard1);
+                    createSprite(65535, 0, 0, 0, v0::2, v0::1, 7);
+                    v0 = ~GetCoord(item);
+                    Item_move(<< (v0::1 - 4), v0::2, 0 >>, _Guard1);
+                    createSprite(65533, 15, 0, 0, v0::2, (v0::1 - 4), 7);
+                    v5 = ~PostAction(<< _aNO_HALT_i, _aWAIT_i, 60, _aUSABLE_i, #DisciplineGuardEgg_i >>, _Guard1);
+                    Npc_setAlignment(_Chaotic, _Guard1);
+                    SetNPCID_i(13, _Guard1);
+                    SetWorkTypeAt_i(_Wander, v0::2, (v0::1 - 4), _Guard1);
+                    PathfindNPC_i(false, #DisciplineGuardEgg_i, ~NPCToItem_i(_Guard1), _Path_Success, << 1822, 631, 0 >>, _Guard1);
+                } else {
+                    flag(554) = true;
+                }
+            } else {
+                flag(553) = true;
+            }
+        }
+    }
+}
+
+Routine DisciplineWallEgg_i accepts a0 #locals(9) {
+    if not ~GetItemFlag_i(_Petra_i, _Avatar) {
+    } else {
+        v0 = ~GetParty();
+        Foreach v3 in v0 {
+            if ((~Item_getType(v3) <> _M_Automaton) and (v3 <> ~NPCToItem_i(_Avatar))) {
+                goto label_8;
+            }
+        }
+        terminate;
+    }
+    label_8:
+    v4 = ~FindNearby_i(0, 12, _Serp4_NS, _Avatar);
+    Foreach v7 in v4 {
+        if (~GetFrame(v7) = 10) {
+            return;
+        }
+    }
+    v4 = ~Item_create(_Serp4_NS);
+    if v4 {
+        SetFrame(10, v4);
+        v8 = ~PopToMap(<< 1821, 633, 0 >>);
+    }
+}
+
+Routine SwapBodiesBack_i accepts a0 #locals(3) {
+    if ~GetItemFlag_i(_Petra_i, _Avatar) {
+        if $avatarwasmale {
+            v0 = ~ChangeNPCStat_i(1, _Sex, _Petra);
+            v0 = ~ChangeNPCStat_i(0, _Sex, _Avatar);
+        }
+        Polymorph_i(_F_Automaton, _Petra);
+        Polymorph_i(_Avatar_Type, _Avatar);
+        v1 = ~GetCoord(_Avatar);
+        v1::1 = (v1::1 - (v1::3 / 2));
+        v1::2 = (v1::2 - (v1::3 / 2));
+        v2 = ~rndRange(3, 0);
+        LightningBolt();
+        createSprite(1, v2, 0, 0, v1::2, v1::1, 43);
+        if ~IsNPCNear_i(_Petra) {
+            v1 = ~GetCoord(_Petra);
+            v1::1 = (v1::1 - (v1::3 / 2));
+            v1::2 = (v1::2 - (v1::3 / 2));
+            v2 = ~rndRange(3, 0);
+            createSprite(1, v2, 0, 0, v1::2, v1::1, 43);
+        }
+        ClearItemFlag_i(_Petra_i, _Avatar);
+        ClearItemFlag_i(_Tournament, _Petra);
+    }
+}
+
+Routine ArtifactDoorEgg_i accepts a0 #locals(5) #uses(~SwingDoor_i, SwingPartner_i, SayDoorBlocked_i) {
+    v0 = ~FindNearby_i(0, 1, _Serp_Artifact, item);
+    if v0 && (~GetFrame(v0) = 16) {
+        v1 = ~FindNearby_i(0, 20, _Door_EW, item);
+        Foreach v4 in v1 {
+            if (~GetQuality(v4) = 86) {
+                if ~SwingDoor_i(7, 0, 0, 1, _Door_NS, v4) {
+                    SwingPartner_i(7, 0, 65533, 1, _DDoor_NS, 2, 0, _DDoor_EW, v4);
+                    playSFX(v4, 32);
+                } else {
+                    SayDoorBlocked_i();
+                }
+            }
+        }
+    }
+}
+
+Routine ArtifactSocketEgg_i accepts a0 #locals(7) {
+    v0 = ~FindNearby_i(0, 1, _Serp_Artifact, item);
+    if v0 {
+        v1 = ~Item_push(v0);
+        v2 = ~GetCoord(item);
+        v1 = ~PopToMap(v2);
+        if (~GetFrame(v0) = 14) {
+            v3 = ~FindNearby_i(16, 4, _Egg_Type, item);
+            Foreach v6 in v3 {
+                if (~GetQuality(v6) = 13) {
+                    Item_destroy(v6);
+                    break;
+                }
+            }
+        }
+    }
+}
+
+Routine FireShooterEgg_i accepts a0 #locals(2) {
+    v0 = ~FindNearby_i(16, 15, _Trap_Type, item);
+    if v0 {
+        v1 = ~PostInFuture(3, << _aHATCH_i >>, v0);
+    }
+}
+
+Routine AcidEgg_i accepts a0 #locals(10) #uses(~PartyUtters) {
+    v0 = ~GetParty();
+    v1 = 30;
+    v2 = 65180;
+    Foreach v5 in v0 {
+        v6 = ~GetDist(item, v5);
+        if (v6 < v1) {
+            if ~GetItemFlag_i(_Petra_i, _Avatar) {
+                if ((v5 <> 65180) and ((v5 <> ~NPCToItem_i(_Avatar)) and (~Item_getType(v5) <> _M_Automaton))) {
+                    v1 = v6;
+                    v2 = v5;
+                }
+            } else {
+                if ((v5 <> 65508) and ((v5 <> ~NPCToItem_i(_Petra)) and (~Item_getType(v5) <> _M_Automaton))) {
+                    v1 = v6;
+                    v2 = v5;
+                }
+            }
+        }
+    }
+    if (v2 <> 65180) {
+        ReduceHits_i(5, 5, v2);
+    }
+    flag(550) = true;
+    if (~rndRange(3, 1) = 2) {
+        v7 = ~PartyUtters(true, "@Acid!@", "@Acid!@", 65508);
+    }
+    v8 = ~GetCoord(v2);
+    v9 = ~Item_create(_Blood_Trails);
+    if v9 {
+        SetFrame(24, v9);
+        v7 = ~PopToMap(v8);
+    }
+}
+
+Routine ArtifactBridgeEgg_i accepts a0 #locals(10) {
+    v0 = ~FindNearby_i(0, 1, _Serp_Artifact, item);
+    if v0 {
+        v1 = ~Item_push(v0);
+        v2 = ~GetCoord(item);
+        v1 = ~PopToMap(v2);
+        if (~GetFrame(v0) = 15) {
+            v3 = ~FindNearby_i(0, 15, _Serpgate, item);
+            v4 = true;
+            Foreach v7 in v3 {
+                v8 = ~GetCoord(v7);
+                if ((v8::1 = 1796) and (v8::2 = 632)) {
+                    v4 = false;
+                    break;
+                }
+            }
+            if v4 {
+                v9 = ~Item_create(_Serpgate);
+                if v9 {
+                    ClearItemFlag_i(_IsTemporary_i, v9);
+                    SetFrame(8, v9);
+                    createSprite(65535, 0, 0, 0, 630, 1794, 47);
+                    Sfx(108);
+                    v1 = ~PopToMap(<< 1796, 632, 0 >>);
+                }
+            }
+        }
+    }
+    CreateSpriteOn_i(65535, 0, 0, 0, 0, 0, 21, item);
+}
+
+Function ~AvatarBodyType_i accepts a0, a1 #locals(0) {
+    return ((1030 + v0) + ((2 - v1) * 2));
+}

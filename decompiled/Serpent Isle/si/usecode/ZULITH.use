@@ -1,0 +1,662 @@
+Routine Zulith accepts a0 #locals(13) #uses(~LordOrLady, ~AvatarName, ~WhereAmI_i, ~GimmePathEgg, PartyFaces_i, Bark_i, ~PartyUtters, ~AskYesNo, ZulithChangesMoney_i, SendAssassin_i, JorvinBringsInvitation_i) {
+    v0 = ~LordOrLady();
+    v1 = ~AvatarSex();
+    v2 = ~AvatarName();
+    v3 = false;
+    v4 = false;
+    v5 = false;
+    v6 = false;
+    v7 = ~WhereAmI_i();
+    if (event = _NearDeath) {
+        v8 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #Green_Noble >>, item);
+    }
+    if (event = _Action) {
+        if $zulithcaughtfollowing {
+            terminate;
+        }
+        if (~WhereAmI_i() = 3) {
+            v8 = ~PostInFuture(50, << _aNO_HALT_i, _aUSABLE_i, #Zulith >>, ~GimmePathEgg(1, 5));
+            v8 = ~ApproachAvatar_i(40, 120, _Zulith);
+            SetWorkType(_Hound, _Zulith);
+        } else {
+            v8 = ~PostInFuture(100, << _aNO_HALT_i, _aUSABLE_i, #Zulith >>, ~GimmePathEgg(1, 5));
+        }
+    }
+    if (event = _Converse) {
+        Item_bark("@A moment, if thou wilt.@", _Avatar);
+        PartyFaces_i(65475);
+        Bark_i(5, "@At thy service.@", _Zulith);
+        SetWorkType(_Talk, _Zulith);
+    }
+    if ((event = _Bark) and ($alyssandtalk and not $zulithcaughtfollowing)) {
+        v9 = ~Random(6);
+        if (v9 = 1) {
+            v10 = "@He is following us!@";
+        }
+        if (v9 = 2) {
+            v10 = "@Look!@";
+        }
+        if (v9 = 3) {
+            v10 = "@Who is that man?@";
+        }
+        if (v9 = 4) {
+            v10 = "@Spy!@";
+        }
+        if (v9 = 5) {
+            v10 = "@Careful!@";
+        }
+        if (v9 = 6) {
+            v10 = "@Do not look now...@";
+        }
+        v11 = ~PartyUtters(true, 0, v10, 1);
+        SetWorkType(_Hound, _Zulith);
+        flag(398) = true;
+    }
+    if (event = _Talking) {
+        Npc_schedule(_Zulith);
+        ClearBark_i(_Zulith);
+        SetSpeaker0_i(0, _Zulith);
+        v12 = ~GetItemFlag_i(_Met, _Zulith);
+        if ($FAWN_TRIAL_RECESS or ($AUDIENCE_WITH_YELINDA and not $FAWN_TRIAL_DONE)) {
+            ["I know thee for what thou art, stranger! And I shall testify at the trial."];
+            CloseSpeaker0_i();
+            Bark_i(0, "@Wait and see!@", _Zulith);
+            terminate;
+        }
+        if (v12 = false) {
+            if ($gottattoo = true) {
+                if (v1 = true) {
+                    ["Ah, one of Monitor's female Pikemen. I am Zulith, Chancellor of Fawn. It is mine honor and duty to serve thee."];
+                } else {
+                    ["What a pleasure to meet one of the illustrious Monitorian knights! I am Zulith, Chancellor of Fawn. How might I assist thee, <v0>?"];
+                }
+            } else {
+                if (v1 = true) {
+                    ["Welcome to Fawn, city of Beauty. My name is Zulith. I am the Chancellor. It is mine honor and duty to serve thee."];
+                } else {
+                    ["Welcome to Fawn, honored traveller. I am Zulith, Chancellor of Fawn. How might I assist thee, <v0>?"];
+                }
+            }
+            SetItemFlag_i(_Met, _Zulith);
+        } else {
+            ["Well met, <v0>. 'Tis a pleasure to see thee again."];
+        }
+        if (flag(398) and not $zulithcaughtfollowing) {
+            TurnOn("Art thou following me?");
+        }
+        TurnOn(<< "storms", "goblins", "Chancellor", "bye" >>);
+        converse {
+            key ("Art thou following me?") {
+                TurnOff("Art thou following me?");
+                ["I am a busy man, <v0>. If thy business lies along the route that mine doth, what fault of mine is that?"];
+                ["Besides, what hast thou done to warrant thy worries that I might be following thee?"];
+                v11 = ~PartyUtters(false, 0, "@Cheeky fellow!@", 1);
+                Bark_i(0, "@Arrogant strangers!@", _Zulith);
+                $zulithcaughtfollowing = true;
+                RevertSchedule_i(_Zulith);
+                SetWorkType(_Shy, _Zulith);
+                break;
+            }
+            key ("storms") {
+                TurnOff("storms");
+                ["Quite disruptive... They have totally depleted our fishing fleet."];
+                if ($AUDIENCE_WITH_YELINDA and ($FAWN_TRIAL_DONE and not $oraclesaysinnocent)) {
+                    ["If only these terrible storms would end!"];
+                } else {
+                    ["Great Captain Garth doth have plans laid for rebuilding the ships. But 'twould not be safe until these storms subside."];
+                    ["Great Captain Joth is in charge of finding the means to sustain the city until this unusual weather clears."];
+                    PushKeys();
+                    TurnOn(<< "Great Captains", "Great Captain Garth", "Great Captain Joth", "change subject" >>);
+                }
+            }
+            key ("change subject") {
+                ["Of course. What dost thou desire to know?"];
+                PopKeys();
+            }
+            key ("Great Captains") {
+                TurnOff("Great Captains");
+                ["The Great Captains are the counsellors to Lady Yelinda, ruler of Fawn. There are three of them: Garth, Joth and Voldin."];
+                TurnOn(<< "duties", "Voldin" >>);
+            }
+            key ("duties") {
+                ["'Tis their honor to oversee the fleets and all trade matters."];
+                ["They are all seamen who have been appointed to their post in recognition of their expertise."];
+                TurnOff("duties");
+            }
+            key ("Voldin") {
+                TurnOff("Voldin");
+                ["Voldin doth have a history of service to Fawn. He was unanimously nominated for the council position by his fellow captains."];
+                ["Voldin works in conjunction with the Captain of the Guard to assure Fawn's safety. He is senior on the council."];
+                TurnOn("history");
+            }
+            key ("history") {
+                TurnOff("history");
+                ["Voldin served Fawn as a member of the city guard in his younger days. Before he became a council member, he was a fishing captain."];
+            }
+            key ("Great Captain Garth") {
+                TurnOff("Great Captain Garth");
+                ["Garth comes from a fine family. He is the youngest member of the council, but wisely tempers his views to those of the senior council members."];
+                ["Garth is also something of a ladies' man, I fear."];
+                TurnOn("Garth's family");
+            }
+            key ("Garth's family") {
+                ["His family doth own a shipping business. They have been merchant seamen for generations."];
+                ["As his mother's youngest son, he took the council seat when his cousin resigned. His elder brother is now in charge of the family's shipping business."];
+                TurnOff("Garth's family");
+            }
+            key ("Great Captain Joth") {
+                TurnOff("Great Captain Joth");
+                ["Joth was the finest sea captain before he was injured."];
+                ["He favors beginning to rebuild the fleet now, but hath deferred to Voldin's opinion that it would not be safe to do so at this time."];
+                TurnOn(<< "injured", "not safe" >>);
+            }
+            key ("injured") {
+                TurnOff("injured");
+                ["Joth's ship ran aground during a storm... When his injuries would not allow him to return to sea, Lady Yelinda most graciously offered him a seat on the council."];
+            }
+            key ("not safe") {
+                TurnOff("not safe");
+                ["Who would cut the wood to build the ships for fear of more goblins? And no sane person would venture into the open with these storms arriving without warning."];
+                ["No, we must wait until this weather clears before we can hope to begin rebuilding our fleet."];
+                TurnOn("Fear of more goblins?");
+            }
+            key ("Fear of more goblins?") {
+                TurnOff("Fear of more goblins?");
+                if $fawntowerretaken {
+                    ["Everyone knows that goblins breed like flies upon carrion! Even though the tower hath been retaken, it will not be long before they are back!"];
+                } else {
+                    ["Everyone knows that goblins breed like flies upon carrion! It will not be long before they engulf the entire city with their filthy numbers!"];
+                }
+            }
+            key ("goblins") {
+                TurnOff("goblins");
+                if ($gottattoo = true) {
+                    if ($fawntowerretaken = true) {
+                        ["Most horrible creatures!"];
+                        ["Dost thou know that, without the possibility of escape by ship because of the storms, I had actually feared that the city might be lost?"];
+                        ["Knowest thou the brave Pikemen that restored our safety? I am sure that Lady Yelinda would like to thank them personally, if possible."];
+                        if (~AskYesNo() = true) {
+                            ["Pray tell me their names that I might relay them to her Ladyship at once."];
+                            PushKeys();
+                            TurnOn(<< "I do not know their names.", "I and my companions.", "I led the attack." >>);
+                        } else {
+                            ["Thou canst not be faulted for not knowing their names. No doubt there are quite a number of Pikemen."];
+                            ["Lady Yelinda will have to send her thanks back to Monitor."];
+                        }
+                    } else {
+                        if (v1 = true) {
+                            ["The goblins are most likely preparing for an assault on our city."];
+                            ["Thou shouldst stay here in Fawn, <v0>. There is great danger now that those horrible creatures hold the tower."];
+                            ["I would be most distraught to know that thou wert going to endanger thyself."];
+                        } else {
+                            ["The goblins are most likely preparing for an assault on our city."];
+                            ["Shouldst thou not lend thy bravery to the cause of restoring our city's safety, noble Pikeman?"];
+                        }
+                    }
+                } else {
+                    if (v1 = true) {
+                        ["Most horrible creatures!"];
+                        ["They have a most unfortunate taste for human flesh. For thy safety, thou shouldst remain within the confines of the city. I fear that they are preparing to assault the city."];
+                    } else {
+                        ["Most horrible creatures!"];
+                        ["Thou shouldst speak with the Captain of the Guard. We have need of able-bodied fighters, such as thyself. I fear that they are preparing to assault the city."];
+                    }
+                }
+            }
+            key ("I do not know their names.") {
+                TurnOff(<< "I do not know their names.", "I and my companions.", "I led the attack." >>);
+                ["Thou canst not be faulted for not knowing their names. No doubt there are quite a number of Pikemen."];
+                ["Lady Yelinda will have to send her thanks back to Monitor."];
+                PopKeys();
+            }
+            key ("I and my companions.") {
+                TurnOff(<< "I do not know their names.", "I and my companions.", "I led the attack." >>);
+                if (v1 = true) {
+                    ["Then thou hast companions beyond compare!"];
+                    ["Lady Yelinda will surely wish to meet thee, a shining example of Beauty!"];
+                } else {
+                    ["Truly thou art the bravest Monitorian alive!"];
+                    ["Lady Yelinda will surely wish to thank thee herself."];
+                }
+                PopKeys();
+            }
+            key ("I led the attack.") {
+                TurnOff(<< "I do not know their names.", "I and my companions.", "I led the attack." >>);
+                if (v1 = true) {
+                    ["Surely thou dost jest!"];
+                    ["They could not have allowed someone as beautiful as thyself to be endangered!"];
+                } else {
+                    ["Truly thou art the bravest Monitorian alive!"];
+                    ["Lady Yelinda will surely wish to thank thee herself."];
+                }
+                PopKeys();
+            }
+            key ("Chancellor") {
+                TurnOff("Chancellor");
+                if ($AUDIENCE_WITH_YELINDA and ($FAWN_TRIAL_DONE and not $oraclesaysinnocent)) {
+                    ["I serve the Lady, handling those details which she doth choose to delegate to me. I also exchange various forms of money."];
+                    TurnOn("exchange money");
+                } else {
+                    ["I serve as an envoy from Lady Yelinda to the Great Captains. I oversee all the minor details that should not worry her Ladyship. I also exchange various forms of money."];
+                    ["If thou dost wish an audience with her, I can examine her schedule."];
+                    TurnOn(<< "Lady Yelinda", "exchange money", "audience" >>);
+                }
+            }
+            key ("Lady Yelinda") {
+                TurnOff("Lady Yelinda");
+                ["She is the ruler of Fawn and all its environs. All who honor Beauty honor Yelinda."];
+                ["She is a wise and compassionate leader. Everyone doth love her. Her beauty is only rivaled by that of Kylista."];
+                TurnOn("Kylista");
+            }
+            key ("Kylista") {
+                TurnOff("Kylista");
+                ["Kylista is the priestess of Beauty."];
+                ["Yelinda is the embodiment of all of Fawn itself. Because Kylista presides over the Oracle, she is the personification of Beauty."];
+                TurnOn("Oracle");
+            }
+            key ("Oracle") {
+                TurnOff("Oracle");
+                ["Many people believe that the Mages of Old Sosaria created the Oracle. I do not believe such."];
+                ["I have stood alone in the temple gazing at it, and I will tell thee that it is a living being trapped there in that statue."];
+                ["Those Mages did not create a magical item! They summoned some beautiful spirit and trapped it there!"];
+                TurnOn(<< "temple" >>);
+            }
+            key ("temple") {
+                TurnOff("temple");
+                ["I often go there when the day hath been difficult. 'Tis directly behind the palace. 'Tis so quiet and peaceful, except before a revelation."];
+                TurnOn("revelation");
+            }
+            key ("revelation") {
+                TurnOff("revelation");
+                ["Yes, revelations are quite exciting. A message from the heavens, or at least that poor trapped spirit." *"Often, 'tis the only thing many people have to give them hope in these troubled times."];
+            }
+            key ("audience") {
+                TurnOff("audience");
+                ["Lady Yelinda doth receive visitors and petitions every morning. Let us see... She could receive thee some time next week." *"Perhaps if I intercede for thee, thou mightest be received earlier. I shall see what I can arrange."];
+            }
+            key ("exchange money") {
+                ZulithChangesMoney_i();
+            }
+            key ("bye") {
+                SendAssassin_i();
+                CloseSpeaker0_i();
+                Bark_i(0, "@Goodbye.@", _Avatar);
+                Bark_i(5, "@Walk in Beauty!@", _Zulith);
+                JorvinBringsInvitation_i();
+                break;
+            }
+        }
+        clear_answers;
+    }
+}
+
+Usable ZulithChangesMoney_i #locals(16) #uses(~AskYesNo, ~AskList, ~IsInInv, ~GiveItemsOrDrop_i) {
+    v0 = true;
+    ["I charge a small amount of the money exchanged. Dost thou accept?"];
+    if ~AskYesNo() {
+        While v0 {
+            ["What coinage dost thou want?"];
+            v1 = ~AskList(<< "Monetari", "Guilders", "Filari", "Gold Coins" >>);
+            if (v1 = "Monetari") {
+                ["What dost thou care to exchange for monetari?"];
+                v2 = 951;
+                v3 = << "Nothing" >>;
+                if ~IsInInv(65177, 65177, _Moon_Money, 1, _Party) {
+                    v3 = (v3 & "Guilders");
+                }
+                if ~IsInInv(65177, 65177, _Fawn_Money, 1, _Party) {
+                    v3 = (v3 & "Filari");
+                }
+                if ~IsInInv(65177, 65177, _Gold_Coins, 1, _Party) {
+                    v3 = (v3 & "Gold Coins");
+                }
+                v4 = ~AskList(v3);
+                if (v4 = "Nothing") {
+                    ["Thou shouldst do well not to waste my time so in the future! I am an important man!"];
+                    terminate;
+                }
+                if (v4 = "Guilders") {
+                    ["I can give thee 1 monetari for every 3 guilders thou hast."];
+                    v5 = 952;
+                }
+                if (v4 = "Filari") {
+                    ["I can give thee 1 monetari for every 4 filari thou hast."];
+                    v5 = 948;
+                }
+                if (v4 = "Gold Coins") {
+                    ["I can give thee 1 monetari for every 2 gold coins thou hast."];
+                    v5 = 644;
+                }
+                ["Wilt thou agree to my rate?"];
+                if (~AskYesNo() = true) {
+                    v6 = ~CountItem(_All, _All, v5, _Party);
+                    if (v6 > 500) {
+                        v6 = 500;
+                    }
+                    if (v6 <> 0) {
+                        ["How many <v4> wouldst thou like to exchange?"];
+                        v7 = ~AskBarInput(0, 1, v6, 0);
+                        if (v7 = 0) {
+                            ["Couldst thou please decide!?"];
+                            goto label_173;
+                        }
+                        if (v4 = "Guilders") {
+                            v8 = (v7 / 3);
+                            v9 = 6;
+                        }
+                        if (v4 = "Filari") {
+                            v8 = (v7 / 4);
+                            v9 = 8;
+                        }
+                        if (v4 = "Gold Coins") {
+                            v8 = (v7 / 2);
+                            v9 = 4;
+                        }
+                        v10 = (v8 / 33);
+                        v11 = (v8 - v10);
+                        if (v8 = 0) {
+                            ["Thou must offer at least <v9> <v4> to exchange for <v1>!"];
+                            goto label_173;
+                        }
+                        if (v8 = 1) {
+                            ["My fee will leave thee with nothing!"];
+                            goto label_173;
+                        }
+                        if (v8 <= 33) {
+                            v10 = 1;
+                            v11 = (v8 - v10);
+                        }
+                        if (v7 >= 1) {
+                            v12 = ~TakeFromParty_i(false, _All, _All, v5, v7);
+                            ["Hmmm..."~"Very well, I will take thy <v7> <v4> and in exchange give thee <v8> Monetari, subtracting my fee of <v10> Monetari, for a final sum of <v11> Monetari given to thee."];
+                            v13 = ~GiveItemsOrDrop_i(true, false, 65177, 65177, v2, v11, _Avatar);
+                            ["The transaction is done!"];
+                        } else {
+                            ["Couldst thou please make up thy mind!?"];
+                        }
+                    } else {
+                        ["Thou dost not have any <v4> to exchange for <v1>!"];
+                    }
+                } else {
+                    ["My rates are the same as every other moneychanger..."];
+                }
+            }
+            if (v1 = "Guilders") {
+                ["Which coin dost thou care to exchange for guilders?"];
+                v2 = 952;
+                v3 = << "Nothing" >>;
+                if ~IsInInv(65177, 65177, _Monitor_Money, 1, _Party) {
+                    v3 = (v3 & "Monetari");
+                }
+                if ~IsInInv(65177, 65177, _Fawn_Money, 1, _Party) {
+                    v3 = (v3 & "Filari");
+                }
+                if ~IsInInv(65177, 65177, _Gold_Coins, 1, _Party) {
+                    v3 = (v3 & "Gold Coins");
+                }
+                v4 = ~AskList(v3);
+                if (v4 = "Nothing") {
+                    ["Thou shouldst do well not to waste my time so in the future! I am an important man!"];
+                    terminate;
+                }
+                if (v4 = "Monetari") {
+                    ["I can give thee 3 guilders for every 1 monetari thou hast."];
+                    v5 = 951;
+                }
+                if (v4 = "Filari") {
+                    ["I can give thee 3 guilders for every 4 filari thou hast."];
+                    v5 = 948;
+                }
+                if (v4 = "Gold Coins") {
+                    ["I can give thee 3 guilders for every 2 gold coins thou hast."];
+                    v5 = 644;
+                }
+                ["Dost thou agree to my rate?"];
+                if (~AskYesNo() = true) {
+                    v6 = ~CountItem(_All, _All, v5, _Party);
+                    if (v6 > 500) {
+                        v6 = 500;
+                    }
+                    if (v6 <> 0) {
+                        ["How many <v4> wouldst thou like to exchange?"];
+                        v7 = ~AskBarInput(0, 1, v6, 0);
+                        if (v7 = 0) {
+                            ["Couldst thou please make a decision!?"];
+                            goto label_173;
+                        }
+                        if (v4 = "Monetari") {
+                            v8 = (v7 * 3);
+                        }
+                        if (v4 = "Filari") {
+                            v8 = ((v7 * 3) / 4);
+                            v9 = 3;
+                        }
+                        if (v4 = "Gold Coins") {
+                            v8 = ((v7 * 3) / 2);
+                            v9 = 2;
+                        }
+                        v10 = (v8 / 33);
+                        v11 = (v8 - v10);
+                        v14 = "Guilders";
+                        v15 = "Guilders";
+                        if (v8 = 0) {
+                            ["Thou must offer at least <v9> <v4> to exchange for <v1>!"];
+                            goto label_173;
+                        }
+                        if (v8 = 1) {
+                            ["My fee will leave thee with nothing!"];
+                            goto label_173;
+                        }
+                        if (v8 <= 33) {
+                            v10 = 1;
+                            v11 = (v8 - v10);
+                        }
+                        if (v11 = 1) {
+                            v14 = "Guilder";
+                        }
+                        if (v10 = 1) {
+                            v15 = "Guilder";
+                        }
+                        if (v7 >= 1) {
+                            v12 = ~TakeFromParty_i(false, _All, _All, v5, v7);
+                            ["Hmmm..."~"Very well, I will take thy <v7> <v4> and in exchange give thee <v8> Guilders, subtracting my fee of <v10> <v15>, for a final sum of <v11> <v14> given to thee."];
+                            v13 = ~GiveItemsOrDrop_i(true, false, 65177, 65177, v2, v11, _Avatar);
+                            ["The transaction is done!"];
+                        } else {
+                            ["Couldst thou please make up thy mind!?"];
+                        }
+                    } else {
+                        ["Thou dost not have any <v4> to exchange for <v1>!"];
+                    }
+                } else {
+                    ["My rates are the same as every other moneychanger..."];
+                }
+            }
+            if (v1 = "Filari") {
+                ["Which coin dost thou care to exchange for filari?"];
+                v2 = 948;
+                v3 = << "Nothing" >>;
+                if ~IsInInv(65177, 65177, _Monitor_Money, 1, _Party) {
+                    v3 = (v3 & "Monetari");
+                }
+                if ~IsInInv(65177, 65177, _Moon_Money, 1, _Party) {
+                    v3 = (v3 & "Guilders");
+                }
+                if ~IsInInv(65177, 65177, _Gold_Coins, 1, _Party) {
+                    v3 = (v3 & "Gold Coins");
+                }
+                v4 = ~AskList(v3);
+                if (v4 = "Nothing") {
+                    ["Thou shouldst do well not to waste my time so in the future! I am an important man!"];
+                    terminate;
+                }
+                if (v4 = "Monetari") {
+                    ["I can give thee 4 filari for every 1 monetari thou hast."];
+                    v5 = 951;
+                }
+                if (v4 = "Guilders") {
+                    ["I can give thee 4 filari for for every 3 guilders thou hast."];
+                    v5 = 952;
+                }
+                if (v4 = "Gold Coins") {
+                    ["I can give thee 2 filari for every 1 gold coin thou hast."];
+                    v5 = 644;
+                }
+                ["Dost thou agree to my rate?"];
+                if (~AskYesNo() = true) {
+                    v6 = ~CountItem(_All, _All, v5, _Party);
+                    if (v6 > 500) {
+                        v6 = 500;
+                    }
+                    if (v6 <> 0) {
+                        ["How many <v4> wouldst thou like to exchange?"];
+                        v7 = ~AskBarInput(0, 1, v6, 0);
+                        if (v7 = 0) {
+                            ["Couldst thou please make up thy mind!?"];
+                            goto label_173;
+                        }
+                        if (v4 = "Monetari") {
+                            v8 = (v7 * 4);
+                        }
+                        if (v4 = "Guilders") {
+                            v8 = ((v7 * 4) / 3);
+                            v9 = 2;
+                        }
+                        if (v4 = "Gold Coins") {
+                            v8 = (v7 * 2);
+                            if (v7 = 1) {
+                                v4 = "Gold Coin";
+                            }
+                        }
+                        v10 = (v8 / 33);
+                        v11 = (v8 - v10);
+                        if (v8 = 0) {
+                            ["Thou must offer at least <v9> <v4> to exchange for <v1>!"];
+                            goto label_173;
+                        }
+                        if (v8 = 1) {
+                            ["My fee will leave thee with nothing!"];
+                            goto label_173;
+                        }
+                        if (v8 <= 33) {
+                            v10 = 1;
+                            v11 = (v8 - v10);
+                        }
+                        if (v7 >= 1) {
+                            v12 = ~TakeFromParty_i(false, _All, _All, v5, v7);
+                            ["Hmmm..."~"Very well, I will take thy <v7> <v4> and in exchange give thee <v8> Filari, subtracting my fee of <v10> Filari, for a final sum of <v11> Filari given to thee."];
+                            v13 = ~GiveItemsOrDrop_i(true, false, 65177, 65177, v2, v11, _Avatar);
+                            ["The transaction is done!"];
+                        } else {
+                            ["Couldst thou please make up thy mind!?"];
+                        }
+                    } else {
+                        ["Thou dost not have any <v4> to exchange for <v1>!"];
+                    }
+                } else {
+                    ["My rates are the same as every other moneychanger..."];
+                }
+            }
+            if (v1 = "Gold Coins") {
+                ["Which coin dost thou care to exchange for gold?"];
+                v2 = 644;
+                v3 = << "Nothing" >>;
+                if ~IsInInv(65177, 65177, _Monitor_Money, 1, _Party) {
+                    v3 = (v3 & "Monetari");
+                }
+                if ~IsInInv(65177, 65177, _Fawn_Money, 1, _Party) {
+                    v3 = (v3 & "Filari");
+                }
+                if ~IsInInv(65177, 65177, _Moon_Money, 1, _Party) {
+                    v3 = (v3 & "Guilders");
+                }
+                v4 = ~AskList(v3);
+                if (v4 = "Nothing") {
+                    ["Thou shouldst do well not to waste my time so in the future! I am an important man!"];
+                    terminate;
+                }
+                if (v4 = "Monetari") {
+                    ["I can give thee 2 gold coins for every 1 monetari thou hast."];
+                    v5 = 951;
+                }
+                if (v4 = "Guilders") {
+                    ["I can give thee 2 gold coins for every 3 guilders thou hast."];
+                    v5 = 952;
+                }
+                if (v4 = "Filari") {
+                    ["I can give thee 1 gold coin for every 2 filari thou hast."];
+                    v5 = 948;
+                }
+                if (v4 = "Gold Nuggets") {
+                    ["I can give thee 20 gold coins for every 1 gold nugget thou hast."];
+                    v5 = 645;
+                }
+                ["Dost thou agree to my rate?"];
+                if (~AskYesNo() = true) {
+                    v6 = ~CountItem(_All, _All, v5, _Party);
+                    if (v6 > 500) {
+                        v6 = 500;
+                    }
+                    if (v6 <> 0) {
+                        ["How many <v4> wouldst thou like to exchange?"];
+                        v7 = ~AskBarInput(0, 1, v6, 0);
+                        if (v7 = 0) {
+                            ["Couldst thou please decide!?"];
+                            goto label_173;
+                        }
+                        if (v4 = "Monetari") {
+                            v8 = (v7 * 2);
+                        }
+                        if (v4 = "Guilders") {
+                            v8 = ((v7 * 2) / 3);
+                            v9 = 3;
+                        }
+                        if (v4 = "Filari") {
+                            v8 = (v7 / 2);
+                            v9 = 4;
+                        }
+                        v10 = (v8 / 33);
+                        v11 = (v8 - v10);
+                        v14 = "Gold Coins";
+                        v15 = "Gold Coins";
+                        if (v8 = 0) {
+                            ["Thou must offer at least <v9> <v4> to exchange for <v1>!"];
+                            goto label_173;
+                        }
+                        if (v8 = 1) {
+                            ["My fee will leave thee with nothing!"];
+                            goto label_173;
+                        }
+                        if (v8 <= 33) {
+                            v10 = 1;
+                            v11 = (v8 - v10);
+                        }
+                        if (v11 = 1) {
+                            v14 = "Gold Coin";
+                        }
+                        if (v10 = 1) {
+                            v15 = "Gold Coin";
+                        }
+                        if (v7 >= 1) {
+                            v12 = ~TakeFromParty_i(false, _All, _All, v5, v7);
+                            ["Hmmm..."~"Very well, I will take thy <v7> <v4> and in exchange give thee <v8> Gold Coins, subtracting my fee of <v10> <v15>, for a final sum of <v11> <v14> given to thee."];
+                            v13 = ~GiveItemsOrDrop_i(true, false, 65177, 65177, v2, v11, _Avatar);
+                            ["The transaction is done!"];
+                        } else {
+                            ["Couldst thou please make up thy mind!?"];
+                        }
+                    } else {
+                        ["Thou dost not have any <v4> to exchange for <v1>!"];
+                    }
+                } else {
+                    ["My rates are the same as every other moneychanger..."];
+                }
+            }
+            label_173:
+            ["Dost thou wish to exchange more coins?"];
+            v0 = ~AskYesNo();
+        }
+    } else {
+        ["Thou wilt find no other moneychangers with such a low fee as mine!"];
+    }
+}

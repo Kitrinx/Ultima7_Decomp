@@ -1,0 +1,234 @@
+Routine Thoxa accepts a0 #locals(14) #uses(~LordOrLady, ~WhereAmI_i, ~GimmePathEgg, ~AvatarName, PartyFaces_i, Bark_i, ~InRect_i, RestoreCompanions_i, ~IsBodyNear_i, ResurrectBodies_i, ~IsNPCNear, MonkMakesPeace_i) {
+    v0 = ~LordOrLady();
+    v1 = ~AvatarSex();
+    v2 = ~WhereAmI_i();
+    v3 = "son";
+    v4 = ~GimmePathEgg(1, 2);
+    v5 = ~NPCToItem_i(_Thoxa);
+    v6 = ~GetItemFlag_i(_Met, _Thoxa);
+    if v1 {
+        v3 = "daughter";
+    }
+    v7 = ~AvatarName();
+    if (event = _Converse) {
+        if (~GetNPCID_i(_Karnax) <> 0) {
+            Item_bark("@Not now...@", _Thoxa);
+            terminate;
+        }
+        Item_bark("@Excuse me...@", _Avatar);
+        PartyFaces_i(65325);
+        Bark_i(2, (("@Yes, my " + v3) + "?@"), _Thoxa);
+        SetWorkType(_Talk, _Thoxa);
+    }
+    if (event = _Talking) {
+        Npc_schedule(_Thoxa);
+        ClearBark_i(_Thoxa);
+        SetSpeaker0_i(0, _Thoxa);
+        if ((v2 = 13) and ($AVATAR_GOT_SHORT_STICK and not $DUPRE_IS_TOAST)) {
+            ["It is written that 'The Hero from Another World shall face the end as the beginning'! Thou didst enter our land with thy three companions, they must be present at the final moment to forestall disaster!"];
+            CloseSpeaker0_i();
+            Bark_i(0, "@I shall pray for thee!@", _Thoxa);
+            Item_move(<< 1530, 1935, 0 >>, _Thoxa);
+            v8 = << 65533, 65534, 65535 >>;
+            Foreach v11 in v8 {
+                if not ~IsNPCNear_i(v11) {
+                    v12 = ~ApproachAvatar_i(40, 80, v11);
+                    if not (~GetWorkType(v11) = _FollowAvt) {
+                        JoinParty(v11);
+                    }
+                }
+            }
+            terminate;
+        }
+        SetSpeakerSlot_i(0);
+        v13 = ~GetCoord(_Thoxa);
+        if ~InRect_i(<< 2361, 473 >>, << 2324, 443 >>, v13) {
+            ["Thou must not enter this door without thy three stalwart companions, Hero from Another World!"];
+            ["It matters not if any others venture with thee, but through this portal the four must pass!"];
+            ["I shall act as a channel for the power to restore thy group as it should be."];
+            RestoreCompanions_i();
+            v12 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #Gwanni_Child >>, v5);
+            terminate;
+        }
+        ["We meet again. Thy destiny draws near quickly... How may I be of service to thee?"];
+        if ~IsBodyNear_i() {
+            ["Oh! One of thy friends hath met an untimely end. This should not be... \["If thou art ready to see thy friend again, merely ask and I will return them to thee."];
+            TurnOn("resurrection");
+        } else {
+            if ((v2 = 2) and not v6) {
+                ["Welcome to Monk Isle, my <v3>."];
+                ["Thou mayest tarry with us for as long as thou dost wish, but remember... The Sands of Time wait for no one, not even thee."];
+                ["Whilst thou art here, thou wilt learn that the life of a monk is governed by the bells. Not all of our membership may speak to thee, the novices are bound by a vow of silence to help them better contemplate the mysteries."];
+                TurnOn(<< "Sands of Time", "bells", "mysteries" >>);
+            }
+        }
+        if ($methierophant and not $metchaoshierophant) {
+            ["I see... Thou hast made great progress in thy quest, my <v3>. But before thou canst continue, thou must seek the wisdom of the last child of Chaos. He alone holds the key to the location of the Chaos Hierophant."];
+            if ~GetItemFlag_i(_Met, _Sethys) {
+                ["Thou didst meet him in his imprisonment, my <v3>. Yet he remains a prisoner out of time. Seek him within the Shrine that is his home."];
+            } else {
+                ["He remains a prisoner out of time, imprisoned within the Shrine that is his home."];
+            }
+        }
+        TurnOn("bye");
+        converse {
+            key ("return") {
+                TurnOff("return");
+                ["Xenka disappeared several centuries ago. No one knows where she went."];
+                ["However, in her writings, Xenka hath promised to return to us when the end is near. She will then guide us once more."];
+            }
+            key ("resurrection") {
+                TurnOff("resurrection");
+                ResurrectBodies_i();
+            }
+            key ("Sands of Time") {
+                TurnOff("Sands of Time");
+                ["Within the Hourglass of Fate lie the Sands of Time. As each grain doth fall, so doth another moment hasten us to our doom."];
+                TurnOn("doom");
+            }
+            key ("doom") {
+                TurnOff("doom");
+                if $BANES_RELEASED {
+                    ["If thou dost fail in thy quest, our world will end... ripped apart by the storms and earthquakes that doth now plague it."];
+                } else {
+                    ["If thou dost fail in thy quest, our world will end... ripped apart by the earthquakes that will soon plague it."];
+                }
+            }
+            key ("bells") {
+                TurnOff("bells");
+                ["They toll, though no one rings them. And it is said that when all the bells toll it will signal Xenka's return. Until then, they signal the order of our daily life. From Chapel to field, from field to the library, and so on."];
+                TurnOn(<< "return", "Chapel", "field", "library" >>);
+            }
+            key ("Chapel") {
+                TurnOff("Chapel");
+                ["The Chapel is where we go to meditate. It is also where all the monks gather to perform resurrections. The book of Xenka's prophecies rests on the altar for all to see."];
+            }
+            key ("field") {
+                TurnOff("field");
+                ["Since we are so secluded from the rest of the land, we grow our own food. And as food concerns us all, we all share the tasks of tending to the garden and orchard."];
+                TurnOn("garden and orchard");
+            }
+            key ("garden and orchard") {
+                TurnOff("garden and orchard");
+                ["Thou art welcome to take what thou dost need from our fields. We would gladly share with thee the bounty of the land that thou art striving to save."];
+            }
+            key ("library") {
+                TurnOff("library");
+                ["Over the years we have gathered many books and scrolls that we thought would help us give light to the meaning within Xenka's prophecies. Only recently hath Miggim undertaken the task of trying to set the library to rights. It is he that helps any visitors that come to us seeking information."];
+                TurnOn(<< "books and scrolls", "visitors", "information" >>);
+            }
+            key ("books and scrolls") {
+                TurnOff("books and scrolls");
+                ["I fear that I do not know all we possess. Thou art free to look, of course. But if thou hast specific questions, thou shouldst direct them to Miggim."];
+            }
+            key ("visitors") {
+                TurnOff("visitors");
+                if ~IsNPCNear(_Gwenno) {
+                    if not ~GetItemFlag_i(_Zombie, _Gwenno) {
+                        ["Such visitors are rare, for the journey here is not an easy one. As I remember it, Gwenno was our last visitor."];
+                    } else {
+                        ["Such visitors are rare, for the journey here is not an easy one. As I remember it, our last visitor was poor Gwenno."];
+                    }
+                } else {
+                    ["Such visitors are rare, for the journey here is not an easy one. As I remember it, our last visitor was that woman, Gwenno."];
+                }
+                TurnOn("Gwenno");
+            }
+            key ("Gwenno") {
+                TurnOff("Gwenno");
+                if ~IsNPCNear(_Gwenno) {
+                    if not ~GetItemFlag_i(_Zombie, _Gwenno) {
+                        ["It is a pleasure having her here, my <v3>, now that her proper state of mind hath been restored."];
+                        ["I hope to speak with Gwenno about her time with the Ice People. It would be most instructive, I am sure."];
+                    } else {
+                        ["'Tis a pity to see her so undone. I hope that thou canst find a way to restore her to her proper state of mind soon."];
+                        ["I had hoped to be able to speak with her about her time with the Ice People. It would be most instructive, I am sure."];
+                    }
+                } else {
+                    ["She stayed with us for a short period of time. I think that she was seeking information concerning the Ice People of the north. But thou shouldst speak with Miggim... Gwenno spent most of her time within the library."];
+                }
+                TurnOn("Ice People");
+            }
+            key ("Ice People") {
+                TurnOff("Ice People");
+                ["I know very little about the Ice People, my <v3>. I know only that they are not like me and thee, but are covered in a thick hide -- like that of a bear, only white."];
+            }
+            key ("information") {
+                TurnOff("information");
+                ["They used to come to us for everything from healing arts to weather predictions. Of course, that was before the storms began."];
+            }
+            key ("mysteries") {
+                TurnOff("mysteries");
+                ["Xenka's prophecies are very unclear, my <v3>. Lacking Xenka's heavenly insight, we must struggle to wrest the meaning from each passage. Some devote their entire lives to finding the meaning of only a handful of passages."];
+            }
+            key ("bye") {
+                if (v2 = 2) {
+                    CloseSpeaker0_i();
+                    Bark_i(0, "@Goodbye!@", _Avatar);
+                    Bark_i(2, "@Fortune!@", item);
+                    break;
+                }
+                ["I must return to Monk Isle."];
+                CloseSpeaker0_i();
+                v13 = ~GetCoord(_Thoxa);
+                v13::1 = (v13::1 - (v13::3 / 2));
+                v13::2 = (v13::2 - (v13::3 / 2));
+                createSprite(65535, 0, 0, 0, v13::2, v13::1, 7);
+                Sfx(81);
+                RemoveNPC_i(_Thoxa);
+                terminate;
+            }
+        }
+        clear_answers;
+    }
+    if (event = _NearDeath) {
+        MonkMakesPeace_i(65325);
+    }
+}
+
+Routine RestoreCompanion_i accepts a0 #locals(7) #uses(~IsNPCNear, ~GetStat, SetStat) {
+    if ~GetItemFlag_i(_Dead, v0) {
+        ResurrectNPC_i(v0);
+    }
+    ClearItemFlag_i(_Asleep, v0);
+    ClearItemFlag_i(_Charmed, v0);
+    ClearItemFlag_i(_Cursed, v0);
+    ClearItemFlag_i(_Paralyzed, v0);
+    ClearItemFlag_i(_Poisoned, v0);
+    ClearItemFlag_i(_DontMove_i, v0);
+    ClearItemFlag_i(_Dead, v0);
+    if not ~IsNPCNear(v0) {
+        v1 = ~GetCoord(item);
+        v2 = ~rndRange(2, 65534);
+        v3 = ~rndRange(2, 65534);
+        v1::1 = (v1::1 + v2);
+        v1::2 = (v1::2 + v3);
+        Item_move(<< v1::1, v1::2, v1::3 >>, v0);
+        createSprite(65535, 0, 0, 0, v1::2, v1::1, 21);
+    }
+    v4 = ~GetStat(_Str, v0);
+    v5 = ~GetStat(_Hits, v0);
+    v6 = (v4 - v5);
+    SetStat(v6, _Hits, v0);
+    if not ~GetItemFlag_i(_InParty_i, v0) {
+        JoinParty(v0);
+    }
+    SetWorkType(_FollowAvt, v0);
+    v7 = ~PostAction(<< _aSTAND_FRAME_i >>, v0);
+}
+
+Usable RestoreCompanions_i #locals(6) #uses(~NearbyBodies_i, RestoreCompanion_i) {
+    v0 = ~NearbyBodies_i();
+    Foreach v3 in v0 {
+        if (v3 <> ~NPCToItem_i(_Avatar)) {
+            v4 = ~BodyToNPC_i(v3);
+            if ((v4 = 65533) or ((v4 = 65534) or (v4 = 65535))) {
+                v5 = ~Resurrect_i(v3);
+                JoinParty(v4);
+            }
+        }
+    }
+    RestoreCompanion_i(_Dupre);
+    RestoreCompanion_i(_Shamino);
+    RestoreCompanion_i(_Iolo);
+}

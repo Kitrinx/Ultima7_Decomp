@@ -1,0 +1,17 @@
+Routine FreezingEgg_i accepts a0 #locals(2) {
+    if (event = _Trigger) {
+        v0 = ~GetQuality(item);
+        if (v0 = 0) {
+            ClearItemFlag_i(_Freeze, _Avatar);
+            v1 = ~GetTemperature_i(_Avatar);
+            v1 = (v1 - 5);
+            if (v1 < 0) {
+                v1 = 0;
+            }
+            SetTemperature_i(v1, _Avatar);
+        }
+        if (v0 = 1) {
+            SetItemFlag_i(_Freeze, _Avatar);
+        }
+    }
+}

@@ -1,0 +1,704 @@
+Routine Lever accepts a0 #locals(18) #uses(PathToItem_i, PullLever_i) {
+    if (event = _Converse) {
+        closeAllGumps();
+        if (~GetDist(item, _Avatar) > 1) {
+            v0 = 65535;
+            v1 = 65535;
+            v2 = 65533;
+            PathToItem_i(1, item, #Lever, v2, v1, v0, item);
+        } else {
+            if ((~GetQuality(item) = 148) or (~GetQuality(item) = 149)) {
+                v3 = ~PostInFuture(1, << _aUSABLE_i, #Lever >>, _Avatar);
+            } else {
+                v4 = ~GetDirToward_i(item, _Avatar);
+                v5 = ~PostAction(<< _aFACE_i, v4, _aCONTINUE_i, _aBEND_FRAME_i, _aWAIT_i, 2, _aSTAND_FRAME_i >>, _Avatar);
+                PullLever_i(item);
+            }
+        }
+    }
+    if (event = _Action) {
+        if ((~Item_getType(item) = _Avatar_Type) or (~Item_getType(item) = _Avatar_Female)) {
+            v6 = ~FindNearest_i(1, _Lever, _Avatar);
+            v7 = ~FindNearby_i(16, 40, _Egg_Type, item);
+            Foreach v10 in v7 {
+                if ((~GetQuality(v10) = 200) and (~GetFrame(v10) = 7)) {
+                    v11 = ~FindNearest_i(8, _Teleport_Platform, v10);
+                    if (~GetFrame(v11) = 1) {
+                        v4 = ~GetDirToward_i(v6, _Avatar);
+                        v5 = ~PostAction(<< _aFACE_i, v4, _aCONTINUE_i, _aBEND_FRAME_i, _aWAIT_i, 2, _aSTAND_FRAME_i >>, _Avatar);
+                        PullLever_i(v6);
+                    } else {
+                        if (~GetWorkType(_Stefano) = _FollowAvt) {
+                            Item_bark("@I shall set the other lever...@", _Stefano);
+                            SetWorkType(_Wait, _Stefano);
+                            v12 = ~FindNearby_i(0, 40, _Lever, _Avatar);
+                            v13 = false;
+                            Foreach v16 in v12 {
+                                if not (v16 = v6) {
+                                    v13 = v16;
+                                }
+                            }
+                            v17 = ~GetCoord(v13);
+                            v17::2 = (v17::2 + 1);
+                            PathfindNPC_i(true, #Stefano, _Stefano, _Pathfind1, v17, _Stefano);
+                            SetPathFailure_i(_Path_Failure, _Stefano, << 1192 >>);
+                            terminate;
+                        } else {
+                            Item_bark("@The lever will not move.@", _Avatar);
+                            terminate;
+                        }
+                    }
+                }
+            }
+        } else {
+            PullLever_i(item);
+        }
+    }
+}
+
+Routine Cremate4 accepts a0 #locals(9) {
+    if (event = _Action) {
+        v0 = ~FindNearby_i(0, 10, _Cremate2, item);
+        v1 = ~FindNearby_i(0, 5, _All, v0);
+        v2 = ~GetCoord(v0);
+        Foreach v5 in v1 {
+            v6 = ~GetCoord(v5);
+            if (v6::3 = 1) {
+                v7 = ~Item_push(v5);
+                if v7 {
+                    v6::1 = (v6::1 - 1);
+                    v6::3 = 0;
+                    v7 = ~PopToMap(v6);
+                }
+            }
+        }
+        if (~GetFrame(v0) < 10) {
+            if v0 {
+                v7 = ~PostAction(<< _aFRAME, 0, _aNEXT_FRAME, _aLOOP_i, 65535, 10, byte(85), 1010 >>, v0);
+            }
+        } else {
+            v8 = ~GetCoord(v0);
+            v8::1 = (v8::1 - 1);
+            v8::2 = (v8::2 - 1);
+            v8::3 = 1;
+            v7 = ~Item_create(_Urn);
+            if v7 {
+                SetFrame(0, v7);
+                if $temp1flag {
+                    $temp1flag = false;
+                    v7 = ~SetQuality(1, v7);
+                } else {
+                    v7 = ~SetQuality(0, v7);
+                }
+                v7 = ~PopToMap(v8);
+            }
+            SetFrame(0, v0);
+        }
+    }
+}
+
+Routine SayBlueLightning_i accepts a0 #locals(1) #uses(~PartyUtters) {
+    v0 = ~PartyUtters(false, "@The lightning was blue. Blue?@", "@Blue lightning? Gustacio said nothing about blue lightning!@", 1);
+}
+
+Routine SayRedLightning_i accepts a0 #locals(3) #uses(~PartyUtters, FinishFirstExperiment_i) {
+    v0 = ~PartyUtters(false, 0, 0, 1);
+    if flag(227) {
+        v0 = ~PartyUtters(true, "@The lightning was red.@", "@The lightning was red!@", 1);
+    } else {
+        if ($SEEN_GREEN_LIGHTNING and ($SEEN_YELLOW_LIGHTNING and not $seenredlightning)) {
+            FinishFirstExperiment_i();
+        } else {
+            if (v0 <> 65180) {
+                SetSpeaker0_i(0, v0);
+                if $seenredlightning {
+                    v1 = << "@That one came too close!@", "@It destroyed that object!@", "@Where did it go?@" >>;
+                    v2 = v1::~Random(~ListSize_i(v1));
+                    append v2;
+                    append "";
+                    say;
+                } else {
+                    ["I saw that! A red bolt of energy, it was!"];
+                }
+            } else {
+                Item_bark("@Red lightning!@", _Avatar);
+            }
+        }
+    }
+    $seenredlightning = true;
+}
+
+Routine SayYellowLightning_i accepts a0 #locals(3) #uses(~PartyUtters, FinishFirstExperiment_i) {
+    v0 = ~PartyUtters(false, 0, 0, 1);
+    if flag(227) {
+        v0 = ~PartyUtters(true, "@Yellow lightning!@", "@That strike was yellow!@", 1);
+    } else {
+        if ($seenredlightning and ($SEEN_GREEN_LIGHTNING and not $SEEN_YELLOW_LIGHTNING)) {
+            FinishFirstExperiment_i();
+        } else {
+            if (v0 <> 65180) {
+                SetSpeaker0_i(0, v0);
+                if $SEEN_YELLOW_LIGHTNING {
+                    v1 = << "@It is not safe here!@", "@Something new hath appeared!@", "@From where did that come?@" >>;
+                    v2 = v1::~Random(~ListSize_i(v1));
+                    append v2;
+                    append "";
+                    say;
+                } else {
+                    ["Did anyone see that color? To be honest, I did not. The flash near blinded me!"];
+                }
+            } else {
+                Item_bark("@Yellow lightning!@", _Avatar);
+            }
+        }
+    }
+    $SEEN_YELLOW_LIGHTNING = true;
+}
+
+Routine SayGreenLightning_i accepts a0 #locals(3) #uses(~PartyUtters, FinishFirstExperiment_i) {
+    v0 = ~PartyUtters(false, 0, 0, 1);
+    if flag(227) {
+        v0 = ~PartyUtters(true, "@That was green.@", "@'Twas green!@", 1);
+    } else {
+        if ($seenredlightning and ($SEEN_YELLOW_LIGHTNING and not $SEEN_GREEN_LIGHTNING)) {
+            FinishFirstExperiment_i();
+        } else {
+            if (v0 <> 65180) {
+                SetSpeaker0_i(0, v0);
+                if $SEEN_GREEN_LIGHTNING {
+                    v1 = << "@It took one item, but left another!@", "@The object hath been turned into something else!@", "@Look! A metamorphosis!@" >>;
+                    v2 = v1::~Random(~ListSize_i(v1));
+                    append v2;
+                    append "";
+                    say;
+                } else {
+                    ["What a strange color -- a greenish bolt, I'd say."];
+                }
+            } else {
+                Item_bark("@Green lightning!@", _Avatar);
+            }
+        }
+    }
+    $SEEN_GREEN_LIGHTNING = true;
+}
+
+Routine PullLever_i accepts a0 #locals(28) #uses(FireCrematorium_i, Bark_i, ToggleSliders_i, BarkIfNear_i, ~RunExperiment_i, ToggleDoorByQual_i, ~SwingSDoorEW_i, ~SwingSDoorNS_i) {
+    v1 = false;
+    v2 = ~GetQuality(v0);
+    if (v2 = 0) {
+        v3 = ~GetAllInRegion(_Lit_Lamp_Post);
+        Foreach v6 in v3 {
+            Item_setType(_Lamp_Post, v6);
+            v7 = ~FindNearby_i(128, 10, _Pool_Of_Light, v6);
+            v8 = ~GetCoord(v6);
+            v8 = << (v8::1 + 3), (v8::2 + 3), v8::3 >>;
+            Foreach v11 in v7 {
+                v12 = ~GetCoord(v11);
+                if (v8::1 = v12::1) && (v8::2 = v12::2) {
+                    Item_destroy(v11);
+                }
+            }
+        }
+        v3 = ~GetAllInRegion(_Lamp_Post);
+        Foreach v6 in v3 {
+            Item_setType(_Lit_Lamp_Post, v6);
+            v11 = ~Item_create(_Pool_Of_Light);
+            if v11 {
+                v8 = ~GetCoord(v6);
+                v1 = ~PopToMap(<< (v8::1 + 3), (v8::2 + 3), v8::3 >>);
+            }
+        }
+        v1 = true;
+    }
+    if (v2 = 10) {
+        v1 = ~PostInFuture(1, << _aNO_HALT_i, _aUSABLE_i, #MoveElevator_i >>, item);
+        v1 = true;
+    }
+    if (v2 = 70) {
+        FireCrematorium_i(item);
+        v1 = true;
+    }
+    if ((v2 = 148) or (v2 = 149)) {
+        v1 = true;
+    }
+    if ((v2 >= 150) and (v2 <= 163)) {
+        v1 = true;
+        if (v2 = 160) && not flag(568) {
+            goto label_77;
+        }
+        if (v2 = 161) {
+            Bark_i(2, "@That did something.@", _Avatar);
+            Bark_i(18, "@I hope nothing bad...@", _Stefano);
+            Sfx(88);
+            if (~GetFrame(item) = 0) {
+                SetFrame(1, item);
+            } else {
+                SetFrame(0, item);
+            }
+            v15 = ~FindNearby_i(0, 20, _Lever, item);
+            Foreach v18 in v15 {
+                v2 = ~GetQuality(v18);
+                if (v2 = 159) {
+                    v8 = ~GetCoord(v18);
+                    v1 = ~PostAction(<< _aNO_HALT_i, _aBARK_i, "@click@" >>, v18);
+                    v19 = ~SetQuality(160, v18);
+                }
+                if (v2 = 160) {
+                    v8 = ~GetCoord(v18);
+                    v1 = ~PostAction(<< _aNO_HALT_i, _aBARK_i, "@click@" >>, v18);
+                    v19 = ~SetQuality(159, v18);
+                }
+                terminate;
+            }
+            terminate;
+        }
+        if (v2 = 162) {
+            flag(568) = true;
+            goto label_77;
+        }
+        if (v2 = 163) {
+            Item_bark("@'Tis jammed.@", _Avatar);
+            terminate;
+        }
+        ToggleSliders_i(65177, item);
+    }
+    if ((v2 = 71) or ((v2 = 72) or (v2 = 73))) {
+        v1 = ("@It's stuck...@" & "@I cannot budge it!@");
+        BarkIfNear_i(v1, _Avatar);
+        v1 = false;
+        terminate;
+    }
+    if (v2 = 204) && $giveneggtoerstam {
+        v8 = ~GetCoord(_Avatar);
+        v20 = true;
+        Item_move(<< (v8::1 + 3), (v8::2 - 2), v8::3 >>, _Boydon);
+    }
+    if ((v2 > 220) and (v2 < 236)) {
+        v1 = true;
+    }
+    if (v2 = 237) {
+        v1 = ~PostInFuture(1, << _aNO_HALT_i, _aUSABLE_i, #CheckSwitches_i >>, item);
+    }
+    if ((v2 > 10) and (v2 < 16)) {
+        v1 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #Great_Captain >>, item);
+        terminate;
+    }
+    if (v2 = 20) {
+        v1 = ~RunExperiment_i(item);
+    }
+    if (v2 = 21) {
+        v21 = ~SetQuality(20, v0);
+        v1 = true;
+    }
+    if ((v2 > 90) and (v2 < 101)) {
+        ToggleDoorByQual_i(v2);
+        v1 = true;
+    }
+    if (((v2 >= 1) and (v2 <= 5)) or (v2 = 18)) {
+        v22 = (~FindNearby_i(0, 80, _SDoor_EW, v0) & ~FindNearby_i(0, 80, _SDoor_NS, v0));
+        Foreach v25 in v22 {
+            if (v2 = ~GetQuality(v25)) {
+                if (~Item_getType(v25) = _SDoor_EW) {
+                    v1 = ~SwingSDoorEW_i(v25);
+                } else {
+                    v1 = ~SwingSDoorNS_i(v25);
+                }
+            }
+        }
+    }
+    if ((v2 >= 240) and (v2 <= 250)) {
+        v22 = (~FindNearby_i(0, 100, _SDoor_EW, v0) & ~FindNearby_i(0, 100, _SDoor_NS, v0));
+        Foreach v25 in v22 {
+            if (v2 = ~GetQuality(v25)) {
+                if (~Item_getType(v25) = _SDoor_EW) {
+                    v1 = ~SwingSDoorEW_i(v25);
+                } else {
+                    v1 = ~SwingSDoorNS_i(v25);
+                }
+            }
+        }
+    }
+    label_77:
+    if v1 {
+        v28 = ~GetFrame(v0);
+        if ((v28 modulo 2) = 0) {
+            SetFrame((v28 + 1), v0);
+        } else {
+            SetFrame((v28 - 1), v0);
+        }
+        playSFX(item, 70);
+    } else {
+        FlashMouse_i(0);
+    }
+}
+
+Routine FireCrematorium_i accepts a0 #locals(16) #uses(Bark_i, DropDupreItems_i, ~GimmePathEgg) {
+    $temp1flag = false;
+    if ($AVATAR_GOT_SHORT_STICK and not $DUPRE_IS_TOAST) {
+        v1 = ~GetCoord(_Dupre);
+        v2 = ~GetCoord(_Avatar);
+        if ((~GetDist(_Dupre, _Avatar) < 8) and (v1::3 = v2::3)) {
+            Bark_i(0, "@Stand back, Avatar!@", _Dupre);
+            SetSpeaker0_i(0, _Dupre);
+            ["I cannot allow thee to throw away thy life! Thou must live to ensure Britannia's safety!"];
+            ["I cannot live with the shame of the deaths I have caused... If I can redeem myself by becoming the required martyr, so be it!"];
+            ["Let it be said that Sir Dupre died bravely!"];
+            CloseSpeaker0_i();
+            v1 = ~GetCoord(_Dupre);
+            v1::1 = (v1::1 - 3);
+            v1::2 = (v1::2 - 3);
+            createSprite(65535, 0, 0, 0, v1::2, v1::1, 9);
+            $temp1flag = true;
+            $DUPRE_IS_TOAST = true;
+            if ~GetItemFlag_i(_InParty_i, _Dupre) {
+                LeaveParty(_Dupre);
+            }
+            SetItemFlag_i(_Dead, _Dupre);
+            DropDupreItems_i();
+            RemoveNPC_i(_Dupre);
+            SetMusic(0, 54);
+        }
+    }
+    v3 = ~FindNearby_i(0, 15, _Cremate1, v0);
+    Foreach v6 in v3 {
+        v2 = ~GetFrame(v6);
+        if (v2 < 3) {
+            v1 = ~PostAction(<< _aFRAME, 0, _aFRAME, 1, _aFRAME, 0, _aFRAME, 2, _aLOOP_i, 65528, 20 >>, v6);
+        } else {
+            v1 = ~PostAction(<< _aFRAME, 5, _aFRAME, 3, _aFRAME, 5, _aFRAME, 4, _aLOOP_i, 65528, 20 >>, v6);
+        }
+    }
+    v3 = ~FindNearby_i(0, 15, _Cremate4, v0);
+    Foreach v9 in v3 {
+        v2 = ~GetFrame(v9);
+        if (v2 < 7) {
+            v1 = ~SetQuality(0, ~GimmePathEgg(2, 1));
+            v1 = ~PostAction(<< _aFRAME, 0, _aNEXT_FRAME, _aLOOP_i, 65535, 5, byte(39), 2, byte(70), 5, byte(80), byte(11), 65535, 4 >>, v9);
+            if not $temp1flag {
+                v10 = << >>;
+                v11 = << 1005, 1007, 1010, 721, 787 >>;
+                v12 = ~FindNearby_i(0, 3, _All, v9);
+                Foreach v15 in v12 {
+                    v1 = ~GetCoord(v15);
+                    if (v1::3 < 11) {
+                        v16 = ~Item_getType(v15);
+                        v1 = ~GetFrame(v15);
+                        if not (v16 in v11) {
+                            if (((v16 = 402) and (v1 = 11)) or (((v16 = 400) and (v1 = 5)) or ((v16 = 400) and (v1 = 6)))) {
+                                $smokedoneforrenfry = true;
+                            }
+                            v1 = ~GetCoord(v15);
+                            v1::1 = (v1::1 - 3);
+                            v1::2 = (v1::2 - 3);
+                            if not ~Item_isNpc(v15) {
+                                createSprite(65535, 0, 0, 0, v1::2, v1::1, 9);
+                                v10 = (v10 & v15);
+                                Item_destroy(v15);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        if (v10 or $temp1flag) {
+            v1 = ~PostInFuture(40, << _aNO_HALT_i, _aUSABLE_i, #Cremate4 >>, v9);
+        }
+    }
+}
+
+Routine VanishItem_i accepts a0 #locals(1) {
+    v1 = ~GetCoord(v0);
+    createSprite(65535, 0, 0, 0, (v1::2 - 6), (v1::1 - 6), 9);
+    Item_destroy(v0);
+}
+
+Routine RemakeItem_i accepts a0, a1, a2 #locals(3) {
+    v3 = ~GetCoord(v2);
+    createSprite(65535, 0, 0, 0, (v3::2 - 6), (v3::1 - 6), 9);
+    Item_destroy(v2);
+    v4 = ~Item_create(v1);
+    if v4 {
+        SetItemFlag_i(_IsTemporary_i, v4);
+        SetFrame(v0, v4);
+        v5 = ~PopToMap(v3);
+    }
+}
+
+Routine CatEatsFish_i accepts a0, a1 #locals(1) {
+    v2 = ~PostInFuture(10, << _aFACE_i, _East, _aRAISE2_FRAME_i, _aTHRUST2_FRAME_i, _aSTAND_FRAME_i >>, v1);
+    v2 = ~PostInFuture(15, << _aREMOVE_i >>, v0);
+}
+
+Routine TransformItem_i accepts a0, a1 #locals(2) #uses(CatEatsFish_i) {
+    v2 = ~GetCoord(v1);
+    createSprite(65535, 0, 0, 0, (v2::2 - 6), (v2::1 - 6), 21);
+    Item_destroy(v1);
+    if (v0 = 495) {
+        v3 = ~CreateCreature_i(v2, v0);
+        if v3 {
+            SetItemFlag_i(_IsTemporary_i, v3);
+            SetWorkType(_Graze, v3);
+            SetFrame(0, v3);
+            v0 = ~FindNearest_i(1, _Food, v3);
+            if (v0 and (~GetFrame(v0) = 12)) {
+                CatEatsFish_i(v0, v3);
+            }
+        }
+    } else {
+        v3 = ~Item_create(v0);
+        if v3 {
+            SetItemFlag_i(_IsTemporary_i, v3);
+            SetFrame(0, v3);
+            v0 = ~PopToMap(v2);
+        }
+    }
+}
+
+Function ~WinchQual_i accepts a0 #locals(4) {
+    v1 = ~FindNearby_i(0, 20, _Winch_EW, v0);
+    Foreach v4 in v1 {
+        return ~GetQuality(v4);
+    }
+    return 0;
+}
+
+Function ~ExperimentFloor_i accepts a0 #locals(7) {
+    v1 = ~FindNearby_i(0, 4, _St_1x3_NS_Floor, v0);
+    v2 = 0;
+    v3 = ~GetCoord(v0);
+    Foreach v6 in v1 {
+        v7 = ~GetCoord(v6);
+        if (((v7::2 - v3::2) < 2) and ((v7::2 - v3::2) > 65534)) {
+            return v6;
+        }
+    }
+    return 0;
+}
+
+Function ~RunExperiment_i accepts a0 #locals(17) #uses(~WinchQual_i, ~ExperimentFloor_i, VanishItem_i, RemakeItem_i, TransformItem_i, CatEatsFish_i) {
+    v1 = ~WinchQual_i(v0);
+    if ((v1 <> 202) and (v1 <> 204)) {
+        v2 = ~SetQuality(21, v0);
+        v2 = ~PostInFuture(5, << _aUSABLE_i, #Lever >>, v0);
+        return true;
+    }
+    v3 = ~ExperimentFloor_i(v0);
+    if v3 {
+        v4 = ~GetCoord(v3);
+        v5 = 0;
+        v6 = 0;
+        v7 = ~FindNearby_i(0, 1, _All, v3);
+        if v7 {
+            Foreach v10 in v7 {
+                v11 = false;
+                v12 = ~Item_getType(v10);
+                if (v12 = 377) {
+                    v13 = ~GetFrame(v10);
+                    if ((v13 <> 12) and (v13 <> 20)) {
+                        v6 = 2034;
+                        v5 = 41;
+                        if (v1 = 202) {
+                            VanishItem_i(v10);
+                        }
+                    }
+                    if (v13 = 12) {
+                        v6 = 2035;
+                        v5 = 42;
+                        if (v1 = 202) {
+                            v14 = ~FindNearest_i(20, _Cat, v10);
+                            if v14 {
+                                v11 = true;
+                            } else {
+                                v14 = ~FindNearest_i(20, _Crested_Helm, v10);
+                            }
+                            if v14 {
+                                v15 = ~Item_create(_Food);
+                                if v15 {
+                                    SetFrame(12, v15);
+                                    SetItemFlag_i(_IsTemporary_i, v15);
+                                    v16 = ~GetCoord(v14);
+                                    v2 = ~PopToMap(v16);
+                                } else {
+                                    v11 = false;
+                                }
+                            }
+                            Item_destroy(v10);
+                        }
+                    }
+                    if (v13 = 20) {
+                        v6 = 2036;
+                        v5 = 43;
+                        RemakeItem_i(0, _Chair, v10);
+                    }
+                }
+                if (v12 = 628) {
+                    v6 = 2034;
+                    v5 = 41;
+                    if (v1 = 202) {
+                        VanishItem_i(v10);
+                    }
+                }
+                if (v12 = 717) {
+                    v6 = 2035;
+                    v5 = 42;
+                    if (v1 = 202) {
+                        TransformItem_i(264, v10);
+                    }
+                }
+                if (v12 = 542) {
+                    v6 = 2035;
+                    v5 = 42;
+                    if (v1 = 202) {
+                        TransformItem_i(495, v10);
+                    }
+                }
+                if (v12 = 572) {
+                    v6 = 2034;
+                    v5 = 41;
+                    if (v1 = 202) {
+                        VanishItem_i(v10);
+                    }
+                }
+                if (v12 = 626) {
+                    v6 = 2035;
+                    v5 = 42;
+                    if (v1 = 202) {
+                        TransformItem_i(203, v10);
+                    }
+                }
+                if (v12 = 873) {
+                    v6 = 2036;
+                    v5 = 43;
+                    RemakeItem_i(20, _Food, v10);
+                }
+                if ((v12 = 264) or ((v12 = 495) or (v12 = 203))) {
+                    v6 = 2034;
+                    v5 = 41;
+                    if (v1 = 202) {
+                        VanishItem_i(v10);
+                    }
+                }
+                if (v12 = 838) && (v1 = 204) {
+                    v13 = ~GetFrame(v10);
+                    if (v13 = 1) {
+                        v6 = 2036;
+                        v5 = 43;
+                        v16 = ~GetCoord(v10);
+                        createSprite(65535, 0, 0, 0, (v16::2 - 6), (v16::1 - 6), 9);
+                        Item_destroy(v10);
+                        Item_move(v16, _Edrin);
+                        SetWorkType(_Talk, _Edrin);
+                        NewSchedule_i(<< v16::1, v16::2 >>, _Wander, 0, _Edrin);
+                        $RESTORED_EDRIN = true;
+                    }
+                }
+                if v11 {
+                    CatEatsFish_i(v15, v14);
+                }
+                if ((v1 = 204) and ((v6 <> 0) and (v5 <> 43))) {
+                    v5 = 43;
+                    RemakeItem_i(~rndRange(20, 0), _Food, v10);
+                }
+            }
+        }
+        if (v6 = 0) {
+            v6 = 2033;
+            v5 = 40;
+            v16 = v4;
+            v16::3 = (v16::3 + 1);
+            createSprite(65535, 0, 0, 0, (v16::2 - 6), (v16::1 - 6), 21);
+            v17 = << 264, 377, 628, 572 >>;
+            v10 = ~Item_create(v17::~Random(4));
+            if v10 {
+                SetItemFlag_i(_IsTemporary_i, v10);
+                v2 = ~PopToMap(v16);
+            }
+        }
+        if (v1 = 202) {
+            v2 = ~PostInFuture(10, << _aNO_HALT_i, _aUSABLE_i, v6 >>, _Avatar);
+        }
+        createSprite(65535, 0, 0, 0, (v4::2 - 6), (v4::1 - 6), v5);
+        Sfx(116);
+        LightningBolt();
+        v2 = ~SetQuality(21, v0);
+        v2 = ~PostInFuture(5, << _aUSABLE_i, #Lever >>, v0);
+        return true;
+    }
+    return false;
+}
+
+Usable FinishFirstExperiment_i #locals(1) #uses(~PartyUtters) {
+    flag(227) = true;
+    v0 = ~PartyUtters(false, 0, 0, 1);
+    if (v0 = 65180) {
+        Item_bark("@Now I know the secret!@", _Avatar);
+    } else {
+        SetSpeaker0_i(0, v0);
+        ["Dost thou not see? Red, green and yellow -- and we have observed their properties. Now we can report to Gustacio."];
+    }
+}
+
+Routine ToggleDoorByQual_i accepts a0 #locals(10) #uses(~DoorState_i, SetDoorState_i) {
+    v1 = << 376, 270, 432, 433 >>;
+    v2 = << >>;
+    Foreach v5 in v1 {
+        v2 = (v2 & ~FindNearby_i(0, 110, v5, item));
+    }
+    v6 = false;
+    Foreach v5 in v2 {
+        if (~GetQuality(v5) = v0) {
+            v6 = v5;
+        }
+    }
+    if v6 {
+        v9 = 2;
+        if (~DoorState_i(v6) = 2) {
+            v9 = 1;
+        }
+        SetDoorState_i(v9, v6);
+    } else {
+        v10 = ~PostAction(<< _aNO_HALT_i, _aBARK_i, "@No door!@" >>, item);
+    }
+}
+
+Usable DropDupreItems_i #locals(5) {
+    v0 = ~GetContents(_All, _All, _All, _Dupre);
+    Foreach v3 in v0 {
+        if ~Item_push(v3) {
+            v4 = ~PopToMap(<< 823, 2597, 5 >>);
+            if not v4 {
+                v4 = ~PopToMap(<< 821, 2597, 5 >>);
+            }
+            if not v4 {
+                v4 = ~PopToMap(<< 819, 2597, 5 >>);
+            }
+            if not v4 {
+                v4 = ~PopToMap(<< 817, 2597, 5 >>);
+            }
+            if not v4 {
+                v4 = ~PopToMap(<< 823, 2599, 5 >>);
+            }
+            if not v4 {
+                v4 = ~PopToMap(<< 821, 2599, 5 >>);
+            }
+            if not v4 {
+                v4 = ~PopToMap(<< 819, 2599, 5 >>);
+            }
+            if not v4 {
+                v4 = ~PopToMap(<< 817, 2599, 5 >>);
+            }
+            if not v4 {
+                v4 = ~PopToMap(<< 822, 2601, 5 >>);
+            }
+            if not v4 {
+                v4 = ~PopToMap(<< 819, 2601, 5 >>);
+            }
+            if not v4 {
+                v4 = ~PopToMap(<< 811, 2599, 0 >>);
+            }
+            if not v4 {
+                v4 = ~Item_popToEnd(_Avatar);
+            }
+        }
+    }
+}

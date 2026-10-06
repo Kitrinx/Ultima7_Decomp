@@ -118,8 +118,9 @@ int8_t FindItem(AreaSearch *search)
 		typeFrame = ITEM(search->current.off)->typeFrame;
 		if (search->type != -1 && (uint16_t)(search->type) != typeFrame.type())
 			continue;
+		/* A byte compare, as Borland made it, so qualities over 127 match. */
 		if (search->quality != (int8_t) -1 && (!(uint8_t)Item_hasQuality(&search->current) ||
-			Item_getQuality(&search->current) != search->quality))
+			Item_getQuality(&search->current) != (uint8_t)search->quality))
 			continue;
 		if (search->frame != 255 && typeFrame.frame() != (uint16_t)(search->frame))
 			continue;
@@ -231,7 +232,7 @@ objref FindItemInChunkLists(int16_t type, int8_t quality, int16_t frame)
 				while (((int8_t) (ref.off != 0))) {
 					typeFrame = ITEM(ref.off)->typeFrame;
 					if ((type == -1 || typeFrame.type() == (uint16_t)type) &&
-						(quality == (int8_t) -1 || (HasQuality(&ref) && Item_getQuality(&ref) == quality)) &&
+						(quality == (int8_t) -1 || (HasQuality(&ref) && Item_getQuality(&ref) == (uint8_t)quality)) &&
 						(frame == 255 || typeFrame.frame() == (uint16_t)frame))
 						return ref;
 				}

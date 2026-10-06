@@ -1,0 +1,449 @@
+Routine Hawk accepts a0 #locals(24) #uses(~LordOrLady, ~AvatarName, ~WhereAmI_i, ~IsNPCNear, ~IsHawkInPub_i, SetSails_i, ~SwingPlank_i, HawkSetsSail_i, PartyFaces_i, Bark_i, ~PartyUtters, ~IsInInv) {
+    v0 = ~GetNPCID_i(_Hawk);
+    v1 = ~GetWorkType(_Hawk);
+    v2 = ~LordOrLady();
+    v3 = ~AvatarSex();
+    v4 = ~AvatarName();
+    v5 = "lad";
+    v6 = ~WhereAmI_i();
+    v7 = ~IsNPCNear(_Flindo);
+    v8 = ~IsNPCNear(_Argus);
+    v9 = ~IsNPCNear(_Ensorcio);
+    if (v3 = true) {
+        v5 = "lass";
+    }
+    if (~IsHawkInPub_i() and (v0 = 0)) {
+        SetNPCID_i(1, _Hawk);
+        v0 = 1;
+    }
+    if (event = _Action) {
+        v10 = ~FindNearby_i(16, 40, _Path, _Hawk);
+        Foreach v13 in v10 {
+            v14 = ~GetItemFlag_i(_IsTemporary_i, v13);
+            if not v14 {
+                Item_destroy(v13);
+            }
+        }
+        v15 = ~FindNearby_i(0, 25, _Sails, item);
+        SetSails_i(1, v15);
+        v16 = ~FindNearby_i(0, 25, _Plank_2, item);
+        v17 = ~SwingPlank_i(v16);
+        v18 = ~FindNearby_i(16, 100, _Barge, item);
+        HawkSetsSail_i(v18);
+    }
+    if (event = _Bark) && (v1 = 29) {
+        if (v0 = 0) {
+            v13 = ~FindNearby_i(16, 2, _Path, _Hawk);
+            v19 = ~GetQuality(v13);
+            if (v19 = 15) {
+                Item_destroy(v13);
+                Item_move(<< 1283, 2247, 0 >>, _Hawk);
+                NewSchedule_i(<< 1283, 2247 >>, _EatAtInn, 0, _Hawk);
+                Npc_schedule(_Hawk);
+            }
+        }
+        if (v0 > 2) {
+            SetWorkType(_Wait, _Hawk);
+            v17 = ~PostAction(<< _aNO_HALT_i, _aGO_N, _aGO_E >>, _Hawk);
+            v0 = (v0 + 1);
+            SetNPCID_i(v0, _Hawk);
+        }
+    }
+    if (event = _Converse) {
+        Item_bark("@Captain?@", _Avatar);
+        PartyFaces_i(65496);
+        Bark_i(2, "@Aye, matey?@", _Hawk);
+        if flag(465) {
+            SetWorkType(_Talk, _Hawk);
+        } else {
+            SetSpeaker0_i(0, _Hawk);
+            ["Could ye unlock this door and let me go?"];
+            Bark_i(0, "@I am cold...@", _Hawk);
+            terminate;
+        }
+    }
+    if (event = _Talking) {
+        Npc_schedule(_Hawk);
+        SetSpeaker0_i(0, _Hawk);
+        if $BANES_RELEASED {
+            ["I had hoped ta see ye again, <v5>." ~"Mine health is failin' me, an' I wanted ta be sure the Arabella went ta someone I can trust to care for her." *"I have no living kin no more..." ~"So I want ye ta take her."];
+            ["Thou art a brave <v5>." ~"An' thou wert willin' ta spend a bit o' thy time listening ta an old man's tales." *"Thou... art..." ~"Worthy..."];
+            v20 = ~PartyUtters(false, "@He is dead.@", "@He is dead!@", 1);
+            KillNPC_i(_Hawk);
+            terminate;
+        }
+        v21 = ~GetItemFlag_i(_Met, _Hawk);
+        if (v21 = false) {
+            ["How pleasant to make thine acquaintance, <v5>." ~"I be Hawk, captain of the good ship Arabella."];
+            SetNPCID_i(0, _Hawk);
+            NewSchedule_i(<< 1283, 2247 >>, _EatAtInn, 0, _Hawk);
+            Npc_schedule(_Hawk);
+            SetItemFlag_i(_Met, _Hawk);
+        } else {
+            ["A pleasure ta see ye again, <v4>!"];
+        }
+        if (v0 = 0) {
+            ["I could use a stiff drink, <v5>."];
+            ["Thou canst talk ta me at the pub!"];
+            v22 = ~GetCoord(_Hawk);
+            if ((v22::1 >= 2801) and ((v22::1 <= 2814) and ((v22::2 >= 193) and (v22::2 <= 222)))) {
+                v13 = ~Item_create(_Path);
+                if v13 {
+                    v17 = ~SetQuality(0, v13);
+                    SetFrame(0, v13);
+                    SetItemFlag_i(_IsTemporary_i, v13);
+                    v17 = ~PopToMap(<< 2812, 207, 0 >>);
+                }
+                v13 = ~Item_create(_Path);
+                if v13 {
+                    v17 = ~SetQuality(15, v13);
+                    SetFrame(1, v13);
+                    SetItemFlag_i(_IsTemporary_i, v13);
+                    v17 = ~PopToMap(<< 2806, 222, 3 >>);
+                }
+                SetWorkType(_Patrol, _Hawk);
+            }
+            Bark_i(0, "@I need a drink!@", _Hawk);
+            terminate;
+        } else {
+            ["So what can I do for ye, <v5>?"];
+        }
+        if (v6 = 9) {
+            ["I thank ye for releasing me from that cell!" ~"I never expected ta end up in jail over not wantin' ta sail in these blasted storms!" *"If there's anything that I can do for ye, thou shouldst tell me." ~"Cap'n Hawk is a man of his word!"];
+            TurnOn(<< "jail", "storms" >>);
+        }
+        if (not $hawksailedtomoonshade and not $hawkintransit) {
+            TurnOn("journey");
+        }
+        if ($hawksailedtomoonshade and not ~GetItemFlag_i(_Met, 480)) {
+            TurnOn("leave island");
+        }
+        if ($hawkknowspinecone and not $knowpinecone) {
+            TurnOn("pinecone");
+        }
+        if ($hawkknowsegg and not $knowpenguinegg) {
+            TurnOn("blue egg");
+        }
+        TurnOn(<< "bye" >>);
+        converse {
+            key ("jail") {
+                ["Now if that ain't gratitude for ye!" ~"Here I refused ta risk the Arabella and them passengers ta the terrible fierce weather." *"And one of them goes and calls the Pikemen on me!"];
+                TurnOff("jail");
+                TurnOn(<< "Arabella", "passengers", "Pikemen" >>);
+            }
+            key ("Arabella") {
+                ["The Arabella is my ship, <v5>." ~"She's named after me dear, departed wife..." ~"And dearer ta me than a good, stiff drink!"];
+                TurnOff("Arabella");
+            }
+            key ("passengers") {
+                ["I had three passengers for the trip over to Moonshade." ~"There's a fellow named Kane, a scurvy merchant named Flindo, and a pretty lass named Selina."];
+                TurnOff("passengers");
+                TurnOn(<< "Kane", "Flindo", "Selina" >>);
+            }
+            key ("Kane") {
+                ["Seems I heard tell he was a sheepherder or something." ~"Kane wants ta go talk ta some of those fancy wizards over in Moonshade..." *"See if they kin help him find what happened ta his older brother who disappeared a few months ago." ~"Ye can't miss him... He always has a bird with him."];
+                TurnOff("Kane");
+                TurnOn("bird");
+            }
+            key ("bird") {
+                ["Bird must have been a sailor, <v5>!" ~"Never seen anything like it! The bird has a real fondness for a stout drink." *"It doth talk purty well, too."];
+                TurnOff("bird");
+            }
+            key ("Flindo") {
+                ["That worm!" ~"He'd spit in yer last cup of grog he would, if he thought he could make money off it!"];
+                if (v7 = true) {
+                    SetSpeaker1_i(0, _Flindo);
+                    ["Thou art a fine one to talk, thou bilge-water rat!" ~"Thou wouldst hold an honest merchant hostage to thy drinking sprees!"];
+                    SetSpeakerSlot_i(0);
+                    ["Why, thou overgrown dung beetle!" ~"I told ye when I landed that those seas were no safe place ta be with these forsaken storms!" *"And thou shouldst suck salt spray for days on end, ye 'honest' merchant!" ~"Then thou'd know the difference between a drunk and a man with a thirst!"];
+                    SetSpeakerSlot_i(1);
+                    ["Thou art the braggart that said he could sail through the fires of hell and back!" ~"And the only thirst thou hast is for more money, thou thief!"];
+                    CloseSpeaker1_i();
+                    SetSpeakerSlot_i(0);
+                    ["Thief, is it!? When I turned down every offer thou didst make ta make me sail out ta sea again?" ~"And I fear nothing the sea can throw at me, thou barnacle!" *"But I'll not deal with things born of magics, for I'm no fool and no mage!" ~"And I warned ye about saying false ta my name before..."];
+                    if (v8 = true) {
+                        SetSpeaker1_i(0, _Argus);
+                        ["Now stop that, both of you!" ~"This is precisely what happened before!" *"If thou dost break any more of my furniture, I will break thine head for thee!"];
+                        CloseSpeaker1_i();
+                    }
+                    if (v9 = true) {
+                        SetSpeaker1_i(0, _Ensorcio);
+                        ["Will you two be quiet!" ~"You are loud enough to wake the dead..." ~"And I am beginning to lose patience with both of you!"];
+                        CloseSpeaker1_i();
+                    }
+                    SetSpeakerSlot_i(0);
+                }
+                ["Flindo was the one that bribed the Pikemen into pulling me away from the fight he started!"];
+                TurnOff("Flindo");
+                TurnOn("bribed");
+            }
+            key ("bribed") {
+                ["Aye, bribed!" ~"I heard some of those scum..."];
+                if (v8 = true) {
+                    ["...Er, Pikemen. Sorry, Argus."];
+                }
+                ["Talking just after I woke up." ~"Seems like Flindo payed them ta rough me up so that I'd decide not ta stay and go back ta Moonshade." *"But, moneybags Flindo didn't count on those swine getting greedy!"];
+                TurnOff("bribed");
+                TurnOff("greedy");
+            }
+            key ("greedy") {
+                ["They thought they could make me pay for my release, but I have no money ta speak of..." ~"Then they thought they could convince Flindo ta pay my way out, but either he'd spent all his money bribing them ta rough me up or he wouldn't pay it out of spite!"];
+                TurnOff("greedy");
+            }
+            key ("Selina") {
+                ["Pretty little thing, <v5>... Brought her over from Moonshade a while back. Might have been the return trip from takin' that fat sage Batlin across."];
+                ["An' a sullen, bossy sort of fellow he was, too. Did not even have the decency ta lift a mug wit' me during the crossing! Bah! But what was I talkin' about... Ah yes, that lovely slip of a lass, Selina."];
+                ["She must have been someone's servant. Said she wanted ta go home for a visit. Said she might be here for me ta take her back."];
+                TurnOff("Selina");
+                TurnOn(<< "servant", "home" >>);
+            }
+            key ("servant") {
+                ["Selina certainly isn't one of those over-dressed mages, for sure!" ~"She's too timid ta be anything but a servant."];
+                TurnOff("servant");
+            }
+            key ("home") {
+                ["I don't think she said, but I did perceive it was somewhere like Monitor."];
+                TurnOff("home");
+            }
+            key ("Pikemen") {
+                ["Well, to honor the fine keeper of this establishment..."];
+                if $gottattoo {
+                    ["'An thee, o' course, <v5>..."];
+                }
+                ["I'll try ta be kind." ~"So I'll merely say that Monitor's finest are no longer cut from the same sailcloth as Argus..." *"If what I've seen and heard is any judge, I'd say that the Pikemen are more interested in money than in valor... and me treasure."];
+                TurnOff("Pikemen");
+                TurnOn("treasure");
+            }
+            key ("treasure") {
+                ["Aye, treasure... from me wilder, younger days."];
+                ["Those Pikemen scoundrels tried ta convince me ta tell 'em where I keep me map. 'Tis lucky fer me that Argus would never let 'em search me room. I never keep it on me... Hide it in me room most times."];
+                TurnOff("treasure");
+            }
+            key ("storms") {
+                ["I've sailed the seas almost all the days of my life, <v5>." ~"And I'll tell ye that there's nothing on the water that I can't sail a ship through." *"But how can a man fight something that plucks a ship out o' the water, or turns a ship's sails into slabs of stone?" ~"And I'll not think me a coward ta tell ye that these storms have me plenty mindful of how deep them seas are!"];
+                TurnOff("storms");
+            }
+            key ("journey") {
+                TurnOff("journey");
+                if (v0 = 1) {
+                    ["I can take ye to Moonshade, <v5>." ~"Wait for me out on the Arabella, and we'll try to outrace these blasted storms!"];
+                    Bark_i(10, "The Arabella sails in two minutes!", _Hawk);
+                    v23 = ~NPCToItem_i(_Hawk);
+                    SetNPCID_i(2, _Hawk);
+                    v0 = 2;
+                }
+                terminate;
+            }
+            key ("leave island") {
+                if $erstamgavejawbone {
+                    ["So ye're still trying ta leave this island?"];
+                    ["Well, I didn't want ta mention it before, but\x09there are caves in the southern mountains." ~"Legend says they lead ta the mainland, if thou canst find the right path..." ~"But none who ventured there have ever returned!" ~"I wager that Julia doth have possession of a key that would let thee in down there, but I would think twice if I were thee before I made such a journey!"];
+                    $knowcatacombs = true;
+                } else {
+                    ["Not on my ship, thou won't!" ~"'Tis too dangerous ta sail these waters in these storms!" *"If thou dost want ta travel elsewhere, why not speak ta the mages?" ~"They know how ta magic themselves for short distances..." *"And I've heard it said that Old Erstam the Mad Mage can travel anywhere he pleases!"];
+                }
+                TurnOff("leave island");
+            }
+            key ("blue egg") {
+                if ~IsInInv(3, 65177, _Gwani_Artifacts, 1, _Party) {
+                    ["A rotten egg!" ~"Why art thou shoving such a thing at me?"];
+                    if ~IsNPCNear(_Rocco) {
+                        SetSpeaker1_i(0, _Rocco);
+                        ["Take that thing out of here!" ~"My patrons are trying to eat!"];
+                        CloseSpeaker1_i();
+                        SetSpeakerSlot_i(0);
+                        Bark_i(5, "@Phew!@", _Petra);
+                        terminate;
+                    }
+                } else {
+                    ["A blue aig?" ~"<v5>, I have never seen or heard of any such thing in all my\x09travels." *"Might be that thou shouldst ask a scholar, like Fedabiblio the Magister, though."];
+                    v20 = ~PartyUtters(false, 0, "@But he sent us to thee!@", 1);
+                    SetSpeakerSlot_i(0);
+                    if (v20 <> 65180) {
+                        ["Then ye be out of luck, matey."];
+                    }
+                }
+                TurnOff("blue egg");
+            }
+            key ("pinecone") {
+                if ~IsInInv(65177, 65177, _Pinecone, 1, _Party) {
+                    ["Anyone can see 'tis a pinecone..." ~"What's thy question?"];
+                    v20 = ~PartyUtters(false, "@Where can I find pinecones?@", "@But where doth it come from?@", 1);
+                    SetSpeaker0_i(0, _Hawk);
+                    SetSpeakerSlot_i(0);
+                    ["In the northern woods, of course." ~"But thou canst not travel there no more -- no ship will sail there, and the Swamp of\x09Gorlab will let no man pass!"];
+                } else {
+                    ["Pinecones come from the northern woods." ~"Purty things, ain't they? I collect 'em and give 'em to sweet gals like Bucia at the Canton."];
+                    ["Can't git 'em now." ~"Ain't gonna sail my ship no more, and a ship is the only way past Gorlab Swamp."];
+                }
+                $knowpinecone = true;
+                TurnOff("pinecone");
+            }
+            key ("bye") {
+                CloseSpeaker0_i();
+                Bark_i(0, "@Fair weather, Captain!@", _Avatar);
+                Bark_i(2, "@Smooth sailin'!@", _Hawk);
+                break;
+            }
+        }
+        clear_answers;
+    }
+}
+
+Routine StopBarge_i accepts a0 #locals(0) {
+    ClearItemFlag_i(_ActiveBarge_i, item);
+    Camera_setCenterOn(_Avatar);
+}
+
+Routine SailToMoonshade_i accepts a0 #locals(5) #uses(~GimmePathEgg) {
+    v0 = ~GimmePathEgg(1, 2);
+    v1 = ~GetQuality(v0);
+    v2 = ~FindNearby_i(16, 100, _Barge, _Avatar);
+    if (v1 = 0) {
+        SetMusic(v0, 16);
+        SetWorkType(_Wander, _Hawk);
+        SetWorkType(_Wander, _Kane);
+        SetWorkType(_Wander, _Ale);
+        SetWorkType(_Wander, _Flindo);
+        SetBargeDir_i(_East, v2);
+        v3 = << byte(44), byte(50), byte(33), byte(11), 65534, 8, byte(85), 2020 >>;
+        v4 = ~PostAction(v3, v2);
+        v4 = ~SetQuality(1, v0);
+    }
+    if (v1 = 1) {
+        SetBargeDir_i(_South, v2);
+        v3 = << byte(44), byte(52), byte(33), byte(11), 65534, 17, byte(85), 2020 >>;
+        v4 = ~PostAction(v3, v2);
+        v4 = ~SetQuality(2, v0);
+    }
+    if (v1 = 2) {
+        SetBargeDir_i(_East, v2);
+        v3 = << byte(44), byte(50), byte(33), byte(11), 65534, 9, byte(85), 2020 >>;
+        v4 = ~PostAction(v3, v2);
+        v4 = ~SetQuality(3, v0);
+    }
+    if (v1 = 3) {
+        SetBargeDir_i(_South, v2);
+        v3 = << byte(44), byte(52), byte(33), byte(11), 65534, 9, byte(85), 2020 >>;
+        v4 = ~PostAction(v3, v2);
+        v4 = ~SetQuality(4, v0);
+    }
+    if (v1 = 4) {
+        SetBargeDir_i(_East, v2);
+        v3 = << byte(44), byte(50), byte(33), byte(11), 65534, 56, byte(85), 2020 >>;
+        v4 = ~PostAction(v3, v2);
+        v4 = ~SetQuality(5, v0);
+    }
+    if (v1 = 5) {
+        SetBargeDir_i(_South, v2);
+        v3 = << byte(44), byte(52), byte(33), byte(11), 65534, 6, byte(85), 2020 >>;
+        v4 = ~PostAction(v3, v2);
+        v4 = ~SetQuality(6, v0);
+    }
+    if (v1 = 6) {
+        SetBargeDir_i(_East, v2);
+        SetSpeaker0_i(0, _Hawk);
+        ["Reef the sails an' hang on! There be one of those damned storms a bearin' down on us! Heavens help us!"];
+        CloseSpeaker0_i();
+        SetMusic(v0, 22);
+        SetBargeDir_i(_East, v2);
+        v3 = << byte(44), byte(50), byte(85), 2021, byte(33), byte(11), 65531, 90, byte(85), 2022 >>;
+        SetWeather_i(_Rain);
+        v4 = ~PostAction(v3, v2);
+        v4 = ~SetQuality(0, v0);
+    }
+}
+
+Routine StormAtSea_i accepts a0 #locals(14) {
+    v0 = ~rndRange(3, 1);
+    if (v0 = 1) {
+        v1 = << 0, 3, 12, 40, 43 >>;
+        v2 = ~rndRange(~ListSize_i(v1), 1);
+        v3 = v1::v2;
+        v4 = (4 * ~rndRange(15, 65521));
+        v5 = (4 * ~rndRange(15, 65521));
+        CreateSpriteOn_i(65535, 0, 1, 0, v5, v4, v3, _Avatar);
+    }
+    if (v0 = 2) {
+        v6 = << 9, 15, 48, 76, 109 >>;
+        v7 = ~rndRange(~ListSize_i(v6), 1);
+        Sfx(v7);
+    }
+    if (v0 = 3) {
+        v8 = << "@Oh!@", "@Whee!@", "@Ouch!@", "@Whoa!@" >>;
+        v9 = ~rndRange(~ListSize_i(v8), 1);
+        v10 = v8::v9;
+        v11 = << 65493, 65499, 65496, 65494 >>;
+        v12 = ~rndRange(~ListSize_i(v11), 1);
+        v13 = v11::v12;
+        Item_bark(v10, v13);
+    }
+}
+
+Routine LandAtMoonshade_i accepts a0 #locals(20) #uses(SetSails_i, ~SwingPlank_i, Bark_i) {
+    ClearItemFlag_i(_DontMove_i, _Avatar);
+    v0 = ~FindNearby_i(0, 25, _Sails, item);
+    SetSails_i(0, v0);
+    v1 = ~FindNearby_i(0, 25, _Plank_Closed, item);
+    if not ~SwingPlank_i(v1) {
+        PrintError_i("Cannot lower Plank's constant");
+    }
+    SetSpeaker0_i(0, _Hawk);
+    v2 = ~AvatarSex();
+    if (v2 = true) {
+        v3 = "lass";
+    } else {
+        v3 = "lad";
+    }
+    ["Here ye be, <v3>..." ~"I never thought we'd make it, but Moonshade lies over yon."];
+    ["I'll not even attempt to make the Arabella seaworthy until these blasted storms are over!"];
+    ["If ye be wantin' Captain Hawk, I'll be at the bottom of a mug at the Blue Boar Inn."];
+    CloseSpeaker0_i();
+    SetWeather_i(_Clear);
+    ClearItemFlag_i(17, _Avatar);
+    ClearItemFlag_i(_DontMove_i, _Hawk);
+    SetItemFlag_i(_Fly, _Ale);
+    SetItemFlag_i(_Tournament, _AutoMessenger);
+    v4 = << 65496, 65494, 65499, 65493 >>;
+    v5 = << 2220, 1816 >>;
+    v6 = << 1978, 2259 >>;
+    v7 = << 2248, 1814 >>;
+    NewSchedule_i(<< v5, v6, v7 >>, << 14, 7, 26 >>, << 0, 3, 4 >>, _Hawk);
+    v8 = << 2357, 1763 >>;
+    v9 = << 2233, 1803 >>;
+    v10 = << 2251, 1866 >>;
+    v11 = << 2174, 1863 >>;
+    v12 = << 2370, 1918 >>;
+    NewSchedule_i(<< v8, v9, v10, v11, v12 >>, << 14, 26, 7, 7, 7 >>, << 0, 3, 5, 6, 7 >>, _Flindo);
+    v13 = << 2237, 1811 >>;
+    v14 = << 2195, 1816 >>;
+    NewSchedule_i(<< v13, v13, v14 >>, << 12, 9, 10 >>, << 2, 3, 7 >>, _Ale);
+    v15 = << 2233, 1808 >>;
+    v16 = << 2197, 1817 >>;
+    NewSchedule_i(<< v15, v15, v16 >>, << 26, 7, 14 >>, << 2, 3, 7 >>, _Kane);
+    Foreach v19 in v4 {
+        Npc_schedule(v19);
+    }
+    $hawkintransit = false;
+    $hawksailedtomoonshade = true;
+    Bark_i(574, "@Never again!@", _Hawk);
+}
+
+Function ~IsHawkInPub_i #locals(1) #uses(~InBox_i) {
+    v0 = ~GetCoord(_Hawk);
+    return ~InBox_i(<< 1310, 2254, 0 >>, << 1265, 2224, 0 >>, v0);
+}
+
+Routine HawkSetsSail_i accepts a0 #locals(3) #uses(~GimmePathEgg) {
+    v1 = ~GimmePathEgg(1, 2);
+    SetSpeaker0_i(0, _Hawk);
+    ["I'd advise ye ta hold fast an' keep a weather eye on that there horizon! We'll be runnin' afore the wind hard enough to splinter the mast as it is."];
+    CloseSpeaker0_i();
+    SetItemFlag_i(17, _Avatar);
+    SetItemFlag_i(_ActiveBarge_i, v0);
+    if not ~Kernel_getNumProcesses(v0) {
+        v2 = << byte(44), byte(50), byte(33), byte(11), 65534, 5, byte(85), 2020 >>;
+        v3 = ~PostAction(v2, v0);
+        v3 = ~SetQuality(0, v1);
+    }
+}

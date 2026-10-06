@@ -1,0 +1,121 @@
+Routine Myauri accepts a0 #locals(3) #uses(Bark_i) {
+    if (event = _Converse) {
+        Item_bark("@Hail, Gwani elder!@", _Avatar);
+        Bark_i(3, "@Thou are here.@", _Myauri);
+        SetWorkType(_Talk, _Myauri);
+    }
+    if (event = _Talking) {
+        Npc_schedule(_Myauri);
+        ClearBark_i(_Myauri);
+        SetSpeaker0_i(0, _Myauri);
+        ["It is one foretold by Gwenno!"];
+        TurnOn(<< "name", "Gwenno", "bye" >>);
+        if $BANES_RELEASED {
+            if $hazarddead {
+                TurnOn("Thanks");
+            } else {
+                TurnOn("We have been attacked!");
+            }
+        }
+        converse {
+            key ("name") {
+                TurnOff("name");
+                ["I Myauri, hunting master. My mate Yenani chieftain of our people. I am father of Neyobi and Kapyundi."];
+                TurnOn(<< "Myauri", "Yenani", "Neyobi", "Kapyundi" >>);
+            }
+            key ("Myauri") {
+                TurnOff("Myauri");
+                ["It is ancient, proud Gwani name. It mean 'Blizzard' in our tongue."];
+            }
+            key ("Yenani") {
+                TurnOff("Yenani");
+                ["She mate of Myauri all of life. She not only leader of Gwani people, but keeper of stories, and history of our people."];
+            }
+            key ("Neyobi") {
+                TurnOff("Neyobi");
+                v0 = ~GetItemFlag_i(_Zombie, _Neyobi);
+                if v0 {
+                    ["Neyobi my only daughter. She very sick. Strange sickness put her to sleep. Now she not wake. If she not cured soon, sleeping sickness kill her."];
+                    TurnOn(<< "strange sickness", "When did this happen?", "cure" >>);
+                } else {
+                    ["Neyobi sickness gone! Avatar cure Neyobi. Myauri never forget great deed Avatar do for Myauri. Great deed for Gwani people!"];
+                }
+            }
+            key ("strange sickness") {
+                TurnOff("strange sickness");
+                ["Not even our healer Baiyanda know what sickness is, where it come from, how it cured. I worry it be with rest of Gwani people. Maybe nothing to be done. Maybe Gwani die."];
+                TurnOn(<< "nothing to be done", "Gwani die" >>);
+            }
+            key ("When did this happen?") {
+                TurnOff("When did this happen?");
+                ["It not long ago when Neyobi was well. Then one morning she not wake. That is all I know."];
+            }
+            key ("cure") {
+                TurnOff("cure");
+                ["Speak with Yenani or Baiyanda. They know what to do."];
+            }
+            key ("Kapyundi") {
+                TurnOff("Kapyundi");
+                v1 = ~GetItemFlag_i(_Dead, _Kapyundi);
+                if v1 {
+                    ["The Trapper killed him. He was great hunter. He fought fiercely for his life and his people. My heart burn at loss of him but he live forever in my memory."];
+                } else {
+                    ["He my son, brave and strong hunter. One day he take my place as Hunting Master of Gwani people. Even now he search for cure for Neyobi sickness."];
+                }
+            }
+            key ("nothing to be done") {
+                TurnOff("nothing to be done");
+                ["Not all things in world meant to have answers. Gwani tried to live in balance with world, not force us on nature. Maybe our time is over."];
+            }
+            key ("Gwani die") {
+                TurnOff("Gwani die");
+                ["Maybe time here to face death of our people. All in universe balanced unless man or Gwani intervene. Our people seen great strife, great challenges. Fierce dragons, goblins, hunting humans. We survive all of these things. Still part of great balance of things. Maybe we not meant to survive this. When Gwani no longer part of balance of universe, time for us to leave world. This way of things."];
+            }
+            key ("Gwenno") {
+                TurnOff("Gwenno");
+                v2 = ~GetWorkType(_Gwenno);
+                if (v2 = 15) {
+                    ["Gwenno great friend to our people. It thanks to her that many of our people speak thy tongue. She even told us all about thou. She said thou would come. Her death tragedy."];
+                    $knowgwennodead = true;
+                    TurnOn(<< "How did Gwenno die?", "Where is Gwenno's body?" >>);
+                } else {
+                    ["All Gwani people very happy to know Gwenno alive again!"];
+                }
+            }
+            key ("How did Gwenno die?") {
+                TurnOff("How did Gwenno die?");
+                ["Gwenno killed by The Trapper's men."];
+                TurnOn("The Trapper");
+            }
+            key ("Where is Gwenno's body?") {
+                TurnOff("Where is Gwenno's body?");
+                ["Gwenno's body now at Gwani Death Temple. It place sacred to us, where spirits of dead rest peacefully. Only leaders of tribe, Yenani and Baiyanda go there. But Baiyanda's mate Bwundai may know where it is."];
+            }
+            key ("The Trapper") {
+                TurnOff("The Trapper");
+                if $hazarddead {
+                    ["I thank thou for killing The Trapper. Maybe now we live in peace!"];
+                } else {
+                    ["The Trapper cunning human who hunt us to near extinction. He hunt us for our skins. He live somewhere north. We do not know where."];
+                }
+            }
+            key ("Thanks") {
+                TurnOff("Thanks");
+                ["Terrible threat to Gwani people ended thanks to thou! We grateful!"];
+            }
+            key ("We have been attacked!") {
+                TurnOff("We have been attacked!");
+                ["The Trapper struck! All Gwani dead but Yenani, Neyobi and I."];
+                TurnOn(<< "nothing to be done", "Gwani die" >>);
+            }
+            key ("bye") {
+                CloseSpeaker0_i();
+                CloseSpeaker1_i();
+                Bark_i(0, "@Goodbye!@", _Avatar);
+                Bark_i(3, "@Go in peace, my friend.@", _Myauri);
+                break;
+            }
+        }
+        clear_answers;
+    }
+}

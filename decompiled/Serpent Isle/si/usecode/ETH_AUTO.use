@@ -1,0 +1,219 @@
+Routine EthAutomaton accepts a0 #locals(4) #uses(AutomatonUsable_i, UnfreezeAvatar_i, ~GimmePathEgg, ~AskYesNo, GatherMoney_i) {
+    ClearItemFlag_i(_DontMove_i, _Avatar);
+    if ~GetItemFlag_i(_Zombie, _EthAutomaton) {
+        AutomatonUsable_i();
+        terminate;
+    }
+    if (event = _Action) {
+        UnfreezeAvatar_i();
+        SetMusic(~GimmePathEgg(1, 5), 64);
+        SetSpeaker0_i(0, _Forskis);
+        v0 = ~GetItemFlag_i(_Met, _EthAutomaton);
+        if (v0 = false) {
+            ["I am the Educator here, seeker. It is my task to determine how far thine Ethicality hath already progressed before the test may begin."];
+            ["Dost thou wish to begin the test?"];
+            if (~AskYesNo() = true) {
+                ["Very well... Consider each question carefully before answering."];
+                ["Question One: If thou didst come upon one who was sure to die, would it be Ethical to risk death trying to save the doomed person? Or would it be more Ethical to flee before the same fate befell thee?"];
+                TurnOn(<< "Risk Death", "Flee" >>);
+                converse {
+                    key ("Risk Death") {
+                        ["Thou art correct. Ethicality demands that thou must seek to preserve the life of others, as thou wouldst thine own." *"No man's fate is certain while he yet lives. Thine actions can change the course of fate..."];
+                        PushKeys();
+                        ["Question Two: If thou didst come upon a room of untold wealth within a structure where thou didst not know if the owner lived, would it be Ethical to take the money if thou wert in sore need? Or wouldst thou leave the money to possibly be used for evil ends?"];
+                        TurnOn(<< "Take the Money", "Leave the Money" >>);
+                    }
+                    key ("Take the Money") {
+                        ["No matter what the need, seeker, Ethicality demands that thou not takest anything without permission. It is difficult to weigh these things at times, but thou shalt find it easier as time passes..."];
+                        PopKeys();
+                        goto label_21;
+                    }
+                    key ("Leave the Money") {
+                        ["Thou art correct, seeker. Thou wouldst have no idea what the money was to be used for." *"Ethicality demands that thou not takest anything without permission, no matter what the need. If thou wouldst stand in judgment of another, thou must be sure of thine Ethicality."];
+                        PushKeys();
+                        ["Finally, Question Three: If thou wert faced with the certainty of thy death at the hands of an unethical man, wouldst thou yield to him to save thy life? Or would Ethicality demand that thou shouldst continue the struggle unto death?"];
+                        TurnOn(<< "Yield", "Continue" >>);
+                    }
+                    key ("Yield") {
+                        ["No, seeker. If thou shouldst yield to one who is evil, even to save thy life, then thou art admitting the dominion of that evil."];
+                        ["Thy life doth have little value if thou dost abandon thy virtue. Ethicality demands that thou wilt oppose evil in all ways, even at the cost of thine own life."];
+                        PopKeys();
+                        PopKeys();
+                        goto label_21;
+                    }
+                    key ("Continue") {
+                        ["Thou art correct, and brave as well, seeker. Thou dost know that yielding to evil is to admit the dominion of that evil." *"Ethicality demands that thou shouldst maintain thy virtue and oppose evil, even at the cost of thy life."];
+                        ["Thou hast answered well... Of all virtues, Ethicality is often the most subjective and tenuous." *"Thou art worthy to begin the test..."];
+                        PopKeys();
+                        PopKeys();
+                        SetItemFlag_i(_Met, _EthAutomaton);
+                        FadePalette_i(0, 1, 12);
+                        Item_move(<< 2478, 879, 0 >>, _Avatar);
+                        Sfx(102);
+                        v1 = ~PostInFuture(5, << _aNO_HALT_i, _aUSABLE_i, #FadeInArrival_i >>, _Avatar);
+                        $ethicalitybegun = true;
+                        terminate;
+                    }
+                    key ("Flee") {
+                        ["Thou art incorrect, seeker. While thou must never seek to throw thy life away, Ethicality demands that thou must seek to preserve the life of others as thou wouldst thine own." *"No man's fate is certain while he yet lives. Thine actions can change the course of fate..."];
+                        PopKeys();
+                        goto label_21;
+                    }
+                }
+                clear_answers;
+                label_21:
+                ["I am sorry, seeker. It is necessary for thee to think more about these questions before undergoing the tests. Please return after further meditation."];
+                FadePalette_i(0, 1, 12);
+                Item_move(<< 2720, 960, 0 >>, _Avatar);
+                Sfx(102);
+                v1 = ~PostAction(<< _aNO_HALT_i, _aKNEEL_FRAME_i, _aWAIT_i, 15 >>, _Avatar);
+                v1 = ~PostInFuture(4, << _aNO_HALT_i, _aUSABLE_i, #FadeInArrival_i >>, _Avatar);
+                v1 = ~PostInFuture(15, << _aNO_HALT_i, _aUSABLE_i, #RecallParty_i >>, _Avatar);
+                v1 = ~PostInFuture(1, << _aNO_HALT_i, _aUSABLE_i, #Rug_8x8 >>, ~GimmePathEgg(1, 5));
+                terminate;
+            } else {
+                ["As thou wishest..."];
+                FadePalette_i(0, 1, 12);
+                Item_move(<< 2720, 960, 0 >>, _Avatar);
+                Sfx(102);
+                v1 = ~PostAction(<< _aNO_HALT_i, _aKNEEL_FRAME_i, _aWAIT_i, 15 >>, _Avatar);
+                v1 = ~PostInFuture(4, << _aNO_HALT_i, _aUSABLE_i, #FadeInArrival_i >>, _Avatar);
+                v1 = ~PostInFuture(15, << _aNO_HALT_i, _aUSABLE_i, #RecallParty_i >>, _Avatar);
+                v1 = ~PostInFuture(1, << _aNO_HALT_i, _aUSABLE_i, #Rug_8x8 >>, ~GimmePathEgg(1, 5));
+                terminate;
+            }
+        }
+        if (flag(539) = true) {
+            ["It is a pleasure to see thee again, seeker. But there is nothing more that can be done here..." *"I have taught thee all I can. Thou must seek other virtues to embrace."];
+            FadePalette_i(0, 1, 12);
+            Item_move(<< 2720, 960, 0 >>, _Avatar);
+            Sfx(102);
+            v1 = ~PostAction(<< _aNO_HALT_i, _aKNEEL_FRAME_i, _aWAIT_i, 15 >>, _Avatar);
+            v1 = ~PostInFuture(4, << _aNO_HALT_i, _aUSABLE_i, #FadeInArrival_i >>, _Avatar);
+            v1 = ~PostInFuture(15, << _aNO_HALT_i, _aUSABLE_i, #RecallParty_i >>, _Avatar);
+            v1 = ~PostInFuture(1, << _aNO_HALT_i, _aUSABLE_i, #Rug_8x8 >>, ~GimmePathEgg(1, 5));
+            terminate;
+        } else {
+            if ($ethicalitybegun and ($temp1flag = false)) {
+                if (~GetClock(3) > 23) {
+                    ["Thou hast returned, seeker! I am pleased." *"I hope that thou hast benefitted from thy meditations... Behold!"];
+                    if ($firstquestionanswered = false) {
+                        FadePalette_i(0, 1, 12);
+                        Item_move(<< 2478, 879, 0 >>, _Avatar);
+                        Sfx(102);
+                        v1 = ~PostInFuture(5, << _aNO_HALT_i, _aUSABLE_i, #FadeInArrival_i >>, _Avatar);
+                        terminate;
+                    }
+                    if ($secondquestionanswered = false) {
+                        FadePalette_i(0, 1, 12);
+                        Item_move(<< 2600, 806, 0 >>, _Avatar);
+                        Sfx(102);
+                        v1 = ~PostInFuture(5, << _aNO_HALT_i, _aUSABLE_i, #FadeInArrival_i >>, _Avatar);
+                        terminate;
+                    }
+                    if (flag(537) = false) {
+                        FadePalette_i(0, 1, 12);
+                        Item_move(<< 2751, 900, 0 >>, _Avatar);
+                        Sfx(102);
+                        v2 = ~CreateCreature_i(<< 2750, 890, 0 >>, _Batlin_Type);
+                        if v2 {
+                            SetWorkType(_Wait, v2);
+                            createSprite(65535, 0, 0, 0, 883, 2594, 26);
+                            v1 = ~PostAction(<< _aFACE_i, byte(52) >>, v2);
+                            v3 = ~GimmePathEgg(1, 0);
+                            if v3 {
+                                v1 = ~PostInFuture(25, << _aNO_HALT_i, _aUSABLE_i, #Batlin_Type >>, v3);
+                            }
+                        }
+                        v1 = ~PostInFuture(5, << _aNO_HALT_i, _aUSABLE_i, #FadeInArrival_i >>, _Avatar);
+                        terminate;
+                    }
+                } else {
+                    ["Further meditation must be done before thou art ready to undertake the tests once more..."];
+                    FadePalette_i(0, 1, 12);
+                    Item_move(<< 2720, 960, 0 >>, _Avatar);
+                    Sfx(102);
+                    v1 = ~PostAction(<< _aNO_HALT_i, _aKNEEL_FRAME_i >>, _Avatar);
+                    v1 = ~PostInFuture(4, << _aNO_HALT_i, _aUSABLE_i, #FadeInArrival_i >>, _Avatar);
+                    v1 = ~PostInFuture(15, << _aNO_HALT_i, _aUSABLE_i, #RecallParty_i >>, _Avatar);
+                    v1 = ~PostInFuture(1, << _aNO_HALT_i, _aUSABLE_i, #Rug_8x8 >>, ~GimmePathEgg(1, 5));
+                    terminate;
+                }
+            }
+        }
+        $temp1flag = false;
+        if (not $passedfiretest and (not $passedmoneytest and not $passedbatlintest)) {
+            ["I am sorry, seeker. Thou hast failed to grasp the meaning of Ethicality in this." *"Study and meditate further... Thou canst return tomorrow to try again, if thou wishest."];
+            FadePalette_i(0, 1, 12);
+            GatherMoney_i();
+            Item_move(<< 2720, 960, 0 >>, _Avatar);
+            Sfx(102);
+            SetClock(3);
+            v1 = ~PostAction(<< _aNO_HALT_i, _aKNEEL_FRAME_i, _aWAIT_i, 15 >>, _Avatar);
+            v1 = ~PostInFuture(4, << _aNO_HALT_i, _aUSABLE_i, #FadeInArrival_i >>, _Avatar);
+            v1 = ~PostInFuture(15, << _aNO_HALT_i, _aUSABLE_i, #RecallParty_i >>, _Avatar);
+            v1 = ~PostInFuture(1, << _aNO_HALT_i, _aUSABLE_i, #Rug_8x8 >>, ~GimmePathEgg(1, 5));
+            terminate;
+        }
+        if ($passedfiretest = true) {
+            ["Thou hast truly learned the Ethicality of saving others! Thou art worthy to continue the test... Behold!"];
+            v1 = ~PostAction(<< _aFACE_i, byte(50) >>, _Avatar);
+            FadePalette_i(0, 1, 12);
+            Item_move(<< 2600, 806, 0 >>, _Avatar);
+            Sfx(102);
+            v1 = ~PostInFuture(5, << _aNO_HALT_i, _aUSABLE_i, #FadeInArrival_i >>, _Avatar);
+            $passedfiretest = false;
+            $firstquestionanswered = true;
+            terminate;
+        }
+        if ($passedmoneytest = true) {
+            ["Thou hast learned to value Ethicality over money... Thou art worthy to continue the test! Behold!"];
+            $batlininethicality = true;
+            FadePalette_i(0, 1, 12);
+            GatherMoney_i();
+            Item_move(<< 2751, 900, 0 >>, _Avatar);
+            Sfx(102);
+            v2 = ~CreateCreature_i(<< 2750, 890, 0 >>, _Batlin_Type);
+            if v2 {
+                SetWorkType(_Wait, v2);
+                createSprite(65535, 0, 0, 0, 883, 2594, 26);
+                v1 = ~PostAction(<< _aFACE_i, byte(52) >>, v2);
+                v3 = ~GimmePathEgg(1, 0);
+                if v3 {
+                    v1 = ~PostInFuture(25, << _aNO_HALT_i, _aUSABLE_i, #Batlin_Type >>, v3);
+                }
+            }
+            v1 = ~PostInFuture(5, << _aNO_HALT_i, _aUSABLE_i, #FadeInArrival_i >>, _Avatar);
+            $passedmoneytest = false;
+            $secondquestionanswered = true;
+            terminate;
+        }
+        if (($ethicalitybegun = true) and ($passedbatlintest = true)) {
+            ["Thou hast retained thy virtue! The very essence of Ethicality flows within thine heart!" *"I congratulate thee, seeker. Thou hast accomplished what many have failed to do."];
+            flag(539) = true;
+            FadePalette_i(0, 1, 12);
+            Item_move(<< 2720, 960, 0 >>, _Avatar);
+            Sfx(102);
+            v1 = ~PostAction(<< _aNO_HALT_i, _aKNEEL_FRAME_i, _aWAIT_i, 15 >>, _Avatar);
+            v1 = ~PostInFuture(4, << _aNO_HALT_i, _aUSABLE_i, #FadeInArrival_i >>, _Avatar);
+            flag(537) = true;
+            $passedfiretest = true;
+            $passedmoneytest = true;
+            $passedbatlintest = true;
+            v1 = ~PostInFuture(1, << _aNO_HALT_i, _aUSABLE_i, #Rug_8x8 >>, ~GimmePathEgg(1, 5));
+            terminate;
+        }
+    }
+}
+
+Usable GatherMoney_i #locals(7) {
+    v0 = << 948, 952, 951, 644, 645, 646, 760 >>;
+    Foreach v3 in v0 {
+        v4 = ~FindNearby_i(0, 20, v3, _Avatar);
+        if v4 {
+            v5 = ~Item_push(v4);
+            v6 = ~NPCToItem_i(_Avatar);
+            v5 = ~PopToNPC(v6);
+        }
+    }
+}

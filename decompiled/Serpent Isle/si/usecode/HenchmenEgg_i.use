@@ -1,0 +1,15 @@
+Routine HenchmenEgg_i accepts a0 #locals(1) #uses(~GimmePathEgg, Bark_i) {
+    SetMusic(~GimmePathEgg(1, 5), 18);
+    Item_move(<< 1890, 1005, 0 >>, _Hench2);
+    NewSchedule_i(<< 1890, 1005 >>, _Wander, 0, _Hench2);
+    PathfindNPC_i(false, #Hench2, ~NPCToItem_i(_Hench2), _Path_Success, << 1890, 1009, 0 >>, _Hench2);
+    SetPathFailure_i(_Path_Failure, ~NPCToItem_i(_Hench2), #Hench2);
+    v0 = ~PostInFuture(8, << _aNO_HALT_i, _aWAIT_WHILE_FAR_i, 10, _aBARK_i, "@I will steal this!@", _aWAIT_i, 14, _aFACE_i, _East, _aBARK_i, "@'Tis the Avatar!@", _aWAIT_i, 10, _aUSABLE_i, #Hench2 >>, _Hench2);
+    Item_move(<< 1900, 999, 0 >>, _Hench3);
+    NewSchedule_i(<< 1900, 999 >>, _Wander, 0, _Hench3);
+    Npc_schedule(_Hench3);
+    Bark_i(3, "@I be bored.@", _Hench3);
+    Item_move(<< 1895, 996, 1 >>, _DBeyer);
+    SetWorkType(_Wait, _DBeyer);
+    v0 = ~PostAction(<< _aNO_HALT_i, _aFACE_i, _South >>, _DBeyer);
+}

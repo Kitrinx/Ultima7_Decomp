@@ -1,0 +1,16 @@
+Routine ForceWallsEgg_i accepts a0 #locals(5) {
+    v0 = << 2411, 2883, 2407, 2883, 2407, 2911, 2411, 2911 >>;
+    v1 = 1;
+    While (v1 <= 4) {
+        Sfx(119);
+        v2 = ~Item_create(_Force);
+        if v2 {
+            SetFrame(0, v2);
+            SetItemFlag_i(_IsTemporary_i, v2);
+            v3 = (v1 * 2);
+            v4 = ~PopToMap(<< v0::(v3 - 1), v0::v3, 0 >>);
+            createSprite(65535, 0, 0, 0, v0::v3, v0::(v3 - 1), 21);
+            v1 = (v1 + 1);
+        }
+    }
+}

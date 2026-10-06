@@ -1,0 +1,203 @@
+Routine Miggim accepts a0 #locals(7) #uses(~LordOrLady, ~WhereAmI_i, ~AvatarName, PartyFaces_i, Bark_i, ~IsBodyNear_i, ResurrectBodies_i, ~IsNPCNear, MonkMakesPeace_i) {
+    v0 = ~LordOrLady();
+    v1 = ~AvatarSex();
+    v2 = ~WhereAmI_i();
+    v3 = "son";
+    if v1 {
+        v3 = "daughter";
+    }
+    v4 = ~AvatarName();
+    if (event = _Converse) {
+        if (~GetNPCID_i(_Karnax) <> 0) {
+            Item_bark("@Be silent...@", _Miggim);
+            terminate;
+        }
+        Item_bark("@A moment, monk!@", _Avatar);
+        PartyFaces_i(65327);
+        Bark_i(2, (("@Yes, my " + v3) + "?@"), _Miggim);
+        SetWorkType(_Talk, _Miggim);
+    }
+    if (event = _Talking) {
+        Npc_schedule(_Miggim);
+        ClearBark_i(_Miggim);
+        SetSpeaker0_i(0, _Miggim);
+        v5 = ~GetItemFlag_i(_Met, _Miggim);
+        if (v2 = 9) {
+            ["My name is Miggim. I am the librarian on Monk Isle."];
+            ["I have been awaiting thine arrival..."];
+            SetItemFlag_i(_Met, _Miggim);
+            TurnOn(<< "librarian", "Monk Isle", "arrival" >>);
+        } else {
+            if (v5 = false) {
+                ["So, thou art the one whose arrival we have been awaiting."];
+                ["I am Miggim, the librarian here on Monk Isle."];
+                SetItemFlag_i(_Met, _Miggim);
+                TurnOn(<< "arrival", "librarian", "Monk Isle" >>);
+            } else {
+                ["Welcome to Monk Isle, <v4>. Feel free to visit me in the library whilst thou art here."];
+                TurnOn("library");
+            }
+        }
+        if (not $marstenarrested and ($TOLD_MARSTEN_SERVES_LORD_BRITISH and not $RENOUNCED_BRITISH)) {
+            ["I have this strange foreboding..."];
+            TurnOn("foreboding");
+        }
+        if ~IsBodyNear_i() {
+            ["Oh! One of thy friends hath met an untimely end. This should not be..."];
+            ["If thou art ready to see thy friend again, thou hast merely to ask and I will return them to thee."];
+            TurnOn("resurrection");
+        }
+        TurnOn("Amulet of Balance");
+        TurnOn(<< "aid", "bye" >>);
+        converse {
+            key ("Amulet of Balance") {
+                TurnOff("Amulet of Balance");
+                ["It was quite a find, <v0>! I have been uncovering many small things over the years in the passages beneath the abbey. But this is the first time I have found something as large as a chest.];
+                ["It was a pity that the scroll that accompanied the Amulet was so fragile. It was one of the oldest I have yet found. All I was able to make out before it disintegrated was the name of the amulet and that it was used near the Serpent gates.];
+                ["Perhaps this means that there is more yet to be discovered. I shall certainly continue my search."];
+            }
+            key ("resurrection") {
+                TurnOff("resurrection");
+                ResurrectBodies_i();
+            }
+            key ("aid") {
+                TurnOff("aid");
+                if not $IOLO_MADE_EQUIPMENT_LIST {
+                    ["I must be cautious in aiding thee, <v0>. But I can say that thou shouldst strive to keep thy three stalwart companions at thy side."];
+                    ["Thy friend -- the master of song and mirth -- must be found before thou dost venture on."];
+                } else {
+                    ["I must be cautious in aiding thee, <v0>. But rest assured that I will prompt thee as much as possible."];
+                }
+            }
+            key ("foreboding") {
+                TurnOff("foreboding");
+                ["I see that thou hast earned the enmity of the leader of warriors, <v0>. Without his favor, and the might of Monitor, thou canst not hope to further thy quest."];
+                ["Only by renouncing thy friend and patron, the ruler who sent thee here, canst thou hope to continue on."];
+                if ~IsNPCNear(_Dupre) {
+                    SetSpeaker1_i(0, _Dupre);
+                    ["Why, that is unthinkable! I have never heard of such a preposterous thing!"];
+                    CloseSpeaker1_i();
+                    Bark_i(0, "@Rubbish!@", _Dupre);
+                    SetSpeakerSlot_i(0);
+                }
+            }
+            key ("librarian") {
+                TurnOff("librarian");
+                ["'Tis my duty to transcribe and care for the prophecies of Xenka."];
+                ["It was I that found the passages that told of thy coming."];
+                TurnOn(<< "Xenka", "passage" >>);
+            }
+            key ("Xenka") {
+                TurnOff("Xenka");
+                ["She was a very wise woman, <v0>."];
+                ["She foretold the storms that brought thee to our land, and saw the end of the world."];
+                ["Those who believed in her visions banded together to study her words so that we might help avert the fate she foresaw."];
+                TurnOn(<< "end of the world" >>);
+            }
+            key ("end of the world") {
+                TurnOff("end of the world");
+                ["Within Xenka's holy writings is the passage -- 'When at last the great scales unhinge, the overburdened world shall be torn asunder by the opposing forces.'"];
+                TurnOn(<< "great scales", "opposing forces" >>);
+            }
+            key ("great scales") {
+                TurnOff("great scales");
+                ["It could mean anything, <v4>. Music scales, map scales, snake scales, or weight scales..."];
+            }
+            key ("opposing forces") {
+                TurnOff("opposing forces");
+                ["I know not... Though I would hazard a guess that it refers to the forces of good and evil."];
+            }
+            key ("passage") {
+                TurnOff("passage");
+                ["Alas, Xenka's writings follow no order and are convoluted and vague."];
+                ["We have spent the years since her disappearance trying to decide if some passage hath already happened or if one event will follow another."];
+                TurnOn(<< "disappearance", "event" >>);
+            }
+            key ("disappearance") {
+                TurnOff("disappearance");
+                ["Xenka was not a young woman, <v4>. After she disappeared from our midst, we found a freshly-inked passage that promised her return when the end was near."];
+                ["I always thought that she had discovered some way to ensure that she would live to see her prophecies revealed. Though I know not how."];
+            }
+            key ("event") {
+                TurnOff("event");
+                ["The events in the prophecies are wild and connected by no frame that we have been able to discover..."];
+                ["'Great storms, the containers of hope smashed, lost love forgiven and restored' -- we still seek their meanings."];
+            }
+            key ("Monk Isle") {
+                TurnOff("Monk Isle");
+                ["Monk Isle is where the followers of Xenka dwell, <v4>."];
+                ["Only a few believers remain to study and contemplate the mystery of her words. Few are now willing to devote their life to waiting on events that may take centuries to unfold. Faith is not an\x09easy thing..."];
+            }
+            key ("arrival") {
+                TurnOff("arrival");
+                ["Yes, <v4>, 'tis written that a hero from another world will come to right the disorder in our land. That is thee..."];
+                if (v2 = 9) {
+                    ["'Tis also written that treachery will stalk thy steps at the beginning of thy quest. That is why I am here..."];
+                    ["Not all of Xenka's followers believe that we should take direct action in aiding thee. However, Thoxa and I disagree."];
+                    TurnOn("action");
+                }
+            }
+            key ("action") {
+                TurnOff("action");
+                ["I believe that an attempt will be made on thy life soon. Perhaps, by being forewarned, thou wilt be able to avoid it."];
+                ["I cannot tell thee who to avoid here, <v4>. I arrived here only a few days ago and have remained in the barn for much of the time. I thought it wise to attract as little notice as possible."];
+                ["But, now that thou art here, feel assured that I will remain vigilant against anything that would deter thee from thy destiny."];
+                TurnOn("destiny");
+            }
+            key ("destiny") {
+                TurnOff("destiny");
+                ["I am not in power to tell thee more of the quest that lies before thee. If I were to tell thee, thou mightest be prejudiced by my words and overlook a crucial event."];
+            }
+            key ("library") {
+                TurnOff("library");
+                ["We have quite a collection of diverse books and scrolls -- all meant to help us aid thee on thy quest."];
+                ["Feel free to look at anything in the library, even if I am attending to my chores."];
+                TurnOn(<< "diverse books and scrolls", "chores" >>);
+            }
+            key ("diverse books and scrolls") {
+                TurnOff("diverse books and scrolls");
+                ["Poetry, astronomical observations, tide charts, and maps... Everything that might provide some insight into the meaning of the prophecies."];
+                if ($miggimhasmaps and not $gotdisciplinewater) {
+                    TurnOn("maps");
+                }
+            }
+            key ("maps") {
+                TurnOff("maps");
+                v6 = ~FindNearby_i(0, 10, _Book, _Avatar);
+                if v6 {
+                    ["We have no maps to aid thee, I fear. But I know that there is a book describing the old temples here in the abbey."];
+                    ["It is written in the Ophidian runes, of course. But thou canst use the Lens of Translating to aid thee in reading it."];
+                    ["Go thou and find it. I am certain that it will help thee."];
+                } else {
+                    ["We have no maps to aid thee, I fear. But I know that there is a book describing the old temples in the abbey."];
+                    ["It is written in the Ophidian runes, of course. But thou canst use the Lens of Translating to aid thee in reading it."];
+                    ["Go thou and find it. I am certain that it will help thee."];
+                }
+                TurnOn("Lens of Translating");
+            }
+            key ("Lens of Translating") {
+                TurnOff("Lens of Translating");
+                ["It is the large device that stands in the center of the library. Using it will allow thee to decipher the difficult Ophidian runes, but only for a short period of time."];
+            }
+            key ("chores") {
+                TurnOff("chores");
+                ["We are a self-sufficient community, <v4>. We share the work in growing all that we need to eat. So I am as often in the field as I am in the library."];
+                TurnOn("growing");
+            }
+            key ("growing") {
+                TurnOff("growing");
+                ["We have berries, pumpkins and other vegetables. Thou mayest take some, if thou dost wish."];
+            }
+            key ("bye") {
+                CloseSpeaker0_i();
+                Bark_i(0, "@So long!@", _Avatar);
+                Bark_i(2, "@Fare thee well!@", item);
+                break;
+            }
+        }
+        clear_answers;
+    }
+    if (event = _NearDeath) {
+        MonkMakesPeace_i(65327);
+    }
+}

@@ -1,0 +1,218 @@
+Routine Man accepts a0 #locals(2) #uses(~AvatarName, PartyFaces_i, Bark_i, TsandarTrains_i) {
+    v0 = ~GetNPCID_i(item);
+    v1 = ~AvatarName();
+    if (event = _Converse) {
+        if not v0 {
+            Item_bark("@Pardon me, Milord.@", _Avatar);
+        } else {
+            Item_bark("@Pardon me, SubCommander.@", _Avatar);
+        }
+        PartyFaces_i(item);
+        Bark_i(2, "@Dost thou address me?@", item);
+        SetWorkType(_Talk, item);
+    }
+    if (event = _Talking) {
+        SetWorkType(_Stand, item);
+        ClearBark_i(item);
+        SetSpeaker0_i(0, 65227);
+        if not v0 {
+            ["Who art thou?! But wait -- Thou dost wear the Amulet of Balance!];
+            ["I am no lord, stranger. I am merely a warrior. Thou mayest address me by name or title. I am SubCommander Tsandar."];
+            SetNPCID_i(1, item);
+        } else {
+            if ($HAVE_SILVER_SEED or $PLANTED_SILVER_SEED) {
+                ["I am honored to see thee again, Champion of Balance."];
+                TurnOn("Congratulations");
+            } else {
+                ["Forgive my rudeness, <v1>. I fear I am not yet accustomed to the title of SubCommander."];
+            }
+        }
+        TurnOn(<< "Train", "SubCommander", "Amulet of Balance", "bye" >>);
+        converse {
+            key ("Congratulations") {
+                TurnOff("Congratulations");
+                if ($HAVE_SILVER_SEED and not $PLANTED_SILVER_SEED) {
+                    ["It took a mighty warrior to retrieve those Orbs, <v1>. Thou art truly worthy of carrying the Silver Seed.];
+                    ["Plant it quickly, <v1>. It may be the only hope our battered world has of surviving this war."];
+                } else {
+                    ["Now that the Tree of Balance again graces our world, perhaps we can end this war soon.];
+                    ["Thou art truly the Champion of Balance."];
+                }
+            }
+            key ("Train") {
+                TsandarTrains_i();
+            }
+            key ("SubCommander") {
+                TurnOff("SubCommander");
+                ["When I was assigned to this garrison, I was Senior File Leader. Then, nine months ago, when those Chaos fiends took Commander Ardiniss, I was was made Garrison Commander.];
+                ["Naturally, now that Isstanar is here, I have become the SubCommander."];
+                TurnOn(<< "Senior File Leader", "Chaos fiends", "Commander Ardiniss", "Isstanar" >>);
+            }
+            key ("Senior File Leader") {
+                TurnOff("Senior File Leader");
+                ["Ones rank denotes how many warriors one is responsible for. It is always an even number of men, measured in hands -- or groups of five."];
+                TurnOn(<< "rank", "even number" >>);
+            }
+            key ("rank") {
+                TurnOff("rank");
+                ["A Senior Warrior commands one hand of warriors, and reports to the Junior File Leader.];
+                ["A Junior File Leader is in charge of two hands of warriors, and reports to the File Leader.];
+                ["A File Leader oversees four hands of warriors, and reports to the Senior File Leader."];
+                ["A Senior File Leader controls ten hands of warriors, and reports to the SubCommander of the Garrison. The SubCommander acts as the aide to the Garrison Commander."];
+            }
+            key ("even number") {
+                TurnOff("even number");
+                ["Of course, even! Dost thou not have two hands? Are there not two forces continually at war within the Void -- Order and vile Chaos?];
+            }
+            key ("Chaos fiends") {
+                TurnOff("Chaos fiends");
+                ["Everyone knows that the followers of Chaos practice unnatural acts! By the two hands of Order, we shall wipe the Chaos abomination from the face of the land!"];
+            }
+            key ("Commander Ardiniss") {
+                TurnOff("Commander Ardiniss");
+                ["Commander Ardiniss was a brave man, <v1>. He was responsible for carving this keep out of hostile Chaos territory.];
+                ["No warrior could match the Commander's mind for Logic. Yet even Logic is no match for the sheer number of Chaos followers that fell on us that day...];
+                ["I regret that we were unable to wrest his body from those vile murderers. Ardiniss deserved a proper warrior's funeral."];
+                TurnOn(<< "What is this place?", "sheer number" >>);
+            }
+            key ("What is this place?") {
+                TurnOff("What is this place?");
+                ["The Order High Command designated this keep as the Serpent's Fang. But our troops call it DeathWatch.];
+                ["The battles have long since raged beyond us. It is our sad duty to continue to hold DeathWatch from any retreating Chaos minions.];
+                ["We long for word of how the War of Imbalance turns."];
+                TurnOn(<< "Order High Command", "battles" >>);
+            }
+            key ("Order High Command") {
+                TurnOff("Order High Command");
+                ["All respect to them!];
+                ["The High Command are the officers that report directly to the Order Hierophant. It is their wisdom that will fulfill the will of the Order Serpent to unite the world under the Ethicality and Discipline of Order."];
+                TurnOn(<< "Order Hierophant", "Order Serpent", "Ethicality", "Discipline" >>);
+            }
+            key ("Order Hierophant") {
+                TurnOff("Order Hierophant");
+                ["The Order Hierophant is our spiritual leader. She is the Voice of the Order Serpent. I would follow her orders even into the very face of death.];
+                ["After those... those... Chaos monsters murdered the Great Hierophant, it was only natural that command of the land fall to Order. We will make them all pay for their crime!"];
+                TurnOn("Great Hierophant");
+            }
+            key ("Great Hierophant") {
+                TurnOff("Great Hierophant");
+                ["Sithnos was the last Great Hierophant, <v1>. He was murdered when I was but a boy, over three hands of years ago now.];
+                ["The Great Hierophant was the Voice of the Great Earth Serpent... Only the will of the Great Earth Serpent could keep the animosity of Order and Chaos at bay.];
+                ["Only the Great Hierophant's wisdom kept Balance within the land.  The last Acolytes of Balance spirited Ssithnos' body away, and the warriors of Order swore vengeance upon Chaos...];
+                ["We have been at war ever since."];
+            }
+            key ("Order Serpent") {
+                TurnOff("Order Serpent");
+                ["The Order Serpent dwells within the Void, eternally battling the Chaos Serpent. Only the strength of the Great Earth Serpent could separate these ancient enemies.];
+                ["But something happened within the Void... I know not what. The power of the Great Earth Serpent is no longer felt, and we no longer have the wisdom of Sithnos to guide us.];
+                ["Our land is doomed unless we can restore it to Order."];
+            }
+            key ("Ethicality") {
+                TurnOff("Ethicality");
+                ["Ethicality is one of the major tenets of Order, <v1>. By forcing those depraved followers of Chaos to conform with the accepted moral standards of Order we shall end the decadence that Tolerance has spread."];
+                TurnOn("Tolerance");
+            }
+            key ("Tolerance") {
+                TurnOff("Tolerance");
+                ["Wouldst thou allow a thief or a murderer to enter thy home, to dwell alongside thy loved ones?];
+                ["Yet this is what insanity Chaos preaches! They would have it thought that even those who practice unnatural acts must be accepted as part of the fabric of life!];
+                ["Better that such fabric be unwoven or burned!"];
+            }
+            key ("Discipline") {
+                TurnOff("Discipline");
+                ["Discipline is what gives meaning to my life! Once we have yoked the laggard followers of Chaos to the Discipline of Order, there will be peace in the land!];
+                ["It matters not if one has no Enthusiasm for one's orders. Those in command know what must be done, that is enough for a true warrior."];
+                TurnOn("Enthusiasm");
+            }
+            key ("Enthusiasm") {
+                TurnOff("Enthusiasm");
+                ["Imagine what would happen if everyone went about doing only what they pleased, only what appealed to them! Nothing would ever work smoothly again, for there are always distasteful tasks to be performed.];
+                ["Yet the followers of Chaos feel that no one should be constrained to do anything they do not wish to do! Who then would dig latrines, or collect refuse, or bury the dead?];
+                ["The land would soon be overrun by disease and vermin!"];
+            }
+            key ("battles") {
+                TurnOff("battles");
+                ["For more than two hands of years, Order has fought only a holding battle against the forces of Chaos. Nothing we did could give us an advantage over their numbers.];
+                ["But now that we have the automatons, nothing can stand in our way! DeathWatch was situated on the spear's point in the confrontation... Now we guard the lines of retreat.];
+                ["I only wish we knew more than what Commander Isstanar had to tell us when he arrived a few weeks ago."];
+                TurnOn(<< "automatons", "DeathWatch" >>);
+            }
+            key ("automatons") {
+                TurnOff("automatons");
+                ["Are they not a marvel?! Look at how they go about their tasks without complaint! They have no cares, no concerns... only their assigned duty.];
+                ["Since our mages discovered the way to imbue their metal bodies with life, Chaos has been without hope! With metal warriors to lead the way, victory will soon be ours!"];
+            }
+            key ("DeathWatch") {
+                TurnOff("DeathWatch");
+                ["I am sorry. I should refer to the keep as the Serpent's Fang, but I think of it as DeathWatch... even so."];
+            }
+            key ("sheer number") {
+                TurnOff("sheer number");
+                ["I could not count them all, <v1>. They filled all the passageways.  It was all we could do to maintain our hold on the keep."];
+            }
+            key ("Isstanar") {
+                TurnOff("Isstanar");
+                ["The epitome of Order warriors, <v1>! Isstanar has forsaken the cares of the flesh and taken the body of an automaton!];
+                ["Eternal life and service to Order are his. It is quite an honor to have him assigned as our new Commander. I am proud that he has allowed me to become his aide.];
+                ["Perhaps one day I too will be worthy of a Commander's position... And I shall not have to make these endless circuits of a nearly empty garrison!"];
+                TurnOn("taken the body");
+            }
+            key ("taken the body") {
+                TurnOff("taken the body");
+                ["I know not how it is accomplished. It is a secret closely guarded by the Order Hierophant and the High Command. Thou couldst ask Isstanar if thou dost desire, but I doubt that he will tell thee anything.];
+                ["In fact, there is a cold arrogance about him. He does not speak with any of the command unless it is in the line of duty. His commitment to Discipline is absolute, but he does little to ease our minds."];
+            }
+            key ("Amulet of Balance") {
+                TurnOff("Amulet of Balance");
+                ["Thou dost not know what thou dost wear?! Couldst thou truly be the warrior of prophecy and not know what it is that thou dost wear?];
+                ["Perhaps I should send thee to speak with Surok. He is the closest thing we have to a Keeper of Knowledge. I canst tell thee what I know, but I fear that it will do thee little good."];
+                TurnOn(<< "warrior of prophecy", "Surok" >>);
+            }
+            key ("warrior of prophecy") {
+                TurnOff("warrior of prophecy");
+                ["When the Great Hierophant was struck down, tales spread through the land saying that a warrior would arise to avenge the death of Sithnos.];
+                ["The Amulet thou dost wear is one that only the Champion of Balance could wear. I do not know how thou couldst wear it and live, if thou art not the chosen Champion.];
+                ["But I do not understand how thou couldst not know of thy duty, if thou art the chosen Champion. This is most perplexing... My Logic does not seem equal to the task. Speak with Isstanar or Surok."];
+                TurnOn("Champion of Balance");
+            }
+            key ("Champion of Balance") {
+                TurnOff("Champion of Balance");
+                ["In the history of our people there were times when a group of disbelievers refused to accept the authority of the Great Hierophant.];
+                ["It would be unseemly for such a holy man to take arms against anyone. So a warrior was chosen from among the Acolytes of Balance to go forth and subdue the renegades. These warriors were without equal and never failed, no matter what the odds."];
+            }
+            key ("Surok") {
+                TurnOff("Surok");
+                ["Surok is our healer. He is very old, and I fear that his resolve is weakening. He has not yet failed in his duty, but I have advised Isstanar to watch him closely nonetheless.];
+                ["We cannot allow any lapse in Discipline. I suspect that he has lost sight of the absolute Ethicality."];
+                TurnOn(<< "resolve weakening", "lost sight" >>);
+            }
+            key ("resolve weakening") {
+                TurnOff("resolve weakening");
+                ["Surok has been a fearless warrior in his day, as well as a healer. It is a sign of his aging, assuredly, but he seems... well, less sure of the right of our cause.];
+                ["I hope that I die in battle, that no one may doubt my dedication to Order!"];
+            }
+            key ("lost sight") {
+                TurnOff("lost sight");
+                ["We captured a Chaos monster lurking on the outskirts of the keep nearly a month ago. It was a fearsome beast -- an impossible cross between a man and a cat.];
+                ["It was my immediate thought that this creature might be Chaos' answer to our automatons. So I brought the beast to Surok to dissect.];
+                ["I have no way to prove this, of course, else I would have gone to Isstanar. But I believe that Surok was taken in with pity for the beast and allowed it to escape.];
+                ["The beast fled into the Endless Maze, and we have been unable to recapture it. I could not afford to risk any warriors to hunt it down, and we have not seen the monster again."];
+                TurnOn("Endless Maze");
+            }
+            key ("Endless Maze") {
+                TurnOff("Endless Maze");
+                ["Issik the Architect came to the keep before the start of the war. It was his duty to create an impossible maze to protect the treasures of the Order.];
+                ["But when the war started, Issik was told that he only had three months to complete the work. No one knows what became of him, for he never came out.];
+                ["The three rescuers who sought to find him never returned. The entrance to the Maze was locked... until the beast stole the key during its escape."];
+            }
+            key ("bye") {
+                CloseSpeaker0_i();
+                Bark_i(0, "@Goodbye!@", _Avatar);
+                Bark_i(2, "@Have Discipline!@", item);
+                SetWorkType(_Loiter, item);
+                break;
+            }
+        }
+        clear_answers;
+    }
+}

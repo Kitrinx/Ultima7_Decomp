@@ -1,0 +1,425 @@
+Routine Wilfred accepts a0 #locals(12) #uses(~LordOrLady, ~AvatarName, ~WhereAmI_i, ~IsNPCNear, WilfredReturnsBelongings_i, Bark_i, SetWorkTypeAt_i, PartyFaces_i, ~AskYesNo, ~AskList, ~PartyUtters, WilfredTrains_i) {
+    v0 = ~LordOrLady();
+    v1 = ~AvatarSex();
+    v2 = ~AvatarName();
+    v3 = ~WhereAmI_i();
+    v4 = ~IsNPCNear(_Iolo);
+    v5 = ~IsNPCNear(_Dupre);
+    v6 = ~IsNPCNear(_Shamino);
+    if (event = _Bark) {
+        v7 = ~Random(6);
+        if (v7 = 1) {
+            Item_bark("@Care to fight?@", _Wilfred);
+        }
+        if (v7 = 2) {
+            Item_bark("@Move aside!@", _Wilfred);
+        }
+        if (v7 = 3) {
+            Item_bark("@I need a drink!@", _Wilfred);
+        }
+        if (v7 = 4) {
+            Item_bark("@Where are the women?@", _Wilfred);
+        }
+        if (v7 = 5) {
+            if ~IsNPCNear(_Argus) {
+                Item_bark("@Argus, thou art a coward!@", _Wilfred);
+            } else {
+                Item_bark("@I'm bored!@", _Wilfred);
+            }
+        }
+        if (v7 = 6) {
+            Item_bark("@My sword wants blood!@", _Wilfred);
+        }
+    }
+    if ((event = _Action) and not ~GetItemFlag_i(_Dead, _Wilfred)) {
+        v8 = ~ChangeNPCStat_i(10, _Hits, _Wilfred);
+        SetSpeaker0_i(0, _Wilfred);
+        ["I was a fool to join with thee, Avatar! Now I am to lose my life in this foolish quest."];
+        LeaveParty(_Wilfred);
+        $wilfredhurt = true;
+        WilfredReturnsBelongings_i();
+        ["I am leaving -- do not try to stop me!"];
+        Bark_i(0, "@Farewell!@", _Wilfred);
+        SetAttackMode_i(_Fleeing, _Wilfred);
+        SetWorkType(_Shy, _Wilfred);
+        SetWorkTypeAt_i(_Wander, 0, 65535, _Wilfred);
+        terminate;
+    }
+    if (event = _NearDeath) && ~GetItemFlag_i(_Tournament, _Wilfred) {
+        ClearItemFlag_i(_Tournament, _Wilfred);
+        v8 = ~ChangeNPCStat_i(10, _Hits, _Wilfred);
+        SetAttackMode_i(_Fleeing, _Wilfred);
+        Bark_i(0, "@I am dying!@", _Wilfred);
+        v8 = ~PostInFuture(7, << _aNO_HALT_i, _aUSABLE_i, #Wilfred >>, _Wilfred);
+    }
+    if (event = _Converse) {
+        Item_bark("@Well met, Knight!@", _Avatar);
+        PartyFaces_i(65491);
+        Bark_i(5, "@Greetings!@", _Wilfred);
+        SetWorkType(_Talk, _Wilfred);
+    }
+    if (event = _Talking) {
+        Npc_schedule(_Wilfred);
+        ClearBark_i(_Wilfred);
+        SetSpeaker0_i(0, _Wilfred);
+        if ~GetItemFlag_i(_InParty_i, _Wilfred) {
+            SetWorkType(_FollowAvt, _Wilfred);
+            TurnOn("leave");
+        } else {
+            Npc_schedule(_Wilfred);
+        }
+        v9 = ~GetItemFlag_i(_Met, _Wilfred);
+        if not ~GetItemFlag_i(_InParty_i, _Wilfred) {
+            Npc_schedule(_Wilfred);
+        } else {
+            SetWorkType(_FollowAvt, _Wilfred);
+            TurnOn("leave");
+        }
+        if (($wilfredhurt or $wilfredleft) and ($WILFRED_HAS_BELONGINGS and ~GetContents(_All, _All, _All, _Wilfred))) {
+            TurnOn("return my belongings");
+        }
+        if ($BANES_RELEASED = true) {
+            if $wilfredjoined {
+                if ~GetItemFlag_i(_InParty_i, _Wilfred) {
+                    ["I am ready to aid thee. Thou couldst have chosen no better companion than myself!"];
+                } else {
+                    ["Why dost thou trouble me now? Canst thou not see that I am very busy..."];
+                    TurnOn("join");
+                }
+            } else {
+                ["Well met, Avatar!"];
+                ["Hath vengeance been exacted upon Batlin for his evil deeds?"];
+                if (~AskYesNo() = true) {
+                    ["Marvelous! The world will be a better place!"];
+                    if ($gottattoo = true) {
+                        ["Thou art truly worthy of thy Knighthood!"];
+                    } else {
+                        ["Thou art worthy of Knighthood!"];
+                    }
+                } else {
+                    ["Then I must continue to seek him."];
+                    Bark_i(0, "@Batlin must die!@", _Wilfred);
+                    SetWorkType(_Shy, _Wilfred);
+                    terminate;
+                }
+                if (~ListSize_i(~GetParty()) < 5) {
+                    ["I am now without a cause to champion. I see that thou art without thy companions. If thou wishest, I will join thee."];
+                    if (~AskYesNo() = true) {
+                        ["Together, none can stand in our way!"];
+                        JoinParty(_Wilfred);
+                        $WILFRED_HAS_BELONGINGS = true;
+                        SetItemFlag_i(_Tournament, _Wilfred);
+                        TurnOn("leave");
+                        $wilfredjoined = true;
+                    } else {
+                        ["Very well. Perhaps I shall journey to Monitor and see what hath transpired there."];
+                    }
+                } else {
+                    ["Thou hast more than enough companions to protect thee!"];
+                    ["Look for me in Monitor when thou dost truly need mine excellent skills. Perhaps I will aid thee then.];
+                }
+            }
+        } else {
+            if (v9 = false) {
+                if ($gottattoo = true) {
+                    ["Ah, I see that thou art a Knight of Monitor!"];
+                    ["Although I do not know thee, I am certain that thou knowest me!"];
+                } else {
+                    ["I do not recall having met thee before..."];
+                    ["But I am certain that thou hast heard of me!"];
+                }
+            } else {
+                ["Art thou not honored? We meet again..."];
+            }
+        }
+        TurnOn(<< "name", "duties", "bye" >>);
+        if ($BANES_RELEASED = true) {
+            TurnOn("train");
+        }
+        converse {
+            key ("return my belongings") {
+                TurnOff("return my belongings");
+                ["Art thou jesting? They belong to me now! I gave thee thy chance when I left. If thou still wantest them, thou wilt have to take them from me!!"];
+                Npc_setAlignment(_Chaotic, _Wilfred);
+                ClearBark_i(_Wilfred);
+                Bark_i(0, "@They are mine!@", _Wilfred);
+                terminate;
+            }
+            key ("join") {
+                TurnOff("join");
+                if $wilfredhurt {
+                    ["Join thee? Why, thou art incompetent as a battle leader -- I was nearly killed the last time I journeyed with thee!"];
+                    ["Thou couldst not give me enough coins to join with thee, <v2>."];
+                } else {
+                    if $wilfredleft {
+                        ["Join thee now? When I was not good enough to continue with thee before? I think not!"];
+                        ["One must have his pride, or be merely a worm..."];
+                    } else {
+                        if (~ListSize_i(~GetParty()) > 5) {
+                            ["But thou hast all of these other companions! Knight Wilfred is not one to join a crowd..."];
+                        } else {
+                            ["I can see that thou dost need a strong arm like myself. Since it is thy wish, I shall come with thee."];
+                            JoinParty(_Wilfred);
+                            $WILFRED_HAS_BELONGINGS = true;
+                            SetItemFlag_i(_Tournament, _Wilfred);
+                            TurnOn("leave");
+                        }
+                    }
+                }
+            }
+            key ("leave") {
+                TurnOff("leave");
+                ["What! Dost thou think me some strumpet, to be cast off at the first excuse? I do not agree to leave."];
+                v10 = ~AskList(<< "insist", "give in" >>);
+                if (v10 = "insist") {
+                    ["Damn thee, Avatar!"];
+                    LeaveParty(_Wilfred);
+                    WilfredReturnsBelongings_i();
+                    $wilfredleft = true;
+                    ClearItemFlag_i(_Tournament, _Wilfred);
+                    Bark_i(0, "@Damn thee!@", _Wilfred);
+                    SetWorkType(_Shy, _Wilfred);
+                    NewSchedule_i(<< 1302, 2295, 1271, 2252, 1293, 2230, 1302, 2210, 1271, 2252 >>, << 14, 5, 3, 11, 5 >>, << 0, 3, 4, 5, 7 >>, _Wilfred);
+                    terminate;
+                } else {
+                    ["Thou couldst not succeed without me!"];
+                }
+            }
+            key ("name") {
+                TurnOff("name");
+                ["What! Thou hast not heard of me?"];
+                ["Where hast thou been all thy life, the frozen north?"];
+                ["I am Wilfred, Knight of the Bear Command -- formerly of Sleeping Bull Inn."];
+                SetItemFlag_i(_Met, _Wilfred);
+                TurnOn("Sleeping Bull");
+            }
+            key ("Sleeping Bull") {
+                TurnOff("Sleeping Bull");
+                ["Well, if thou art so rude to ask..."];
+                v11 = ~PartyUtters(false, 0, "@Thou art the rude one!@", 1);
+                SetSpeakerSlot_i(0);
+                ["Devra and Angus, proprietors of the inn, are my parents. I was born here."];
+            }
+            key ("duties") {
+                TurnOff("duties");
+                ["As thou canst see... I am a Knight of Monitor."];
+                ["I am currently seeking the murderer of my father."];
+                TurnOn("murderer");
+            }
+            key ("murderer") {
+                TurnOff("murderer");
+                ["He disappeared some time ago, and is presumed dead. I have been seeking clues since I was notified..."];
+                ["Unlike my brother, Argus, who came running home to take over the inn."];
+                TurnOn(<< "clues", "Argus" >>);
+            }
+            key ("clues") {
+                TurnOff("clues");
+                ["Why should I tell thee what I have learned? Thou mayest well be the murderer..."];
+                if (v5 = true) {
+                    SetSpeaker1_i(0, _Dupre);
+                    ["Retract thy words, or eat them! Thou art speaking about the Avatar!"];
+                    CloseSpeaker1_i();
+                    SetSpeakerSlot_i(0);
+                }
+                if (v4 = true) {
+                    SetSpeaker1_i(0, _Iolo);
+                    ["Take the wind out of this egotistical dog's sails, Avatar!"];
+                    CloseSpeaker1_i();
+                    SetSpeakerSlot_i(0);
+                }
+                if (v6 = true) {
+                    SetSpeaker1_i(0, _Shamino);
+                    ["Thou dost tread on dangerous ground with such accusations..."];
+                    CloseSpeaker1_i();
+                    SetSpeakerSlot_i(0);
+                }
+                ["Perhaps I was too hasty, <v0>. But I would see my father avenged."];
+                ["If thou art truly searching for my father's killer, then I will tell thee what I have learned."];
+                TurnOn("learned");
+            }
+            key ("learned") {
+                TurnOff("learned");
+                ["Mother mentioned that a guest -- a mage by the name of Batlin -- also disappeared the same night father did. I know for a fact that Angus hated mages and would never have gone anywhere with one willingly... or alive!"];
+                ["The name Batlin stirred something in my brain, so I asked around Monitor before I left. And I discovered some very interesting things indeed."];
+                TurnOn("interesting");
+            }
+            key ("interesting") {
+                TurnOff("interesting");
+                ["Batlin came to Monitor some time ago. He was accompanied by several unsavory companions -- one was a huge hooded man, like the one that mother mentioned in her letter."];
+                ["This odd party came asking about the Serpent ruins. The mage was unusually interested in anything to do with the Serpent people."];
+                ["And... After Batlin and his henchmen left Monitor, it was discovered that a valuable Serpent relic was stolen from Andral, the sculptor."];
+                TurnOn(<< "henchmen", "relic" >>);
+            }
+            key ("henchmen") {
+                TurnOff("henchmen");
+                ["There were three with him, so I was told."];
+                ["One was a pirate, by his looks, with an unearthly white eye."];
+                ["One was a dark-skinned fighter, very strong but seemingly lacking in wit."];
+                ["And the other, as I have said, was a tall hooded man -- No one recalls hearing him speak at all. So perhaps he is mute."];
+            }
+            key ("relic") {
+                TurnOff("relic");
+                ["Though Andral is a Pikeman, I still cannot understand the interest he places in pieces of stone..."];
+                ["He was the one that told me a carved blackrock serpent was missing soon after the mage left. Apparently it was a family heirloom or something."];
+            }
+            key ("Argus") {
+                TurnOff("Argus");
+                ["Thou shouldst say cowardly cur, instead!"];
+                ["He was so glad of an excuse to flee his accusers in Monitor that he ran all the way to the inn when mother notified us of father's disappearance!"];
+                TurnOn("accusers");
+            }
+            key ("accusers") {
+                TurnOff("accusers");
+                ["There are many who say that Argus took bribes to look aside while illegal activities took place."];
+                ["When Argus heard Flessar repeating these things, Argus called him into a selfish duel and killed him!"];
+                ["Of course, like the pack of dogs that they are, the Wolves declared it an accident. And their investigation of the bribes was more for show than anything."];
+                $wilfredsaidbribe = true;
+                TurnOn(<< "Flessar", "Wolves" >>);
+            }
+            key ("Flessar") {
+                TurnOff("Flessar");
+                ["Flessar was a Knight of the Leopard Command. He was Templar's friend."];
+                ["He was also not nearly as skilled as my... brother, being many years Argus' junior."];
+                TurnOn("Templar");
+            }
+            key ("Templar") {
+                TurnOff("Templar");
+                ["Templar is a Knight of the Bear Command, and my friend."];
+                ["Although his friendship with Flessar was unusual, in that they were from different Commands, it was inevitable that young Flessar would look to one of Monitor's best swordsmen for guidance."];
+                ["Alas, Templar's skill could not help young Flessar on the dueling field."];
+            }
+            key ("Wolves") {
+                TurnOff("Wolves");
+                ["Argus is... or was... a member of the Wolf Command."];
+                ["It doth not take much more than a glance at their commander to see what a worthless Command they are."];
+                ["Brendann's womanizing speaks well enough for the character of the rank and file of his troops."];
+                ["And that includes Argus."];
+            }
+            key ("train") {
+                WilfredTrains_i();
+            }
+            key ("bye") {
+                CloseSpeaker0_i();
+                Bark_i(0, "@Goodbye.@", _Avatar);
+                Bark_i(5, "@Indeed.@", _Wilfred);
+                Bark_i(7, "@What a butthead!@", _Iolo);
+                break;
+            }
+        }
+        clear_answers;
+    }
+}
+
+Usable WilfredReturnsBelongings_i #locals(1) #uses(~AskYesNo, ~ReturnBelongings_i) {
+    if ~GetContents(_All, _All, _All, _Wilfred) {
+        ["I still have some of thy worthless belongings. If thou wantest them, thou hadst best take them now."];
+        ["Dost thou want such items returned?"];
+        if ~AskYesNo() {
+            ["Here they are."];
+            $WILFRED_HAS_BELONGINGS = false;
+            v0 = ~ReturnBelongings_i(65491);
+            if (v0::1 <> 0) {
+                ["Thy companions will have to carry some of these useless things."];
+            }
+            if (v0::2 > 0) {
+                v0 = v0::2;
+                if (v0 > 1) {
+                    ["Since thou canst not carry these remaining <v0> items, they will go on the floor."];
+                } else {
+                    ["Since thou dost not have enough room for this last item, it will go on the floor."];
+                }
+            }
+        } else {
+            $WILFRED_HAS_BELONGINGS = true;
+            ["If that is what thou wantest, so be it."];
+        }
+    }
+}
+
+Usable WilfredTrains_i #locals(14) #uses(~AskList, ~PartyNoAutomatons_i, ~AskOrdList, ~CanTrain, ~GetStat, CombatTrain_i, StrTrain) {
+    v0 = 951;
+    v1 = << 0, 4 >>;
+    v2 = 30;
+    if (($wilfredjoined = false) or (($wilfredleft = true) or ($wilfredhurt = true))) {
+        ["I charge 30 monetari to instruct students in my knowledge of combat. Dost thou agree?"];
+        v3 = ~AskList(<< "Yes", "No" >>);
+        goto label_3;
+    }
+    ["Since I have joined thee, I will not ask for mine usual fee!"];
+    v2 = 0;
+    goto label_6;
+    label_3:
+    if (v3 = "No") {
+        ["Thou art a lout not to pay me!"];
+        terminate;
+    }
+    if (v3 = "Yes") {
+        label_6:
+        ["Whom dost thou wish to train?"];
+        v4 = ~PartyNoAutomatons_i();
+        v4 = (0 & v4);
+        v5 = << "Nobody" >>;
+        Foreach v8 in v4 {
+            if not (v8 = 0) {
+                v5 = (v5 & ~GetNPCName_i(v8));
+            }
+        }
+        v9 = ~AskOrdList(v5);
+        v9 = v4::v9;
+        v10 = ~ItemToNPC_i(v9);
+        v11 = ~GetNPCName_i(v9);
+        if (v9 = 0) {
+            ["Very well, but thou shouldst make up thy mind!"];
+        } else {
+            if (v10 = 65491) {
+                ["I do not train myself!"];
+            } else {
+                v12 = ~CanTrain(2, v10, v2, v0, v1);
+                if (~GetStat(_TrainingPoints, v9) < 2) {
+                    v12 = 0;
+                }
+                if (v12 = 0) {
+                    if (v10 = 65180) {
+                        ["Thou art not ready to learn yet!"];
+                    } else {
+                        ["<v11> is not ready to learn yet!"];
+                    }
+                }
+                if (v12 = 1) {
+                    if (($wilfredjoined = false) or (($wilfredleft = true) or ($wilfredhurt = true))) {
+                        ["Thou dost not have 30 monetari! Talk to me again when thou canst pay me!"];
+                        terminate;
+                    }
+                    goto label_34;
+                }
+                if (v12 = 2) {
+                    if (~GetStat(_Cbt, v9) < 30) {
+                        goto label_34;
+                    }
+                    if (~GetStat(_Str, v9) < 30) {
+                        goto label_34;
+                    }
+                    if (v10 = 65180) {
+                        ["Thou dost already possess more skill than I could teach thee!"];
+                    } else {
+                        ["<v11> doth already possess more skill than I could ever teach!"];
+                    }
+                }
+                if (v12 = 3) {
+                    label_34:
+                    ["First, let me see thy stance."];
+                    ["Hmmm... If thou dost hold thy weapon higher, thou wilt have better leverage with which to smash thy foes."];
+                    ["Secondly, thou shouldst always carry through with thy swing, as it will improve thy chances of recovering to land succeeding blows."];
+                    ["I do see some improvement in thee!"];
+                    v13 = ~TakeFromParty_i(true, _All, _All, v0, v2);
+                    if (~GetStat(_Cbt, v9) < 30) {
+                        CombatTrain_i(1, v9);
+                    }
+                    if (~GetStat(_Str, v9) < 30) {
+                        StrTrain(1, v9);
+                    }
+                }
+            }
+        }
+    }
+}

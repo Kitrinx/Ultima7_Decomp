@@ -1,0 +1,148 @@
+Routine Joth accepts a0 #locals(5) #uses(~LordOrLady, ~AvatarName, PartyFaces_i, Bark_i, SendAssassin_i, JorvinBringsInvitation_i) {
+    v0 = ~LordOrLady();
+    v1 = ~AvatarName();
+    v2 = ~AvatarSex();
+    if (event = _NearDeath) {
+        v3 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #Green_Noble >>, item);
+    }
+    if (event = _Converse) {
+        Item_bark("@Greetings, good sir.@", _Avatar);
+        PartyFaces_i(65486);
+        Bark_i(5, (("@Greetings, " + v0) + ".@"), _Joth);
+        SetWorkType(_Talk, _Joth);
+    }
+    if (event = _Talking) {
+        Npc_schedule(_Joth);
+        ClearBark_i(_Joth);
+        SetSpeaker0_i(0, _Joth);
+        v4 = ~GetItemFlag_i(_Met, _Joth);
+        if (v4 = false) {
+            if ($gottattoo = true) {
+                ["Welcome ta Fawn. I am Great Captain Joth. Thou canst call me Joth." *"'Tis always a pleasure ta meet a Pikeman."];
+            } else {
+                ["I cannot remember seeing thee here... I am Great Captain Joth. Thou canst call me Joth." *"Welcome ta Fawn, <v0>."];
+            }
+            SetItemFlag_i(_Met, _Joth);
+        } else {
+            ["Good ta see thee again."];
+        }
+        TurnOn(<< "storms", "goblins", "bye" >>);
+        converse {
+            key ("storms") {
+                ["'Twas a storm what ran me ship aground and took me from the sea! 'Tis fitting that these daemon storms will be the end of us all." *"They have taken all me old friends -- plucked 'em right off the water or drowned 'em deep. Never thought I'd live ta see the day when Fawn's fleet was brought low."];
+                TurnOff("storms");
+                TurnOn(<< "aground", "friends", "fleet" >>);
+            }
+            key ("aground") {
+                TurnOff("aground");
+                ["'Twere a handful o' years ago, and me body remembers it like 'twere yesterday. I was fouled in a mass of rigging when me ship was thrown inta the shoals."];
+                ["Seth, the healer, patched me up right enough, but that were the end of me sea-goin' days."];
+                if ($AUDIENCE_WITH_YELINDA and ($FAWN_TRIAL_DONE and not $oraclesaysinnocent)) {
+                    ["Life's not been the same for me since. I do miss the sea!"];
+                } else {
+                    ["Never dreamed a crusty old salt like meself would end my days on the Great Captain's Council."];
+                    TurnOn(<< "Great Captain's Council" >>);
+                }
+                TurnOn(<< "Seth" >>);
+            }
+            key ("Seth") {
+                ["Seth's gone too. Only the goblins got 'im. Put 'im in their big ol' stewpots, they did." *"What's the world comin' ta, I ask thee? If it isn't vile monsters, 'tis Nature herself what has turned against us."];
+                TurnOff("Seth");
+                TurnOn("Nature herself");
+            }
+            key ("Nature herself") {
+                ["'Tis plain that thou art not a seaman... The rain's the tears o' Nature. An' the wind, that be the breath o' Nature. Whene'er there be a bad storm, 'tis Nature's anger." *"I'll wager that she be fearsome upset about now."];
+                TurnOff("Nature herself");
+            }
+            key ("Great Captain's Council") {
+                ["Aye. 'Tis the Great Captains what advise Lady Yelinda in the workings of trade and the fleet. Things what some feel that women have no interest in." *"The Great Captains be meself, Garth and Voldin."];
+                TurnOff("Great Captain's Council");
+                TurnOn(<< "Lady Yelinda", "Garth", "Voldin" >>);
+            }
+            key ("Lady Yelinda") {
+                ["She be the ruler of Fawn. 'Tis Lady Yelinda what doth do the meetin' an' greetin' of all what wish ta trade with Fawn. An' Lady Yelinda be the one what makes the official decrees an' laws an' such. After she counsels with us, of course. Ha."];
+                TurnOff("Lady Yelinda");
+            }
+            key ("Garth") {
+                ["Garth be no more than a green lad with a passion for the ladies. Never been ta sea that I know of. Some Great Captain that is." *"But 'is family's had money an' lots o' trade smarts. Could do worse for a council member, I reckon. Could put poor ol' drunken Olon in the seat. Ha."];
+                TurnOff("Garth");
+                TurnOn("Olon");
+            }
+            key ("Olon") {
+                ["Olon was one of the best fishermen we had, 'til the day he watched his ship go down." *"'Twere durin' one of these weird storms, an' Olon had missed castoff. He was fixin' ta row out ta the ship when it were hit by that freak lightning. All of a sudden, it weren't no ship. It were a grain wagon. All hands drowned, and Olon thinks he's a doomed man."];
+                ["If thou wert ta ask me, I'd tell thee that we all be doomed, so why not bury our troubles in the bottom of an ale glass? But no one hath asked ol' Joth nothin', so I go about me business."];
+                TurnOff("Olon");
+            }
+            key ("Voldin") {
+                ["Now Voldin were a captain, all right. An' a guardsman ta boot. He likes ta run things... be in charge." *"Suppose 'twere only natural that he end on the Council. Now he doth have Garth and me ta bully, and Zulith and Kylista at his beck an' call."];
+                TurnOff("Voldin");
+                TurnOn(<< "Zulith", "Kylista" >>);
+            }
+            key ("Zulith") {
+                ["Look for a bright green flare... that'd be Zulith in his flashy Chancellor's robes." *"Puffs like he's important, runnin' messages from the palace ta the Great Captains. But ever'one laughs real quiet behind their sleeves. Zulith is a vengeful little man, and thou had best be wary around him."];
+                TurnOff("Zulith");
+            }
+            key ("Kylista") {
+                if (v2 = true) {
+                    ["Now thou art talkin' o' the other end o' Zulith's tether. Kylista is the Priestess of Beauty, but -- between thee an' me -- I think she would rather be called Lady Kylista, if it pleases thee." *"She doth perform a pretty show at the Oracle, no doubt, callin' for those revelations."];
+                } else {
+                    ["A wondrous fling between the covers, she is! Kylista certainly knows the secrets of usin' Beauty ta obtain what she wants. If not before the Oracle callin' revelations, then in a man's bedchamber."];
+                    ["Kylista is the Priestess of Beauty, but -- between thee an' me -- I think she would rather be called Lady Kylista, if it pleases thee. She hath a firm hold on Zulith's tether, 'tis certain."];
+                }
+                TurnOff("Kylista");
+                TurnOn(<< "Oracle", "revelations" >>);
+            }
+            key ("Oracle") {
+                ["'Tis a wonder ta behold, make no mistake. A true magical type of thing. Used ta draw quite a crowd, before the storms went so bad." *"Pretty ta look at, for sure."];
+                TurnOff("Oracle");
+            }
+            key ("revelations") {
+                ["Straight from the heavens, ta hear Kylista speak of it. Never found much use in 'em meself. A fisherman don't see much beauty out haulin' in nets all day long."];
+                TurnOff("revelations");
+            }
+            key ("friends") {
+                ["Good seamen all. Fishermen an' captains alike. These cursed storms have taken every good man from Fawn's shores an' left me alone with these land crawlers." *"'Tis enough ta make a man think about walkin' inta the sea at high tide..."];
+                TurnOff("friends");
+            }
+            key ("fleet") {
+                TurnOff("fleet");
+                ["Fawn used ta be able ta bring in enough fish for us an' the other cities besides. Now there's nothing but a few old rowboats left.];
+                if ($AUDIENCE_WITH_YELINDA and ($FAWN_TRIAL_DONE and not $oraclesaysinnocent)) {
+                    ["An' there be nobody brave enough to even sail the rowboats! Not in these storms..."];
+                } else {
+                    ["An' what's worse, Lady Yelinda tells me that I'm ta be in charge of the restorations!"];
+                    TurnOn("restorations");
+                }
+            }
+            key ("restorations") {
+                ["Restorations she calls it! Like there was something ta restore! But drawn the reports and plans, I have. As ordered."];
+                ["But tell me, if thou canst, how Fawn is ta build ships when most of the shipwrights are drowned? Or tell me how we're ta acquire the wood ta build with if these storms have us runnin' like rabbits ta a hole?"];
+                ["An' Voldin sits holdin' the money tellin' me 'tis unsafe ta begin buildin'. As if I had ballast for brains! But he doth not have ta report to Lady Yelinda. I do!"];
+                TurnOff("restorations");
+            }
+            key ("goblins") {
+                ["The goblins have always been like fleas infestin' this part o' the land. We'd stomp on 'em good an' hard, an' they'd go crawl back ta whate'er hole they crawled out of." *"But since this Pomdirgun brute came along, there's been no drivin' 'em back."];
+                TurnOff("goblins");
+                TurnOn("Pomdirgun");
+            }
+            key ("Pomdirgun") {
+                ["Pomdirgun's larger than most goblins. Certainly meaner or he would never have gotten the brutes all under his command. I'm almost willin' ta believe that he's half daemon, like some folk say."];
+                TurnOff("Pomdirgun");
+                TurnOn("daemon");
+            }
+            key ("daemon") {
+                ["There are daemon ruins all around this land. Thou canst not miss them -- they are all covered with evil lookin' serpents." *"Some say that the daemons are still here. They say that civilized man drove them underground when we settled here." ~"Haven't ever seen one. Wouldn't want to neither."];
+                TurnOff("daemon");
+            }
+            key ("bye") {
+                SendAssassin_i();
+                CloseSpeaker0_i();
+                Bark_i(0, "@Goodbye!@", _Avatar);
+                Bark_i(2, "@Keep a weather eye!@", _Joth);
+                JorvinBringsInvitation_i();
+                break;
+            }
+        }
+        clear_answers;
+    }
+}

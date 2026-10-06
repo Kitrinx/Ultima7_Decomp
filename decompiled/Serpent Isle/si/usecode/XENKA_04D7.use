@@ -1,0 +1,195 @@
+Routine XenkaMonk accepts a0 #locals(5) #uses(~LordOrLady, ~AvatarName, PartyFaces_i, Bark_i, ~IsBodyNear_i, ResurrectBodies_i, ~GiveItemsOrDrop_i, ~IsInInv) {
+    v0 = ~LordOrLady();
+    v1 = ~AvatarSex();
+    v2 = ~AvatarName();
+    v3 = ~GetItemFlag_i(_Met, _XenkaMonk_215);
+    if (event = _Converse) {
+        Item_bark("Most honored one...", _Avatar);
+        PartyFaces_i(65321);
+        Bark_i(2, "@What?@", _XenkaMonk_215);
+        SetWorkType(_Talk, _XenkaMonk_215);
+    }
+    if ((event = _Talking) or (event = _Action)) {
+        SetWorkType(_Stand, _XenkaMonk_215);
+        SetSpeaker0_i(0, _XenkaMonk_215);
+        if v3 {
+            ["We meet again, <v2>.  How may I aid thee?"];
+        } else {
+            SetItemFlag_i(_Met, _XenkaMonk_215);
+            ["Let the bells ring... for Xenka hath returned!!!"];
+            ["So, <v2>, thou art the one who hath caused me all this grief..."];
+            ["And you, my rock-brained monks! Is this how you serve my visions?! You cannot even take the words down properly!"];
+            ["I knew that thou wouldst need me to unravel the mess that these monks have made of my prophecies."];
+        }
+        TurnOn(<< "returned", "grief", "unravel the mess" >>);
+        if not $methierophant {
+            TurnOn("instructions");
+        }
+        if ($metchaoshierophant and not $gotsunrisetooth) {
+            TurnOn("journey");
+        }
+        if ($sithsaidstaff and not $gotserpstaff) {
+            TurnOn("Staff of the Serpent");
+        }
+        if ($gotserpstaff and ($gotsunrisetooth and ($metchaoshierophant and not flag(578)))) {
+            TurnOn("sacrifice");
+        }
+        if flag(630) {
+            ["There is no time left! Go to Sunrise Isle!"];
+            CloseSpeaker0_i();
+            Bark_i(2, "@Hurry!@", _XenkaMonk_215);
+            terminate;
+        }
+        if $DUPRE_IS_TOAST {
+            TurnOn("final task");
+        }
+        if ~IsBodyNear_i() {
+            ["Oh! One of thy friends hath met an untimely end. This should not be..."];
+            ["If thou art ready to see thy friend again, simply ask and I will return them to thee."];
+            TurnOn("resurrection");
+        }
+        TurnOn(<< "bye" >>);
+        converse {
+            key ("resurrection") {
+                TurnOff("resurrection");
+                ResurrectBodies_i();
+            }
+            key ("returned") {
+                TurnOff("returned");
+                ["I knew that if I did not promise to return that these laggard monks would drift away from the task I set them."];
+                ["As it is, they have nearly brought disaster upon us all... including thee, Hero from Another World."];
+                TurnOff(<< "task", "disaster", "Hero" >>);
+            }
+            key ("task") {
+                TurnOff("task");
+                ["They were to watch for thine arrival, oh mighty Hero, and prepare the people for the approaching danger."];
+                TurnOn("danger");
+            }
+            key ("danger") {
+                TurnOff("danger");
+                ["I think that magical storms and earthquakes qualify as ample danger, but then I am not a Hero."];
+            }
+            key ("disaster") {
+                TurnOff("disaster");
+                ["By hopelessly miring my visions in the bog of high and mighty language, they have delayed thee until it is nearly too late."];
+                TurnOn(<< "miring my visions", "too late" >>);
+            }
+            key ("miring my visions") {
+                TurnOff("miring my visions");
+                ["I am a blunt, plain-spoken woman, noble Hero. Too plain for those who wanted to feel that they followed the words of some holy sage."];
+                ["So my visions became cryptic puzzles and poor poetry, like that of some half-witted gleeman. And worse upon worse, they forgot the true meaning behind their flowery words!"];
+            }
+            key ("too late") {
+                TurnOff("too late");
+                ["The world is a heavy thing, Hero. Once it gathers enough force to try and shake those who sicken it from its skin, dost thou think that turning back will be easy?"];
+                ["Better to try and stand beneath a falling boulder and command it to stop."];
+            }
+            key ("Hero") {
+                TurnOff("Hero");
+                ["Do not thy companions dear to thine heart call thee Avatar?"];
+                ["Art thou not from a strange land that thou dost call Earth?"];
+                ["I think then that thou dost indeed fit the title of Hero from Another World."];
+                TurnOn("Earth");
+            }
+            key ("Earth") {
+                TurnOff("Earth");
+                ["I have never seen this wondrous land. I have only felt its presence upon the edge of the Void."];
+                ["But I have felt great tides of power being directed toward it."];
+                TurnOn(<< "Void", "power" >>);
+            }
+            key ("Void") {
+                TurnOff("Void");
+                ["I cannot explain how it was that I got there, or even that it is not empty..."];
+                ["Thou couldst not grasp it. For it encompasses countless worlds and draws power from the life-forces of each one. It is... amazing!"];
+            }
+            key ("power") {
+                TurnOff("power");
+                ["I have no name for what that power was. I know not if the intent was hostile or good."];
+                ["I only felt the power move, as a swimmer feels the currents within a stream."];
+            }
+            key ("grief") {
+                TurnOff("grief");
+                ["I was a wife, and a mother, Hero. I did not ask to become a prophetess."];
+                ["My poor husband took me before the great Mages of Moonshade when these visions came upon me. And those wise men dismissed me saying, 'She is crazy.'"];
+                ["Mine husband, my children... even my children's children are long gone to dust. While I remain alive, enslaved to visions I never asked for!"];
+                TurnOn(<< "Mages of Moonshade", "visions" >>);
+            }
+            key ("Mages of Moonshade") {
+                TurnOff("Mages of Moonshade");
+                ["Arrogant manipulators! Never once did they attempt to divine if my visions were true!"];
+                ["Never once did they offer to try and cure my supposed madness, for we were too poor to pay their fees."];
+                ["Is it any wonder that they could not stand to live within the rule of an honest man?!"];
+                TurnOn("honest man");
+            }
+            key ("honest man") {
+                TurnOff("honest man");
+                ["Surely thou knowest of whom I speak... For he is the ruler that sent thee to meet thy fate here."];
+                ["Thy Lord British demanded honesty of the rogues that call themselves Mages. And when that sat ill in their bellies, they fled to where they could cheat people in peace!"];
+            }
+            key ("visions") {
+                TurnOff("visions");
+                ["At first they were but nightmares... Until I feared to close mine eyes. And then the death and destruction I saw followed mine every waking move."];
+                ["The people of my village bade mine husband to cast me out, for they feared that my madness might spread. So I came to this island to be free of the whispers and stares."];
+            }
+            key ("unravel the mess") {
+                TurnOff("unravel the mess");
+                ["I can see that thou art unsure of how to progress, great Hero... That is why I am here."];
+                ["Return here if thou art unsure of how to proceed. I shall guide thee in some small fashion."];
+            }
+            key ("instructions") {
+                TurnOff("instructions");
+                if not flag(588) {
+                    ["Take this Serpent's Tooth... Thou must seek the Dead on the Isle of Crypts."];
+                    v4 = ~GiveItemsOrDrop_i(true, 0, 6, 65177, 559, 1, _Avatar);
+                    flag(588) = true;
+                } else {
+                    ["Use the tooth that I have given thee! Seek the Dead on the Isle of Crypts."];
+                }
+            }
+            key ("journey") {
+                TurnOff("journey");
+                if ~IsInInv(0, 65177, _Teeth, 1, _Party) {
+                    ["Good, thou hast the tooth that will take thee to Sunrise Isle!"];
+                } else {
+                    ["Thou must journey to the frozen wastelands and speak with those considered savage. They hold the means to further thy quest with the Serpent Tooth thou dost lack."];
+                }
+            }
+            key ("Staff of the Serpent") {
+                TurnOff("Staff of the Serpent");
+                ["Without the proper armaments, thou canst not seek the wisdom of the dead. Seek the Staff of the Serpent within the bowels of Furnace."];
+            }
+            key ("sacrifice") {
+                TurnOff("sacrifice");
+                if $DUPRE_IS_TOAST {
+                    ["I share thy sorrow at the loss of thy friend, <v2>. Take comfort that his ashes shall be the glue which shall bind the sundered pieces of our land together once more."];
+                    ["But we must hurry... Only a few grains remain to fall. Time is fleeing. Take thy friend's ashes with thee, <v2>, for the Three must be with thee at the Chaos Shrine deep within the heart of Skullcrusher."];
+                } else {
+                    if $AVATAR_GOT_SHORT_STICK {
+                        ["Do not tarry overlong in thy goodbyes to thy friends, Hero. Our land has little time left for sentiment."];
+                    } else {
+                        ["As I had feared, the imbalance hath grown too powerful..."];
+                        ["Only the final sacrifice of one who is in balance can aid thee now. For this, only thy three companions, the lady Gwenno and thyself doth qualify."];
+                        ["Thou must draw straws to see who the Monitor crematorium awaits."];
+                        $AVATAR_GOT_SHORT_STICK = true;
+                        ["I am sorry, Hero. Thou hast drawn the shortest straw. Take comfort that thine ashes shall bind the wounds of the land. Go quickly for the Hourglass is nearly empty."];
+                    }
+                }
+            }
+            key ("final task") {
+                TurnOff("final task");
+                ["Thy time is at hand, <v2>!"];
+                ["Thy destiny and our fate shall be found upon the island known as Sunrise Isle. Take this Serpent Sword as my final aid to thee... I can do no more."];
+                v4 = ~GiveItemsOrDrop_i(true, 0, 0, 0, 710, 1, _Avatar);
+                flag(630) = true;
+                ["Go quickly! The end is at hand!"];
+            }
+            key ("bye") {
+                CloseSpeaker0_i();
+                Bark_i(0, "@Goodbye!@", _Avatar);
+                Bark_i(2, "@Fulfill thy destiny!@", _XenkaMonk_215);
+                break;
+            }
+        }
+        clear_answers;
+    }
+}

@@ -1,0 +1,97 @@
+Routine GrowSilverTree_i accepts a0 #locals(4) {
+    if ((event = _Action) and (($temp1flag = false) and (($temp2flag = false) and (($temp3flag = false) and ($temp4flag = false))))) {
+        v0 = << 568, 3018, 0 >>;
+        createSprite(65535, 0, 0, 0, v0::2, v0::1, 17);
+        createSprite(65535, 0, 0, 0, v0::2, v0::1, 31);
+        Sfx(40);
+        v1 = ~Item_create(_Silver_Tree);
+        if v1 {
+            SetFrame(0, v1);
+            v2 = ~PopToMap(v0);
+            v2 = ~PostInFuture(20, << _aNO_HALT_i, _aUSABLE_i, #GrowSilverTree_i >>, v1);
+        }
+        $temp2flag = true;
+        terminate;
+    }
+    if ((event = _Action) and ($temp2flag = true)) {
+        Item_destroy(item);
+        v0 = << 568, 3018, 0 >>;
+        createSprite(65535, 0, 0, 0, v0::2, v0::1, 17);
+        createSprite(65535, 0, 0, 0, v0::2, v0::1, 31);
+        Sfx(41);
+        v1 = ~Item_create(_Silver_Tree);
+        if v1 {
+            SetFrame(1, v1);
+            v2 = ~PopToMap(v0);
+            v2 = ~PostInFuture(20, << _aNO_HALT_i, _aUSABLE_i, #GrowSilverTree_i >>, v1);
+        }
+        $temp2flag = false;
+        $temp3flag = true;
+        terminate;
+    }
+    if ((event = _Action) and ($temp3flag = true)) {
+        Item_destroy(item);
+        createSprite(65535, 0, 0, 0, v0::2, v0::1, 17);
+        createSprite(65535, 0, 0, 0, v0::2, v0::1, 31);
+        Sfx(42);
+        v1 = ~Item_create(_Silver_Tree);
+        if v1 {
+            SetFrame(2, v1);
+            v2 = ~PopToMap(<< 568, 3018, 0 >>);
+        }
+        v1 = ~Item_create(_Silver_Tree);
+        if v1 {
+            SetFrame(3, v1);
+            v2 = ~PopToMap(<< 565, 3020, 5 >>);
+        }
+        v1 = ~Item_create(_Silver_Tree);
+        if v1 {
+            SetFrame(4, v1);
+            v2 = ~PopToMap(<< 570, 3013, 5 >>);
+        }
+        v1 = ~Item_create(_Silver_Tree);
+        if v1 {
+            SetFrame(5, v1);
+            v2 = ~PopToMap(<< 563, 3013, 5 >>);
+        }
+        v2 = ~PostInFuture(25, << _aNO_HALT_i, _aUSABLE_i, #GrowSilverTree_i >>, v1);
+        $temp3flag = false;
+        $temp4flag = true;
+        terminate;
+    }
+    if ((event = _Action) and ($temp4flag = true)) {
+        SetWeather_i(_Clear);
+        Item_bark("@By Lord British's Beard!@", _Avatar);
+        SetSpeaker0_i(0, _Avatar);
+        ["Look at how quickly it has grown! It looks as if it has been here for decades!"];
+        CloseSpeaker0_i();
+        v2 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #Karnax >>, item);
+        $temp4flag = false;
+        v3 = ~GetNPCStat_i(_Experience, _Avatar);
+        if (v3 <= 800) {
+            v2 = ~ChangeNPCStat_i(800, _Experience, _Avatar);
+            terminate;
+        }
+        if (v3 <= 1600) {
+            v2 = ~ChangeNPCStat_i(1600, _Experience, _Avatar);
+            terminate;
+        }
+        if (v3 <= 3200) {
+            v2 = ~ChangeNPCStat_i(3200, _Experience, _Avatar);
+            terminate;
+        }
+        if (v3 <= 6400) {
+            v2 = ~ChangeNPCStat_i(6400, _Experience, _Avatar);
+            terminate;
+        }
+        if (v3 <= 12800) {
+            v2 = ~ChangeNPCStat_i(12800, _Experience, _Avatar);
+            terminate;
+        }
+        if (v3 <= 25600) {
+            v2 = ~ChangeNPCStat_i(25600, _Experience, _Avatar);
+            terminate;
+        }
+        v2 = ~ChangeNPCStat_i(51200, _Experience, _Avatar);
+    }
+}

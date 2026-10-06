@@ -1,0 +1,37 @@
+Routine ReleaseAutomatonEgg_i accepts a0 #locals(7) #uses(~PartyUtters, ToggleSliders_i) {
+    if not flag(520) {
+        terminate;
+    }
+    v0 = ~GetQuality(item);
+    if (v0 = 69) && not (flag(521) and (flag(522) and (flag(523) and flag(524)))) {
+        terminate;
+    }
+    v1 = ("@Uh oh...@" & ("@Something is coming!@" & ("@I hear something...@" & ("@What was that?@" & ("@Oh, no!@" & "@Hark!@")))));
+    v2 = ~PartyUtters(true, v1::~Random(~ListSize_i(v1)), v1::~Random(~ListSize_i(v1)), 1);
+    v1 = ~FindNearby_i(0, 100, _EW_C_Slider, item);
+    Foreach v5 in v1 {
+        if (~GetQuality(v5) = v0) {
+            ToggleSliders_i(1, v5);
+        }
+    }
+    v1 = false;
+    if (v0 = 65) {
+        v1 = 65444;
+    }
+    if (v0 = 66) {
+        v1 = 65451;
+    }
+    if (v0 = 67) {
+        v1 = 65449;
+    }
+    if (v0 = 68) {
+        v1 = 65443;
+    }
+    if v1 {
+        NewSchedule_i(<< 1843, 2681 >>, _Combat_0, 0, v1);
+        v6 = ~GetCoord(v1);
+        PathfindNPC_i(true, #Auto1, ~NPCToItem_i(v1), _Path_Success, << v6::1, (v6::2 + 15), 0 >>, v1);
+        SetPathFailure_i(_Path_Failure, ~NPCToItem_i(v1), #Auto1);
+    }
+    Item_destroy(item);
+}

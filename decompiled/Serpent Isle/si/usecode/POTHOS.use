@@ -1,0 +1,969 @@
+Routine Pothos accepts a0 #locals(7) #uses(~LordOrLady, ~AvatarName, PartyFaces_i, Bark_i, ~IsInInv, ~GimmePathEgg, ~AskYesNo, ~PartyUtters, ~AskList, PothosSellsPotions_i, PothosSellsReagents_i, PothosSellsMagicItems_i, PothosBuysStonehearts_i, MessengerBringsScroll_i) {
+    v0 = ~LordOrLady();
+    v1 = ~AvatarSex();
+    v2 = "his";
+    if v1 {
+        v2 = "her";
+    }
+    v3 = ~AvatarName();
+    if (event = _Converse) {
+        Item_bark("@Excuse me...@", _Avatar);
+        PartyFaces_i(65507);
+        Bark_i(2, (("@Yes, " + v0) + "?@"), _Pothos);
+        SetWorkType(_Talk, _Pothos);
+    }
+    if (event = _Bark) {
+        v4 = ~Random(6);
+        if (v4 = 1) {
+            Item_bark("@Wares for sale!@", _Pothos);
+        }
+        if (v4 = 2) {
+            Item_bark("@Reagents!@", _Pothos);
+        }
+        if (v4 = 3) {
+            Item_bark("@Potions! Scrolls!@", _Pothos);
+        }
+        if (v4 = 4) {
+            Item_bark("@Do not touch that!@", _Pothos);
+        }
+        if (v4 = 5) {
+            Item_bark("@Please come in.@", _Pothos);
+        }
+        if (v4 = 6) {
+            if not $knowturtle {
+                Item_bark("@What shall I do?@", _Pothos);
+            } else {
+                Item_bark((("@Hello, " + v3) + "!@"), _Pothos);
+            }
+        }
+    }
+    if (event = _Talking) {
+        Npc_schedule(_Pothos);
+        ClearBark_i(_Pothos);
+        SetSpeaker0_i(0, _Pothos);
+        if not ~GetItemFlag_i(_Met, _Pothos) {
+            ["Yes, I remember thee from the banquet -- Rotoluncia wanted to kill thee!"];
+            SetItemFlag_i(_Met, _Pothos);
+            if (~GetWorkType(_Pothos) = _Patrol) {
+                ["Welcome to the Apothecary Shop. I am Pothos, the proprietor."];
+            } else {
+                ["I am Pothos, the Apothecary in this city."];
+                ["If thou desirest potions, reagents, or other ingredients such as are customary in the practice of magic, come to my shop."];
+            }
+            TurnOn(<< "banquet", "Rotoluncia", "Apothecary Shop" >>);
+        } else {
+            if ($WILL_HELP_POTHOS and not $knowturtle) {
+                if ~IsInInv(1, 65177, _Reagents, 1, _Party) {
+                    ["Thou dost have the Blood Moss! Wonderful!"];
+                    ["In exchange for thy service, I will trust thee with the information that wilt allow thee to speak with Erstam.];
+                    v5 = ~CountItem(1, _All, _Reagents, _Party);
+                    v4 = ~TakeFromParty_i(0, 1, _All, _Reagents, v5);
+                    $knowturtle = true;
+                    v4 = ~PostAction(<< _aNO_HALT_i, _aWAIT_i, 130, _aUSABLE_i, #Rotoluncia >>, ~GimmePathEgg(1, 5));
+                } else {
+                    ["I am waiting for the Blood Moss, <v0>."];
+                }
+            } else {
+                if (~GetWorkType(_Pothos) = _Patrol) {
+                    ["Shopping for something, <v0>?"];
+                } else {
+                    ["What can I do for thee?"];
+                }
+            }
+        }
+        if ($knowturtle and not $sentoneggquest) {
+            TurnOn("tell me about Erstam");
+        }
+        if (~GetWorkType(_Pothos) = _Patrol) {
+            TurnOn("buy");
+        }
+        if ($gotmagicwine and not $knowmagicwine) {
+            TurnOn("strange wine");
+        }
+        if (flag(277) and not $knowslippers) {
+            TurnOn("slippers");
+        }
+        if ($ducioknowslab and not $knowlabitem) {
+            TurnOn("apparatus");
+        }
+        if ($gotbloodyhand and not $knowbloodyhand) {
+            TurnOn("bloody hand");
+        }
+        if ~IsInInv(15, 65177, _Reagents, 1, _Party) {
+            TurnOn("Stoneheart");
+        }
+        if ($KNOWS_POTHOS_SECRET and not $WILL_HELP_POTHOS) {
+            TurnOn("secret");
+        }
+        if (flag(234) and not ~GetItemFlag_i(_Dead, _Rotoluncia)) {
+            TurnOn("kidnap");
+        }
+        if not ~GetItemFlag_i(_Dead, _Rotoluncia) {
+            TurnOn("Rotoluncia");
+        }
+        TurnOn(<< "bye" >>);
+        converse {
+            key ("tell me about Erstam") {
+                TurnOff("tell me about Erstam");
+                ["It would not be wise for me to tell thee much. I shall merely acquaint thee with how to reach the docks, how to call thy transport, and the required password."];
+                PushKeys();
+                TurnOn(<< "reach the docks", "call transport", "password", "change subject" >>);
+            }
+            key ("kidnap") {
+                TurnOff("kidnap");
+                ["Thy friend was taken by magical means? 'Tis incredible. Thou art new to this town..."];
+                ["Julia of the Rangers might be of aid to thee, but I doubt it. This matter concerns magic, and she is merely Mundane."];
+                ["I advise thee to speak to Fedabiblio -- he can counsel thee well. And he doth have connections in high places."];
+            }
+            key ("banquet") {
+                TurnOff("banquet");
+                ["I apologize for disrupting the party, <v0>. Normally, I wouldn't have been there. But I had been on a special errand for the MageLord."];
+                TurnOn(<< "Wouldn't have been there?", "errand" >>);
+            }
+            key ("Wouldn't have been there?") {
+                TurnOff("Wouldn't have been there?");
+                ["While it is true that I am a Mage, I am not an Adept. And Filbercio invites only Adepts to his banquets, as a rule."];
+                TurnOn(<< "Filbercio", "Adept" >>);
+            }
+            key ("Filbercio") {
+                TurnOff("Filbercio");
+                ["Filbercio is the MageLord! And thou wouldst do well not to forget that while thou art in Moonshade."];
+                ["Filbercio is a man of great passions. The Mountains of Freedom are a powerful argument against crossing him in any way."];
+                if (flag(302) = false) {
+                    TurnOn("Freedom");
+                }
+            }
+            key ("Freedom") {
+                TurnOff("Freedom");
+                ["The name was meant in jest, I'm certain. For the Mountains of Freedom are a prison, <v0>. A prison meant to hold Mage and Mundane alike."];
+                ["It is said that if thou art sentenced to that terrible stone pit, and thou canst win thy way back to the outside world, then thou art free. No one will hunt thee for the crimes thou didst commit before thine incarceration..."];
+                ["The only problem is that none have ever won free. And Filbercio reigns unchallenged."];
+                flag(302) = true;
+                TurnOn(<< "stone pit", "unchallenged" >>);
+            }
+            key ("stone pit") {
+                TurnOff("stone pit");
+                ["The Mountains of Freedom are a mine that was shut down long ago when the quality of ore became profitless to dredge from the mountain's heart."];
+                ["Filbercio devised a new use for it, and turned it into a prison. Now its value lies not in what is gotten out of the mine, but in what is put into it."];
+            }
+            key ("unchallenged") {
+                TurnOff("unchallenged");
+                ["There is little true crime here, <v0>."];
+                ["Most of the offenders that find themselves within the confines of Freedom are there because they angered Filbercio in some way."];
+                ["The very existence of Freedom silences most of the MageLord's detractors."];
+            }
+            key ("Adept") {
+                TurnOff("Adept");
+                ["There are different levels of competence with magic, <v0>. It is all based on what level of spells thou canst cast."];
+                ["I myself can only master the third level of spells. An Adept can master the ninth level of spells."];
+                ["Only an Adept can become MageLord, or sit on the Council of Mages. So I make my living selling reagents to Adepts."];
+            }
+            key ("errand") {
+                TurnOff("errand");
+                ["With these storms, I have had little trade with the mainland, so I'm nearly out of most reagents. Filbercio wished me to gather some Blood Moss for him."];
+                ["I tried. But these storms have brought fierce monsters into that area... And I'm no Adept to deal with them."];
+                ["Filbercio threatened to throw me into the Mountains of Freedom if I do not obtain the Blood Moss! I'd trade my dearest secret to be able to find some Blood Moss!"];
+                if ($KNOWS_POTHOS_SECRET and not $WILL_HELP_POTHOS) {
+                    TurnOn("secret");
+                }
+                if (flag(302) = false) {
+                    TurnOn("Freedom");
+                }
+            }
+            key ("secret") {
+                TurnOff("secret");
+                if (flag(287) = true) {
+                    ["Hast thou reconsidered mine offer?"];
+                    if (~AskYesNo() = true) {
+                        ["Thou art my savior! I shall await thy return eagerly."];
+                        flag(287) = false;
+                        $WILL_HELP_POTHOS = true;
+                    } else {
+                        ["My fate is certain!"];
+                        flag(287) = true;
+                        CloseSpeaker0_i();
+                        Bark_i(0, "@I am lost!@", _Pothos);
+                        terminate;
+                    }
+                } else {
+                    ["Thou knowest?!"];
+                    ["It is true. I am Erstam's son... Which is why I still continue to trade with him, even though it is forbidden. If the Council knew, I'd surely be exiled."];
+                    ["Since thou knowest, I will offer thee a deal. If thou wilt go to the swamps south of here and bring back some Blood Moss for me, I will tell thee how to contact my father."];
+                    if (~AskYesNo() = true) {
+                        ["Thou art my savior! I shall await thy return eagerly."];
+                        $WILL_HELP_POTHOS = true;
+                    } else {
+                        ["Then I have nothing to bargain with. I shall certainly end my life in the Mountains of Freedom now!"];
+                        flag(287) = true;
+                        CloseSpeaker0_i();
+                        Bark_i(0, "@I am lost!@", _Pothos);
+                        terminate;
+                    }
+                }
+            }
+            key ("Rotoluncia") {
+                TurnOff("Rotoluncia");
+                ["Like Filbercio, Rotoluncia doth have a will of steel and a fiery temper."];
+                ["She is convinced that some outside force is responsible for these abominable storms."];
+                if flag(234) {
+                    ["I wonder... perhaps Rotoluncia could have had something to do with thy companion's demise?"];
+                    ["If thou dost wish to visit her, she lives in a manor in the northeast corner of the city."];
+                } else {
+                    ["She hates thee because she thinks that thou art keeping knowledge from her. It isn't anything personal, <v0>."];
+                }
+                PushKeys();
+                TurnOn(<< "force", "storms", "change subject" >>);
+            }
+            key ("change subject") {
+                ["Why, certainly, <v0>..."];
+                PopKeys();
+            }
+            key ("force") {
+                TurnOff("force");
+                ["Well, to be precise, I should say that she suspects a recent visitor -- a Mage named Batlin."];
+                ["I'll grant that he came through asking all sorts of questions, and badgering people to sell their Serpent Teeth. But I fail to see how she thinks he doth have anything to do with the storms."];
+                ["And I'm afraid that she thinks all strangers are in league with Batlin. Of course, it did not help that he had that Daemon, either..."];
+                TurnOn(<< "Batlin", "questions", "Serpent Teeth", "Daemon" >>);
+            }
+            key ("Batlin") {
+                TurnOff("Batlin");
+                ["Little, fat man... Small beard and mustache... Angry scowl. I'm sure thou wilt remember him if thou hast met him."];
+                ["Not a particularly nice person, that I recall. Seemed like any other Adept -- used to getting his way, and angry if thwarted. I dealt as little with him as possible."];
+            }
+            key ("questions") {
+                TurnOff("questions");
+                ["Batlin seemed very interested in learning more of the history of the ancient people of this land -- the ones we call the Ophidians."];
+                ["As I am far from my days as a novice, I do not remember all that the Magister taught us. I wasn't much interested then, or now. I sent him to Fedabiblio."];
+                TurnOn(<< "Ophidians", "Fedabiblio" >>);
+            }
+            key ("Ophidians") {
+                TurnOff("Ophidians");
+                ["As I told thee, I don't recall very much history. All I do know is that the ancients seem to have worshipped serpents. If thou wishest to know more, ask Fedabiblio. He's very learned on the subject."];
+            }
+            key ("Fedabiblio") {
+                TurnOff("Fedabiblio");
+                ["Fedabiblio keeps the library here in Moonshade. All information, whether historical or magical in nature, finds its way to his hands."];
+                ["He is also the teacher of the novices, so I'm certain that he will be able to help thee with any questions thou mightest have."];
+            }
+            key ("Serpent Teeth") {
+                TurnOff("Serpent Teeth");
+                if ($WILL_HELP_POTHOS or flag(287)) {
+                    ["'Tis a tradition, <v0>, to steal some small item from my father to prove that thou art a worthy Mage. 'Tis never anything of value, so I have said nothing so far."];
+                    ["A particular favorite item to purloin is a Serpent Tooth from my father's collection. As far as I know, they are useless. But Batlin certainly wanted to purchase them."];
+                    ["No one would sell... Who knows, perhaps he hoped to make some sort of deal with my father for them."];
+                } else {
+                    ["'Tis a tradition, <v0>, to steal some small item from the Mad Mage to prove that thou art a worthy Mage."];
+                    ["A particular favorite item to purloin is a Serpent Tooth from the Mad Mage's collection. As far as I know, they are useless. But Batlin certainly wanted to purchase them."];
+                    ["No one would sell... Who knows, perhaps he hoped to make some sort of deal with the Mad Mage for them."];
+                }
+            }
+            key ("Daemon") {
+                TurnOff("Daemon");
+                ["Yes! Batlin had a Daemon wandering about at his heels, as tame as thou couldst please. Did his bidding without a word... Big, big, ugly red creature."];
+                ["'Tis just the thing to catch Rotoluncia's eye... She's very interested in learning to tame a Daemon for her personal servant. She was quite put out that Batlin wouldn't tell her how he had done it."];
+                ["But I'm sure Filbercio heaved a sigh of relief when Batlin refused to tell her. Everyone knows that Rotoluncia would love to feed Filbercio to a Daemon, in small pieces."];
+            }
+            key ("storms") {
+                TurnOff("storms");
+                ["Definitely magic-born, no doubt about it. Anyone caught outside during one risks being teleported into oblivion."];
+                ["Gustacio hath been working on finding a way to stop the storms. But so far, he hath not had any luck. Mayhaps now that Mortegro is helping him, they'll find the answer..."];
+                ["I certainly hope so. Moonshade is isolated until they do."];
+                TurnOn(<< "Gustacio", "Mortegro" >>);
+            }
+            key ("Gustacio") {
+                TurnOff("Gustacio");
+                ["Gustacio is an Adept that specializes in working with the weather... the power of nature, and all that."];
+                ["Gustacio said something about needing to learn as much about the storms as possible. Even babbled something about learning to see the colors... At least it sounded like babble to me."];
+            }
+            key ("Mortegro") {
+                TurnOff("Mortegro");
+                ["Mortegro is an Adept that specializes in speaking with the dead. He doth not bind them to service or anything, simply talks to them."];
+                ["Why Gustacio wants Mortegro's help, I'll never know. Unless the dead are responsible for the storms, or something."];
+            }
+            key ("Apothecary Shop") {
+                TurnOff("Apothecary Shop");
+                ["I sell everything that thou wouldst need to cast spells or do magic..."];
+                ["Unfortunately, I have a very limited supply of most things right now."];
+            }
+            key ("password") {
+                TurnOff("password");
+                if $KNOWS_ERSTAM_PASSWORD {
+                    ["Oh -- didst thou forget? How embarrassing..."];
+                } else {
+                    ["Isn't it interesting that Blood Moss is so potent, since it is connected with the fluid of life? Blood... But I'm babbling..."];
+                }
+                $KNOWS_ERSTAM_PASSWORD = true;
+                ["Erstam shall not speak a word to thee unless thou dost speak the password which I do give thee. This will be the sign that I have sent thee."];
+                ["The password is \@Iskatradeeth\@."];
+            }
+            key ("reach the docks") {
+                TurnOff("reach the docks");
+                ["Thou must go to the docks north of the Mountains of Freedom. My father hath trained a sea creature to come on command. It will take thee to Erstam -- do not fear. But remember to not leave any of thy possessions upon it, for once it leaves thou shalt not be able to recall it."];
+            }
+            key ("call transport") {
+                TurnOff("call transport");
+                ["To call the creature, go to the docks. There, thou shalt find a ship's bell."];
+                ["Once thou hast rung the bell and chanted the mantra, thy transport will arrive. It can only take thee to my father's island... nowhere else."];
+                TurnOn("mantra");
+            }
+            key ("mantra") {
+                if $KNOWS_ERSTAM_PASSWORD {
+                    TurnOff("mantra");
+                    ["My, thou art impatient! I was just about to tell thee..."];
+                    ["I Re-Ten Bentas Juxark I! Praetimde Mir-Wis Re-Por I."];
+                    ["To learn its meaning, translate it from the language of Magic."];
+                    ["Alas -- as is often the case, 'tis not required to understand power to use it."];
+                    v6 = ~PartyUtters(false, "@I was taught well in the days of the False Prophet...@", (((("@" + v3) + " learned ") + v2) + " lessons well in the days of the False Prophet.@"), 65533);
+                    SetSpeakerSlot_i(0);
+                    ["Whom?"];
+                    v6 = ~PartyUtters(false, "@Never mind...@", "@Never mind...@", 1);
+                    SetSpeakerSlot_i(0);
+                    flag(317) = true;
+                } else {
+                    ["No, no, no -- thou shouldst learn of the password first! Thou dost need it most of all, for Erstam shall not speak with thee without it!"];
+                }
+            }
+            key ("buy") {
+                ["What dost thou need?"];
+                v4 = ~AskList(<< "Potions", "Reagents", "Magic Items" >>);
+                if (v4 = "Potions") {
+                    ["What potion dost thou wish to purchase?"];
+                    PothosSellsPotions_i();
+                }
+                if (v4 = "Reagents") {
+                    ["What reagents dost thou desire to buy?"];
+                    PothosSellsReagents_i();
+                }
+                if (v4 = "Magic Items") {
+                    ["What magic items wouldst thou care to buy?"];
+                    PothosSellsMagicItems_i();
+                }
+            }
+            key ("strange wine") {
+                TurnOff("strange wine");
+                ["That can only be Moonshade wine, <v0>. The Rangers make it right here in the city, with a magic wine press -- naturally."];
+                TurnOn(<< "Rangers", "magic wine press" >>);
+            }
+            key ("Rangers") {
+                TurnOff("Rangers");
+                ["The Rangers are nominally the city guards. They deal with any physical threats that aren't worthy of bothering a Mage about. Their commander is a woman named Julia."];
+                TurnOn("Julia");
+            }
+            key ("Julia") {
+                TurnOff("Julia");
+                ["Julia is a rather forbidding woman. Always seems to be looking for thy secret desire to cause trouble, if thou knowest what I mean."];
+                ["She's quite competent, but not overly warm. I've actually seen her rebuff the MageLord's advances... A formidable woman, indeed."];
+            }
+            key ("magic wine press") {
+                TurnOff("magic wine press");
+                if ($WILL_HELP_POTHOS or flag(287)) {
+                    ["The magic wine press is another piece of my father's legacy, <v0>. He hath always liked fine wine, but hated the work required to make it. So he made the wine press."];
+                } else {
+                    ["The magic wine press is another piece of Erstam's legacy, <v0>. He always liked fine wine, but hated the work required to make it. So he made the wine press."];
+                    TurnOn("Erstam");
+                }
+            }
+            key ("Erstam") {
+                TurnOff("Erstam");
+                ["Erstam was the mentor of most of the Adepts. He was a hard master, so they say."];
+                ["The popular story is that Erstam would never admit that any of his students were ready to be called Adepts in their own right. Apparently, he wanted the free labor for as long as he could have it."];
+                ["Each one rebelled against him, until he became angry and withdrew to his own little island -- forswearing any company but that of his assistants."];
+            }
+            key ("slippers") {
+                TurnOff("slippers");
+                ["Hmmm. I don't think that they belong to a Mage, <v0>. Most Mages prefer something a bit more... impressive."];
+                ["These look more like something a Mundane would wear. Thou mightest check with Bucia over at the Capessii Canton."];
+                flag(277) = true;
+                TurnOn(<< "Bucia", "Capessii Canton" >>);
+            }
+            key ("Bucia") {
+                TurnOff("Bucia");
+                ["If any one person could be considered the heart of Moonshade, I'd be hard-pressed to say whether it was Bucia or Rocco."];
+                ["Bucia doth do business with both Mage and Mundane, so she usually has a full share of the most recent gossip in the city -- which she collects like a ship collects barnacles."];
+                TurnOn("Rocco");
+            }
+            key ("Rocco") {
+                TurnOff("Rocco");
+                ["Rocco is the proprietor of the Blue Boar Inn. Most of the people in the city -- Mage and Mundane alike -- eat there."];
+                ["Rocco collects gossip from those too far in their cups to care what is said to whom. So, between Bucia and Rocco, they hear everything going on in Moonshade."];
+            }
+            key ("Capessi Canton") {
+                TurnOff("Capessi Canton");
+                ["Strange name, isn't it? 'Tis actually Flindo's shop, but he's away so much that Bucia runs it."];
+                TurnOn("Flindo");
+            }
+            key ("Flindo") {
+                TurnOff("Flindo");
+                ["Flindo travels to and from the mainland quite often to purchase merchandise for the shop -- which is another reason Bucia is a good source for information. She hears what Flindo learns in his trips."];
+            }
+            key ("apparatus") {
+                TurnOff("apparatus");
+                ["'Tis a Mage's equipment. But I don't recognize the style."];
+                ["Every Mage prefers something different from the others. This isn't one I'm familiar with, but I'm not that well-connected."];
+                ["Thou shouldst ask Master Ducio. Or, better yet, Topo -- if thou dost wish an answer."];
+                TurnOn(<< "Ducio", "Topo" >>);
+            }
+            key ("Ducio") {
+                TurnOff("Ducio");
+                ["Ducio is a Master Artisan. His work is incredibly good -- when he does any work at all."];
+                ["Most of the time he leaves the work to his apprentice. But I know for a fact that he makes all the lab apparatus for the Adepts. He should be able to tell thee who this piece belongs to... if he's awake, that is!"];
+            }
+            key ("Topo") {
+                TurnOff("Topo");
+                ["Topo is the unfortunate boy that Master Ducio took for an apprentice. He's the one that does all the work at the shop."];
+                ["Despite Ducio's sloth, Topo seems to have quite a bit of talent and promise. In fact, everyone in Moonshade hath learned to go to Topo if they need anything..."];
+                ["The service is quicker and much friendlier."];
+            }
+            key ("bloody hand") {
+                TurnOff("bloody hand");
+                if ($WILL_HELP_POTHOS or flag(287)) {
+                    ["Eyeh! Please, put it away!"];
+                    ["I do not need to look at it any more to be able to tell thee that it is the damnable product of my father's experiments! Is it any wonder that they call him the Mad Mage?!"];
+                    $knowbloodyhand = true;
+                } else {
+                    ["Eyeh! Please, put it away!"];
+                    ["I do not need to look at it any more to be able to tell thee that it is the damnable product of Erstam's experiments! Is it any wonder that they call him the Mad Mage?!"];
+                    $knowbloodyhand = true;
+                }
+                TurnOn(<< "experiments", "Mad Mage" >>);
+            }
+            key ("experiments") {
+                TurnOff("experiments");
+                if ($WILL_HELP_POTHOS or flag(287)) {
+                    ["My father seeks to find the secret to creating life. I surmise that it's his attempt at immortality -- Even spells fall to the ravages of time in the end."];
+                    ["Unfortunately, Erstam's quest for knowledge hath been at the sacrifice of his assistants. Vasel hath sidestepped the inevitable much longer than I would have expected..."];
+                } else {
+                    ["Erstam seeks to find the secret to creating life. I surmise that it's his attempt at immortality -- Even spells fall to the ravages of time in the end."];
+                    ["Unfortunately, Erstam's quest for knowledge hath been at the sacrifice of his assistants. Vasel hath sidestepped the inevitable much longer than I would have expected..."];
+                }
+                TurnOn("Vasel");
+            }
+            key ("Vasel") {
+                TurnOff("Vasel");
+                if ($WILL_HELP_POTHOS or flag(287)) {
+                    ["Vasel is my father's latest assistant. He is a grinning hunchback that I had not given credit for much intelligence. But he seems to be more cunning than even my father anticipated."];
+                } else {
+                    ["Vasel is Erstam's latest assistant. He is a grinning hunchback that I had not given credit for much intelligence. But he seems to be more cunning than even Erstam anticipated."];
+                }
+            }
+            key ("Mad Mage") {
+                TurnOff("Mad Mage");
+                ["What else wouldst thou call a man who hacks his assistants to pieces for his experiments?!"];
+                ["That is another reason that he lives apart from the other Mages. He will never bow to their Strictures... And I doubt that any of the Adepts in Moonshade could hope to enforce them anyway!"];
+            }
+            key ("Stoneheart") {
+                TurnOff("Stoneheart");
+                ["How didst thou come by that?!"];
+                ["No! I did not ask that! I do not want to know!"];
+                ["Dost thou know that possession of that stone is forbidden? Dost thou know how much certain Adepts would pay for the reagent that that stone produces?"];
+                TurnOn(<< "forbidden", "reagent" >>);
+            }
+            key ("forbidden") {
+                TurnOff("forbidden");
+                ["Prolonged exposure to Stoneheart causes insanity, <v0>. And to have the type of power that the reagent makes in the hands of a madman is unthinkable!"];
+                ["Of course, as an apothecary, I could buy it from thee... And find a buyer or two with clearance to possess it."];
+                ["I could make thee a good offer... Say, 120 guilders. Wilt thou sell it?"];
+                if (~AskYesNo() = true) {
+                    ["Wonderful! This will be far less trouble for thee..."];
+                    PothosBuysStonehearts_i();
+                } else {
+                    ["I shall not tell anyone that thou hast the Stoneheart, <v0>. But thou shouldst be likewise discreet."];
+                }
+            }
+            key ("reagent") {
+                TurnOff("reagent");
+                ["It produces Bloodspawn when mixed with a quantity of blood... Well, I am getting ahead of myself."];
+                ["If thou hast a ritual blood-letting device -- which is technically forbidden as well -- thou must fill a small container with blood."];
+                ["Then thou must use the blood on the Stoneheart. This produces the Bloodspawn that thou wilt need for death spells. Thou must be very careful. It is very powerful."];
+            }
+            key ("bye") {
+                CloseSpeaker0_i();
+                if (~GetWorkType(_Pothos) = _Patrol) {
+                    Bark_i(0, "@Nice shop.@", _Avatar);
+                    Bark_i(2, "@Come again!@", _Pothos);
+                } else {
+                    Bark_i(0, "@Until later...@", _Avatar);
+                    Bark_i(2, "@Take care!@", _Pothos);
+                }
+                MessengerBringsScroll_i();
+                break;
+            }
+        }
+        clear_answers;
+    }
+}
+
+Usable PothosBuysStonehearts_i #locals(3) #uses(~GiveItemsOrDrop_i) {
+    v0 = ~CountItem(15, _All, _Reagents, _Party);
+    if (v0 > 1) {
+        ["Thou dost have more than one! How many art thou willing to sell?"];
+        v1 = ~AskBarInput(0, 1, v0, 0);
+        if (v1 <> 0) {
+            v0 = ~TakeFromParty_i(0, 15, _All, _Reagents, v1);
+            v2 = (120 * v1);
+            v0 = ~GiveItemsOrDrop_i(true, 0, 65177, 65177, 952, v2, _Avatar);
+            if (v1 = 1) {
+                ["I will take thy Stoneheart and give thee <v2> guilders for it..."];
+                ["There. 'Tis done!"];
+            } else {
+                ["I will take thy <v1> Stonehearts and give thee <v2> guilders for them..."];
+                ["There. 'Tis done!"];
+            }
+        } else {
+            ["But thou said thou wouldst sell the Stoneheart!"];
+        }
+    } else {
+        ["There. 'Tis done!"];
+        v0 = ~TakeFromParty_i(0, 15, _All, _Reagents, 1);
+        v0 = ~GiveItemsOrDrop_i(true, 0, 65177, 65177, 952, 120, _Avatar);
+    }
+}
+
+Usable PothosSellsPotions_i #locals(14) #uses(~LordOrLady, ~AskOrdList, ~AskYesNo, ~PothosHaggles_i, ~SellItem_i, ~PartyUtters) {
+    v0 = ~LordOrLady();
+    PushKeys();
+    v1 = true;
+    v2 = << "nothing", "sleeping", "healing", "light", "curing", "awakening", "protection", "invisibility" >>;
+    v3 = << 0, 340, 340, 340, 340, 340, 340, 340 >>;
+    v4 = << 65177, 0, 1, 6, 2, 4, 5, 7 >>;
+    v5 = << 0, 85, 100, 50, 75, 65, 150, 240 >>;
+    v6 = << 0, 40, 50, 25, 45, 30, 75, 135 >>;
+    v7 = 952;
+    v8 = << 0, 1, 1, 1, 1, 1, 1, 1 >>;
+    v9 = << 0, 1, 1, 1, 1, 1, 1, 1 >>;
+    While v1 {
+        v10 = ~AskOrdList(v2);
+        if (v10 = 1) {
+            ["Later then, <v0>."];
+            v1 = false;
+        } else {
+            v11 = v5::v10;
+            v12 = 0;
+            if (v10 = 2) {
+                ["That will be <v11> guilders. If thou dost sleep poorly, this is the perfect solution, <v0>."];
+                ["Wilt thou accept?"];
+            }
+            if (v10 = 3) {
+                ["I sell mine healing potions for <v11> guilders each."];
+                ["How doth that sound?"];
+            }
+            if (v10 = 4) {
+                ["I will sell a potion of illumination to thee for the fair price of <v11> guilders."];
+                ["Dost thou agree?"];
+            }
+            if (v10 = 5) {
+                ["<v11> guilders is a small price to pay if thou art in need of removing poisons from thy body, <v0>."];
+                ["Is the price acceptable?"];
+            }
+            if (v10 = 6) {
+                ["This potion, of course, will awaken anyone... or anything... from the deepest slumber. <v11> guilders is the price."];
+                ["Is the price acceptable to thee, <v0>?"];
+            }
+            if (v10 = 7) {
+                ["I can sell this to thee for <v11> guilders. The efficacy of this potion is guaranteed, <v0>!"];
+                ["Dost thou agree, <v0>?"];
+            }
+            if (v10 = 8) {
+                ["Needless to say, this is a very useful potion, <v0>. <v11> guilders is an excellent price, if I do say so myself."];
+                ["What dost thou say?"];
+            }
+            if (v11 = v6::v10) {
+                if ~AskYesNo() {
+                    v13 = v11;
+                } else {
+                    v13 = 0;
+                }
+            } else {
+                v13 = ~PothosHaggles_i(v6::v10, v5::v10);
+            }
+            if (v13 > 0) {
+                if (v9::v10 = 1) {
+                    ["How many wouldst thou like?"];
+                    v12 = ~SellItem_i(false, 1, 10, v13, v7, 1, v4::v10, v3::v10);
+                } else {
+                    v12 = ~SellItem_i(false, 1, 0, v13, v7, 1, v4::v10, v3::v10);
+                }
+            }
+            if (v12 = 1) {
+                ["Good luck with thy purchase, <v0>."];
+            } else {
+                if (v12 = 2) {
+                    ["Thine hands are full, <v0>!"];
+                } else {
+                    if (v12 = 3) {
+                        v10 = ~PartyUtters(false, 0, (("@But " + v0) + ", we have not the guilders to purchase this.@"), 1);
+                        if (v10 <> 65180) {
+                            SetSpeaker0_i(0, _Pothos);
+                            ["I do not give my merchandise away!"];
+                        } else {
+                            ["I am sorry, but thou dost not have enough guilders to purchase this!"];
+                        }
+                        if (31 < (~GetNPCID_i(_Pothos) + 6)) {
+                            SetNPCID_i(31, _Pothos);
+                        } else {
+                            SetNPCID_i((~GetNPCID_i(_Pothos) + 6), _Pothos);
+                        }
+                    } else {
+                    }
+                }
+            }
+            ["Dost thou desire another purchase?"];
+            v1 = ~AskYesNo();
+        }
+    }
+    PopKeys();
+}
+
+Usable PothosSellsReagents_i #locals(14) #uses(~LordOrLady, ~AskOrdList, ~AskYesNo, ~PothosHaggles_i, ~SellItem_i, ~PartyUtters) {
+    v0 = ~LordOrLady();
+    PushKeys();
+    v1 = true;
+    v2 = << "nothing", "black pearls", "mandrake", "garlic", "spider silk", "ash", "worm heart" >>;
+    v3 = << 0, 842, 842, 842, 842, 842, 842 >>;
+    v4 = << 65177, 0, 3, 4, 6, 7, 10 >>;
+    v5 = << 0, 50, 75, 8, 35, 36, 100 >>;
+    v6 = << 0, 25, 45, 5, 19, 20, 60 >>;
+    v7 = 952;
+    v8 = << 0, 1, 1, 1, 1, 1, 1 >>;
+    v9 = << 0, 1, 1, 1, 1, 1, 1 >>;
+    While v1 {
+        v10 = ~AskOrdList(v2);
+        if (v10 = 1) {
+            ["As thou dost wish, <v0>."];
+            v1 = false;
+        } else {
+            v11 = v5::v10;
+            v12 = 0;
+            if (v10 = 2) {
+                ["My black pearls are sought after from across Serpent Isle for their potency. Surely <v11> guilders is an equitable price?"];
+                ["Dost thou accept?"];
+            }
+            if (v10 = 3) {
+                ["<v11> guilders each for a mandrake root, which is a most excellent reagent for powerful spells."];
+                ["Dost thou find this price acceptable?"];
+            }
+            if (v10 = 4) {
+                ["For the fair price of <v11> guilders, I can sell thee garlic that is most efficacious for spellcasting."];
+                ["Dost thou agree?"];
+            }
+            if (v10 = 5) {
+                ["<v11> guilders for the finest spun silk thou canst find, <v0>."];
+                ["Is the price acceptable?"];
+            }
+            if (v10 = 6) {
+                ["I went to great lengths to acquire the ash from Furnace itself! <v11> guilders is the asking price."];
+                ["Wilt thou accept this price?"];
+            }
+            if (v10 = 7) {
+                ["Ah, these worm hearts are most precious, <v0>, and needless to say, they are very difficult to procure! I am asking <v11> guilders each for these fine jewels."];
+                ["What dost thou think, <v0>?"];
+            }
+            if (v11 = v6::v10) {
+                if ~AskYesNo() {
+                    v13 = v11;
+                } else {
+                    v13 = 0;
+                }
+            } else {
+                v13 = ~PothosHaggles_i(v6::v10, v5::v10);
+            }
+            if (v13 > 0) {
+                if (v9::v10 = 1) {
+                    ["How many wouldst thou like?"];
+                    v12 = ~SellItem_i(false, 1, 20, v13, v7, 1, v4::v10, v3::v10);
+                } else {
+                    v12 = ~SellItem_i(false, 1, 0, v13, v7, 1, v4::v10, v3::v10);
+                }
+            }
+            if (v12 = 1) {
+                ["Best of luck with thy purchase, <v0>."];
+            } else {
+                if (v12 = 2) {
+                    ["I believe that thine hands are full, <v0>!"];
+                } else {
+                    if (v12 = 3) {
+                        v10 = ~PartyUtters(false, 0, (("@But " + v0) + ", we have not the guilders to purchase this.@"), 1);
+                        if (v10 <> 65180) {
+                            SetSpeaker0_i(0, _Pothos);
+                            ["Ah... it dost appear that thy purse is empty, <v0>."];
+                        } else {
+                            ["I do not give my merchandise away! Thou dost not have the guilders to purchase this!"];
+                        }
+                        if (31 < (~GetNPCID_i(_Pothos) + 6)) {
+                            SetNPCID_i(31, _Pothos);
+                        } else {
+                            SetNPCID_i((~GetNPCID_i(_Pothos) + 6), _Pothos);
+                        }
+                    } else {
+                    }
+                }
+            }
+            ["Dost thou desire another purchase?"];
+            v1 = ~AskYesNo();
+        }
+    }
+    PopKeys();
+}
+
+Usable PothosSellsMagicItems_i #locals(15) #uses(~LordOrLady, ~AskOrdList, ~AskYesNo, ~PothosHaggles_i, ~SellItem_i, ~PartyUtters) {
+    v0 = ~LordOrLady();
+    PushKeys();
+    v1 = true;
+    v2 = << "nothing", "Magic Leggings", "Magic Boots", "Magic Axe", "Sword of Defense", "Magic Bolts", "Glass Sword" >>;
+    v3 = << 0, 686, 587, 552, 567, 417, 604 >>;
+    v4 = << 65177, 0, 1, 0, 0, 0, 0 >>;
+    v5 = << 0, 550, 100, 600, 1200, 200, 1500 >>;
+    v6 = << 0, 550, 100, 600, 1200, 200, 1500 >>;
+    v7 = 952;
+    v8 = << 0, 1, 1, 1, 1, 10, 1 >>;
+    v9 = << 0, 0, 0, 0, 0, 1, 0 >>;
+    While v1 {
+        v10 = ~AskOrdList(v2);
+        if (v10 = 1) {
+            ["Drop by again, <v0>."];
+            v1 = false;
+        } else {
+            v11 = v5::v10;
+            v12 = 0;
+            if (v10 = 2) {
+                ["Well, for a warrior such as thou art, I suppose that magic leggings will prove useful. I will sell a pair to thee for <v11> guilders."];
+                ["Wilt thou buy?"];
+            }
+            if (v10 = 3) {
+                ["Hmmm... a pair of magic boots will protect thee quite well. I offer a pair for <v11> guilders."];
+                ["Wilt thou take it?"];
+            }
+            if (v10 = 4) {
+                ["I do not recall who enchanted my magic axes, but let me assure thee, they are well constructed! I can sell thee one for <v11> guilders."];
+                ["Dost thou agree?"];
+            }
+            if (v10 = 5) {
+                ["Ah, thou hast chosen what I consider to be the ultimate weapon for a warrior born! The Sword of Defense will protect thee just as well as plate armour, but without the encumbrance and weight. I can sell thee one for <v11> guilders."];
+                ["Dost thou accept the price?"];
+            }
+            if (v10 = 6) {
+                ["For the low cost of <v11> guilders I can sell thee ten magic bolts. They are more accurate and far more deadly than the mundane variety."];
+                ["Is the price acceptable?"];
+                v13 = "magic bolts, in bundles of ten,";
+            }
+            if (v10 = 7) {
+                ["Some say that the Glass Sword is the deadliest weapon one can aspire to wield. I do not know for certain, but rest assured that it is most lethal. For <v11> guilders it is thine."];
+                ["Wilt thou agree to this price?"];
+            }
+            if (v11 = v6::v10) {
+                if ~AskYesNo() {
+                    v14 = v11;
+                } else {
+                    ["Perhaps another time, <v0>."];
+                    v14 = 0;
+                }
+            } else {
+                v14 = ~PothosHaggles_i(v6::v10, v5::v10);
+            }
+            if (v14 > 0) {
+                if (v9::v10 = 1) {
+                    ["How many <v13> wouldst thou like?"];
+                    v12 = ~SellItem_i(false, 1, 5, v14, v7, v8::v10, v4::v10, v3::v10);
+                } else {
+                    v12 = ~SellItem_i(false, 1, 0, v14, v7, 1, v4::v10, v3::v10);
+                }
+            }
+            if (v12 = 1) {
+                ["Good luck with thy purchase, <v0>."];
+            } else {
+                if (v12 = 2) {
+                    ["Thine hands are full, <v0>!"];
+                } else {
+                    if (v12 = 3) {
+                        v10 = ~PartyUtters(false, 0, (("@But " + v0) + ", we have not the guilders to purchase this.@"), 1);
+                        if (v10 <> 65180) {
+                            SetSpeaker0_i(0, _Pothos);
+                            ["I do not give my merchandise away!"];
+                        } else {
+                            ["I am sorry, but thou dost not have enough guilders to purchase this!"];
+                        }
+                        if (31 < (~GetNPCID_i(_Pothos) + 6)) {
+                            SetNPCID_i(31, _Pothos);
+                        } else {
+                            SetNPCID_i((~GetNPCID_i(_Pothos) + 6), _Pothos);
+                        }
+                    } else {
+                    }
+                }
+            }
+            ["Dost thou wish something else?"];
+            v1 = ~AskYesNo();
+        }
+    }
+    PopKeys();
+}
+
+Function ~PothosHaggles_i accepts a0, a1 #locals(14) #uses(~LordOrLady, ~AskList, ~Haggle_i, ~AskYesNo) {
+    v2 = ~LordOrLady();
+    v3 = v1;
+    v4 = ((v0 / 3) * 2);
+    v5 = (15 - (~GetNPCID_i(_Pothos) / 2));
+    v6 = 0;
+    v7 = 1;
+    v8 = 0;
+    v9 = 2;
+    v10 = ~GetNPCID_i(_Pothos);
+    While v7 {
+        v11 = ~AskList(<< "yes", "no", "haggle" >>);
+        if (v11 = "no") {
+            return 0;
+        } else {
+            if (v11 = "yes") {
+                v12 = 0;
+                goto label_8;
+            }
+        }
+        v13 = ~Haggle_i(v6, v5, v8, v4, v9, v0, v3);
+        v8 = (v8 + 1);
+        v6 = v13::4;
+        v12 = v13::3;
+        v14 = v3;
+        v3 = v13::2;
+        v4 = v13::1;
+        label_8:
+        v15 = ~Random(3);
+        if (v12 < 2) {
+            if (v3 < (v0 + ((v1 - v0) / 4))) {
+                if (v15 = 1) {
+                    ["I shall never live this down, if thou dost tell anyone..."];
+                }
+                if (v15 = 2) {
+                    ["It is rare to find one who trades as well as thee..."];
+                }
+                if (v15 = 3) {
+                    ["Would that I had more stock, that I might make a better deal!"];
+                }
+            } else {
+                if (v3 < (v0 + ((v1 - v0) / 3))) {
+                    if (v15 = 1) {
+                        ["I offer only the finest merchandise at the fairest prices!"];
+                    }
+                    if (v15 = 2) {
+                        ["It would do me better to tell everyone that thou hadst stolen this from me!"];
+                    }
+                    if (v15 = 3) {
+                        ["I could almost suspect thee of charming me..."];
+                    }
+                } else {
+                    if (v3 < (v0 + ((v1 - v0) / 2))) {
+                        if (v15 = 1) {
+                            ["I think we have both made a good deal, <v2>."];
+                        }
+                        if (v15 = 2) {
+                            ["Trading with thee is most challenging, <v2>."];
+                        }
+                        if (v15 = 3) {
+                            ["There are not many others who sell such things, <v2>."];
+                        }
+                    } else {
+                        if (v15 = 1) {
+                            ["Thou art a fine customer... Return any time!"];
+                        }
+                        if (v15 = 2) {
+                            ["May fortune favor thee, <v2>!"];
+                        }
+                        if (v15 = 3) {
+                            ["If I had more stock, <v2>, I could offer thee a better price. "];
+                        }
+                    }
+                }
+            }
+            ["Wilt thou agree on a price of <v3> guilders, <v2>?"];
+            if ~AskYesNo() {
+                if (v10 > 1) {
+                    SetNPCID_i((v10 - 2), _Pothos);
+                }
+                return v3;
+            } else {
+                if (v15 = 1) {
+                    ["Thou didst agree! I had not thought that thou wouldst go back on thy word!"];
+                }
+                if (v15 = 2) {
+                    ["Is this the way the Avatar deals?"];
+                }
+                if (v15 = 3) {
+                    ["I shall be sure to let the Council know of thine underhanded dealing, <v2>!"];
+                }
+                if (31 < (v10 + 10)) {
+                    SetNPCID_i(31, _Pothos);
+                } else {
+                    SetNPCID_i((v10 + 10), _Pothos);
+                }
+                return 0;
+            }
+        }
+        if (v6 = 1) {
+            if (v12 = 5) {
+                ["I said that <v3> was my final offer. Dost thou accept?"];
+                if (v10 < 28) {
+                    SetNPCID_i((v10 + 4), _Pothos);
+                }
+                if ~AskYesNo() {
+                    return v3;
+                }
+                v7 = 0;
+            } else {
+                ["<v3> guilders is my final offer. Take it or leave it..."];
+                if (v10 < 30) {
+                    SetNPCID_i((v10 + 2), _Pothos);
+                }
+            }
+        } else {
+            if (v12 = 2) {
+                if (v15 = 1) {
+                    ["None of the Mages care to bargain as thou dost... How doth <v3> guilders sound?"];
+                }
+                if (v15 = 2) {
+                    ["Thou art a worthy opponent! Wilt thou agree on <v3> guilders?"];
+                }
+                if (v15 = 3) {
+                    ["I offer thee <v3> guilders. Dost thou accept?"];
+                }
+            }
+            if (v12 = 3) {
+                if (v15 = 1) {
+                    ["I have so little to sell now... Perhaps <v3> guilders?"];
+                }
+                if (v15 = 2) {
+                    ["Let me think... <v3> guilders?"];
+                }
+                if (v15 = 3) {
+                    ["How shall I live! <v3> guilders?"];
+                }
+            }
+            if (v12 = 4) {
+                if (v15 = 1) {
+                    ["I cannot possibly accept less than <v3>\x09guilders!"];
+                    ["What dost thou say to this?"];
+                }
+                if (v15 = 2) {
+                    ["Supply and demand... <v3> guilders, no less."];
+                }
+                if (v15 = 3) {
+                    ["I am not the fool everyone thinks me. I will not accept less than <v3> guilders."];
+                }
+            }
+            if (v12 = 5) {
+                v3 = v14;
+                if (v15 = 1) {
+                    ["I would rather endure the Mountains of Freedom! <v3> guilders is what I offer."];
+                }
+                if (v15 = 2) {
+                    ["I am not a child to be so misled! <v3> guilders, and no less!"];
+                }
+                if (v15 = 3) {
+                    ["If I accepted such a price, I would have to close my shop and begin begging!"];
+                    ["<v3> guilders is where I stand."];
+                }
+                if (v10 < 31) {
+                    SetNPCID_i((v10 + 1), _Pothos);
+                }
+            }
+        }
+    }
+}

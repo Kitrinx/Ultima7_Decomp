@@ -1,0 +1,116 @@
+Routine Daemon_sword accepts a0 #locals(7) #uses(~InAvatarInv_i, ReturnDaemonSword_i, ~AskYesNo, PlaySpeechOrText_i, Bark_i) {
+    closeAllGumps();
+    if (event = _Unequip) {
+        if ((flag(570) = false) and ($daemoninsword = true)) && not ~InAvatarInv_i(item) {
+            ReturnDaemonSword_i(0, item);
+        }
+        terminate;
+    }
+    if (event = _Converse) {
+        if ($daemoninsword = false) {
+            if ($anarchybaneinsword or (flag(210) or flag(209))) {
+                v0 = ~GetTarget();
+                if not v0 {
+                    return;
+                }
+                v1 = ~Item_getType(v0);
+                if (v1 = 445) {
+                    v2 = ~GetFrame(v0);
+                    if ($anarchybaneinsword and (v2 = 4)) {
+                        $anarchybaneinsword = false;
+                        SetFrame(7, v0);
+                    }
+                    if (flag(210) and (v2 = 2)) {
+                        flag(210) = false;
+                        SetFrame(5, v0);
+                    }
+                    if (flag(209) and (v2 = 3)) {
+                        flag(209) = false;
+                        SetFrame(6, v0);
+                    }
+                }
+            }
+            terminate;
+        }
+        if not $tookinventory {
+            closeAllGumps();
+            SetSpeaker0_i(0, _BillyCain);
+            ["Where hast thou taken me, Avatar?!"];
+            ["I served thee well upon the Isle of Fire! Why hast thou brought me to this cold place?"];
+            ["I gave thee the power of life and death over thine enemies! And see how thou hast repaid me?! I remain bound within this jewel... In a land where I cannot feed! The veins of power have been disrupted! Release me! Release me..."];
+            CloseSpeaker0_i();
+            terminate;
+        } else {
+            closeAllGumps();
+            SetSpeaker0_i(0, _BillyCain);
+            ["I shall offer thee mine aid once again, Avatar... Thou dost not possess the skill or power enough to overcome the madman Lorthondo thou must face. I do, but not within the constraints of this gem in which thou didst bind me."];
+            ["Free me and I shall help thee win free of this place!"];
+            if (~AskYesNo() = true) {
+                Sfx(76);
+                ["Free! Free! Free at last!"];
+                Sfx(116);
+                ["Thou art a fool, Avatar! Thou hast no idea what thou hast lost!"];
+                ["I thank thee for thine ignorance..."];
+                CloseSpeaker0_i();
+                PlaySpeechOrText_i(23);
+                flag(570) = true;
+                $daemoninsword = false;
+            } else {
+                ["Beware! The energy of the stones here is drawing away thy power to keep me imprisoned..."];
+                ["But thou wilt accept mine offer yet..."];
+                CloseSpeaker0_i();
+            }
+            if (~IsNPCNear_i(_Lorthondo) and (flag(570) = true)) {
+                SetItemFlag_i(_DontMove_i, _Avatar);
+                v3 = ~FindNearby_i(16, 0, _Egg_Type, _Lorthondo);
+                if v3 {
+                    Item_destroy(v3);
+                }
+                ClearBark_i(_Lorthondo);
+                Bark_i(0, "@No, wait!...@", _Lorthondo);
+                v4 = ~FindNearby_i(0, 5, _NS_I_Glass_Wall, _Lorthondo);
+                v4 = (v4 & ~FindNearby_i(0, 5, _EW_I_Glass_Wall, _Lorthondo));
+                v5 = ~PostAction(<< _aWAIT_i, 5, _aUSABLE_i, #Lorthondo, _aREMOVE_i >>, v4::1);
+                v5 = ~PostAction(<< _aWAIT_i, 8, _aUSABLE_i, #Lorthondo, _aREMOVE_i >>, v4::3);
+                v5 = ~PostAction(<< _aWAIT_i, 10, _aUSABLE_i, #Lorthondo, _aREMOVE_i >>, v4::2);
+                v5 = ~PostAction(<< _aWAIT_i, 14, _aUSABLE_i, #Lorthondo, _aREMOVE_i >>, v4::4);
+                v6 = ~FindNearest_i(10, _Body_Parts, _Lorthondo);
+                if v6 {
+                    v5 = ~PostAction(<< _aWAIT_i, 16, _aUSABLE_i, #Lorthondo >>, v6);
+                }
+            }
+        }
+    }
+    if (event = _Action) {
+        if ($daemoninsword = false) {
+            if (~GetDist(_Lorthondo, _Avatar) < 45) {
+                SetSpeaker(0, _SuperGoblin);
+                ["Avatar! Because thou didst keep thy promise to release me"];
+                ["now shall I return the favor."];
+                ["This dark sorcerer will trouble thee no more..."];
+                CloseSpeaker0_i();
+                ClearBark_i(_Lorthondo);
+                Bark_i(0, "@No, wait! Please...@", _Lorthondo);
+                v4 = ~FindNearby_i(0, 5, _NS_I_Glass_Wall, _Lorthondo);
+                v4 = (v4 & ~FindNearby_i(0, 5, _EW_I_Glass_Wall, _Lorthondo));
+                v5 = ~PostAction(<< _aWAIT_i, 5, _aUSABLE_i, #Lorthondo, _aREMOVE_i >>, v4::1);
+                v5 = ~PostAction(<< _aWAIT_i, 8, _aUSABLE_i, #Lorthondo, _aREMOVE_i >>, v4::3);
+                v5 = ~PostAction(<< _aWAIT_i, 10, _aUSABLE_i, #Lorthondo, _aREMOVE_i >>, v4::2);
+                v5 = ~PostAction(<< _aWAIT_i, 14, _aUSABLE_i, #Lorthondo, _aREMOVE_i >>, v4::4);
+                v6 = ~FindNearest_i(10, _Body_Parts, _Lorthondo);
+                if v6 {
+                    v5 = ~PostAction(<< _aWAIT_i, 16, _aUSABLE_i, #Lorthondo >>, v6);
+                }
+                terminate;
+            } else {
+                terminate;
+            }
+        }
+        if $tookinventory {
+            closeAllGumps();
+            SetSpeaker0_i(0, _BillyCain);
+            ["Avatar, thou must set me free now! The stone's power is quickly diminishing, and this evil wizard will take thee before long." ~"If thou wilt but liberate me from this crystal prison I shall serve thee once more before departing from thy side..."];
+            CloseSpeaker0_i();
+        }
+    }
+}

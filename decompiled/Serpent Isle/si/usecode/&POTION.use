@@ -1,0 +1,69 @@
+Routine Potion accepts a0 #locals(11) #uses(StealItem_i, ChangeHits_i, ~PartyUtters, ~LordOrLady, ~PartyUtters) {
+    v0 = false;
+    if (event = _Converse) {
+        StealItem_i(item);
+        v1 = ~GetFrame(item);
+        v2 = ~GetTarget();
+        v3 = ~Item_isNpc(v2);
+        playSFX(item, 36);
+        if v3 {
+            Sfx(57);
+            if (v1 = 0) {
+                SetItemFlag_i(_Asleep, v2);
+            }
+            if (v1 = 1) {
+                v4 = ~rndRange(12, 3);
+                ChangeHits_i(v4, v2);
+            }
+            if (v1 = 2) {
+                ClearItemFlag_i(_Poisoned, v2);
+                ClearItemFlag_i(_Paralyzed, v2);
+                ClearItemFlag_i(_Asleep, v2);
+                ClearItemFlag_i(_Charmed, v2);
+                ClearItemFlag_i(_Cursed, v2);
+            }
+            if (v1 = 3) {
+                SetItemFlag_i(_Poisoned, v2);
+            }
+            if (v1 = 4) {
+                ClearItemFlag_i(_Asleep, v2);
+            }
+            if (v1 = 5) {
+                SetItemFlag_i(_Protected, v2);
+            }
+            if (v1 = 6) {
+                StartLight_i(200);
+            }
+            if (v1 = 7) {
+                SetItemFlag_i(_Invisible, v2);
+            }
+            if (v1 = 8) && (v2 = ~NPCToItem_i(_Avatar)) {
+                v5 = ~GetNPCStat_i(_Mag, _Avatar);
+                v6 = ~Random(10);
+                if ((v5 + v6) > 31) {
+                    v6 = (31 - v5);
+                }
+                v7 = ~ChangeNPCStat_i(v6, _Mag, _Avatar);
+            }
+            if (v1 = 9) {
+                SetTemperature_i(0, v2);
+            }
+            if (v1 >= 10) {
+                v8 = ~PartyUtters#2(false, 0, "@What is this!@", 1);
+                terminate;
+            }
+            Item_destroy(item);
+            terminate;
+        } else {
+            v9 = << v2::2, v2::3, v2::4 >>;
+            v8 = ~PartyUtters#2(false, 0, (("@Please, " + ~LordOrLady()) + ", waste them not!@"), 1);
+            v10 = ~Item_create(_Blood_Trails);
+            if v10 {
+                SetItemFlag_i(_IsTemporary_i, v10);
+                SetFrame(~rndRange(23, 4), v10);
+                v7 = ~PopToMap(v9);
+            }
+        }
+        Item_destroy(item);
+    }
+}

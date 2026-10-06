@@ -1,0 +1,70 @@
+Routine HawkVoyageEgg_i accepts a0 #locals(10) #uses(~PartyUtters, ~LoadBarge_i) {
+    v0 = ~GetNPCID_i(_Hawk);
+    v1 = 25;
+    v2 = ~FindNearby_i(16, 100, _Barge, item);
+    if (v0 = 2) && v2 {
+        SetItemFlag_i(_DontMove_i, _Avatar);
+        v3 = ~PartyUtters(true, "@I should sit.@", "@We should find a seat.@", 1);
+        v3 = ~LoadBarge_i(v2);
+        if v3 {
+            $hawkintransit = true;
+            SetNPCID_i(3, _Hawk);
+            v0 = 3;
+            v3 = ~PostInFuture(v1, << _aNO_HALT_i, _aUSABLE_i, #HawkVoyageEgg_i >>, item);
+            terminate;
+        }
+    }
+    if (v0 = 3) {
+        v3 = ~LoadBarge_i(v2);
+        if ~IsOnBarge_i() {
+            v4 = ~Item_create(_Path);
+            if v4 {
+                SetFrame(0, v4);
+                v3 = ~SetQuality(0, v4);
+                ClearItemFlag_i(_IsTemporary_i, v4);
+                v3 = ~PopToMap(<< 1362, 2215, 2 >>);
+            }
+            v4 = ~Item_create(_Path);
+            if v4 {
+                ClearItemFlag_i(_IsTemporary_i, v4);
+                v3 = ~SetQuality(0, v4);
+                SetFrame(1, v4);
+                v3 = ~PopToMap(<< 1380, 2215, 2 >>);
+            }
+            v4 = ~Item_create(_Path);
+            if v4 {
+                ClearItemFlag_i(_IsTemporary_i, v4);
+                v3 = ~SetQuality(15, v4);
+                SetFrame(2, v4);
+                v3 = ~PopToMap(<< 1390, 2212, 1 >>);
+            }
+            v5 = << 1361, 2215, 2 >>;
+            v6 = << 65496, 65494, 65499, 65493 >>;
+            Foreach v9 in v6 {
+                Item_move(v5, v9);
+                NewSchedule_i(<< 1371, 2215 >>, << 29 >>, << 0 >>, v9);
+                SetWorkType(_Patrol, v9);
+            }
+            ClearItemFlag_i(_Fly, _Ale);
+            SetNPCID_i(4, _Hawk);
+            v0 = 4;
+            v3 = ~PostInFuture(v1, << _aNO_HALT_i, _aUSABLE_i, #HawkVoyageEgg_i >>, item);
+            terminate;
+        }
+        v3 = ~PostInFuture(v1, << _aNO_HALT_i, _aUSABLE_i, #HawkVoyageEgg_i >>, item);
+        terminate;
+    }
+    if ((v0 > 3) and (v0 < 8)) {
+        v3 = ~PostInFuture(v1, << _aNO_HALT_i, _aUSABLE_i, #HawkVoyageEgg_i >>, item);
+        terminate;
+    }
+    if (v0 = 8) {
+        if ~IsOnBarge_i() {
+            Kernel_resetRef(item);
+            v3 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #Hawk >>, _Hawk);
+        } else {
+            v3 = ~PostInFuture(v1, << _aNO_HALT_i, _aUSABLE_i, #HawkVoyageEgg_i >>, item);
+        }
+        terminate;
+    }
+}

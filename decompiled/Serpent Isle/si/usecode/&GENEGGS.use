@@ -1,0 +1,425 @@
+Routine PlaceholderEgg_i accepts a0 #locals(0) #uses(MemberSays_i) {
+    if (event = _Trigger) {
+        MemberSays_i("Damn! I've stepped on an egg! Egg 0, to be precise!");
+    }
+}
+
+Routine Puke accepts a0 #locals(13) #uses(SetBusy_i, ~IsAbleToTalk_i, BarkIfNear_i) {
+    if (event = _Trigger) {
+        v0 = ~GetParty();
+        Foreach v3 in v0 {
+            if not ~RollToWin_i(~GetQuality(item), ~GetNPCStat_i(_Str, v3)) {
+                v4 = ~NPCToItem_i(v3);
+                Kernel_resetRef(v4);
+                SetBusy_i(v4);
+                v5 = ~PostInFuture(25, << _aNO_HALT_i, _aUSABLE_i, #ClearBusy_i >>, v4);
+                v5 = ~PostAction(<< _aNO_HALT_i, _aWAIT_i, 5, _aBEND_FRAME_i, _aWAIT_i, 4, _aKNEEL_FRAME_i, _aWAIT_i, 4, _aLIE_FRAME_i, _aWAIT_i, 4, _aSTAND_FRAME_i >>, v4);
+                if ~IsAbleToTalk_i(v4) {
+                    BarkIfNear_i(<< "@Ohh!@", "@Eeehhh!@", "@Bleh!@", "@Gak!@" >>, v4);
+                }
+                v5 = ~PostInFuture(17, << _aNO_HALT_i, _aUSABLE_i, #Puke >>, v4);
+            }
+        }
+    }
+    if (event = _Action) {
+        v6 = 0;
+        v7 = 0;
+        While (v6 < 16) {
+            v8 = ~rndRange(3, 0);
+            if (v7 = 0) {
+                v7 = (v6 + v8);
+            } else {
+                v7 = (v7 & (v6 + v8));
+            }
+            v6 = (v6 + 4);
+        }
+        Foreach v11 in v7 {
+            v5 = ~Item_create(_Blood_Trails);
+            if v5 {
+                SetItemFlag_i(_IsTemporary_i, v5);
+                SetFrame(v11, v5);
+                v12 = ~PopToMap(~GetCoord(item));
+            }
+        }
+    }
+}
+
+Routine Fear accepts a0 #locals(6) {
+    if (event = _Trigger) {
+        v0 = ~GetQuality(item);
+        v1 = ~GetParty();
+        Foreach v4 in v1 {
+            if (v4 <> ~NPCToItem_i(_Avatar)) && not ~RollToWin_i(15, ~GetNPCStat_i(_Int, v4)) {
+                Kernel_resetRef(v4);
+                SetWorkType(_Combat_0, v4);
+                SetAttackMode_i(_Fleeing, v4);
+                SetAttacker_i(_Avatar, v4);
+                v5 = ~PostInFuture(v0, << _aNO_HALT_i, _aUSABLE_i, #Fear >>, v4);
+            }
+        }
+    }
+    if (event = _Action) {
+        SetWorkType(_FollowAvt, item);
+    }
+}
+
+Routine GetMad accepts a0 #locals(5) #uses(~OrderList_i, ~IndexInList_i, AttackAvatar_i) {
+    if (event = _Trigger) {
+        v0 = ~FindNearby_i(8, 40, _All, item);
+        v1 = ~OrderList_i();
+        Foreach v4 in v0 {
+            if not ~GetItemFlag_i(_InParty_i, v4) && not ~IndexInList_i(v1, ~ItemToNPC_i(v4)) {
+                ClearItemFlag_i(_Asleep, v4);
+                AttackAvatar_i(v4);
+            }
+        }
+    }
+}
+
+Routine Tremor accepts a0 #locals(14) {
+    if ((event = _Trigger) or (event = _Action)) {
+        v0 = ~FindNearby_i(8, 40, _All, item);
+        v1 = ~GetParty();
+        v2 = ~GetQuality(item);
+        if (v2 = 0) {
+            v2 = 30;
+        }
+        v3 = ~GetItemFlag_i(_InParty_i, item);
+        Foreach v6 in v0 {
+            if (not v3 or not (v6 in v1)) {
+                v7 = 0;
+                v8 = "";
+                While (v7 < v2) {
+                    v9 = ~rndRange(8, 0);
+                    if (v9 = 0) {
+                        v10 = << byte(109), byte(108), byte(97) >>;
+                        v8 = << v8, v10 >>;
+                    }
+                    if (v9 = 1) {
+                        v10 = << byte(109), byte(97), byte(97) >>;
+                        v8 = << v8, v10 >>;
+                    }
+                    if (v9 = 2) {
+                        v10 = << byte(108), byte(110), byte(97) >>;
+                        v8 = << v8, v10 >>;
+                    }
+                    if (v9 = 3) {
+                        v10 = << byte(97), byte(97), byte(97) >>;
+                        v8 = << v8, v10 >>;
+                    }
+                    if (v9 = 4) {
+                        v10 = << byte(109), byte(100), byte(97) >>;
+                        v8 = << v8, v10 >>;
+                    }
+                    if (v9 = 5) {
+                        v10 = << byte(100), byte(109), byte(97) >>;
+                        v8 = << v8, v10 >>;
+                    }
+                    if (v9 = 6) {
+                        v11 = (byte(48) + (~rndRange(3, 0) * 2));
+                        v10 = << byte(89), v11, byte(108), byte(97) >>;
+                        v8 = << v8, v10 >>;
+                    }
+                    if (v9 = 7) {
+                        v11 = (byte(48) + (~rndRange(3, 0) * 2));
+                        v10 = << byte(89), v11, byte(109), byte(97) >>;
+                        v8 = << v8, v10 >>;
+                    }
+                    if (v9 = 8) {
+                        v11 = (byte(48) + (~rndRange(3, 0) * 2));
+                        v10 = << byte(89), v11, byte(100), byte(97) >>;
+                        v8 = << v8, v10 >>;
+                    }
+                    v7 = (v7 + 3);
+                }
+                Kernel_resetRef(v6);
+                v12 = ~rndRange(5, 1);
+                if (v12 = 1) {
+                    v8 = << byte(82), "Aaahhh!", v8 >>;
+                }
+                v13 = ~PostAction(v8, v6);
+            }
+        }
+        Earthquake_i(v2);
+    }
+}
+
+Routine StopTime accepts a0 #locals(0) {
+    if (event = _Trigger) {
+        StopTime_i(~GetQuality(item));
+    }
+}
+
+Routine DamageParty accepts a0 #locals(6) #uses(DoDamage_i) {
+    if (event = _Trigger) {
+        v0 = ~GetParty();
+        v1 = ~GetQuality(item);
+        Foreach v4 in v0 {
+            v5 = ~rndRange(v1, 1);
+            DoDamage_i(v5, v4);
+        }
+    }
+}
+
+Routine Sleep accepts a0 #locals(6) #uses(SetBusy_i) {
+    if (event = _Trigger) {
+        Sfx(70);
+        v0 = ~GetParty();
+        Foreach v3 in v0 {
+            if not ~RollToWin_i(~GetQuality(item), ~GetNPCStat_i(_Str, v3)) {
+                v4 = ~NPCToItem_i(v3);
+                SetBusy_i(v4);
+                SetItemFlag_i(_Asleep, v4);
+                v5 = ~PostInFuture(100, << _aNO_HALT_i, _aUSABLE_i, #ClearBusy_i >>, v4);
+            }
+        }
+    }
+}
+
+Routine Poison accepts a0 #locals(4) {
+    if (event = _Trigger) {
+        Sfx(70);
+        v0 = ~GetParty();
+        Foreach v3 in v0 {
+            if not ~RollToWin_i(~GetQuality(item), ~GetNPCStat_i(_Str, v3)) {
+                SetItemFlag_i(_Poisoned, ~NPCToItem_i(v3));
+            }
+        }
+    }
+}
+
+Routine Paralyze accepts a0 #locals(6) #uses(SetBusy_i) {
+    if (event = _Trigger) {
+        Sfx(70);
+        v0 = ~GetParty();
+        Foreach v3 in v0 {
+            if not ~RollToWin_i(~GetQuality(item), ~GetNPCStat_i(_Str, v3)) {
+                SetItemFlag_i(_Paralyzed, ~NPCToItem_i(v3));
+                v4 = ~NPCToItem_i(v3);
+                SetBusy_i(v4);
+                v5 = ~PostInFuture(100, << _aNO_HALT_i, _aUSABLE_i, #ClearBusy_i >>, v4);
+            }
+        }
+    }
+}
+
+Routine DamageGuyInParty accepts a0 #locals(4) #uses(~ListCount_i, DoDamage_i) {
+    if (event = _Trigger) {
+        Sfx(70);
+        v0 = ~GetParty();
+        v1 = ~ListCount_i(v0);
+        v2 = ~rndRange(v1, 1);
+        v3 = ~rndRange(~GetQuality(item), 1);
+        DoDamage_i(v3, ~NPCToItem_i(v0::v2));
+    }
+}
+
+Routine Lightning accepts a0 #locals(2) #uses(~ListCount_i, CallLightning_i) {
+    if (event = _Trigger) {
+        Sfx(70);
+        v0 = ~GetParty();
+        v1 = ~rndRange(~ListCount_i(v0), 1);
+        CallLightning_i(v0::v1);
+    }
+}
+
+Routine ExplosionEgg_i accepts a0 #locals(0) #uses(Powder_Keg) {
+    if (event = _Trigger) {
+        Powder_Keg(item);
+    }
+}
+
+Routine StoneHarpiesEgg_i accepts a0 #locals(7) {
+    if (event = _Trigger) {
+        v0 = ~FindNearby_i(0, 5, _Statues, item);
+        Foreach v3 in v0 {
+            v4 = ~GetFrame(v3);
+            if (v4 = 0) {
+                v5 = ~GetCoord(v3);
+                Item_destroy(v3);
+                v6 = ~CreateCreature_i(v5, _Stone_Harpy);
+                Npc_setAlignment(_Evil, v6);
+                SetWorkType(_Combat_0, v6);
+            }
+        }
+    }
+}
+
+Routine LightStuff accepts a0 #locals(9) #uses(Lightsource, Torch, Lamp_Post) {
+    if (event = _Trigger) {
+        event = 1;
+        Sfx(70);
+        v0 = ~GetQuality(item);
+        v1 = ~FindNearby_i(0, v0, _Lightsource, item);
+        Foreach v4 in v1 {
+            Lightsource(v4);
+        }
+        v1 = ~FindNearby_i(0, v0, _Torch, item);
+        Foreach v4 in v1 {
+            Torch(v4);
+        }
+        v1 = ~FindNearby_i(0, v0, _Lamp_Post, item);
+        Foreach v4 in v1 {
+            Lamp_Post(v4);
+        }
+    }
+}
+
+Routine SnuffStuff accepts a0 #locals(9) #uses(Lit_Lightsource, Lit_Torch, Lit_Lamp_Post) {
+    if (event = _Trigger) {
+        Sfx(70);
+        event = 1;
+        v0 = ~GetQuality(item);
+        v1 = ~FindNearby_i(0, v0, _Lit_Lightsource, item);
+        Foreach v4 in v1 {
+            Lit_Lightsource(v4);
+        }
+        v1 = ~FindNearby_i(0, v0, _Lit_Torch, item);
+        Foreach v4 in v1 {
+            Lit_Torch(v4);
+        }
+        v1 = ~FindNearby_i(0, v0, _Lit_Lamp_Post, item);
+        Foreach v4 in v1 {
+            Lit_Lamp_Post(v4);
+        }
+    }
+}
+
+Routine DoorHaunt accepts a0 #locals(7) #uses(~SortByCriteria_i, ~DoorState_i, Door_EW, Door_NS) {
+	if (event = _Trigger) {
+		event = 1;
+		v0 = ~FindNearby_i(0, 40, _Door_EW, item);
+		v0 = (v0 & ~FindNearby_i(0, 40, _Door_NS, item));
+		v1 = << >>;
+		Foreach v4 in v0 {
+			v1 = (v1 & ~GetDist(v4, item));
+		}
+		v0 = ~SortByCriteria_i(v1, v0);
+		v5 = 1;
+		loop {
+			v4 = v0::v5;
+		} while v4 {
+			if (~DoorState_i(v4) = 2) {
+				v5 = (v5 + 1);
+				continue;
+			} else {
+				v6 = ~Item_getType(v4);
+				if (v6 = _Door_EW) {
+					Door_EW(v4);
+				}
+				if (v6 = _Door_NS) {
+					Door_NS(v4);
+				}
+				break;
+			}
+		}
+	}
+}
+
+Routine ChairHaunt accepts a0 #locals(8) #uses(~SortByCriteria_i) {
+    if (event = _Trigger) {
+        Sfx(70);
+        event = 1;
+        v0 = ~FindNearby_i(0, 20, _Chair, item);
+        v1 = << >>;
+        Foreach v4 in v0 {
+            v1 = (v1 & ~GetDist(item, v4));
+        }
+        v0 = ~SortByCriteria_i(v1, v0);
+        v4 = v0::1;
+        if v4 {
+            v5 = ~GetFrame(v4);
+            v6 = (v5 modulo 4);
+            if (v6 < 3) {
+                v7 = ~PostAction(<< _aNEXT_FRAME >>, v4);
+            } else {
+                v5 = (v5 - v6);
+                v7 = ~PostAction(<< _aFRAME, v5 >>, v4);
+            }
+        }
+    }
+}
+
+Routine ToggleSlidersEgg_i accepts a0 #locals(0) #uses(ToggleSliders_i) {
+    if (event = _Trigger) {
+        ToggleSliders_i(65177, item);
+    }
+}
+
+Routine OpenSlidersEgg_i accepts a0 #locals(0) #uses(ToggleSliders_i) {
+    if (event = _Trigger) {
+        ToggleSliders_i(1, item);
+    }
+}
+
+Routine CloseSlidersEgg_i accepts a0 #locals(0) #uses(ToggleSliders_i) {
+    if (event = _Trigger) {
+        ToggleSliders_i(0, item);
+    }
+}
+
+Routine uegg_270 accepts a0 #locals(12) {
+    if (event = _Trigger) {
+        v0 = ~GetQuality(item);
+        v1 = ~GetCoord(item);
+        v2 = 768;
+        if ((v0 = 0) or (v0 > 6)) {
+            PrintError_i("Quality 0 for egg 270");
+        }
+        if (v0 = 6) {
+            v0 = ~rndRange(5, 1);
+            v3 = 130;
+        }
+        if (v0 = 1) {
+            v2 = 768;
+            v4 = false;
+            v5 = ~FindNearby_i(0, 3, v2, item);
+            Foreach v8 in v5 {
+                v4 = true;
+            }
+            if not v4 {
+                v9 = ~Item_create(v2);
+                if v9 {
+                    v9 = ~PopToMap(v1);
+                    Sfx(119);
+                }
+            }
+            terminate;
+        }
+        if (v0 = 2) {
+            v2 = 561;
+            v3 = 40;
+        }
+        if (v0 = 3) {
+            v2 = 895;
+            v3 = 41;
+        }
+        if (v0 = 4) {
+            v2 = 900;
+            v3 = 104;
+        }
+        if (v0 = 5) {
+            v2 = 902;
+            v3 = 69;
+        }
+        v4 = false;
+        v5 = ~FindNearby_i(16, 3, v2, item);
+        Foreach v8 in v5 {
+            v4 = true;
+        }
+        if not v4 {
+            v9 = ~Item_create(v2);
+            if v9 {
+                v9 = ~PopToMap(v1);
+                Sfx(v3);
+            }
+        }
+    }
+}
+
+Usable PartyWaits_i #locals(4) #uses(~RemoveFromList_i) {
+    v0 = ~RemoveFromList_i(~GetParty(), ~NPCToItem_i(_Avatar));
+    Foreach v3 in v0 {
+        SetWorkType(_Wait, v3);
+    }
+}

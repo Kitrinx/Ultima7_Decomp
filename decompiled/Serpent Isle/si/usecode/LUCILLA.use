@@ -1,0 +1,879 @@
+Routine Lucilla accepts a0 #locals(5) #uses(LucillaBegsRelease_i, ~LordOrLady, FaceAvatar_i, Bark_i, ~GimmePathEgg, PartyFaces_i, SayIfNear_i, ~IsNPCNear, ~PartyUtters, ~IsInInv, ~AskList, LucillaSellsFood_i, LucillaSellsDrink_i, ~AskYesNo, ~GiveItemsOrDrop_i) {
+    v0 = ~GetCoord(item);
+    if ((v0::1 >= 1074) and ((v0::1 <= 1081) and ((v0::2 >= 996) and ((v0::2 <= 1003) and (v0::3 < 5))))) {
+        LucillaBegsRelease_i();
+        terminate;
+    }
+    v1 = ~LordOrLady();
+    if (event = _NearDeath) {
+        v0 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #Paladin >>, item);
+    }
+    if ((event = _Converse) and (~GetWorkType(_Lucilla) <> _Wait)) {
+        v2 = ~GetCoord(_Lucilla);
+        if ($lucillainvited and ((~GetWorkType(_Lucilla) = _Sleep) and ((v2::1 > 1071) and ((v2::1 < 1087) and ((v2::2 > 2640) and (v2::2 < 2655)))))) {
+            FaceAvatar_i(65466);
+            SetWorkType(_Wait, _Lucilla);
+            Bark_i(2, "@Yes, love?@", _Lucilla);
+            v0 = ~PostInFuture(10, << _aNO_HALT_i, _aUSABLE_i, #Wench >>, _Lucilla);
+            SetMusic(~GimmePathEgg(1, 5), 28);
+        } else {
+            Item_bark("@Miss!@", _Avatar);
+            PartyFaces_i(65466);
+            if ~AvatarSex() {
+                Bark_i(2, "@Yes, dearie?@", _Lucilla);
+            } else {
+                Bark_i(2, "@Yes, handsome?@", _Lucilla);
+            }
+            Bark_i(2, "Hello.", _Lucilla);
+            SetWorkType(_Talk, _Lucilla);
+        }
+    }
+    if (event = _Talking) {
+        Npc_schedule(_Lucilla);
+        ClearBark_i(_Lucilla);
+        SetSpeaker0_i(0, _Lucilla);
+        if ($lucillainvited and (~GetWorkType(_Lucilla) = _Sleep)) {
+            ["Oh, darling! Let us meet in my bedroom..."];
+            Bark_i(0, "@I am so sleepy...@", _Lucilla);
+            Npc_schedule(_Lucilla);
+            terminate;
+        }
+        if not ~GetItemFlag_i(_Met, _Lucilla) {
+            if not ~AvatarSex() {
+                ["Forgive my boldness, but I must say that thou hast a fine build, milord! Surely, thou hast overcome many foes with the powerful thrust of thy weapon..."];
+            } else {
+                ["What can I do for thee, dear?"];
+            }
+            if ~IsNPCNear_i(_Spektor) {
+                SayIfNear_i("@I do hope that I am not interrupting...@", 65459);
+                SetSpeakerSlot_i(0);
+            }
+            ["My name is Lucilla. Is there anything I can do for thee? Anything at all?"];
+            SetItemFlag_i(_Met, _Lucilla);
+        } else {
+            ["Hello again!"];
+        }
+        TurnOn(<< "duties" >>);
+        if ~IsNPCNear(_Spektor) {
+            TurnOn("interrupting");
+        }
+        if $lucillakissed {
+            TurnOn("rendezvous");
+        }
+        if $lucillalovedandral {
+            TurnOn("Andral");
+        }
+        if $spektorarrested {
+            TurnOn("Spektor");
+        }
+        if ($asklucillaring and not $knowengagementring) {
+            TurnOn("lost ring");
+        }
+        if ($doneknightstest and not $gavemeat) {
+            TurnOn("banquet stew");
+        }
+        if ($foundsimonbottle and (~GetWorkType(_Simon) <> _Wait)) {
+            TurnOn("brown bottle");
+        }
+        if ($AVATAR_IS_KNIGHT and not (~GetItemFlag_i(_Dead, _Simon) and not ($marstenarrested and not $spektorarrested))) {
+            TurnOn("traitor");
+        }
+        TurnOn(<< "name", "buy", "bye" >>);
+        converse {
+            key ("traitor") {
+                TurnOff("traitor");
+                ["This is all so confusing. Lord Brendann is certain that there must be a traitor, and the Wolves are united behind him."];
+                ["Yet I have also heard that there is certainly no traitor, and that we should not indulge in hysteria..."];
+                v3 = ~PartyUtters(false, 0, "@Who told thee this, madam?@", 1);
+                if (v3 <> 65180) {
+                    SetSpeakerSlot_i(0);
+                    ["Um... no single person, actually. I have merely heard it said in conversation. In a tavern, one hears everything."];
+                }
+            }
+            key ("brown bottle") {
+                TurnOff("brown bottle");
+                if ~IsInInv(9, 65177, _Bottles, 1, _Party) {
+                    ["'Tis a very dirty bottle. Thou didst find this in the woods?"];
+                    ["Ah! 'Tis one of Simon's ale bottles. I order them specially for him, as only he can stand the taste."];
+                    ["Fawnish ale -- phew! A horrible brew."];
+                    $knowsimonbottle = true;
+                } else {
+                    ["If thou couldst bring me the bottle, I am sure that I could identify it. We supply ale and spirits for the entire town from the pub where I work."];
+                    ["If the bottle is of an uncommon type, then perhaps that would be a clue."];
+                }
+            }
+            key ("name") {
+                TurnOff("name");
+                ["My name is Lucilla."];
+                SetItemFlag_i(_Met, _Lucilla);
+            }
+            key ("duties") {
+                TurnOff("duties");
+                ["I run the Slashing Sword, the best pub in Monitor. Thou mightest think that cooking is not a very Knightly activity, but I assure thee, feeding the warriors in this town is indeed a Quest of Courage!"];
+                if (~GetWorkType(_Lucilla) = _Waiter) {
+                    ["If thou dost want anything to eat or drink, thou hast merely to say so, <v1>."];
+                } else {
+                    ["Please come by the pub sometime."];
+                }
+                if not $AVATAR_IS_KNIGHT {
+                    ["And I would love to chat further, but I do not speak with strangers. My standards are very high, and thou art not a Knight of Monitor."];
+                    Bark_i(0, "@Not a Knight!@", _Lucilla);
+                    terminate;
+                } else {
+                    TurnOn(<< "The Slashing Sword", "cooking", "Quest of Courage" >>);
+                }
+            }
+            key ("buy") {
+                if (~GetWorkType(_Lucilla) = _Waiter) {
+                    ["What wouldst thou like, <v1>?"];
+                    v4 = ~AskList(<< "food", "drink" >>);
+                    if (v4 = "food") {
+                        LucillaSellsFood_i();
+                    }
+                    if (v4 = "drink") {
+                        LucillaSellsDrink_i();
+                    }
+                } else {
+                    ["If thou wouldst return when we are open, perhaps I could serve thee food or drink..."];
+                    TurnOff("buy");
+                }
+            }
+            key ("The Slashing Sword") {
+                TurnOff("The Slashing Sword");
+                ["'Tis a pub that hath been handed down generation to generation, originating with my great-grandfather. Although 'tis a wonderful place to have a meal, most of the men in the town come by to court me!"];
+                if not ~AvatarSex() {
+                    ["I enjoy all the attention..."];
+                    TurnOn("court");
+                }
+                TurnOn(<< "great-grandfather", "men" >>);
+            }
+            key ("great-grandfather") {
+                TurnOff("great-grandfather");
+                ["He was not only the founder of the pub, but he was a Champion Knight of Monitor! He wore the Helm of Monitor for several years, before he was bested in a tournament."];
+                TurnOn(<< "Champion Knight", "tournament" >>);
+            }
+            key ("Champion Knight") {
+                TurnOff("Champion Knight");
+                ["I can hardly speak of the Champion Knight without remembering Astrid's foul death at the hands of the Goblins."];
+                if $gothelmofmonitor {
+                    ["I am so glad that thou hast recaptured the Helm of Monitor. Thou dost make a fine Champion Knight in thine own right."];
+                } else {
+                    ["I fear that there is none worthy to fill her shoes as Champion Knight!"];
+                    TurnOn("worthy");
+                    if not ~AvatarSex() {
+                        ["Except, perhaps, thyself? I must believe that thou hast had thy share of conquests in thy time..."];
+                    }
+                }
+            }
+            key ("worthy") {
+                TurnOff("worthy");
+                ["Monitor is not the town it once was. Our ancestors founded a settlement built on the Principle of Courage."];
+                ["But today, greed and glory have corrupted our Knights. Monitor needs a champion that is not only a leader on the battlefield, but someone who can stir their hearts and lead them back to what it means to be a Knight."];
+                if not $gothelmofmonitor {
+                    ["I wish a new Champion Knight would arise, one who can not only retrieve the Helm of Monitor, but also right the wrongs in this town!"];
+                }
+                if not ~AvatarSex() {
+                    ["Could that person be thee? I would like it to be so."];
+                } else {
+                    v3 = ~PartyUtters(false, 0, "@Perhaps this is a quest for the Avatar?@", 1);
+                    if (v3 <> 65180) {
+                        SetSpeakerSlot_i(0);
+                    }
+                }
+            }
+            key ("tournament") {
+                TurnOff("tournament");
+                ["All the Knights think about is fighting! And who do they fight? The Goblins? No! They prefer to spar with one another at the List Field!"];
+                ["Luther is the worst. Oh, how I hate him!"];
+                TurnOn("Luther");
+            }
+            key ("Luther") {
+                TurnOff("Luther");
+                ["What a buffoon! He thinks every woman in this town wants him, but I find him repulsive!"];
+                ["To prove his prowess, he torments the weakest Knights and challenges them to meet him on the List Field."];
+                ["And when they lose -- which they must, since Luther is such a powerful brute -- he gloats over them."];
+                if not $HAS_DUPRE_SHIELD {
+                    ["They say that that new shield of his doth have special powers, so that now he is truly invincible!"];
+                    ["Well, I say if it is magical, then force him to not use it! Monitorians do not use magic weapons or armour..."];
+                    ["But no one can tell Luther anything."];
+                    $askluthermagicshield = true;
+                }
+                $lucillasaidrepellant = true;
+            }
+            key ("men") {
+                TurnOff("men");
+                if ~AvatarSex() {
+                    ["Dost thou not know that men are scum? Yet we cannot leave them alone..."];
+                    ["Wouldst thou like to know more about the men of Monitor?"];
+                    if ~AskYesNo() {
+                        ["Avoid Brendann -- he sees women as trophies, to be won and then set on a shelf. He is shallow and insincere."];
+                        ["Templar is very attractive, I think. But Caladin is a brute, and Luther is a clod!"];
+                    } else {
+                        ["'Tis just as well -- there are no great lovers in this place!"];
+                    }
+                } else {
+                    ["Why is it that a woman must have a man? I have looked and looked, and I have not yet found the one for me."];
+                    ["He must be tough, yet gentle with his woman. Brave, but afraid to disappoint his mate. He must be devious enough to win many battles, yet fair enough to consider me as his equal..."];
+                }
+            }
+            key ("Andral") {
+                TurnOff("Andral");
+                ["For a time we were quite close. I still have great respect for his talents, but in truth he always put me second to his work. I suppose I enjoy being the center of attention too much."];
+            }
+            key ("court") {
+                TurnOff("court");
+                ["Dost thou find me beautiful? I admit I love the attention! But I have never found the right man for me..."];
+                if not ~AvatarSex() {
+                    ["But I sense that thou art somehow different, milord."];
+                    if $spektorandlucillacaught {
+                        ["Listen, Spektor and I truly have nothing together. Honestly, 'tis nothing."];
+                    }
+                    ["Wouldst thou like to meet later?"];
+                    $lucillakissed = true;
+                    if ~AskYesNo() {
+                        label_103:
+                        ["Then meet me at the pub after we have closed, in the wee hours before dawn. 'Tis the only time I can be alone with thee since I work so late."];
+                        ["I cannot wait."];
+                        $lucillainvited = true;
+                    } else {
+                        ["Oh. Be that way, then. There are plenty of others who are interested in me!"];
+                    }
+                }
+            }
+            key ("cooking") {
+                TurnOff("cooking");
+                ["If I do say so myself, I am a master of cooking poultry. Or as they say..."];
+                if not ~AvatarSex() {
+                    ["Breasts and thighs, breasts and thighs. And which dost thou prefer, milord? But do not answer yet..."];
+                } else {
+                    ["If I cannot succeed in the bedroom, I might as well try in the kitchen! Homely women make good cooks, they say..."];
+                }
+            }
+            key ("Quest of Courage") {
+                TurnOff("Quest of Courage");
+                ["Thou knowest -- the quests to prove that thou art fit to bear thy Knighthood..."];
+                if $gothelmofmonitor {
+                    ["Like when thou didst retrieve the Helm of Monitor from that vile Pomdirgun."];
+                } else {
+                    ["Surely, a fine young warrior like thyself dost plan to partake in the Quest to retrieve the Helm of Monitor?"];
+                    if ~AskYesNo() {
+                        ["If only we could learn the secret of their hidden camp! But it remains a mystery..."];
+                    } else {
+                        ["Too dangerous for a coward like thyself? And I thought better of thee..."];
+                    }
+                }
+            }
+            key ("interrupting") {
+                TurnOff("interrupting");
+                ["Surely, thou dost know Spektor the Financier?"];
+                SetSpeaker1_i(0, _Spektor);
+                ["I must be going. Pressing town business, that sort of thing."];
+                SetSpeakerSlot_i(0);
+                ["And it is so seldom that we are able to talk! Be sure to give my greetings to Lord Marsten."];
+                SetSpeakerSlot_i(1);
+                ["I shall!"];
+                $spektorandlucillacaught = true;
+                Bark_i(0, "@Farewell!@", _Lucilla);
+                Bark_i(2, "@Anon!@", _Spektor);
+                PathfindNPC_i(true, #Spektor, _Spektor, _Path_Success, << 1051, 2642, 0 >>, _Spektor);
+                terminate;
+            }
+            key ("rendezvous") {
+                TurnOff("rendezvous");
+                if not $lucillainvited {
+                    ["Hast thou changed thy mind about meeting?"];
+                    if ~AskYesNo() {
+                        goto label_103;
+                    } else {
+                        ["Suit thyself."];
+                    }
+                } else {
+                    ["The time is not right. I cannot see thee now. Another time, my love..."];
+                    Bark_i(0, "@Not now!@", _Lucilla);
+                    terminate;
+                }
+            }
+            key ("Spektor") {
+                TurnOff("Spektor");
+                if not $spektorarrested {
+                    ["Very well, I shall bare my soul to thee."];
+                    if $spektorandlucillacaught {
+                        ["I suspected that thou knewest when thou didst catch Spektor and I together that time. But we could not fool thee..."];
+                    }
+                    ["Spektor and I were lovers. Canst thou believe it? Yet there was something appealing about that man..."];
+                    ["Despite my conscience, I have kept his guilty secret for these many months. It casts filth upon my soul. I am ashamed."];
+                    TurnOn(<< "lovers", "secret" >>);
+                } else {
+                    ["Now that Spektor hath been arrested for his crimes, I wonder what I shall do with this key that he gave to me for safekeeping. Perhaps I shall give it to thee. Since thou hast determined all of what hath been happening, perhaps thou wilt be able to put it to good use."];
+                    if not $HAVE_SPEKTOR_KEY {
+                        v0 = ~GiveItemsOrDrop_i(true, false, 5, 98, 641, 1, _Avatar);
+                        $HAVE_SPEKTOR_KEY = true;
+                    }
+                }
+            }
+            key ("lovers") {
+                TurnOff("lovers");
+                ["This is so embarrassing. To think that I could have had any man in this town, and yet I gave mine heart to... Spektor!"];
+                ["A Knight who had scarce drawn his sword in many moons..."];
+            }
+            key ("secret") {
+                TurnOff("secret");
+                ["Spektor played a key part in Lord Marsten's plan to destroy the Bears and Wolves, so that the Leopards could rule Monitor!"];
+                ["They had a secret cache of money and weapons hidden somewhere in the mountains west of town."];
+                ["I do not know what else they hid there, but Spektor said that they had the power to someday rule all of Serpent Isle!"];
+            }
+            key ("lost ring") {
+                TurnOff("lost ring");
+                ["A ring so pretty must be intended for a loved one. Perhaps a ring of marriage or engagement."];
+            }
+            key ("banquet stew") {
+                TurnOff("banquet stew");
+                if ~TakeFromParty_i(false, 3, _All, _Mage_Food, 3) {
+                    ["Very good! Now that I have the meat, thy stew will be ready for the banquet. Thy banquet will be held at the Knight's Banquet Hall. It is located south of the Pub. Thou shalt find it on Banquet Hall Road."];
+                    $gavemeat = true;
+                } else {
+                    ["Now that thou hast completed the Knight's Test, thou must now bring me the meat for thy banquet stew."];
+                }
+            }
+            key ("bye") {
+                Bark_i(0, "@Must be going...@", _Avatar);
+                if not ~AvatarSex() {
+                    Bark_i(2, "@Goodbye, lover.@", _Lucilla);
+                } else {
+                    Bark_i(2, "@Goodbye, milady.@", _Lucilla);
+                }
+                break;
+            }
+        }
+        clear_answers;
+    }
+}
+
+Usable LucillaSellsFood_i #locals(19) #uses(~LordOrLady, ~AskOrdList, ~AskYesNo, ~LucillaHaggles_i, ~SellItem_i, ~PartyUtters) {
+    v0 = ~LordOrLady();
+    v1 = ~AvatarSex();
+    PushKeys();
+    v2 = true;
+    v3 = << "nothing", "poultry", "beef", "ribs", "bread", "fish", "sausage", "cake" >>;
+    v4 = << 0, 377, 377, 377, 377, 377, 377, 377 >>;
+    v5 = << 65177, 10, 9, 23, 0, 12, 7, 4 >>;
+    v6 = << 0, 8, 12, 13, 4, 6, 9, 4 >>;
+    v7 = << 0, 5, 8, 8, 2, 4, 6, 2 >>;
+    v8 = << 0, 1, 1, 1, 1, 1, 1, 1 >>;
+    v9 = << 0, 1, 1, 1, 1, 1, 1, 1 >>;
+    v10 = 951;
+    ["Name thine appetites, <v0>."];
+    While v2 {
+        v11 = ~AskOrdList(v3);
+        if (v11 = 1) {
+            if v1 {
+                ["As thou dost wish."];
+            } else {
+                ["As thou dost wish, love."];
+            }
+            v2 = false;
+        } else {
+            v12 = v6::v11;
+            v13 = 0;
+            v14 = ~rndRange(6, 1);
+            if (v14 = 1) {
+                v15 = "Doth that sound good?";
+            }
+            if (v14 = 2) {
+                v15 = "Dost thou take this price?";
+            }
+            if (v14 = 3) {
+                v15 = "Dost thou find the price agreeable?";
+            }
+            if (v14 = 4) {
+                v15 = "Dost thou agree?";
+            }
+            if (v14 = 5) {
+                v15 = "How doth that sound?";
+            }
+            if (v14 = 6) {
+                v15 = "Wilt thou agree to my price?";
+            }
+            if (v11 = 2) {
+                ["<v12> monetari for the most delectable fowl thou hast ever tasted."];
+                ["<v15>"];
+                v16 = "fowl";
+            }
+            if (v11 = 3) {
+                ["The beef dinner costs <v12> monetari, a bargain at twice the price."];
+                ["<v15>"];
+                v16 = "beef dinners";
+            }
+            if (v11 = 4) {
+                ["The ribs are a specialty of mine. Special spices, thou seest... They cost <v12> monetari."];
+                ["<v15>"];
+                v16 = "ribs";
+            }
+            if (v11 = 5) {
+                ["My bread is baked fresh every day. <v12> monetari is my price."];
+                ["<v15>"];
+                v16 = "loaves of bread";
+            }
+            if (v11 = 6) {
+                ["The fish dinner costs <v12> monetari. 'Tis grilled trout with a nice butter sauce to top it. Very delicious, <v0>."];
+                ["<v15>"];
+                v16 = "fish dinners";
+            }
+            if (v11 = 7) {
+                ["<v12> monetari for my fine sausage dinner, <v0>."];
+                ["<v15>"];
+                v16 = "sausages";
+            }
+            if (v11 = 8) {
+                ["<v12> monetari is a low price to pay for my cake, <v0>, if thou dost like things that are sweet..."];
+                ["<v15>"];
+                v16 = "cakes";
+            }
+            if (v12 = v7::v11) {
+                if ~AskYesNo() {
+                    v17 = v12;
+                } else {
+                    v17 = 0;
+                }
+            } else {
+                v17 = ~LucillaHaggles_i(v7::v11, v6::v11);
+            }
+            if (v17 > 0) {
+                if (v9::v11 = 1) {
+                    ["How many <v16> wouldst thou like?"];
+                    v13 = ~SellItem_i(false, 1, 10, v17, v10, v8::v11, v5::v11, v4::v11);
+                } else {
+                    v13 = ~SellItem_i(false, 1, 0, v17, v10, 1, v5::v11, v4::v11);
+                }
+            }
+            if (v13 = 1) {
+                ["Enjoy thy meal!"];
+            } else {
+                if (v13 = 2) {
+                    ["I believe thou canst not carry so much food, <v0>."];
+                } else {
+                    if (v13 = 3) {
+                        v18 = ~PartyUtters(false, 0, (("@But " + v0) + ", we have not the monetari to pay for this.@"), 1);
+                        if (v18 <> 65180) {
+                            SetSpeaker0_i(0, _Lucilla);
+                            ["I am truly sorry, but thou dost not have enough money to pay for that, <v0>."];
+                        } else {
+                            ["It would appear thou dost not have enough monetari for that..."];
+                        }
+                        if (31 < (~GetNPCID_i(_Lucilla) + 6)) {
+                            SetNPCID_i(31, _Lucilla);
+                        } else {
+                            SetNPCID_i((~GetNPCID_i(_Lucilla) + 6), _Lucilla);
+                        }
+                    } else {
+                    }
+                }
+            }
+            ["Wouldst thou care for more?"];
+            v2 = ~AskYesNo();
+        }
+    }
+    PopKeys();
+}
+
+Usable LucillaSellsDrink_i #locals(18) #uses(~LordOrLady, ~AvatarName, ~AskOrdList, ~AskYesNo, ~LucillaHaggles_i, ~SellItem_i, ~PartyUtters) {
+    v0 = ~LordOrLady();
+    v1 = ~AvatarName();
+    v2 = ~AvatarSex();
+    PushKeys();
+    v3 = true;
+    v4 = << "nothing", "wine", "mead", "ale" >>;
+    v5 = << 0, 616, 616, 616 >>;
+    v6 = << 65177, 0, 5, 3 >>;
+    v7 = << 0, 5, 6, 3 >>;
+    v8 = << 0, 2, 4, 1 >>;
+    v9 = << 0, 1, 1, 1 >>;
+    v10 = << 0, 1, 1, 1 >>;
+    v11 = 951;
+    ["So what hast thou a thirst for, <v0>?"];
+    While v3 {
+        v12 = ~AskOrdList(v4);
+        if (v12 = 1) {
+            if v2 {
+                ["If thou dost become thirsty, ask me again, <v0>!"];
+            } else {
+                ["Ask me again, handsome, if thou dost become... thirsty."];
+            }
+            v3 = false;
+        } else {
+            v13 = v7::v12;
+            v14 = 0;
+            if (v12 = 2) {
+                ["The wine is a bit dry and a little sweet. I will sell thee a bottle for <v13> monetari."];
+                ["Dost thou accept?"];
+                v15 = "wine bottles";
+            }
+            if (v12 = 3) {
+                ["Our mead is flavorful and very filling, <v0>."];
+                ["For the price of <v13> monetari, thou wilt accept some?"];
+                v15 = "bottles of mead";
+            }
+            if (v12 = 4) {
+                ["<v13> monetari for a mug of ale. All the men seem to enjoy it! Dost thou want any?"];
+                v15 = "mugs of ale";
+            }
+            if (v13 = v8::v12) {
+                if ~AskYesNo() {
+                    v16 = v13;
+                } else {
+                    v16 = 0;
+                }
+            } else {
+                v16 = ~LucillaHaggles_i(v8::v12, v7::v12);
+            }
+            if (v16 > 0) {
+                if (v10::v12 = 1) {
+                    ["How many <v15> wouldst thou like?"];
+                    v14 = ~SellItem_i(false, 1, 10, v16, v11, v9::v12, v6::v12, v5::v12);
+                } else {
+                    v14 = ~SellItem_i(false, 1, 0, v16, v11, 1, v6::v12, v5::v12);
+                }
+            }
+            if (v14 = 1) {
+                ["To thine health, <v0>!"];
+            } else {
+                if (v14 = 2) {
+                    ["Thou shouldst not travel so heavily burdened -- I do not think that thou canst bear the bottles that thou desirest!"];
+                } else {
+                    if (v14 = 3) {
+                        v17 = ~PartyUtters(false, 0, (("@But " + v1) + ", we lack adequate funds!@"), 1);
+                        if (v17 <> 65180) {
+                            SetSpeaker0_i(0, _Lucilla);
+                            ["Then thy thirst will not be quenched here."];
+                        } else {
+                            ["It seems thou dost not have the funds to pay me..."];
+                        }
+                        if (31 < (~GetNPCID_i(_Lucilla) + 6)) {
+                            SetNPCID_i(31, _Lucilla);
+                        } else {
+                            SetNPCID_i((~GetNPCID_i(_Lucilla) + 6), _Lucilla);
+                        }
+                    } else {
+                    }
+                }
+            }
+            ["Wouldst thou care for more?"];
+            v3 = ~AskYesNo();
+        }
+    }
+    PopKeys();
+}
+
+Function ~LucillaHaggles_i accepts a0, a1 #locals(17) #uses(~LordOrLady, ~AskList, ~Haggle_i, ~AskYesNo) {
+    v2 = ~LordOrLady();
+    v3 = ~AvatarSex();
+    if v3 {
+        v4 = "Milady";
+    } else {
+        v4 = "Milord";
+    }
+    if ($AVATAR_IS_KNIGHT = true) {
+        if v3 {
+            v4 = "Milady Knight";
+        } else {
+            v5 = ~rndRange(3, 1);
+            if (v5 = 1) {
+                v4 = "My brave knight";
+            }
+            if (v5 = 2) {
+                v4 = "My valiant knight";
+            }
+            if (v5 = 3) {
+                v4 = "My sweet knight";
+            }
+        }
+    }
+    v6 = v1;
+    v7 = ((v0 / 3) * 2);
+    v8 = (15 - (~GetNPCID_i(_Lucilla) / 2));
+    v9 = 0;
+    v10 = 1;
+    v11 = 0;
+    v12 = 2;
+    v13 = ~GetNPCID_i(_Lucilla);
+    While v10 {
+        v14 = ~AskList(<< "yes", "no", "haggle" >>);
+        if (v14 = "no") {
+            return 0;
+        } else {
+            if (v14 = "yes") {
+                v15 = 0;
+                goto label_20;
+            }
+        }
+        v16 = ~Haggle_i(v9, v8, v11, v7, v12, v0, v6);
+        v11 = (v11 + 1);
+        v9 = v16::4;
+        v15 = v16::3;
+        v17 = v6;
+        v6 = v16::2;
+        v7 = v16::1;
+        label_20:
+        v18 = ~Random(3);
+        if (v15 < 2) {
+            if (v6 < (v0 + ((v1 - v0) / 4))) {
+                if v3 {
+                    if (v18 = 1) {
+                        ["<v4>, thou art very good at this... If I listened to thee much more, I would be penniless."];
+                    }
+                    if (v18 = 2) {
+                        ["Thou dost bargain as well as any, <v2>. 'Tis truly a very low price I have agreed to!"];
+                    }
+                    if (v18 = 3) {
+                        ["Oh, if I were better at this, perhaps I could make more monetari."];
+                    }
+                } else {
+                    if (v18 = 1) {
+                        ["If thou dost bargain so well as to bring my price this low, perhaps thou art better at other things as well..."];
+                    }
+                    if (v18 = 2) {
+                        ["<v4>, thy words are very powerful... Perhaps thou dost wish to wrestle somewhat differently?"];
+                    }
+                    if (v18 = 3) {
+                        ["Ah, my sweet... Thou hast a very quick wit to bargain me so low. Are other parts of thee as well-equipped as thy tongue?"];
+                    }
+                }
+            } else {
+                if (v6 < (v0 + ((v1 - v0) / 3))) {
+                    if v3 {
+                        if (v18 = 1) {
+                            ["A low price, but thou hast bargained well, dost thou not think?"];
+                        }
+                        if (v18 = 2) {
+                            ["<v4>, thou hast bargained fairly, but this is a very low price."];
+                        }
+                        if (v18 = 3) {
+                            ["A bit lower than I had hoped, <v2>, but 'twill do."];
+                        }
+                    } else {
+                        if (v18 = 1) {
+                            ["<v4>, thou art getting a very good value for thy monetari, even if thy clever tongue did lower my price..."];
+                        }
+                        if (v18 = 2) {
+                            ["'Tis not often a man gets the better of me! Thou shouldst enjoy thyself, <v2>, taking advantage of a poor girl so..."];
+                        }
+                        if (v18 = 3) {
+                            ["Oooh..."];
+                            ["Thou didst certainly haggle a good price from me! Thou art naughty..."];
+                        }
+                    }
+                } else {
+                    if (v6 < (v0 + ((v1 - v0) / 2))) {
+                        if v3 {
+                            if (v18 = 1) {
+                                ["A fair enough price, <v2>."];
+                            }
+                            if (v18 = 2) {
+                                ["It hath a been pleasure to trade with thee, <v2>."];
+                            }
+                            if (v18 = 3) {
+                                ["Thou hast made a good bargain, <v2>."];
+                            }
+                        } else {
+                            if (v18 = 1) {
+                                ["Oooh..."];
+                                ["Thou hast given me goose bumps, <v2>. Perhaps thou wilt spend more?"];
+                            }
+                            if (v18 = 2) {
+                                ["It hath been a pleasure trading with thee! Most men would try to take advantage of my sweet nature and lower my price even further!"];
+                            }
+                            if (v18 = 3) {
+                                ["Ah, my sweet, thou dost know how to make a girl feel well-liked!"];
+                            }
+                        }
+                    } else {
+                        if v3 {
+                            if (v18 = 1) {
+                                ["<v4>, thou mayest buy from me anytime!"];
+                            }
+                            if (v18 = 2) {
+                                ["Thou art most generous to offer such a price, <v2>!"];
+                            }
+                            if (v18 = 3) {
+                                ["Enjoy thy stay in Monitor, <v2>. Thou art most welcome at The Slashing Blade!"];
+                            }
+                        } else {
+                            if (v18 = 1) {
+                                ["<v4>, thou hast made me cry! 'Tis most generous of thee!"];
+                            }
+                            if (v18 = 2) {
+                                ["Dost thou give all of thy money to other girls too, <v2>, or only to me?"];
+                            }
+                            if (v18 = 3) {
+                                ["'Tis sweet of thee to agree to this price, love..."];
+                            }
+                        }
+                    }
+                }
+            }
+            if v3 {
+                ["Thou hast agreed to a price of <v6> monetari, <v2>?"];
+            } else {
+                ["So, handsome, thou hast agreed to <v6> monetari?"];
+            }
+            if ~AskYesNo() {
+                if (v13 > 1) {
+                    SetNPCID_i((v13 - 2), _Lucilla);
+                }
+                return v6;
+            } else {
+                if v3 {
+                    if (v18 = 1) {
+                        ["Thou art a vindictive woman to argue with me and then change thy mind out of spite!"];
+                    }
+                    if (v18 = 2) {
+                        ["We in Monitor do not forget those who cross us!"];
+                        ["I do not think I shall be thy friend unless thou dost acquire better manners!"];
+                        terminate;
+                    }
+                    if (v18 = 3) {
+                        ["Art thou jealous of me to change thy mind so? If so, I am not amused!"];
+                        terminate;
+                    }
+                } else {
+                    if (v18 = 1) {
+                        ["Oooh! Thou dost infuriate me! Just like a man to lead a poor girl on so!"];
+                        terminate;
+                    }
+                    if (v18 = 2) {
+                        ["Do not think that I am fooled by thine handsome features! Thou art merely a mean- spirited man, the same as any other!"];
+                        terminate;
+                    }
+                    if (v18 = 3) {
+                        ["<v4>, what of our bargain?! Dost thou think to take advantage of me?"];
+                    }
+                }
+                if (31 < (v13 + 10)) {
+                    SetNPCID_i(31, _Lucilla);
+                } else {
+                    SetNPCID_i((v13 + 10), _Lucilla);
+                }
+                return 0;
+            }
+        }
+        if (v9 = 1) {
+            if (v15 = 5) {
+                ["I said that <v6> was my final offer. Dost thou accept?"];
+                if (v13 < 28) {
+                    SetNPCID_i((v13 + 4), _Lucilla);
+                }
+                if ~AskYesNo() {
+                    return v6;
+                }
+                v10 = 0;
+            } else {
+                ["<v6> monetari is my final offer."];
+                if (v13 < 30) {
+                    SetNPCID_i((v13 + 2), _Lucilla);
+                }
+            }
+        } else {
+            if (v15 = 2) {
+                if v3 {
+                    if (v18 = 1) {
+                        ["'Tis a pleasure to barter with thee, <v2>. <v6> monetari?"];
+                    }
+                    if (v18 = 2) {
+                        ["<v4>, we are both women and know good prices when we see them. How doth <v6> monetari sound to thee?"];
+                    }
+                    if (v18 = 3) {
+                        ["As one woman to another, wouldst thou consider <v6> monetari?"];
+                    }
+                } else {
+                    if (v18 = 1) {
+                        ["Sweetie, thou art a pleasure to trade with... How doth <v6> monetari sound?"];
+                    }
+                    if (v18 = 2) {
+                        ["Well, handsome, how doth <v6> monetari sound to thee?"];
+                    }
+                    if (v18 = 3) {
+                        ["<v4>, thou hast offered a goodly price... Wouldst thou pay <v6> monetari instead?"];
+                    }
+                }
+            }
+            if (v15 = 3) {
+                if v3 {
+                    if (v18 = 1) {
+                        ["I am not quite certain, though 'tis not a bad offer. I would ask <v6> monetari?"];
+                    }
+                    if (v18 = 2) {
+                        ["I need to make some profit... How doth <v6> monetari sound to thee?"];
+                    }
+                    if (v18 = 3) {
+                        ["Thou dost understand better than men how we women make less in our dealings... Perhaps <v6> monetari?"];
+                    }
+                } else {
+                    if (v18 = 1) {
+                        ["Well, my sweet, 'tis not the highest amount thou couldst offer a girl. Perhaps <v6> monetari?"];
+                    }
+                    if (v18 = 2) {
+                        ["Certainly mine handsome warrior could offer a better price than that! How doth <v6> monetari sound to thee?"];
+                    }
+                    if (v18 = 3) {
+                        ["<v4>, how thy muscles do bulge! Thou art certainly the stongest man in Monitor..."];
+                        ["Perhaps thou wilt agree to <v6> monetari?"];
+                    }
+                }
+            }
+            if (v15 = 4) {
+                if v3 {
+                    if (v18 = 1) {
+                        ["What sort of offer is this?! How doth <v6> monetari sound to thy shrewish ears?"];
+                    }
+                    if (v18 = 2) {
+                        ["Thou dost not offer more than a selfish man would! <v6> monetari?"];
+                    }
+                    if (v18 = 3) {
+                        ["Thou art a very deceptive female! And I thought thou wert better than most! I can offer no less than <v6> monetari."];
+                    }
+                } else {
+                    if (v18 = 1) {
+                        ["Certainly, thou wouldst not offer such a low price to me... How doth <v6> monetari sound to thee?"];
+                    }
+                    if (v18 = 2) {
+                        ["And I thought thou wert different than the other men in Monitor! This is not an acceptable price. <v6> monetari is what I offer thee."];
+                        ["What dost thou say?"];
+                    }
+                    if (v18 = 3) {
+                        ["Didst thou think thou couldst sweet-talk me like any simple country girl and convince me to lower my price?"];
+                        ["I want no fewer than <v6> monetari. What dost thou think?"];
+                    }
+                }
+            }
+            if (v15 = 5) {
+                v6 = v17;
+                if v3 {
+                    if (v18 = 1) {
+                        ["Thou art most ungenerous! My previous price stands, at <v6> monetari."];
+                    }
+                    if (v18 = 2) {
+                        ["Spiteful wench! I offer <v6> monetari, and no less!"];
+                    }
+                    if (v18 = 3) {
+                        ["I cannot accept such an offer!"];
+                        ["I stand at my price of <v6> monetari, and no lower!"];
+                    }
+                } else {
+                    if (v18 = 1) {
+                        ["Hmmpf! Just like a man to offer a ridiculous price! Well, I am no simpleton to accept such! My previous price stands, at <v6> monetari."];
+                    }
+                    if (v18 = 2) {
+                        ["I would not accept such a price even if thou wert the most handsome man in Monitor! I want <v6> monetari, and no less!"];
+                    }
+                    if (v18 = 3) {
+                        ["Ugh! Thou hast the manners of a man -- if not a goblin, to offer a girl such a pitiful sum!"];
+                        ["I will make this very clear -- <v6> monetari is as low as I will go!"];
+                    }
+                }
+                if (v13 < 31) {
+                    SetNPCID_i((v13 + 1), _Lucilla);
+                }
+            }
+        }
+    }
+}

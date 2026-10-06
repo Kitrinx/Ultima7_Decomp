@@ -1,0 +1,66 @@
+Routine SilverSeedAmbush_i accepts a0 #locals(21) #uses(FaceAvatar_i, ~GimmePathEgg, Bark_i) {
+    v0 = ~AvatarSex();
+    v1 = "he";
+    v2 = "him";
+    v3 = "his";
+    if v0 {
+        v1 = "she";
+        v2 = "her";
+        v3 = "her";
+    }
+    if ((event = _Action) and ($temp1flag = false)) {
+        v4 = << 2619, 2597, 2619, 2600, 2622, 2599 >>;
+        v5 = 1;
+        While (v5 <= 3) {
+            v6 = (v5 * 2);
+            v7 = ~CreateCreature_i(<< v4::(v6 - 1), v4::v6, 0 >>, _Ghost_337);
+            if v7 {
+                SetWorkType(_Wait, v7);
+                v5 = (v5 + 1);
+                createSprite(65535, 0, 0, 0, v4::v6, v4::(v6 - 1), 26);
+                Sfx(81);
+                FaceAvatar_i(v7);
+                Npc_setAlignment(_Evil, v7);
+                SetItemFlag_i(_IsTemporary_i, v7);
+                ClearItemFlag_i(_Tournament, v7);
+            }
+        }
+        v8 = ~GetCoord(_Avatar);
+        CreateSpriteOn_i(65535, 0, 0, 0, 0, 0, 13, _Avatar);
+        createSprite(65535, 0, 0, 0, v8::2, v8::1, 9);
+        $temp1flag = true;
+        v9 = ~GimmePathEgg(1, 0);
+        v10 = ~PostInFuture(20, << _aNO_HALT_i, _aUSABLE_i, #SilverSeedAmbush_i >>, v9);
+        terminate;
+    }
+    if ((event = _Action) and ($temp1flag = true)) {
+        $temp1flag = false;
+        SetSpeaker0_i(0, 65222);
+        ["Blast! The Amulet seems to be protecting <v2>! This shall not be as easy as we were led to believe!"];
+        SetSpeaker0_i(0, 65224);
+        ["Then we shall have to work together..."];
+        SetSpeaker1_i(0, 65223);
+        ["The Guide shall make our aim true! The Guide shall lead the way to our truly perfect world!"];
+        SetSpeakerSlot_i(0);
+        CloseSpeaker1_i();
+        ["Let us be done with this! Once this pathetic pawn is dead we can cross into the new world, and let this decaying husk die as it was meant to!"];
+        CloseSpeaker0_i();
+        v11 = << "@Attack!@", "@Die, Dog of Prophecy!@", "@Ha ha ha ha!@" >>;
+        v12 = 1;
+        v9 = ~GimmePathEgg(1, 5);
+        v13 = ~FindNearby_i(0, 20, _Xenka, v9);
+        Foreach v16 in v13 {
+            SetWorkType(_Combat_0, v16);
+            SetAttacker_i(v16, _Avatar);
+            Bark_i((v12 * 2), v11::v12, v16);
+            v12 = (v12 + 1);
+        }
+        v9 = ~GimmePathEgg(2, 5);
+        v17 = ~FindNearby_i(0, 30, _Ghost_337, v9);
+        Foreach v20 in v17 {
+            SetWorkType(_Combat_0, v20);
+            SetAttacker_i(v20, _Avatar);
+            v12 = (v12 + 1);
+        }
+    }
+}

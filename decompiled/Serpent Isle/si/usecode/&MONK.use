@@ -1,0 +1,70 @@
+Routine GrowMandrakeEgg_i accepts a0 #locals(3) {
+    if ($mandraketime or (~GetClock(1) > 5)) {
+        v0 = ~GetCoord(item);
+        v1 = ~Item_create(_Reagents);
+        if v1 {
+            SetFrame(3, v1);
+            ClearItemFlag_i(_IsTemporary_i, v1);
+            v1 = ~SetQuantity(~GetQuality(item), v1);
+            v2 = ~PopToMap(v0);
+            if v2 {
+                Item_destroy(item);
+            }
+        }
+    }
+}
+
+Routine GotFreshRootEgg_i accepts a0 #locals(5) {
+    v0 = ~ListSize_i(~FindNearby_i(16, 5, _Egg_Type, item));
+    if (v0 < 2) {
+        v1 = ~FindNearby_i(0, 1, _Reagents, item);
+        Foreach v4 in v1 {
+            if (~GetFrame(v4) = 3) {
+                terminate;
+            }
+        }
+        $gotfreshroot = true;
+        Item_destroy(item);
+    }
+}
+
+Routine RingBellsEgg_i accepts a0 #locals(7) #uses(~RemoveNth_i, ShowRinging_i, ~GimmePathEgg) {
+    if (event = _Trigger) {
+        v0 = ~FindNearby_i(0, 25, _Bells, item);
+        v1 = ~ListSize_i(v0);
+        v0 = ~RemoveNth_i(v0, v1);
+        Foreach v4 in v0 {
+            Sfx(16);
+            ShowRinging_i(v4);
+        }
+        v5 = ~GimmePathEgg(1, 5);
+        v6 = ~PostAction(<< _aWAIT_i, 100, _aUSABLE_i, #Monk, 0 >>, v5);
+    }
+}
+
+Routine TimeOfVisionsEgg_i accepts a0 #locals(9) #uses(~GimmePathEgg, ~MonkCoord_i, SetWorkTypeAt_i) {
+    if (event = _Trigger) {
+        if not flag(627) {
+            terminate;
+        }
+        v0 = << 65329, 65325, 65327, 65324, 65322, 65328, 65326 >>;
+        if ~GetItemFlag_i(_Met, _XenkaMonk_215) {
+            v0 = (v0 & 65321);
+        }
+        v1 = 5;
+        v2 = ~GimmePathEgg(1, 5);
+        v3 = ~SetQuality(v1, v2);
+        Foreach v6 in v0 {
+            v7 = ~MonkCoord_i(v1, v6);
+            Item_move(v7, v6);
+            NewSchedule_i(v7, _MajorSit, 0, v6);
+            Npc_schedule(v6);
+        }
+        v8 = ~GetCoord(item);
+        Item_move(v8, _Draxta);
+        SetWorkType(_Wait, _Draxta);
+        v3 = ~PostAction(<< _aNO_HALT_i, _aFACE_i, _South, _aWAIT_WHILE_FAR_i, 10, _aBARK_i, "@Now is the Time of Visions!@" >>, _Draxta);
+        SetWorkTypeAt_i(_Wait, v8::2, v8::1, _Draxta);
+        SetMusic(v2, 63);
+    }
+}

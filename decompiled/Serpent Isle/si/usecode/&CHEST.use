@@ -1,0 +1,70 @@
+Routine Chest accepts a0 #locals(11) #uses(Bark_i) {
+    v0 = 65180;
+    v1 = ~GetQuality(item);
+    v2 = ~SetQuality(0, item);
+    v3 = ~GetCoord(item);
+    v4 = ~GetCoord(_Avatar);
+    if (v1 < 251) {
+        createSprite(65535, 0, 0, 0, v3::2, v3::1, 47);
+        Sfx(81);
+        if v2 {
+            Bark_i(0, "@Trapped!@", _Avatar);
+            v5 = ~GetParty();
+            v6 = 16;
+            Foreach v9 in v5 {
+                SetItemFlag_i(_Poisoned, v9);
+                SetItemFlag_i(_Paralyzed, v9);
+                SetItemFlag_i(_Charmed, v9);
+                SetItemFlag_i(_Cursed, v9);
+                v6 = (v6 + 16);
+                Bark_i(v6, "@Arrrgh!@", _Avatar);
+            }
+            createSprite(65535, 0, 0, 65535, v4::2, (v4::1 + 2), 33);
+            createSprite(65535, 0, 65535, 0, (v4::2 + 2), v4::1, 33);
+            createSprite(65535, 0, 0, 1, v4::2, (v4::1 - 2), 33);
+            createSprite(65535, 0, 1, 0, (v4::2 - 2), v4::1, 33);
+        }
+    }
+    if (v1 = 251) {
+        createSprite(65535, 0, 0, 0, v3::2, v3::1, 26);
+        Sfx(29);
+        Bark_i(2, "@Yow!", _Avatar);
+        Bark_i(18, "'Twas trapped!@", _Avatar);
+        SetItemFlag_i(_Cursed, _Avatar);
+        createSprite(65535, 0, 0, 0, v4::2, v4::1, 26);
+    }
+    if (v1 = 252) {
+        Sfx(82);
+        v2 = ~Item_create(_Field_Sleep);
+        if v2 {
+            Bark_i(2, "@'Twas trapped!@", _Avatar);
+            createSprite(65535, 0, 0, 0, v3::2, v3::1, 7);
+            v2 = ~PopToMap(v4);
+        }
+    }
+    if (v1 = 253) {
+        Sfx(92);
+        createSprite(65535, 0, 0, 0, v3::2, v3::1, 6);
+        Bark_i(0, "@Run away!@", _Avatar);
+        v2 = ~PostInFuture(5, << _aNO_HALT_i, _aUSABLE_i, #CallLightning_i >>, _Avatar);
+    }
+    if (v1 = 254) {
+        Sfx(104);
+        v2 = ~Item_create(_Field_Poison);
+        if v2 {
+            Bark_i(2, "@Aagh! Poison!@", _Avatar);
+            createSprite(65535, 0, 0, 0, v3::2, v3::1, 13);
+            v2 = ~PopToMap(v4);
+        }
+    }
+    if (v1 = 255) {
+        createSprite(65535, 0, 0, 0, v3::2, v3::1, 27);
+        v10 = ~Item_create(_Field_Fire);
+        if v10 {
+            Sfx(39);
+            v2 = ~PopToMap(v4);
+            v2 = ~PostInFuture(7, << _aNO_HALT_i, _aUSABLE_i, #Powder_Keg >>, v10);
+            Bark_i(2, "@Run away!@", _Avatar);
+        }
+    }
+}

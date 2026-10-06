@@ -1,0 +1,40 @@
+Routine serp_artifact accepts a0 #locals(12) #uses(Bark_i) {
+    if (event = _Converse) {
+        v0 = ~GetFrame(item);
+        if (v0 = 22) {
+            SetFrame(23, item);
+            Sfx(39);
+            Bark_i(4, "@Pretty@", _Avatar);
+            CreateSpriteOn_i(65535, 0, 0, 0, 0, 0, 12, item);
+            v1 = ~PostAction(<< _aNO_HALT_i, _aWAIT_i, 20, _aFRAME, 21 >>, item);
+            terminate;
+        }
+    }
+    if (event = _Equip) {
+        v0 = ~GetFrame(item);
+        if (v0 = 10) {
+            closeAllGumps();
+            v2 = ~FindNearby_i(0, 30, _Skeleton, item);
+            v3 = ~FindNearby_i(176, 15, _Egg_Type, item);
+            Foreach v6 in v3 {
+                Item_destroy(v6);
+            }
+            v1 = ~PostAction(<< _aNO_HALT_i, _aBARK_i, "@Die, you cursed fiends!@", _aUP_FRAME_i, _aOUT_FRAME_i, _aTHRUST2_FRAME_i >>, _Avatar);
+            Bark_i(2, "@I despise you all!@", ~NPCToItem_i(_Avatar));
+            Foreach v9 in v2 {
+                v10 = ~GetCoord(v9);
+                v10::1 = (v10::1 - (v10::3 / 2));
+                v10::2 = (v10::2 - (v10::3 / 2));
+                Sfx(71);
+                createSprite(65535, 0, 0, 0, v10::2, v10::1, 17);
+                v10 = ~GetCoord(v9);
+                Sfx(41);
+                Item_destroy(v9);
+                v11 = ~Item_create(_Flat_Burn_Mark);
+                if v11 {
+                    v1 = ~PopToMap(v10);
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,67 @@
+Routine Xenka accepts a0 #locals(5) #uses(PartyFaces_i, Bark_i) {
+    if (event = _Converse) {
+        v0 = 0;
+        v1 = ~GetNPCID_i(item);
+        if ((v1 = 1) or (v1 = 11)) {
+            v0 = 1561;
+            if (v1 = 11) {
+                v2 = true;
+            }
+            if not v2 {
+                Item_bark("@Hail, old woman!@", _Avatar);
+            } else {
+                Item_bark("@Hail, Drusilla!@", _Avatar);
+            }
+            PartyFaces_i(item);
+            if not v2 {
+                Bark_i(2, "@Old, is it?!@", item);
+            } else {
+                Bark_i(2, "@Hail yerself!@", item);
+            }
+        }
+        if ((v1 = 2) or (v1 = 12)) {
+            v0 = 1562;
+            if (v1 = 12) {
+                v2 = true;
+            }
+            if not v2 {
+                Item_bark("@Greetings, strange one.@", _Avatar);
+            } else {
+                Item_bark("@Greetings, Rieya.@", _Avatar);
+            }
+            PartyFaces_i(item);
+            if not v2 {
+                Bark_i(2, "@Me, strange?!@", item);
+            } else {
+                Bark_i(2, "@Back again?@", item);
+            }
+        }
+        if ((v1 = 3) or (v1 = 13)) {
+            v0 = 1563;
+            if (v1 = 13) {
+                v2 = true;
+            }
+            if not v2 {
+                Item_bark("@Hail, lady!@", _Avatar);
+            } else {
+                Item_bark("@Hail, Solaria!@", _Avatar);
+            }
+            PartyFaces_i(item);
+            if not v2 {
+                Bark_i(2, "@Me, a lady?!@", item);
+            } else {
+                Bark_i(2, "@Hail to thee!@", item);
+            }
+        }
+        if v0 {
+            v3 = ~PostInFuture(10, << _aNO_HALT_i, _aUSABLE_i, v0 >>, item);
+        }
+        terminate;
+    }
+    if (event = 29) {
+        v4 = ~GetCoord(item);
+        Item_destroy(item);
+        Sfx(96);
+        createSprite(65535, 0, 0, 0, v4::2, v4::1, 26);
+    }
+}

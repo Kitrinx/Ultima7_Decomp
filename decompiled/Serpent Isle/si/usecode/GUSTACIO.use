@@ -1,0 +1,337 @@
+Routine Gustacio accepts a0 #locals(8) #uses(~AvatarName, PartyFaces_i, Bark_i, ~PartyUtters, GustacioTeachesSpells_i, ~AskYesNo, ~GiveItemsOrDrop_i, GivePartyExp_i, ~GimmePathEgg, MessengerBringsScroll_i) {
+    v0 = "Mundane";
+    if $gotspellbook {
+        v0 = "Mage";
+    }
+    v1 = ~AvatarSex();
+    v2 = ~AvatarName();
+    if ((event = _NearDeath) and ~GetItemFlag_i(_Tournament, item)) {
+        v3 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #Black_Mage >>, item);
+    }
+    if (event = _Converse) {
+        Item_bark("@A moment, sir.@", _Avatar);
+        PartyFaces_i(65514);
+        Bark_i(2, "@I am a busy mage...@", _Gustacio);
+        SetWorkType(_Talk, _Gustacio);
+    }
+    if (event = _Talking) {
+        Npc_schedule(_Gustacio);
+        ClearBark_i(_Gustacio);
+        SetSpeaker0_i(0, _Gustacio);
+        v4 = ~GetItemFlag_i(_Met, _Gustacio);
+        if (~GetWorkType(_Gustacio) = _Sleep) {
+            ["Canst thou not see that I am trying to sleep!"];
+            Bark_i(0, "@Return tomorrow!@", _Gustacio);
+            terminate;
+        }
+        if (v4 = false) {
+            if $filberciobanquet {
+                ["I know thee! Thou art the adventurer for whom the MageLord held the banquet."];
+            } else {
+                ["A pleasure to meet thee, I am certain. But I have no patience for idle tongue wagging."];
+            }
+            ["Forgive me, but this is an absolute waste of time, when there are other matters which are pressing..."];
+            SetItemFlag_i(_Met, _Gustacio);
+            SetWorkType(_Wander, _Gustacio);
+            Bark_i(0, "@To work...@", _Gustacio);
+            terminate;
+        } else {
+            if not flag(226) {
+                ["I am sorry, but I do not have time for this. My studies devour mine entire day."];
+                Bark_i(0, "@Now, where is that book?@", _Gustacio);
+                terminate;
+            } else {
+                ["It is an honor to receive thee, <v2>. How may I be of service to thee?"];
+                if not flag(569) {
+                    TurnOn("Dungeon Freedom");
+                }
+                if not $FAWN_TRIAL_DONE {
+                    TurnOn("the trial");
+                }
+            }
+        }
+        if (flag(227) and not $SAW_EDRIN_TRANSFORM) {
+            TurnOn("experiment");
+        }
+        if ($SAW_EDRIN_TRANSFORM and (not $RESTORED_EDRIN and not $HAVE_2ND_ENERGY_GLOBE)) {
+            TurnOn("Ale is Edrin");
+        }
+        if ($SAW_EDRIN_TRANSFORM and (not $RESTORED_EDRIN and $HAVE_2ND_ENERGY_GLOBE)) {
+            TurnOn("instructions");
+        }
+        if ($RESTORED_EDRIN and not $gotmirror) {
+            TurnOn("experiment");
+        }
+        if ($senttogustacio and not flag(206)) {
+            TurnOn("Daemon Sword");
+        }
+        if flag(226) {
+            TurnOn("stone altar");
+        }
+        TurnOn(<< "name", "spells", "bye" >>);
+        if (flag(227) and not $RESTORED_EDRIN) {
+            TurnOff("spells");
+        }
+        converse {
+            key ("the trial") {
+                TurnOff("the trial");
+                ["Please do not hold me responsible for that travesty of justice! In Moonshade, one doth not contradict the MageLord!"];
+                ["Besides, thou wast guilty of the crime, meaning that thou wast in the forbidden bedchamber..."];
+                if not ~AvatarSex() {
+                    ["Oh, how I envy thee! But I am old now, and have my researches to content me."];
+                }
+            }
+            key ("Dungeon Freedom") {
+                TurnOff("Dungeon Freedom");
+                ["Thou must indeed be a formidable Mage, <v2>, since thou wast able to survive Filbercio's dungeons."];
+                ["I apologize for being brusque with thee before. I had no true concept of thine abilities."];
+            }
+            key ("name") {
+                ["My name is Gustacio, if thou must inquire!"];
+                TurnOff("name");
+            }
+            key ("Daemon Sword") {
+                TurnOff("Daemon Sword");
+                ["Thy daemon sword needs to have its sorcerous energies realigned. I could repair it if I had my flux analyzer."];
+                if $gotfluxdevice {
+                    v5 = ~PartyUtters(false, "@I found it in Skullcrusher!@", "@We found it in Skullcrusher!@", 1);
+                    v6 = ~CountItem(_All, _All, _Flux_Analyzer, _Party);
+                    if (v6 > 0) {
+                        SetSpeakerSlot_i(0);
+                        ["Excellent! Now we can repair thy sword."~ "Place it here and activate it. When the machine is working, use it on the sword."];
+                    } else {
+                        SetSpeakerSlot_i(0);
+                        ["Thou didst? But then where is it?"~ "Thou wouldst have me think that thou didst find it!"];
+                    }
+                } else {
+                    ["Unfortunately, it was stolen from me years ago."];
+                }
+            }
+            key ("spells") {
+                TurnOff("spells");
+                if $RESTORED_EDRIN {
+                    ["I thank thee for thine excellent help. Now that my work hath been completed, I have time to teach thee magic as I promised."];
+                    GustacioTeachesSpells_i();
+                } else {
+                    if $HAVE_1ST_ENERGY_GLOBE {
+                        ["Thou didst agree to help with mine experiments. Why hast thou not taken the energy globe to the tower on the plains?"];
+                        goto label_59;
+                    } else {
+                        ["If thou wilt aid me with mine experiments involving the teleport storms, I shall reward thee with magic. Dost thou agree?"];
+                        if ~AskYesNo() {
+                            ["Excellent! First I shall need to tell thee what I have learned of these storms so far. They appear to have three powers: teleportation, transposition and transmutation. Also, the lightning of the teleport storms appears to have several different colors."];
+                            label_59:
+                            PushKeys();
+                            v7 = true;
+                            $temp1flag = false;
+                            $temp2flag = false;
+                            $temp3flag = false;
+                            $temp4flag = false;
+                            TurnOn(<< "teleportation", "transposition", "transmutation", "lightning colors" >>);
+                        } else {
+                            ["Then I am sorry, I do not have any time to spare for thee."];
+                            Bark_i(0, "@Farewell...@", _Gustacio);
+                            terminate;
+                        }
+                    }
+                }
+            }
+            key ("teleportation") {
+                TurnOff("teleportation");
+                $temp1flag = true;
+                ["This is the mysterious power to move things from one place to another without passing through the space between."];
+                if ($temp1flag and ($temp2flag and ($temp3flag and $temp4flag))) {
+                    TurnOn("further details");
+                }
+            }
+            key ("transposition") {
+                TurnOff("transposition");
+                $temp2flag = true;
+                ["This is a more elaborate form of teleportation, wherein two objects exchange places -- neither passing through the physical space between them. Fascinating!"];
+                if ($temp1flag and ($temp2flag and ($temp3flag and $temp4flag))) {
+                    TurnOn("further details");
+                }
+            }
+            key ("transmutation") {
+                TurnOff("transmutation");
+                $temp3flag = true;
+                ["I am not quite certain that this power actually exists. I have theorized that it would involve taking one object and literally changing it into another type of object. The difficulty in proving that something like this exists is that this power must be directly witnessed. Otherwise how is one to know that an item is not what it always was?"];
+                if ($temp1flag and ($temp2flag and ($temp3flag and $temp4flag))) {
+                    TurnOn("further details");
+                }
+            }
+            key ("lightning colors") {
+                TurnOff("lightning colors");
+                $temp4flag = true;
+                ["I have a theory that the colors of the lightning somehow directly correspond to the supernatural force behind it."];
+                if not flag(227) {
+                    ["But I have developed an experiment to test this theory, and thou canst help me with it."];
+                } else {
+                    ["And the experiment that thou didst carry out for me seems to confirm what I believed to be true."];
+                }
+                if ($temp1flag and ($temp2flag and ($temp3flag and $temp4flag))) {
+                    TurnOn("further details");
+                }
+            }
+            key ("further details") {
+                TurnOff("further details");
+                $temp1flag = false;
+                $temp2flag = false;
+                $temp3flag = false;
+                $temp4flag = false;
+                if not $HAVE_1ST_ENERGY_GLOBE {
+                    ["Since thou hast agreed to help with mine experiments, take this energy globe to my special tower. Thou wilt find this tower in the valley to the north of Moonshade in the middle of the plains."];
+                    v3 = ~GiveItemsOrDrop_i(true, 0, 2, 0, 450, 1, _Avatar);
+                    $HAVE_1ST_ENERGY_GLOBE = true;
+                }
+                ["Place the globe on the platform, on top of the tower structure."];
+                ["Next, thou shouldst engage the winch. This will seal thee within the tower, and activate the levers. It will also summon a magical storm."];
+                v5 = ~PartyUtters(false, 0, "@Thou dost want us to summon a storm? This is madness!@", 1);
+                if (v5 <> 65180) {
+                    SetSpeakerSlot_i(0);
+                    ["I assure thee, thou art in no danger! I would do this myself, but at mine age, climbing stairs is very difficult..."];
+                }
+                ["Pull the levers one at a time. This will draw down lightning from the storm, and cause it to strike the objects which I have placed on the tower."];
+                ["Observe the effects, and most importantly -- observe which color lightning hath which effect. Then return to me with thy report."];
+                PopKeys();
+            }
+            key ("experiment") {
+                TurnOff("experiment");
+                if $SAW_EDRIN_TRANSFORM {
+                    ["Thou hast completed the experiment. As a token of appreciation, here is the Mirror of Truth."];
+                    $gotmirror = true;
+                    GivePartyExp_i(1000);
+                    v3 = ~GiveItemsOrDrop_i(true, 0, 11, 0, 649, 1, _Avatar);
+                    flag(729) = true;
+                    v3 = ~PostInFuture(100, << _aNO_HALT_i, _aUSABLE_i, #Ring >>, ~GimmePathEgg(4, 5));
+                } else {
+                    ["But of course! Thou must needs go to Fedabiblio for the answers..."];
+                    $senttofedabiblio = true;
+                }
+            }
+            key ("instructions") {
+                TurnOff("instructions");
+                if $HAVE_2ND_ENERGY_GLOBE {
+                    ["Why hast thou not taken the energy globe which I did give thee to the tower on the plains?"];
+                }
+            }
+            key ("Ale is Edrin") {
+                ["Thou must needs take the bird Ale to the tower in the wilderness, and place him where the lightning can strike him."];
+                if not $HAVE_BIRD_CAGE {
+                    ["I shall give thee this cage to hold the bird within."];
+                    $HAVE_BIRD_CAGE = true;
+                    v3 = ~GiveItemsOrDrop_i(true, 0, 0, 0, 838, 1, _Avatar);
+                }
+                if not $HAVE_2ND_ENERGY_GLOBE {
+                    ["Return to the tower with this new energy globe!"];
+                    v3 = ~GiveItemsOrDrop_i(true, 0, 1, 0, 450, 1, _Avatar);
+                    $HAVE_2ND_ENERGY_GLOBE = true;
+                }
+                TurnOff("Ale is Edrin");
+            }
+            key ("stone altar") {
+                TurnOff("stone altar");
+                ["Such a curious thing happened during mine experiments, <v2>."];
+                ["While Mortegro and I were working to discover the secret of the teleportation storms, Mortegro was hit by a lightning strike."];
+                ["In his place, within my cellar, is this odd stone altar. By its look it is something from a Serpent temple, but I have no idea how to send it back where it came from... yet."];
+                ["If I can discern how to reverse the teleportation, perhaps I can rescue poor Mortegro. I hope he was not killed in the exchange..."];
+            }
+            key ("bye") {
+                CloseSpeaker0_i();
+                Bark_i(0, "@Many thanks!@", _Avatar);
+                Bark_i(2, "@Back to my studies...@", _Gustacio);
+                MessengerBringsScroll_i();
+                break;
+            }
+        }
+        clear_answers;
+    }
+}
+
+Usable GustacioTeachesSpells_i #locals(9) #uses(~AskOrdList, ~AskYesNo) {
+    ["As thou hast aided me in mine experiments, I shall teach thee spells free of charge."];
+    PushKeys();
+    v0 = true;
+    While v0 {
+        ["In which circle of magic art thou interested?"];
+        v1 = ~AskOrdList(<< "nothing", "First", "Second", "Third", "Fourth", "Fifth", "Sixth", "Seventh", "Eighth", "Ninth" >>);
+        v1 = (v1 - 1);
+        if (v1 = 0) {
+            break;
+        }
+        switch v1 {
+            case 1 {
+                v2 = << "nothing", "Detect Trap", "Create Food" >>;
+                v3 = << 0, 2, 0 >>;
+            }
+            case 2 {
+                v2 = << "nothing", "Cold Blast", "Mass Cure" >>;
+                v3 = << 0, 11, 14 >>;
+            }
+            case 3 {
+                v2 = << "nothing", "Enchant Missiles" >>;
+                v3 = << 0, 18 >>;
+            }
+            case 4 {
+                v2 = << "nothing", "Unlock Magic" >>;
+                v3 = << 0, 31 >>;
+            }
+            case 5 {
+                v2 = << "nothing", "Conjure", "Great Heal" >>;
+                v3 = << 0, 32, 35 >>;
+            }
+            case 6 {
+                v2 = << "nothing", "Fire Field" >>;
+                v3 = << 0, 43 >>;
+            }
+            case 7 {
+                v2 = << "nothing", "Restoration" >>;
+                v3 = << 0, 53 >>;
+            }
+            case 8 {
+                v2 = << "nothing", "Delayed Blast" >>;
+                v3 = << 0, 58 >>;
+            }
+            case 9 {
+                v2 = << "nothing", "Spiral Missiles", "Stop Storm" >>;
+                v3 = << 0, 67, 68 >>;
+            }
+            default {
+            }
+        }
+        ["What spell dost thou wish to learn?"];
+        v4 = ~AskOrdList(v2);
+        if (v4 = 1) {
+            ["As thou dost wish..."];
+        } else {
+            v5 = v3::v4;
+            v6 = v2::v4;
+            v7 = ~FindItem(_All, _All, _Spellbook, _Party);
+            if v7 {
+                if ~AddSpell_i(v7, 0, v5) {
+                    v8 = 1;
+                } else {
+                    v8 = 3;
+                }
+            } else {
+                v8 = 2;
+            }
+            if (v8 = 1) {
+                ["The spell <v6> is thine."];
+            } else {
+                if (v8 = 2) {
+                    ["Thou dost not have a spellbook! Return to me when thou dost have one."];
+                    v0 = false;
+                    break;
+                }
+                if (v8 = 3) {
+                    ["I believe thou dost already have that spell."];
+                } else {
+                }
+            }
+        }
+        ["Perhaps thou wouldst care to learn another spell?"];
+        v0 = ~AskYesNo();
+    }
+    PopKeys();
+}

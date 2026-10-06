@@ -1,0 +1,10 @@
+Routine AutoMessengerEgg_i accepts a0 #locals(0) #uses(SetWorkTypeAt_i, Bark_i) {
+    if (flag(234) and not $rotomanor) {
+        if ~GetItemFlag_i(_Dead, _AutoMessenger) {
+            $rotomanor = true;
+        } else {
+            SetWorkTypeAt_i(_Talk, 0, 65535, _AutoMessenger);
+            Bark_i(3, "@Who doth approach?!@", _AutoMessenger);
+        }
+    }
+}

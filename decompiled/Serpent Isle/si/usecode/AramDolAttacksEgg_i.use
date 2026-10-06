@@ -1,0 +1,29 @@
+Routine AramDolAttacksEgg_i accepts a0 #locals(4) #uses(~GiveItemsOrDrop_i, EncircleWithFire_i) {
+    if (event = _Trigger) {
+        v0 = ~CreateCreature_i(<< 3015, 2572, 1 >>, _Aram_Dol);
+        if v0 {
+            ClearItemFlag_i(_IsTemporary_i, v0);
+            v1 = ~GiveItemsOrDrop_i(false, 0, 7, 230, 641, 1, v0);
+            v1 = ~GiveItemsOrDrop_i(false, 0, 9, 223, 641, 1, v0);
+            Npc_setAlignment(_Evil, v0);
+            SetWorkType(_Combat_0, v0);
+            v2 = ~GetNPCStat_i(_Str, v0);
+            v3 = (25 - v2);
+            v1 = ~ChangeNPCStat_i(v3, _Str, v0);
+            v2 = ~GetNPCStat_i(_Dex, v0);
+            v3 = (21 - v2);
+            v1 = ~ChangeNPCStat_i(v3, _Dex, v0);
+            v2 = ~GetNPCStat_i(_Int, v0);
+            v3 = (30 - v2);
+            v1 = ~ChangeNPCStat_i(v3, _Int, v0);
+            v2 = ~GetNPCStat_i(_Cbt, v0);
+            v3 = (30 - v2);
+            v1 = ~ChangeNPCStat_i(v3, _Cbt, v0);
+            v2 = ~GetNPCStat_i(_Hits, v0);
+            v3 = (30 - v2);
+            v1 = ~ChangeNPCStat_i(v3, _Hits, v0);
+            EncircleWithFire_i(_Field_Fire, ~NPCToItem_i(_Avatar));
+            Sfx(42);
+        }
+    }
+}

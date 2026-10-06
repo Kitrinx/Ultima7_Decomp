@@ -1,0 +1,172 @@
+Routine Madman accepts a0 #locals(6) #uses(~AvatarName, ~IsInInv, PartyFaces_i, Bark_i, ~AskYesNo, AttackAvatar_i) {
+    v0 = ~AvatarName();
+    v1 = ~IsInInv(3, 65177, _Magic_Rings, 1, _Party);
+    v2 = false;
+    if (event = _Converse) {
+        Item_bark("@I would have words with thee!@", _Avatar);
+        PartyFaces_i(item);
+        Bark_i(5, "@They will be thine last.@", item);
+        SetWorkType(_Talk, item);
+    }
+    if (event = _Talking) {
+        SetWorkType(_Dance, item);
+        SetSpeaker0_i(0, 65231);
+        TurnOn(<< "name", "bye" >>);
+        v3 = ~GetNPCID_i(item);
+        if v3 {
+            ["How nice.  Thou hast returned to me.  Hast thou brought the ring?"];
+            v4 = ~AskYesNo();
+            if (v4 = true) {
+                if (v1 = true) {
+                    ["Excellent.  Thou hast served me well, pawn.  Alas, I shall kill thee just the same."];
+                    AttackAvatar_i(item);
+                    terminate;
+                } else {
+                    ["Thou dost dare lie to me!  I shall make thee pay!"];
+                    AttackAvatar_i(item);
+                    terminate;
+                }
+            } else {
+                ["Curse thee!  I shall roast thine flesh!"];
+                AttackAvatar_i(item);
+                terminate;
+            }
+        } else {
+            ["Welcome, Simpleton.  Do not expect to stay long, for I am getting rather hungry and it has been months since I have eaten the flesh of a human."];
+            SetNPCID_i(1, item);
+        }
+        converse {
+            key ("name") {
+                TurnOff("name");
+                ["I am the manifestation of the horrific images of thine mind's darkest recesses!  Ha!  I am Chaos Unrestrained!  Those cowards in the keep call me the Fiend!"];
+                TurnOn(<< "unrestrained", "orb" >>);
+            }
+            key ("unrestrained") {
+                TurnOff("unrestrained");
+                ["Fool!  Dost thou think those flimsy doors are my prison?  That the meager traps and inconsequential guards hold me here?  Nonsense!"];
+                TurnOn("Why stay?");
+            }
+            key ("Why stay?") {
+                TurnOff("Why stay?");
+                ["The ring!  I am a prisoner of my former self, for without the ring I cannot right the world!"];
+                TurnOn(<< "former self", "ring", "right the world" >>);
+            }
+            key ("former self") {
+                TurnOff("former self");
+                ["Master of reagents!  Wizard beyond compare!"];
+                TurnOn("master");
+            }
+            key ("master") {
+                TurnOff("master");
+                ["I do not expect thee to comprehend, simpleton!  The Ring! Creator of the Ring!"];
+                if not (v2 = true) {
+                    TurnOn("ring");
+                }
+            }
+            key ("ring") {
+                TurnOff("ring");
+                ["Thou must know of the Ring of Shal.  Even the King of Fools knows of its powers.  Any idiot can see what importance it bears to my ambitions."];
+                v2 = true;
+                TurnOn(<< "ambitions", "powers" >>);
+            }
+            key ("right the world") {
+                TurnOff("right the world");
+                ["Order is folly!  The world has blinded itself to this truth, and I shall force them to see!"];
+                TurnOn("see");
+            }
+            key ("see") {
+                TurnOff("see");
+                ["I shall bring death to the hierophants to bring Chaos and freedom.  No longer shall men weaken themselves with reason! I shall liberate the entire world!"];
+            }
+            key ("ambitions") {
+                TurnOff("ambitions");
+                ["I shall save the world.  I shall take away its order as it was taken from me.  Thus shall I show the world the truth."];
+            }
+            key ("powers") {
+                TurnOff("powers");
+                ["Fool!  Ignoramus!  I should slay you and add your bones to my collection!  Thou knowest well the powers of the ring!  If I had the reagents to spare I would strike thee down with a spell most dire!  If I had the ring..."];
+                TurnOn("reagents");
+            }
+            key ("reagents") {
+                TurnOff("reagents");
+                ["Thou art not merely feigning stupidity, art thou?  With it on my finger, I need never use reagents, for it simulates their magical properties!  That is why I created the ring!  That is why I pledged myself to Chaos!"];
+                TurnOn("created");
+            }
+            key ("created") {
+                TurnOff("created");
+                ["Yes, you fool.  I was Shal.  But Shal had not the knowledge to create his life's goal, so he called upon greater powers than he to complete his work.  The Chaos Serpent granted him that power, but there was a price."];
+                TurnOn(<< "price", "greater powers" >>);
+            }
+            key ("greater powers") {
+                TurnOff("greater powers");
+                ["Yes!  Greater powers!  He called to the Serpents of Order and Chaos.  He spoke with Demons.  Only the Chaos Serpent would hear him!"];
+            }
+            key ("price") {
+                TurnOff("price");
+                ["Price?  He was shown the error of his ways!  It was a gift! He was granted a year's time to complete his work, at which time he would be changed...into me.  Bless the Chaos Serpent for his Wisdom!"];
+                TurnOn(<< "changed", "time" >>);
+            }
+            key ("changed") {
+                TurnOff("changed");
+                ["My dear moron, Shal was shown the wisdom of Chaos!  All traces of Order were removed from him; he became a paragon of Chaos."];
+                TurnOn("paragon");
+            }
+            key ("paragon") {
+                TurnOff("paragon");
+                ["Aye, a paragon of Chaos--me.  There were some Chaotics who said my words were those of a fanatic; that I am too extreme.  Ha!  They are all dead now.  That skeleton in the corner was Selioas; near you, Ajalsarthis. They now face the Chaos Serpent's wrath for defying me."];
+            }
+            key ("time") {
+                TurnOff("time");
+                ["The Chaos Serpent was far too generous in granting him a full year.  Had it granted him but a month, I would already have saved the world!"];
+                TurnOn("generous");
+            }
+            key ("generous") {
+                TurnOff("generous");
+                ["Shal had time to hide the ring from me. He did give the ring to an animated suit of armor, with the orders to hide and guard it, even from himself.  I have not yet been able to recover it."];
+                TurnOn(<< "recover", "armor" >>);
+            }
+            key ("armor") {
+                TurnOff("armor");
+                ["The predecessors to automatons.  They cannot speak and can barely follow orders.  They make idiots like thyself seem intelligent."];
+                TurnOn("orders");
+            }
+            key ("orders") {
+                TurnOff("orders");
+                ["I would not be surprised if the suit of armor forgot entirely about it."];
+                TurnOn("forgot");
+            }
+            key ("forgot") {
+                TurnOff("forgot");
+                ["The accursed thing may have noticed it days later and thought it was a rock!  It could be in a pile of rubble!  It might still have the ring in its hand!  Curse this world!"];
+            }
+            key ("recover") {
+                TurnOff("recover");
+                ["My only thought thus far has been to see thine bones scattered across my floor, but you might yet be of use to me.  I shall let thee live if thou dost retrieve the ring and bring it to me.  Dost thou agree?"];
+                v5 = ~AskYesNo();
+                if (v5 = true) {
+                    ["Ha!  Excellent!  Go then!  Bring me the ring!  Do not betray me or I shall sate myself by killing thee slowly!"];
+                    terminate;
+                } else {
+                    ["Fool!  Simpleton!  Idiot!  Thou hast condemned thyself to death!"];
+                    AttackAvatar_i(item);
+                    terminate;
+                }
+            }
+            key ("bye") {
+                ["Not so fast, mealworm!  I have developed an appetite for thee!"];
+                AttackAvatar_i(item);
+                terminate;
+            }
+            key ("orb") {
+                TurnOff("orb");
+                ["I do not possess this orb, moron, nor have I any desire to. I do, however, recall an entertaining diversion perhaps one year ago.  A crazed soldier of Chaos stole it and brought it into my domain."];
+                TurnOn("soldier");
+            }
+            key ("soldier") {
+                TurnOff("soldier");
+                ["I assume he had been discovered and, rather than face the persuasive initiates of Discipline, sought asylum in my domain.  He fell victim to one of my more flamboyant traps. I'm sure he still has the orb on his charred body!"];
+            }
+        }
+        clear_answers;
+    }
+}

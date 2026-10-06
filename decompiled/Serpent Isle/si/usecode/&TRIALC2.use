@@ -1,0 +1,620 @@
+Routine DefendTraitor_i accepts a0 #locals(9) #uses(~GimmePathEgg, ~AvatarName, ~JailedNPC_i, Bark_i, ~PartyUtters, ~AskList) {
+    v0 = ~GetQuality(~GimmePathEgg(1, 1));
+    v1 = ~AvatarName();
+    v2 = ~JailedNPC_i(false);
+    if (v0 = 44) {
+        ClearSpeakers_i();
+        SetSpeaker0_i(0, _Joth);
+        if ~GetItemFlag_i(_Met, _Joth) {
+            ["I am prepared for thy questions, <v1>. What dost thou care to question me about?"];
+        } else {
+            ["What hast thou to do with me? I did not even set eyes upon <v2> until this trial."];
+        }
+        TurnOn(<< "the character of the accused", "Daemonism", "no questions" >>);
+        converse {
+            key ("the character of the accused") {
+                TurnOff(<< "the character of the accused", "no questions" >>);
+                TurnOn("no further questions");
+                if ~GetItemFlag_i(_Met, _Joth) {
+                    v3 = ~JailedNPC_i(false);
+                    if $IOLO_ACCUSED {
+                        ["To be honest, he did not strike me as an honest man. Never cared much for bards. Louts, every one of them!"];
+                    }
+                    if $DUPRE_ACCUSED {
+                        ["Well, I must say that I find him likable. He does his duty without blabbering all the time."];
+                        ["Hard to believe a good man like Dupre would be in league with Daemon British..."];
+                    }
+                    if $SHAMINO_ACCUSED {
+                        ["Hard to say. He doth not talk much, and always seems to be in a hurry..."];
+                        ["Couldn't say more than that. Merely an ordinary knave."];
+                    }
+                } else {
+                    ["Art thou daft? I said that I have never met the man. I can form no opinion."];
+                }
+            }
+            key ("Daemonism") {
+                TurnOff(<< "Daemonism", "no questions" >>);
+                TurnOn("no further questions");
+                ["Look here, <v1>. I'm a captain, not a theologian. I find it hard to believe in something I can't touch or smell."];
+                ["Yet all of our legends tell of this Beast British, and his crimes against our ancestors."];
+                ["I suppose I don't know what to believe -- pardon me, Kylista..."];
+            }
+            key ("no questions") {
+                SetSpeaker1_i(0, _Avatar);
+                ["Forgive me. I have no questions for thee."];
+                Bark_i(0, "@Waste of time...@", item);
+                goto label_24;
+            }
+            key ("no further questions") {
+                Bark_i(0, "@No further questions...@", _Avatar);
+                goto label_24;
+            }
+        }
+        clear_answers;
+        label_24:
+        $done7 = true;
+        v3 = ~SetQuality(29, ~GimmePathEgg(1, 1));
+        v4 = (~GetCoord(_Joth) & (4 & 6));
+        v5 = ~FindNearby_i(16, 40, _Egg_Type, v4);
+        if v5 {
+            v6 = ~GetCoord(v5);
+            PathfindNPC_i(false, #FawnTrialEgg_i, item, _Path_Success, v6, item);
+        }
+        EndConverse_i();
+        terminate;
+    }
+    if (v0 = 47) {
+        ClearSpeakers_i();
+        SetSpeaker0_i(0, _Garth);
+        ["Question me! I am ready. On what subject dost thou desire information?"];
+        TurnOn(<< "the character of the accused", "Daemonism", "no questions" >>);
+        converse {
+            key ("the character of the accused") {
+                TurnOff(<< "the character of the accused", "no questions" >>);
+                TurnOn("no further questions");
+                v3 = ~PartyUtters(true, 0, 0, 1);
+                v3 = ~GetNPCName_i(v3);
+                ["I have met him face to face, and I find <v3> to be the most surly, disrespectful man I have ever seen."];
+                ["He offends with every breath that comes out of his ugly face!"];
+                v7 = ~JailedNPC_i(false);
+                if (v3 <> v7) {
+                    SetSpeaker1_i(0, _Olon);
+                    ["Captain, thou art confused. It is <v7> on trial, not <v3>."];
+                    CloseSpeaker1_i();
+                    SetSpeakerSlot_i(0);
+                    ["Why, thou art right, sailor. Nevertheless, I stand by my sworn testimony!"];
+                    SetSpeaker1_i(0, _Olon);
+                    ["I may be drunk, but I'm not stupid..."];
+                    CloseSpeaker1_i();
+                    SetSpeakerSlot_i(0);
+                }
+            }
+            key ("Daemonism") {
+                TurnOff(<< "Daemonism", "no questions" >>);
+                TurnOn("no further questions");
+                ["Lest anyone be confused, let me state unequivocably that Daemons exist. Evil is real!"];
+                ["The tales of our forefathers -- about the Daemon King named British, and the lands he stole in the name of Virtue -- are literally true."];
+                ["Lastly, I have absolute faith in the Priestess of Beauty... wherever she may be. She is too beautiful to be wrong!"];
+            }
+            key ("no questions") {
+                SetSpeaker1_i(0, _Avatar);
+                ["Forgive me. I have no questions for thee."];
+                Bark_i(0, "@Damned traitor...@", item);
+                goto label_41;
+            }
+            key ("no further questions") {
+                Bark_i(0, "@No further questions...@", _Avatar);
+                goto label_41;
+            }
+        }
+        clear_answers;
+        label_41:
+        flag(383) = true;
+        v3 = ~SetQuality(29, ~GimmePathEgg(1, 1));
+        v4 = (~GetCoord(_Garth) & (5 & 6));
+        v5 = ~FindNearby_i(16, 40, _Egg_Type, v4);
+        if v5 {
+            v6 = ~GetCoord(v5);
+            PathfindNPC_i(false, #FawnTrialEgg_i, item, _Path_Success, v6, item);
+        }
+        EndConverse_i();
+        terminate;
+    }
+    if (v0 = 39) {
+        ClearSpeakers_i();
+        SetSpeaker0_i(0, _Jendon);
+        ["Why hast thou brought me before the Oracle, Avatar? Ask me thy questions."];
+        TurnOn(<< "the character of the accused", "Daemonism" >>);
+        if flag(429) {
+            TurnOn("strange objects");
+        }
+        if flag(428) {
+            TurnOn("ancient ruins");
+        }
+        if flag(427) {
+            TurnOn("savages");
+        }
+        if flag(341) {
+            TurnOn("Gwenno");
+        }
+        TurnOn("no questions");
+        converse {
+            key ("strange objects") {
+                TurnOff(<< "strange objects", "no questions" >>);
+                TurnOn("no further questions");
+                ["That is what I said in my testimony -- <v2> brought me strange items, and asked me to identify them."];
+                v8 = ~PartyUtters(false, 0, "@But thou art an innkeeper! Surely, many folks bring thee mysteries...@", 1);
+                SetSpeakerSlot_i(0);
+                ["Mayhaps, stranger. But nothing half so strange..."];
+            }
+            key ("ancient ruins") {
+                TurnOff(<< "ancient ruins", "no questions" >>);
+                TurnOn("no further questions");
+                ["<v2> did ask me about the ancient ruins, indeed. Very suspicious."];
+                v8 = ~PartyUtters(false, 0, "@Surely, others ask of these same things?@", 1);
+                SetSpeakerSlot_i(0);
+                ["Indeed, the sage Batlin was also curious about the ruins."];
+                SetSpeaker1_i(0, _Garth);
+                ["See how the evidence convicts him! I tell thee, this <v2> works for Batlin, and both are tools of Beast British!"];
+                CloseSpeaker1_i();
+                SetSpeakerSlot_i(0);
+            }
+            key ("savages") {
+                TurnOff(<< "savages", "no questions" >>);
+                TurnOn("no further questions");
+                ["We did speak of the northern barbarians, <v2> and I. He seemed to relish the most grisly parts of the tale."];
+                SetSpeaker1_i(0, _Olon);
+                ["Ah, but thou dost tell that tale to everyone, Jendon. Thou canst not convict a man for listening to thy tales..."];
+                CloseSpeaker1_i();
+                SetSpeakerSlot_i(0);
+            }
+            key ("Gwenno") {
+                TurnOff(<< "Gwenno", "no questions" >>);
+                TurnOn("no further questions");
+                ["Yes, I did meet the scholar when she was here. A fine lady, of good temperament."];
+                if $IOLO_ACCUSED {
+                    ["I find it hard to believe that Iolo could be guilty of Daemonism, yet be wed to such a wonderful lady."];
+                } else {
+                    ["But I fail to see any connection between that good lady, and this trial."];
+                }
+            }
+            key ("the character of the accused") {
+                TurnOff(<< "the character of the accused", "no questions" >>);
+                TurnOn("no further questions");
+                if ~GetItemFlag_i(_Met, _Jendon) {
+                    if $IOLO_ACCUSED {
+                        ["A prince of a man! Why, when he breaks into song, I can hardly keep the crowds out of mine inn!"];
+                        SetSpeaker1_i(0, _Yelinda);
+                        ["Such a man hardly sounds like the servant of Daemons, innkeeper."];
+                        CloseSpeaker1_i();
+                        SetSpeakerSlot_i(0);
+                        ["Aye. But then again, doth legend not claim that Daemons have silver tongues? This Iolo doth certainly have charm..."];
+                    }
+                    if $SHAMINO_ACCUSED {
+                        ["Can't say as I like him much, <v1>. He doth not drink much, nor doth he seem to enjoy the entertainments of the inn."];
+                        SetSpeaker1_i(0, _Zulith);
+                        ["Doth Shamino not have the passions of a normal man, Jendon?"];
+                        CloseSpeaker1_i();
+                        SetSpeakerSlot_i(0);
+                        ["Perhaps. Or he may merely be driven by his cause. Shamino is far too serious."];
+                    }
+                    if $DUPRE_ACCUSED {
+                        ["He can out-drink any man in this town, and I think he could out-fight nearly everyone except Jorvin!"];
+                        ["I must admit, Dupre is a likable man. Hard to believe he's a tool of Beast British."];
+                    }
+                } else {
+                    ["Not having met the man, I have little to say about him. He needs a shave."];
+                }
+            }
+            key ("Daemonism") {
+                TurnOff(<< "Daemonism", "no questions" >>);
+                TurnOn("no further questions");
+                ["Do I believe in Daemonism? Of course. My mother told me the legends when I was a mere child."];
+                ["And even if I didn't -- why, I'm an innkeeper, <v1>. For the sake of my business, friend, I dare not disagree with the Priestess of Beauty."];
+            }
+            key ("no questions") {
+                SetSpeaker1_i(0, _Avatar);
+                ["Forgive me. I have no questions for thee."];
+                Bark_i(0, "@Strange kind of person...@", item);
+                goto label_83;
+            }
+            key ("no further questions") {
+                Bark_i(0, "@No further questions...@", _Avatar);
+                goto label_83;
+            }
+        }
+        clear_answers;
+        label_83:
+        flag(377) = true;
+        v3 = ~SetQuality(29, ~GimmePathEgg(1, 1));
+        v4 = (~GetCoord(_Jendon) & (16 & 6));
+        v5 = ~FindNearby_i(16, 40, _Egg_Type, v4);
+        if v5 {
+            v6 = ~GetCoord(v5);
+            PathfindNPC_i(false, #FawnTrialEgg_i, item, _Path_Success, v6, item);
+        }
+        EndConverse_i();
+        terminate;
+    }
+    if (v0 = 38) {
+        ClearSpeakers_i();
+        SetSpeaker0_i(0, _Delphynia);
+        ["Hail to Beauty, and the omnipotence of the Oracle!"];
+        ["I shall answer thy questions truthfully, Avatar. Of what can I tell thee?"];
+        TurnOn(<< "the character of the accused", "Daemonism" >>);
+        if flag(430) {
+            TurnOn("Varo Leaves");
+        }
+        TurnOn("no questions");
+        converse {
+            key ("Varo Leaves") {
+                TurnOff(<< "Varo Leaves", "no questions" >>);
+                TurnOn("no further questions");
+                ["I did provide Varo Leaves for <v2>, as I did testify before. And such leaves are used to treat poisons and curses."];
+                SetSpeaker1_i(0, _Avatar);
+                ["It was not <v2> who was cursed, Delphynia. 'Twas I, poisoned by a treacherous woman in the city of Monitor."];
+                CloseSpeaker1_i();
+                SetSpeakerSlot_i(0);
+                ["Mine apologies, <v1>. I did not know..."];
+                SetSpeaker1_i(0, _Garth);
+                ["How do we know this to be true? I say that he lies!"];
+                CloseSpeaker1_i();
+                SetSpeakerSlot_i(0);
+            }
+            key ("the character of the accused") {
+                TurnOff(<< "the character of the accused", "no questions" >>);
+                TurnOn("no further questions");
+                if $IOLO_ACCUSED {
+                    ["He did strike me as a kindly man, of affable temperament. Good with children. Not the kind to consort with Daemons."];
+                }
+                if $SHAMINO_ACCUSED {
+                    ["He doth have honest eyes. He is a hard man to like, but I do not think he is a bad sort."];
+                }
+                if $DUPRE_ACCUSED {
+                    ["This man drinks far too much, and his health will surely suffer for this some day! He is also a bit of a braggart, and he doth think himself a ladies' man --"];
+                    ["He did try to steal a kiss from me!"];
+                    ["Dupre doth have an evil heart. I'd not be surprised if he were in the service of Daemons."];
+                }
+            }
+            key ("Daemonism") {
+                TurnOff(<< "Daemonism", "no questions" >>);
+                TurnOn("no further questions");
+                ["I do believe in Daemons. There is much evil in this world, and I do not believe that we cause it of ourselves."];
+                ["Our ancestors did beat the British by escaping to this land. Is it so incredible that the Daemon would want revenge?"];
+                ["We should be very afraid, all of us..."];
+            }
+            key ("no questions") {
+                SetSpeaker1_i(0, _Avatar);
+                ["Forgive me. I have no questions for thee."];
+                Bark_i(0, "@Never mind...@", item);
+                goto label_108;
+            }
+            key ("no further questions") {
+                Bark_i(0, "@No further questions...@", _Avatar);
+                goto label_108;
+            }
+        }
+        clear_answers;
+        label_108:
+        flag(376) = true;
+        v3 = ~SetQuality(29, ~GimmePathEgg(1, 1));
+        v4 = (~GetCoord(_Delphynia) & (18 & 6));
+        v5 = ~FindNearby_i(16, 40, _Egg_Type, v4);
+        if v5 {
+            v6 = ~GetCoord(v5);
+            PathfindNPC_i(false, #FawnTrialEgg_i, item, _Path_Success, v6, item);
+        }
+        EndConverse_i();
+        terminate;
+    }
+    if (v0 = 31) {
+        ClearSpeakers_i();
+        SetSpeaker0_i(0, _Delin);
+        ["Oh... I'm not used to standing in public like this... crowds make me nervous..."];
+        ["Let this be swift. Ask thy questions."];
+        TurnOn(<< "the character of the accused", "Daemonism" >>);
+        if flag(431) {
+            TurnOn("engagement ring");
+        }
+        TurnOn("no questions");
+        converse {
+            key ("engagement ring") {
+                TurnOff(<< "engagement ring", "no questions" >>);
+                TurnOn("no further questions");
+                ["That is what Alyssand said in her testimony -- that thy friend did return her engagement ring to her."];
+                ["Mighty nice of him, I say. He looks to be a good lad. Doth he need a wife?"];
+                if $IOLO_ACCUSED {
+                    SetSpeaker1_i(0, _Iolo);
+                    ["I already have a wife, thank thee!"];
+                }
+                if $DUPRE_ACCUSED {
+                    SetSpeaker1_i(0, _Dupre);
+                    ["I'm afraid thy daughter is not lively enough for me, old man."];
+                }
+                if $SHAMINO_ACCUSED {
+                    SetSpeaker1_i(0, _Shamino);
+                    ["This is not the time for idle chat, good man. My life is at stake!"];
+                }
+                CloseSpeaker1_i();
+                SetSpeakerSlot_i(0);
+                ["I know that the Priestess fears that the ring was stolen by magical means. But what about the storms! They steal things every day. Could not a storm have taken my daughter's ring?"];
+            }
+            key ("the character of the accused") {
+                TurnOff(<< "the character of the accused", "no questions" >>);
+                TurnOn("no further questions");
+                if $IOLO_ACCUSED {
+                    ["He looks to be too old for my daughter, now that I see him clearly."];
+                    ["When a man ages, he starts to lose his mind. Wouldn't want mine Alyssand to have to deal with someone like that..."];
+                }
+                if $SHAMINO_ACCUSED {
+                    ["Doth he not ever smile? He doth have the look of a convict, that's what I say."];
+                }
+                if $DUPRE_ACCUSED {
+                    ["He looks like a fine lad, he doth."];
+                    ["<v2>! Come by the shop afterwards, and I'll introduce ye to my daughter!"];
+                }
+            }
+            key ("Daemonism") {
+                TurnOff(<< "Daemonism", "no questions" >>);
+                TurnOn("no further questions");
+                ["Very frightening. Don't care much for Daemons."];
+            }
+            key ("no questions") {
+                SetSpeaker1_i(0, _Avatar);
+                ["Forgive me. I have no questions for thee."];
+                Bark_i(0, "@Nor I for thee...@", item);
+                goto label_139;
+            }
+            key ("no further questions") {
+                Bark_i(0, "@No further questions...@", _Avatar);
+                goto label_139;
+            }
+        }
+        clear_answers;
+        label_139:
+        flag(375) = true;
+        v3 = ~SetQuality(29, ~GimmePathEgg(1, 1));
+        v4 = (~GetCoord(_Delin) & (14 & 6));
+        v5 = ~FindNearby_i(16, 40, _Egg_Type, v4);
+        if v5 {
+            v6 = ~GetCoord(v5);
+            PathfindNPC_i(false, #FawnTrialEgg_i, item, _Path_Success, v6, item);
+        }
+        EndConverse_i();
+        terminate;
+    }
+    if (v0 = 46) {
+        ClearSpeakers_i();
+        SetSpeaker0_i(0, _Olon);
+        ["Hail to Lady Yelinda, Hail to the Oracle, hail to... hail to everyone!"];
+        SetSpeaker1_i(0, _Jendon);
+        ["I'm afraid he hath been drinking..."];
+        CloseSpeaker1_i();
+        SetSpeakerSlot_i(0);
+        ["I drinks ta forget my pain, innkeeper. Go ahead, Avatar. Ask me thy questions."];
+        TurnOn(<< "the character of the accused", "Daemonism", "drinking", "no questions" >>);
+        converse {
+            key ("the character of the accused") {
+                TurnOff(<< "the character of the accused", "no questions" >>);
+                TurnOn("no further questions");
+                if ~GetItemFlag_i(_Met, _Olon) {
+                    if $IOLO_ACCUSED {
+                        ["He looks like he hath had one too many tips of the bottle, if ya know what I mean."];
+                    }
+                    if $SHAMINO_ACCUSED {
+                        ["What a sourpuss! Wouldn't even share a glass of ale with me..."];
+                    }
+                    if $DUPRE_ACCUSED {
+                        ["I love that man! Dupre, sing that drinking song thou didst teach me, the one about all the young ladies?"];
+                        SetSpeaker1_i(0, _Zulith);
+                        ["I don't think that would be advisable."];
+                        CloseSpeaker1_i();
+                        SetSpeakerSlot_i(0);
+                        ["I have my lute with me..."];
+                        SetMusic(~GimmePathEgg(1, 5), 59);
+                        ["If all the young ladies were bricks in a pile,"];
+                        SetMusic(~GimmePathEgg(1, 5), 60);
+                        ["I'd be a mason and lay them in style!"];
+                        SetMusic(~GimmePathEgg(1, 5), 61);
+                        ["Roll thy leg over, roll thy leg over..."];
+                        SetSpeaker1_i(0, _Zulith);
+                        ["Zounds, man! In the earshot of Lady Yelinda? Hast thou no decency!"];
+                        Bark_i(0, "@Leave me alone...@", _Olon);
+                        goto label_165;
+                    }
+                } else {
+                    ["Don't believe I've met the man before."];
+                }
+            }
+            key ("Daemonism") {
+                TurnOff(<< "Daemonism", "no questions" >>);
+                TurnOn("no further questions");
+                ["I used ta believe in that stuff. But what Beauty is there in the world for a sailor who cannot sail?"];
+                ["If the Oracle is so powerful, why did it not save us from the storms? Why did it let so many good men die?"];
+                SetSpeaker1_i(0, _Garth);
+                ["Foul blasphemy! Hold thy tongue, rogue, or face the wrath of the Oracle."];
+                CloseSpeaker1_i();
+                SetSpeakerSlot_i(0);
+                ["I may be a drunk, but I be an honest drunk. I shall follow no hypocrite ta a watery grave."];
+                Bark_i(0, "@That's all I have to say...@", _Olon);
+                goto label_165;
+            }
+            key ("drinking") {
+                TurnOff(<< "drinking", "no questions" >>);
+                TurnOn("no further questions");
+                ["Why do I drink so much? That's rather a personal question..."];
+                ["I be a sailor stranded on the shore, mate. 'Tis no worse fate. With my very own eyes, I have seen our fleet blasted to wreckage by the storms. I saw sailors die!"];
+                ["Why would a man who hath cheated death not drink, Avatar? Perhaps I should have died with my brothers..."];
+            }
+            key ("no questions") {
+                SetSpeaker1_i(0, _Avatar);
+                ["Forgive me. I have no questions for thee."];
+                Bark_i(0, "@Drunkard...@", item);
+                goto label_165;
+            }
+            key ("no further questions") {
+                Bark_i(0, "@No further questions...@", _Avatar);
+                goto label_165;
+            }
+        }
+        clear_answers;
+        label_165:
+        flag(382) = true;
+        v3 = ~SetQuality(29, ~GimmePathEgg(1, 1));
+        v4 = (~GetCoord(_Olon) & (17 & 6));
+        v5 = ~FindNearby_i(16, 40, _Egg_Type, v4);
+        if v5 {
+            v6 = ~GetCoord(v5);
+            PathfindNPC_i(false, #FawnTrialEgg_i, item, _Path_Success, v6, item);
+        }
+        EndConverse_i();
+        terminate;
+    }
+    if (v0 = 52) {
+        ClearSpeakers_i();
+        SetSpeaker0_i(0, _Yelinda);
+        ["I shall answer thy questions, <v1>, for the sake of the Oracle. But do not try my patience."];
+        TurnOn(<< "the character of the accused", "Daemonism", "Dupre's words", "no questions" >>);
+        converse {
+            key ("Dupre's words") {
+                TurnOff(<< "Dupre's words", "no questions" >>);
+                TurnOn("no further questions");
+                ["I do not remember every word uttered in my presence, <v1>."];
+                SetSpeaker1_i(0, ~JailedNPC_i(true));
+                ["These were mine exact words, Lady -- All hail Lord British and the glory that is Britannia!"];
+                CloseSpeaker1_i();
+                SetSpeakerSlot_i(0);
+                ["Beauty forbid! Thou hast spouted the blasphemy again!"];
+                Bark_i(0, "@I cannot bear this!@", _Yelinda);
+                goto label_188;
+            }
+            key ("the character of the accused") {
+                TurnOff(<< "the character of the accused", "no questions" >>);
+                TurnOn("no further questions");
+                if $IOLO_ACCUSED {
+                    ["He seems to be an unstable man. Sociable at one moment, and deranged in the next!"];
+                }
+                if $SHAMINO_ACCUSED {
+                    ["He frightens me. Look into those cold, hard eyes! Aren't those the eyes of a murderer?"];
+                }
+                if $DUPRE_ACCUSED {
+                    ["This is a wild man, full of passions and lusts! I can feel his eyes on me now..."];
+                }
+            }
+            key ("Daemonism") {
+                TurnOff(<< "Daemonism", "no questions" >>);
+                TurnOn("no further questions");
+                ["There is no doubt that Daemon British exists. I have seen the records left by previous generations."];
+                ["The Beast did conquer all of Sosaria, and did force the Fawnese to flee into the sea. How cruel!"];
+                ["I have always hated the Beast, and I always shall!"];
+            }
+            key ("no questions") {
+                SetSpeaker1_i(0, _Avatar);
+                ["Forgive me. I have no questions for thee."];
+                Bark_i(2, "@Such impudence!@", _Zulith);
+                Bark_i(0, "@For shame!@", _Joth);
+                goto label_188;
+            }
+            key ("no further questions") {
+                Bark_i(0, "@No further questions...@", _Avatar);
+                goto label_188;
+            }
+        }
+        clear_answers;
+        label_188:
+        flag(385) = true;
+        v3 = ~SetQuality(29, ~GimmePathEgg(1, 1));
+        v4 = (~GetCoord(_Yelinda) & (2 & 6));
+        v5 = ~FindNearby_i(16, 40, _Egg_Type, v4);
+        if v5 {
+            v6 = ~GetCoord(v5);
+            PathfindNPC_i(false, #FawnTrialEgg_i, item, _Path_Success, v6, item);
+        }
+        EndConverse_i();
+        terminate;
+    }
+    if (v0 = 51) {
+        ClearSpeakers_i();
+        SetSpeaker0_i(0, _Zulith);
+        ["Ask thy questions, Avatar. However, I shall reserve the right to silence. After all, I am the custodian of Lady Yelinda's confidential matters."];
+        TurnOn(<< "the character of the accused", "Daemonism", "following me", "no questions" >>);
+        converse {
+            key ("following me") {
+                TurnOff(<< "following me", "no questions" >>);
+                TurnOn("no further questions");
+                if flag(432) {
+                    ["As I stated in the earlier session of these proceedings, <v2> was too sharp for me. However, I did see him conferring with Delin's daughter, and she is a known sympathizer with The Fellowship!"];
+                    goto label_201;
+                }
+                ["I do not have to answer that question. This is a matter of state security."];
+                v3 = ~AskList(<< "protest", "accept" >>);
+                if (v3 = "protest") {
+                    ["I don't have to answer thy questions, traitor!"];
+                    SetSpeaker1_i(0, _Yelinda);
+                    ["The Oracle must hear all of the facts, if it is to decide fairly. Chancellor, I give my permission to speak of thy secrets."];
+                    CloseSpeaker1_i();
+                    SetSpeakerSlot_i(0);
+                    goto label_200;
+                }
+                ["Ask me something else..."];
+                goto label_202;
+                label_200:
+                ["I followed <v2> about this town, until he spotted me. No doubt I prevented him from great evil!"];
+                SetSpeaker1_i(0, _Delphynia);
+                ["But thou didst not see him actually perform any vile acts?"];
+                CloseSpeaker1_i();
+                SetSpeakerSlot_i(0);
+                ["He contacted Alyssand, madam! I saw them speaking together, and casting many sly glances in my direction."];
+                label_201:
+                SetSpeaker1_i(0, _Delin);
+                ["My daughter is not on trial here, chancellor..."];
+                CloseSpeaker1_i();
+                SetSpeakerSlot_i(0);
+                ["Well... I suppose not..."];
+                label_202:
+                v3 = 1;
+            }
+            key ("the character of the accused") {
+                TurnOff(<< "the character of the accused", "no questions" >>);
+                TurnOn("no further questions");
+                if $IOLO_ACCUSED {
+                    ["Isn't it obvious? The bard is a light-minded man, disrespectful of proper authority! Iolo is not a man to be trusted."];
+                }
+                if $SHAMINO_ACCUSED {
+                    ["He possesses the grim silence of the professional executioner. Shamino never laughs. I find him to be disquieting..."];
+                }
+                if $DUPRE_ACCUSED {
+                    ["Why, the man is a known drunkard, and a companion of thieves and cut-throats. Look at those he consorts with!"];
+                }
+            }
+            key ("Daemonism") {
+                TurnOff(<< "Daemonism", "no questions" >>);
+                TurnOn("no further questions");
+                ["Dost thou not feel the sudden chill in this Temple, at the very mention of Beast British?"];
+                ["I tell thee, the Daemon exists, and his schemes to destroy Fawn can only be averted by the justice of the Oracle!"];
+            }
+            key ("no questions") {
+                SetSpeaker1_i(0, _Avatar);
+                ["Forgive me. I have no questions for thee."];
+                Bark_i(0, "@Idiot...@", item);
+                goto label_218;
+            }
+            key ("no further questions") {
+                Bark_i(0, "@No further questions...@", _Avatar);
+                goto label_218;
+            }
+        }
+        clear_answers;
+        label_218:
+        flag(386) = true;
+        v3 = ~SetQuality(29, ~GimmePathEgg(1, 1));
+        v4 = (~GetCoord(_Zulith) & (10 & 6));
+        v5 = ~FindNearby_i(16, 40, _Egg_Type, v4);
+        if v5 {
+            v6 = ~GetCoord(v5);
+            PathfindNPC_i(false, #FawnTrialEgg_i, item, _Path_Success, v6, item);
+        }
+        EndConverse_i();
+        terminate;
+    }
+}

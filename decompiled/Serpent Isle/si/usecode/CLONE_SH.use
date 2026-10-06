@@ -1,0 +1,295 @@
+Routine CloneShamino accepts a0 #locals(22) #uses(~LordOrLady, ~AvatarName, PartyFaces_i, Bark_i, ~GimmePathEgg, ~AskYesNo, SetWorkTypeAt_i, LeaveCloneTest_i) {
+    v0 = ~LordOrLady();
+    v1 = ~AvatarSex();
+    v2 = ~AvatarName();
+    if (event = _Bark) {
+        v3 = ("@I like this place!@" & ("@Pleasure me, woman!@" & ("@Dance, dance, dance!@" & ("@Now!@" & ("@Come to me!@" & "@Thou art beautiful...@")))));
+        Item_bark(v3::~Random(~ListSize_i(v3)), item);
+    }
+    if (event = _Converse) {
+        Item_bark("@Old friend...@", _Avatar);
+        PartyFaces_i(65357);
+        Bark_i(2, "@What dost thou wish?@", _CloneShamino);
+        SetWorkType(_Talk, _CloneShamino);
+    }
+    if (event = _Talking) {
+        ClearBark_i(_CloneShamino);
+        if ~GetItemFlag_i(_DontMove_i, _Avatar) {
+            v4 = ~GimmePathEgg(1, 0);
+            v5 = ~PostInFuture(2, << _aNO_HALT_i, _aUSABLE_i, #CaptivesBark_i >>, v4);
+            ClearItemFlag_i(_DontMove_i, _Avatar);
+            v6 = ~FindNearby_i(0, 30, _Door_EW, _Avatar);
+            if v6 {
+                v7 = ~GetCoord(v6);
+                v8 = ~Item_create(_Door_NS);
+                if v8 {
+                    Item_destroy(v6);
+                    SetFrame(22, v8);
+                    v5 = ~PopToMap(v7);
+                }
+            }
+        }
+        SetWorkType(_Wait, _CloneShamino);
+        SetSpeaker0_i(0, _Shamino);
+        ["We feared for thee when thou didst disappear from between the pillars. While searching, I became trapped here. I cannot seem to find the way out. Though I suspect that those buttons on the wall might be part of the answer."];
+        TurnOn(<< "disappear", "trapped", "buttons", "bye" >>);
+        converse {
+            key ("bye") {
+                Npc_schedule(_CloneShamino);
+                Bark_i(0, "@Thanks...@", _Avatar);
+                Bark_i(2, "@Try the left button!@", _CloneShamino);
+                terminate;
+            }
+            key ("disappear") {
+                ["Thou didst examine the fiery pillar, as Zhelkas instructed thee... And then thou wert gone!"];
+                ["I think the Gargoyle hath tricked us, Avatar. Never trust their type..."];
+                TurnOff("disappear");
+                TurnOn("tricked");
+            }
+            key ("tricked") {
+                ["When we sought to question him about thy disappearance, he was nowhere to be found. So we divided to look for thee..."];
+                ["I became confused when trying to return to the pillars. And here I am... With all these lovely people."];
+                TurnOff("tricked");
+                TurnOn("people");
+            }
+            key ("people") {
+                ["They seem to be trapped here as well."];
+                ["They have been trying to discourage me from using the button on the left... but there are powerful rewards for pressing that button!"];
+                TurnOff("people");
+                TurnOn("rewards");
+            }
+            key ("rewards") {
+                ["Well, these people seem to have been here a very long time. They are... lonely... for company."];
+                ["There is much that we could do to make them feel less lonely, Avatar, if thou dost know what I mean..."];
+                TurnOff("rewards");
+            }
+            key ("trapped") {
+                ["Thou canst see for thyself... There is no way out of here. I can find no concealed doors."];
+                ["It is only reasonable that these buttons hold the way out. Though they also hold much more..."];
+                TurnOff("trapped");
+                TurnOn("what else");
+            }
+            key ("what else") {
+                ["Apparently the buttons also control the doors to the private chambers."];
+                ["And also the private passions of these people! This is such fun, Avatar."];
+                TurnOff("what else");
+                TurnOn("private chambers");
+            }
+            key ("private chambers") {
+                TurnOff("private chambers");
+                ["I can show thee, if thou wouldst like... Or thou canst press the button on the left post and see for thyself."];
+                ["Wouldst thou like me to do it?"];
+                if (~AskYesNo() = true) {
+                    CloseSpeaker0_i();
+                    Bark_i(0, "@Watch this!@", _CloneShamino);
+                    flag(494) = true;
+                    v9 = ~FindNearby_i(0, 20, _Switch, _Avatar);
+                    Foreach v12 in v9 {
+                        v13 = ~GetQuality(v12);
+                        if (v13 = 23) {
+                            SetMusic(~GimmePathEgg(1, 5), 28);
+                            v14 = ~GetDist(v12, _CloneShamino);
+                            v7 = ~GetCoord(v12);
+                            v7::1 = (v7::1 + 1);
+                            SetNPCID_i(1, _CloneShamino);
+                            PathfindNPC_i(true, #CloneShamino, ~NPCToItem_i(_CloneShamino), _Path_Success, v7, _CloneShamino);
+                        }
+                    }
+                    terminate;
+                } else {
+                    ["Perhaps later, when thou art more relaxed, eh?"];
+                }
+            }
+            key ("buttons") {
+                ["There are two buttons on the posts behind me."];
+                ["When I went to press the one on the left, these comely folks begged me not to."];
+                TurnOff("buttons");
+                TurnOn("begged");
+            }
+            key ("begged") {
+                ["Yes, begged. But they would not explain, and I was certain they were hiding something from me..."];
+                ["What could I do?"];
+                ["I pressed the button on the left... And made a rather fascinating discovery."];
+                TurnOff("begged");
+                TurnOn("discovery");
+            }
+            key ("discovery") {
+                ["I found out how very lonely certain of these folks have been -- particularly the women..."];
+                ["They have been very convincing."];
+                ["Press the button, and thou canst see for thyself!"];
+                TurnOff("discovery");
+            }
+        }
+        clear_answers;
+    }
+    if (event = _Action) {
+        if flag(494) {
+            SetSpeaker0_i(0, _Shamino);
+            ["See, Avatar? When I press this button, the women become so friendly towards me..."];
+            ["Now I and one of my new friends shall go to a private chamber for some socializing... if thou knowest what I mean..."];
+            ["I do not think I'll be back for quite a while, Avatar. Thou shalt have to find the way out thyself."];
+            ["If thou wishest to..."];
+            CloseSpeaker0_i();
+            v15 = ~FindNearby_i(4, 30, _Blonde_Mage, _CloneShamino);
+            if v15 {
+                Bark_i(1, "@I think 'tis THY turn...@", _CloneShamino);
+                SetWorkType(_Wait, v15);
+                ClearBark_i(_Sex02);
+                Bark_i(2, "@Yes, Shamino...@", _Sex02);
+                v6 = ~FindNearby_i(0, 10, _Door_NS, _CloneShamino);
+                if v6 {
+                    v7 = ~GetCoord(v6);
+                    SetNPCID_i(0, _CloneShamino);
+                    PathfindNPC_i(true, #CloneShamino, item, _Pathfind1, << (v7::1 + 1), v7::2, v7::3 >>, _CloneShamino);
+                    PathfindNPC_i(true, #CloneShamino, item, _Pathfind1, << (v7::1 + 1), (v7::2 + 2), v7::3 >>, _Sex02);
+                }
+            }
+            Bark_i(3, "@Hey, come back!@", _Avatar);
+            flag(494) = false;
+            terminate;
+        } else {
+            SetSpeaker0_i(0, _Shamino);
+            ["See, their desire to please thee hath clouded their minds..."];
+            ["Open the door to their private chambers and let them show thee how much they'd like thee to stay..."];
+            ["They can be... very... persuasive."];
+            CloseSpeaker0_i();
+        }
+        terminate;
+    }
+    if (event = _Path_Failure) {
+        v16 = ~Item_getType(item);
+        if (v16 = 888) {
+            event = 7;
+        }
+        if ((v16 = 721) and ($foundsexdoor = true)) {
+            event = 7;
+        }
+        if ((v16 = 487) and (~GetNPCID_i(_CloneShamino) = 1)) {
+            event = 13;
+        }
+        if ((v16 = 487) and (~GetNPCID_i(_CloneShamino) = 0)) {
+            event = 10;
+        }
+        if (v16 = 652) {
+            event = 10;
+        }
+    }
+    if (event = _Path_Success) {
+        v5 = ~PostAction(<< _aUSABLE_i, #ClonePressesButton_i >>, _CloneShamino);
+        terminate;
+    }
+    if (event = _Pathfind1) {
+        if $foundsexdoor {
+            v17 = ~GetCoord(_CloneShamino);
+            v18 = ~GetCoord(_Sex02);
+            SetWorkTypeAt_i(_Dance, 1644, 28, _CloneShamino);
+            SetWorkTypeAt_i(_Dance, 1644, 24, _Sex02);
+            createSprite(65535, 0, 0, 0, v17::2, v17::1, 26);
+            createSprite(65535, 0, 0, 0, v18::2, v18::1, 26);
+            $foundsexdoor = false;
+        } else {
+            $foundsexdoor = true;
+        }
+        terminate;
+    }
+    if (event = _NearDeath) {
+        if $foundsexdoor {
+            v19 = ~GetCoord(_Avatar);
+            v18 = ~GetCoord(_Sex03);
+            RemoveNPC_i(_Sex03);
+            createSprite(65535, 0, 0, 0, v19::2, v19::1, 26);
+            createSprite(65535, 0, 0, 0, v18::2, v18::1, 26);
+            ClearItemFlag_i(_DontMove_i, _Avatar);
+            LeaveCloneTest_i(0);
+        } else {
+            Bark_i(2, "@Come, Avatar...@", _Sex03);
+            v6 = ~FindNearby_i(0, 10, _Door_NS, item);
+            if v6 {
+                SetItemFlag_i(_DontMove_i, _Avatar);
+                v7 = ~GetCoord(v6);
+                v7::1 = (v7::1 + 1);
+                v7::2 = (v7::2 - 2);
+                PathfindNPC_i(true, #CloneShamino, ~NPCToItem_i(_Avatar), _NearDeath, v7, _Avatar);
+            }
+            $foundsexdoor = true;
+        }
+        terminate;
+    }
+    if (event = _Pathfind2) {
+        v20 = ~ItemToNPC_i(item);
+        v7 = ~GetCoord(v20);
+        RemoveNPC_i(v20);
+        createSprite(65535, 0, 0, 0, v7::2, v7::1, 7);
+        if ($passedshaminoclonetest = true) {
+            v7 = ~GetCoord(_Avatar);
+            createSprite(65535, 0, 0, 0, v7::2, v7::1, 7);
+            if ~FindNearby_i(0, 20, _Shamino_Type, _Avatar) {
+                SetSpeaker0_i(0, _CloneShamino);
+                ["The slaves, Avatar! Thou didst release them all! Damn thee!"];
+                CloseSpeaker0_i();
+            }
+            v21 = ~GimmePathEgg(1, 0);
+            v5 = ~PostInFuture(15, << _aNO_HALT_i, _aUSABLE_i, #LeaveCloneTest_i >>, v21);
+        }
+    }
+}
+
+Routine ClonePressesButton_i accepts a0 #locals(2) #uses(ThrowSwitch_i) {
+    if (event = _Action) {
+        v0 = ~FindNearby_i(0, 4, _Switch, _CloneShamino);
+        if v0 {
+            v1 = ~GetQuality(v0);
+            ThrowSwitch_i(v1);
+        }
+    }
+}
+
+Routine ThrowSwitch_i accepts a0 #locals(16) #uses(~IsInInv, FuseReagents_i, ThrowSceneSwitch_i, ThrowDoorSwitch_i, ShowTemptation_i) {
+    if (v0 = 1) {
+        v1 = ~FindNearby_i(0, 20, _Chaos_Male, item);
+        Kernel_resetRef(v1);
+        ClearBark_i(v1);
+        v2 = ~FindNearby_i(0, 30, _Field_Fire, item);
+        Foreach v5 in v2 {
+            v6 = ~PostAction(<< _aNO_HALT_i, _aREMOVE_i >>, v5);
+        }
+        $passedfiretest = true;
+        if v1 {
+            v7 = ~GetCoord(item);
+            PathfindNPC_i(false, #Switch, item, _NearDeath, v7, _ManInFire);
+            v6 = ~PostInFuture(10, << _aNO_HALT_i, _aBARK_i, "@Thou art truly ethical!@" >>, v1);
+            SetNPCID_i(5, _ManInFire);
+        }
+        terminate;
+    }
+    if (v0 = 2) {
+        v8 = false;
+        v9 = << 948, 952, 951, 644, 645, 646 >>;
+        Foreach v12 in v9 {
+            if ~IsInInv(65177, 65177, v12, 1, _Avatar) {
+                v8 = true;
+            }
+        }
+        if (v8 = false) {
+            $passedmoneytest = true;
+        }
+        v6 = ~PostAction(<< _aUSABLE_i, #LeaveEthicalTest_i >>, _Avatar);
+        v13 = ~FindNearby_i(16, 160, _Trap_Type, item);
+        Foreach v16 in v13 {
+            v6 = ~PostAction(<< _aSET_EGG_i, _External, 5 >>, v16);
+        }
+        terminate;
+    }
+    if (v0 = 10) {
+        FuseReagents_i();
+    }
+    if ((v0 > 20) and (v0 <= 100)) {
+        ThrowSceneSwitch_i(v0);
+    }
+    if ((v0 > 100) and (v0 < 200)) {
+        ThrowDoorSwitch_i(v0);
+    }
+    if (v0 = 200) {
+        ShowTemptation_i(item);
+    }
+}

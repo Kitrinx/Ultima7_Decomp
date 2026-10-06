@@ -1,0 +1,44 @@
+Routine InstallSilverSeed_i accepts a0 #locals(17) {
+    if (event = _Action) {
+        v0 = << 945, 1015, 946, 947, 975, 957, 978 >>;
+        v1 = << 30, 12, 8, 24, 30, 23, 30 >>;
+        v2 = << 30, 15, 12, 16, 30, 30, 20 >>;
+        v3 = << 20, 25, 28, 10, 30, 13, 30 >>;
+        v4 = << 30, 13, 11, 18, 30, 18, 30 >>;
+        v5 = << 30, 12, 8, 24, 50, 23, 30 >>;
+        v6 = << 2681, 2597, 2736, 2736, 3040, 2502, 288 >>;
+        v7 = << 2764, 2985, 2793, 3038, 2891, 2629, 3024 >>;
+        v8 = << 16, 21, 11, 11, 4, 29, 10 >>;
+        v9 = 0;
+        Foreach v12 in v0 {
+            v9 = (v9 + 1);
+            v13 = ~CreateCreature_i(<< v6::v9, v7::v9, 0 >>, v12);
+            if v13 {
+                ClearItemFlag_i(_IsTemporary_i, v13);
+                Npc_setAlignment(_Neutral, v13);
+                SetWorkType(v8::v9, v13);
+                SetNPCID_i(0, v13);
+                v14 = ~GetNPCStat_i(_Str, v13);
+                v15 = (v1::v9 - v14);
+                v16 = ~ChangeNPCStat_i(v15, _Str, v13);
+                v14 = ~GetNPCStat_i(_Dex, v13);
+                v15 = (v2::v9 - v14);
+                v16 = ~ChangeNPCStat_i(v15, _Dex, v13);
+                v14 = ~GetNPCStat_i(_Int, v13);
+                v15 = (v3::v9 - v14);
+                v16 = ~ChangeNPCStat_i(v15, _Int, v13);
+                v14 = ~GetNPCStat_i(_Cbt, v13);
+                v15 = (v4::v9 - v14);
+                v16 = ~ChangeNPCStat_i(v15, _Cbt, v13);
+                v14 = ~GetNPCStat_i(_Hits, v13);
+                v15 = (v5::v9 - v14);
+                v16 = ~ChangeNPCStat_i(v15, _Hits, v13);
+                if (v12 = 945) {
+                    SetItemFlag_i(_Tournament, v13);
+                }
+            } else {
+                PrintError_i("Error! Silver Seed Installation.");
+            }
+        }
+    }
+}

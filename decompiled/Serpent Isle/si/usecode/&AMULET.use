@@ -1,0 +1,102 @@
+Routine Amulet accepts a0 #locals(5) #uses(PlayQuestSpeech_i, UseAmuletOfBalance_i, Bark_i, ~WhereAmI_i) {
+    if (event = _Converse) {
+        v0 = ~Npc_getEquip(3, _Avatar);
+        if (v0 = item) {
+            v1 = ~GetFrame(v0);
+            v2 = ~Item_getType(v0);
+            if ((v2 = 955) and (v1 = 2)) {
+                PlayQuestSpeech_i();
+                terminate;
+            }
+            if ((v2 = 955) and (v1 = 9)) {
+                UseAmuletOfBalance_i();
+                terminate;
+            }
+        }
+    }
+    if (event = _Pathfind1) {
+        if not $USED_AMULET_OF_BALANCE {
+            $USED_AMULET_OF_BALANCE = true;
+            SaveCoord_i(item);
+            SetItemFlag_i(_DontMove_i, _Avatar);
+            Bark_i(35, "@What?@", _Avatar);
+            Bark_i(55, "@Why isn't this working?@", _Avatar);
+            v3 = ~PostAction(<< _aNO_HALT_i, _aWAIT_i, 2, _aFACE_i, _South, _aWAIT_i, 2, _aBEND_FRAME_i, _aWAIT_i, 2, _aKNEEL_FRAME_i, _aLOOP_i, 65535, 30, byte(39), 30, byte(85), 2003 >>, _Avatar);
+        } else {
+            v3 = ~PostAction(<< _aNO_HALT_i, _aWAIT_i, 2, _aFACE_i, _South, _aWAIT_i, 2, _aBEND_FRAME_i, _aWAIT_i, 2, _aKNEEL_FRAME_i, _aLOOP_i, 65535, 10, byte(85), 955 >>, _Avatar);
+        }
+    }
+    if (event = _Action) {
+        v4 = ~WhereAmI_i();
+        if (v4 = 32) {
+            RecallCoord_i(item);
+            terminate;
+        } else {
+            SaveCoord_i(item);
+            Item_move(<< 2695, 2818, 2 >>, _Party);
+            terminate;
+        }
+    }
+}
+
+Usable UseAmuletOfBalance_i #locals(17) #uses(~GimmePathEgg, PathToItem_i) {
+    v0 = ~FindNearby_i(0, 15, _Serpgate, item);
+    v1 = false;
+    Foreach v4 in v0 {
+        v5 = ~GetFrame(v4);
+        if (v5 < 8) {
+            v1 = true;
+        }
+    }
+    if not v1 {
+        SetSpeaker0_i(0, _Avatar);
+        ["I must be near a Serpent Gate for the Amulet of Balance to work."];
+        CloseSpeaker0_i();
+        terminate;
+    }
+    v6 = ~GetClock(7);
+    if (not $USED_AMULET_OF_BALANCE or $PLANTED_SILVER_SEED) {
+        v6 = 168;
+    }
+    if (v6 < 168) {
+        v7 = (7 - (v6 / 24));
+        v8 = (24 - (v6 modulo 24));
+        if ((v6 >= 144) and (v6 < 168)) {
+            v7 = 0;
+        }
+        SetSpeaker0_i(0, _Avatar);
+        ["It has not yet been a full week. The Amulet of Balance has not fully recharged."];
+        if (v7 > 0) {
+            ["I cannot use it for another <v7> days yet."];
+        }
+        if (v7 = 0) {
+            if (v8 > 1) {
+                ["I must wait another <v8> hours."];
+            } else {
+                ["I must wait another hour."];
+            }
+        }
+        CloseSpeaker0_i();
+        terminate;
+    } else {
+        SetClock(7);
+    }
+    v9 = ~FindNearby_i(16, 20, _Egg_Type, item);
+    Foreach v12 in v9 {
+        if (~GetFrame(v12) = 6) {
+            closeAllGumps();
+            ClearItemFlag_i(_Freeze, _Avatar);
+            $temp1flag = false;
+            $temp2flag = false;
+            $temp3flag = false;
+            $temp4flag = false;
+            v13 = ~GetNPCStat_i(_Mag, _Avatar);
+            v13 = (0 - v13);
+            v14 = ~ChangeNPCStat_i(v13, _Mag, _Avatar);
+            v15 = ~GimmePathEgg(2, 0);
+            SetMusic(v15, 29);
+            v16 = ~GetCoord(v12);
+            PathToItem_i(10, v12, #Amulet, 65535, 65535, 65535, v12);
+        }
+    }
+}

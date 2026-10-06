@@ -1,0 +1,40 @@
+Routine BraccusEgg_i accepts a0 #locals(7) #uses(~GimmePathEgg, ~IsInInv, PartyFaces_i, FaceAvatar_i, Bark_i) {
+    if (event = _Trigger) {
+        if not $SHAMINOS_KEEP_BARRIERS_GONE {
+            terminate;
+        }
+        v0 = ~PostInFuture(5, << _aNO_HALT_i, _aUSABLE_i, #BraccusEgg_i >>, ~GimmePathEgg(1, 5));
+        Item_destroy(item);
+        terminate;
+    }
+    if (event = _Action) {
+        v1 = ~GetCoord(_Avatar);
+        v0 = ~FindNearby_i(0, 30, _NPC2_Bodies, _Avatar);
+        v2 = false;
+        Foreach v5 in v0 {
+            if (~GetFrame(v5) = 21) {
+                v2 = v5;
+            }
+        }
+        v6 = 100;
+        if v2 {
+            v6 = ~GetDist(_Avatar, v2);
+        }
+        if ((v1::3 > 5) and ((v6 < 6) or ~IsInInv(21, 65177, _NPC2_Bodies, 65177, _Party))) {
+            SetItemFlag_i(_DontMove_i, _Avatar);
+            EndConverse_i();
+            v1 = ~GetCoord(_Avatar);
+            v1::1 = (v1::1 + 5);
+            createSprite(65535, 0, 0, 0, (v1::2 - 3), (v1::1 - 3), 7);
+            Item_move(v1, _Braccus);
+            Sfx(81);
+            PartyFaces_i(65324);
+            FaceAvatar_i(65324);
+            Bark_i(2, "@Hero...@", _Braccus);
+            SetMusic(~GimmePathEgg(1, 5), 63);
+            v0 = ~PostInFuture(14, << _aNO_HALT_i, _aUSABLE_i, #Braccus >>, _Braccus);
+        } else {
+            v0 = ~PostInFuture(2, << _aNO_HALT_i, _aUSABLE_i, #BraccusEgg_i >>, ~GimmePathEgg(1, 5));
+        }
+    }
+}

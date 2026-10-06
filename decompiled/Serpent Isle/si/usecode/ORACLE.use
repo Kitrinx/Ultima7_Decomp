@@ -1,0 +1,99 @@
+Routine Oracle accepts a0 #locals(5) #uses(~AvatarName, ~JailedNPC_i) {
+    v0 = ~AvatarName();
+    v1 = ~JailedNPC_i(false);
+    v2 = "his";
+    if ~AvatarSex() {
+        v2 = "her";
+    }
+    v3 = false;
+    if (event = _Action) {
+        SetSpeaker0_i(0, _Smudge);
+        ["What dost thou wish, Master?"];
+        if $FAWN_TRIAL_RECESS {
+            TurnOn(<< "revelation", "change revelation" >>);
+        }
+        if ($FAWN_TRIAL_DONE and (not $BANES_RELEASED and not $FAWN_TRIAL_RECESS)) {
+            if (not $oraclesaysinnocent and not $ORACLE_SET_TO_CORRUPT) {
+                ["Forgive me for denouncing thee, stranger. I was under compulsion from the Great Captains, and had no choice."];
+                ["Now that Alyssand and Jorvin have unmasked the true villains, I can once again speak the Truth. Go in peace, stranger. I wish thee well in thy quest."];
+                terminate;
+            }
+            if $oraclesaysinnocent {
+                ["Thy friend hath been spared, stranger. Go thy way... I must attend to the wishes of my masters."];
+                terminate;
+            }
+            if $ORACLE_SET_TO_CORRUPT {
+                ["I thank thee for freeing me from the yoke of the Great Captains, stranger. Thy friend is safe and I may once again speak the Truth."];
+                ["Go in peace, stranger. I wish thee well on thy quest."];
+                terminate;
+            }
+        }
+        if $BANES_RELEASED {
+            ["It saddens me to speak the Truth to thee, stranger."];
+            ["Thy former companion, Iolo, hath fallen prey to the imbalance that plagues this land. He hath ripped Beauty from the soul of Fawn and driven it into the wilds."];
+            ["Seek out the one whose Beauty lies deep within. He will set thee upon the path to the lost soul of Fawn."];
+            terminate;
+        }
+        TurnOn("bye");
+        converse {
+            key ("revelation") {
+                if not v3 {
+                    ["There will be a Grand Trial soon. At the end of the proceedings, I shall proclaim the verdict."];
+                    v3 = true;
+                }
+                ["I have been told to say the following..."];
+                if $oraclesaysinnocent {
+                    ["<v1> is innocent! <v0> and <v2> companions have no wish to destroy Beauty!"];
+                    ["Free them at once!"];
+                }
+                if $ORACLE_SET_TO_CORRUPT {
+                    ["<v1> is innocent! Set him and his companions free!"];
+                    ["The true criminals are Priestess Kylista and Great Captain Voldin, who have conspired to convict this innocent man!"];
+                }
+                if not ($oraclesaysinnocent or $ORACLE_SET_TO_CORRUPT) {
+                    ["<v1> is guilty of associating with Daemons to destroy our Beauty! The fiend, <v0>, is also guilty!"];
+                    ["Such offense to Beauty cannot go unpunished... The stain of their presence must be washed away with their blood."];
+                }
+            }
+            key ("change revelation") {
+                ["I shall proclaim whatever thou dost instruct me to proclaim. What dost thou wish me to say regarding the accused traitor, Master?"];
+                PushKeys();
+                TurnOn(<< "He is innocent.", "The trial is corrupted.", "Make no change." >>);
+            }
+            key ("Make no change.") {
+                ["I shall do as thou hast instructed."];
+                $oraclesaysinnocent = false;
+                $ORACLE_SET_TO_CORRUPT = false;
+                PopKeys();
+            }
+            key ("He is innocent.") {
+                ["I will say that <v1> is innocent."];
+                $oraclesaysinnocent = true;
+                $ORACLE_SET_TO_CORRUPT = false;
+                PopKeys();
+            }
+            key ("The trial is corrupted.") {
+                ["I will say that the trial is corrupted, and I shall denounce the true traitors."];
+                ["I have waited many years for this moment. I thank thee, Master!"];
+                $ORACLE_SET_TO_CORRUPT = true;
+                $oraclesaysinnocent = false;
+                PopKeys();
+                TurnOn("many years");
+            }
+            key ("many years") {
+                TurnOff("many years");
+                ["I have been the prisoner of the Great Captains for many generations, stranger."];
+                ["I do not know who thou art, but I am glad thou hast come! At last, I can speak the Truth."];
+            }
+            key ("nothing") {
+                ["As thou wishest. I shall proclaim the verdict which I was previously instructed to give."];
+                PopKeys();
+            }
+            key ("bye") {
+                v4 = ~PostAction(<< _aNO_HALT_i, _aBARK_i, "@'Tis my duty.@" >>, item);
+                terminate;
+            }
+        }
+        clear_answers;
+    }
+}

@@ -1,0 +1,22 @@
+Routine Magic_Compass accepts a0 #locals(2) #uses(~IsInInv, Bark_i, ~PartyUtters) {
+    if not $knowcompass {
+        Sfx(48);
+        terminate;
+    }
+    if ~IsInInv(65177, 65177, _Magic_Compass, 1, _Party) {
+        Sfx(48);
+        terminate;
+    }
+    closeAllGumps();
+    Sfx(27);
+    Bark_i(0, "@Yleg Ort!@", _Avatar);
+    CreateSpriteOn_i(65535, 0, 0, 0, 0, 0, 21, item);
+    SetFrame((~Random(8) - 1), item);
+    if (~Random(3) = 1) {
+        v0 = << "@Let us go!@", "@It shows the way!@", "@Try again.@", "@That direction?@", "@Is it broken?@", "@I do not think it works.@" >>;
+        v1 = ~PartyUtters(true, 0, 0, 1);
+        if (v1 <> 65180) {
+            Bark_i(5, v0::~Random(~ListSize_i(v0)), v1);
+        }
+    }
+}

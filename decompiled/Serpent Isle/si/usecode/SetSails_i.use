@@ -1,0 +1,147 @@
+Routine SetSails_i accepts a0, a1 #locals(8) {
+    if (v0 = 1) {
+        v2 = 65532;
+        v3 = 124;
+        v4 = ~FindNearby_i(0, 25, _Ship_Mast, v1::1);
+        v5 = ~PostAction(<< _aMUSIC_i, 12, 0 >>, v4);
+    }
+    if (v0 = 0) {
+        v2 = 4;
+        v3 = 52;
+    }
+    Foreach v8 in v1 {
+        v9 = ~GetFullFrame_i(v8);
+        SetFullFrame_i((v9 + v2), v8);
+    }
+    Sfx(v3);
+}
+
+Routine LaunchShip_i accepts a0 #locals(6) #uses(~SwingPlank_i, MemberSays_i, SetSails_i) {
+    flag(5) = false;
+    v1 = ~GetCoord(v0);
+    v1 = (v1 & ~GetQuality(v0));
+    v1 = (v1 & 65177);
+    v2 = ~FindNearby_i(0, 12, _Plank_2, v1);
+    Foreach v5 in v2 {
+        if not ~SwingPlank_i(v5) {
+            MemberSays_i("@One of the gangplanks seems to be blocked. It must be lowered to sail.@");
+            return;
+        }
+    }
+    v6 = ~FindNearby_i(0, 18, _Sails, v1);
+    SetSails_i(1, v6);
+    ClearItemFlag_i(20, _Avatar);
+    SetItemFlag_i(_OnMovingBarge_i, v0);
+    SetItemFlag_i(_ActiveBarge_i, ~GetBarge_i(_Avatar));
+}
+
+Routine RaiseAlarm_i accepts a0 #locals(7) #uses(AttackAvatar_i, Bark_i) {
+    v1 = << 65243, 65331, 65333, 65332 >>;
+    if (~GetNPCID_i(_Hench3) = 0) {
+        Foreach v4 in v1 {
+            ClearBark_i(v4);
+            AttackAvatar_i(v4);
+        }
+        SetNPCID_i(1, _Hench3);
+    } else {
+        if (~GetNPCID_i(_Hench3) = 1) {
+            Bark_i(0, "@Master!@", _DBeyer);
+            Bark_i(7, "@Come quickly!@", _DBeyer);
+            v5 = << 1874, 997, 6 >>;
+            v6 = ~CreateCreature_i(v5, _Batlin_Type);
+            if v6 {
+                Npc_setAlignment(_Neutral, v6);
+                SetWorkType(_Patrol, v6);
+                SetItemFlag_i(_Tournament, v6);
+                SetNPCID_i(2, _Hench3);
+                v7 = ~GiveToCont_i(18, 0, _All, _Backpack, 1, v6);
+                v7 = ~GiveToCont_i(18, _All, 3, _Fire_Bolt, 1, v6);
+                v7 = ~GiveToCont_i(18, _All, 3, _M_Lightning, 1, v6);
+                v7 = ~GiveToCont_i(18, _All, 1, _M_Swordstrike, 1, v6);
+                v7 = ~GiveToCont_i(18, _All, 6, _Sp_Zap, 1, v6);
+            }
+        }
+    }
+}
+
+Routine MushroomDelusion_i accepts a0 #locals(3) {
+    if ((~rndRange(7, 1) = 7) and ((~GetHour() < 7) and ($BANES_RELEASED = true))) {
+        v1 = ~GetTarget();
+    } else {
+        terminate;
+    }
+    if ~Item_isNpc(v1) {
+        Sfx(119);
+        v2 = ~ItemToNPC_i(v1);
+        if ~GetItemFlag_i(_InParty_i, v2) {
+            SetSpeaker0_i(0, v2);
+            ["I am the Lizard King. I can do anything."];
+            CloseSpeaker0_i();
+            if (v2 = 65180) {
+                SetItemFlag_i(25, v2);
+            }
+            SetItemFlag_i(_Fly, v2);
+            v3 = ~PostInFuture(20, << _aNO_HALT_i, _aUSABLE_i, #Med_IShroom >>, v2);
+        }
+    }
+}
+
+Usable BrendannBegsRelease_i #locals(0) {
+    if (event = _Converse) {
+        SetSpeaker0_i(0, _Brendann);
+        ["Avatar! Release thou me from this vile cell!"];
+        ["Some fell sorcery brought me here and nothing I do can unlock the door. Release me and together we shall find the key to this mystery!"];
+        CloseSpeaker0_i();
+    }
+}
+
+Usable LucillaBegsRelease_i #locals(0) {
+    if (event = _Converse) {
+        SetSpeaker0_i(0, _Lucilla);
+        ["Avatar! Save me!"];
+        ["Some fell sorcery brought me here and nothing I do can unlock the door. Release me, I beg thee! -- Before the fiend that did this comes for me!"];
+        CloseSpeaker0_i();
+    }
+}
+
+Usable SpringCellTrap_i #locals(4) #uses(Door_EW) {
+    v0 = ~FindNearby_i(8, 40, _Skeleton, _Avatar);
+    if v0 {
+        v1 = ~GetCoord(v0);
+        if ((v1::1 >= 1074) and ((v1::1 <= 1081) and ((v1::2 >= 996) and ((v1::2 <= 1003) and (v1::3 = 0))))) {
+            Npc_setAlignment(_Evil, v0);
+            SetWorkType(_Combat_0, v0);
+            SetAttacker_i(v0, _Avatar);
+            createSprite(65535, 0, 0, 0, (v1::2 - 2), (v1::1 - 2), 13);
+            Sfx(130);
+            ClearBark_i(v0);
+            Kernel_resetRef(v0);
+            v2 = ~PostInFuture(0, << _aNO_HALT_i, _aBARK_i, "@Thank thee!@", _aWAIT_i, 10, _aBARK_i, "@Now I feed!!@" >>, v0);
+            v2 = ~FindNearby_i(16, 0, _Egg_Type, v0);
+            if v2 {
+                Item_destroy(v2);
+            }
+            v3 = ~FindNearest_i(5, _Door_EW, v0);
+            if v3 {
+                SetFrame(4, v3);
+                event = 1;
+                Door_EW(v3);
+            }
+        }
+    }
+}
+
+Routine OpenSlider_i accepts a0, a1 #locals(2) #uses(CheckDoorPassword_i) {
+    CheckDoorPassword_i(v1);
+    v2 = ~GetFrame(v1);
+    if (v2 <= 4) {
+        v2 = 4;
+    } else {
+        if (v2 >= 10) {
+            v2 = 14;
+        } else {
+            v2 = 9;
+        }
+    }
+    v3 = ~PostAction(<< _aFRAME, v2, _aPREV_FRAME, _aSFX_i, 89, _aLOOP_i, 65533, 3, byte(85), v0, byte(88), 88 >>, v1);
+}

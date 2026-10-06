@@ -1,0 +1,16 @@
+Routine Philanderer_s_Friend accepts a0 #locals(3) {
+    if (event = _Converse) {
+        closeAllGumps();
+        v0 = ~GetTarget();
+        v1 = ~GetCoord(v0);
+        v1::1 = (v1::1 - (v1::3 / 2));
+        v1::2 = (v1::2 - (v1::3 / 2));
+        createSprite(65535, 0, 0, 0, v1::2, v1::1, 21);
+        if ((~Item_getType(v0) = _Statues2) and (~GetFrame(v0) = 6)) {
+            Sfx(119);
+            v2 = ~PostInFuture(5, << _aNO_HALT_i, _aUSABLE_i, #Statues2 >>, v0);
+        } else {
+            Sfx(48);
+        }
+    }
+}

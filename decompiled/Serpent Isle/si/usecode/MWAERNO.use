@@ -1,0 +1,74 @@
+Routine Mwaerno accepts a0 #locals(6) #uses(Bark_i, ~IsNPCNear, ~IsInInv) {
+    if (event = _Converse) {
+        Item_bark("@Hail there!@", _Avatar);
+        Bark_i(3, "@Gruk! Barama tu!@", _Mwaerno);
+        SetWorkType(_Talk, _Mwaerno);
+    }
+    if (event = _Talking) {
+        Npc_schedule(_Mwaerno);
+        ClearBark_i(_Mwaerno);
+        SetSpeaker0_i(0, _Mwaerno);
+        v0 = ~IsNPCNear(_Bwundiai);
+        v1 = ~GetItemFlag_i(_InParty_i, _Iolo);
+        v2 = ~GetItemFlag_i(_InParty_i, _Shamino);
+        v3 = ~GetItemFlag_i(_InParty_i, _Dupre);
+        v4 = ~IsInInv(8, 65177, _Cloaks, 1, _Party);
+        v5 = ~IsInInv(4, 65177, _Water_1, 1, _Party);
+        if (v4 or v5) {
+            ["Rrrow! Meteka Gwani adu laseka!" This creature looks at you with angry eyes.];
+            if v0 {
+                SetSpeaker1_i(0, _Bwundiai);
+                SetSpeakerSlot_i(1);
+                ["Soko terama dok!" This one gives you a mean look and spits.];
+                CloseSpeaker1_i();
+            }
+            if v1 {
+                SetSpeaker1_i(0, _Iolo);
+                SetSpeakerSlot_i(1);
+                ["Avatar, 'tis the pelts! They can smell that we have Gwani pelts on us! I suggest we throw them away!"];
+                CloseSpeaker1_i();
+                terminate;
+            } else {
+                if v2 {
+                    SetSpeaker1_i(0, _Shamino);
+                    SetSpeakerSlot_i(1);
+                    ["Avatar, 'tis the pelts! They can smell that we have Gwani pelts on us! I suggest we throw them away!"];
+                    CloseSpeaker1_i();
+                    terminate;
+                } else {
+                    if v3 {
+                        SetSpeaker1_i(0, _Dupre);
+                        SetSpeakerSlot_i(1);
+                        ["Avatar, 'tis the pelts! They can smell we have Gwani pelts on us! I suggest that we throw them away!"];
+                        CloseSpeaker1_i();
+                        terminate;
+                    } else {
+                        Item_bark("@I have Gwani pelts!@", _Avatar);
+                        terminate;
+                    }
+                }
+            }
+        } else {
+            ["Thou look like Avatar," the Gwani creature says with broken speech.];
+            TurnOn(<< "name", "Gwani", "bye" >>);
+            converse {
+                key ("name") {
+                    TurnOff("name");
+                    ["Mwaerno. Means 'rain clouds'."];
+                }
+                key ("Gwani") {
+                    TurnOff("Gwani");
+                    ["Our village near. Speak to Yenani."];
+                }
+                key ("bye") {
+                    CloseSpeaker0_i();
+                    CloseSpeaker1_i();
+                    Bark_i(0, "@Goodbye!@", _Avatar);
+                    Bark_i(3, "@Atala dak!@", _Mwaerno);
+                    break;
+                }
+            }
+            clear_answers;
+        }
+    }
+}

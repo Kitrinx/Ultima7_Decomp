@@ -1,0 +1,331 @@
+Routine Plaque accepts a0 #locals(13) #uses(~SortByCriteria_i, ~AvatarName, Bark_i, ~CreateItemAt_i) {
+    v0 = item;
+    v1 = ~GetQuality(v0);
+    if (event = _Trigger) {
+        if (~Item_getType(item) <> _Plaque) {
+            v0 = ~FindNearby_i(176, 5, _Plaque, v0);
+            v0 = ~SortByCriteria_i(v0, v0);
+            if not v0 {
+                terminate;
+            }
+        }
+        v1 = ~GetQuality(v0);
+        v2 = << >>;
+        if (v1 = 7) {
+            v2 = << 600, 623, 557 >>;
+        }
+        if (v1 = 8) {
+            v2 = 627;
+        }
+        if (v1 = 10) {
+            v2 = 654;
+        }
+        if (v1 = 11) {
+            v2 = << 644, 645, 646 >>;
+        }
+        v3 = false;
+        Foreach v6 in v2 {
+            if ~FindNearby_i(176, 5, v6, v0) {
+                if (v1 < 11) {
+                    v1 = (v1 + 1);
+                    v7 = ~SetQuality(v1, v0);
+                    closeAllGumps();
+                    v3 = true;
+                    break;
+                } else {
+                    v8 = ~GetCoord(v0);
+                    v8::1 = (v8::1 - (v8::3 / 2));
+                    v8::2 = (v8::2 - (v8::3 / 2));
+                    createSprite(65535, 0, 0, 0, v8::2, v8::1, 7);
+                    Sfx(57);
+                    Item_destroy(v0);
+                    closeAllGumps();
+                    terminate;
+                }
+            }
+        }
+        if not v3 {
+            terminate;
+        }
+    }
+    v9 = ~AvatarName();
+    switch v1 {
+        case 0 {
+            v10 = << "po,|no", "plaques|here", "on|pain|of|d+(" >>;
+        }
+        case 1 {
+            v10 = << "choose" >>;
+            v11 = ~FindNearby_i(_All, 5, _Door_EW, item);
+            v7 = ~PostInFuture(5, << _aUSABLE_i, #Door_EW >>, v11);
+        }
+        case 2 {
+            v10 = << "wardrobe", "room" >>;
+        }
+        case 3 {
+            v10 = << "wine", "room" >>;
+        }
+        case 20 {
+            v10 = << "1" >>;
+        }
+        case 21 {
+            v10 = << "2" >>;
+        }
+        case 22 {
+            v10 = << "3" >>;
+        }
+        case 23 {
+            v10 = << "4" >>;
+        }
+        case 24 {
+            v10 = << "5" >>;
+        }
+        case 25 {
+            v10 = << "6" >>;
+        }
+        case 26 {
+            v10 = << "7" >>;
+        }
+        case 27 {
+            v10 = << "Throw two up" >>;
+        }
+        case 28 {
+            v10 = << "3 down gets 8" >>;
+        }
+        case 29 {
+            v10 = << "(e", "blue", "boar" >>;
+        }
+        case 30 {
+            v10 = << "royal", "museum" >>;
+        }
+        case 31 {
+            v10 = << "(e", "music", "hall" >>;
+        }
+        case 32 {
+            v10 = << "town", "hall" >>;
+        }
+        case 33 {
+            v10 = << "royal", "mint" >>;
+        }
+        case 34 {
+            v10 = << "4 down" >>;
+        }
+        case 35 {
+            v10 = << "First & Last are even" >>;
+        }
+        case 36 {
+            v10 = << "3 follows 4" >>;
+        }
+        case 46 {
+            v10 = << "DO NOT", "ENTER" >>;
+        }
+        case 50 {
+            v10 = << "in", "lovi*", "memory", "of", "mama" >>;
+        }
+        case 51 {
+            v10 = << "BEWARE", "THE", "DRAGON" >>;
+        }
+        case 52 {
+            v10 = << "for", "(e", "love", "of", "marney" >>;
+        }
+        case 53 {
+            v10 = << "|j|r|r|t|", "a|gr+t", "man", "a|gr+t", "writer" >>;
+        }
+        case 61 {
+            v10 = << "beware!", "spirits", "prowl", "here!" >>;
+        }
+        case 62 {
+            v10 = << "town", "hall" >>;
+        }
+        case 63 {
+            v10 = << "provision", "shoppe" >>;
+        }
+        case 64 {
+            v10 = << "archives" >>;
+        }
+        case 65 {
+            v10 = << "goblin", "war", "drum" >>;
+        }
+        case 66 {
+            v10 = << "goblin", "artifacts" >>;
+        }
+        case 67 {
+            v10 = << "b+trix", "of|(e", "broken", "h+rt" >>;
+        }
+        case 70 {
+            v10 = << "sarah", "swift|of|blade", ",ro*|of|h+rt" >>;
+        }
+        case 71 {
+            v10 = << "groat", "no|knight", "swifter", "(an|he" >>;
+        }
+        case 72 {
+            v10 = << "edmund", "archer", "par|excellence" >>;
+        }
+        case 73 {
+            v10 = << "reynald", "valiant|and|glorious" >>;
+        }
+        case 74 {
+            v10 = << "pedigar", ",re*(", "and", "valor" >>;
+        }
+        case 75 {
+            v10 = << "elena", "wor(y", "of", "immortality" >>;
+        }
+        case 76 {
+            v10 = << "caladin", "golden-to*ued", "knight" >>;
+        }
+        case 77 {
+            v10 = << "terrence", "(e", "pure" >>;
+        }
+        case 78 {
+            v10 = << "randall", "intrepid", "and", "brave" >>;
+        }
+        case 79 {
+            v10 = << "samuel", "(ou|wert", "never", "matched" >>;
+        }
+        case 80 {
+            v10 = << "kosric", "(underbolts", "from", "above" >>;
+        }
+        case 81 {
+            v10 = << "bryan", "his|skill", "knew|no|bounds" >>;
+        }
+        case 82 {
+            v10 = << "goff", "renown", "and", "honor" >>;
+        }
+        case 83 {
+            v10 = << "melina", "adept", "in|(e", "art", "of", "war" >>;
+        }
+        case 84 {
+            v10 = << "roland", "red)med", "(e", "honor", "of|our", "land" >>;
+        }
+        case 85 {
+            v10 = << "cellia's", "fine|furs" >>;
+        }
+        case 86 {
+            v10 = << "li,", "field" >>;
+        }
+        case 87 {
+            v10 = << "lydia's", "tattoo|parlor" >>;
+        }
+        case 88 {
+            v10 = << "crematorium" >>;
+        }
+        case 89 {
+            v10 = << "armoury" >>;
+        }
+        case 90 {
+            v10 = << "banquet|hall" >>;
+        }
+        case 91 {
+            v10 = << "jail" >>;
+        }
+        case 92 {
+            v10 = << "traini*|hall" >>;
+        }
+        case 95 {
+            v10 = << "supply", "room" >>;
+        }
+        case 117 {
+            v10 = << "enter", "(y|name", "into|log|book" >>;
+        }
+        case 118 {
+            v10 = << "enter|at", "(ine|own", "risk" >>;
+        }
+        case 119 {
+            v10 = << "warni*", "da*erous|b+,", "wi(in" >>;
+        }
+        case 120 {
+            v10 = << "f)d", "b+,", "daily" >>;
+        }
+        case 121 {
+            v10 = << "pick", "one", "or", "die" >>;
+        }
+        case 122 {
+            v10 = << "inmates", "mu,", "work" >>;
+        }
+        case 123 {
+            v10 = << "kn)l", "before", "(e", "ma,er" >>;
+        }
+        case 124 {
+            v10 = << "do", "not", "di,urb", "gamema,ers" >>;
+        }
+        case 125 {
+            v10 = << "ri*", "bell|for", "service" >>;
+            v7 = ~SetQuality(126, item);
+        }
+        case 126 {
+            v10 = << "r+ch", "bell|for", "fr)dom" >>;
+            v7 = ~SetQuality(125, item);
+        }
+        case 127 {
+            v10 = << "enter", "(e", "flame" >>;
+            v7 = ~SetQuality(129, item);
+        }
+        case 128 {
+            v10 = << "t+mwork", "insures", "liberty" >>;
+        }
+        case 129 {
+            v10 = << "to", "end|(y", "dr+m" >>;
+            v7 = ~SetQuality(127, item);
+        }
+        case 130 {
+            v10 = << "room 1" >>;
+        }
+        case 131 {
+            v10 = << "room 2" >>;
+        }
+        case 132 {
+            v10 = << "room 3" >>;
+        }
+        case 133 {
+            v10 = << "room 4" >>;
+        }
+        case 134 {
+            v10 = << "room 5" >>;
+        }
+        case 135 {
+            v10 = << "room 6" >>;
+        }
+        case 136 {
+            v10 = << "room 7" >>;
+        }
+        case 137 {
+            v10 = << "palace" >>;
+        }
+        case 138 {
+            v10 = << "temple", "of", "b+uty" >>;
+        }
+        case 139 {
+            v10 = << "royal", "gardens" >>;
+        }
+        case 140 {
+            v10 = << "broken", "oar" >>;
+        }
+        case 141 {
+            v10 = << "re,house" >>;
+        }
+        case 142 {
+            v10 = << "donations", "welcome" >>;
+        }
+        case 143 {
+            v10 = << "magic", "wine" >>;
+        }
+        case 158 {
+            v10 = << "gannt", "(e|bard", "wanders|no|more" >>;
+        }
+        case 159 {
+            v10 = << "gannt", "(e|bard", "wanders|no|more" >>;
+            ShowSign_i(v10, 46);
+            v7 = ~SetQuality(158, item);
+            Bark_i(2, "@Stand back!@", _Avatar);
+            Bark_i(20, "@It dropped a scroll!@", _Avatar);
+            v8 = << 312, 2031, 0 >>;
+            createSprite(65535, 0, 0, 0, v8::2, v8::1, 4);
+            v7 = ~CreateItemAt_i(v8, false, 150, 4, _Scroll);
+            v8 = ~GetCoord(item);
+            v12 = ~CreateCreature_i(<< (v8::1 + 1), (v8::2 + 1), 2 >>, _Ghost_337);
+            SetWorkType(_Shy, v12);
+            Sfx(58);
+            terminate;
+        }
+    }
+    ShowSign_i(v10, 46);
+}

@@ -1,0 +1,125 @@
+Routine NS_C_Slider accepts a0 #locals(6) {
+    if (event = _Action) {
+        v0 = ~GetCoord(item);
+        v1 = ~GetQuality(item);
+        v2 = ~GetFrame(item);
+        if (v2 = 0) {
+            v2 = 0;
+        } else {
+            if (v2 = 2) {
+                v2 = 10;
+            } else {
+                v2 = 5;
+            }
+        }
+        Item_destroy(item);
+        v3 = ~Item_create(_NS_C_Slider);
+        if v3 {
+            SetFrame(v2, v3);
+            v4 = ~SetQuality(v1, v3);
+            v4 = ~PopToMap(v0);
+            if v4 {
+                v5 = ~PostAction(<< _aNEXT_FRAME, _aSFX_i, 89, _aLOOP_i, 65533, 3, byte(88), 88 >>, v3);
+            }
+        }
+        terminate;
+    }
+    if (event = _Converse) {
+        FlashMouse_i(0);
+        return;
+    }
+}
+
+Routine EW_C_Slider accepts a0 #locals(6) {
+    if (event = _Action) {
+        v0 = ~GetCoord(item);
+        v1 = ~GetQuality(item);
+        v2 = ~GetFrame(item);
+        if (v2 = 0) {
+            v2 = 0;
+        } else {
+            if (v2 = 2) {
+                v2 = 10;
+            } else {
+                v2 = 5;
+            }
+        }
+        Item_destroy(item);
+        v3 = ~Item_create(_EW_C_Slider);
+        if v3 {
+            SetFrame(v2, v3);
+            v4 = ~SetQuality(v1, v3);
+            v4 = ~PopToMap(v0);
+            if v4 {
+                v5 = ~PostAction(<< _aNEXT_FRAME, _aSFX_i, 89, _aLOOP_i, 65533, 3, byte(88), 88 >>, v3);
+            }
+        }
+        terminate;
+    }
+    if (event = _Converse) {
+        FlashMouse_i(0);
+        return;
+    }
+}
+
+Routine EW_Slider accepts a0 #locals(5) {
+    if (event = _Action) {
+        v0 = ~GetCoord(item);
+        v1 = ~GetQuality(item);
+        v2 = ~GetFrame(item);
+        if (v2 <= 4) {
+            v2 = 0;
+        } else {
+            if (v2 >= 10) {
+                v2 = 2;
+            } else {
+                v2 = 1;
+            }
+        }
+        Item_destroy(item);
+        v3 = ~Item_create(_EW_Slider);
+        if v3 {
+            SetFrame(v2, v3);
+            v4 = ~SetQuality(v1, v3);
+            v4 = ~PopToMap(v0);
+        }
+        terminate;
+    }
+    if (event = _Converse) {
+        FlashMouse_i(0);
+        return;
+    }
+}
+
+Routine NS_Slider accepts a0 #locals(5) {
+    if (event = _Action) {
+        v0 = ~GetCoord(item);
+        v1 = ~GetQuality(item);
+        v2 = ~GetFrame(item);
+        if (v2 <= 4) {
+            v2 = 0;
+        } else {
+            if (v2 >= 10) {
+                v2 = 2;
+            } else {
+                v2 = 1;
+            }
+        }
+        Item_destroy(item);
+        v3 = ~Item_create(_NS_Slider);
+        if v3 {
+            SetFrame(v2, v3);
+            v4 = ~SetQuality(v1, v3);
+            v4 = ~PopToMap(v0);
+        }
+        terminate;
+    }
+    if (event = _Converse) {
+        FlashMouse_i(0);
+        return;
+    }
+}
+
+Routine PostUsable_i accepts a0, a1 #locals(1) {
+    v2 = ~PostAction(<< _aUSABLE_i, v0 >>, v1);
+}

@@ -1,0 +1,44 @@
+Routine Gold_Coins accepts a0 #locals(1) #uses(~IsAbleToTalk_i, ~IsNPCNear, Bark_i) {
+    if (event = _Converse) {
+        closeAllGumps();
+        playSFX(item, 28);
+        if not (~IsAbleToTalk_i(_Avatar) or not ~IsAbleToTalk_i(_Iolo)) {
+            return;
+        }
+        if ~IsNPCNear(_Iolo) {
+            Bark_i(0, "@Call it.@", _Avatar);
+            v0 = ~rndRange(2, 1);
+            if (v0 = 1) {
+                Bark_i(16, "@Tails.@", _Iolo);
+                Bark_i(32, "@'Tis heads.@", _Avatar);
+            } else {
+                Bark_i(16, "@Heads.@", _Iolo);
+                Bark_i(32, "@'Tis tails.@", _Avatar);
+            }
+            if (~rndRange(3, 1) = 1) {
+                Bark_i(48, "@Again!@", _Iolo);
+            }
+        }
+    }
+}
+
+Routine Gold_Nugget accepts a0 #locals(1) #uses(MemberSays_i) {
+    if (event = _Converse) {
+        v0 = ("@I believe I heard somewhere that the innkeeper at " + "Sleeping Bull will exchange those.@");
+        MemberSays_i(v0);
+    }
+}
+
+Routine Gold_Bar accepts a0 #locals(1) #uses(MemberSays_i) {
+    if (event = _Converse) {
+        v0 = ("@I do not know where those may be exchanged on the " + "Serpent Isle.@");
+        MemberSays_i(v0);
+    }
+}
+
+Routine Gems accepts a0 #locals(1) #uses(MemberSays_i) {
+    if (event = _Converse) {
+        v0 = ("@Those are beautiful. I am sure that they would fetch " + "a high price.@");
+        MemberSays_i(v0);
+    }
+}

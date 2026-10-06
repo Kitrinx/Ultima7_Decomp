@@ -1,0 +1,168 @@
+Routine Sethys accepts a0 #locals(3) #uses(~LordOrLady, ~AvatarName, PartyFaces_i, Bark_i) {
+    v0 = ~LordOrLady();
+    v1 = ~AvatarName();
+    if (event = _Converse) {
+        Item_bark("@Greetings, friend!@", _Avatar);
+        PartyFaces_i(65384);
+        if $methierophant {
+            Bark_i(2, "@I know thee...@", _Sethys);
+        } else {
+            Bark_i(2, "@Don't hurt me!@", _Sethys);
+        }
+        SetWorkType(_Talk, _Sethys);
+    }
+    if (event = _Talking) {
+        ClearBark_i(_Sethys);
+        SetSpeaker0_i(0, _Sethys);
+        if ~GetItemFlag_i(_InParty_i, _Sethys) {
+            ["We must hasten to the Serpent Gate!"];
+            SetWorkType(_FollowAvt, _Sethys);
+            TurnOn("leave");
+            goto label_16;
+        } else {
+            Npc_schedule(_Sethys);
+        }
+        v2 = ~GetItemFlag_i(_Met, _Sethys);
+        if $methierophant {
+            ["Thou art late! I have been waiting for thee for a very long time..."];
+            TurnOn(<< "waiting", "long time" >>);
+        } else {
+            if ~GetItemFlag_i(_Met, _Sethys) {
+                ["Thou art returned! What tortures hast thou devised for me, Order dog?"];
+            } else {
+                ["I knew that thou wouldst come for me, Order dog! Thou canst take my life, but the key is gone! Gone!" *"Sethys shall not fail the Chaos Hierophant!"];
+                SetItemFlag_i(_Met, _Sethys);
+            }
+            TurnOn(<< "Order dog", "key", "Chaos Hierophant" >>);
+        }
+        label_16:
+        TurnOn("bye");
+        converse {
+            key ("Order dog") {
+                ["Thou canst not be satisfied with winning the war! No, thou must slaughter all who dared to believe in something other than what thou dost hold dear!" *"Fine warriors who kill cripples and children!"];
+                TurnOff("Order dog");
+                TurnOn(<< "winning the war", "cripples and children" >>);
+            }
+            key ("winning the war") {
+                ["Thy kind hath destroyed the Balance... All power now rests with the Order villains!"];
+                ["The Temples have been desecrated, and the altars have been thrown down..."];
+                ["See how thou wilt use it... To slay an unarmed man!"];
+                TurnOff("winning the war");
+                TurnOn(<< "destroyed the Balance", "desecrated" >>);
+            }
+            key ("desecrated") {
+                TurnOff("desecrated");
+                ["Do not deny it, fiend! I know how thy mind works. Even now, thou doth lust to topple the altar of this temple."];
+                ["But I shall not tell thee where it lies! I shall not aid thee in stopping the glorious waters which flow from it, nor shall I aid thee in placing the sacred containers upon it..."];
+            }
+            key ("destroyed the Balance") {
+                TurnOff("destroyed the Balance");
+                ["I'm certain it was thy pack of jackals that killed the Great Hierophant! Without Ssithnos' guidance, we are lost... Even thee, dog!"];
+            }
+            key ("cripples and children") {
+                ["I was at the Temple of Enthusiasm as thy forces marched on it! I saw the children fall to thy soldiers' blades!" *"And now that thou art here -- where all are misfits and crippled... I'm certain thou wilt slay us with as little regard!"];
+                TurnOff("cripples and children");
+            }
+            key ("key") {
+                TurnOff("key");
+                ["Thou knowest of the key? The Chaos Hierophant sent thee!" *"Alas, I have failed my duty... The key that I was to guard and hide is gone!"];
+                TurnOn(<< "hide and guard", "gone" >>);
+            }
+            key ("hide and guard") {
+                ["Our Master gave me the key as the Order soldiers came. He bade me guard the key with my life, and hide it from their filthy grasp." *"I have not seen our Master since... And thus far I have eluded the Order scum."];
+                TurnOff("hide and guard");
+            }
+            key ("gone") {
+                TurnOff("gone");
+                ["Now my soul will never enter the Void! Long ago, or so it seems to me, a vicious rat came and gnashed its long teeth at me." *"I dropped the key as I tried to fend the beast off. The rat, seeing a shiny treasure, took the key and fled!"];
+                TurnOn(<< "Void", "fled" >>);
+            }
+            key ("Void") {
+                TurnOff("Void");
+                ["It is the goal of the devout to live pure lives, so that we can ascend to the Void and merge with the Greater One."];
+                ["But I stand condemned, for the key is lost!"];
+            }
+            key ("fled") {
+                ["Down that small tunnel in the wall..." *"I have tried to enlarge the hole so that I might retrieve the key... But I have nothing as strong and sharp as a rat's teeth." *"Oh, I am doomed!"];
+                Bark_i(0, "@Doomed!@", _Sethys);
+                SetWorkType(_Shy, _Sethys);
+                terminate;
+            }
+            key ("Chaos Hierophant") {
+                TurnOff("Chaos Hierophant");
+                ["The Chaos Hierophant charged me with an important task... Who would have ever thought that I would be found worthy?"];
+                TurnOn(<< "worthy", "task" >>);
+            }
+            key ("worthy") {
+                TurnOff("worthy");
+                ["I must confess that in mine humility, it never occurred to me that the Hierophant even knew my name!"];
+                ["And then, in the hour of need, he selected me! Such an honor!"];
+            }
+            key ("task") {
+                TurnOff("task");
+                ["I shall not tell thee... At last, I, Sethys, have something important, something of value." *"I have a secret!"];
+                PushKeys();
+                TurnOn(<< "share it with me", "don't care" >>);
+            }
+            key ("share it with me") {
+                ["A secret! A secret! I have a secret! And I won't tell!"];
+                PopKeys();
+            }
+            key ("don't care") {
+                ["Ah, but I can tell that thou dost want mine hidden knowledge. It will do thee no good! I shall keep my secret."];
+                PopKeys();
+            }
+            key ("waiting") {
+                TurnOff("waiting");
+                ["How canst thou have forgotten? It is time for us to bring the key to the Master."];
+                ["Sadly, I have lost the key, so I shall have to beg for forgiveness..."];
+                TurnOn("Master");
+            }
+            key ("long time") {
+                TurnOff("long time");
+                ["Why, I have been in this place for... centuries, it doth seem. The aura of this place must have preserved me to fulfill my duty."];
+            }
+            key ("Master") {
+                ["Only I know where our Master lies, dear friend, for I am the sole survivor of that horrible battle. I could show thee the place, but I am loathe to leave the Temple... I have been here so long."];
+                TurnOff("Master");
+                PushKeys();
+                TurnOn(<< "show me", "never mind" >>);
+            }
+            key ("never mind") {
+                TurnOff("never mind");
+                ["I am so relieved! There is so much to be done here."];
+                PopKeys();
+            }
+            key ("leave") {
+                TurnOff("leave");
+                ["Oh, but I cannot leave thee now! I have pledged to show thee the resting place of the Hierophant, and I shall not disappoint thee."];
+            }
+            key ("show me") {
+                TurnOff("show me");
+                ["I should remain here. This place must be cleaned before the Master of Tolerance returns... Look at what those filthy Order monsters did to our home!"];
+                if (~ListSize_i(~GetParty_i()) < 5) {
+                    ["But I would like to return the key to the Chaos Hierophant. Perhaps it would not hurt to go to the Temple of Enthusiasm, briefly."];
+                    ["Very well! I shall join with thee."];
+                    JoinParty(_Sethys);
+                    Bark_i(0, "@Onward!@", _Sethys);
+                    terminate;
+                } else {
+                    ["Ah, but thou hast so many companions! Surely I would only be a nuisance to thee..."];
+                    PopKeys();
+                }
+            }
+            key ("bye") {
+                CloseSpeaker0_i();
+                if ~GetItemFlag_i(_InParty_i, _Sethys) {
+                    Bark_i(0, "@Thank thee!@", _Avatar);
+                    Bark_i(2, "@Hasten!@", _Sethys);
+                } else {
+                    Bark_i(0, "@Farewell, ancient!@", _Avatar);
+                    Bark_i(2, "@Go in Chaos!@", _Sethys);
+                }
+                terminate;
+            }
+        }
+        clear_answers;
+    }
+}

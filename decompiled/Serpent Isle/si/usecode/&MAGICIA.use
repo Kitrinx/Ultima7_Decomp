@@ -1,0 +1,20 @@
+Routine Zot_Wand accepts a0 #locals(2) {
+    if (event = _Converse) {
+        v0 = ~GetTarget();
+    } else {
+        v0 = item;
+    }
+    v1 = ~PostAction(<< _aNO_HALT_i, _aREADY_FRAME_i, _aRAISE2_FRAME_i, _aTHRUST2_FRAME_i, _aATTACK_i, _aREADY_FRAME_i >>, _Avatar);
+    v1 = ~SetAttack_i(_Zot_Wand, v0, _Avatar);
+}
+
+Routine Fire_Wand accepts a0 #locals(2) {
+    if (event = _Converse) {
+        v0 = ~GetTarget();
+    } else {
+        v0 = item;
+    }
+    Kernel_resetRef(_Avatar);
+    v1 = ~PostAction(<< _aNO_HALT_i, _aREADY_FRAME_i, _aRAISE2_FRAME_i, _aTHRUST2_FRAME_i, _aATTACK_i, _aREADY_FRAME_i >>, _Avatar);
+    v1 = ~SetAttack_i(_Fire_Wand, v0, _Avatar);
+}

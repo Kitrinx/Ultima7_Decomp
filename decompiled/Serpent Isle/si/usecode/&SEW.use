@@ -1,0 +1,222 @@
+Routine Loom accepts a0 #locals(5) #uses(~DirFrom_i, MemberSays_i) {
+    if (event = _Pathfind1) {
+        Kernel_resetRef(item);
+        v0 = ~PostAction(<< _aFRAME, 0, _aNEXT_FRAME, _aCONTINUE_i, _aSFX_i, 92, _aLOOP_i, 65532, 32, byte(85), 261 >>, item);
+        v1 = ~DirFrom_i(item, _Avatar);
+        v0 = ~PostAction(<< _aFACE_i, v1, _aCONTINUE_i, _aTHRUST1_FRAME_i, _aSTAND_FRAME_i, _aWAIT_i, 1, _aLOOP_i, 65531, 9 >>, _Avatar);
+    }
+    if (event = _Action) {
+        v2 = ~GetContents(_All, _All, _Spindle_Of_Thread, _Avatar);
+        if v2 {
+            Item_destroy(v2);
+        }
+        v3 = ~Item_create(_Cloth);
+        if v3 {
+            SetItemFlag_i(_IsTemporary_i, v3);
+            SetItemFlag_i(_OkayToTake_i, v3);
+            SetFrame(~rndRange(4, 0), v3);
+            v4 = ~GetCoord(item);
+            v4::1 = (v4::1 + 1);
+            v4::2 = (v4::2 + 1);
+            v0 = ~PopToMap(v4);
+        }
+    }
+    if (event = _Converse) {
+        MemberSays_i("@I believe that one threads a loom before using it.@");
+    }
+}
+
+Routine Spinning_Wheel accepts a0 #locals(7) #uses(MemberSays_i) {
+    if (event = _Pathfind1) {
+        v0 = ~FindNearby_i(0, 1, _Chair, _Avatar);
+        v1 = 0;
+        if (~ListSize_i(v0) > 0) {
+            v2 = ~PostAction(<< _aFACE_i, _West, _aBEND_FRAME_i, _aSIT_FRAME_i, _aLOOP_i, 65535, 12 >>, _Avatar);
+            v1 = 3;
+        }
+        Kernel_resetRef(item);
+        v2 = ~PostInFuture(v1, << _aFRAME, 0, _aNEXT_FRAME, _aCONTINUE_i, _aSFX_i, 92, _aLOOP_i, 65532, 12, byte(85), 651 >>, item);
+        return;
+    }
+    if (event = _Action) {
+        v3 = ~GetContents(_All, _All, _Bale_Of_Wool, _Avatar);
+        if v3 {
+            Item_destroy(v3);
+        }
+        v4 = ~Item_create(_Spindle_Of_Thread);
+        if v4 {
+            SetItemFlag_i(_IsTemporary_i, v4);
+            SetItemFlag_i(_OkayToTake_i, v4);
+            SetFrame(~rndRange(9, 0), v4);
+            v5 = ~GetCoord(item);
+            v5::1 = (v5::1 + 1);
+            v5::2 = (v5::2 + 1);
+            v2 = ~PopToMap(v5);
+        }
+        return;
+    }
+    if (event = _Converse) {
+        v6 = ("@I suspect spinning the wool will be more fruitful " + "than spinning an empty wheel.@");
+        MemberSays_i(v6);
+    }
+}
+
+Routine Bale_of_Wool accepts a0 #locals(5) #uses(SpinWool_i, PathToItem_i) {
+    if (event = _Converse) {
+        v0 = ~Item_getContainer(item);
+        if (v0 = ~NPCToItem_i(_Avatar)) {
+            event = 10;
+            SpinWool_i(item);
+            return;
+        } else {
+            if v0 {
+                v1 = ~Item_push(item);
+                if v1 {
+                    v1 = ~PopToNPC(_Avatar);
+                    if not v1 {
+                        v1 = ~PopToNPC(v0);
+                        FlashMouse_i(4);
+                        terminate;
+                    }
+                } else {
+                    return;
+                }
+                event = 10;
+                SpinWool_i(item);
+                return;
+            }
+        }
+        v2 = 65535;
+        v3 = 65535;
+        v4 = 65535;
+        PathToItem_i(10, item, #SpinWool_i, v4, v3, v2, item);
+    }
+}
+
+Routine Spindle_of_Thread accepts a0 #locals(5) #uses(WeaveCloth_i, PathToItem_i) {
+    if (event = _Converse) {
+        v0 = ~Item_getContainer(item);
+        if (v0 = ~NPCToItem_i(_Avatar)) {
+            event = 10;
+            WeaveCloth_i(item);
+            return;
+        } else {
+            if v0 {
+                v1 = ~Item_push(item);
+                if v1 {
+                    v1 = ~PopToNPC(_Avatar);
+                    if not v1 {
+                        v1 = ~PopToNPC(v0);
+                        FlashMouse_i(4);
+                        terminate;
+                    }
+                    event = 10;
+                    WeaveCloth_i(item);
+                    return;
+                } else {
+                    return;
+                }
+            }
+        }
+        v2 = 65535;
+        v3 = 65535;
+        v4 = 65535;
+        PathToItem_i(10, item, #WeaveCloth_i, v4, v3, v2, item);
+    }
+}
+
+Routine Shears accepts a0 #locals(2) #uses(MemberSays_i) {
+    if (event = _Converse) {
+        v0 = ~GetTarget();
+        v1 = ~Item_getType(v0::1);
+        if (v1 = 851) {
+            Item_setType(_First_Aid, v0);
+            SetFrame(~rndRange(2, 0), v0);
+        } else {
+            MemberSays_i("@Might not those come in handy for cutting cloth into bandages?@");
+        }
+    }
+}
+
+Routine Cloth accepts a0 #locals(1) #uses(MemberSays_i) {
+    if (event = _Converse) {
+        v0 = ("@That appears to be very fine cloth." + "Perhaps thou couldst cut it into bandages with shears.@");
+        MemberSays_i(v0);
+    }
+}
+
+Routine SpinWool_i accepts a0 #locals(10) #uses(~DirFrom_i, PathToItem_i, MemberSays_i) {
+    if (event = _Pathfind1) {
+        v0 = ~Item_getContainer(item);
+        if not v0 {
+            v1 = ~DirFrom_i(item, _Avatar);
+            v2 = ~GetCoord(item);
+            v3 = ~Item_push(item);
+            if v3 {
+                v3 = ~PopToNPC(_Avatar);
+                if not v3 {
+                    v3 = ~PopToMap(v2);
+                    FlashMouse_i(4);
+                    terminate;
+                } else {
+                    v3 = ~PostAction(<< _aFACE_i, v1, _aCONTINUE_i, _aBEND_FRAME_i, _aSTAND_FRAME_i, _aUSABLE_i, #SpinWool_i >>, _Avatar);
+                }
+            } else {
+                return;
+            }
+        } else {
+            closeAllGumps();
+        }
+    }
+    if ((event = _Action) or v0) {
+        v4 = ~GetTarget();
+        v5 = ~Item_getType(v4);
+        if (v5 = 651) {
+            v6 = << 1, 1 >>;
+            v7 = << 0, 0 >>;
+            v8 = 65535;
+            PathToItem_i(10, v4, #Spinning_Wheel, v8, v7, v6, v4);
+        } else {
+            v9 = "@Why dost thou not spin that wool into thread?@";
+            MemberSays_i(v9);
+        }
+    }
+}
+
+Routine WeaveCloth_i accepts a0 #locals(10) #uses(~DirFrom_i, PathToItem_i, MemberSays_i) {
+    if (event = _Pathfind1) {
+        v0 = ~Item_getContainer(item);
+        if not v0 {
+            v1 = ~DirFrom_i(item, _Avatar);
+            v2 = ~GetCoord(item);
+            v3 = ~Item_push(item);
+            if v3 {
+                v3 = ~PopToNPC(_Avatar);
+                if not v3 {
+                    v3 = ~PopToMap(v2);
+                    FlashMouse_i(4);
+                    terminate;
+                } else {
+                    v3 = ~PostAction(<< _aFACE_i, v1, _aCONTINUE_i, _aBEND_FRAME_i, _aSTAND_FRAME_i, _aUSABLE_i, #WeaveCloth_i >>, _Avatar);
+                }
+            } else {
+                return;
+            }
+        } else {
+            closeAllGumps();
+        }
+    }
+    if ((event = _Action) or v0) {
+        v4 = ~GetTarget();
+        v5 = ~Item_getType(v4);
+        if (v5 = 261) {
+            v6 = << 0, 65535, 65534 >>;
+            v7 = << 1, 1, 1 >>;
+            v8 = 65535;
+            PathToItem_i(10, v4, #Loom, v8, v7, v6, v4);
+        } else {
+            v9 = "@Why dost thou not weave cloth with that thread on the loom?@";
+            MemberSays_i(v9);
+        }
+    }
+}

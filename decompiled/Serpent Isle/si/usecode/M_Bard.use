@@ -1,0 +1,134 @@
+Routine M_Bard accepts a0 #locals(19) #uses(~WhereAmI_i, ~GimmePathEgg, FaceAvatar_i, Bark_i) {
+    v0 = "his";
+    if ~AvatarSex() {
+        v0 = "her";
+    }
+    if (event = _Action) {
+        if (~WhereAmI_i() = 2) {
+            if not ~IsNPCNear_i(_Karnax) {
+                SetWorkType(_TendShop, _Karnax);
+                terminate;
+            }
+            v1 = ~GimmePathEgg(1, 2);
+            v2 = << 2397, 1143, 0 >>;
+            FaceAvatar_i(65329);
+            SetNPCID_i((~GetNPCID_i(_Karnax) + 1), _Karnax);
+            ClearBark_i(_Karnax);
+            v3 = ~FindNearby_i(8, 20, 65535, _Karnax);
+            v4 = << >>;
+            Foreach v7 in v3 {
+                if (~GetWorkType(v7) = _Wait) {
+                    v4 = (v4 & v7);
+                }
+            }
+            if (~GetNPCID_i(_Karnax) = 8) {
+                ClearItemFlag_i(_DontMove_i, _Avatar);
+                SetNPCID_i(0, _Karnax);
+                SetWeather_i(_Clear);
+                SetWorkType(_Talk, _XenkaMonk_215);
+                v8 = ~PostInFuture(1000, << _aNO_HALT_i, _aUSABLE_i, #Monk, 0 >>, ~GimmePathEgg(1, 5));
+                terminate;
+            }
+            if (~GetNPCID_i(_Karnax) = 7) {
+                SetSpeaker0_i(0, _Karnax);
+                ["The energies from beyond the Void now converge upon this place and time. It is the moment when Xenka shall move across the eons and bring us the light of prophecy..."];
+                v9 = ~FindNearby_i(0, 20, _Weird_Dream_Realm_Stuff, _Avatar);
+                Item_destroy(v9);
+                SetMusic(v1, 63);
+                Item_move(v2, _XenkaMonk_215);
+                createSprite(65535, 0, 0, 0, v2::2, v2::1, 26);
+                v8 = ~PostAction(<< _aNO_HALT_i, _aFACE_i, _East, _aCONTINUE_i, _aOUT_FRAME_i >>, _XenkaMonk_215);
+                Bark_i(5, "@It is I...@", _XenkaMonk_215);
+                Bark_i(0, "@Come to us, Xenka!@", _Karnax);
+                v8 = ~PostInFuture(10, << _aNO_HALT_i, _aUSABLE_i, #M_Bard >>, ~GimmePathEgg(3, 5));
+                $xenkareturned = true;
+                terminate;
+            }
+            if (~GetNPCID_i(_Karnax) = 6) {
+                Item_bark("@Xenka is near!@", _Karnax);
+                v10 = "@Xenka!@";
+                v8 = ~PostInFuture(10, << _aNO_HALT_i, _aUSABLE_i, #M_Bard >>, ~GimmePathEgg(3, 5));
+            }
+            if (~GetNPCID_i(_Karnax) = 5) {
+                createSprite(65535, 0, 0, 0, 1140, 2408, 13);
+                Item_bark("@Invoke her name!@", _Karnax);
+                v10 = "@Xenka!@";
+                v8 = ~PostInFuture(10, << _aNO_HALT_i, _aUSABLE_i, #M_Bard >>, ~GimmePathEgg(3, 5));
+            }
+            if (~GetNPCID_i(_Karnax) = 4) {
+                Item_bark("@The time is at hand!@", _Karnax);
+                v10 = "@The time!@";
+                v8 = ~PostInFuture(10, << _aNO_HALT_i, _aUSABLE_i, #M_Bard >>, ~GimmePathEgg(3, 5));
+            }
+            if (~GetNPCID_i(_Karnax) = 3) {
+                Item_bark("@Xenka returns!@", _Karnax);
+                v10 = "@She is pure.@";
+                v8 = ~PostInFuture(10, << _aNO_HALT_i, _aUSABLE_i, #M_Bard >>, ~GimmePathEgg(3, 5));
+            }
+            if (~GetNPCID_i(_Karnax) = 2) {
+                v9 = ~Item_create(_Weird_Dream_Realm_Stuff);
+                if v9 {
+                    SetFrame(6, v9);
+                    v8 = ~PopToMap(v2);
+                    Sfx(70);
+                }
+                Item_bark("@Our vigil is over!@", _Karnax);
+                v10 = "@Xenka comes!@";
+                v8 = ~PostInFuture(10, << _aNO_HALT_i, _aUSABLE_i, #M_Bard >>, ~GimmePathEgg(3, 5));
+            }
+            if (~GetNPCID_i(_Karnax) = 1) {
+                SetWeather_i(_Sparkle);
+                SetMusic(v1, 65);
+                SetItemFlag_i(_DontMove_i, _Avatar);
+                Item_bark("@Long have we waited...@", _Karnax);
+                v10 = "@No more!@";
+                v8 = ~PostInFuture(10, << _aNO_HALT_i, _aUSABLE_i, #M_Bard >>, ~GimmePathEgg(3, 5));
+            }
+            if (v4 <> << >>) {
+                v11 = v4::~Random(~ListSize_i(v4));
+                ClearBark_i(v11);
+                v12 = ~Random(10);
+                v8 = ~PostInFuture(v12, << _aSTAND_FRAME_i, _aWAIT_i, 7, _aSIT_FRAME_i >>, v11);
+                v12 = (v12 + 1);
+                Bark_i(v12, v10, v11);
+            }
+            createSprite(65535, 0, 0, 0, v2::2, v2::1, 7);
+            terminate;
+        }
+        if (~WhereAmI_i() = 27) {
+            ClearSpeakers_i();
+            SetSpeaker0_i(0, _Karnax);
+            ["Thou shouldst know better than to meddle in the affairs of Fate, Thoxa. By merely talking with the Hero, thou mayest be condemning us."];
+            SetSpeaker1_i(0, _Thoxa);
+            ["We must intervene, Karnax. The very fabric that weaves the tapestry of the Cosmos may depend upon it."];
+            CloseSpeaker1_i();
+            SetSpeakerSlot_i(0);
+            ["Thou art as foolish as ever, girl..."];
+            ["Xenka's writings are crystal clear -- those who seek to aid the Hero, shall cause <v0> greatest calamities!"];
+            ["I must stop thee, before thou sendest us all to our doom!"];
+            Bark_i(0, "@I must stop thee...@", _Karnax);
+            CloseSpeaker1_i();
+            CloseSpeaker0_i();
+            EndConverse_i();
+            SetItemFlag_i(_DontMove_i, _Avatar);
+            v8 = ~PostAction(<< _aNO_HALT_i, _aFACE_i, byte(48), _aOUT_FRAME_i, _aWAIT_i, 2, _aUP_FRAME_i, _aWAIT_i, 4, _aTHRUST1_FRAME_i, _aUSABLE_i, #ThoxaArrivesEgg_i >>, _Thoxa);
+            Bark_i(2, "@Flam Mas Flam!@", _Thoxa);
+            $temp4flag = true;
+            v8 = ~PostInFuture(10, << _aNO_HALT_i, _aEXTEND1_FRAME_i, _aWAIT_i, 2, _aRAISE2_FRAME_i, _aWAIT_i, 2, _aBARK_i, "@Thoxa...@", _aEXTEND2_FRAME_i, _aWAIT_i, 2, _aTHRUST2_FRAME_i, _aSTAND_FRAME_i, _aUSABLE_i, #KarnaxAttacksThoxa_i >>, _Karnax);
+            v13 = ~GetCoord(_Karnax);
+            v14 = ~GetCoord(_Thoxa);
+            createSprite(65535, 0, 0, 0, (v14::2 - 2), (v14::1 - 2), 21);
+            v15 = << 65534, 0, 2, 0, 1, 0, 0 >>;
+            v16 = << 65534, 65533, 2, 2, 65534, 65533, 0 >>;
+            v17 = 1;
+            While (v17 <= 7) {
+                v18 = ~Item_create(_Path);
+                if v18 {
+                    ClearItemFlag_i(_IsTemporary_i, v18);
+                    v8 = ~PopToMap(<< (v13::1 + v15::v17), (v13::2 + v16::v17), 0 >>);
+                }
+                v17 = (v17 + 1);
+            }
+        }
+    }
+}

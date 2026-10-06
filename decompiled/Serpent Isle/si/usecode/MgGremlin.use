@@ -1,0 +1,19 @@
+Routine MgGremlin accepts a0 #locals(4) #uses(~WhereAmI_i, Bark_i, ~GimmePathEgg) {
+    if ((event = _Bark) and (~WhereAmI_i() = 14)) {
+        ClearBark_i(item);
+        v0 = << "@I want an eyeball!@", "@Yes, mistress!@", "@We must hurry!@", "@Break his bones...@", "@I cannot wait!@", "@Skin him alive!@" >>;
+        Bark_i(0, v0::~Random(~ListSize_i(v0)), item);
+        if (~Random(10) = 1) {
+            SetWorkType(_Dance, item);
+        }
+    }
+    if (event = _Action) {
+        v1 = ~FindNearby_i(0, 30, _MgGremlin, item);
+        if v1 {
+            v2 = ~PostInFuture(~Random(20), << _aNO_HALT_i, _aUSABLE_i, #MgGremlin >>, ~GimmePathEgg(1, 5));
+            v3 = ~GetCoord(v1);
+            createSprite(65535, 0, 0, 0, (v3::2 - 3), (v3::1 - 1), 27);
+            KillNPC_i(v1);
+        }
+    }
+}

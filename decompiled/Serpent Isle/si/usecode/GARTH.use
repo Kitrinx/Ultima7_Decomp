@@ -1,0 +1,215 @@
+Routine Garth accepts a0 #locals(5) #uses(~LordOrLady, ~AvatarName, PartyFaces_i, Bark_i, SendAssassin_i, JorvinBringsInvitation_i) {
+    v0 = ~LordOrLady();
+    v1 = ~AvatarName();
+    v2 = ~AvatarSex();
+    if (event = _NearDeath) {
+        v3 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #Green_Noble >>, item);
+    }
+    if (event = _Converse) {
+        Item_bark("@A moment, sir.@", _Avatar);
+        PartyFaces_i(65487);
+        Bark_i(5, "@At thy service.@", _Garth);
+        SetWorkType(_Talk, _Garth);
+    }
+    if (event = _Talking) {
+        Npc_schedule(_Garth);
+        ClearBark_i(_Garth);
+        SetSpeaker0_i(0, _Garth);
+        v4 = ~GetItemFlag_i(_Met, _Garth);
+        if ($FAWN_TRIAL_RECESS or ($AUDIENCE_WITH_YELINDA and not $FAWN_TRIAL_DONE)) {
+            ["Why, thou art the confidant of the accused blasphemer! I cannot be seen speaking with thee..."];
+            CloseSpeaker0_i();
+            Bark_i(0, "@Off with thee!@", _Garth);
+            SetWorkType(_Wander, _Garth);
+            terminate;
+        }
+        if (v4 = false) {
+            if ($gottattoo = true) {
+                if (v2 = true) {
+                    ["Ah, a sweet savior! No fairer face hath a warrior worn."];
+                    ["Welcome to Fawn, dear <v0>. I am Great Captain Garth, but thou canst call me Garth."];
+                } else {
+                    ["Welcome to Fawn, noble Pikeman. We are honored by thy presence." *"I am Great Captain Garth. Call me Garth."];
+                }
+            } else {
+                if (v2 = true) {
+                    ["Welcome to Fawn, most fair <v0>! Now that thou art here, we can truly say that this is the city of Beauty."];
+                    ["I am Great Captain Garth, but thou canst call me Garth."];
+                } else {
+                    ["Thou art a welcome sight, noble <v0>." ~"We are sorely in need of more able-bodied fighters in Fawn's darkest hour." *"I am Great Captain Garth. Call me Garth."];
+                }
+            }
+            SetItemFlag_i(_Met, _Garth);
+        } else {
+            if (v2 = true) {
+                ["Now may I rest my weary eyes on thy lovely face. Thou art always a welcome sight, <v1>."];
+            } else {
+                ["'Tis good to see thee, <v1>. I trust that thou art feeling well."];
+            }
+        }
+        TurnOn(<< "storms", "goblins", "bye" >>);
+        converse {
+            key ("storms") {
+                ["Without question, these storms are unnatural. If they do not cease soon, Fawn will perish!" ~"Already our livelihood hath been taken from us." ~"And women weep at the loss of those who once sailed in our fleet. We have no idea what became of them."];
+                TurnOff("storms");
+                TurnOn(<< "livelihood", "fleet" >>);
+            }
+            key ("livelihood") {
+                TurnOff("livelihood");
+                ["As thou canst see, Fawn is built upon the water. We are... or were... fishermen by trade."];
+                ["That is how we fed our people, and how we traded with the other towns."];
+                if (v2 = true) {
+                    ["But we are a hardy lot." ~"We will weather these foul storms and rebuild what hath been destroyed."];
+                    if ($AUDIENCE_WITH_YELINDA and ($FAWN_TRIAL_DONE and not $oraclesaysinnocent)) {
+                        ["Perhaps I shall speak with Lady Yelinda again. Surely, she doth need mine advice if this town is to be saved..."];
+                    } else {
+                        ["Lady Yelinda hath charged me with the task of finding a way to sustain the people until the storms pass."];
+                        TurnOn("Lady Yelinda");
+                    }
+                } else {
+                    ["We have lost most of our men to the sea and storms." ~"We do not know if they were drowned or transformed."];
+                    if ($AUDIENCE_WITH_YELINDA and ($FAWN_TRIAL_DONE and not $oraclesaysinnocent)) {
+                        ["May Beauty lay their souls to rest..."];
+                    } else {
+                        ["Now Lady Yelinda hath charged me with the task of finding a way to sustain our people until we can rebuild our ships." ~"To be truthful, I am not hopeful..."];
+                        TurnOn("Lady Yelinda");
+                    }
+                }
+            }
+            key ("Lady Yelinda") {
+                if (v2 = true) {
+                    ["Lady Yelinda rules Fawn, assisted by Joth, Voldin and myself." ~"Many say she is the most beautiful woman in the city." ~"Others, like Zulith, say Kylista is more beautiful."];
+                    ["Now that I have seen thee, I think they are all wrong." ~"Thou art the most wondrous beauty I have seen."];
+                } else {
+                    ["Lady Yelinda is a ruler of Fawn, at least in name." ~"Zulith fetches and carries for her, and makes her feel important." *"But the truth of the matter is that Fawn's real power lies in the hands of Joth, Voldin and Kylista."];
+                }
+                TurnOff("Lady Yelinda");
+                TurnOn(<< "Zulith", "Joth", "Voldin", "Kylista" >>);
+            }
+            key ("Zulith") {
+                ["He is the messenger between the Great Captains and Lady Yelinda." ~"He takes orders well enough, if thou dost stroke his ego enough." *"But, if thou shouldst belittle him, beware!" ~"He hath the ears of both Yelinda and Kylista."];
+                TurnOff("Zulith");
+            }
+            key ("Joth") {
+                ["Joth was a fine seaman, before his injury. But he hath little use for the politics of those on the land." *"He doth do his best to represent the interests of the fleet. But it is plain that his heart is still at sea."];
+                if (v2 = false) {
+                    ["Without his support on the Council, I am locked against Voldin and must defer to his seniority." ~"If Joth would waken to life as it is, Fawn would be in far better shape."];
+                }
+                TurnOff("Joth");
+                TurnOn("injury");
+            }
+            key ("injury") {
+                ["Before one of those freak storms hit, a fine lighthouse stood near the town to guide the fleet home at night." ~"During one very bad storm, its light went out and the sailors could not see to make their way back to the docks."];
+                ["Joth ordered his ship to stand near the shoals and set fire to her sails so that the remainder of the fleet could find their way in." ~"All of the ships docked safely that night, except for his."];
+                ["A freak change of wind cast his ship aground and he was trapped in the rigging."];
+                ["The healers say his back will never be the same again. He can never go back to sea."];
+                TurnOff("injury");
+                TurnOn("lighthouse");
+            }
+            key ("lighthouse") {
+                ["The heart seemed to go out of the sailors when the storms exchanged our lighthouse for a haunted building." ~"They believed that it was a bad omen..." *"They were right."];
+                TurnOff("lighthouse");
+                TurnOn("haunted building");
+            }
+            key ("haunted building") {
+                ["Joth led a party of sailors and guardsmen to check what happened to the lighthouse." ~"We suspected goblin mayhem, to lure us out of the city."];
+                ["The party returned pale and shaken. All they could tell us was that the lighthouse was gone." ~"In its place was a strange haunted building!"];
+                ["I know no more than that. I must concern myself with trying to provide Fawn with food."];
+                TurnOff("haunted building");
+            }
+            key ("Voldin") {
+                ["Voldin is the senior member of the Great Captains." ~"He is a very ambitious man with strong opinions and no great love for our fishing captains."];
+                TurnOff("Voldin");
+                TurnOn(<< "opinions", "fishing captains" >>);
+            }
+            key ("opinions") {
+                if (v2 = true) {
+                    ["I shall merely say that Voldin's views are very old fashioned, <v0>." ~"He firmly believes in the sanctity of Beauty and the protection of all things beautiful."];
+                } else {
+                    ["Voldin doth have a very limited opinion of a woman's intelligence." ~"He doth not believe that they are capable of making decisions more challenging than what to wear in the morning." *"I fear that Lady Yelinda is too easily led by Voldin's wishes."];
+                }
+                TurnOff("opinions");
+            }
+            key ("fishing captains") {
+                ["Voldin hath long been a bully -- from his days as a guardsman, to his days as a sea captain." ~"Few sailors were willing to serve under him for long."];
+                ["When the Council seat opened, they begged Lady Yelinda to appoint Voldin to the post. They told her it was to honor his years of service." ~"But Voldin knows, as doth every other sailor, that it was to bring him in off the sea." *"This was a vaster mistake than anyone could foretell."];
+                TurnOff("fishing captains");
+            }
+            key ("Kylista") {
+                if (v2 = true) {
+                    ["Kylista is the Priestess of Beauty." ~"She presides over the Oracle and insures that Fawn adheres to the tenets of Beauty." *"It is her duty to advise Lady Yelinda on spiritual matters."];
+                } else {
+                    ["Kylista is the Priestess of Beauty." ~"She is a very ambitious woman who is not above using her feminine wiles or the words of the Oracle to obtain what she wants."];
+                    ["Kylista holds Zulith in her thrall, I know." ~"I think she seeks to use Voldin to gain power of her own. But Voldin thinks to use her as his own pawn." ~"'Tis a monumental game, and I fear Fawn is the prize."];
+                }
+                TurnOff("Kylista");
+                TurnOn("Oracle");
+            }
+            key ("Oracle") {
+                ["The Oracle is a strange magical device built long ago as an instrument of truth." *"But of late its revelations have become echoes of Kylista and Voldin." ~"I do not know how they accomplish this, but I am certain that their plots are anything but divine."];
+                TurnOff("Oracle");
+                TurnOn("revelations");
+            }
+            key ("revelations") {
+                ["When I was a lad, the Oracle was called on to settle disputes and reveal the truth." ~"Now it pronounces marriages based more on wealth and power than on love." ~"The Oracle hath become a political tool, and I have no idea how."];
+                TurnOff("revelations");
+            }
+            key ("fleet") {
+                ["After the lighthouse was lost, the fleet sailed only in the daylight hours. There was no other choice." ~"But the storms seemed drawn to the water. They took the ships as well, one by one."];
+                TurnOff("fleet");
+                TurnOn("ships");
+            }
+            key ("ships") {
+                ["A few we know were lost at sea... transformed into blazes knows what." ~"The others could have been transported to the frozen mountains, for all we know. None have been seen again."];
+                TurnOff("ships");
+            }
+            key ("goblins") {
+                ["We have battled goblins since the time of Fawn's founding." ~"We drove the savage creatures from this area when we settled here." *"Because of their innate cowardice, we have always been able to drive them away with ease. Until Pomdirgun gathered them under his leadership."];
+                TurnOff("goblins");
+                TurnOn("Pomdirgun");
+            }
+            key ("Pomdirgun") {
+                ["Pomdirgun is far more cunning than normal goblins. He hath attacked Fawn without respite for nearly a year now."];
+                ["His attacks have grown more daring of late."];
+                TurnOff("Pomdirgun");
+                TurnOn("attacks");
+            }
+            key ("attacks") {
+                ["Without Pomdirgun leading them, the goblins would never have had the nerve to take the Pikeman tower."];
+                ["And he was responsible for the death of Seth, Fawn's healer."];
+                ["Delphynia is all we have now."];
+                TurnOff("attacks");
+                TurnOn("Delphynia");
+            }
+            key ("Delphynia") {
+                TurnOff("Delphynia");
+                ["Delphynia is a horticulturist." ~"Her knowledge of herbs made her the only logical choice as healer when Seth was killed."];
+                if ($AUDIENCE_WITH_YELINDA and ($FAWN_TRIAL_DONE and not $oraclesaysinnocent)) {
+                    ["She doth seem happier of late, since the Lady did allow the Fellowship scum to return to the city."];
+                    ["How can she abide that fellow Ruggs? He is so confounded ugly..."];
+                } else {
+                    ["Delphynia hath been a sad lady since Kylista arranged to exile the Fellowship sailors from the city." ~"She cannot decide whether she is glad that Ruggs is gone, or not. Poor lady."];
+                    TurnOn(<< "Fellowship sailors", "Ruggs" >>);
+                }
+            }
+            key ("Fellowship sailors") {
+                ["They sailed in quite a while ago. We had never seen the like of their ship before." ~"Then one of them proved to be a charismatic leader who spoke eloquently of some new belief called The Fellowship." ~"It appealed to many people, especially the women."];
+                ["Kylista was mightily put out, I will tell thee." ~"So she blamed the storms on the strangers and had them banned from the city. She still has everyone atoning for their transgressions against Beauty." ~"She says the storms will not stop until the heavens are appeased. I do not think she knows when -- or if -- they will stop."];
+                TurnOff("Fellowship sailors");
+            }
+            key ("Ruggs") {
+                ["Ruggs is one of the Fellowship sailors." ~"He is a good man who thinks that Delphynia put the stars in the sky." ~"The only problem is that he is hideously ugly." *"Ruggs could curdle milk with that face! But he is a gentle man."];
+                TurnOff("Ruggs");
+            }
+            key ("bye") {
+                SendAssassin_i();
+                CloseSpeaker0_i();
+                Bark_i(0, "@Thou hast been most kind.@", _Avatar);
+                Bark_i(5, "@A pleasure.@", _Joth);
+                JorvinBringsInvitation_i();
+                break;
+            }
+        }
+        clear_answers;
+    }
+}

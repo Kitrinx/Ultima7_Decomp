@@ -1,0 +1,60 @@
+Usable SurokHeals_i #locals(15) #uses(~AvatarName, ~PartyNoAutomatons_i, ~AskOrdList, ~GetStat, SetStat) {
+    v0 = ~AvatarName();
+    v1 = true;
+    ["Whom dost thou wish to heal?"];
+    While v1 {
+        v2 = ~PartyNoAutomatons_i();
+        v2 = (0 & v2);
+        v3 = << "nobody" >>;
+        Foreach v6 in v2 {
+            if not (v6 = 0) {
+                v3 = (v3 & ~GetNPCName_i(v6));
+            }
+        }
+        v7 = ~AskOrdList(v3);
+        v7 = v2::v7;
+        if (v7 = 0) {
+            ["So be it."];
+            break;
+        }
+        v8 = ~ItemToNPC_i(v7);
+        v9 = ~GetItemFlag_i(_Poisoned, v7);
+        v10 = ~GetStat(_Str, v7);
+        v11 = ~GetStat(_Hits, v7);
+        v12 = ~GetNPCName_i(v7);
+        v13 = "his";
+        if (v12 = "Petra") {
+            v13 = "her";
+        }
+        if (v10 > v11) {
+            v14 = (v10 - v11);
+            SetStat(v14, _Hits, v8);
+            if (v8 = 65180) {
+                ["I have healed thee of thy wounds. Rest easy, my friend."];
+            } else {
+                ["I have healed thy companion <v12> of <v13> wounds."];
+            }
+        } else {
+            if (v9 = false) {
+                if (v8 = 65180) {
+                    ["Thou seemest quite healthy!"];
+                } else {
+                    ["<v12> is already healthy!"];
+                }
+            } else {
+                if (v8 = 65180) {
+                    if ($poisonedbylydia and not $CURED_LYDIA_POISON) {
+                        ["What is this?! I have never seen the like of such a poison! I am afraid I cannot heal this, <v0>."];
+                        break;
+                    } else {
+                        ["Ah, this poison I can remedy. A moment... *There, 'tis done. Thou art whole once more."];
+                        ClearItemFlag_i(_Poisoned, _Avatar);
+                    }
+                } else {
+                    ["Your companion <v12> is badly poisoned. I shall remove it. *There. 'Tis done."];
+                    ClearItemFlag_i(_Poisoned, v7);
+                }
+            }
+        }
+    }
+}

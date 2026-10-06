@@ -1,0 +1,205 @@
+Routine Batlin_Type accepts a0 #locals(15) #uses(~WhereAmI_i, RemoveAll_i, ~GimmePathEgg, Bark_i, FaceAvatar_i, PartyFaces_i) {
+    v0 = ~AvatarSex();
+    v1 = "him";
+    if v0 {
+        v1 = "her";
+    }
+    v2 = ~WhereAmI_i();
+    if $batlininethicality {
+        v3 = ~FindNearby_i(0, 20, _Batlin_Type, _Avatar);
+        if (event = _Action) {
+            SetSpeaker0_i(0, _Cindy);
+            ["Well, well, well... If it isn't the Avatar!" *"Fool! Thou didst think me dead... But now it is time for thee to die!"];
+            v4 = ~GiveToCont_i(18, 0, _All, _Backpack, 1, v3);
+            v4 = ~GiveToCont_i(18, _All, 3, _Fire_Bolt, 1, v3);
+            v4 = ~GiveToCont_i(18, _All, 3, _M_Lightning, 1, v3);
+            v4 = ~GiveToCont_i(18, _All, 1, _M_Swordstrike, 1, v3);
+            v4 = ~GiveToCont_i(18, _All, 6, _Sp_Zap, 1, v3);
+            Npc_setAlignment(_Evil, v3);
+            SetWorkType(_Combat_0, v3);
+            v4 = ~PostInFuture(20, << _aNO_HALT_i, _aBARK_i, "@Thou art no match for me!@" >>, v3);
+            CloseSpeaker0_i();
+            SetItemFlag_i(_Tournament, _Avatar);
+            SetItemFlag_i(_Tournament, v3);
+            v4 = ~ChangeNPCStat_i(10, _Cbt, v3);
+            v4 = ~ChangeNPCStat_i(10, _Int, v3);
+            v4 = ~ChangeNPCStat_i(10, _Str, v3);
+            v5 = ~GetNPCStat_i(_Hits, _Avatar);
+            if (v5 > 15) {
+                v4 = ~ChangeNPCStat_i((15 - v5), _Hits, _Avatar);
+            }
+        }
+        if (event = _NearDeath) {
+            SetSpeaker0_i(0, _Cindy);
+            v6 = ~rndRange(3, 1);
+            if (v6 = 1) {
+                ["Fool! Dost thou think thou canst actually kill me?" *"I am forever!" *"I am eternity!"];
+            }
+            if (v6 = 2) {
+                ["Puny Avatar! Thou canst not defeat what is undefeatable!"];
+            }
+            if (v6 = 3) {
+                ["No! Thou canst not escape that easily!"];
+            }
+            v4 = ~ChangeNPCStat_i(20, _Hits, v3);
+        }
+    }
+    v7 = ~GetNPCID_i(item);
+    if ((~GetWorkType(item) = _Patrol) and (~GetNPCID_i(_Cantra) <> 0)) {
+        terminate;
+    }
+    if (~WhereAmI_i() = 16) {
+        if (event = _Action) {
+            SetSpeaker0_i(1, _Cindy);
+            ["Thou art too late, Avatar! Nothing can stop me now! The girl is dead and the last Bane is mine!"];
+            ["Soon I shall rival the Guardian himself and crush thee like the irritating insect thou art!"];
+            ["I shall open the Wall of Lights and destroy the world! And thou art powerless to follow me!"];
+            v8 = ~GetCoord(item);
+            createSprite(65535, 0, 0, 0, v8::2, v8::1, 21);
+            if ~IsNPCNear_i(_DBeyer) {
+                ["Come, Palos! Destiny awaits beyond the frozen mountains!"];
+                v8 = ~GetCoord(_DBeyer);
+                createSprite(65535, 0, 0, 0, v8::2, v8::1, 21);
+            }
+            Item_destroy(_DBeyer);
+            RemoveAll_i(item);
+            Sfx(130);
+            $BATLIN_FLED_SHAMINOS_KEEP = true;
+            v4 = ~PostInFuture(200, << _aNO_HALT_i, _aUSABLE_i, #Ring >>, ~GimmePathEgg(4, 5));
+        }
+        if ((event = _NearDeath) and not ~GetItemFlag_i(_Zombie, item)) {
+            Bark_i(0, "@At last...@", item);
+            FaceAvatar_i(item);
+            PartyFaces_i(item);
+            SetWorkType(_Wait, item);
+            v4 = ~PostInFuture(10, << _aNO_HALT_i, _aUSABLE_i, #Batlin_Type >>, item);
+            SetItemFlag_i(_Zombie, item);
+        }
+        if (event = _Bark) {
+            if (v7 = 0) {
+                SetItemFlag_i(_Dead, _Cantra);
+                v9 = ~FindNearby_i(0, 5, _Door_NS, item);
+                if v9 {
+                    v10 = (~GetFrame(v9) - 1);
+                    SetFrame(v10, v9);
+                }
+                SetNPCID_i(1, item);
+            } else {
+                if ((~GetDist(item, _Avatar) < 12) and not ~GetItemFlag_i(_Zombie, item)) {
+                    Bark_i(0, "@At last...@", item);
+                    FaceAvatar_i(65180);
+                    PartyFaces_i(item);
+                    SetWorkType(_Wait, item);
+                    v4 = ~PostInFuture(10, << _aNO_HALT_i, _aUSABLE_i, #Batlin_Type >>, item);
+                    SetItemFlag_i(_Zombie, item);
+                }
+            }
+        }
+    }
+    if ($beginspinevision and ((event = _Bark) and not $spinevisiondone)) {
+        SetNPCID_i((~GetNPCID_i(item) + 1), item);
+        if (~GetNPCID_i(item) = 10) {
+            ClearSpeakers_i();
+            SetSpeaker0_i(0, _Cindy);
+            ["Thy fire shall warm the heart of my trap, Palos. I shall rely on thee to make sure the Avatar feels the warmth of our welcome."];
+            SetSpeaker1_i(0, _Meelose);
+            ["To be my great pleasure. To look forward to the meeting..."];
+            CloseSpeaker1_i();
+            SetSpeakerSlot_i(0);
+            v11 = ~FindNearby_i(0, 20, _Garg_Wingless, item);
+            if v11 {
+                SetWorkType(_Loiter, v11);
+            }
+            EndConverse_i();
+        }
+        if (~GetNPCID_i(item) = 9) {
+            Bark_i(0, "@Ah, Palos!@", item);
+            v4 = ~PostInFuture(20, << _aNO_HALT_i, _aUSABLE_i, #Batlin_Type >>, item);
+        }
+        if (~GetNPCID_i(item) = 8) {
+            ClearSpeakers_i();
+            SetSpeaker0_i(0, _Cindy);
+            ["Thou shalt be my door warden. I can count on thy strength to delay the Avatar..."];
+            SetSpeaker1_i(0, _Brunt);
+            ["Dost thou wish <v1> dead or mangled, Batlin?"];
+            CloseSpeaker1_i();
+            SetSpeakerSlot_i(0);
+            ["Mangled will suffice, mighty Brunt. But do as thou wishest..."];
+            SetSpeaker1_i(0, _Brunt);
+            ["Good... Dead it is!"];
+            CloseSpeaker1_i();
+            SetSpeakerSlot_i(0);
+            EndConverse_i();
+            SetWorkType(_Loiter, _Brunt);
+            v12 = << 2340, 382, 0 >>;
+            v11 = ~FindNearby_i(0, 20, _Garg_Wingless, item);
+            if v11 {
+                PathfindNPC_i(false, #Garg_Wingless, v11, _Path_Success, v12, v11);
+            }
+        }
+        if (~GetNPCID_i(item) = 7) {
+            Bark_i(0, "@Brunt!@", item);
+        }
+        if (~GetNPCID_i(item) = 6) {
+            v13 = << 2342, 391, 0 >>;
+            PathfindNPC_i(false, #Brunt, _Brunt, _Path_Success, v13, _Brunt);
+            Bark_i(0, "@I must be certain...@", item);
+        }
+        if (~GetNPCID_i(item) = 5) {
+            ClearSpeakers_i();
+            SetSpeaker0_i(0, _Cindy);
+            ["To thee I give the anchor's job... The Avatar must not enter the Shrine of Balance before the Wall of Lights is fully open. Thou must stop the Avatar, should the others fail."];
+            SetSpeaker1_i(0, _Deadeye);
+            ["I'll split <v1> from stem ta stern afore I let <v1> pass, Batlin!"];
+            ["An' o' course there be another yearnin' for a chance ta meet up with <v1> again, too..."];
+            CloseSpeaker1_i();
+            SetSpeakerSlot_i(0);
+            ["Ah, yes... I had nearly forgotten."];
+            SetWorkType(_Loiter, _Deadeye);
+            EndConverse_i();
+        }
+        if (~GetNPCID_i(item) = 4) {
+            Bark_i(0, "@Deadeye! Come here!@", item);
+        }
+        if (~GetNPCID_i(item) = 3) {
+            ClearSpeakers_i();
+            SetSpeaker0_i(0, _Cindy);
+            ["I must prepare an appropriate welcome for mine old enemy!"];
+            EndConverse_i();
+            v14 = << 2346, 409, 0 >>;
+            PathfindNPC_i(false, #Deadeye, _Deadeye, _Path_Success, v14, _Deadeye);
+        }
+        if (~GetNPCID_i(item) = 2) {
+            Bark_i(0, "@...before the Avatar cometh.@", item);
+        }
+        if (~GetNPCID_i(item) = 1) {
+            FadePalette_i(1, 1, 12);
+            Bark_i(0, "@So little time...@", item);
+            SetMusic(~GimmePathEgg(1, 5), 52);
+        }
+        terminate;
+    }
+    if ($beginspinevision and ((event = _Action) and not $spinevisiondone)) {
+        SetAmbientLight_i(1);
+        SetTimePalette_i();
+        FadePalette_i(0, 1, 12);
+        Camera_setCenterOn(_Avatar);
+        v4 = ~PostInFuture(10, << _aNO_HALT_i, _aUSABLE_i, #FadeInArrival_i >>, ~GimmePathEgg(1, 5));
+        ClearItemFlag_i(_DontMove_i, _Avatar);
+        ClearSpeakers_i();
+        SetNPCID_i(0, item);
+        $spinevisiondone = true;
+        RemoveNPC_i(_Brunt);
+        RemoveNPC_i(_Deadeye);
+        $USING_FAR_SIGHT_MAGIC = false;
+    }
+    if ((event = _Trigger) and (v2 = 31)) {
+        SetSpeaker0_i(0, _Cindy);
+        ["Ah, Avatar! Thou wert ne'er a match for me..." *"Soon I will have power to rival even the Guardian himself! And thou wilt be powerless, just as thou art now." *"I will bury my blade deep within thine entrails, twisting it ever so slowly, enjoying each of thy pitiful screams." *"Farewell, hero of Britannia. Though thou wilt beg for a quick end to thy life, I shall resist. I want to enjoy thy death..."];
+        CloseSpeaker0_i();
+        Bark_i(2, "@Enjoy thy death!@", item);
+        v4 = ~SetQuality(16, item);
+        v4 = ~PostInFuture(35, << _aNO_HALT_i, _aUSABLE_i, #DreamScenesEgg_i >>, item);
+        terminate;
+    }
+}

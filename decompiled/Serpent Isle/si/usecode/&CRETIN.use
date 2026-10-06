@@ -1,0 +1,359 @@
+Routine CretinUsable_i accepts a0 #locals(3) #uses(~CretinLine_i) {
+    if ((event = _Converse) or (event = _Action)) {
+        v0 = ~ItemToNPC_i(item);
+        if (v0 < 256) {
+            SetSpeaker(0, v0);
+            v1 = 0;
+            While (v1 < 10) {
+                v2 = ~CretinLine_i();
+                ["<v2>"];
+                v1 = (v1 + 1);
+            }
+        }
+    }
+    if (event = _Bark) {
+        Item_bark("@Oink@", item);
+    }
+}
+
+Function ~CretinNoun_i #locals(4) {
+    v0 = ("soup" & ("*" & ("eruption" & ("*" & ("quagmire" & ("*" & ("bureaucracy" & ("bureaucracies" & ("hoe" & "*")))))))));
+    v0 = (v0 & ("tyranny" & ("tyrannies" & ("monarchy" & ("monarchies" & ("hammer" & ("*" & ("sickle" & ("*" & ("imperialism" & "*"))))))))));
+    v0 = (v0 & ("axle" & ("*" & ("wheel" & ("*" & ("Gump" & ("*" & ("lenticular cloud" & ("*" & ("clock" & ("*" & ("sloop" & ("*" & ("barge" & "*"))))))))))))));
+    v1 = ~rndRange((~ListSize_i(v0) / 2), 1);
+    v2 = v0::((v1 * 2) - 1);
+    v3 = v0::(v1 * 2);
+    if (v3 = "*") {
+        v3 = (v2 + "s");
+    }
+    return << v2, v3 >>;
+}
+
+Function ~CretinNoun2_i #locals(4) {
+    v0 = ("cage" & ("*" & ("flagpole" & ("*" & ("digit" & ("*" & ("nail" & ("*" & ("epaphite" & ("*" & ("sycophant" & ("*" & ("demagogue" & "*")))))))))))));
+    v0 = (v0 & ("prophet" & ("*" & ("profit" & ("*" & ("pus" & ("pus" & ("mulch" & ("mulch" & ("Garden Gnome" & "*"))))))))));
+    v0 = (v0 & ("personal crisis" & ("personal crises" & ("wit" & ("*" & ("bathysphere" & ("*" & ("pudding" & ("*" & ("origami ball" & ("*" & ("communion wafer" & ("*" & ("armageddon" & ("*" & ("balloon" & "*"))))))))))))))));
+    v1 = ~rndRange((~ListSize_i(v0) / 2), 1);
+    v2 = v0::((v1 * 2) - 1);
+    v3 = v0::(v1 * 2);
+    if (v3 = "*") {
+        v3 = (v2 + "s");
+    }
+    return << v2, v3 >>;
+}
+
+Function ~CretinAdjectives_i #locals(4) {
+    v0 = ("constipated" & ("fractured" & ("dysfunctional" & ("dyslexic" & ("diuretic" & ("glandular" & ("hormonal" & ("obtuse" & ("obese" & ("partisan" & "bilateral"))))))))));
+    v0 = (v0 & ("symmetrical" & ("frontal" & ("superfluous" & ("saturated" & ("molar" & ("low-pressure" & ("diagnostic" & ("acidic" & ("empirical" & ("basic" & ("suicidal" & ("comforting" & "passive")))))))))))));
+    v0 = (v0 & ("hedonistic" & ("pagan" & ("philanthropic" & ("operatic" & ("staged" & ("affected" & ("grotesque" & ("orgasmic" & ("organic" & ("pedantic" & ("imperialist" & ("Gumpy" & "dependent")))))))))))));
+    v1 = ~rndRange(~ListSize_i(v0), 1);
+    v2 = v0::v1;
+    v1 = ~rndRange(~ListSize_i(v0), 1);
+    v3 = v0::v1;
+    return << v2, v3 >>;
+}
+
+Function ~CretinVerb_i #locals(5) {
+    v0 = ("lactate" & ("lactated" & ("lactating" & ("grovel" & ("grovelled" & ("grovelling" & ("brew" & ("*" & ("*" & ("digest" & ("*" & ("*" & ("complain" & ("*" & "*"))))))))))))));
+    v0 = (v0 & ("gump" & ("*" & ("*" & ("guffaw" & ("*" & ("*" & ("loiter" & ("*" & ("*" & ("solicit" & ("*" & "*"))))))))))));
+    v0 = (v0 & ("represent" & ("*" & ("*" & ("conjugate" & ("conjugated" & ("conjugating" & ("sink" & ("sank" & ("*" & ("harvest" & ("*" & ("*" & ("gossip" & ("*" & ("*" & ("falsify" & ("falsified" & ("*" & ("sue" & ("sued" & "suing")))))))))))))))))))));
+    v0 = (v0 & ("gyrate" & ("gyrated" & ("gyrating" & ("outstretch" & ("*" & ("*" & ("deflower" & ("*" & "*")))))))));
+    v1 = ~rndRange((~ListSize_i(v0) / 3), 1);
+    v2 = v0::((v1 * 3) - 2);
+    v3 = v0::((v1 * 3) - 1);
+    v4 = v0::(v1 * 3);
+    if (v3 = "*") {
+        v3 = (v2 + "ed");
+    }
+    if (v4 = "*") {
+        v4 = (v2 + "ing");
+    }
+    return << v2, v3, v4 >>;
+}
+
+Function ~CretinVerb2_i #locals(5) {
+    v0 = ("collate" & ("collated" & ("collating" & ("sear" & ("*" & ("*" & ("croak" & ("*" & ("*" & ("nap" & ("napped" & ("napping" & ("work" & ("*" & ("*" & ("conjure" & ("conjured" & "conjuring")))))))))))))))));
+    v0 = (v0 & ("campaign" & ("*" & ("*" & ("protest" & ("*" & ("*" & ("spew" & ("*" & ("*" & ("inhabit" & ("*" & ("*" & ("censor" & ("*" & "*")))))))))))))));
+    v0 = (v0 & ("lay off" & ("laid off" & ("laying off" & ("spray" & ("*" & ("*" & ("tan" & ("tanned" & "tanning")))))))));
+    v1 = ~rndRange((~ListSize_i(v0) / 3), 1);
+    v2 = v0::((v1 * 3) - 2);
+    v3 = v0::((v1 * 3) - 1);
+    v4 = v0::(v1 * 3);
+    if (v3 = "*") {
+        v3 = (v2 + "ed");
+    }
+    if (v4 = "*") {
+        v4 = (v2 + "ing");
+    }
+    return << v2, v3, v4 >>;
+}
+
+Function ~CretinAdverb_i #locals(3) {
+    v0 = ("between the sheets" & ("with a melon" & ("assuredly" & ("above thine house" & "below the ground"))));
+    v0 = (v0 & ("with much consternation" & ("Gumpily" & ("fiscally" & ("similarly" & "throughout the universe")))));
+    v1 = ~rndRange(~ListSize_i(v0), 1);
+    v2 = v0::v1;
+    return v2;
+}
+
+Function ~CretinAdverb2_i #locals(3) {
+    v0 = ("without my knowledge" & ("without the proper permit" & ("through the ages" & "against all odds")));
+    v0 = (v0 & ("with thy mother" & ("in a roundabout manner" & ("implicitly" & ("explicitly" & "anxiously")))));
+    v1 = ~rndRange(~ListSize_i(v0), 1);
+    v2 = v0::v1;
+    return v2;
+}
+
+Function ~CretinAnimal_i #locals(4) {
+    v0 = ("armadillo" & ("*" & ("octopus" & ("octopi" & ("ungulate" & ("*" & ("cockatoo" & ("*" & ("ferret" & ("*" & ("weasel" & ("*" & ("bassalope" & "*")))))))))))));
+    v0 = (v0 & ("platypus" & ("platypuses" & ("no-see-um" & ("*" & ("alpaca" & ("*" & ("mooncow" & ("*" & ("thundermoose" & ("*" & ("llama" & "*"))))))))))));
+    v0 = (v0 & ("iguana" & ("*" & ("reptile" & ("*" & ("amphibian" & ("*" & ("mammal" & ("*" & ("invertebrate" & "*"))))))))));
+    v1 = ~rndRange((~ListSize_i(v0) / 2), 1);
+    v2 = v0::((v1 * 2) - 1);
+    v3 = v0::(v1 * 2);
+    if (v3 = "*") {
+        v3 = (v2 + "s");
+    }
+    return << v2, v3 >>;
+}
+
+Function ~CretinAnimal2_i #locals(4) {
+    v0 = ("dicot" & ("*" & ("conifer" & ("*" & ("slug" & ("*" & ("sloth" & ("*" & ("mole-person" & ("mole-people" & ("pod-person" & ("pod-people" & ("Saxon" & ("*" & ("Dominican" & ("*" & ("Basque" & "*")))))))))))))))));
+    v0 = (v0 & ("Gypsy" & ("Gypsies" & ("Jute" & ("*" & ("Norman" & ("*" & ("Mongol" & ("*" & ("Slav" & ("*" & ("Hindu" & ("*" & ("Christian" & ("*" & ("Albigensian" & ("*" & ("cephalopod" & ("*" & ("rock critic" & "*"))))))))))))))))))));
+    v1 = ~rndRange((~ListSize_i(v0) / 2), 1);
+    v2 = v0::((v1 * 2) - 1);
+    v3 = v0::(v1 * 2);
+    if (v3 = "*") {
+        v3 = (v2 + "s");
+    }
+    return << v2, v3 >>;
+}
+
+Function ~CretinSlangNoun_i #locals(3) {
+    v0 = ("studmuffin" & ("creampuff" & ("sot" & ("guttersnipe" & ("yellowback" & ("four-eyes" & ("goofball" & ("wretch" & ("shmuck" & ("pox" & ("twig" & ("comrade" & ("babycakes" & ("smart-guy" & ("dumpling" & ("smartypants" & "Spankamiah"))))))))))))))));
+    v1 = ~rndRange(~ListSize_i(v0), 1);
+    v2 = v0::v1;
+    return v2;
+}
+
+Function ~CretinLine_i #locals(20) #uses(~CretinNoun_i, ~CretinNoun2_i, ~CretinAnimal_i, ~CretinAnimal2_i, ~CretinAdjectives_i, ~CretinVerb_i, ~CretinVerb2_i, ~CretinAdverb_i, ~CretinAdverb2_i, ~CretinSlangNoun_i) {
+    if ~rndRange(3, 0) {
+        if ~rndRange(1, 0) {
+            v0 = ~CretinNoun_i();
+        } else {
+            v0 = ~CretinNoun2_i();
+        }
+    } else {
+        if ~rndRange(1, 0) {
+            v0 = ~CretinAnimal_i();
+        } else {
+            v0 = ~CretinAnimal2_i();
+        }
+    }
+    v1 = v0::1;
+    v2 = v0::2;
+    if ~rndRange(1, 0) {
+        v3 = ~CretinNoun_i();
+    } else {
+        v3 = ~CretinNoun2_i();
+    }
+    if ~rndRange(1, 0) {
+        v4 = ~CretinNoun_i();
+    } else {
+        v4 = ~CretinNoun2_i();
+    }
+    if ~rndRange(1, 0) {
+        v5 = ~CretinNoun_i();
+    } else {
+        v5 = ~CretinNoun2_i();
+    }
+    v5 = v5::2;
+    v0 = ~CretinAdjectives_i();
+    v6 = v0::1;
+    v7 = v0::2;
+    if ~rndRange(1, 0) {
+        v0 = ~CretinVerb_i();
+    } else {
+        v0 = ~CretinVerb2_i();
+    }
+    v8 = v0::1;
+    v9 = v0::2;
+    v10 = v0::3;
+    if ~rndRange(1, 0) {
+        v11 = ~CretinAdverb_i();
+    } else {
+        v11 = ~CretinAdverb2_i();
+    }
+    if ~rndRange(1, 0) {
+        v0 = ~CretinAnimal_i();
+    } else {
+        v0 = ~CretinAnimal2_i();
+    }
+    v12 = v0::1;
+    v13 = v0::2;
+    v14 = ~CretinSlangNoun_i();
+    v0 = ~rndRange(36, 0);
+    if (v0 = 0) {
+        v15 = (((("I will show thee my " + v6) + " ") + v1) + " if thou wilt show me thine.");
+    }
+    v0 = (v0 - 1);
+    if (v0 = 0) {
+        v15 = (((((((("All of my " + v6) + " ") + v2) + " are ") + v10) + " ") + v11) + ".");
+    }
+    v0 = (v0 - 1);
+    if (v0 = 0) {
+        v15 = (((((("Stop " + v10) + " my ") + v6) + " ") + v1) + ", please.");
+    }
+    v0 = (v0 - 1);
+    if (v0 = 0) {
+        v15 = (((((("Hast thou seen my " + v1) + "? 'Tis ") + v10) + " ") + v11) + ".");
+    }
+    v0 = (v0 - 1);
+    if (v0 = 0) {
+        v15 = (((("There is no " + v1) + " for thee today, little ") + v12) + ", only death.");
+    }
+    v0 = (v0 - 1);
+    if (v0 = 0) {
+        v16 = ~AOrAn_i(v6);
+        v15 = (((((("Am I having " + v16) + " ") + v6) + " ") + v1) + " yet?");
+    }
+    v0 = (v0 - 1);
+    if (v0 = 0) {
+        v16 = ~AOrAn_i(v6);
+        v15 = (((((("Where is mine advisor? I need " + v16) + " ") + v6) + " ") + v1) + " immediately.");
+    }
+    v0 = (v0 - 1);
+    if (v0 = 0) {
+        v15 = (((((((("Thou hast saved my " + v6) + " ") + v12) + " from ") + v1) + ", ") + v14) + ". How can I ever repay thee?");
+    }
+    v0 = (v0 - 1);
+    if (v0 = 0) {
+        v16 = ~AOrAn_i(v1);
+        v15 = (((((((((((("^" + v16) + " ") + v1) + ", ") + v16) + " ") + v1) + ", my kingdom for ") + v16) + " ") + v1) + "!");
+    }
+    v0 = (v0 - 1);
+    if (v0 = 0) {
+        v16 = ~AOrAn_i(v1);
+        v15 = (((("Frankly, my dear, I don't give " + v16) + " ") + v1) + ".");
+    }
+    v0 = (v0 - 1);
+    if (v0 = 0) {
+        v15 = (((("As " + v2) + " are my witness, I'll never go ") + v6) + " again.");
+    }
+    v0 = (v0 - 1);
+    if (v0 = 0) {
+        v15 = (("Oh, my, " + v14) + ", I don't think we're in Britannia anymore.");
+    }
+    v0 = (v0 - 1);
+    if (v0 = 0) {
+        v15 = (((((("May I borrow thy " + v1) + "? Mine seems to be ") + v6) + " ") + v11) + ".");
+    }
+    v0 = (v0 - 1);
+    if (v0 = 0) {
+        v15 = (((((("My " + v13) + " are ") + v10) + " ") + v11) + ".");
+    }
+    v0 = (v0 - 1);
+    if (v0 = 0) {
+        v15 = (((((("Thou shalt know the " + v1) + " and the ") + v1) + " shall make thee ") + v6) + ".");
+    }
+    v0 = (v0 - 1);
+    if (v0 = 0) {
+        v16 = ~AOrAn_i(v12);
+        v15 = (((((((("Thou shalt not " + v8) + " to ") + v16) + " ") + v12) + ", ") + v14) + ".");
+    }
+    v0 = (v0 - 1);
+    if (v0 = 0) {
+        v15 = (((("Honor thy father and thy " + v1) + ", ") + v14) + ".");
+    }
+    v0 = (v0 - 1);
+    if (v0 = 0) {
+        v15 = (((("Thou shalt not covet thy neighbor's " + v1) + ", ") + v14) + ".");
+    }
+    v0 = (v0 - 1);
+    if (v0 = 0) {
+        v16 = ~AOrAn_i(v1);
+        v15 = (((("Neither a borrower nor " + v16) + " ") + v1) + " be.");
+    }
+    v0 = (v0 - 1);
+    if (v0 = 0) {
+        v15 = (((((("Never " + v8) + " a gift ") + v12) + " in the ") + v1) + ".");
+    }
+    v0 = (v0 - 1);
+    if (v0 = 0) {
+        v15 = (((("A fool and his " + v1) + " are soon ") + v6) + ".");
+    }
+    v0 = (v0 - 1);
+    if (v0 = 0) {
+        v15 = (((("Workers of the world, " + v8) + "! You have nothing to lose but your ") + v2) + "!");
+    }
+    v0 = (v0 - 1);
+    if (v0 = 0) {
+        v15 = (("Ich bin ein " + v1) + "er.");
+    }
+    v0 = (v0 - 1);
+    if (v0 = 0) {
+        v15 = (((("Damn the " + v2) + "! ^") + v6) + " speed ahead!");
+    }
+    v0 = (v0 - 1);
+    if (v0 = 0) {
+        v15 = (((((((("Ask not what thy " + v6) + " ") + v1) + " can do for thee, but what thou canst do for thy ") + v6) + " ") + v1) + ".");
+    }
+    v0 = (v0 - 1);
+    if (v0 = 0) {
+        v15 = (((((("^" + v14) + "! ") + v14) + "! Thou damned ") + v12) + ".");
+    }
+    v0 = (v0 - 1);
+    if (v0 = 0) {
+        v15 = (((((("Let me remind thee that the " + v2) + " of ") + v3) + " may be more ") + v6) + " than they appear.");
+    }
+    v0 = (v0 - 1);
+    if (v0 = 0) {
+        v15 = (((((("Destroy thy " + v6) + " and ") + v7) + " life before it is too late, ") + v14) + ".");
+    }
+    v0 = (v0 - 1);
+    if (v0 = 0) {
+        v16 = ~AOrAn_i(v6);
+        v17 = ~AOrAn_i(v1);
+        v15 = (((((((("Mine head feels like " + v16) + " ") + v6) + " with ") + v17) + " ") + v1) + " pointed at it.");
+    }
+    v0 = (v0 - 1);
+    if (v0 = 0) {
+        v15 = (((((("Beautiful, " + v14) + ", I shall have my ") + v1) + " call thy ") + v1) + ".");
+    }
+    v0 = (v0 - 1);
+    if (v0 = 0) {
+        v15 = (("No, thank thee, I'm watching my " + v1) + " intake.");
+    }
+    v0 = (v0 - 1);
+    if (v0 >= 0) {
+        v16 = ~AOrAn_i(v6);
+        v18 = (((((("Ode to " + v16) + " ") + v6) + " ") + v1) + ". ");
+        if (v0 = 0) {
+            v15 = (((((((((((("O how the " + v13) + " of ") + v1) + " ") + v8) + " ") + v11) + " amidst the ") + v6) + " ") + v3) + ".");
+        }
+        v0 = (v0 - 1);
+        if (v0 = 0) {
+            v16 = ~AOrAn_i(v6);
+            v15 = (((((((("Shall I compare thee to " + v16) + " ") + v6) + " ") + v1) + "? Thou art far more ") + v7) + ".");
+        }
+        v0 = (v0 - 1);
+        if (v0 = 0) {
+            v19 = ~AOrAn_i(v1);
+            v15 = (((((((((((((((((("To be " + v16) + " ") + v1) + " or not to be. That is the ") + v3) + ". Whether 'tis nobler in the ") + v4) + " to ") + v8) + " the ") + v2) + " and ") + v5) + " of ") + v6) + " ") + v3) + " or...");
+        }
+        v0 = (v0 - 1);
+        if (v0 = 0) {
+            v15 = ((((((((((("This morning I saw a small " + v1) + " ") + v10) + " ") + v11) + ". How the seasons of ") + v6) + " ") + v3) + " come and go.") + " Death falls upon us all.");
+        }
+        v0 = (v0 - 1);
+        if (v0 = 0) {
+            v15 = (((("Rage, rage against the " + v10) + " of the ") + v1) + ".");
+        }
+        v0 = (v0 - 1);
+        if (v0 = 0) {
+            v15 = (((((((((((((((("Love in the turning " + v1) + ". The small ") + v13) + " ") + v8) + " ") + v11) + ".  The ") + v6) + " ") + v5) + " whisper their ") + v7) + " muses. Oh, the turning ") + v1) + ".");
+        }
+        v0 = (v0 - 1);
+    }
+    return (v18 + v15);
+}

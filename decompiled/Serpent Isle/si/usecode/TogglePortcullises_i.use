@@ -1,0 +1,62 @@
+Function ~TogglePortcullises_i #locals(18) {
+    v0 = (~FindNearby_i(0, 25, _NS_Crossbeam, _Avatar) & ~FindNearby_i(0, 25, _EW_Crossbeam, _Avatar));
+    v1 = (~FindNearby_i(0, 25, _NS_Portcullis, _Avatar) & ~FindNearby_i(0, 25, _EW_Portcullis, _Avatar));
+    Foreach v4 in v1 {
+        v5 = ~Item_getZ(v4);
+        if (v5 = 0) {
+            v6 = ~PostAction(<< _aSFX_i, 89, _aUSABLE_i, #RaiseLevel_i, _aLOOP_i, 65531, 3 >>, v4);
+            Foreach v9 in v0 {
+                v6 = ~PostAction(<< _aFRAME, 1, _aFRAME, 2, _aFRAME, 3 >>, v9);
+            }
+        }
+        if (v5 = 1) {
+            v6 = ~PostAction(<< _aNO_HALT_i, _aSFX_i, 89, _aUSABLE_i, #RaiseLevel_i, _aLOOP_i, 65531, 2 >>, v4);
+            Foreach v9 in v0 {
+                v6 = ~PostAction(<< _aFRAME, 2, _aFRAME, 3 >>, v9);
+            }
+        }
+        if (v5 = 2) {
+            v6 = ~PostAction(<< _aSFX_i, 89, _aUSABLE_i, #RaiseLevel_i, _aLOOP_i, 65531, 1 >>, v4);
+            Foreach v9 in v0 {
+                v6 = ~PostAction(<< _aFRAME, 3 >>, v9);
+            }
+        }
+        if (v5 = 3) {
+            v6 = ~PostAction(<< _aSFX_i, 89, _aUSABLE_i, #RaiseLevel_i >>, v4);
+            Foreach v9 in v0 {
+                v6 = ~PostAction(<< _aFRAME, 3 >>, v9);
+            }
+        }
+        if (v5 = 4) {
+            v6 = ~PostAction(<< _aSFX_i, 89, _aUSABLE_i, #LowerLevel_i, _aLOOP_i, 65531, 3 >>, v4);
+        }
+        Foreach v9 in v0 {
+            v6 = ~PostAction(<< _aFRAME, 2, _aFRAME, 1, _aFRAME, 0 >>, v9);
+        }
+    }
+    return true;
+}
+
+Routine CheckDoorPassword_i accepts a0 #locals(2) {
+    v1 = ~GetQuality(v0);
+    if (v1 = 91) {
+        if not $KNOW_SKULLCRUSHER_PASSWORD {
+            CreateSpriteOn_i(65535, 0, 0, 0, 4, 2, 9, v0);
+            v2 = ~PostInFuture(8, << _aNO_HALT_i, _aUSABLE_i, #ForgotPasswordEgg_i >>, v0);
+            Sfx(39);
+            terminate;
+        } else {
+            Item_bark("@Isal Sal Cra Gaas Iskar!@", _Avatar);
+            CreateSpriteOn_i(65535, 0, 0, 0, 0, 0, 21, v0);
+            SetMusic(v0, 53);
+        }
+    }
+}
+
+Routine PlaySpeechOrText_i accepts a0 #locals(0) #uses(ShowSpeechText_i) {
+    if not ~PlaySpeech_i(v0) {
+        ShowSpeechText_i(0);
+    } else {
+        closeAllGumps();
+    }
+}

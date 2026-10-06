@@ -1,0 +1,10 @@
+Routine RestoreSerpentBookEgg_i accepts a0 #locals(3) #uses(~IsInInv) {
+    if (event = _Trigger) && (flag(683) and (flag(684) and (flag(685) and (flag(686) and (flag(687) and flag(688)))))) && not ~IsInInv(65177, 241, _Serp_Book, 1, _Party) {
+        v0 = ~Item_create(_Serp_Book);
+        if v0 {
+            v1 = ~SetQuality(241, v0);
+            v2 = ~GetCoord(item);
+            v1 = ~PopToMap(v2);
+        }
+    }
+}

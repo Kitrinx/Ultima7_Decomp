@@ -1,0 +1,57 @@
+Routine Kapyundi accepts a0 #locals(1) #uses(Bark_i) {
+    if (event = _Converse) {
+        Item_bark("@Hail, Gwani!@", _Avatar);
+        Bark_i(3, "@Noocha Ta, Avatar!@", _Kapyundi);
+        SetWorkType(_Talk, _Kapyundi);
+    }
+    if (event = _Talking) {
+        Npc_schedule(_Kapyundi);
+        ClearBark_i(_Kapyundi);
+        SetSpeaker0_i(0, _Kapyundi);
+        v0 = ~GetItemFlag_i(_Met, _Kapyundi);
+        if v0 {
+            ["Greetings, great hunter."];
+        } else {
+            ["Our hunt bad."];
+        }
+        TurnOn(<< "name", "hunt", "bye" >>);
+        converse {
+            key ("name") {
+                TurnOff("name");
+                ["Me Kapyundi, mean \@little glacier\@. Me son of Yenani and Myauri."];
+                SetItemFlag_i(_Met, _Kapyundi);
+            }
+            key ("hunt") {
+                TurnOff("hunt");
+                ["We try to kill Ice Dragon, use blood to save Neyobi. But lair of Ice Dragon is certain death."];
+                TurnOn(<< "Ice Dragon lair", "certain death" >>);
+            }
+            key ("Ice Dragon lair") {
+                TurnOff("Ice Dragon lair");
+                ["Front entrance is too much danger! Must be other entrance!"];
+            }
+            key ("certain death") {
+                TurnOff("certain death");
+                ["Three of us died in Ice Dragon lair. We two injured. Must return to village in shame."];
+                TurnOn("three died");
+            }
+            key ("three died") {
+                TurnOff("three died");
+                ["We fought by three Gwani hunters who died in Ice Dragon lair. Dragon eat them. Now we never able to take their bodies to Gwani death temple."];
+                TurnOn("Gwani death temple");
+            }
+            key ("Gwani death temple") {
+                ["I do not know where temple. Gwani place of death to west of Ice Dragon's lair. Temple is there somewhere."];
+                TurnOff("Gwani death temple");
+            }
+            key ("bye") {
+                CloseSpeaker0_i();
+                CloseSpeaker1_i();
+                Bark_i(0, "@Safe journey to thee.@", _Avatar);
+                Bark_i(3, "@Good luck.@", _Kapyundi);
+                break;
+            }
+        }
+        clear_answers;
+    }
+}

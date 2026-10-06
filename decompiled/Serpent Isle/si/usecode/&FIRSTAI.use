@@ -1,0 +1,37 @@
+Routine First_Aid accepts a0 #locals(4) #uses(MemberSays_i, MemberBarks_i, ~IsAbleToTalk_i, ConsumeOne_i) {
+    if (event = _Converse) {
+        v0 = ~GetTarget();
+        if ~Item_isNpc(v0) {
+            v1 = ~GetNPCStat_i(_Str, v0);
+            v2 = ~GetNPCStat_i(_Hits, v0);
+            if (v2 = v1) {
+                MemberSays_i("@It doth not appear that a bandage is needed.@");
+            } else {
+                if (~ItemToNPC_i(v0) = 65180) {
+                    MemberBarks_i("@Much better.@");
+                } else {
+                    if ~IsAbleToTalk_i(v0) {
+                        v3 = ~rndRange(3, 1);
+                        if (v3 = 1) {
+                            Item_bark("@Ah, much better!@", v0);
+                        }
+                        if (v3 = 2) {
+                            Item_bark("@Thank thee!@", v0);
+                        }
+                        if (v3 = 3) {
+                            Item_bark("@That looks better.@", v0);
+                        }
+                    }
+                }
+                v3 = ~rndRange(4, 1);
+                if ((v2 + v3) > v1) {
+                    v3 = (v1 - v2);
+                }
+                v3 = ~ChangeNPCStat_i(v3, _Hits, v0);
+                ConsumeOne_i(item);
+            }
+        } else {
+            MemberBarks_i("@Do not soil the bandages.@");
+        }
+    }
+}

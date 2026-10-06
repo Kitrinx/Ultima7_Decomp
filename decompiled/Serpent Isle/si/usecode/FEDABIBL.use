@@ -1,0 +1,460 @@
+Routine Fedabiblio accepts a0 #locals(17) #uses(~LordOrLady, ~AvatarName, Bark_i, ~GiveItemsOrDrop_i, ~IsInInv, ~IsNPCNear, ~PartyUtters, ~AskCopyProtection_i, ~FindInParty_i, MessengerBringsScroll_i) {
+    v0 = ~LordOrLady();
+    v1 = ~AvatarSex();
+    v2 = ~AvatarName();
+    v3 = ~GetTime();
+    if ((v3 > 1) or (v3 < 6)) {
+        v3 = "day";
+    } else {
+        v3 = "evening";
+    }
+    if ((event = _NearDeath) and ~GetItemFlag_i(_Tournament, item)) {
+        v4 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #Black_Mage >>, item);
+    }
+    if (event = _Converse) {
+        Item_bark((("@Good " + v3) + "!@"), _Avatar);
+        Bark_i(2, "@Hush...@", _Fedabiblio);
+        SetWorkType(_Talk, _Fedabiblio);
+    }
+    if (event = _Talking) {
+        Npc_schedule(_Fedabiblio);
+        ClearBark_i(_Fedabiblio);
+        SetSpeaker0_i(0, _Fedabiblio);
+        v5 = ~GetItemFlag_i(_Met, _Fedabiblio);
+        if ($CRYSTAL_BALL_WILL_SHOW_EDRIN and not $SAW_EDRIN_TRANSFORM) {
+            ["I cannot give thee what thou dost desire until thou hast gazed into my crystal ball, <v0>. Come back when thou hast done so."];
+            Bark_i(0, "@The crystal ball!@", _Fedabiblio);
+            terminate;
+        }
+        if ($CRYSTAL_BALL_WILL_SHOW_EDRIN and ($SAW_EDRIN_TRANSFORM and not $HAVE_2ND_ENERGY_GLOBE)) {
+            if $KNOW_ALE_IS_EDRIN {
+                ["Did I not tell thee to speak with Gustacio?"];
+                Bark_i(0, "@Tell him the news.@", _Fedabiblio);
+                terminate;
+            } else {
+                ["At last, all is made clear! Tell good Gustacio that Edrin the missing brother is actually Ale the Bird! He will know what to do from there..."];
+                $KNOW_ALE_IS_EDRIN = true;
+                Bark_i(0, "@Speak to Gustacio...@", _Fedabiblio);
+                terminate;
+            }
+        }
+        if $BANES_RELEASED {
+            if $gaveserpscroll {
+                ["So good to see that the Anarch hath not yet slain thee, <v0>. How may I be of aid?"];
+            } else {
+                ["A thousand thanks! I had feared that I would remain an adornment of this place forever, thanks to Shamino the Anarch."];
+            }
+            TurnOn("Shamino the Anarch");
+            if not $gaveserpscroll {
+                TurnOn("gratitude");
+            }
+        } else {
+            if (v5 = false) {
+                SetItemFlag_i(_Met, _Fedabiblio);
+                ["Thou must be a seeker after knowledge. I am the Mage Fedabiblio, and I serve as the Magister of Moonshade."];
+            } else {
+                ["Thou hast a voracious appetite for knowledge. What dost thou desire to learn?"];
+            }
+            TurnOn(<< "Magister", "Moonshade" >>);
+        }
+        if not $gotspellbook {
+            TurnOn("spellbook");
+        }
+        if ($senttofedabiblio and not $SAW_EDRIN_TRANSFORM) {
+            TurnOn("Gustacio's experiment");
+        }
+        if (flag(234) and not ~GetItemFlag_i(_Dead, _Rotoluncia)) {
+            TurnOn("kidnap");
+        }
+        if (($fedaknowspinecone and not $knowpinecone) or (($fedaknowsegg and not $knowpenguinegg) or ((flag(270) and not $KNOWS_BEAR_SKULL_ORIGIN) or (($magesknowapparati and not $knowlabitem) or (($fedaknowspumice and not $knowpumice) or ($magesknowslippers and not $knowslippers)))))) {
+            TurnOn("information");
+        }
+        TurnOn(<< "bye" >>);
+        converse {
+            key ("kidnap") {
+                TurnOff("kidnap");
+                if $rotomanor {
+                    ["Most ominous... Again, I would direct thee to the MageLord. He is a man of low intellect and great cunning. No doubt he can aid thee."];
+                } else {
+                    if flag(321) {
+                        ["Do not waste thy time with the Rangers -- this is a case for Mages, most obviously!"];
+                        ["I direct thee to go immediately to MageLord Filbercio with this matter."];
+                    } else {
+                        ["Thy friend hath been taken! By means magical! 'Tis an offense to the Council..."];
+                        ["Take thy case directly to the MageLord -- he shall aid thee!"];
+                        flag(321) = true;
+                    }
+                }
+            }
+            key ("Shamino the Anarch") {
+                TurnOff("Shamino the Anarch");
+                ["The first thing that thy monstrous companion did when he came into town was oust the MageLord and the Council of Mages. When they resisted his edicts, Shamino killed them!"];
+                ["Thou wouldst not believe it, <v0>! The Anarch simply deflected all their spells... They had no effect at all."];
+                ["The Rangers became his instruments of chaos... Anything was allowed, as long as one held a 'permit' from the Anarch."];
+                ["I do not know how many of us are left now. It seems that most of the manors are abandoned..."];
+                PushKeys();
+                TurnOn(<< "anything", "left", "abandoned", "change subject" >>);
+            }
+            key ("change subject") {
+                PopKeys();
+                ["Ah, thy mind is questing again! What shall we speak of now?"];
+            }
+            key ("anything") {
+                TurnOff("anything");
+                ["Many of the Mages fell to the Anarch's wild justice. Others fell to the unorthodox magic of their fellow Mages. And I found myself in the lamentable position thou didst find me in for NOT using Death spells!"];
+                if not flag(256) {
+                    ["I tried to save Captain Hawk from the Anarch, but my powers were not sufficient."];
+                    ["As he lay dying, Hawk gave me this key. He said that it unlocked his sea chest at the Blue Boar Inn, and that the contents might be helpful someday."];
+                    ["As I think the key might be useful to thee, I am giving it to thee."];
+                    v4 = ~GiveItemsOrDrop_i(true, 0, 6, 188, 641, 1, _Avatar);
+                    flag(256) = true;
+                }
+            }
+            key ("abandoned") {
+                TurnOff("abandoned");
+                ["It might not seem virtuous, but I would suggest that thou shouldst explore the empty manors for magical scrolls and other items which might be of use in thy quest."];
+                ["For instance, thou couldst perchance assemble a near- complete set of the fabled Serpent Teeth -- "];
+                ["It was a coup to steal such an artifact from old Erstam, but now the trophies lie abandoned in the mansions..."];
+                ["I know not what the powers of the Teeth might be, but they might reveal their secret to thee."];
+                ["But beware of the automatons!"];
+            }
+            key ("left") {
+                TurnOff("left");
+                ["The last I knew, before I earned the Anarch's ire, Stefano was alive... though he was being pursued by some fell creature."];
+                ["Ducio yet lived. As did Torrissio. And I can only pray that Andrio and Freli escaped the notice of that monster!"];
+            }
+            key ("Magister") {
+                TurnOff("Magister");
+                ["Thou dost not know what a Magister does? The Magister is the director of the Seminarium -- 'tis the only School for Mages in the entire land."];
+                ["One of my functions is to find gifted children for this school. When they are located, I bring them to the school."];
+                ["I was appointed as Magister for life."];
+                PushKeys();
+                TurnOn(<< "Seminarium", "children", "change subject" >>);
+            }
+            key ("children") {
+                TurnOff("children");
+                ["A young, untrained Mage can be quite dangerous! Therefore, these children must be brought to the Seminarium -- for their own safety!"];
+                ["For instance, take young Freli. His father was a shopkeeper. What could a merchant teach his son about magical powers!"];
+                ["Taking care of my students is a tiring but fulfilling duty. Young Freli shows much promise, and Andrio is almost ready to graduate."];
+                TurnOn(<< "Andrio", "Freli" >>);
+            }
+            key ("Seminarium") {
+                TurnOff("Seminarium");
+                ["The Seminarium is unique in all the land, for all Mages are welcome to come here and study our records concerning spell research and magical activity."];
+                ["Any Mage can study here in safety, knowing that this place is a sanctuary from violence."];
+                ["Passing travellers also stop here to access our library."];
+                TurnOn(<< "travellers" >>);
+            }
+            key ("Andrio") {
+                TurnOff("Andrio");
+                ["Andrio hath quite a bit of youthful enthusiasm, and I find that most refreshing, but I do wish that he would use a bit more caution in his experiments!"];
+            }
+            key ("Freli") {
+                TurnOff("Freli");
+                ["I must confess that Freli is my favorite student. He is most brilliant, but the unfortunate thing is that he knows this. Sometimes I feel that he is simply too smart for his own good."];
+            }
+            key ("travellers") {
+                TurnOff("travellers");
+                ["Thou art not the first to be attracted to our facilities! In recent days, two visitors are memorable."];
+                ["First, there was the scholar Gwenno. We could not help her much, as her interest was in historical matters. I suggested that she consult the library on Monk Isle."];
+                ["Less agreeable was the visit of the Mage Batlin. He appeared to be most interested in the ancient inhabitants of this land, the Ophidians. Indeed, one might say that he was obsessed."];
+            }
+            key ("Moonshade") {
+                TurnOff("Moonshade");
+                ["Since thou art a visitor, I will explain a few things to thee. Moonshade is a city of Mages and for Mages. It is ruled by the Adepts, and served by the lesser Mages. There is a lower class -- the Mundanes. But some of them are skilled as artisans."];
+                PushKeys();
+                TurnOn(<< "Adepts", "lesser Mages", "artisans", "Mundanes", "change subject" >>);
+            }
+            key ("Adepts") {
+                TurnOff("Adepts");
+                ["The three Adepts are the most powerful wizards in the city. They compose the Council of Mages, which governs the city."];
+                ["One of the Adepts serves as MageLord. Currently, Filbercio rules as Lord of Moonshade."];
+                TurnOn("Filbercio");
+                if ~GetItemFlag_i(_Dead, _Rotoluncia) {
+                    if flag(226) {
+                        ["All is in an uproar, with Rotoluncia dead and her replacement -- the Necromancer Mortegro -- missing."];
+                        ["Gustacio hath asked that I join the Council in this troubled time, and I have done so."];
+                        TurnOn(<< "Gustacio", "missing?" >>);
+                    } else {
+                        ["Rotoluncia was on the Council, but her recent death hath made a change necessary. Therefore, Mortegro the Necromancer now holds her former position."];
+                        ["Gustacio remains on the Council, as he is second in power only to Filbercio."];
+                        TurnOn(<< "Gustacio", "Mortegro" >>);
+                    }
+                } else {
+                    ["The other two Adepts are Gustacio the Green Mage, and the Red Sorceress, Rotoluncia."];
+                    TurnOn(<< "Gustacio", "Rotoluncia" >>);
+                }
+            }
+            key ("Filbercio") {
+                TurnOff("Filbercio");
+                ["He comes from a long line of Mages. Filbercio is well-respected and is known as a shrewd administrator of city affairs. In private, though, it is said that he is something of a womanizer."];
+                PushKeys();
+                TurnOn(<< "politics", "womanizer", "nothing more" >>);
+            }
+            key ("politics") {
+                TurnOff("politics");
+                ["When dealing with magic in this city, everything in this city is political. And when dealing with politics, Filbercio is the master of the game. I dare say, he would be a force to be reckoned with, even if his actual magical skills alone were not good enough to make him the MageLord of Moonshade."];
+            }
+            key ("womanizer") {
+                TurnOff("womanizer");
+                ["If Filbercio doth have a flaw, it is that he can be distracted by a pretty face. It doth not hurt if that face belongs to a woman who is also a powerful Mage. The trouble is that it doth not deter him if that woman is already betrothed to another! Oh, perhaps I have said too much..."];
+            }
+            key ("Gustacio") {
+                TurnOff("Gustacio");
+                ["He is Filbercio's chief rival for the position of MageLord. Gustacio is extremely hard-working and devout in his studies and practices of the magical arts. He is a respected citizen, although there are those who do not like him -- he tends to have a rather severe personality."];
+                ["Now, Gustacio hath thrown himself into his studies of the phenomenon of the teleport storms. It hath become his obsession."];
+            }
+            key ("Rotoluncia") {
+                TurnOff("Rotoluncia");
+                ["Trust me, she is someone thou dost not wish to cross."];
+            }
+            key ("Mortegro") {
+                TurnOff("Mortegro");
+                ["Mortegro, master of death magic. Quite often he is dismissed as having the least political influence, but it is a mistake to underestimate him. He is a highly-skilled diplomat. After all, he hath remained on close personal speaking terms with the dead for all these years."];
+                ["He holds seances regularly. I am certain he will invite thee to one, sooner or later."];
+            }
+            key ("missing?") {
+                TurnOff("missing?");
+                ["Indeed, Mortegro hath gone missing! It is said that he chose to take a stroll during one of the magical storms..."];
+                ["Whilst making his observations of the storm, the Necromancer was struck by lightning -- and disappeared."];
+                ["It would be a shame if he were dead, for only he knows the secrets of speaking with the souls of the dead."];
+            }
+            key ("lesser Mages") {
+                TurnOff("lesser Mages");
+                ["These are citizens who have pursued some sort of magical education. Although they know a few spells, they were not able to become Adepts. Most become Rangers or Apothecaries."];
+            }
+            key ("artisans") {
+                TurnOff("artisans");
+                ["These are basically Mundanes who possess some skill that is valued in the society of Mages. Artists, writers, musicians, metalsmiths... That sort."];
+            }
+            key ("Mundanes") {
+                TurnOff("Mundanes");
+                ["These poor souls live in a dark little world where magic is merely another powerful natural force that affects them, which they desperately try to adjust to or withstand."];
+                ["Most of the Mundanes born here eventually leave. They settle in Fawn or Monitor, and this is better for them."];
+            }
+            key ("information") {
+                TurnOff("information");
+                ["In what art thou interested?"];
+                PushKeys();
+                v6 = 1;
+                TurnOn(<< "people", "places", "strange objects", "nothing more" >>);
+            }
+            key ("people") {
+                TurnOff("people");
+                ["Thou hast mistaken me for a common gossip."];
+                Bark_i(0, "@Be gone with thee!@", _Fedabiblio);
+                terminate;
+            }
+            key ("places") {
+                TurnOff("places");
+                ["There are many strange places that one may explore in Moonshade. To the south of the city are ancient catacombs. Somewhere within those tunnels is a way leading to a dungeon known only as Furnace."];
+                TurnOn(<< "catacombs", "Furnace" >>);
+            }
+            key ("catacombs") {
+                TurnOff("catacombs");
+                ["The catacombs were once occupied by the Rangers, until the water level began to rise. The Rangers built pumps to drain the water, but then a strange breed of rodent began to infest the catacombs. The creatures are said to be large vicious rats that have fangs as big as daggers. Needless to say, the catacombs were shortly abandoned."];
+            }
+            key ("Furnace") {
+                TurnOff("Furnace");
+                ["I myself would not go there. It is said that the heat there is so intense that it is lethal."];
+            }
+            key ("strange objects") {
+                ["Bucia the Shopkeeper hath sent thee to me! And what did she tell thee to ask of me?"];
+                PushKeys();
+                v6 = (v6 + 1);
+                if ($fedaknowspumice and not $knowpumice) {
+                    TurnOn("pumice");
+                }
+                if ($magesknowapparati and not $knowlabitem) {
+                    TurnOn("apparatus");
+                }
+                if ($fedaknowspinecone and not $knowpinecone) {
+                    TurnOn("pinecone");
+                }
+                if ($fedaknowsegg and not $knowpenguinegg) {
+                    TurnOn("blue egg");
+                }
+                if (flag(270) and not $KNOWS_BEAR_SKULL_ORIGIN) {
+                    TurnOn("skull");
+                }
+                TurnOn("nothing more");
+            }
+            key ("pumice") {
+                TurnOff("pumice");
+                if ~IsInInv(65177, 65177, _Pumice, 1, _Party) {
+                    ["Might I take that..."];
+                    ["Yes, this is pumice -- black in color, rough in texture, light in weight."];
+                } else {
+                    ["Pumice is a light, rough rock of a black or light brown hue."];
+                }
+                ["These rocks are formed when the Primal Forces of Fire and Earth collide -- during certain conjurations, for instance."];
+                ["Pumice is also found deep in the bowels of the world, where fire runs liquid."];
+                $knowspumicehot = true;
+                if ($knowspumicehot and $heardaboutfurnace) {
+                    $knowpumice = true;
+                }
+            }
+            key ("apparatus") {
+                TurnOff("apparatus");
+                if ~IsInInv(1, 65177, _Al_App_1, 1, _Party) {
+                    ["That item is used for researching the properties of magic, and to create new spells."];
+                    if not $gotspellbook {
+                        ["It is not safe for thee to have such an item. As the Magister, it is my duty to take that from thee."];
+                        v4 = ~TakeFromParty_i(18, 1, _All, _Al_App_1, 1);
+                        v7 = ~GetCoord(_Avatar);
+                        CreateSpriteOn_i(65535, 0, 0, 0, 0, 0, 21, _Avatar);
+                        terminate;
+                    }
+                    ["It is not mine, but I cannot tell thee to whom it belongs. Only Master Ducio would know."];
+                    $ducioknowslab = true;
+                } else {
+                    ["The item sounds as if it might be a piece of magical apparatus. Master Ducio would know for certain."];
+                    if not $gotspellbook {
+                        ["But thou shouldst not handle such equipment -- for Mundanes, it could be very dangerous."];
+                    }
+                }
+            }
+            key ("pinecone") {
+                TurnOff("pinecone");
+                ["Ah, yes. We sometimes find these on the beach after a storm."];
+                ["The northern trees produce tough cones which are filled with seeds. Later, the cones open and release their seeds."];
+                if ~IsInInv(65177, 65177, _Pinecone, 1, _Party) {
+                    ["As thou canst see, this cone still doth have its seeds. It hath been newly released from its tree."];
+                    ["It must have come directly from the northern forests, on the mainland north of the Swamp of Gorlab."];
+                } else {
+                    ["Once the pinecone releases its seeds, it becomes a dried husk. Being light, it is transported by wind and wave."];
+                    ["Thy pinecone could have come from any northern forest or any beach."];
+                }
+                $knowpinecone = true;
+            }
+            key ("blue egg") {
+                TurnOff("blue egg");
+                if ~IsInInv(3, 65177, _Gwani_Artifacts, 1, _Party) {
+                    ["What a stench! This egg hath gone putrid!"];
+                    ["A blue egg... doth not seem to be magical or in any way arcane..."];
+                } else {
+                    ["A blue egg... have I ever read of such a thing? Blue hens, blue frogs -- but eggs?"];
+                }
+                ["I do not know what it is! And if I do not know, then no one shall."];
+                if not (~GetItemFlag_i(_Dead, _Hawk) and ~IsNPCNear(_Freli)) {
+                    SetSpeaker1_i(0, _Freli);
+                    ["Cap'n Hawk might know! He hath been everywhere in the world!"];
+                    $hawkknowsegg = true;
+                    SetSpeakerSlot_i(0);
+                    ["The lad doth have a point. Also..."];
+                    ["Erstam the Mad Mage would almost certainly know, but he doth not share his information with anyone."];
+                }
+            }
+            key ("skull") {
+                TurnOff("skull");
+                if ~IsInInv(65177, 65177, _Bearskull, 1, _Party) {
+                    ["Allow me to handle it..."];
+                    ["But this is merely the skull of a common bear, such as are found on the mainland, most often along the westerly coast."];
+                    $KNOWS_BEAR_SKULL_ORIGIN = true;
+                } else {
+                    ["If thou wilt bring me the item, I shall examine it for thee. I can tell thee nothing now."];
+                }
+            }
+            key ("nothing more") {
+                PopKeys();
+                ["Remember always -- knowledge is power."];
+            }
+            key ("gratitude") {
+                TurnOff("gratitude");
+                ["Thank thee for saving me. Now that I am no longer imprisoned within stone, I can continue my researches. There must be some way to stop Shamino the Anarch!"];
+                v8 = ~PartyUtters(false, "@I seek the Scroll of the Serpent, sir.@", "@We seek the Scroll of the Serpent, sir.@", 1);
+                SetSpeakerSlot_i(0);
+                ["The ancient scroll? Be warned -- it is written entirely in the ancient runes of the Daemons who once dwelt in this land. I can understand none of it."];
+                ["It is said that Erstam translated portions of it, but the translation was lost many years ago."];
+                ["As a token of my gratitude, please accept this, the Scroll of the Serpent."];
+                v4 = ~GiveItemsOrDrop_i(true, 0, 0, 80, 707, 1, _Avatar);
+                $gaveserpscroll = true;
+            }
+            key ("Gustacio's experiment") {
+                TurnOff("Gustacio's experiment");
+                ["Hmmm... I think that thou shouldst consult my crystal ball. Perhaps it can provide a clue into the matter of the missing brother."];
+                ["Once thou hast looked, come back and I shall divine what thou hast seen."];
+                $CRYSTAL_BALL_WILL_SHOW_EDRIN = true;
+                Bark_i(0, "@The crystal ball!@", _Fedabiblio);
+                terminate;
+            }
+            key ("spellbook") {
+                TurnOff("spellbook");
+                if not $mustgetroot {
+                    ["Bring me three fresh Mandrake Roots, and I shall let thee have a spellbook. The Roots are found on Monk Isle."];
+                    $mustgetroot = true;
+                }
+                if ~IsInInv(3, 65177, _Reagents, 1, _Party) {
+                    if not ~IsInInv(3, 65177, _Reagents, 3, _Party) {
+                        ["This is not a sufficient number of roots with which to make a spellbook. Return to Monk Isle, and when thou again comest, bring three roots of the Mandrake."];
+                        Bark_i(0, "@Go back!@", _Fedabiblio);
+                        terminate;
+                    }
+                    if $gotfreshroot {
+                        ["I see that thou hast brought the Mandrake Roots. But I am still hesitant... If thou art truly a Mage, thou wilt be able to answer my four questions."];
+                        if ~AskCopyProtection_i() {
+                            ["Forgive me for my suspicions. But thou wilt understand that I take my responsibility seriously. I will now conjure a spellbook for thee."];
+                            CreateSpriteOn_i(65535, 0, 0, 0, 0, 0, 21, _Avatar);
+                            v4 = ~TakeFromParty_i(0, 3, _All, _Reagents, 3);
+                            v4 = ~GiveItemsOrDrop_i(true, 0, 5, 1, 761, 1, _Avatar);
+                            if (v4::2 <> 0) {
+                                v9 = ~FindNearest_i(10, _Spellbook, _Avatar);
+                            } else {
+                                v4 = ~FindInParty_i(5, 65177, _Spellbook);
+                                if (v4 = 0) {
+                                    ["Ummm.... For some reason, I cannot locate the spellbook that I was going to give thee. Thou wilt have to return at a later time."];
+                                    terminate;
+                                } else {
+                                    v9 = v4::1;
+                                }
+                            }
+                            ClearSpells_i(v9);
+                            v10 = << 1, 8, 13, 23, 30 >>;
+                            Foreach v13 in v10 {
+                                v4 = ~AddSpell_i(v9, 0, v13);
+                            }
+                            ["Thou wilt notice that the Transcribe spell is within thy spellbook. Use it to copy spell scrolls into thy spellbook, for they will disappear once thou hast used them."];
+                            ["Remember this well. It may mean the difference between thy life and thy death."];
+                            $gotspellbook = true;
+                            v14 = << 2421, 1864 >>;
+                            v15 = << 2408, 1895 >>;
+                            v16 = << 2415, 1886 >>;
+                            NewSchedule_i(<< v14, v15, v16 >>, << 14, 26, 21 >>, << 0, 3, 4 >>, _Frigidazzi);
+                            Item_move(<< 2424, 1892, 0 >>, _Frigidazzi);
+                            Npc_schedule(_Frigidazzi);
+                            v14 = << 2440, 1858 >>;
+                            v15 = << 2409, 1896 >>;
+                            v16 = << 2401, 1892 >>;
+                            NewSchedule_i(<< v14, v15, v16 >>, << 14, 23, 12 >>, << 0, 3, 4 >>, _GoblinMessenge);
+                            Item_move(<< 2415, 1886, 0 >>, _GoblinMessenge);
+                            Npc_schedule(_GoblinMessenge);
+                        } else {
+                            SetWorkType(_Shy, _Fedabiblio);
+                            ClearBark_i(_Fedabiblio);
+                            Bark_i(0, "@Be gone, rogue!@", _Fedabiblio);
+                            terminate;
+                        }
+                    } else {
+                        ["Thou didst not understand me. The Roots must be fresh, taken from the swamp precisely as the tides are receding. These roots are stale, and unsuitable for our purposes."];
+                        ["Return to Monk Isle, and return with fresh roots of the Mandrake!"];
+                        Bark_i(0, "@Return!@", _Fedabiblio);
+                        terminate;
+                    }
+                } else {
+                    if $mustgetroot {
+                        ["Without the Mandrake Roots, I can do nothing for thee."];
+                        ["Return to Monk Isle, and return with fresh roots of the Mandrake!"];
+                    }
+                }
+            }
+            key ("bye") {
+                CloseSpeaker0_i();
+                Bark_i(0, "@Thank thee!@", _Avatar);
+                Bark_i(2, "@Seek truth always.@", _Fedabiblio);
+                MessengerBringsScroll_i();
+                break;
+            }
+        }
+        clear_answers;
+    }
+}

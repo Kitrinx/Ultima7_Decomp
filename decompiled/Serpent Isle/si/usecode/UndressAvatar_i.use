@@ -1,0 +1,79 @@
+Usable UndressAvatar_i #locals(1) {
+    v0 = (1030 + ((2 - ~AvatarSkin_i()) * 2));
+    if ~AvatarSex() {
+        Polymorph_i((v0 + 1), _Avatar);
+    } else {
+        Polymorph_i(v0, _Avatar);
+    }
+}
+
+Function ~ReturnBelongings_i accepts a0 #locals(6) #uses(~GiveItemsOrDrop_i, ~ListCount_i) {
+    v1 = << false, 0 >>;
+    v2 = ~GetContents(_All, _All, _All, v0);
+    Foreach v5 in v2 {
+        if not ((~Item_getType(v5) = _Magic_Rings) and (~GetFrame(v5) = 2)) {
+            v6 = ~GiveItemsOrDrop_i(false, ~GetItemFlag_i(_IsTemporary_i, v5), ~GetFrame(v5), ~GetQuality(v5), ~Item_getType(v5), ~GetQuantity(0, v5), _Avatar);
+            if (v1::1 = 0) {
+                v1::1 = v6::1;
+            }
+            v1::2 = (v1::2 + v6::~ListCount_i(v6));
+            Item_destroy(v5);
+        }
+    }
+    return v1;
+}
+
+Routine ChooseMeetingPlace_i accepts a0 #locals(2) #uses(~AskList, SetWorkTypeAt_i) {
+    v1 = ~GetCoord(v0);
+    if (v1::3 <> 0) {
+        if (v0 = 65387) {
+            SetWorkType(_Wait, v0);
+            ["We must plan for every eventuality, Avatar. Should I not be able to remain here, I shall await thee on Monk Isle."];
+            NewSchedule_i(<< 2423, 1164 >>, _DeskWork, 0, v0);
+            terminate;
+        }
+        if (v0 = 65508) {
+            SetWorkType(_Wait, v0);
+            ["If I cannot remain here, I shall go home to the inn. Thou canst always find me there."];
+            RevertSchedule_i(_Petra);
+            terminate;
+        }
+        SetWorkType(_Wait, v0);
+        ["I shall attempt to wait for thee here, but if I cannot, where shall we meet?"];
+        v2 = "Monk Isle";
+        if $hawksailedtomoonshade {
+            if $zhelkasdidfirstdrawbridge {
+                v2 = (v2 & ("Fawn" & ("Monitor" & "Moonshade")));
+            } else {
+                v2 = (v2 & "Moonshade");
+            }
+        } else {
+            if flag(707) {
+                v2 = (v2 & "Monitor");
+            }
+            if ~GetItemFlag_i(_Met, _Ruggs) {
+                v2 = (v2 & "Fawn");
+            }
+        }
+        v1 = ~AskList(v2);
+        if (v1 = "Monitor") {
+            ["Then in an emergency, I shall find thee at the Town Hall in Monitor."];
+            NewSchedule_i(<< 976, 2554 >>, _Wander, 0, v0);
+        } else {
+            if (v1 = "Moonshade") {
+                ["If I cannot remain here, we shall meet at the Blue Boar Inn in Moonshade."];
+                NewSchedule_i(<< 2241, 1808 >>, _EatAtInn, 0, v0);
+            } else {
+                if (v1 = "Fawn") {
+                    ["If I cannot stay here, I shall travel to Fawn. We can meet at the tavern there."];
+                    NewSchedule_i(<< 941, 1762 >>, _EatAtInn, 0, v0);
+                } else {
+                    ["Let us meet at the abbey on Monk Isle, should I be forced to wander from this spot. No doubt Thoxa can fetch me there."];
+                    NewSchedule_i(<< 2428, 1124 >>, _EatAtInn, 0, v0);
+                }
+            }
+        }
+    } else {
+        SetWorkTypeAt_i(_Wander, 0, 65535, v0);
+    }
+}

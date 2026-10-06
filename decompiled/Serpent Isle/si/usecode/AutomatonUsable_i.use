@@ -1,0 +1,64 @@
+Usable AutomatonUsable_i #locals(2) #uses(PartyFaces_i, Bark_i, ~PartyUtters, ~ReturnBelongings_i, SetWorkTypeAt_i) {
+    if (event = _Converse) {
+        Item_bark("Hold!", _Avatar);
+        PartyFaces_i(item);
+        Bark_i(2, "@What was that?@", item);
+        SetWorkType(_Talk, item);
+    }
+    if (event = _Talking) {
+        SetSpeaker0_i(0, _Forskis);
+        ClearBark_i(item);
+        Npc_schedule(item);
+        ["What dost thou wish?"];
+        if ~GetItemFlag_i(_InParty_i, item) {
+            SetWorkType(_FollowAvt, item);
+            TurnOn("leave");
+        } else {
+            Npc_schedule(item);
+            TurnOn("join");
+        }
+        TurnOn(<< "bye" >>);
+        converse {
+            key ("join") {
+                TurnOff("join");
+                if (~ListSize_i(~GetParty()) < 5) {
+                    TurnOn("leave");
+                    ["Yes, master. I shall be thy servant."];
+                    JoinParty(item);
+                } else {
+                    ["But I cannot, master."];
+                    v0 = ~PartyUtters(false, 0, "@Our travelling group would be too large, Avatar.@", 1);
+                    SetSpeakerSlot_i(0);
+                }
+            }
+            key ("leave") {
+                TurnOff("leave");
+                TurnOn("join");
+                ["Yes, master."];
+                LeaveParty(item);
+                if ~GetContents(_All, _All, _All, item) {
+                    ["I have possessions which belong to thee."];
+                    v1 = ~ReturnBelongings_i(item);
+                    if (v1::1 <> 0) {
+                        ["Thy companions are helping thee with this burden."];
+                    }
+                    if (v1::2 > 0) {
+                        v1 = v1::2;
+                        if (v1 > 1) {
+                            ["Of thy belongings, <v1> are now on the ground."];
+                        } else {
+                            ["One of thy belongings is now on the ground."];
+                        }
+                    }
+                    ["They are thine once again."];
+                }
+                SetWorkTypeAt_i(_Wander, 0, 65535, item);
+            }
+            key ("bye") {
+                Bark_i(5, "@I obey@", item);
+                terminate;
+            }
+        }
+        clear_answers;
+    }
+}

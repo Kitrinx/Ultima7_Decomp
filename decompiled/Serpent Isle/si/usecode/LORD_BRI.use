@@ -1,0 +1,135 @@
+Routine British accepts a0 #locals(5) #uses(~LordOrLady, ~AvatarName) {
+    v0 = ~LordOrLady();
+    v1 = ~AvatarSex();
+    v2 = ~AvatarName();
+    if (event = _Bark) {
+        v3 = ~rndRange(4, 1);
+        if (v3 = 1) {
+            Item_bark("@All dead...@", item);
+        }
+        if (v3 = 2) {
+            Item_bark("@Oh, Britannia...@", item);
+        }
+        if (v3 = 3) {
+            Item_bark("@If only the Avatar...@", item);
+        }
+        if (v3 = 4) {
+            Item_bark("@Curse the Guardian!@", item);
+        }
+    }
+    if (event = _Talking) {
+        Item_bark("@Ah, there thou art, Avatar!@", item);
+        SetWorkType(_Talk, item);
+    }
+    if (event = _NearDeath) {
+        SetSpeaker0_i(0, _Sonar);
+        ["This nightmare hath become too much to bear! The Avatar himself hath turned against me!" *"The Guardian's foul deeds have even corrupted our last bastion of virtue. Britannia is lost without its hero! I must awake..."];
+        CloseSpeaker0_i();
+        v4 = ~GetCoord(item);
+        createSprite(65535, 0, 0, 0, v4::2, v4::1, 26);
+        Sfx(76);
+        KillNPC_i(item);
+    }
+    if (event = _Converse) {
+        SetSpeaker0_i(0, _Sonar);
+        ["Avatar! At last thou hast come. Seeing thee again hath brought me strength."];
+        ["Dost thou know that I expected to find thee here, in my dreams? I wish that thou wert truly here to counsel me...];
+        TurnOn(<< "name", "job", "bye" >>);
+        converse {
+            key ("name") {
+                ["Dost thou truly have to ask my name? Hast thou suffered from the recent afflictions as has all of Britannia? Canst thou not recognize thine old friend?"* "'Tis I, Lord British, ruler of all Britannia. Or at least what is left of it after all of the disasters..."];
+                TurnOff("name");
+                TurnOn(<< "disasters" >>);
+            }
+            key ("job") {
+                ["Thou dost have to ask? Why, I am ruler of Britannia, if thou dost not remember." ~"'Tis sad. Truly thou art suffering from some sort of malady such as the imbalances which are plaguing all of the land. I fear that nature is trying to rend itself apart." ~"Mine only hope is that thou art truly in fair health and that this pale reflection of thee in my dream is only a deceit of thy true fate."];
+                TurnOff("job");
+                TurnOn(<< "dream" >>);
+            }
+            key ("dream") {
+                ["Of course this is a dream! Thou hast not yet returned from the Serpent Isle to which I sent thee." *"Some days I fear that thou shalt never return... The storms began shortly after thou didst set sail."];
+                TurnOff("dream");
+                TurnOn("storms");
+            }
+            key ("storms") {
+                ["They are storms unlike anyone has seen before. The scholars can find no mention of such storms in any of the archives." *"How can a mere stroke of lightning rip away the entire royal mint..."];
+                TurnOff("storms");
+                TurnOn(<< "mint", "disturbance" >>);
+            }
+            key ("mint") {
+                ["Thou dost think me slack-witted, I am certain. But I have seen it for myself..." *"The royal mint is gone. In its place stands a strange lighthouse."];
+                TurnOff("mint");
+                TurnOn("lighthouse");
+            }
+            key ("lighthouse") {
+                ["'Twas clear enough what it was... Its light was still shining after the storm." *"But none of the sailors recognized it."];
+                TurnOff("lighthouse");
+            }
+            key ("disturbance") {
+                ["I know not what they mean... But none of the mages in Britannia seem to be able to predict the outcome of the most simple spells."];
+                TurnOff("disturbance");
+                TurnOn("outcome");
+            }
+            key ("outcome") {
+                ["A mage might find his entire house burned to the ground after merely trying to light a candle magically. Or another mage may, in the same instant, find himself unable to light a candle with a great flame spell." *"The mages claim that the ether is unstable..."];
+                TurnOff("outcome");
+                TurnOn("ether");
+            }
+            key ("ether") {
+                ["Ether, that which mages call upon to shape their spells. The mages say that the instability is a very bad sign." *"According to the mages, such an imbalance could easily destroy the world -- if it continues to increase in severity."];
+                TurnOff("ether");
+            }
+            key ("disasters") {
+                ["If it were only the strange storms, or only the magic instability, I would be less concerned. But when thou dost consider it along with the earthquakes, the emps, and the gargoyles, I fear that the world may indeed be ending."];
+                TurnOff("disasters");
+                TurnOn(<< "earthquakes", "emps", "gargoyles" >>);
+            }
+            key ("earthquakes") {
+                ["The earthquakes started not long after the storms began. At first they were fairly small and infrequent, but now they are growing more powerful and threatening the castle itself."];
+                TurnOff("earthquakes");
+                TurnOn("castle");
+            }
+            key ("castle") {
+                ["Only this morning did a guard find a crack at the base of the castle's foundation. It hath grown wider during the day..." *"If the castle falls, there will be no turning back. There will be nothing I can do to hold back the destruction."];
+                TurnOff("castle");
+            }
+            key ("emps") {
+                ["Thou shouldst remember the emps, Avatar. Thou didst save their trees before I sent thee to find the Serpent Isle." *"I fear that this cataclysm is affecting them the hardest of all."];
+                TurnOff("emps");
+                TurnOn("cataclysm");
+            }
+            key ("cataclysm") {
+                ["The emps live in closer harmony with the natural world than man does, Avatar. The storms and earthquakes have brought a great illness upon them."];
+                TurnOff("cataclysm");
+                TurnOn("illness");
+            }
+            key ("illness") {
+                ["Many of the emps have died already. I have little hope that any of that gentle race shall survive, even if the world doth not rend itself apart." *"I am sure that the illness will spread to humans, if something is not done to stop these disasters."];
+                TurnOff("illness");
+            }
+            key ("gargoyles") {
+                ["The gargoyles have also succumbed to these afflictions. They have fallen into a deep state of dreaming."];
+                TurnOff("gargoyles");
+                TurnOn("dreaming");
+            }
+            key ("dreaming") {
+                ["Few of the gargoyles can resist the compulsion to sleep, Avatar. Their slumber seems troubled, however. They thrash about and mutter in their sleep." *"Yet when we attempted to wake a sleeping gargoyle, to see if his dreams held any answers, he attacked us. I fear that we will have no answers from dreams..."];
+                TurnOff("dreaming");
+                TurnOn("answers");
+            }
+            key ("answers") {
+                ["There are no answers, Avatar. No answers for those who sleep. I must wake and seek what answers I can without thee here." *"I do not know that thou couldst save us if thou wert here, but I would have more hope if thou didst return..."];
+                CloseSpeaker1_i();
+                SetWorkType(_TendShop, item);
+                terminate;
+            }
+            key ("bye") {
+                ["Yes, yes. I should not be talking to myself anyway. With Britannia in the grip of these dark events it would be best if the people not fear that I have become afflicted, too. Thank thee, Avatar. Though thou art just a dream thou hast given me hope that Britannia will yet survive these dark days."];
+                SetWorkType(_TendShop, item);
+                CloseSpeaker1_i();
+                terminate;
+            }
+        }
+        clear_answers;
+    }
+}

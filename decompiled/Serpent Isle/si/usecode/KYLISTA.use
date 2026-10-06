@@ -1,0 +1,276 @@
+Routine Kylista accepts a0 #locals(12) #uses(~LordOrLady, ~AvatarName, ~IsNPCNear, Bark_i, PartyFaces_i, FaceAvatar_i, ~AskYesNo, ~IsInInv, ~PartyUtters, ~TransferItems_i, SendAssassin_i, JorvinBringsInvitation_i) {
+    v0 = ~LordOrLady();
+    v1 = ~AvatarSex();
+    v2 = ~AvatarName();
+    v3 = ~IsNPCNear(_Iolo);
+    v4 = ~FindNearby_i(0, 40, _Oracle, item);
+    if (event = _NearDeath) {
+        v5 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #Green_Noble >>, item);
+    }
+    if ((event = _Bark) and (~GetWorkType(_Kylista) = _TendShop)) && (($AUDIENCE_WITH_YELINDA and $FAWN_TRIAL_DONE) and not $oraclesaysinnocent) {
+        v6 = << "@I do not deserve this!@", "@Save me, please!@", "@Such filth!@", "@I wish I had a pillow...@", "@Damn Alyssand!@", "@Curse The Fellowship!@" >>;
+        if ~IsNPCNear_i(_Voldin) {
+            v6 = (v6 & ("@Be still, Voldin.@" & ("@Get away from me...@" & "@Thy dreams are dust.@")));
+        }
+        Bark_i(0, v6::~Random(~ListSize_i(v6)), _Kylista);
+    }
+    if ((event = _Converse) and (~GetWorkType(_Kylista) <> _Wait)) {
+        PartyFaces_i(65482);
+        if (($AUDIENCE_WITH_YELINDA and $FAWN_TRIAL_DONE) and not $oraclesaysinnocent) {
+            Item_bark("@Surprise!@", _Avatar);
+            SetWorkType(_Wait, _Kylista);
+            Bark_i(2, "@Hello, there...!@", _Kylista);
+            FaceAvatar_i(65482);
+            v5 = ~PostInFuture(7, << _aNO_HALT_i, _aUSABLE_i, #Kylista >>, _Kylista);
+        } else {
+            Item_bark("@Greetings, noble lady!@", _Avatar);
+            PartyFaces_i(65482);
+            Bark_i(5, (("@At thy service, " + v0) + ".@"), _Kylista);
+            SetWorkType(_Talk, _Kylista);
+        }
+    }
+    if (event = _Action) {
+        Npc_schedule(_Kylista);
+        ClearBark_i(_Kylista);
+        SetSpeaker0_i(0, _Kylista);
+        ["I am so grateful that thou hast come to visit me, <v2>! Everyone else hath forgotten me. I am so lonely here..."];
+        TurnOn(<< "plot", "Voldin", "lonely" >>);
+        goto label_37;
+    }
+    if (event = _Talking) {
+        Npc_schedule(_Kylista);
+        ClearBark_i(_Kylista);
+        SetSpeaker0_i(0, _Kylista);
+        v7 = ~GetItemFlag_i(_Met, _Kylista);
+        if ($FAWN_TRIAL_RECESS or ($AUDIENCE_WITH_YELINDA and not $FAWN_TRIAL_DONE)) {
+            ["Thou dost make my spine shiver, thou who dost associate with the enemies of Beauty!];
+            ["I beg thee to depart..."];
+            CloseSpeaker0_i();
+            Bark_i(0, "@Depart from me!@", _Kylista);
+            terminate;
+        }
+        if (v7 = false) {
+            if ($gottattoo = true) {
+                if (v1 = true) {
+                    ["One of Monitor's famed Pikemen! I am Kylista, Priestess of Beauty."];
+                    ["I have always thought it daring of Monitorian women to wear a tattoo. Tell me, do the Monitorian men find this alluring?"];
+                    v8 = ~AskYesNo();
+                    if v8 {
+                        ["Most men seem to find me attractive... Except for the Pikemen. I had wondered why. Thank thee for the enlightening information."];
+                    } else {
+                        ["Perhaps the sight is too common to affect them. I am certain that Fawn males will not be as... unaffected, shall we say."];
+                    }
+                } else {
+                    ["One of Monitor's famed Pikemen! I am Kylista, Priestess of Beauty."];
+                    ["What a pleasure to meet one who is brave as well as handsome."];
+                }
+            } else {
+                if (v1 = true) {
+                    ["Welcome to Fawn. I am Kylista, Priestess of Beauty."];
+                    ["Mayest thou walk in Beauty."];
+                } else {
+                    ["Welcome to Fawn, the city of Beauty. I am Kylista, Priestess of Beauty."];
+                    ["Hast thou come for instruction in the path of Beauty?"];
+                    v9 = ~AskYesNo();
+                    if v9 {
+                        ["Hmmm... Perhaps we could arrange private instruction..."];
+                    } else {
+                        ["A pity. Private instruction is available."];
+                    }
+                }
+            }
+            SetItemFlag_i(_Met, _Kylista);
+        } else {
+            if (flag(350) = true) {
+                SetWorkType(_Combat_0, _Kylista);
+                SetAttackMode_i(_Fleeing, _Kylista);
+                ["Thou hast found me out! The Oracle is a fraud!"];
+                terminate;
+            } else {
+                ["Thou dost honor us with thy presence, <v2>."];
+            }
+        }
+        TurnOn(<< "goblins", "storms", "Oracle", "revelations", "bye" >>);
+        if (($gotbreastplate or $askstandarrarmor) and not $knowbreastplate) {
+            TurnOn("white breastplate");
+        }
+        label_37:
+        TurnOn("bye");
+        converse {
+            key ("plot") {
+                TurnOff("plot");
+                ["I see now that Captain Voldin and his men did take advantage of me, through the deception called the Oracle."];
+                if ~IsNPCNear_i(_Voldin) {
+                    SetSpeaker1_i(0, _Voldin);
+                    ["Of course we did, Priestess. Men have always had the advantage over the weaker sex..."];
+                    CloseSpeaker1_i();
+                    SetSpeakerSlot_i(0);
+                    ["Be still, Voldin. Thou hast been brought low, even as I have."];
+                }
+                ["How could I have been so naive? I was never part of their plans, but only a tool."];
+                ["Perhaps Lady Yelinda will spare my life, when she understands my role -- I, too, was a victim!"];
+            }
+            key ("lonely") {
+                TurnOff("lonely");
+                if ~IsNPCNear_i(_Voldin) {
+                    ["Voldin doth not count -- he is an animal. What I need is companionship..."];
+                }
+                if ~AvatarSex() {
+                    ["Come and visit me often, <v2>. I am touched that thou didst come down into this dungeon to visit me."];
+                    ["Perhaps we could become friends."];
+                } else {
+                    ["Look at me, <v2>. I am a woman in the full bloom of my youth. Such beauty doth not deserve to dwell in the squalor of a jail cell..."];
+                    ["They say that thou hast been making friends with young Alyssand, the weaver. I think we, too, could be friends."];
+                    ["And I'm the kind of friend who could keep thee warm on a cold winter's night. Not like that thin-framed weaver wench."];
+                    ["Think of me, <v2>. I'll be thinking of thee..."];
+                }
+            }
+            key ("goblins") {
+                TurnOff("goblins");
+                ["The very antithesis of Beauty! Goblins are base savages with no appreciation of Beauty and no grasp of Beauty's truth."];
+                TurnOn("Beauty's truth");
+            }
+            key ("Beauty's truth") {
+                TurnOff("Beauty's truth");
+                ["All things good possess an innate Beauty that attracts all living things."];
+                ["To goblins, who are vile, ugly monsters, Beauty is a lie. To Pomdirgun, Beauty is something to be exterminated, not cherished."];
+                TurnOn("Pomdirgun");
+            }
+            key ("Pomdirgun") {
+                TurnOff("Pomdirgun");
+                ["Pomdirgun is the epitome of all repulsive things. He hath risen to unite the goblins against all things good and Beautiful."];
+                ["The heavens have tired of our wandering from Beauty's truth. They have sent Pomdirgun to destroy those that fall short of the mark."];
+            }
+            key ("storms") {
+                TurnOff("storms");
+                ["Another sign that the heavens are displeased with our associations with false prophets!"];
+                ["We allowed corruption to enter our city, to visit the very heart of Beauty. Some even encouraged its growth. Now we must pay for our transgressions."];
+                ["Once we have been brought low enough to see only Beauty, the storms will stop and Fawn will once again prosper. But while all traces of untrue beliefs linger, the punishment will remain."];
+                TurnOn("false prophets");
+            }
+            key ("false prophets") {
+                TurnOff("false prophets");
+                ["Those who call themselves Britannians -- the sailors that dwell outside the city gates to the northeast -- are false prophets!"];
+                ["We thought them poor, confused seamen worthy of our embrace. But we were fooled! All they brought were lies!"];
+                ["The one they call Leon denounced Beauty as a mere shadow of The Fellowship's truth! And then -- then -- did the storms come! To smite those who would utter such blasphemy!"];
+                ["The storms will not end until the blight of the blasphemers' existence hath been wiped from Beauty's face!"];
+                if (v3 = true) {
+                    SetSpeaker1_i(0, _Iolo);
+                    ["I would say that she feels rather strongly about this, Avatar.\x09But what she is proposing to stop the storms seems a bit extreme."];
+                    CloseSpeaker1_i();
+                    SetSpeakerSlot_i(0);
+                }
+                TurnOn(<< "Leon", "Fellowship" >>);
+            }
+            key ("Leon") {
+                TurnOff("Leon");
+                ["Leon seeks to divert unsuspecting people from Beauty's path. He is the one that hath brought the anger of the heavens down upon us!"];
+                ["Lady Yelinda should have ordered him executed for the woes that he hath brought upon our city!"];
+                TurnOn("Lady Yelinda");
+            }
+            key ("Lady Yelinda") {
+                TurnOff("Lady Yelinda");
+                ["Lady Yelinda, honor to her, is the ruler of Fawn."];
+                ["I recommended that she have these foreign blasphemers killed -- let their blood wash away the evil they have wrought. But Lady Yelinda is a soft-hearted woman who doth not know the harshness of the heavens' anger."];
+                ["I fear that the Great Captains urged her to leniency in favor of their common ties with the sea."];
+                TurnOn("Great Captains");
+            }
+            key ("Great Captains") {
+                TurnOff("Great Captains");
+                ["The Great Captains are advisors to Lady Yelinda. They ensure that Lady Yelinda is not overtaxed with the tedious daily problems of ruling the city."];
+                ["Joth and Garth allowed themselves to be swayed by feelings of kinship with these foreign sailors. Only Voldin recognized their true danger."];
+                TurnOn(<< "Joth", "Garth", "Voldin" >>);
+            }
+            key ("Joth") {
+                TurnOff("Joth");
+                ["Joth is a good man, with a fine sense of what needs to be done to keep the fleets in good order."];
+                ["He is not, I fear, a good advisor when it comes to political matters. In fact, Zulith would be better in that respect."];
+                TurnOn("Zulith");
+            }
+            key ("Zulith") {
+                TurnOff("Zulith");
+                ["Zulith is Lady Yelinda's secretary. He schedules her audiences and acts as a messenger between her Ladyship and the Great Captains."];
+                ["His official title is Chancellor, I believe."];
+            }
+            key ("Garth") {
+                TurnOff("Garth");
+                ["Garth is no more than a boy! He blows with the wind of anything that catches his fancy, most notably young ladies."];
+                ["Garth is of little use in all but representing the interests of the merchant captains."];
+            }
+            key ("Voldin") {
+                TurnOff("Voldin");
+                if (($AUDIENCE_WITH_YELINDA and $FAWN_TRIAL_DONE) and not $oraclesaysinnocent) {
+                    if ~GetItemFlag_i(_Dead, _Voldin) {
+                        ["He was an evil man, Avatar. Captain Voldin forced me to do his bidding, beating me when I refused!"];
+                        ["I am glad that thou didst kill him -- glad!"];
+                    } else {
+                        ["The whole scheme was his -- not mine! I did only what I was told. He forced me to serve him..."];
+                        if ~IsNPCNear_i(_Voldin) {
+                            SetSpeaker1_i(0, _Voldin);
+                            ["Liar! Thou didst enjoy thy role as Priestess, using thy sensual powers over men."];
+                            CloseSpeaker1_i();
+                            SetSpeakerSlot_i(0);
+                            ["Oh, <v2>! Thou must rescue me from the presence of this evil man!"];
+                        }
+                    }
+                } else {
+                    ["Now Voldin is truly what Fawn needs as an advisor! His record of service on land and sea is impeccable."];
+                    ["I fear it takes all his expertise to explain most situations to his companions. Fawn would fare much better if Voldin were Lady Yelinda's only advisor."];
+                }
+            }
+            key ("Fellowship") {
+                TurnOff("Fellowship");
+                ["Lies! Lies! Simplistic half truths meant to snare the unwitting and twist Beauty's truth!"];
+                ["How can any person tell heaven's will without benefit of divine guidance? The deluded fools have not heard the voice of the Oracle or felt the heavens' anger."];
+            }
+            key ("Oracle") {
+                TurnOff("Oracle");
+                ["The Oracle was commissioned by Lady Fawn, many years ago, as an instrument to speak the heavens' truths."];
+                ["The Mages of Old Sosaria labored for nearly a year before the task was done. The revealed wonder was the Oracle."];
+                ["As Priestess of Beauty, I have the power to call forth a revelation from the Oracle. In times past, before the storms began, people came from all around to hear the Oracle's divine words."];
+            }
+            key ("revelations") {
+                ["The revelations are truths of heaven filtered through a mouth of stone!"];
+                ["It is a pity that thou wilt not hear a revelation... I have decided to close the rituals to all outsiders. We cannot be too careful, after what happened with the false prophets."];
+                TurnOff("revelations");
+            }
+            key ("white breastplate") {
+                TurnOff("white breastplate");
+                $knowbreastplate = true;
+                if ~IsInInv(0, 65177, _White_Brest, 1, _Party) {
+                    ["Thou hast the Armour of Beauty! Oh, what a sign from the heavens!"];
+                    ["Return it to me... Perhaps the heavens shall once again smile upon Fawn."];
+                    if (~AskYesNo() = true) {
+                        v10 = ~PartyUtters(false, "@But what of mine own armour?@", "@But what about thine own armour, Avatar?@", 1);
+                        if (v10 <> 65180) {
+                            SetSpeakerSlot_i(0);
+                        }
+                        ["Oh, was that strange armour that appeared in my bedchamber thine?"];
+                        ["I cannot recall what I did with it. Perhaps I still have it... Perhaps thou wilt come by some evening and I will look for it."];
+                        v11 = ~TransferItems_i(false, 0, 65177, _White_Brest, 1, _Kylista, _Party);
+                        ["I thank thee, <v0>!"];
+                    } else {
+                        ["Why dost thou not give it to me?"];
+                    }
+                } else {
+                    ["Thou hast seen the Armour of Beauty! Oh, will the heavens never smile upon Fawn again?. I would that thou hadst brought it with thee."];
+                    v10 = ~PartyUtters(false, "@But what of mine own armour?@", "@But what about thine own armour, Avatar?@", 1);
+                    if (v10 <> 65180) {
+                        SetSpeakerSlot_i(0);
+                    }
+                    ["Oh, was that strange armour that appeared in my bedchamber thine?"];
+                    ["I cannot recall what I did with it. Perhaps I still have it... Perhaps thou wilt come by some evening and I will look for it."];
+                }
+            }
+            key ("bye") {
+                SendAssassin_i();
+                CloseSpeaker0_i();
+                Bark_i(0, "@Farewell.@", _Avatar);
+                Bark_i(2, (("@Walk in Beauty, " + v2) + ".@"), _Kylista);
+                JorvinBringsInvitation_i();
+                break;
+            }
+        }
+        clear_answers;
+    }
+}

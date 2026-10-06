@@ -1,0 +1,1182 @@
+Routine ApproachNPC_i accepts a0 #locals(15) #uses(~PartyNoAutomatons_i, PathToItem_i) {
+    if (event = _Action) {
+        v0 = ~PartyNoAutomatons_i();
+        Foreach v3 in v0 {
+            if ~IsNPCNear_i(v3) {
+                v4 = ~GetDirToward_i(item, v3);
+                v5 = ~PostAction(<< _aFACE_i, v4 >>, v3);
+            }
+        }
+        v6 = << byte(85), 1599 >>;
+        v4 = ~GetDirToward_i(_Avatar, item);
+        v7 = ~PostAction(<< _aFACE_i, v4 >>, item);
+        v8 = << 0, 2, 2, 2, 0, 65534, 65534, 65534 >>;
+        v9 = << 65534, 65534, 0, 2, 2, 2, 0, 65534 >>;
+        v10 = (v8 & v8);
+        v11 = (v9 & v9);
+        v4 = (~GetDir(_Avatar, item) + 1);
+        v12 = 1;
+        v13 = v10::v4;
+        v14 = v11::v4;
+        While (v12 < 8) {
+            v13 = (v13 & v10::(v4 + v12));
+            v14 = (v14 & v11::(v4 + v12));
+            v12 = (v12 + 1);
+        }
+        PathToItem_i(10, item, #ApproachNPC_i, 65535, v14, v13, item);
+    }
+}
+
+Routine WalkToAvatar_i accepts a0 #locals(9) #uses(PathNPCToItem_i) {
+    if (item in ~GetParty()) {
+        terminate;
+    }
+    if (event = _Action) {
+        v0 = ~GetDirToward_i(_Avatar, item);
+        v1 = ~PostAction(<< _aFACE_i, v0 >>, item);
+        v2 = << 0, 2, 2, 2, 0, 65534, 65534, 65534 >>;
+        v3 = << 65534, 65534, 0, 2, 2, 2, 0, 65534 >>;
+        v4 = (v2 & v2);
+        v5 = (v3 & v3);
+        v0 = (~GetDir(item, _Avatar) + 1);
+        v6 = 1;
+        v7 = v4::v0;
+        v8 = v5::v0;
+        While (v6 < 8) {
+            v7 = (v7 & v4::(v0 + v6));
+            v8 = (v8 & v5::(v0 + v6));
+            v6 = (v6 + 1);
+        }
+        PathNPCToItem_i(true, _Pathfind1, item, #WalkToAvatar_i, 65535, v8, v7, _Avatar, item);
+    }
+}
+
+Routine PartyFaces_i accepts a0 #locals(6) #uses(~PartyNoAutomatons_i) {
+    v0 = ~PartyNoAutomatons_i();
+    Foreach v3 in v0 {
+        if ~IsNPCNear_i(v3) {
+            v4 = ~GetDirToward_i(item, v3);
+            v5 = ~PostAction(<< _aNO_HALT_i, _aSTAND_FRAME_i, _aFACE_i, v4 >>, v3);
+        }
+    }
+}
+
+Routine FaceAvatar_i accepts a0 #locals(2) {
+    v0 = ~GetDirToward_i(_Avatar, item);
+    v1 = ~PostAction(<< _aNO_HALT_i, _aSTAND_FRAME_i, _aFACE_i, v0 >>, item);
+}
+
+Routine StartTimeTravel_i accepts a0 #locals(12) #uses(~GimmePathEgg, Bark_i) {
+    if ((event = _Action) and ($temp1flag = false)) {
+        v0 = ~GimmePathEgg(1, 0);
+        v1 = ~SetQuality(40, v0);
+        v1 = ~PostInFuture(10, << _aNO_HALT_i, _aUSABLE_i, #Tremor >>, v0);
+        Sfx(39);
+        SetWeather_i(_Sparkle);
+        Bark_i(2, "@Oh...@", _Avatar);
+        Bark_i(45, "@AAAAHHHH!!!!!@", _Avatar);
+        Bark_i(60, "@NOOOO!!!!!@", _Avatar);
+        v2 = ~FindNearby_i(0, 5, _Serpgate, _Avatar);
+        Foreach v5 in v2 {
+            v6 = ~GetCoord(v5);
+            createSprite(65535, 0, 0, 0, (v6::2 - 2), (v6::1 - 2), 7);
+        }
+        Sfx(119);
+        v1 = ~PostInFuture(35, << _aNO_HALT_i, _aSFX_i, 39, _aMUSIC_i, 49, 0, _aSTAND_FRAME_i, _aFACE_i, _South, _aWAIT_i, 2, _aBEND_FRAME_i, _aWAIT_i, 2, _aKNEEL_FRAME_i, _aWAIT_i, 6, _aSTAND_FRAME_i, _aWAIT_i, 2, _aOUT_FRAME_i, _aWAIT_i, 2, _aUP_FRAME_i, _aWAIT_i, 8, _aUSABLE_i, #StartTimeTravel_i, _aWAIT_i, 4, _aWAIT_i, 2, _aBEND_FRAME_i, _aWAIT_i, 2, _aSTAND_FRAME_i, _aWAIT_i, 2, _aOUT_FRAME_i, _aWAIT_i, 2, _aUP_FRAME_i, _aWAIT_i, 8, _aUSABLE_i, #StartTimeTravel_i, _aWAIT_i, 4, _aWAIT_i, 2, _aBEND_FRAME_i, _aWAIT_i, 2, _aKNEEL_FRAME_i, _aWAIT_i, 2, _aUSABLE_i, #WarpThroughTime_i >>, _Avatar);
+        $temp1flag = true;
+        terminate;
+    }
+    if ((event = _Action) and ($temp1flag = true)) {
+        v7 = ~FindNearby_i(0, 20, _Serpgate, item);
+        v8 = 0;
+        Foreach v11 in v7 {
+            v6 = ~GetCoord(v11);
+            createSprite(65535, 0, 0, 0, v6::2, v6::1, (40 + v8));
+            createSprite(65535, 0, 0, 0, (v6::2 - 2), (v6::1 - 2), 27);
+            Sfx(42);
+            v8 = (v8 + 1);
+        }
+    }
+}
+
+Routine WarpThroughTime_i accepts a0 #locals(5) #uses(~GimmePathEgg, PolymorphParty_i) {
+    if ((event = _Action) and ($temp4flag = false)) {
+        Sfx(91);
+        v0 = ~GimmePathEgg(1, 0);
+        SetMusic(v0, 64);
+        v1 = ~GimmePathEgg(2, 0);
+        v2 = ~SetQuality(0, v1);
+        v2 = ~SetQuality(1, v0);
+        v2 = ~PostInFuture(2, << _aNO_HALT_i, _aUSABLE_i, #WarpThroughTime_i >>, v0);
+        v2 = ~PostInFuture(20, << _aNO_HALT_i, _aUSABLE_i, #WarpThroughTime_i >>, v0);
+        v2 = ~PostInFuture(40, << _aNO_HALT_i, _aUSABLE_i, #WarpThroughTime_i >>, v0);
+        v2 = ~PostInFuture(60, << _aNO_HALT_i, _aUSABLE_i, #WarpThroughTime_i >>, v0);
+        v2 = ~PostInFuture(80, << _aNO_HALT_i, _aUSABLE_i, #WarpThroughTime_i >>, v0);
+        v2 = ~PostInFuture(95, << _aNO_HALT_i, _aUSABLE_i, #WarpThroughTime_i >>, v0);
+        v2 = ~PostInFuture(110, << _aNO_HALT_i, _aUSABLE_i, #WarpThroughTime_i >>, v0);
+        v2 = ~PostInFuture(125, << _aNO_HALT_i, _aUSABLE_i, #WarpThroughTime_i >>, v0);
+        v2 = ~PostInFuture(140, << _aNO_HALT_i, _aUSABLE_i, #WarpThroughTime_i >>, v0);
+        v2 = ~PostInFuture(150, << _aNO_HALT_i, _aUSABLE_i, #WarpThroughTime_i >>, v0);
+        v2 = ~PostInFuture(158, << _aNO_HALT_i, _aUSABLE_i, #WarpThroughTime_i >>, v0);
+        v2 = ~PostInFuture(164, << _aNO_HALT_i, _aUSABLE_i, #WarpThroughTime_i >>, v0);
+        v2 = ~PostInFuture(170, << _aNO_HALT_i, _aUSABLE_i, #WarpThroughTime_i >>, v0);
+        v2 = ~PostInFuture(176, << _aNO_HALT_i, _aUSABLE_i, #WarpThroughTime_i >>, v0);
+        v2 = ~PostInFuture(180, << _aNO_HALT_i, _aUSABLE_i, #WarpThroughTime_i >>, v0);
+        v2 = ~PostInFuture(186, << _aNO_HALT_i, _aUSABLE_i, #WarpThroughTime_i >>, v0);
+        v2 = ~PostInFuture(192, << _aNO_HALT_i, _aUSABLE_i, #WarpThroughTime_i >>, v0);
+        $temp4flag = true;
+        $temp1flag = false;
+        v2 = ~PostInFuture(210, << _aNO_HALT_i, _aUSABLE_i, #ArriveInPast_i >>, v0);
+        terminate;
+    }
+    if ((event = _Action) and ($temp4flag = true)) {
+        v3 = false;
+        v1 = ~GimmePathEgg(2, 0);
+        v4 = ~GetQuality(v1);
+        if (v4 >= 4) {
+            v3 = true;
+        }
+        v2 = ~SetQuality((v4 + 1), v1);
+        v4 = ~GetQuality(item);
+        if (v4 = 1) {
+            PolymorphParty_i(v3, 1);
+            v2 = ~SetQuality(0, item);
+        } else {
+            PolymorphParty_i(v3, 0);
+            v2 = ~SetQuality(1, item);
+        }
+    }
+}
+
+Routine ArriveInPast_i accepts a0 #locals(14) #uses(~GimmePathEgg, ~PartyUtters, Bark_i) {
+    if ((event = _Action) and ($temp1flag = false)) {
+        Item_move(<< 2695, 2818, 2 >>, _Party);
+        v0 = ~FindNearby_i(0, 10, _Serpgate, _Avatar);
+        Foreach v3 in v0 {
+            v4 = ~GetFrame(v3);
+            if (v4 < 5) {
+                v5 = ~GetCoord(v3);
+                createSprite(65535, 0, 0, 0, (v5::2 - 2), (v5::1 - 2), 7);
+            }
+        }
+        Sfx(119);
+        v6 = ~GimmePathEgg(1, 0);
+        v7 = ~PostInFuture(25, << _aNO_HALT_i, _aUSABLE_i, #ArriveInPast_i >>, v6);
+        $temp1flag = true;
+        terminate;
+    }
+    if ((event = _Action) and ($temp1flag = true)) {
+        v8 = ~GetParty();
+        Foreach v11 in v8 {
+            v12 = ~Item_getType(v11);
+            Polymorph_i(v12, v11);
+        }
+        v13 = ~PartyUtters(true, "@By Lord British's throne...@", "@By Lord British's throne...@", 65533);
+        if (v13 = ~ItemToNPC_i(_Avatar)) {
+            Bark_i(15, "@...where am I?@", v13);
+        } else {
+            Bark_i(15, "@...where are we?@", v13);
+        }
+        SetSpeaker0_i(0, ~ItemToNPC_i(v13));
+        if (v13 = ~ItemToNPC_i(_Avatar)) {
+            ["This is the architecture I have seen throughout Serpent Isle, but where are the signs of destruction? These are not ruins, they are new!"];
+        } else {
+            ["Avatar! This is the architecture we have seen throughout Serpent Isle, but where are the signs of destruction? These are not ruins, they are new!"];
+        }
+        CloseSpeaker0_i();
+        Sfx(130);
+        ClearItemFlag_i(_DontMove_i, _Avatar);
+        SetWeather_i(_Clear);
+        $temp1flag = false;
+        $temp2flag = false;
+        $temp3flag = false;
+        $temp4flag = false;
+    }
+}
+
+Routine DismissParty_i accepts a0 #locals(5) {
+    v0 = ~GetParty_i();
+    v1 = ~NPCToItem_i(_Avatar);
+    Foreach v4 in v0 {
+        if (v4 <> v1) {
+            LeaveParty(v4);
+            SetNPCID_i(31, v4);
+            SetWorkType(_Wait, v4);
+        }
+    }
+}
+
+Routine RecallParty_i accepts a0 #locals(5) #uses(~OrderList_i) {
+    v0 = ~OrderList_i();
+    Foreach v3 in v0 {
+        v4 = ~GetNPCID_i(v3);
+        if (v4 = 31) {
+            JoinParty(v3);
+            SetNPCID_i(0, v3);
+        }
+    }
+}
+
+Function ~PartyNoAutomatons_i #locals(5) {
+    v0 = ~GetParty();
+    v1 = << >>;
+    Foreach v4 in v0 {
+        if (~Item_getType(v4) <> _M_Automaton) {
+            v1 = (v1 & v4);
+        }
+    }
+    return v1;
+}
+
+Function ~PartyNoAutomatons2_i #locals(5) {
+    v0 = ~GetParty_i();
+    v1 = << >>;
+    Foreach v4 in v0 {
+        if (~Item_getType(v4) <> _M_Automaton) {
+            v1 = (v1 & v4);
+        }
+    }
+    return v1;
+}
+
+Function ~PartySays accepts a0, a1, a2 #locals(1) #uses(~PartyUtters) {
+    PrintError_i("Error: Calling PartySays. Change to PartyUtters.");
+    v3 = ~PartyUtters(false, v0, v1, v2);
+    return v3;
+}
+
+Function ~PartyBarks accepts a0, a1, a2 #locals(1) #uses(~PartyUtters) {
+    PrintError_i("Error: Calling PartyBarks. Change to PartyUtters.");
+    v3 = ~PartyUtters(true, v0, v1, v2);
+    return v3;
+}
+
+Function ~PartyUtters accepts a0, a1, a2, a3 #locals(24) #uses(~PartyNoAutomatons_i, ~IsInInv, Bark_i, SayIfNear_i, ~OrderList_i) {
+    v4 = ~PartyNoAutomatons_i();
+    if (~IsInInv(18, 65177, _Body_Parts, 1, _Party) and not v0) {
+        v4 = (v4 & 65235);
+    }
+    v5 = ~ListSize_i(v4);
+    if (v5 = 1) {
+        if (v1 <> 0) {
+            if v0 {
+                Bark_i(0, v1, _Avatar);
+            } else {
+                SayIfNear_i(v1, 65180);
+            }
+        }
+        return 65180;
+        terminate;
+    }
+    v6 = ~OrderList_i();
+    v7 = ~ListSize_i(v6);
+    v8 = << 1, 7, 2, 8, 5, 6, 2, 11, 3, 9, 10 >>;
+    v9 = << 2, 10, 11, 4, 5, 8, 6, 3, 1, 7, 9 >>;
+    v10 = << 3, 8, 11, 4, 6, 9, 2, 7, 5, 1, 10 >>;
+    v11 = << 4, 5, 9, 3, 11, 6, 8, 1, 2, 7, 10 >>;
+    v12 = << 5, 6, 10, 4, 9, 11, 8, 3, 2, 1, 7 >>;
+    v13 = << 6, 10, 8, 11, 5, 3, 4, 9, 7, 2, 1 >>;
+    v14 = << 7, 1, 2, 8, 6, 11, 5, 4, 3, 9, 10 >>;
+    v15 = << 8, 10, 6, 5, 11, 3, 4, 9, 7, 2, 1 >>;
+    v16 = << 9, 4, 5, 8, 10, 3, 6, 11, 7, 2, 1 >>;
+    v17 = << 10, 4, 6, 2, 8, 5, 9, 11, 1, 7, 3 >>;
+    v18 = << 11, 3, 8, 6, 4, 9, 7, 5, 1, 10, 2 >>;
+    if not (v3 in v6) {
+        v3 = 1;
+    }
+    if (v3 = 1) {
+        v19 = false;
+        While (v19 = false) {
+            v20 = ~Random(v5);
+            if (~ItemToNPC_i(v4::v20) <> 65180) {
+                v19 = true;
+            }
+        }
+        if (v4::v20 = 65235) {
+            v3 = 65235;
+        } else {
+            v3 = ~ItemToNPC_i(v4::v20);
+        }
+        if (v2 <> 0) {
+            if v0 {
+                Bark_i(0, v2, v3);
+            } else {
+                SayIfNear_i(v2, v3);
+            }
+        }
+        return v3;
+        terminate;
+    } else {
+        if (~NPCToItem_i(v3) in v4) {
+            if (v2 <> 0) {
+                if v0 {
+                    Bark_i(0, v2, v3);
+                } else {
+                    SayIfNear_i(v2, v3);
+                }
+            }
+            return v3;
+            terminate;
+        } else {
+            v20 = 1;
+            While (v6::v20 <> v3) {
+                v20 = (v20 + 1);
+            }
+        }
+    }
+    if (v8::1 = v20) {
+        v21 = v8;
+    }
+    if (v9::1 = v20) {
+        v21 = v9;
+    }
+    if (v10::1 = v20) {
+        v21 = v10;
+    }
+    if (v11::1 = v20) {
+        v21 = v11;
+    }
+    if (v12::1 = v20) {
+        v21 = v12;
+    }
+    if (v13::1 = v20) {
+        v21 = v13;
+    }
+    if (v14::1 = v20) {
+        v21 = v14;
+    }
+    if (v15::1 = v20) {
+        v21 = v15;
+    }
+    if (v16::1 = v20) {
+        v21 = v16;
+    }
+    if (v17::1 = v20) {
+        v21 = v17;
+    }
+    if (v18::1 = v20) {
+        v21 = v18;
+    }
+    v20 = 2;
+    v22 = (v7 + 1);
+    While (v20 <> v22) {
+        v3 = v6::v21::v20;
+        if (~NPCToItem_i(v3) in v4) {
+            if (v2 <> 0) {
+                if v0 {
+                    Bark_i(0, v2, v3);
+                } else {
+                    SayIfNear_i(v2, v3);
+                }
+            }
+            return v3;
+            terminate;
+        } else {
+            if ((v3 = 65502) and (65235 in v4)) {
+                v3 = 65235;
+                if not v0 {
+                    SayIfNear_i(v2, v3);
+                }
+                return v3;
+                terminate;
+            }
+        }
+        v20 = (v20 + 1);
+    }
+    PrintError_i("OrderList or NotThereList improperly maintained - see\x0D\n\x09\x09~PartyUtters function");
+    v23 = "";
+    v24 = ~GetParty();
+    Foreach v27 in v24 {
+        v23 = (v23 & (v27 & ~GetNPCName_i(v27)));
+    }
+    if (~IsInInv(18, 65177, _Body_Parts, 1, _Party) and not v0) {
+        v23 = (v23 & (65235 & "Boydon's head in party"));
+    }
+    PrintError_i("Copy down this information with the error");
+    PrintError_i(v23);
+}
+
+Function ~WhereIs_i accepts a0 #locals(2) {
+    v1 = v0::1;
+    v2 = v0::2;
+    if (((v1 > 1710) and ((v1 < 1855) and ((v2 > 1340) and (v2 < 1455)))) or ((v1 > 2443) and ((v1 < 2531) and ((v2 > 28) and (v2 < 126))))) {
+        return 0;
+    }
+    if (((v1 > 2244) and ((v1 < 2558) and ((v2 > 929) and (v2 < 1278)))) or ((v1 > 2592) and ((v1 < 2815) and ((v2 > 1024) and (v2 < 1247))))) {
+        return 2;
+    }
+    if (((v1 > 2810) and ((v1 < 3071) and ((v2 > 1024) and (v2 < 1536)))) or ((v1 > 0) and ((v1 < 255) and ((v2 > 1025) and (v2 < 1535))))) {
+        return 31;
+    }
+    if (((v1 > 858) and ((v1 < 1187) and ((v2 > 1533) and (v2 < 2007)))) or ((v1 > 2752) and ((v2 > 192) and ((v1 < 2767) and (v2 < 223))))) {
+        return 3;
+    }
+    if (((v1 > 1152) and ((v1 < 1407) and ((v2 > 2560) and (v2 < 2735)))) or (((v1 > 1408) and ((v1 < 1999) and ((v2 > 2416) and (v2 < 2751)))) or (((v1 > 1936) and ((v1 < 2028) and ((v2 > 2736) and (v2 < 2812)))) or (((v1 > 2848) and ((v1 < 3039) and ((v2 > 1808) and (v2 < 1980)))) or (((v1 > 13) and ((v1 < 171) and ((v2 > 1567) and (v2 < 1659)))) or (((v1 > 2573) and ((v2 > 94) and ((v1 < 2623) and (v2 < 127)))) or ((v1 > 2611) and ((v2 > 159) and ((v1 < 2655) and (v2 < 175)))))))))) {
+        return 4;
+    }
+    if (((v1 > 1360) and ((v1 < 1424) and ((v2 > 464) and (v2 < 528)))) or ((v1 > 2703) and ((v1 < 2784) and ((v2 > 79) and (v2 < 160))))) {
+        return 21;
+    }
+    if ((v1 > 1472) and ((v1 < 1784) and ((v2 > 476) and (v2 < 566)))) {
+        return 22;
+    }
+    if ((v1 > 1328) and ((v1 < 1600) and ((v2 > 529) and (v2 < 880)))) {
+        return 5;
+    }
+    if (((v1 > 1104) and ((v1 < 1695) and ((v2 > 1216) and (v2 < 1375)))) or (((v1 > 560) and ((v1 < 800) and ((v2 > 1600) and (v2 < 1715)))) or ((v1 > 1530) and ((v1 < 1776) and ((v2 > 1020) and (v2 < 1215)))))) {
+        return 7;
+    }
+    if (((v1 > 1168) and ((v1 < 1328) and ((v2 > 2144) and (v2 < 2288)))) or ((v1 > 2800) and ((v2 > 192) and ((v1 < 2815) and (v2 < 223))))) {
+        return 9;
+    }
+    if ((v1 > 112) and ((v1 < 560) and ((v2 > 800) and (v2 < 1040)))) {
+        return 10;
+    }
+    if (((v1 > 1920) and ((v1 < 2128) and ((v2 > 1264) and (v2 < 1393)))) or ((v1 > 2000) and ((v1 < 2176) and ((v2 > 1090) and (v2 < 1270))))) {
+        return 11;
+    }
+    if ((v1 > 784) and ((v1 < 1024) and ((v2 > 2048) and (v2 < 2280)))) {
+        return 12;
+    }
+    if (((v1 > 672) and ((v1 < 1136) and ((v2 > 2432) and (v2 < 2800)))) or ((v1 > 2846) and ((v2 > 174) and ((v1 < 2864) and (v2 < 209))))) {
+        return 13;
+    }
+    if ((v1 > 2100) and ((v1 < 2494) and ((v2 > 1723) and (v2 < 2126)))) {
+        return 14;
+    }
+    if (((v1 > 2016) and ((v1 < 2256) and ((v2 > 1408) and (v2 < 1680)))) or (((v1 > 2160) and ((v1 < 2320) and ((v2 > 1312) and (v2 < 1504)))) or (((v1 > 2240) and ((v1 < 2592) and ((v2 > 1312) and (v2 < 1425)))) or (((v1 > 2400) and ((v1 < 2656) and ((v2 > 1424) and (v2 < 1616)))) or (((v1 > 2544) and ((v1 < 2656) and ((v2 > 1600) and (v2 < 1744)))) or ((v1 > 2480) and ((v1 < 2576) and ((v2 > 1696) and (v2 < 1808))))))))) {
+        return 15;
+    }
+    if (((v1 > 1800) and ((v1 < 1978) and ((v2 > 948) and (v2 < 1108)))) or ((v1 > 2963) and ((v2 > 67) and ((v1 < 3052) and (v2 < 236))))) {
+        return 16;
+    }
+    if (((v1 > 1760) and ((v1 < 1839) and ((v2 > 592) and (v2 < 687)))) or ((v1 > 2816) and ((v1 < 2959) and ((v2 > 80) and (v2 < 127))))) {
+        return 17;
+    }
+    if ((v1 > 1408) and ((v1 < 1471) and ((v2 > 912) and (v2 < 1007)))) {
+        return 18;
+    }
+    if ((v1 > 2240) and ((v1 < 2367) and ((v2 > 288) and (v2 < 335)))) {
+        return 19;
+    }
+    if (((v1 > 2224) and ((v1 < 2303) and ((v2 > 784) and (v2 < 863)))) or ((v1 > 2464) and ((v1 < 2815) and ((v2 > 768) and (v2 < 911))))) {
+        return 20;
+    }
+    if (((v1 > 928) and ((v1 < 1103) and ((v2 > 976) and (v2 < 1327)))) or (((v1 > 1104) and ((v1 < 1391) and ((v2 > 1008) and (v2 < 1183)))) or (((v1 > 1184) and ((v1 < 1295) and ((v2 > 624) and (v2 < 1023)))) or (((v1 > 1104) and ((v1 < 1231) and ((v2 > 608) and (v2 < 767)))) or (((v1 > 2832) and ((v1 < 240) and ((v2 > 2048) and (v2 < 2288)))) or ((v1 > 0) and ((v1 < 192) and ((v2 > 1792) and (v2 < 2048))))))))) {
+        return 23;
+    }
+    if (((v1 > 1840) and ((v1 < 2398) and ((v2 > 520) and (v2 < 760)))) or ((v1 > 2174) and ((v1 < 2398) and ((v2 > 360) and (v2 < 520))))) {
+        return 24;
+    }
+    if ((v1 > 1280) and ((v1 < 2030) and ((v2 > 0) and (v2 < 400)))) {
+        return 25;
+    }
+    if (((v1 > 1344) and ((v1 < 1520) and ((v2 > 1408) and (v2 < 1648)))) or ((v1 > 1520) and ((v1 < 1770) and ((v2 > 1370) and (v2 < 1600))))) {
+        return 26;
+    }
+    if ((v1 > 528) and ((v1 < 720) and ((v2 > 2384) and (v2 < 2736)))) {
+        return 27;
+    }
+    if ((v1 > 600) and ((v1 < 780) and ((v2 > 1150) and (v2 < 1480)))) {
+        return 28;
+    }
+    if ((v1 > 890) and ((v1 < 1160) and ((v2 > 830) and (v2 < 890)))) {
+        return 29;
+    }
+    if ((v1 > 303) and ((v1 < 479) and ((v2 > 1839) and (v2 < 1984)))) {
+        return 30;
+    }
+    if (((v1 > 0) and ((v2 > 2815) and ((v1 < 2304) and (v2 < 3072)))) or (((v1 > 2303) and ((v2 > 2559) and ((v1 < 3072) and (v2 < 3072)))) or ((v1 > 2927) and ((v2 > 2495) and ((v1 < 3072) and (v2 < 2560)))))) {
+        return 32;
+    }
+    if ((v1 > 2303) and ((v2 > 2559) and ((v1 < 2560) and (v2 < 2816)))) {
+        return 33;
+    }
+    if (((v1 > 2579) and ((v2 > 20) and ((v1 < 2623) and (v2 < 61)))) or (((v1 > 2512) and ((v2 > 160) and ((v1 < 2542) and (v2 < 174)))) or ((v1 > 592) and ((v2 > 831) and ((v1 < 816) and (v2 < 1153)))))) {
+        return 65535;
+    }
+    if (v2 < 1024) {
+        return 8;
+    } else {
+        return 65535;
+    }
+}
+
+Function ~WhereAmI_i #locals(1) #uses(~WhereIs_i) {
+    v0 = ~GetCoord(_Avatar);
+    return ~WhereIs_i(v0);
+}
+
+Function ~InColdRegion_i #locals(3) {
+    v0 = ~GetCoord(_Avatar);
+    v1 = v0::1;
+    v2 = v0::2;
+    if ((v1 > 832) and ((v1 < 1072) and ((v2 > 767) and (v2 < 1360)))) {
+        return true;
+    }
+    if ((v1 > 848) and ((v1 < 1280) and ((v2 > 1024) and (v2 < 1216)))) {
+        return true;
+    }
+    if ((v1 > 255) and ((v1 < 560) and ((v2 > 1008) and (v2 < 1104)))) {
+        return true;
+    }
+    if ((v1 > 2048) and ((v1 < 3056) and ((v2 > 0) and (v2 < 240)))) {
+        return false;
+    }
+    if ((v1 > 2560) and ((v1 < 3056) and ((v2 > 256) and (v2 < 768)))) {
+        return false;
+    }
+    if ((v1 > 1280) and ((v1 < 2032) and ((v2 > 0) and (v2 < 400)))) {
+        return false;
+    }
+    if ((v1 > 608) and ((v1 < 784) and ((v2 > 848) and (v2 < 1136)))) {
+        return false;
+    }
+    if ((v1 > 2448) and ((v1 < 2816) and ((v2 > 768) and (v2 < 1024)))) {
+        return false;
+    }
+    if ((v1 > 2240) and ((v1 < 3056) and ((v2 > 944) and (v2 < 1024)))) {
+        return false;
+    }
+    if (v2 > 1024) {
+        return false;
+    } else {
+        return true;
+    }
+}
+
+Function ~TransferItems_i accepts a0, a1, a2, a3, a4, a5, a6 #locals(4) {
+    if (v6 = 65179) {
+        if (~TakeFromParty_i(v0, v1, v2, v3, v4) = false) {
+            return false;
+        }
+    } else {
+        if (~TakeFromCont_i(v0, v1, v2, v3, v4, v6) = false) {
+            return false;
+        }
+    }
+    v7 = ~GiveToCont_i(v0, v1, v2, v3, v4, v5);
+    if v7 {
+        v8 = ~Item_create(v3);
+        if v8 {
+            v9 = ~SetQuantity(v7, v8);
+            v10 = ~PopToMap(~GetCoord(v5));
+        }
+    }
+    return true;
+}
+
+Routine ExchangeBarks_i accepts a0, a1 #locals(3) #uses(Bark_i) {
+    if (v0 <> false) {
+        v2 = ~ListSize_i(v0);
+        v3 = 0;
+        v4 = 1;
+        While (v2 > 0) {
+            Bark_i(v3, v0::v4, _Avatar);
+            v3 = (v3 + 5);
+            v4 = (v4 + 1);
+            Bark_i(v3, v0::v4, v1);
+            v2 = (v2 - 2);
+        }
+    }
+}
+
+Routine EncircleWithFire_i accepts a0, a1 #locals(13) {
+    v2 = << 65535, 0, 1, 2, 2, 2, 1, 0, 65535, 65534, 65534, 65534, 65534, 65535, 0, 1, 2, 3, 4, 4, 4, 4, 4, 3, 2, 1, 0, 65535, 65534, 65533, 65532, 65532, 65532, 65532, 65532, 65533 >>;
+    v3 = << 65534, 65534, 65534, 65535, 0, 1, 2, 2, 2, 1, 0, 65535, 65532, 65532, 65532, 65532, 65532, 65533, 65534, 65535, 0, 1, 2, 3, 4, 4, 4, 4, 4, 3, 2, 1, 0, 65535, 65534, 65533 >>;
+    v4 = ~GetCoord(v1);
+    v5 = (v1 & v4);
+    v6 = 0;
+    While (v6 < 36) {
+        v6 = (v6 + 1);
+        v7 = (v5::2 + v2::v6);
+        v8 = (v5::3 + v3::v6);
+        v9 = v5::4;
+        v10 = << v7, v8, v9 >>;
+        v11 = << v7, v8, (v9 + 1) >>;
+        if not ~canExistAt(0, v0, v10) {
+            v10 = v11;
+        }
+        if ~canExistAt(0, v0, v10) {
+            v12 = ~Item_create(v0);
+            if v12 {
+                v13 = ~rndRange(5, 0);
+                SetFrame(v13, v12);
+                SetItemFlag_i(_IsTemporary_i, v12);
+                v14 = ~PopToMap(v10);
+            }
+        } else {
+            v14 = ~PopToMap(_Destroy);
+        }
+    }
+}
+
+Function ~Haggle_i accepts a0, a1, a2, a3, a4, a5, a6 #locals(5) {
+    if (v2 = 0) {
+        v7 = ~AskBarInput(0, 1, v6, 0);
+    } else {
+        v7 = ~AskBarInput(0, 1, v6, v3);
+    }
+    v8 = 0;
+    v9 = 0;
+    if (v7 = v6) {
+        goto label_32;
+    }
+    v8 = (v6 - v7);
+    if (v0 = 1) {
+        v9 = 5;
+        v10 = v6;
+        goto label_44;
+    } else {
+        if not v0 && (v2 > (v1 / 2)) && ~Random((v1 - v2)) {
+            v0 = 1;
+            v9 = 4;
+        }
+    }
+    if not v9 {
+        if (v7 < (v3 + ((v8 * 3) / 10))) {
+            if (v7 < (v3 + ((v8 * 15) / 100))) {
+                if (v7 > v5) {
+                    if (~Random(2) = 1) {
+                        v9 = 1;
+                    }
+                } else {
+                    v9 = 1;
+                }
+            }
+            v9 = (v9 + 4);
+        } else {
+            if (v8 < ((v6 - v3) / 2)) {
+                if (v7 > v5) {
+                    if (~Random(3) = 1) {
+                        v9 = 1;
+                    } else {
+                        v9 = 2;
+                    }
+                } else {
+                    v9 = 3;
+                }
+            } else {
+                if (v7 = v6) {
+                    v9 = 1;
+                } else {
+                    v9 = 3;
+                }
+            }
+        }
+    }
+    label_32:
+    if (v4 = 1) {
+        v10 = (v6 - (v8 / 2));
+    }
+    if (v4 = 2) {
+        v10 = (v6 - (v8 / 3));
+    }
+    if (v4 = 3) {
+        v10 = (v6 - (v8 / 4));
+    }
+    v11 = (v6 - v10);
+    v10 = (v6 - ((v11 * (80 + ~Random(40))) / 100));
+    if (v10 >= v6) {
+        v10 = (v10 - 1);
+    }
+    if (v10 <= v7) {
+        v10 = v7;
+        v9 = 1;
+    }
+    if (v10 <= v5) {
+        v10 = v5;
+        v0 = 1;
+        v9 = 4;
+    }
+    label_44:
+    return << v7, v10, v9, v0 >>;
+}
+
+Function ~RemoveNth2_i accepts a0, a1 #locals(5) {
+    v2 = 1;
+    v3 = << >>;
+    Foreach v6 in v1 {
+        if (v2 <> v0) {
+            v3 = (v3 & v6);
+        }
+        v2 = (v2 + 1);
+    }
+    return v3;
+}
+
+Function ~GiveItemsOrDrop_i accepts a0, a1, a2, a3, a4, a5, a6 #locals(3) #uses(~ListCount_i, ~RemoveNth2_i, SayIfNear_i) {
+    v7 = ~GiveToCont_i(v1, v2, v3, v4, v5, v6);
+    if (v7 = 0) {
+        return << 0, 0 >>;
+    } else {
+        v7 = ~GiveToParty_i(v1, v2, v3, v4, v7);
+        v3 = v5;
+        if not v0 {
+            return v7;
+        }
+        v2 = ~ListCount_i(v7);
+        v5 = v7::v2;
+        v1 = ~RemoveNth2_i(v2, v7);
+        if v1 {
+            if (v3 = 1) {
+                ["Thou art so encumbered! Perhaps one of thy friends might be willing to carry this?"];
+            } else {
+                ["Thou art so encumbered! Let me give some of this to thy friends."];
+            }
+            Foreach v4 in v1 {
+                SayIfNear_i("@I'll help carry it.@", ~ItemToNPC_i(v4));
+                SetSpeakerSlot_i(0);
+            }
+        }
+        if (v5 > 0) {
+            if (v3 = 1) {
+                ["Since thou art so encumbered, I shall set this upon the ground."];
+            } else {
+                if (v5 = 1) {
+                    ["Since not one of you can hold another, I shall place this last remaining one upon the ground."];
+                } else {
+                    ["Since thou art so encumbered, I shall place the remaining <v5> of these upon the ground."];
+                }
+            }
+        }
+        return v7;
+    }
+}
+
+Routine TakeAllFromParty_i accepts a0 #locals(2) {
+    v1 = ~CountItem(_All, _All, v0, _Party);
+    v2 = ~TakeFromParty_i(true, _All, _All, v0, v1);
+}
+
+Function ~InAvatarInv_i accepts a0 #locals(1) {
+    v1 = ~Item_getContainer(v0);
+    While not (v1 = ~NPCToItem_i(_Avatar)) {
+        v1 = ~Item_getContainer(v1);
+        if not v1 {
+            return 0;
+        }
+    }
+    return v1;
+}
+
+Function ~OuterContainer_i accepts a0 #locals(2) {
+    v1 = ~Item_getContainer(v0);
+    v2 = v1;
+    While v1 {
+        v2 = v1;
+        v1 = ~Item_getContainer(v1);
+    }
+    return v2;
+}
+
+Function ~FindInParty_i accepts a0, a1, a2 #locals(6) {
+    v3 = ~GetParty();
+    Foreach v6 in v3 {
+        v7 = ~GetContents(v0, v1, v2, v6);
+        if v7 {
+            v8 = << v7, v6 >>;
+            return v8;
+        }
+    }
+    return 0;
+}
+
+Function ~GimmePathEgg accepts a0, a1 #locals(2) {
+    if (((v1 < 0) or (v1 > 7)) or ((v0 < 1) or (v0 > 4))) {
+        return false;
+    }
+    if ((v1 = 0) or (v1 = 1)) {
+        v2 = (((v1 * 2) + 23) + v0);
+        v3 = ~GetContents(v2, _All, _Path, _Avatar);
+        if (v3 < 8) {
+            PrintError_i(<< "WARNING! GimmePathEgg returning ref = ", v3 >>);
+        }
+        return v3;
+    } else {
+        v2 = (((v1 * 4) + v0) - 1);
+        v3 = ~GetContents(v2, _All, _Path, _Avatar);
+        if (v3 < 8) {
+            PrintError_i(<< "WARNING! GimmePathEgg returning ref = ", v3 >>);
+        }
+        return v3;
+    }
+}
+
+Function ~CreateAttacker_i accepts a0 #locals(2) #uses(MoveNear_i) {
+    v1 = ~CreateCreature_i(<< 0, 0, 0 >>, v0);
+    if not (v1 = 0) {
+        SetWorkType(_Combat_0, v1);
+        SetAttacker_i(~NPCToItem_i(_Avatar), v1);
+        Npc_setAlignment(_Chaotic, v1);
+        v2 = ~ApproachAvatar_i(40, 50, v1);
+        if not v2 {
+            MoveNear_i(_Avatar, v1);
+        }
+    }
+    return v1;
+}
+
+Routine MoveNear_i accepts a0, a1 #locals(2) {
+    v2 = ~GetCoord(v0);
+    v3 = << (v2::1 + ~rndRange(5, 65531)), (v2::2 + ~rndRange(5, 65531)), v2::3 >>;
+    Item_move(v3, v1);
+}
+
+Routine RemoveAll_i accepts a0 #locals(4) {
+    loop {
+        v1 = ~GetContents(_All, _All, _All, v0);
+    } while v1 {
+        Foreach v4 in v1 {
+            Item_destroy(v4);
+        }
+    }
+    Item_destroy(v0);
+}
+
+Routine RemoveContents_i accepts a0 #locals(4) {
+    loop {
+        v1 = ~GetContents(_All, _All, _All, v0);
+    } while v1 {
+        Foreach v4 in v1 {
+            Item_destroy(v4);
+        }
+    }
+}
+
+Usable SpringRodTrap_i #locals(8) #uses(CallLightning_i) {
+    v0 = ~FindNearby_i(176, 80, _Plasmic_Rod, _Avatar);
+    Foreach v3 in v0 {
+        CallLightning_i(v3);
+    }
+    v4 = ~GetParty();
+    Foreach v7 in v4 {
+        CallLightning_i(v7);
+    }
+}
+
+Function ~IsContainer_i accepts a0 #locals(0) {
+    if (~Item_getType(v0) in << 486, 522, 800, 801, 802, 803, 804, 819, 297, 406, 407, 283, 416, 679, 400, 414, 778, 892, 762, 507, 405, 555, 755 >>) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+Function ~RemoveNth_i accepts a0, a1 #locals(5) {
+    v2 = 0;
+    v3 = << >>;
+    Foreach v6 in v0 {
+        v2 = (v2 + 1);
+        if (v2 <> v1) {
+            v3 = << v3, v6 >>;
+        }
+    }
+    return v3;
+}
+
+Function ~MatchesInList_i accepts a0, a1 #locals(5) {
+    v2 = << >>;
+    v3 = 0;
+    Foreach v6 in v0 {
+        v3 = (v3 + 1);
+        if (v6 = v1) {
+            v2 = << v2, v3 >>;
+        }
+    }
+    return v2;
+}
+
+Function ~CoordMatches_i accepts a0, a1, a2 #locals(6) #uses(~MatchesInList_i, ~IndexInList_i) {
+    v3 = ~MatchesInList_i(v1, v2::1);
+    v4 = ~MatchesInList_i(v0, v2::2);
+    v5 = << >>;
+    if v3 {
+        Foreach v8 in v3 {
+            if ~IndexInList_i(v4, v8) {
+                v5 = << v5, v8 >>;
+            }
+        }
+        return v5;
+    } else {
+        return << >>;
+    }
+}
+
+Usable UnfreezeAvatar_i #locals(0) {
+    ClearItemFlag_i(_DontMove_i, _Avatar);
+    ClearSpeakers_i();
+}
+
+Function ~CreateItemAt_i accepts a0, a1, a2, a3, a4 #locals(2) {
+    v5 = ~Item_create(v4);
+    if not v5 {
+        return false;
+    }
+    SetFrame(v3, v5);
+    if not ~SetQuality(v2, v5) && not ~SetQuantity(v2, v5) {
+        return false;
+    }
+    if v1 {
+        SetItemFlag_i(_IsTemporary_i, v5);
+    } else {
+        ClearItemFlag_i(_IsTemporary_i, v5);
+    }
+    if (~ListSize_i(v0) = 3) {
+        if not ~PopToMap(v0) {
+            return false;
+        }
+    } else {
+        v6 = ~GetCoord(v0::1);
+        if not ~PopToMap(v6) {
+            return false;
+        }
+    }
+    return v5;
+}
+
+Routine SetWorkTypeAt_i accepts a0, a1, a2, a3 #locals(2) #uses(~OrderList_i) {
+    v4 = false;
+    if (v2 < 0) {
+        v4 = ~GetCoord(v3);
+        if (v4::3 = 0) {
+            v2 = v4::1;
+            v1 = v4::2;
+            goto label_6;
+        }
+        SetFrame(0, v3);
+        SetWorkType(_Wait, v3);
+        v5 = ~OrderList_i();
+        if (v3 in v5) {
+            NewSchedule_i(<< 2428, 1124 >>, _EatAtInn, 0, v3);
+        }
+        goto label_9;
+    }
+    label_6:
+    NewSchedule_i(<< v2, v1 >>, v0, 0, v3);
+    if not v4 {
+        Item_move(<< v2, v1, 0 >>, v3);
+    }
+    Npc_schedule(v3);
+    label_9:
+    v4 = false;
+}
+
+Routine AttackAvatar_i accepts a0 #locals(0) {
+    Npc_setAlignment(_Evil, v0);
+    SetWorkType(_Combat_0, v0);
+    Npc_setTarget(_Avatar, v0);
+    SetAttacker_i(_Avatar, v0);
+}
+
+Function ~UsePatience_i accepts a0 #locals(0) #uses(SayIfNear_i, Bark_i) {
+    v0 = (v0 - 1);
+    if (v0 < 0) {
+        if (item = ~NPCToItem_i(_Jendon)) {
+            $startjendongossip = true;
+            if (~GetWorkType(_Jendon) = _Waiter) {
+                SayIfNear_i("@I need a drink...@", 65478);
+                SetSpeakerSlot_i(0);
+                ["I've enjoyed jawin' with ye, mate, but I'd better be back to me duties..."];
+                Bark_i(0, "@What'll ye have?@", _Jendon);
+            }
+            if (~GetWorkType(_Jendon) = _MajorSit) {
+                if ~IsNPCNear_i(_Kylista) {
+                    SayIfNear_i("@Be still! Beauty is not irreverent.@", 65482);
+                    SetSpeakerSlot_i(0);
+                }
+                ["This isn't the place for a long talk, mate. Meet me later, back at the tavern, and we'll talk more."];
+                Bark_i(0, "@Not now...@", _Jendon);
+            }
+            if (~GetWorkType(_Jendon) = _Sleep) {
+                ["Better we talk in the morning, mate. As for right now, I'm goin' back to sleep..."];
+                Bark_i(0, "@Time for bed!@", _Jendon);
+            }
+        }
+        if (item = ~NPCToItem_i(_Bucia)) {
+            Bark_i(0, "@Have a nice day!@", _Bucia);
+            flag(259) = true;
+            if (~GetWorkType(_Bucia) = _TendShop) {
+                SayIfNear_i("@I do not pay thee to stand jabbering, Bucia.@", 65494);
+                SetSpeakerSlot_i(0);
+                ["I must be getting back to work now. But it hath been nice talking with thee."];
+                if (~GetNPCID_i(_Bucia) < 15) {
+                    ["If thou wert to be at the Blue Boar Inn at 10 tonight, I could discuss these things further with thee..."];
+                    $startbuciagossip = true;
+                }
+            } else {
+                ["It is getting late! I have truly enjoyed our talk, but I think I shall eat my dinner now."];
+            }
+        }
+        if (item = ~NPCToItem_i(_Harnna)) {
+            $startharnnagossip = true;
+            if ($takencantraquest and not $cantraresurrected) {
+                Bark_i(0, "@Remember Cantra...@", _Harnna);
+            } else {
+                Bark_i(0, "@Courage to thee!@", _Harnna);
+            }
+            if (~GetWorkType(_Harnna) = _Farm) {
+                ["I must return to my duties. These crops will not wait!"];
+            }
+            if (~GetWorkType(_Harnna) = _Eat) {
+                ["Pardon me, but my dinner is wasting. We can talk again later."];
+            }
+            if (~GetWorkType(_Harnna) = _Sleep) {
+                ["I must get some sleep! Thou shouldst return tomorrow..."];
+            }
+        }
+        if (item = ~NPCToItem_i(946)) {
+            $ASKED_SUROK_TOO_MUCH = true;
+            if (~GetWorkType(946) = _Lab) {
+                ["I must return to my duties..."];
+            }
+            if (~GetWorkType(946) = _Eat) {
+                ["I am sorry, but my dinner is waiting. We can talk again later."];
+            }
+            if (~GetWorkType(946) = _Sleep) {
+                ["I need rest! Return tomorrow..."];
+            }
+        }
+        SetClock(2);
+        terminate;
+    }
+    return v0;
+}
+
+Routine IntroduceNPC_i accepts a0, a1, a2, a3 #locals(1) {
+    v4 = ~PostAction(<< _aNO_HALT_i, _aWAIT_i, 2, _aBEND_FRAME_i, _aUSABLE_i, #FaceAvatar_i, _aWAIT_i, 2, _aUSABLE_i, v0 >>, v2);
+    v4 = ~PostAction(<< _aNO_HALT_i, _aFACE_i, v1, _aBEND_FRAME_i, _aSIT_FRAME_i >>, v3);
+}
+
+Routine SingSong_i accepts a0 #locals(1) #uses(~WhereAmI_i, AskForTip_i) {
+    if (v0 = 1) {
+        v1 = ~WhereAmI_i();
+        SetMusic(0, 59);
+        ["Long ago, there lived a maid As fair as a summer morn."];
+        SetMusic(0, 62);
+        ["She loved a King, a noble king, Who left her all forlorn."];
+        SetMusic(0, 61);
+        ["He pledged his heart and sailed away Never to return again."];
+        SetMusic(0, 60);
+        ["Her heart did break and fade away Into the icy northern wind."];
+        SetMusic(0, 61);
+        $sangbeatrix = true;
+        if (not (item = ~NPCToItem_i(_Iolo)) and (v1 <> 31)) {
+            AskForTip_i();
+        }
+    }
+    if (v0 = 2) {
+        v1 = ~WhereAmI_i();
+        SetMusic(0, 62);
+        ["I will tell thee a tale of vaulting ambition laid low by the hands of time."];
+        SetMusic(0, 60);
+        ["Far away, near where the sun doth rise, there once a mountain stood."];
+        SetMusic(0, 59);
+        ["It called itself the pinnacle of earth, until the earthquakes came."];
+        SetMusic(0, 61);
+        ["And now that mountain, tried by fire and ice, lies crushed beneath another's dream."];
+        SetMusic(0, 62);
+        $sangsunrise = true;
+        if (not (item = ~NPCToItem_i(_Iolo)) and (v1 <> 31)) {
+            AskForTip_i();
+        }
+    }
+    if (v0 = 3) {
+        v1 = ~WhereAmI_i();
+        SetMusic(0, 60);
+        ["Far away, in the cold white north, There lives a vicious band."];
+        SetMusic(0, 62);
+        ["With soft grey fur, they walk about On two legs just like men."];
+        SetMusic(0, 60);
+        ["Do not fool thyself to think that they Might be a pretty robe."];
+        SetMusic(0, 62);
+        ["For if thou dost go a-hunting them, Thou shalt never return home again."];
+        SetMusic(0, 60);
+        $sanggwani = true;
+        if (not (item = ~NPCToItem_i(_Iolo)) and (v1 <> 31)) {
+            AskForTip_i();
+        }
+    }
+    if (v0 = 4) {
+        v1 = ~WhereAmI_i();
+        SetMusic(0, 61);
+        ["Within the great wide forest, Hard on the snow and ice, There dwells a man called the Forest Master Who rules both plant and beast."];
+        SetMusic(0, 59);
+        ["His power, by cruel thieves, One day from him was stolen. And now the one great tree doth wilt Without his tender care."];
+        SetMusic(0, 62);
+        ["So if thou dost seek favors, From the Forest Master fierce, Thou shouldst be prepared to return to him The Orb of Elerion."];
+        SetMusic(0, 60);
+        $sangforestmaster = true;
+        if (not (item = ~NPCToItem_i(_Iolo)) and (v1 <> 31)) {
+            AskForTip_i();
+        }
+    }
+    if (v0 = 5) {
+        v1 = ~WhereAmI_i();
+        SetMusic(0, 59);
+        ["Walk carefully when thou art dreaming. Never stray too far. For there is one who is waiting To trap thy very soul."];
+        SetMusic(0, 61);
+        ["See the balance slipping In the fight between ill and good. Thou shalt walk the beam To find the treasure thou seekest."];
+        SetMusic(0, 59);
+        $sanggorlab = true;
+        if (not (item = ~NPCToItem_i(_Iolo)) and (v1 <> 31)) {
+            AskForTip_i();
+        }
+    }
+    if (v0 = 6) {
+        v1 = ~WhereAmI_i();
+        SetMusic(0, 62);
+        ["Once this land was ruled by kings, One old, one young, but friends true."];
+        SetMusic(0, 61);
+        ["Then one day, the young king sailed away, And the old king lost his mind."];
+        SetMusic(0, 59);
+        ["Plagued by goblins and treachery vile, The old king went too far."];
+        SetMusic(0, 60);
+        ["He killed those he would protect, And threw himself from the White Dragon tower."];
+        SetMusic(0, 62);
+        $sangwhitedragon = true;
+        if (not (item = ~NPCToItem_i(_Iolo)) and (v1 <> 31)) {
+            AskForTip_i();
+        }
+    }
+}
+
+Usable AskForTip_i #locals(6) #uses(~LordOrLady, ~AskList) {
+    v0 = ~LordOrLady();
+    ["If thou didst enjoy my song, I would appreciate a small contribution to my room and board."];
+    v1 = ~AskList(<< "Nothing", "Monetari", "Guilders", "Filari", "Gold Coins" >>);
+    if (v1 = "Monetari") {
+        v2 = 951;
+    }
+    if (v1 = "Guilders") {
+        v2 = 952;
+    }
+    if (v1 = "Filari") {
+        v2 = 948;
+    }
+    if (v1 = "Gold Coins") {
+        v2 = 644;
+    }
+    if (v1 = "Nothing") {
+        v2 = 644;
+    }
+    v3 = ~CountItem(_All, _All, v2, _Party);
+    if (v1 <> "Nothing") {
+        if (v3 <> 0) {
+            v4 = ~AskBarInput(0, 1, v3, 0);
+            if (v4 >= 1) {
+                v5 = ~TakeFromParty_i(false, _All, _All, v2, v4);
+                ["Many thanks, <v0>. Perhaps thou wouldst care to hear another song. Or, if thou art tired, I can return later..."];
+                TurnOn(<< "song", "bye" >>);
+            } else {
+                ["Perhaps some other time..."];
+                terminate;
+            }
+        } else {
+            ["I am afraid thy purse is empty of <v1>, <v0>."];
+        }
+    } else {
+        ["Very well... then I shall play no more."];
+        terminate;
+    }
+}

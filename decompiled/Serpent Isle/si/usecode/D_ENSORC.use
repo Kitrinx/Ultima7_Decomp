@@ -1,0 +1,34 @@
+Routine DEnsorcio accepts a0 #locals(2) #uses(Bark_i) {
+    v0 = ~GetItemFlag_i(_Met, _Ensorcio);
+    if (event = _Talking) {
+        SetSpeaker0_i(0, _Ensorcio);
+        if (v0 = true) {
+            ["Do not interfere with me, Avatar!" ~"I am the MageLord now...];
+            ["Thou dost know that Filbercio is lower than swine..." ~"He doth deserve to be tortured for all the ill that he hath done."];
+            SetSpeaker1_i(0, _Filbercio);
+            ["Help me, Please! I beseech thee..." *"I cannot survive much more of this..." *"Uunnggghhh!"];
+            CloseSpeaker1_i();
+        } else {
+            ["Do not meddle in that which thou dost not understand, hero!" ~"I am the MageLord, and this man is evil."];
+            ["He hath destroyed the lives of many." ~"He doth deserve to be tortured for all the ill that he hath done."];
+            SetSpeaker1_i(0, _Filbercio);
+            ["Help me, Please! I beseech thee... It is he who is evil, not I." *"I cannot survive much more of this torture..."];
+            CloseSpeaker1_i();
+        }
+        SetSpeaker0_i(0, _Ensorcio);
+        [Ha, ha, ha, ha, ha!];
+        CloseSpeaker0_i();
+        SetWorkType(_Stand, _DEnsorcio);
+        v1 = ~GetCoord(_DEnsorcio);
+        createSprite(65535, 0, 0, 0, v1::2, v1::1, 4);
+        v1 = ~GetCoord(_DFilbert);
+        createSprite(65535, 0, 0, 0, v1::2, v1::1, 4);
+        Sfx(41);
+        Bark_i(0, "@Ha, ha, ha!@", _DEnsorcio);
+        Bark_i(0, "@Have mercy!@", _DFilbert);
+        RemoveNPC_i(_DEnsorcio);
+        RemoveNPC_i(_DFilbert);
+        Item_destroy(item);
+        terminate;
+    }
+}

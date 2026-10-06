@@ -1,0 +1,107 @@
+Routine Turtle1 accepts a0 #locals(3) {
+    if ((event = _Action) or (event = _Converse)) {
+        v0 = ~FindNearby_i(176, 40, _Barge, _Avatar);
+        if not ~IsOnBarge_i() {
+            v1 = ~PostInFuture(2, << _aUSABLE_i, #Turtle1, 0 >>, item);
+        } else {
+            v2 = ~GetCoord(item);
+            if (v2 > 2095) {
+                v1 = ~PostInFuture(3, << _aGO_W, _aUSABLE_i, #Turtle1, 0 >>, v0);
+            }
+        }
+    }
+}
+
+Routine Bells accepts a0 #locals(7) #uses(~GimmePathEgg, PlaySpeechOrText_i, Turtle1) {
+    v0 = ~GimmePathEgg(1, 2);
+    v1 = ~GetQuality(v0);
+    if (event = _Converse) {
+        Sfx(30);
+        if not ~FindNearby_i(176, 40, _Barge, item) {
+            terminate;
+        }
+        if flag(317) {
+            v1 = ~SetQuality(0, v0);
+            v1 = 0;
+            SetSpeaker0_i(0, _Avatar);
+            ["I Re-Ten Bentas Juxark I!"];
+            ["Praetimde Mir-Wis Re-Por I."];
+            CloseSpeaker0_i();
+            if ~GetItemFlag_i(_Dead, _Rotoluncia) {
+                if (v1 = 0) {
+                    flag(317) = false;
+                    SetItemFlag_i(_DontMove_i, _Avatar);
+                    v2 = ~SetQuality(1, v0);
+                    v2 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #Bells >>, v0);
+                }
+            } else {
+                v2 = ~PostInFuture(10, << _aNO_HALT_i, _aUSABLE_i, #Bells >>, v0);
+            }
+        }
+    }
+    if (event = _Path_Failure) {
+        Item_move(<< 2216, 1281, 1 >>, _Avatar);
+    }
+    if (event = _Action) {
+        if (v1 = 0) {
+            PlaySpeechOrText_i(3);
+        }
+        if (v1 = 1) {
+            PathfindNPC_i(false, #Bells, v0, _Path_Success, << 2216, 1281, 1 >>, _Avatar);
+            SetPathFailure_i(_Path_Failure, item, #Bells);
+            v3 = << 2244, 1278, 0 >>;
+            createSprite(65535, 0, 0, 0, v3::2, v3::1, 46);
+            v2 = ~SetQuality(2, v0);
+            v2 = ~PostInFuture(21, << _aUSABLE_i, #Bells >>, v0);
+        }
+        if (v1 = 2) {
+            v2 = ~Item_create(_Turtle1);
+            if v2 {
+                ClearItemFlag_i(_IsTemporary_i, v2);
+                v2 = ~PopToMap(<< 2232, 1273, 1 >>);
+            }
+            v2 = ~Item_create(_Turtle2);
+            if v2 {
+                ClearItemFlag_i(_IsTemporary_i, v2);
+                v2 = ~PopToMap(<< 2236, 1279, 0 >>);
+            }
+            v2 = ~Item_create(_Turtle3);
+            if v2 {
+                ClearItemFlag_i(_IsTemporary_i, v2);
+                v2 = ~PopToMap(<< 2244, 1279, 0 >>);
+            }
+            v2 = ~Item_create(_Turtle4);
+            if v2 {
+                ClearItemFlag_i(_IsTemporary_i, v2);
+                v2 = ~PopToMap(<< 2236, 1271, 0 >>);
+            }
+            v2 = ~Item_create(_Turtle5);
+            if v2 {
+                ClearItemFlag_i(_IsTemporary_i, v2);
+                v2 = ~PopToMap(<< 2244, 1271, 0 >>);
+            }
+            v2 = ~SetQuality(3, v0);
+            v2 = ~PostInFuture(0, << _aUSABLE_i, #Bells >>, v0);
+        }
+        if (v1 = 3) {
+            v4 = ~FindNearby_i(176, 80, _Barge, _Avatar);
+            if ~IsOnBarge_i() {
+                SetMusic(v0, 12);
+                v2 = ~SetQuality(0, v0);
+                Kernel_resetRef(v0);
+                v5 = ~GetBarge_i(_Avatar);
+                Turtle1(v5);
+            } else {
+                if v4 {
+                    v6 = ~GetCoord(v4);
+                    if (v6::1 > 2228) {
+                        v2 = ~PostInFuture(3, << _aNO_HALT_i, _aGO_W >>, v4);
+                    } else {
+                        ClearItemFlag_i(_DontMove_i, _Avatar);
+                    }
+                    v2 = ~PostInFuture(3, << _aUSABLE_i, #Bells, 0 >>, v0);
+                }
+            }
+        }
+    }
+}
