@@ -139,7 +139,7 @@ $(IN_MAIN_XMM_OG):
 	$(CC) -O -G main\xmm\$&.c
 
 IN_O1P = dirdelta.obj vidrest.obj rowtable.obj biostext.obj dlist.obj \
-	strops.obj strbuf.obj ds1482.obj
+	strops.obj strbuf.obj
 $(IN_O1P):
 	$(CC) -O -1 -P $&.c
 
@@ -188,5 +188,14 @@ all_3: $(IN_MAIN_XMM_ASM) $(IN_MAIN_XMM_OG) $(IN_MAIN_XMM_OWN_OG) \
 	$(IN_O1P) $(IN_O1Pd) $(IN_SOUND_1GPdvi0) $(IN_SOUND_1GPvi0) \
 	$(IN_ZEVENT_O1P)
 
-INTRO.EXE: all_1 all_2 all_3 ail.obj fatalerr.lib INTRO.LNK
+# In the library but linked by no program: see unlinked\newlist.c.
+IN_UNLINKED_O1Pd = newlist.obj
+$(IN_UNLINKED_O1Pd):
+	$(CC) -O -1 -P -d unlinked\$&.c
+
+# The modules from cachelst on link from a library, members in link order.
+modules.lib: all_1 all_2 all_3 ail.obj newlist.obj MODULES.RSP
+	$(BC)\tlib modules.lib @MODULES.RSP
+
+INTRO.EXE: modules.lib fatalerr.lib INTRO.LNK
 	$(BC)\tlink /m /s /c /d /i /L$(BC)\lib @INTRO.LNK

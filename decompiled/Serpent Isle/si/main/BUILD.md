@@ -30,10 +30,8 @@ make -DBC=C:\BC20       compiler elsewhere
   the source relative to that folder.
 - `main/palette/paldata1.asm`, `main/video/farptrs.asm` and the other codeless modules exist for
   their segment-table entries and data; `main/ovlnull.c` is an overlay with no code.
-
-Until `inv_ov2.c` (overlay segment 330) is recovered, `SI.LNK` names `inv_ov2`, but no rule builds
-it. `agents/tools/build_exe.py` copies in the trial link's temporary stand-in object, which carries
-the shipped bytes (target profile `link.stand_ins`).
+- `main/inv_ov2.c` (overlay segment 330) builds without line numbers (`-y-`): they change how `-O`
+  merges its branch ends.
 
 From the repository root, `uv run python3 agents/tools/build_exe.py --target si` runs this makefile
 in DOSBox-X from a clean copy of the tree. `uv run --with capstone python3 agents/tools/golden_check.py

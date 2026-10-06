@@ -5,8 +5,9 @@ The `.use` files here compile in the order `usecode.lnk` gives, against the name
 
     u7ucproj project.u7p <directory>
 
-That writes `USECODE`, `LINKDEP1` and `LINKDEP2`; copy all three into the game's `STATIC`
-folder. With `--check` the build also fails unless `USECODE` matches the shipped file.
+`u7ucproj` comes from the `ultima7-usecode` package. That writes `USECODE`, `LINKDEP1` and
+`LINKDEP2`; copy all three into the game's `STATIC` folder. With `--check` the build also fails
+unless `USECODE` matches the shipped file.
 
 When changing it:
 

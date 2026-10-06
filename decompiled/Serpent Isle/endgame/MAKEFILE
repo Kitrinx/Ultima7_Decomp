@@ -139,7 +139,7 @@ $(EG_MAIN_XMM_OG):
 	$(CC) -O -G main\xmm\$&.c
 
 EG_O1P = dirdelta.obj vidrest.obj rowtable.obj biostext.obj dlist.obj \
-	strops.obj strbuf.obj ds1482.obj
+	strops.obj strbuf.obj
 $(EG_O1P):
 	$(CC) -O -1 -P $&.c
 
@@ -188,5 +188,14 @@ all_3: $(EG_MAIN_XMM_ASM) $(EG_MAIN_XMM_OG) $(EG_MAIN_XMM_OWN_OG) \
 	$(EG_O1P) $(EG_O1Pd) $(EG_SOUND_1GPdvi0) $(EG_SOUND_1GPvi0) \
 	$(EG_ZEVENT_O1P)
 
-ENDGAME.EXE: all_1 all_2 all_3 ail.obj fatalerr.lib ENDGAME.LNK
+# In the library but linked by no program: see unlinked\newlist.c.
+EG_UNLINKED_O1Pd = newlist.obj
+$(EG_UNLINKED_O1Pd):
+	$(CC) -O -1 -P -d unlinked\$&.c
+
+# The modules from cachelst on link from a library, members in link order.
+modules.lib: all_1 all_2 all_3 ail.obj newlist.obj MODULES.RSP
+	$(BC)\tlib modules.lib @MODULES.RSP
+
+ENDGAME.EXE: modules.lib fatalerr.lib ENDGAME.LNK
 	$(BC)\tlink /m /s /c /d /L$(BC)\lib @ENDGAME.LNK

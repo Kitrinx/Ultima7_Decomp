@@ -28,7 +28,7 @@ A module's header has its name and sits beside it; `include/` holds only headers
 | `main/collgrid.asm` | 9 | 0x00f25e | 405 | whole segment | `/mx` | RELOC |
 | `main/collide.c` | 10 | 0x00f3f3 | 5885 | whole segment | `-O -G -P` | RELOC |
 | `main/debug.c` | 11 | 0x010af0 | 501 | whole segment | `-O -G -P` | RELOC |
-| `inter/debugint.c` | 12 | 0x010ce5 | 0 | whole segment | `-O -G` | unrecorded |
+| `inter/debugint.c` | 12 | 0x010ce5 | 0 | whole segment | `-O -G` | RELOC |
 | `main/endstats.c` | 13 | 0x010ce5 | 222 | whole segment | `-O -G -P` | RELOC |
 | `main/frameflg.c` | 14 | 0x010dc3 | 722 | whole segment | `-O -G -P` | RELOC |
 | `main/gtimer.c` | 15 | 0x011095 | 757 | whole segment | `-O -G -P` | RELOC |
@@ -38,7 +38,7 @@ A module's header has its name and sits beside it; `include/` holds only headers
 | `common/lstrtok.asm` | 19 | 0x0135aa | 144 | whole segment | `/mx` | RELOC |
 | `main/lunch.c` | 20 | 0x01363a | 514 | whole segment | `-O -G -P` | RELOC |
 | `main/main.c` | 21 | 0x01383c | 643 | whole segment | `-O -G -P` | EXACT |
-| `main/mainctrl.c` | 22 | 0x013abf | 5155 | whole segment | `-O -G -P` | EXACT |
+| `main/mainctrl.c` | 22 | 0x013abf | 5155 | whole segment | `-O -G -P` | RELOC |
 | `main/makemojo.c` | 23 | 0x014ee2 | 659 | whole segment | `-O -G -P` | RELOC |
 | `main/movepath.c` | 24 | 0x015175 | 5431 | whole segment | `-O -G -P` | RELOC |
 | `main/oops.c` | 25 | 0x0166ac | 110 | whole segment | `-O -G` | RELOC |
@@ -69,7 +69,7 @@ A module's header has its name and sits beside it; `include/` holds only headers
 | `common/easyfile.c` | 50 | 0x021381 | 1166 | whole segment | `-O -G -P -d` | RELOC |
 | `common/egg.c` | 51 | 0x02180f | 159 | whole segment | `-O -G -Z` | RELOC |
 | `common/falloc.c` | 52 | 0x0218ae | 60 | whole segment | `-O -G` | RELOC |
-| `common/typeflag.c` | 53 | 0x0218ea | 0 | whole segment | `-O -G` | unrecorded |
+| `common/typeflag.c` | 53 | 0x0218ea | 0 | whole segment | `-O -G` | RELOC |
 | `common/flxcach.c` | 54 | 0x0218ea | 475 | whole segment | `-O -G -P` | RELOC |
 | `common/flxwrite.c` | 55 | 0x021ac5 | 2835 | whole segment | `-O -G -P` | RELOC |
 | `common/flex.c` | 56 | 0x0225d8 | 1626 | whole segment | `-O -G -P` | RELOC |
@@ -124,7 +124,7 @@ A module's header has its name and sits beside it; `include/` holds only headers
 | `sound/gsound.c` | 83 | 0x03323a | 841 | whole segment | `-O -G -P -d -b-` | RELOC |
 | `common/manager.c` | 84 | 0x033583 | 460 | whole segment | `-O -G -P -d` | RELOC |
 | `common/random.asm` | 85 | 0x033750 | 115 | whole segment | `/mx` | RELOC |
-| `main/palette/paldata1.asm` | 86 | 0x0337c4 | 0 | whole segment | `/mx` | unrecorded |
+| `main/palette/paldata1.asm` | 86 | 0x0337c4 | 0 | whole segment | `/mx` | RELOC |
 | `main/palette/palctrl.c` | 87 | 0x0337c4 | 171 | whole segment | `-O -G -P` | RELOC |
 | `main/palette/crawpal.c` | 88 | 0x03386f | 914 | whole segment | `-O -G -P` | RELOC |
 | `main/palette/rgbstep.c` | 89 | 0x033c01 | 245 | whole segment | `-O -G -P` | RELOC |
@@ -133,28 +133,28 @@ A module's header has its name and sits beside it; `include/` holds only headers
 | `main/palette/palfade.c` | 92 | 0x034b40 | 879 | whole segment | `-O -G -P` | RELOC |
 | `main/palette/redscrn.c` | 93 | 0x034eaf | 842 | whole segment | `-O -G -P` | RELOC |
 | `main/palette/redtimer.asm` | 94 | 0x0351fa | 276 | whole segment | `/mx` | RELOC |
-| `main/palette/paldata2.c` | 95 | 0x03530e | 0 | whole segment | `-O -G` | unrecorded |
-| `main/palette/palnull1.c` | 96 | 0x03530e | 0 | whole segment | `-O -G` | unrecorded |
-| `main/palette/palnull2.c` | 97 | 0x03530e | 0 | whole segment | `-O -G` | unrecorded |
+| `main/palette/paldata2.c` | 95 | 0x03530e | 0 | whole segment | `-O -G` | RELOC |
+| `main/palette/palnull1.c` | 96 | 0x03530e | 0 | whole segment | `-O -G` | RELOC |
+| `main/palette/palnull2.c` | 97 | 0x03530e | 0 | whole segment | `-O -G` | RELOC |
 | `main/palette/worldpal.c` | 98 | 0x03530e | 5058 | whole segment | `-O -G -P` | RELOC |
 | `inter/keywords.c` | 99 | 0x0366d0 | 1026 | whole segment | `-O -P -Y` | RELOC |
 | `inter/ucvalue.c` | 100 | 0x036ad2 | 136 | whole segment | `-O -G -P` | RELOC |
-| `inter/ucintrin.c` | 101 | 0x036b5a | 0 | whole segment | `-O -G -P` | unrecorded |
+| `inter/ucintrin.c` | 101 | 0x036b5a | 0 | whole segment | `-O -G -P` | RELOC |
 | `main/combgump.c` | 102 | 0x036b5a | 889 | whole segment | `-O -G -P` | RELOC |
 | `main/gumps.c` | 103 | 0x036ed3 | 3362 | whole segment | `-O -G -P` | EXACT |
 | `main/spellini.c` | 104 | 0x037bf5 | 860 | whole segment | `-O -G -P` | EXACT |
 | `main/jawgump.c` | 105 | 0x037f51 | 743 | whole segment | `-O -G -P` | EXACT |
 | `main/scrlgump.c` | 106 | 0x038238 | 456 | whole segment | `-O -G -P` | EXACT |
 | `main/sound/ail.asm` | 107 | 0x038400 | 6404 | whole segment | `/m /w+ /ml` | RELOC |
-| `sound/sounds.c` | 108 | 0x039d04 | 2399 | whole segment | `-O -G -P` | EXACT |
-| `sound/u7sound.c` | 109 | 0x03a663 | 3367 | whole segment | `-O -G -P -d -b-` | EXACT |
+| `sound/sounds.c` | 108 | 0x039d04 | 2399 | whole segment | `-O -G -P` | RELOC |
+| `sound/u7sound.c` | 109 | 0x03a663 | 3367 | whole segment | `-O -G -P -d -b-` | RELOC |
 | `zevent/getfont.asm` | 110 | 0x03b38a | 22 | whole segment | `/mx` | RELOC |
 | `zevent/mouseint.asm` | 111 | 0x03b3a0 | 198 | whole segment | `/mx` | RELOC |
 | `zevent/dbgfont.c` | 112 | 0x03b466 | 410 | whole segment | `-O -G -P` | RELOC |
 | `zevent/mevent.c` | 113 | 0x03b600 | 727 | whole segment | `-O -G -P` | RELOC |
 | `zevent/mouse.c` | 114 | 0x03b8d7 | 902 | whole segment | `-O -G -P` | RELOC |
 | `zevent/msclick.c` | 115 | 0x03bc5d | 964 | whole segment | `-O -G -P` | RELOC |
-| `zevent/cursor.c` | 116 | 0x03c021 | 0 | whole segment | `-O -G` | unrecorded |
+| `zevent/cursor.c` | 116 | 0x03c021 | 0 | whole segment | `-O -G` | RELOC |
 | `zevent/systimer.c` | 117 | 0x03c021 | 808 | whole segment | `-O -G -P -1 -Y` | RELOC |
 | `zevent/u7point.c` | 118 | 0x03c349 | 2262 | whole segment | `-O -G -P -d` | EXACT |
 | `zevent/u7event.c` | 119 | 0x03cc1f | 2349 | whole segment | `-O -G -P` | EXACT |
@@ -173,7 +173,7 @@ A module's header has its name and sits beside it; `include/` holds only headers
 | `main/dos/fileread.asm` | 132 | 0x03db34 | 41 | whole segment | `/mx` | RELOC |
 | `main/dos/filewrit.asm` | 133 | 0x03db5e | 41 | whole segment | `/mx` | RELOC |
 | `main/dos/dosseek.asm` | 134 | 0x03db88 | 56 | whole segment | `/mx` | RELOC |
-| `main/dos/dosnull.c` | 135 | 0x03dbc0 | 0 | whole segment | `-O -G` | unrecorded |
+| `main/dos/dosnull.c` | 135 | 0x03dbc0 | 0 | whole segment | `-O -G` | RELOC |
 | `main/mem/memapi.c` | 136 | 0x03dbc0 | 172 | whole segment | `-O -G` | RELOC |
 | `main/mem/memmgr.c` | 137 | 0x03dc6c | 3292 | whole segment | `-O -G` | RELOC |
 | `main/mem/memstat.c` | 138 | 0x03e948 | 316 | whole segment | `-O -G` | RELOC |
@@ -202,7 +202,7 @@ A module's header has its name and sits beside it; `include/` holds only headers
 | `main/video/vidmode.c` | 184 | 0x03fe76 | 275 | whole segment | `-O -G` | RELOC |
 | `main/overlay/ovrdump.c` | 185 | 0x03ff89 | 389 | whole segment | `-O -G -P -vi-` | RELOC |
 | `main/overlay/ovrprof.asm` | 186 | 0x04010e | 919 | whole segment | `/mx` | RELOC |
-| `main/video/farptrs.asm` | 187 | 0x0404a6 | 0 | whole segment | `/mx` | unrecorded |
+| `main/video/farptrs.asm` | 187 | 0x0404a6 | 0 | whole segment | `/mx` | RELOC |
 | `main/video/crtport.asm` | 188 | 0x0404a6 | 20 | whole segment | `/mx` | RELOC |
 | `main/video/vretrace.asm` | 189 | 0x0404ba | 15 | whole segment | `/mx` | RELOC |
 | `main/actitem.c` | 207 | 0x04e900 | 6705 | whole segment | `-O -G -P` | EXACT |
@@ -223,18 +223,18 @@ A module's header has its name and sits beside it; `include/` holds only headers
 | `main/flexvoo.c` | 222 | 0x05e0a0 | 507 | whole segment | `-O -G -P` | RELOC |
 | `main/getpick.c` | 223 | 0x05e2c0 | 461 | whole segment | `-O -G -P` | RELOC |
 | `main/init.c` | 224 | 0x05e4b0 | 1471 | whole segment | `-O -G -P -Y` | RELOC |
-| `main/initwp.c` | 225 | 0x05eb10 | 1822 | whole segment | `-O -G -P -d` | EXACT |
+| `main/initwp.c` | 225 | 0x05eb10 | 1822 | whole segment | `-O -G -P -d` | RELOC |
 | `main/keyring.c` | 226 | 0x05f2d0 | 585 | whole segment | `-O -G -P -d -Y` | RELOC |
 | `main/look.c` | 227 | 0x05f530 | 6797 | whole segment | `-O -G -P -d` | RELOC |
 | `main/lookat.c` | 228 | 0x0610e0 | 201 | whole segment | `-O -G -P -d` | RELOC |
 | `main/npcpath.c` | 229 | 0x0611c0 | 8931 | whole segment | `-O -G -P -d -Y` | RELOC |
 | `main/operate.c` | 230 | 0x0635d0 | 1406 | whole segment | `-O -G -P` | RELOC |
 | `main/party.c` | 231 | 0x063b70 | 6464 | whole segment | `-O -G -P -d -Y` | RELOC |
-| `main/philbert.c` | 232 | 0x0655d0 | 405 | whole segment | `-O -G -P -Y` | EXACT |
+| `main/philbert.c` | 232 | 0x0655d0 | 405 | whole segment | `-O -G -P -Y` | RELOC |
 | `main/powder.c` | 233 | 0x065790 | 1951 | whole segment | `-O -G -P` | RELOC |
 | `main/polymorp.c` | 234 | 0x065fa0 | 1028 | whole segment | `-O -G -P -d -Y` | RELOC |
 | `main/preload.c` | 235 | 0x0663e0 | 2850 | whole segment | `-O -G -P -d -Y -b-` | EXACT |
-| `main/ovlnull.c` | 236 | 0x067020 | 0 | whole segment | `-O -G` | unrecorded |
+| `main/ovlnull.c` | 236 | 0x067020 | 0 | whole segment | `-O -G` | RELOC |
 | `main/savegame.c` | 237 | 0x067030 | 1189 | whole segment | `-O -G -P -d` | RELOC |
 | `main/selweap.c` | 238 | 0x067550 | 4767 | whole segment | `-O -G -P` | RELOC |
 | `main/slime.c` | 239 | 0x0688d0 | 1400 | whole segment | `-O -G -P` | RELOC |
@@ -297,7 +297,7 @@ A module's header has its name and sits beside it; `include/` holds only headers
 | `main/schedule/scheshut.c` | 296 | 0x07fae0 | 2392 | whole segment | `-O -G -P` | RELOC |
 | `main/schedule/schearea.c` | 297 | 0x0804b0 | 873 | whole segment | `-O -G -P` | RELOC |
 | `inter/flags.c` | 298 | 0x080870 | 1347 | whole segment | `-O -G -P -Y` | RELOC |
-| `inter/usehook.c` | 299 | 0x080e10 | 1003 | whole segment | `-O -P -Y` | EXACT |
+| `inter/usehook.c` | 299 | 0x080e10 | 1003 | whole segment | `-O -P -Y` | RELOC |
 | `inter/ucstack.c` | 300 | 0x081250 | 895 | whole segment | `-O -G -P` | RELOC |
 | `inter/uclist.c` | 301 | 0x081610 | 7147 | whole segment | `-O -P -Y` | RELOC |
 | `inter/routine.c` | 302 | 0x083340 | 2579 | whole segment | `-O -P` | RELOC |
@@ -321,13 +321,14 @@ A module's header has its name and sits beside it; `include/` holds only headers
 | `inter/uccomm5.c` | 320 | 0x08dcc0 | 2586 | whole segment | `-O -P` | RELOC |
 | `main/combg_ov.c` | 321 | 0x08e7e0 | 4232 | whole segment | `-O -P -Y` | RELOC |
 | `main/convgump.c` | 322 | 0x08f910 | 3543 | whole segment | `-O -P -d` | RELOC |
-| `main/convmgr.c` | 323 | 0x090770 | 3785 | whole segment | `-O -P -d -Y` | EXACT |
+| `main/convmgr.c` | 323 | 0x090770 | 3785 | whole segment | `-O -P -d -Y` | RELOC |
 | `main/gamegump.c` | 324 | 0x091710 | 2015 | whole segment | `-O -P` | RELOC |
 | `main/controls.c` | 325 | 0x091f50 | 3467 | whole segment | `-O -P` | RELOC |
 | `main/gumpmgr.c` | 326 | 0x092d80 | 4980 | whole segment | `-O -P -Y` | EXACT |
 | `main/gumpmgr2.c` | 327 | 0x0941e0 | 2508 | whole segment | `-O -P -Y` | RELOC |
 | `main/gumpmgr3.c` | 328 | 0x094c30 | 686 | whole segment | `-O -P -Y` | RELOC |
 | `main/contgump.c` | 329 | 0x094f10 | 4185 | whole segment | `-O -P -Z -Y` | RELOC |
+| `main/inv_ov2.c` | 330 | 0x096000 | 16267 | whole segment | `-O -P -d -Y -y-` | RELOC |
 | `main/itemdrag.c` | 331 | 0x09a1d0 | 1312 | whole segment | `-O -P` | RELOC |
 | `main/jawg_ov.c` | 332 | 0x09a730 | 2682 | whole segment | `-O -P` | RELOC |
 | `main/lsgump.c` | 333 | 0x09b1f0 | 6122 | whole segment | `-O -P -Y` | EXACT |

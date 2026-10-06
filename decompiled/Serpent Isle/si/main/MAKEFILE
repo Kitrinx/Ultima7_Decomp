@@ -131,6 +131,11 @@ MAIN_OPdY = convmgr.obj
 $(MAIN_OPdY):
 	$(CC) -O -P -d -Y $&.c
 
+# Built without line numbers: they change how -O merges the quiver branch ends.
+MAIN_OPdYy0 = inv_ov2.obj
+$(MAIN_OPdYy0):
+	$(CC) -O -P -d -Y -y- $&.c
+
 MAIN_ASM = collgrid.obj keybios.obj
 $(MAIN_ASM):
 	$(AS) /mx $&.asm
@@ -412,7 +417,7 @@ $(ZEVENT_ASM):
 
 all_main: $(MAIN_OG) $(MAIN_OGP) $(MAIN_OGPY) $(MAIN_OGPYb0) $(MAIN_OGPb0) \
 	$(MAIN_OGPd) $(MAIN_OGPdY) $(MAIN_OGPdYb0) $(MAIN_OGPdb0) $(MAIN_OP) \
-	$(MAIN_OPY) $(MAIN_OPYZ) $(MAIN_OPd) $(MAIN_OPdY) $(MAIN_ASM)
+	$(MAIN_OPY) $(MAIN_OPYZ) $(MAIN_OPd) $(MAIN_OPdY) $(MAIN_OPdYy0) $(MAIN_ASM)
 
 all_combat: $(COMBAT_OGP) $(COMBAT_OGPY) $(COMBAT_OWN_OGP) $(COMBAT_OWN_OGPY)
 

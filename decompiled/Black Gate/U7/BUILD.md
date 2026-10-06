@@ -28,8 +28,14 @@ Each source also names its options in its header.
 
 ## Output
 
-TLINK stores the output name in the overlay header, so link under the name `U7.EXE`. The goal
-is the shipped `U7.EXE`: 689,248 bytes, SHA-256 `4d588b12c775927c77c221531be4910eaf413864a8e2ec3f6f0d7a9c302b6e54`.
+`U7.EXE` equals the shipped file: 689,248 bytes, SHA-256
+`4d588b12c775927c77c221531be4910eaf413864a8e2ec3f6f0d7a9c302b6e54`, provided the link is run as
+Origin ran it:
 
-TLINK can leave stale memory in the alignment padding before an overlay, so a link run in a
-different memory layout may differ there.
+- The output is named `U7.EXE` and the map `objfile.map`. TLINK leaves the output name and the
+  map name's first letters in the overlay header.
+- The date is 06/02/1992, which TLINK stores as the link date.
+- EMS is available. Without it TLINK swaps to disk and leaves stale memory in the padding after
+  overlays.
+
+So compile without EMS, then set that date, turn EMS on and rerun the makefile's TLINK command.

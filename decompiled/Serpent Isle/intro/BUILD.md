@@ -16,11 +16,12 @@ make                    compiler in C:\BORLANDC
 make -DBC=C:\BC20       compiler elsewhere
 ```
 
-Run it in this directory, the build directory. Objects, `FATALERR.LIB`, `INTRO.EXE` and `INTRO.MAP`
+Run it in this directory, the build directory. Objects, `MODULES.LIB`, `FATALERR.LIB`, `INTRO.EXE` and `INTRO.MAP`
 land here.
 
 - `MAKEFILE`: every module's compiler options. It is the source of truth.
-- `INTRO.LNK`: TLINK's response file: link order, startup module, `CM.LIB`, then `FATALERR.LIB`.
+- `INTRO.LNK`: TLINK's response file: link order, startup module, `MODULES.LIB`,
+  `CM.LIB`, then `FATALERR.LIB`.
   `trial_link.py --target si_intro` links in this order too.
 - `INTRO.CFG`: include paths, which MAKE writes.
 - `fatalerr.c` links from a library searched after `CM.LIB`: the shipped file keeps its data
@@ -37,6 +38,10 @@ every module's status and a full comparison.
 
 ## Output
 
-`INTRO.EXE` is 108,528 bytes, as shipped, and differs from it in 73 bytes around `cachelst.c`: the
-shipped file places DoubleList's table and destructor copy ahead of CacheList's. This is the same
-link-order effect as Black Gate ENDGAME's, and the same 73 kinds of byte.
+`INTRO.EXE` equals the shipped file: 108,528 bytes.
+
+TLINK reads every library member, even one it does not link, and places a virtual table where it
+first meets its name. The shipped order needs DoubleList's names met before `cachelst.c`'s, so the
+modules from `cachelst.c` on link from `MODULES.LIB` (members in link order, from `MODULES.RSP`),
+which also holds `unlinked\newlist.c`: an unused member that uses DoubleList, standing in for one
+of Origin's that is not known.

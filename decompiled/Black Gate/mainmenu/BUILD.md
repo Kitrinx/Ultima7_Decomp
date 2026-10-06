@@ -5,7 +5,8 @@
 - Borland C++ 2.0: BCC 2.0, TLINK 4.0 and MAKE 3.5, with its libraries and headers.
 - Turbo Assembler 2.51, on the `PATH`.
 - DOS, or DOSBox-X with EMS off (BCC hangs when it spills into EMS).
-- U7's tree beside this one as `..\U7`: MAINMENU links 58 of its modules unchanged.
+- The tree is self-contained: the U7 modules MAINMENU links unchanged are copied under `u7\`, with
+  their headers.
 
 The Borland tools are commercial. Supply your own copy; never commit it.
 

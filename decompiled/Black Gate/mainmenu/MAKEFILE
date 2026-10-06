@@ -1,8 +1,8 @@
 #	MAINMENU.EXE, the Black Gate menu, credits and installer front end
 #
 #	Borland C++ 2.0 with its MAKE, and Turbo Assembler 2.51.  Run MAKE in
-#	this directory, the build directory; U7's tree sits beside it as ..\U7,
-#	and the modules INTRO or ENDGAME also link as ..\shared.
+#	this directory, the build directory.  The U7 modules it links are copied
+#	here under u7, each with the U7 headers it reads.
 #
 #		make			compiler in C:\BORLANDC
 #		make -DBC=C:\BC20	compiler elsewhere
@@ -35,23 +35,23 @@ MAINMENU.CFG: MAKEFILE
 -Imain
 -Izevent
 -Iinclude
--I..\shared
--I..\shared\main
--I..\shared\main\mem
--I..\shared\zevent
--I..\U7\common
--I..\U7\inter
--I..\U7\main
--I..\U7\main\combat
--I..\U7\main\mem
--I..\U7\main\palette
--I..\U7\main\schedule
--I..\U7\main\video
--I..\U7\main\xmm
--I..\U7\sound
--I..\U7\sound\drv
--I..\U7\zevent
--I..\U7\include
+-I.
+-Imain
+-Imain\mem
+-Izevent
+-Iu7\common
+-Iu7\inter
+-Iu7\main
+-Iu7\main\combat
+-Iu7\main\mem
+-Iu7\main\palette
+-Iu7\main\schedule
+-Iu7\main\video
+-Iu7\main\xmm
+-Iu7\sound
+-Iu7\sound\drv
+-Iu7\zevent
+-Iu7\include
 -I$(BC)\include
 | MAINMENU.CFG
 
@@ -59,19 +59,19 @@ MAINMENU.CFG: MAKEFILE
 SHARED.CFG: MAKEFILE
 	copy &&|
 -c -mm
--I..\U7\common
--I..\U7\main
--I..\U7\main\mem
--I..\U7\main\video
--I..\U7\main\xmm
--I..\U7\sound
--I..\U7\zevent
--I..\U7\inter
--I..\U7\main\combat
--I..\U7\main\palette
--I..\U7\main\schedule
--I..\U7\sound\drv
--I..\U7\include
+-Iu7\common
+-Iu7\main
+-Iu7\main\mem
+-Iu7\main\video
+-Iu7\main\xmm
+-Iu7\sound
+-Iu7\zevent
+-Iu7\inter
+-Iu7\main\combat
+-Iu7\main\palette
+-Iu7\main\schedule
+-Iu7\sound\drv
+-Iu7\include
 -I.
 -Imain
 -Izevent
@@ -81,87 +81,87 @@ SHARED.CFG: MAKEFILE
 
 BG_COMMON_O1 = strfmt.obj
 $(BG_COMMON_O1):
-	$(CU7) -O -1 ..\U7\common\$&.c
+	$(CU7) -O -1 u7\common\$&.c
 
 BG_COMMON_O1P = flex.obj
 $(BG_COMMON_O1P):
-	$(CU7) -O -1 -P ..\U7\common\$&.c
+	$(CU7) -O -1 -P u7\common\$&.c
 
 BG_COMMON_O1Pd = easyfile.obj
 $(BG_COMMON_O1Pd):
-	$(CU7) -O -1 -P -d ..\U7\common\$&.c
+	$(CU7) -O -1 -P -d u7\common\$&.c
 
 BG_COMMON_ASM = lstrtok.obj
 $(BG_COMMON_ASM):
-	$(AS) /mx ..\U7\common\$&.asm
+	$(AS) /mx u7\common\$&.asm
 
 BG_MAIN_O1 = oops.obj rmhook.obj videomd.obj
 $(BG_MAIN_O1):
-	$(CU7) -O -1 ..\U7\main\$&.c
+	$(CU7) -O -1 u7\main\$&.c
 
 BG_MAIN_DOS_ASM = addrptr.obj delay.obj doscreat.obj dosfile.obj dosread.obj \
 	dosseek.obj doswrite.obj memmove.obj ptraddr.obj
 $(BG_MAIN_DOS_ASM):
-	$(AS) /mx ..\U7\main\dos\$&.asm
+	$(AS) /mx u7\main\dos\$&.asm
 
 BG_MAIN_MEM_OG = drawbuf.obj inthook.obj memapi.obj memhook.obj memmgr.obj \
 	memstat.obj
 $(BG_MAIN_MEM_OG):
-	$(CU7) -O -G ..\U7\main\mem\$&.c
+	$(CU7) -O -G u7\main\mem\$&.c
 
 BG_MAIN_MEM_OGP = screen.obj
 $(BG_MAIN_MEM_OGP):
-	$(CU7) -O -G -P ..\U7\main\mem\$&.c
+	$(CU7) -O -G -P u7\main\mem\$&.c
 
 BG_MAIN_MEM_ASM = a20gate.obj
 $(BG_MAIN_MEM_ASM):
-	$(AS) /mx ..\U7\main\mem\$&.asm
+	$(AS) /mx u7\main\mem\$&.asm
 
 BG_MAIN_VIDEO_OG = colormap.obj vidmode.obj
 $(BG_MAIN_VIDEO_OG):
-	$(CU7) -O -G ..\U7\main\video\$&.c
+	$(CU7) -O -G u7\main\video\$&.c
 
 BG_MAIN_VIDEO_OGP = colorreg.obj modecolr.obj
 $(BG_MAIN_VIDEO_OGP):
-	$(CU7) -O -G -P ..\U7\main\video\$&.c
+	$(CU7) -O -G -P u7\main\video\$&.c
 
 BG_MAIN_VIDEO_ASM = crtport.obj vretrace.obj
 $(BG_MAIN_VIDEO_ASM):
-	$(AS) /mx ..\U7\main\video\$&.asm
+	$(AS) /mx u7\main\video\$&.asm
 
 BG_MAIN_XMM_OG = vooalloc.obj xmmcheck.obj xmminit.obj xmmstale.obj
 $(BG_MAIN_XMM_OG):
-	$(CU7) -O -G ..\U7\main\xmm\$&.c
+	$(CU7) -O -G u7\main\xmm\$&.c
 
 BG_MAIN_XMM_OGP = shapehgt.obj shapewid.obj
 $(BG_MAIN_XMM_OGP):
-	$(CU7) -O -G -P ..\U7\main\xmm\$&.c
+	$(CU7) -O -G -P u7\main\xmm\$&.c
 
 BG_MAIN_XMM_ASM = copyview.obj drawblnd.obj drawfram.obj emscheck.obj \
 	framebnd.obj framecnt.obj restfram.obj restrect.obj rowaddr.obj \
 	savefram.obj saverect.obj xmmblock.obj
 $(BG_MAIN_XMM_ASM):
-	$(AS) /mx ..\U7\main\xmm\$&.asm
+	$(AS) /mx u7\main\xmm\$&.asm
 
 BG_SOUND_O1P = cflxcach.obj
 $(BG_SOUND_O1P):
-	$(CU7) -O -1 -P ..\U7\sound\$&.c
+	$(CU7) -O -1 -P u7\sound\$&.c
 
 BG_SOUND_O1Pdb0 = gsound.obj
 $(BG_SOUND_O1Pdb0):
-	$(CU7) -O -1 -P -d -b- ..\U7\sound\$&.c
+	$(CU7) -O -1 -P -d -b- u7\sound\$&.c
 
 BG_SOUND_DRV_ASM = vocirq.obj
 $(BG_SOUND_DRV_ASM):
-	$(AS) /mx ..\U7\sound\drv\$&.asm
+	$(AS) /mx u7\sound\drv\$&.asm
 
 BG_ZEVENT_O1P = mevent.obj
 $(BG_ZEVENT_O1P):
-	$(CU7) -O -1 -P ..\U7\zevent\$&.c
+	$(CU7) -O -1 -P u7\zevent\$&.c
 
 BG_ZEVENT_ASM = getfont.obj mouseint.obj sysclk.obj syskey.obj
 $(BG_ZEVENT_ASM):
-	$(AS) /mx ..\U7\zevent\$&.asm
+	$(AS) /mx u7\zevent\$&.asm
 
 MM_O1P = device.obj dirdelta.obj dlist.obj dosmem.obj flexprn.obj \
 	fontprn.obj install.obj keyqueue.obj menu.obj menuent.obj scroll.obj \
@@ -200,31 +200,31 @@ $(MM_ZEVENT_O1P):
 SH_O1P = fade.obj fadecol.obj fadepal.obj farbuf.obj inttrap.obj \
 	modebyte.obj music.obj rgbpal.obj textfile.obj
 $(SH_O1P):
-	$(CC) -O -1 -P ..\shared\$&.c
+	$(CC) -O -1 -P $&.c
 
 SH_ASM = emsinit.obj emsmap.obj flatmode.obj palfade.obj
 $(SH_ASM):
-	$(AS) /mx ..\shared\$&.asm
+	$(AS) /mx $&.asm
 
 SH_MAIN_O1P = itable.obj
 $(SH_MAIN_O1P):
-	$(CC) -O -1 -P ..\shared\main\$&.c
+	$(CC) -O -1 -P main\$&.c
 
 SH_MAIN_DOS_ASM = fileread.obj filewrit.obj
 $(SH_MAIN_DOS_ASM):
-	$(AS) /mx ..\shared\main\dos\$&.asm
+	$(AS) /mx main\dos\$&.asm
 
 SH_MAIN_MEM_OGP = errors.obj
 $(SH_MAIN_MEM_OGP):
-	$(CC) -O -G -P ..\shared\main\mem\$&.c
+	$(CC) -O -G -P main\mem\$&.c
 
 SH_MAIN_XMM_ASM = linear.obj
 $(SH_MAIN_XMM_ASM):
-	$(AS) /mx ..\shared\main\xmm\$&.asm
+	$(AS) /mx main\xmm\$&.asm
 
 SH_SOUND_DRV_O1Pd = midiplay.obj
 $(SH_SOUND_DRV_O1Pd):
-	$(CC) -O -1 -P -d ..\shared\sound\drv\$&.c
+	$(CC) -O -1 -P -d sound\drv\$&.c
 
 # The IDE compiled these under their full upper-case paths, which __FILE__
 # keeps.  IDESTUB.BAT puts each source there and writes a stub including it.
@@ -240,9 +240,9 @@ specache.obj: sound\specache.c
 # directory, as in U7's build.
 BG_MAIN_XMM_OWN_OG = freexmm.obj xmmhand.obj
 $(BG_MAIN_XMM_OWN_OG):
-	cd ..\U7\main\xmm
-	$(BC)\bcc -c -mm -I..;..\mem;$(BC)\include -n..\..\..\mainmenu -O -G $&.c
-	cd ..\..\..\mainmenu
+	cd u7\main\xmm
+	$(BC)\bcc -c -mm -I..;..\mem;$(BC)\include -n..\..\.. -O -G $&.c
+	cd ..\..\..
 
 # VIDMODE.ASM shares vidmode.c's name, so its object stays in its folder.
 main\video\vidmode.obj: main\video\vidmode.asm

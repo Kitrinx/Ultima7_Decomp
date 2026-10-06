@@ -2,7 +2,7 @@
 #
 #	Borland C++ 2.0 with its MAKE and TLIB, and Turbo Assembler 2.51.  Run
 #	MAKE in this directory, the build directory; U7's tree sits beside it
-#	as ..\U7, and the modules MAINMENU or INTRO also link as ..\shared.
+#	copied here under u7, with the modules once shared with the other helpers alongside its own.
 #
 #		make			compiler in C:\BORLANDC
 #		make -DBC=C:\BC20	compiler elsewhere
@@ -38,23 +38,23 @@ ENDGAME.CFG: MAKEFILE
 -Imain\xmm
 -Isound
 -Izevent
--I..\shared
--I..\shared\main
--I..\shared\main\mem
--I..\shared\zevent
--I..\U7\common
--I..\U7\inter
--I..\U7\main
--I..\U7\main\combat
--I..\U7\main\mem
--I..\U7\main\palette
--I..\U7\main\schedule
--I..\U7\main\video
--I..\U7\main\xmm
--I..\U7\sound
--I..\U7\sound\drv
--I..\U7\zevent
--I..\U7\include
+-I.
+-Imain
+-Imain\mem
+-Izevent
+-Iu7\common
+-Iu7\inter
+-Iu7\main
+-Iu7\main\combat
+-Iu7\main\mem
+-Iu7\main\palette
+-Iu7\main\schedule
+-Iu7\main\video
+-Iu7\main\xmm
+-Iu7\sound
+-Iu7\sound\drv
+-Iu7\zevent
+-Iu7\include
 -I$(BC)\include
 | ENDGAME.CFG
 
@@ -62,23 +62,23 @@ ENDGAME.CFG: MAKEFILE
 U7.CFG: MAKEFILE
 	copy &&|
 -c -mm
--I..\U7\main
--I..\U7\common
--I..\U7\inter
--I..\U7\main\combat
--I..\U7\main\mem
--I..\U7\main\palette
--I..\U7\main\schedule
--I..\U7\main\video
--I..\U7\main\xmm
--I..\U7\sound
--I..\U7\sound\drv
--I..\U7\zevent
--I..\U7\include
--I..\shared
--I..\shared\main
--I..\shared\main\mem
--I..\shared\zevent
+-Iu7\main
+-Iu7\common
+-Iu7\inter
+-Iu7\main\combat
+-Iu7\main\mem
+-Iu7\main\palette
+-Iu7\main\schedule
+-Iu7\main\video
+-Iu7\main\xmm
+-Iu7\sound
+-Iu7\sound\drv
+-Iu7\zevent
+-Iu7\include
+-I.
+-Imain
+-Imain\mem
+-Izevent
 -I.
 -Icommon
 -Iinclude
@@ -92,48 +92,48 @@ U7.CFG: MAKEFILE
 
 BG_COMMON_ASM = lstrtok.obj
 $(BG_COMMON_ASM):
-	$(AS) /mx ..\U7\common\$&.asm
+	$(AS) /mx u7\common\$&.asm
 
 BG_MAIN_DOS_ASM = addrptr.obj doscreat.obj dosfile.obj dosread.obj \
 	dosseek.obj memmove.obj ptraddr.obj
 $(BG_MAIN_DOS_ASM):
-	$(AS) /mx ..\U7\main\dos\$&.asm
+	$(AS) /mx u7\main\dos\$&.asm
 
 BG_MAIN_MEM_OG = memhook.obj
 $(BG_MAIN_MEM_OG):
-	$(CU7) -O -G ..\U7\main\mem\$&.c
+	$(CU7) -O -G u7\main\mem\$&.c
 
 BG_MAIN_MEM_OGP = errors.obj
 $(BG_MAIN_MEM_OGP):
-	$(CU7) -O -G -P ..\U7\main\mem\$&.c
+	$(CU7) -O -G -P u7\main\mem\$&.c
 
 BG_MAIN_MEM_ASM = a20gate.obj
 $(BG_MAIN_MEM_ASM):
-	$(AS) /mx ..\U7\main\mem\$&.asm
+	$(AS) /mx u7\main\mem\$&.asm
 
 BG_MAIN_VIDEO_ASM = crtport.obj vretrace.obj
 $(BG_MAIN_VIDEO_ASM):
-	$(AS) /mx ..\U7\main\video\$&.asm
+	$(AS) /mx u7\main\video\$&.asm
 
 BG_MAIN_XMM_1G = vooalloc.obj
 $(BG_MAIN_XMM_1G):
-	$(CU7) -1 -G ..\U7\main\xmm\$&.c
+	$(CU7) -1 -G u7\main\xmm\$&.c
 
 BG_MAIN_XMM_OG = xmmcheck.obj xmminit.obj xmmstale.obj
 $(BG_MAIN_XMM_OG):
-	$(CU7) -O -G ..\U7\main\xmm\$&.c
+	$(CU7) -O -G u7\main\xmm\$&.c
 
 # __FILE__ gives these their bare names, so they compile in their own
 # directory, as in U7's build.
 BG_MAIN_XMM_OWN_OG = freexmm.obj xmmhand.obj
 $(BG_MAIN_XMM_OWN_OG):
-	cd ..\U7\main\xmm
-	$(BC)\bcc -c -mm -I..;..\mem;$(BC)\include -n..\..\..\endgame -O -G $&.c
-	cd ..\..\..\endgame
+	cd u7\main\xmm
+	$(BC)\bcc -c -mm -I..;..\mem;$(BC)\include -n..\..\.. -O -G $&.c
+	cd ..\..\..
 
 BG_MAIN_XMM_ASM = emscheck.obj xmmblock.obj
 $(BG_MAIN_XMM_ASM):
-	$(AS) /mx ..\U7\main\xmm\$&.asm
+	$(AS) /mx u7\main\xmm\$&.asm
 
 EG_1GPvi0 = chunknam.obj digital.obj display.obj doshandl.obj endgame.obj \
 	file.obj flic.obj iff.obj shapefnt.obj sounddrv.obj speech.obj \
@@ -145,7 +145,7 @@ EG_1GPvi0d = options.obj
 $(EG_1GPvi0d):
 	$(CC) -1 -G -P -vi- -d $&.c
 
-EG_O1P = biostext.obj dirdelta.obj dlist.obj ds1482.obj ds169a.obj \
+EG_O1P = biostext.obj dirdelta.obj dlist.obj \
 	fatal.obj fileio.obj flatflag.obj linefile.obj memfile.obj message.obj \
 	reporter.obj rowtable.obj shutdown.obj strbuf.obj strops.obj vidrest.obj
 $(EG_O1P):
@@ -212,11 +212,11 @@ $(EG_ZEVENT_O1P):
 
 SH_ASM = emsmap.obj flatmode.obj
 $(SH_ASM):
-	$(AS) /mx ..\shared\$&.asm
+	$(AS) /mx $&.asm
 
 SH_MAIN_XMM_ASM = clrview.obj copyview.obj framebnd.obj linear.obj
 $(SH_MAIN_XMM_ASM):
-	$(AS) /mx ..\shared\main\xmm\$&.asm
+	$(AS) /mx main\xmm\$&.asm
 
 # FatalError links from a library: its data follows CM.LIB's.
 fatalerr.lib: fatalerr.obj
@@ -240,6 +240,15 @@ all_eg_io: $(EG_MAIN_MEM_O1P) $(EG_MAIN_XMM_ASM) $(EG_SOUND_1GPvi0d) $(EG_ZEVENT
 
 all_sh: $(SH_ASM) $(SH_MAIN_XMM_ASM)
 
-ENDGAME.EXE: all_bg all_bg_sub all_bg_xmm all_eg all_eg_asm all_eg_sub \
-	all_eg_io all_sh fatalerr.lib ENDGAME.LNK
+# In the library but linked by no program: see unlinked\newlist.c.
+EG_UNLINKED_O1Pd = newlist.obj
+$(EG_UNLINKED_O1Pd):
+	$(CC) -O -1 -P -d unlinked\$&.c
+
+# The modules from cachelst on link from a library, members in link order.
+modules.lib: all_bg all_bg_sub all_bg_xmm all_eg all_eg_asm all_eg_sub \
+	all_eg_io all_sh newlist.obj MODULES.RSP
+	$(BC)\tlib modules.lib @MODULES.RSP
+
+ENDGAME.EXE: modules.lib fatalerr.lib ENDGAME.LNK
 	$(BC)\tlink /m /s /c /d /L$(BC)\lib @ENDGAME.LNK
