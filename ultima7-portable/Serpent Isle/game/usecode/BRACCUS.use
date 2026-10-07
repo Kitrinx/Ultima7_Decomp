@@ -1,0 +1,205 @@
+Routine Braccus accepts a0 #locals(15) #uses(~LordOrLady, ~AvatarName, ~WhereAmI_i, Bark_i, SetWorkTypeAt_i, PartyFaces_i, ~IsBodyNear_i, ResurrectBodies_i, ~PartyUtters, MonkMakesPeace_i) {
+    v0 = ~LordOrLady();
+    v1 = ~AvatarSex();
+    v2 = ~AvatarName();
+    v3 = "son";
+    v4 = ~WhereAmI_i();
+    if v1 {
+        v3 = "daughter";
+    }
+    if (event = _Action) {
+        if $BANES_RELEASED {
+            ClearItemFlag_i(_DontMove_i, _Avatar);
+            ClearSpeakers_i();
+            SetSpeaker0_i(0, _Braccus);
+            ["Well done, my <v3>. I shall take Yelinda back to her rightful place."];
+            SetSpeaker1_i(0, _Yelinda);
+            ["Oh, thank thee, kind monk!"];
+            CloseSpeaker1_i();
+            SetSpeakerSlot_i(0);
+            ["As for thee, <v2>, thou must continue toward thine union with the Powers..."];
+            CloseSpeaker0_i();
+            Bark_i(2, "@Peace.@", item);
+            v5 = ~GetCoord(_Braccus);
+            createSprite(65535, 0, 0, 0, (v5::2 - 3), (v5::1 - 3), 7);
+            v6 = ~GetCoord(_Yelinda);
+            createSprite(65535, 0, 0, 0, (v6::2 - 3), (v6::1 - 3), 7);
+            RemoveNPC_i(_Braccus);
+            SetWorkTypeAt_i(_Wander, 1720, 1028, _Yelinda);
+            Sfx(81);
+        } else {
+            ClearSpeakers_i();
+            SetSpeaker0_i(0, _Braccus);
+            ClearItemFlag_i(_DontMove_i, _Avatar);
+            ["We mourn with thee, Hero From Another World, for this purposeless death of the girl once known as Cantra."];
+            ["We shall take her lifeless body to Monk Isle, where perhaps we can restore life where death doth now reign."];
+            ["Continue on thy quest. Trouble not thyself for this girl, as we shall do all that is possible for her."];
+            v7 = ~TakeFromParty_i(0, 21, _All, _NPC2_Bodies, _All);
+            if not v7 {
+                v8 = ~FindNearby_i(0, 30, _NPC2_Bodies, item);
+                Foreach v11 in v8 {
+                    if (~GetFrame(v11) = 21) {
+                        v5 = ~GetCoord(v11);
+                        createSprite(65535, 0, 0, 0, (v5::2 - 3), (v5::1 - 3), 7);
+                        Item_destroy(v11);
+                    }
+                }
+            }
+            v5 = ~GetCoord(_Braccus);
+            createSprite(65535, 0, 0, 0, (v5::2 - 3), (v5::1 - 3), 7);
+            RemoveNPC_i(_Braccus);
+            ClearItemFlag_i(_Dead, _Cantra);
+            SetWorkTypeAt_i(_Wander, 1129, 2429, _Cantra);
+            SetItemFlag_i(_Zombie, _Cantra);
+            Sfx(81);
+        }
+        terminate;
+    }
+    if (event = _Converse) {
+        if (~GetNPCID_i(_Karnax) <> 0) {
+            Item_bark("@Not now...@", _Braccus);
+            terminate;
+        }
+        Item_bark("@Excuse me...@", _Avatar);
+        PartyFaces_i(65324);
+        Bark_i(2, (("@Yes, my " + v3) + "?@"), _Braccus);
+        SetWorkType(_Talk, _Braccus);
+    }
+    if (event = _Talking) {
+        Npc_schedule(_Braccus);
+        ClearBark_i(_Braccus);
+        SetSpeaker0_i(0, _Braccus);
+        ["I am but a humble monk. I can be of no help to thee in any way, I fear."];
+        v12 = false;
+        v13 = false;
+        if ($mustgetroot and not $gotspellbook) {
+            TurnOn("Mandrake Root");
+        }
+        if $knowxenka {
+            TurnOn("Xenka");
+        }
+        if $knowtides {
+            TurnOn("salt tides");
+        }
+        if ~IsBodyNear_i() {
+            ["Oh! One of thy friends hath met an untimely end. This should not be..."];
+            ["If thou art ready to see thy friend again, thou dost have but to ask and I will return them to thee."];
+            TurnOn("resurrection");
+        }
+        TurnOn(<< "name", "duties", "bye" >>);
+        converse {
+            key ("resurrection") {
+                TurnOff("resurrection");
+                ResurrectBodies_i();
+            }
+            key ("name") {
+                TurnOff("name");
+                ["I no longer believe in names. Doth the corn in the field have a name? Canst thou hear the cry of the corn?"];
+                v14 = ~PartyUtters(false, 0, (("@" + v0) + ", this monk is a mystical man indeed...@"), 65533);
+                SetSpeakerSlot_i(0);
+                TurnOn(<< "beliefs", "corn" >>);
+            }
+            key ("beliefs") {
+                TurnOff("beliefs");
+                ["There are unseen energies which permeate the worlds. A monk within the Order of Xenka seeks to attune himself with these ethereal vapors."];
+                ["In mine own case -- I being but the least of these, my brethren -- I can draw upon the Power of the Void to foster the growth of plants."];
+                if $xenkareturned {
+                    ["Xenka the Seer is the greatest of us all."];
+                } else {
+                    ["Xenka was the greatest of us all."];
+                }
+                $knowxenka = true;
+                if not v12 {
+                    TurnOn("Xenka");
+                }
+            }
+            key ("Xenka") {
+                TurnOff("Xenka");
+                ["It was she who mastered the Energies of the Void, until at last she was no longer of this world."];
+                ["Xenka is our exemplar -- we all would harness\x09the Powers as she did."];
+                ["I am unable to speak further -- I am incapable of expressing all that Xenka is and was."];
+                v12 = true;
+                if $xenkareturned {
+                    ["And now she hath returned! The Seer hath come back from beyond the Void."];
+                } else {
+                    ["Thou shouldst speak to Monk Draxta, if thou desirest to perceive the mystery of Xenka."];
+                }
+            }
+            key ("corn") {
+                TurnOff("corn");
+                ["Corn is at the center of the kingdom of vegetables."];
+                ["Corn is tall and green, king of the grasses, and its fruit is sweet when roasted."];
+                ["I seek to find union with the corn. I am a Child of the Corn."];
+                v14 = ~PartyUtters(false, 0, (("@As I said, " + v0) + "...@"), 65533);
+                SetSpeakerSlot_i(0);
+            }
+            key ("duties") {
+                TurnOff("duties");
+                ["In order to become one with the soil, I have been granted the task of nurturing the crops."];
+                TurnOn("crops");
+            }
+            key ("crops") {
+                TurnOff("crops");
+                ["Our harvest is varied. There are ochre berries in the spring, corn in the summer, and walnuts in the fall."];
+                ["We also nurture many root crops, and make flour from their tubers."];
+                if $BANES_RELEASED {
+                    ["Now the fields are dying, as the blight spreads throughout the land. The storms leach the life from the land, and the crops fail."];
+                } else {
+                    ["But the crops have not been healthy, not since the strange storms afflicted the island."];
+                }
+                ["Thou mayest partake of any of the fruits and vegetables on this island, so long as thou dost not indulge in gluttony."];
+            }
+            key ("Mandrake Root") {
+                TurnOff("Mandrake Root");
+                ["Thou art not the first to come to this isle in search of the Mandrakes, for the plant is the source of powerful magic."];
+                ["There is a supply of roots in mine hut, if thou needest any."];
+                ["Please take all that thou needest, for Mandrakes grow only in the swamps, and are exceedingly rare elsewhere."];
+                TurnOn(<< "swamps", "rare" >>);
+            }
+            key ("swamps") {
+                TurnOff("swamps");
+                ["The Mandrakes are only found in the swamplands, and only when the salt tides are right."];
+                ["I have only dried roots in my supply -- if thou desirest fresh roots, thou must go into the swamp when the tides are right."];
+                if ($knowtides = false) {
+                    SetClock(1);
+                }
+                $knowtides = true;
+                TurnOn("salt tides");
+            }
+            key ("salt tides") {
+                TurnOff("salt tides");
+                if ((~GetClock(1) > 3) and not $gotfreshroot) {
+                    ["The tides are in convergence. If thou desirest Mandrake Roots, thou must hasten to the swamplands."];
+                    $mandraketime = true;
+                } else {
+                    if $gotfreshroot {
+                        ["The tides have gone. It will be many days\x09before the roots can again be gathered."];
+                    } else {
+                        ["The Mandrake Roots only appear when the tides are right -- otherwise, they lay beneath the mud and cannot be seen."];
+                        ["Now is not the time, but the tides will soon be in -- precisely when, I cannot predict."];
+                        ["I could tell thee when the tides were right, if thou dost ask later."];
+                    }
+                }
+                v13 = true;
+            }
+            key ("rare") {
+                TurnOff("rare");
+                ["Mandrakes grow only in certain swamps, of which there is one on this isle."];
+                ["Due to the dangers of the magical storms, the ships no longer come."];
+                ["Only thou, the Stranger from Another World, canst visit us now."];
+                ["Therefore, no one can take the Mandrake Roots to the mages of Moonshade."];
+                ["There is certain to be a grave shortage of reagents in that city soon."];
+            }
+            key ("bye") {
+                CloseSpeaker0_i();
+                Bark_i(0, "@Farewell@", _Avatar);
+                Bark_i(2, "@Peace.@", item);
+                break;
+            }
+        }
+        clear_answers;
+    }
+    if (event = _NearDeath) {
+        MonkMakesPeace_i(65329);
+    }
+}

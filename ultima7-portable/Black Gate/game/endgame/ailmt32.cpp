@@ -15,6 +15,10 @@
 #include "plat.h"
 #include "ailmt32.h"
 
+/* No waits after MT-32 memory writes (a launcher switch, not in the original): Munt takes them
+ * at once. */
+extern "C" uint8_t Mt32ShortWaits = 0;
+
 namespace Endgame {
 
 #define NUM_CHANS       16
@@ -106,6 +110,8 @@ static int16_t MidiProgram[NUM_CHANS];
  * moved meanwhile. In the service only the music stops. */
 static void Wait(uint16_t retraces)
 {
+	if (Mt32ShortWaits)
+		return;
 	if (InService) {
 		StallUs += (int32_t) retraces * RETRACE_US;
 		return;
@@ -841,6 +847,7 @@ void Mt32InstallTimbre(uint8_t bank, uint8_t patch, const uint8_t *timbre)
 
 extern "C" void ResetEndgameAilmt32Globals(void)
 {
+	Mt32ShortWaits = 0;
 	Endgame::Opened = 0;
 	Endgame::InService = 0;
 	Endgame::MainWaiting = 0;

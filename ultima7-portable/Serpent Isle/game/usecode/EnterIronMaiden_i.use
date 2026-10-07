@@ -1,0 +1,27 @@
+Routine EnterIronMaiden_i accepts a0 #locals(12) #uses(PathToItem_i, ~GimmePathEgg) {
+    v0 = << 1703, 3013, 0 >>;
+    v1 = ~FindNearby_i(0, 5, _Iron_Maiden, item);
+    Foreach v4 in v1 {
+        v5 = ~GetFrame(v4);
+        if (v5 = 1) {
+            SetFrame(0, v4);
+            terminate;
+        }
+        if (v5 = 0) {
+            PathToItem_i(11, item, #EnterIronMaiden_i, 65535, << 0, 1 >>, << 1, 0 >>, item);
+        }
+    }
+    if (event = _Pathfind2) {
+        SetFrame(1, v1);
+        FadePalette_i(0, 1, 12);
+        Item_move(v0, _Party);
+        v6 = ~GetParty();
+        Foreach v9 in v6 {
+            v10 = ~PostAction(<< _aNO_HALT_i, _aFACE_i, _North >>, v9);
+        }
+        $USED_IRON_MAIDEN = false;
+        v11 = ~GimmePathEgg(1, 0);
+        v10 = ~PostInFuture(1, << _aNO_HALT_i, _aUSABLE_i, #FadeIn_i >>, v11);
+        terminate;
+    }
+}

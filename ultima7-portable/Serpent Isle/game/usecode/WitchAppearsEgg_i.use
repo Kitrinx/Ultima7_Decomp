@@ -1,0 +1,36 @@
+Routine WitchAppearsEgg_i accepts a0 #locals(6) #uses(FaceAvatar_i, PartyFaces_i) {
+    if (event = _Trigger) {
+        if $HAVE_SILVER_SEED {
+            terminate;
+        }
+        v0 = ~GetQuality(item);
+        v1 = ~GetCoord(item);
+        v2 = ~CreateCreature_i(v1, _Xenka);
+        if v2 {
+            createSprite(65535, 0, 0, 0, v1::2, v1::1, 26);
+            Sfx(81);
+            FaceAvatar_i(v2);
+            PartyFaces_i(v2);
+            Npc_setAlignment(_Neutral, v2);
+            SetWorkType(_Wait, v2);
+            SetNPCID_i(v0, v2);
+            SetItemFlag_i(_IsTemporary_i, v2);
+            SetItemFlag_i(_Tournament, v2);
+            v3 = ~GetNPCStat_i(_Str, v2);
+            v4 = (11 - v3);
+            v5 = ~ChangeNPCStat_i(v4, _Str, v2);
+            v3 = ~GetNPCStat_i(_Dex, v2);
+            v4 = (18 - v3);
+            v5 = ~ChangeNPCStat_i(v4, _Dex, v2);
+            v3 = ~GetNPCStat_i(_Int, v2);
+            v4 = (24 - v3);
+            v5 = ~ChangeNPCStat_i(v4, _Int, v2);
+            v3 = ~GetNPCStat_i(_Cbt, v2);
+            v4 = (16 - v3);
+            v5 = ~ChangeNPCStat_i(v4, _Cbt, v2);
+            v3 = ~GetNPCStat_i(_Hits, v2);
+            v4 = (16 - v3);
+            v5 = ~ChangeNPCStat_i(v4, _Hits, v2);
+        }
+    }
+}

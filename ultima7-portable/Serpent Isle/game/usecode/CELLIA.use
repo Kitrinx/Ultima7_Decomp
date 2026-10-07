@@ -1,0 +1,515 @@
+Routine Cellia accepts a0 #locals(12) #uses(~LordOrLady, ~IsInInv, Bark_i, PartyFaces_i, ~PopToParty_i, ~PartyUtters, ~GiveItemsOrDrop_i, ~AskYesNo, CelliaSells_i) {
+    v0 = ~GetItemFlag_i(_Met, _Cellia);
+    v1 = "stranger";
+    if v0 {
+        v1 = ~LordOrLady();
+    }
+    if $AVATAR_IS_KNIGHT {
+        v1 = "Knight";
+    }
+    v2 = ~IsInInv(7, 65177, _Crtr1_Bodies, 65177, _Party);
+    v3 = ~LordOrLady();
+    if (event = _NearDeath) {
+        v4 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #Paladin >>, item);
+    }
+    if (event = _Converse) {
+        Bark_i(0, "@Pardon me....@", _Avatar);
+        PartyFaces_i(65471);
+        Bark_i(2, (("@Yes, " + v1) + "?@"), _Cellia);
+        SetWorkType(_Talk, _Cellia);
+    }
+    if (event = _Talking) {
+        Npc_schedule(_Cellia);
+        ClearBark_i(_Cellia);
+        v5 = false;
+        if (~GetWorkType(_Cellia) = _TendShop) {
+            v5 = true;
+        }
+        SetSpeaker0_i(0, _Cellia);
+        if not v0 {
+            if $doneknightstest {
+                ["I am Cellia the Furrier. What may I do for thee, <v1>?"];
+            } else {
+                ["When thou hast become a Knight, I can be of service to thee. Until then, go thy way."];
+                Bark_i(0, "@Farewell.@", _Cellia);
+                terminate;
+            }
+            SetItemFlag_i(_Met, _Cellia);
+        } else {
+            if $doneknightstest {
+                ["Glad to see thee again, <v1>. What may I do for thee?"];
+            } else {
+                ["Glad to see thee again, <v1>."];
+                ["When thou hast become a Knight, I can be of service to thee. Until then, be thou gone."];
+                Bark_i(0, "@Farewell.@", _Cellia);
+                terminate;
+            }
+        }
+        if ($doneknightstest and not $gavewolfpelt) {
+            TurnOn("slain wolf");
+        }
+        if ($gavewolfpelt and not $gotcloak) {
+            TurnOn("cloak");
+        }
+        if ($askcelliacap and not $knowfurcap) {
+            TurnOn("fur cap");
+        }
+        TurnOn(<< "buy", "furrier", "bye" >>);
+        converse {
+            key ("slain wolf") {
+                TurnOff("slain wolf");
+                ["Now that thou hast completed the Test, I must make a cloak for thee from the skin of the animal thou didst slay."];
+                if not v5 {
+                    ["When I am in my shop, bring me the body which thou didst obtain at Knight's Test."];
+                } else {
+                    ["Give to me the body."];
+                    if v2 {
+                        v4 = ~TakeFromParty_i(true, 7, _All, _Crtr1_Bodies, _All);
+                        ["Oooh, 'tis a large one."];
+                        v6 = ~GetContents(_All, _All, _All, v4);
+                        if v6 {
+                            Foreach v9 in v6 {
+                                v10 = ~Item_push(v9);
+                                v4 = ~PopToParty_i();
+                            }
+                        }
+                        v11 = ~PartyUtters(false, 0, "@The Avatar is quite skilled at killing large animals.@", 65533);
+                        if (v11 <> 65180) {
+                            SetSpeakerSlot_i(0);
+                            CloseSpeaker1_i();
+                        }
+                        ["Return in one day. I shall have thy cloak by then."];
+                        SetClock(4);
+                        $gavewolfpelt = true;
+                    } else {
+                        v11 = ~PartyUtters(false, "@I do not have the wolf's body.@", "@But we do not have the body with us.@", 1);
+                        CloseSpeaker1_i();
+                        SetSpeakerSlot_i(0);
+                        ["I cannot make thee a cloak without an animal's skin!"];
+                        ["Return to Knight's Test, and bring me the slain wolf. Or else thou canst not achieve thy knighthood!"];
+                        Bark_i(0, "@Go!@", _Cellia);
+                        terminate;
+                    }
+                }
+            }
+            key ("cloak") {
+                TurnOff("cloak");
+                if (~GetClock(4) < 23) {
+                    ["It is not time! I must have the full 24 hours!"];
+                    v11 = ~PartyUtters(false, 0, (("@Take care, " + v3) + ". She hath a very sharp knife!@"), 1);
+                    if (v11 <> 65180) {
+                        SetSpeakerSlot_i(0);
+                        CloseSpeaker1_i();
+                        ["And I know exactly where and how to use it..."];
+                    }
+                    Bark_i(0, "@Give me time!@", _Cellia);
+                    terminate;
+                } else {
+                    ["It is ready."];
+                    v11 = ~PartyUtters(false, 0, (("@'Tis beautiful, " + v3) + "!@"), 65533);
+                    if (v11 <> 65180) {
+                        CloseSpeaker1_i();
+                        SetSpeakerSlot_i(0);
+                        ["What didst thou expect?"];
+                    }
+                    v4 = ~GiveItemsOrDrop_i(true, 0, 3, 65177, 227, 1, _Avatar);
+                    $gotcloak = true;
+                }
+            }
+            key ("furrier") {
+                TurnOff("furrier");
+                ["I am the furrier, tanner and tailor of Monitor. It is my duty to make cloaks from the animals slain by our valiant Knights. If one were to travel far north, it is exactly the sort of thing one should wear."];
+                ["I skin the carcasses myself."];
+                ["Other pelts I obtain from the northern trappers. They supply exotic furs which are rare here in Monitor -- especially Gwani pelts!"];
+                TurnOn(<< "trappers", "Gwani pelts" >>);
+                if ($doneknightstest and not $gavewolfpelt) {
+                    ["Now that thou hast completed the Test of Knighthood, thou must bring me the body of the animal thou didst slay."];
+                    ["I shall make a cloak from its skin for thee."];
+                    ["This is the cloak which thou must wear to the Ceremony of Initiation."];
+                }
+            }
+            key ("Gwani pelts") {
+                TurnOff("Gwani pelts");
+                ["Hast thou not heard stories of these creatures? They are terrible, ferocious, savage creatures!"];
+                ["They live in the snowlands of the far north, where the Goblins sometimes go to war on them."];
+                ["It is exceedingly rare for the Goblins to slay a Gwani, but when they do, their chieftain immediately lays claim to the carcass."];
+                ["Only the toughest Goblin chiefs wear the Gwani cloak. And only the toughest Knights can slay such a fearsome Goblin!"];
+            }
+            key ("trappers") {
+                TurnOff("trappers");
+                ["Luther brings me leopard pelts now and again, but mostly I must rely on the trappers to bring me exotic furs."];
+                ["The trappers live in the Great Northern Forest, at the foot of the Impassable Mountains."];
+                ["A trapper named Hazard sells me snow leopard pelts. Unfortunately, his men only make it as far south as Monitor a few times a year."];
+                ["Sometimes he even sends Gwani pelts! He likes hunting Gwani because it is such a challenge."];
+                TurnOn("Luther");
+            }
+            key ("Luther") {
+                TurnOff("Luther");
+                ["Actually, when Luther doth go on the hunt he rarely catches anything!"];
+                ["Like all the other Bears, I think he prefers to hunt other warriors! He always bullies the strangers that come into town."];
+                ["He is a bully and someone should teach him a lesson! I have noticed that Luther doth completely relax his guard whenever he loses his temper. And nothing angers him so much as when he is taunted. Do with the information what thou wilt. I simply love to cause dissension."];
+                $celliagaveadvice = true;
+            }
+            key ("buy") {
+                if (~GetWorkType(_Cellia) = _TendShop) {
+                    ["Dost thou wish to buy one of my pelts or cloaks?"];
+                    if ~AskYesNo() {
+                        CelliaSells_i();
+                    } else {
+                        ["Some other time, perhaps."];
+                    }
+                } else {
+                    ["If thou wouldst come to my shop during the day, I could sell thee something..."];
+                    TurnOff("buy");
+                }
+            }
+            key ("fur cap") {
+                TurnOff("fur cap");
+                ["The fur cap thou hast described is from Northern Forest, but it is too fancy for any woman from this part of the world. In truth it doth remind me of a piece of work I created for Frigidazzi, a mage in the city of Moonshade. Yes, that must be it."];
+            }
+            key ("bye") {
+                Bark_i(0, "@Good day to thee.@", _Avatar);
+                Bark_i(2, "@Happy Hunting!@", _Cellia);
+                break;
+            }
+        }
+        clear_answers;
+    }
+}
+
+Usable CelliaSells_i #locals(20) #uses(~LordOrLady, ~AvatarName, ~AskOrdList, ~AskYesNo, ~CelliaHaggles_i, ~SellItem_i, ~PartyUtters) {
+    v0 = ~LordOrLady();
+    v1 = ~AvatarName();
+    PushKeys();
+    v2 = true;
+    v3 = << "nothing", "bear pelt", "beaver pelt", "muskrat pelt", "snow leopard pelt", "gwani pelt", "bear cloak", "leopard cloak", "gwani cloak", "fur cap", "fur boots" >>;
+    v4 = << 0, 977, 977, 977, 977, 977, 227, 227, 227, 1004, 587 >>;
+    v5 = << 65177, 1, 2, 4, 8, 9, 1, 2, 4, 1, 3 >>;
+    v6 = << 0, 80, 60, 45, 90, 100, 120, 150, 175, 22, 30 >>;
+    v7 = << 0, 45, 30, 27, 50, 50, 75, 85, 80, 13, 17 >>;
+    v8 = 951;
+    v9 = << 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 >>;
+    v10 = << 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1 >>;
+    if ~AvatarSex() {
+        v11 = "menfolk";
+        v12 = "Milady";
+    } else {
+        v11 = "ladies";
+        v12 = "Milord";
+    }
+    ["What wouldst thou care to purchase, <v0>?"];
+    While v2 {
+        v13 = ~AskOrdList(v3);
+        if (v13 = 1) {
+            ["Some other time then."];
+            v2 = false;
+        } else {
+            v14 = v6::v13;
+            v15 = 0;
+            v16 = ~rndRange(5, 1);
+            if (v16 = 1) {
+                v17 = "Dost thou accept?";
+            }
+            if (v16 = 2) {
+                v17 = "Will this be fine with thee?";
+            }
+            if (v16 = 3) {
+                v17 = "What dost thou say?";
+            }
+            if (v16 = 4) {
+                v17 = (v12 + ", dost thou agree?");
+            }
+            if (v16 = 5) {
+                v17 = (v12 + ", is the price acceptable?");
+            }
+            if (v13 = 2) {
+                ["I can let thee have it for <v14> monetari. It will keep thy toes warm on a frosty night, <v0>."];
+                ["<v17>"];
+            }
+            if (v13 = 3) {
+                ["<v14> monetari for a nice beaver rug is not much."];
+                ["<v17>"];
+            }
+            if (v13 = 4) {
+                ["My muskrat pelts are cheap if thou dost care about saving thy money. <v14> monetari is what I charge."];
+                ["<v17>"];
+            }
+            if (v13 = 5) {
+                ["Ah, the <v11> enjoy a good romp on snow leopard skin! <v14> monetari is my price."];
+                ["<v17>"];
+            }
+            if (v13 = 6) {
+                ["There is something very exotic about Gwani pelts, <v0>. For <v14> monetari I will sell thee one."];
+                ["<v17>"];
+            }
+            if (v13 = 7) {
+                ["If thou dost want something to keep thee warm on cold winter days, thou shouldst buy one of my bear cloaks. I can sell it to thee for <v14> monetari."];
+                ["<v17>"];
+            }
+            if (v13 = 8) {
+                ["There is nothing finer than the feel of snow leopard skin upon thine own! For <v14> monetari it is thine."];
+                ["<v17>"];
+            }
+            if (v13 = 9) {
+                ["A Gwani cloak will protect thee from the cold better than any other type of fur! For <v14> monetari I can sell thee one."];
+                ["<v17>"];
+            }
+            if (v13 = 10) {
+                ["I will sell thee a nice warm fur cap for <v14> monetari."];
+                ["<v17>"];
+            }
+            if (v13 = 11) {
+                ["For <v14> monetari, thou canst purchase fur-lined boots, <v0>. A pair will keep thee warm even in the frozen north."];
+                ["<v17>"];
+            }
+            if (v14 = v7::v13) {
+                if ~AskYesNo() {
+                    v18 = v14;
+                } else {
+                    v18 = 0;
+                }
+            } else {
+                v18 = ~CelliaHaggles_i(v7::v13, v6::v13);
+            }
+            if (v18 > 0) {
+                if (v10::v13 = 1) {
+                    ["How many wouldst thou like?"];
+                    v15 = ~SellItem_i(false, 1, 5, v18, v8, 1, v5::v13, v4::v13);
+                } else {
+                    v15 = ~SellItem_i(false, 1, 0, v18, v8, v9::v13, v5::v13, v4::v13);
+                }
+            }
+            if (v15 = 1) {
+                ["Enjoy thy purchase, <v0>!"];
+            } else {
+                if (v15 = 2) {
+                    ["Thou canst not carry thy purchase, <v0>!"];
+                } else {
+                    if (v15 = 3) {
+                        v19 = ~PartyUtters(false, 0, (("@But " + v1) + ", we lack adequate funds!@"), 1);
+                        if (v19 <> 65180) {
+                            SetSpeaker0_i(0, _Cellia);
+                            ["I am sorry, but I must make a living."];
+                        } else {
+                            ["Thou dost not have the monetari to pay me."];
+                        }
+                        if (31 < (~GetNPCID_i(_Cellia) + 6)) {
+                            SetNPCID_i(31, _Cellia);
+                        } else {
+                            SetNPCID_i((~GetNPCID_i(_Cellia) + 6), _Cellia);
+                        }
+                    } else {
+                    }
+                }
+            }
+            ["Wouldst thou care for more?"];
+            v2 = ~AskYesNo();
+        }
+    }
+    PopKeys();
+}
+
+Function ~CelliaHaggles_i accepts a0, a1 #locals(16) #uses(~LordOrLady, ~AskList, ~Haggle_i, ~AskYesNo) {
+    v2 = ~LordOrLady();
+    v3 = ~AvatarSex();
+    if ~AvatarSex() {
+        v4 = "Milady";
+    } else {
+        v4 = "Milord";
+    }
+    v5 = v1;
+    v6 = ((v0 / 3) * 2);
+    v7 = (15 - (~GetNPCID_i(_Cellia) / 2));
+    v8 = 0;
+    v9 = 1;
+    v10 = 0;
+    v11 = 2;
+    v12 = ~GetNPCID_i(_Cellia);
+    While v9 {
+        v13 = ~AskList(<< "yes", "no", "haggle" >>);
+        if (v13 = "no") {
+            return 0;
+        } else {
+            if (v13 = "yes") {
+                v14 = 0;
+                goto label_11;
+            }
+        }
+        v15 = ~Haggle_i(v8, v7, v10, v6, v11, v0, v5);
+        v10 = (v10 + 1);
+        v8 = v15::4;
+        v14 = v15::3;
+        v16 = v5;
+        v5 = v15::2;
+        v6 = v15::1;
+        label_11:
+        v17 = ~Random(3);
+        if (v14 < 2) {
+            if (v5 < (v0 + ((v1 - v0) / 4))) {
+                if (v17 = 1) {
+                    ["Thou dost not know what a good bargain thou hast made, <v2>."];
+                }
+                if (v17 = 2) {
+                    ["<v4>, I have not lost money on a deal since I was a young girl."];
+                }
+                if (v17 = 3) {
+                    ["Thou art shrewd indeed, <v2>."];
+                }
+            } else {
+                if (v5 < (v0 + ((v1 - v0) / 3))) {
+                    if (v17 = 1) {
+                        ["I must be taken with thee, <v2>! To offer such a price..."];
+                    }
+                    if (v17 = 2) {
+                        ["<v4>, thou wilt put me out of business if thou dost stay much longer!"];
+                    }
+                    if (v17 = 3) {
+                        ["I have met my match in thee, <v2>!"];
+                    }
+                } else {
+                    if (v5 < (v0 + ((v1 - v0) / 2))) {
+                        if (v17 = 1) {
+                            ["No one else is willing to put such care into their work as I do, <v2>."];
+                        }
+                        if (v17 = 2) {
+                            ["Thou art a worthy opponent, <v2>."];
+                        }
+                        if (v17 = 3) {
+                            ["Remember me, if thou dost ever need any more furs!"];
+                        }
+                    } else {
+                        if (v17 = 1) {
+                            ["Thou art always welcome in my shop, <v2>!"];
+                        }
+                        if (v17 = 2) {
+                            ["May it give thee great pleasure, <v2>!"];
+                        }
+                        if (v17 = 3) {
+                            ["'Tis hard to offer lower prices these days. The Goblins have hurt everyone's business."];
+                        }
+                    }
+                }
+            }
+            ["Thou hast agreed to a price of <v5> monetari, <v2>?"];
+            if ~AskYesNo() {
+                if (v12 > 1) {
+                    SetNPCID_i((v12 - 2), _Cellia);
+                }
+                return v5;
+            } else {
+                if (v17 = 1) {
+                    ["Take care that thou dost not seek to play me for the fool!"];
+                }
+                if (v17 = 2) {
+                    ["What of our bargain? Thou art rash, <v2>."];
+                }
+                if (v17 = 3) {
+                    ["I will not deal with dishonorable people! Be gone!"];
+                    terminate;
+                }
+                if (31 < (v12 + 10)) {
+                    SetNPCID_i(31, _Cellia);
+                } else {
+                    SetNPCID_i((v12 + 10), _Cellia);
+                }
+                return 0;
+            }
+        }
+        if (v8 = 1) {
+            if (v14 = 5) {
+                ["I said that <v5> was my final offer. Dost thou accept?"];
+                if (v12 < 28) {
+                    SetNPCID_i((v12 + 4), _Cellia);
+                }
+                if ~AskYesNo() {
+                    return v5;
+                }
+                v9 = 0;
+            } else {
+                ["<v5> monetari is my final offer."];
+                if (v12 < 30) {
+                    SetNPCID_i((v12 + 2), _Cellia);
+                }
+            }
+        } else {
+            if (v14 = 2) {
+                if (v17 = 1) {
+                    ["Thou knowest fine wares when thou dost see them, <v2>. How does <v5> monetari sound?"];
+                }
+                if (v17 = 2) {
+                    ["<v4>, for a person of thy fine taste I will offer a special price. How does <v5> monetari sound to thee?"];
+                }
+                if (v17 = 3) {
+                    ["My price is <v5> monetari, <v2>. Dost thou accept?"];
+                }
+            }
+            if (v14 = 3) {
+                if (v17 = 1) {
+                    ["I must think about my business. Wouldst thou consider <v5> monetari?"];
+                }
+                if (v17 = 2) {
+                    ["I don't know... <v5> monetari?"];
+                }
+                if (v17 = 3) {
+                    ["Perhaps <v5> monetari? Such furs are rare..."];
+                }
+            }
+            if (v14 = 4) {
+                if (v17 = 1) {
+                    ["<v5> monetari is as low as I can go."];
+                    ["What dost thou say to this?"];
+                }
+                if (v17 = 2) {
+                    ["I still cannot accept less than <v5> monetari. I must pay for my shop..."];
+                }
+                if (v17 = 3) {
+                    ["I can accept no less than <v5> monetari... No matter how well I like thee."];
+                }
+            }
+            if (v14 = 5) {
+                v5 = v16;
+                if (v17 = 1) {
+                    ["My previous price stands, at <v5> monetari. I would be a fool to take less."];
+                }
+                if (v17 = 2) {
+                    ["Better I should simply throw the furs into the street! <v5> monetari, and no less!"];
+                }
+                if (v17 = 3) {
+                    ["What dost thou take me for, a bear?! I am not that witless!"];
+                    ["<v5> monetari is as low as I will go!"];
+                }
+                if (v12 < 31) {
+                    SetNPCID_i((v12 + 1), _Cellia);
+                }
+            }
+        }
+    }
+}
+
+Function ~PopToParty_i #locals(5) #uses(~ListCount_i) {
+    v0 = ~GetParty();
+    v0 = (~NPCToItem_i(_Avatar) & v0);
+    v1 = ~ListCount_i(v0);
+    v2 = false;
+    v3 = 1;
+    While ((v2 = false) and (v3 <= v1)) {
+        v4 = ~PopToNPC(v0::v3);
+        if v4 {
+            v2 = v0::v3;
+        } else {
+            v3 = (v3 + 1);
+        }
+    }
+    if (v2 = false) {
+        v4 = ~PopToMap(~GetCoord(_Avatar));
+        if v4 {
+            v2 = true;
+        } else {
+            v4 = ~PopToMap(~GetCoord(item));
+            if v4 {
+                v2 = (true + 1);
+            }
+        }
+    }
+    return v2;
+}

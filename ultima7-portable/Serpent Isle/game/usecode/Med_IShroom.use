@@ -1,0 +1,22 @@
+Routine Med_IShroom accepts a0 #locals(2) #uses(MushroomDelusion_i) {
+    if (event = _Converse) {
+        MushroomDelusion_i(960);
+        terminate;
+    }
+    v0 = ~ItemToNPC_i(item);
+    if ((event = _Action) and ~GetItemFlag_i(_Fly, v0)) {
+        if ~GetItemFlag_i(_InParty_i, v0) {
+            v1 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #CretinUsable_i >>, item);
+            v1 = ~PostInFuture(~rndRange(175, 100), << _aNO_HALT_i, _aUSABLE_i, #Med_IShroom >>, item);
+        } else {
+            ClearItemFlag_i(_Fly, v0);
+        }
+        terminate;
+    }
+    if ((event = _Action) and not ~GetItemFlag_i(_Fly, v0)) {
+        Item_bark("@Whoa. Bad shrooms.@", item);
+        if (v0 = 65180) {
+            ClearItemFlag_i(25, v0);
+        }
+    }
+}

@@ -1,0 +1,214 @@
+Routine Vasel accepts a0 #locals(7) #uses(~LordOrLady, ~AvatarName, ~IsNPCNear, PartyFaces_i, BarkIfNear_i, ~PartyUtters, Bark_i) {
+    v0 = ~LordOrLady();
+    v1 = ~AvatarName();
+    v2 = ~IsNPCNear(_Erstam);
+    v3 = ~GetItemFlag_i(_InParty_i, _Iolo);
+    v4 = ~GetItemFlag_i(_Met, _Vasel);
+    if (event = _Converse) {
+        Item_bark("@A moment, good fellow.@", _Avatar);
+        PartyFaces_i(65500);
+        v5 = ("@Do not hit me...@" & "@I beg thee!@");
+        BarkIfNear_i(v5, _Vasel);
+        SetWorkType(_Talk, _Vasel);
+    }
+    if (event = _Talking) {
+        Npc_schedule(_Vasel);
+        ClearBark_i(_Vasel);
+        SetSpeaker0_i(0, _Vasel);
+        if not v4 {
+            ["What dost thou want, if thou dost not want to beat me?"];
+        } else {
+            ["Thou hast come to beat me again, I know it!"];
+        }
+        TurnOn(<< "name", "duties" >>);
+        if $erstamsaidteleport {
+            TurnOn("teleportation");
+        }
+        TurnOn("bye");
+        converse {
+            key ("name") {
+                TurnOff("name");
+                ["I am an orphan. I have no name. My parents were so poor they could not afford to give me one!"];
+                PushKeys();
+                TurnOn(<< "orphan", "What art thou called?", "change subject" >>);
+            }
+            key ("change subject") {
+                ["Yes, master... er, I mean, <v0>."];
+                PopKeys();
+            }
+            key ("orphan") {
+                TurnOff("orphan");
+                ["My parents served an evil sorceress who stole me away and had them banished. She raised me as her own dog -- er, I mean son. But she was eventually caught and hanged for all her heinous crimes. I still miss my stepmother, terribly."];
+            }
+            key ("What art thou called?") {
+                TurnOff("What art thou called?");
+                ["As a child, I was called a freak because I collected bugs! But when I went to dispose of my collection, I was called grotesque! I was so upset I could barely finish eating! But now I am called by an honorable gentleman's name, given to me by the Master."];
+                v6 = ~PartyUtters(false, 0, "@Avatar, talking to this little fellow doth turn my stomach.@", 65533);
+                if (v6 <> 65180) {
+                    SetSpeakerSlot_i(0);
+                }
+                TurnOn(<< "freak", "grotesque", "master" >>);
+            }
+            key ("freak") {
+                TurnOff("freak");
+                ["Merely because I had a brief career with one sideshow, everyone hath marked me for life! Still, it taught me things that have helped me in my work here. It gave me a strong stomach."];
+            }
+            key ("grotesque") {
+                TurnOff("grotesque");
+                ["They called me that when I was young. But looking back on it, I think they meant it in a complimentary way."];
+            }
+            key ("master") {
+                TurnOff("master");
+                ["'Tis my master who calls me Vasel. Thou mayest address me by that name as well."];
+                SetItemFlag_i(_Met, _Vasel);
+                if v2 {
+                    SetSpeaker1_i(0, _Erstam);
+                    ["They shall be carving that name on thy tombstone if thou dost not return to work!"];
+                    CloseSpeaker1_i();
+                    SetSpeakerSlot_i(0);
+                }
+                TurnOn("Who is thy master?");
+            }
+            key ("Who is thy master?") {
+                TurnOff("Who is thy master?");
+                ["I serve Erstam. He is the master of this Manor."];
+                TurnOn(<< "Why serve him?", "Erstam" >>);
+            }
+            key ("Why serve him?") {
+                TurnOff("Why serve him?");
+                ["There is something about him that reminds me of my stepmother! Call it crazy if thou wilt!"];
+            }
+            key ("Erstam") {
+                TurnOff("Erstam");
+                ["He is the one who is called the Mad Mage!"];
+                if v2 {
+                    SetSpeaker1_i(0, _Erstam);
+                    ["Thou dost dare to speak that name in my presence, thou cretin?! I said I do not want to hear that name come from thy lips ever again!"];
+                    CloseSpeaker1_i();
+                    SetSpeakerSlot_i(0);
+                    ["Never again! Never again! I promise! Do not beat me, Master!"];
+                }
+                TurnOn("mad mage");
+            }
+            key ("mad mage") {
+                TurnOff("mad mage");
+                ["The Master hath not been himself since he lost his one true love, the enchantress Drogeni. Many years ago she left on what she said was a secret errand for a wealthy patron, and she hath never returned."];
+            }
+            key ("duties") {
+                TurnOff("duties");
+                ["I am the custodian of the Manor. I assist the Master in his experiments. I am also called upon to do the housekeeping."];
+                TurnOn(<< "Manor", "experiments", "housekeeping" >>);
+            }
+            key ("Manor") {
+                TurnOff("Manor");
+                ["The Master's house is very old, and constantly in need of repair."];
+                if v2 {
+                    SetSpeaker1_i(0, _Erstam);
+                    ["That is correct, Vasel! Thou shouldst be returning to thine appointed chores!"];
+                    SetSpeakerSlot_i(0);
+                    CloseSpeaker1_i();
+                }
+            }
+            key ("experiments") {
+                TurnOff("experiments");
+                ["The Master's experiments are of an extremely secret nature. They are also quite dangerous."];
+                TurnOn(<< "secret", "dangerous" >>);
+            }
+            key ("secret") {
+                TurnOff("secret");
+                ["Like any mage, the Master's work involves rare artifacts and arcane spells. Thou canst look as much as thou dost want for them. But thou shalt never be able to find them! Ha! Ha!"];
+                if v2 {
+                    SetSpeaker1_i(0, _Erstam);
+                    ["Vasel, thou art a fool! I will not tolerate thee giving away my precious secrets! Stop it at once!"];
+                    CloseSpeaker1_i();
+                    SetSpeakerSlot_i(0);
+                    ["Yes, Master... I am sorry... Please do not beat me...!"];
+                }
+            }
+            key ("dangerous") {
+                TurnOff("dangerous");
+                ["I am not the first to have worked as the Master's assistant. Nor, I fear, shall I be the last. There have been many of us."];
+                TurnOn(<< "first assistant", "last assistant", "other assistants" >>);
+            }
+            key ("first assistant") {
+                TurnOff("first assistant");
+                ["I do not know the name of the Master's first assistant. His partial remains are around here somewhere. I do not know where. They are not where I last left them."];
+                if v2 {
+                    SetSpeaker1_i(0, _Erstam);
+                    ["Hmph!  A lazy lout he was, as well. We shall not miss him!"];
+                    CloseSpeaker1_i();
+                    SetSpeakerSlot_i(0);
+                }
+            }
+            key ("last assistant") {
+                TurnOff("last assistant");
+                ["The last assistant to the Master -- before myself, that is -- was named Boydon. In fact, thou canst say he is still the head assistant. Heh-heh-heh-heh..."];
+                if v2 {
+                    SetSpeaker1_i(0, _Erstam);
+                    ["He was another one who was dead from the neck up!"];
+                    CloseSpeaker1_i();
+                    SetSpeakerSlot_i(0);
+                    ["Dost thou not actually mean dead from the neck down?"];
+                    SetSpeaker1_i(0, _Erstam);
+                    ["Yes, very well, Vasel. I shall concede that point."];
+                    CloseSpeaker1_i();
+                    SetSpeakerSlot_i(0);
+                }
+            }
+            key ("other assistants") {
+                TurnOff("other assistants");
+                ["Oh, little by little and bit by bit, they pop up now and again. I was never very good with names or faces... or arms or legs, or any of those other parts."];
+                if v2 {
+                    SetSpeaker1_i(0, _Erstam);
+                    ["Enough with this maudlin waste of time! Back to work with thee, Vasel!"];
+                    CloseSpeaker1_i();
+                    SetSpeakerSlot_i(0);
+                }
+            }
+            key ("housekeeping") {
+                TurnOff("housekeeping");
+                ["This place becomes quite... unkempt, and requires constant cleaning. 'Tis a dreadful thing to do! I hate the cleanings! I hate them!"];
+                if v2 {
+                    SetSpeaker1_i(0, _Erstam);
+                    ["Stop thy whining, Vasel! Back to work with thee!"];
+                    CloseSpeaker1_i();
+                    SetSpeakerSlot_i(0);
+                }
+                TurnOn(<< "Why so much cleaning?", "Why hate cleaning?" >>);
+            }
+            key ("Why so much cleaning?") {
+                TurnOff("Why so much cleaning?");
+                ["The experiments are, to say the least, quite messy..."];
+            }
+            key ("Why hate cleaning?") {
+                TurnOff("Why hate cleaning?");
+                ["Because I have to... to touch... all those things! I have to pick them up, with all their little squeaky noises... and squirming!"];
+                v6 = ~PartyUtters(false, 0, "@Things?! Squirming things?! What sort of squirming things?! Not snakes!@", 65534);
+                CloseSpeaker1_i();
+                if (v6 <> 65180) {
+                    SetSpeakerSlot_i(0);
+                    ["Snakes would be pleasant compared to what thou canst find here..."];
+                }
+            }
+            key ("teleportation") {
+                TurnOff("teleportation");
+                ["There is a way to travel quickly from one place to another, and its magic is very powerful. The Jawbone of the Serpent enables one to walk through the great Void. But it belongs to the Master."];
+                $vaselsaidjawbone = true;
+                v6 = ~PartyUtters(false, 0, "@Thou dost mean one must actually touch such a hideous thing?! I simply cannot abide snakes!@", 65534);
+                CloseSpeaker1_i();
+                if (v6 <> 65180) {
+                    SetSpeakerSlot_i(0);
+                    ["'Tis not so hideous. Sometimes I amuse myself, taking the Teeth out and putting them back into the Jawbone..."];
+                }
+            }
+            key ("bye") {
+                CloseSpeaker0_i();
+                CloseSpeaker1_i();
+                Bark_i(0, "@Good day to thee.@", _Avatar);
+                Bark_i(3, "@Please do not hit me!@", _Vasel);
+                break;
+            }
+        }
+        clear_answers;
+    }
+}

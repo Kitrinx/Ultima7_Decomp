@@ -1,0 +1,190 @@
+Routine Serp_Scroll accepts a0 #locals(4) #uses(~PartyUtters, ~GimmePathEgg) {
+    if (event <> _Converse) {
+        return;
+    }
+    v0 = ~GetQuality(item);
+    if (v0 = 31) {
+        closeAllGumps();
+        v1 = ~GetCoord(item);
+        v1::1 = (v1::1 - (v1::3 / 2));
+        v1::2 = (v1::2 - (v1::3 / 2));
+        Item_destroy(item);
+        v2 = ~PartyUtters(true, "@The scroll talks...@", "@The scroll talks!@", 1);
+        createSprite(65535, 0, 0, 0, v1::2, v1::1, 21);
+        v3 = ~PostAction(<< _aNO_HALT_i, _aWAIT_i, 13, _aUSABLE_i, #Rotoluncia >>, ~GimmePathEgg(1, 5));
+        terminate;
+    }
+    playSFX(item, 94);
+    ShowBook_i(item);
+    switch v0 {
+        case 0 {
+            [From the desk of the Great Hierophant.];
+        }
+        case 1 {
+            [A SOLDIER'S NOTES~~];
+            [These sheep all went to their deaths with smiles on their accursed faces!~];
+            [We pulled out their fingernails, seared their flesh with burning coals, peeled their skin back with rusty knives, gouged out their eyes with sharp sticks, and still they said nothing!~];
+            [We must have the answer. But I cannot obtain the answer to my question now that they all lie dead. Could there be any truth to the old one's claim that "meditation leads to enlightenment?"];
+            [~Whatever the answer may be, there is no time left. We must go. I have ordered the destruction of the temple -- there\x09must be no trace of this structure left...];
+        }
+        case 2 {
+            [MUSINGS, by Issik the Architect~~];
+            [  The snowswept surface of Sunrise Isle is totally barren. No life can live long upon the surface. It is a good thing, indeed, that the Great Hierophant decreed that it was too dangerous to allow access to the surface.];
+        }
+        case 3 {
+            [MAGIC CANDLES~~];
+            [  The devout follower of Balance will know how to form the blocks of ice which are necessary in achieving Balance. To those of you who have forgotten your lessons, take heed: Take the magic tapers to the Walls of Ice. Therein, use the tapers upon the walls.];
+        }
+        case 4 {
+            [Create Soul Prism~~ This spell doth enchant a prism so that it may become the receptacle for a soul. Though powerful, this spell hath limited applications. The reagents necessary are: sulfuric ash, blood moss, garlic, mandrake root, spider silk, and serpent scales. ];
+        }
+        case 5 {
+            [Create Automata~~ This spell is actually misnamed, for it doth not create automata, rather, it repairs them. If thou dost have a damaged automaton, simply cast this spell over the body and it shall be fully restored. The necessary reagents to cast this spell are as follows: sulfuric ash, mandrake root, spider silk, and serpent scales. ];
+        }
+        case 6 {
+            [Create Ice~~ This spell immobilizes a chosen enemy in a block of ice. After a short period of time, the ice shatters, and the foe is released. Only two reagents are necessary to cast this spell: worm heart and spider silk. ];
+        }
+        case 7 {
+            [Invoke Serpent~~ This spell summons a snow serpent that is "friendly" to the caster. The reagents necessary to cast this spell are as follows: blood moss, garlic, worm heart, spider silk, and serpent scales. ];
+        }
+        case 8 {
+            [Serpent Bond~~ This powerful spell transforms the caster into a serpent for a short duration. This spell is very useful for obtaining ingress into places ordinarily inaccessible, such as a small crawlspace. ~The reagents necessary to cast this spell are as follows: blood moss, black pearl, garlic, worm heart, spider silk, and serpent scales. ];
+        }
+        case 9 {
+            [Imbalance~~ This powerful spell is very dangerous. The energy released by this spell sprays out in a random pattern, usually destroying whatever is hit.~ The reagents necessary to cast this spell are as follows: blood moss, sulfuric ash, worm heart, nightshade plant, and serpent scales. ];
+        }
+        case 10 {
+            ['Tis a wise man that doth know the contented man is never poor, whilst the discontented man is never rich...];
+        }
+        case 11 {
+            [When a man finds no peace within himself, 'tis useless to seek it elsewhere...];
+        }
+        case 12 {
+            [Thou canst never teach a person anything. Thou canst only help him discover wisdom himself...];
+        }
+        case 15 {
+            [Things unsavory may often be necessary. All Causes are not what they seem. What appears evil often can be good. Never discount.];
+        }
+        case 16 {
+            [The Hero from Another World must encounter again what he thought eradicated. The Cause is good this time.];
+        }
+        case 24 {
+            [~~Those who desire to meditate need only kneel before the serpent.];
+        }
+        case 28 {
+            [~~\x09The Ethical Man obtains his strength through Ethics.];
+            [Hence, he is stronger as well as more daring.];
+            [The Ethical Man would risk his life to save another man's life];
+        }
+        case 29 {
+            [~On the topic of Wealth and Ethics:];
+            [To be truly ethical, thou shouldst reject Wealth.];
+            [Wealth corrupts the soul. It doth do so by placing a greater value upon goods and material possessions rather than upon the "anima", that is the living matter or spiritual matter. Spiritual kinship should be established as early as possible instead of the numerous tentative efforts by parents and the various communities to establish a Wealth kinship.];
+            [Believing thou shouldst abide by rules of conduct, learning well and being of good rule and disposition are what will make an ethical Man of thee. Wealth turns too many men away from rules of conduct.];
+            [Quickly enough, young men like thee become wastrels and haunters of alehouses, thereby losing their temporary possession, Wealth, but above all losing their richest dowry, their only true wealth, their soul. Ethics will prevent thee from following that path. Reject Wealth, my dear reader and most assured brother, and be truly ethical.~ I hope I have convinced thee, for if so, I have saved thee.];
+        }
+        case 30 {
+            [Never, NEVER, surrender to thine enemies.];
+            [Fight to the death, but do not abandon thine Ethics.];
+        }
+        case 61 {
+            [~The serpent of gold can send thee along the path to knowledge, but only if balanced by wisdom. Thou mayest already have felt the ill fortune brought about by wealth without wisdom; now use thy newfound wisdom to balance the power of gold.];
+        }
+        case 62 {
+            [In the event that the waiting lizard should become uncontrollable, use this hammer, but be warned that using it foolishly will result in punishment for it is not easily replaced.];
+        }
+        case 63 {
+            [~Do thou not despair, general, for the Arrows of Discipline];
+            [are well hidden.];
+            [If thou hast need of them, I will provide them.];
+        }
+        case 64 {
+            [~Thou hast proven, through thy discipline, to be worthy.];
+        }
+        case 65 {
+            [~Drink thou of the fountain and feel the Force of Discipline flow through thee.];
+        }
+        case 66 {
+            [~Congratulations to thee, initiate. Thou hast found the symbol of balance.];
+        }
+        case 67 {
+            [~It is thy duty to meet thy death protecting the women and children. Their lives are the wellspring of our strength; draw courage from the knowledge that it is thy body which stands between the foul blades of Order and their hearts.];
+        }
+        case 68 {
+            [~Move one of the stones so that there are two straight lines];
+            [of four stones that cross each other at the center point of];
+            [each line];
+        }
+        case 75 {
+            [~Here doth lie Ssithnos, foully murdered in his unrelenting];
+            [service to balance.];
+        }
+        case 77 {
+            [~Let this be a final warning: Those who enter this room lacking in discipline will forfeit their lives.];
+        }
+        case 78 {
+            [Those who know not the password, Despair! The brass gate bars thy way, would-be intruder, and only those privy to the secret password know when to use the runes! Crawl back to your cities of structured folly and temples of Order, dog!  As I lie here, slowly dying of starvation, I laugh at thy fate, for though our city hath fallen, fool, thou wilt not use my gate as a means of ingress! Here in our city, your fellow dogs revel in their victory, knowing not that I have sealed them within! There, look! A general shakes his fist at me through the brass gate, sealed within! Nay, Order dogs, thou wilt not use my gate to send your metal slayers toward my fellows! Thou wilt have to use the serpent gates to conquer the southern lands! I can die in peace, knowing that, though mine home lies in ruin and the Chaos that is our city is now under the control of the enemy, my gate will stand closed for all eternity!];
+        }
+        case 80 {
+            [I write this in great haste, for I can already hear the forces of Order breaching the keep walls. I know not how this missive will survive to reach the outside lands, or for that matter, future generations. Mine only hope is that this speedily-drafted work will offer record of our hallowed philosophy. For our culture to have any chance of enduring the ages, someone, somewhere must find this. Please, reader, I beseech thee, spread the word of our peoples. Balance -- The harmony between the Principles of Order and Chaos -- is the one pure axiom we hold true. All three Principles are symbolized in our hieroglyphs: The Great Earth Serpent, keeper of Balance, lies on a vertical plane, around which the two opposing serpents of Chaos and Order wrap themselves.];
+            [Chaos and Order each embrace three Forces. These six Forces, when combined, form the three Principles of Balance. The Forces of Chaos are Tolerance, Enthusiasm, and Emotion; the Forces of Order are Ethicality, Discipline, and Logic.];
+            [CHAOS -- Tolerance is that which encourages the acceptance of all things. Enthusiasm is the energy that allows one to perform great tasks. Emotion is the ability to perceive those feelings that come from the heart, as opposed to coming from the mind.];
+            [ORDER -- Ethicality is the belief that there is great value in abiding by rules of conduct. Discipline is the drive to complete a task and avoid the distractions that will prevent its completion. Logic permits clear, reasoned thought, free from any instinctual biases.];
+            [BALANCE -- From the marriage between two Forces, one each from Chaos and Order, come the Principles. Tolerance and Ethicality combine to form Harmony, the ability to be at peace with the self, the individual, and the world. From the union of Enthusiasm and Discipline springs Dedication, that which permits one to surmount obstacles and lead others. Finally, Emotion tempered by Logic results in Rationality, the ability to comprehend life and understand the world around us. The Forces of Chaos and Order must ever remain in Balance, for imbalance leads to disaster. Witness the war-torn state of our world today! As thou canst surely see, my world hath been torn asunder by disregard for Balance -- our dearest axiom! If thou dost thrive in a time less violent, I can do no more than plead with thee to help restore Balance to the Serpent Isle! I must end this brief explication here, for I can hear mine attackers pounding upon the oaken door downstairs.];
+            [I wish thee and thy world better fortune than mine own. -- Ssithnos, the Great Hierophant];
+        }
+        case 81 {
+            [~The Chaos vermin took their own lives];
+            [ rather than face us.];
+            [\x09Let them rot!];
+        }
+        case 82 {
+            [~\x09\x09\x09Sceptre of Enlightenment.];
+            [True dedication places Enlightenment above all else.];
+        }
+        case 83 {
+            [~Revere these remains, for they are the ashes of the brave initiates who sacrificed their bodies for the greater victory of Order over Chaos. Theirs are the minds that make the Lords of Discipline more than mere automatons. Their sacrifice will bring ultimate victory to our cause, for none can stand against an automaton with the Will and Discipline of an initiate!];
+        }
+        case 84 {
+            [~Report on the Cleansing of the Fiend's Domain~];
+            [~Subcommander Stherask, I regret to inform thee that, of the entire company of brass automatons, not one has returned. This mission has not only proven costly in terms of the efforts expended by our wizards to create these automatons, but in the lives of brave soldiers as well.  Of the three humans we had sent on the mission, Lieutenant Alspeth and her two sergeants, Shesparios and Iskil, none have returned.  We can only fear the worst in this case; the mission has failed.  Were it not for the unfaltering faith I have in thee and our Commander, I would question the value of our attempt, as the Fiend has ceased to meddle in the affairs of Serpent's Fang.  I assure thee, Subcommander, that none blame thee for the deaths of those three fine warriors.  All who know of the failed mission have no doubts that this was a just cause for loss of lives.];
+        }
+        case 99 {
+            [~Ritual of Reunification. ~];
+            [~  First -- Open the window into the Void by placing the Blackrock Serpent in its proper slot.];
+            [~  Second -- Each imprisoned Bane must be placed upon the altar corresponding to its Principle. Unrestrained Emotion leads to Madness. Unchecked Enthusiasm leads to Wantonness. Unthinking Tolerance produces Anarchy. The Flame of Chaos shall welcome each Bane to its proper place.];
+            [~  Third -- That which shall bond the Banes together must be placed upon the remaining altar.];
+            [~  If all is done correctly, Chaos shall be reunited.];
+        }
+        case 120 {
+            [~Ethicality. ~];
+            [~\x09As a follower of Order thou must always conform to the principles of conduct as accepted by our alliance. Without these as guides we as a people would be lost. We would be no better than those who are controlled by Chaos.];
+            [~\x09We are far better than those who permit anarchy to control their lives and their thoughts. We must be eternally vigilant to insure that our system of ethics stands strong, that it must not be corrupted from within. We must insure that we remain pure, for corruption is the strength of our enemy, though it will be his own undoing should we stand aligned against it.];
+            [~\x09Student of Ethicality, take heed! Thou must be stronger than thou art in order to stand against the false truths that Chaos will tempt thee with. As iron is in a forge, thou wilt be blasted with the torrent of Chaos and corruption 'til thou wilt lose thy brittleness and harden into a core of strength. Through Ethics, thou canst become free of the anarchy and pain that lies within Chaos and ignorance.];
+        }
+        case 121 {
+            [~Library of the Hierophant ~~ \x09The Great Library of the Hierophant contains all the history and knowledge that defines and guides the followers of Order. Though it is hidden away within the bowels of the mountain, a student of Order may enter it through the portal in the Temple of the Hierophant.];
+            [~\x09In times of disaster and of war, the Great Library was sealed to prevent its valuable works from being destroyed, or from falling into the hands of Chaos. Entry into the Library meant first opening the door to the Temple of the Hierophant.];
+            [~ This could only be achieved by a student placing the correct symbols of Order on the pedestal before the door to the temple. Since only true followers of Order would have the understanding of the symbols, this was the first test to prevent those of Chaos from desecrating both Temple and Library.\x09Only those who have studied\x09the writers and poets of Order will have the wisdom and knowledge to open the door.];
+            [~\x09Once the door opens the student doth need the Sceptre of the Hierophant to gain entry into the Library. Since the Hierophant keeps it in his charge, only by asking his permission can one gain access. Should the Sceptre be lost, or the Hierophant killed in battle, the Library will remain forever closed, away from the corruptions of Chaos.];
+            [~\x09With Sceptre in hand, the student must stand in front of the blue pedestal of the temple. He must place the Sceptre atop the pedestal. The student will then gain instant access to the Library. All knowledge of Order is held there as a bastion against corruption and Chaos.];
+        }
+        case 122 {
+            [~What is Order? a poem by Sschittek the Wise ~];
+            [~\x09What is Order? ~Is it a rule? ~Is it a law? ~Is it a whip with barbs to control the unruly? ~It is not any of these, it is more... ~It is wisdom, it is knowledge, ~It is a sense of duty!~ ~Ethicality is a Scroll, ~speaking of principles, ~of wisdom and of freedom ~from fear and hate. ~It is a gleam of sunrise ~guiding thee toward enlightenment ~and to thy true fate.~ ~Discipline is strength of the mind, ~born of willpower and knowledge, ~cleansing like a noon summer shower. ~It is a well-honed Serpent Dagger, ~a blade that cuts through ~Chaos and corruption's foul power.~ ~Logic is a straight path, ~without obstacles or brambles, ~free from both rock and tooth. ~Logic is precise and unswerving, ~counting Order's truth on an ~eternal Abacus\x09of Truth.];
+        }
+        case 123 {
+            [~To commune with the Serpent one must be in possession of the Earrings of the Serpent. Only via these can the Great Serpent channel his words to thee. ~To be at one with Balance one must have the blackrock Serpents of Order, Chaos, and of Balance. ~To enter into the Grand Shrine of Balance one must wear the Armour of the Serpent, carry the great Staff of the Serpent, and wear the Crown of the Serpent upon one's head. ~Only after these are obtained may one enter the most sacred of sanctums of the people of the Ophidian order.];
+        }
+        case 124 {
+            [~I have blocked the entrance to the Catacombs beneath our outpost with walls of force. None may pass ere this key is used. If thy need is great, and thou dost follow in the steps of Order, thou shalt know what to do to retrieve Loriel's Gift. ~~Ardiniss];
+            v3 = ~PostInFuture(1, << _aUSABLE_i, #OpenCatacombs_i >>, ~GimmePathEgg(1, 0));
+        }
+        case 125 {
+            [~NOTES: ~~I have looked for a way through to the other chambers of this cursed outpost, but have yet found nothing. I did discover that the well in the southernmost chamber was empty. By using rope I lowered myself down into the darkness. ~At the last chamber I could go no further -- a wall of some kind of eldritch force blocked my way. I discerned that no ordinary key would grant me passage. ~I will search for this key.];
+        }
+        default {
+            [     This is not a valid scroll.];
+        }
+    }
+}

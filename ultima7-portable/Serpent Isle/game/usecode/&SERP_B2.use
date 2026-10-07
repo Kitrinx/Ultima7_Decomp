@@ -1,0 +1,44 @@
+Routine SerpBook2Usable_i accepts a0 #locals(10) #uses(~GimmePathEgg) {
+    if (event = _Converse) {
+        playSFX(item, 94);
+        ShowBook_i(item);
+        v0 = ~GetQuality(item);
+        if (v0 = 213) {
+            [~~ ~~MY LIFE AND MY BELIEFS~~ ~~by Svenjaja~~];
+            [I do not have much time left. I hope it will be enough time to write everything down, before THEY come to take me. And THEY will come...~];
+            [I came here to this Temple full of love and inspiration. All I wanted was to read the writings of artistic truth. The wise men would talk to me and I wanted to listen to them. But then it happened...~];
+            [I did everything right, I followed the rules, but I still got confused. After fasting for two days in the meditation room and staring at the red and black floor, I was still waiting for a sign. A sign which would show me the right path to follow.~];
+            [And finally, I could rejoice. I found my calling and I was taken to the Pool of Dedication. But then the soldiers came and destroyed everything. They killed the Great Hierophant of Chaos in the garden. Somehow the people could save the Sceptre of Enlightenment. They were able to hide it beneath the lectern...~];
+            [I hope for the safety of my brother Sethys, for he doth have the key to the Altar of Tolerance. The Great Hierophant had entrusted him with the key, moments before the soldiers arrived...];
+            [I cannot hope for mine own safety, for I am sitting here now, awaiting my death. The Order fanatics will come soon and with them my death is arriving...];
+        }
+        if (v0 = 220) {
+            [~True follower of Order do not despair! The Hierophant hath led us to a new world via passage through the Wall of Lights! Though thou wert not here to make the passage, fear not. Some day thou too wilt join us. *If thou wishest to enter into the Temple of the Hierophant thou must merely place the symbols of Order upon the pedestal indicated by the plaque. ~Once the three artifacts have been placed one at a time, the door will swing wide. *If thou art a true disciple thou wilt have read the scrolls that contain the words of wisdom that thou needest to decipher the plaque's meaning. The sacred Library of the Hierophant shall remain secure from those who art not of Order. For if thou art not true, thou wilt never enter into the Hierophant's temple.];
+        }
+        if (v0 = 241) {
+            v1 = 0;
+            v2 = 0;
+            v3 = ~FindNearby_i(16, 5, _Egg_Type, _Avatar);
+            if v3 {
+                v1 = ~GetQuality(v3);
+            }
+            v4 = ~FindNearby_i(0, 7, _Iron_Maiden, v3);
+            if (((v1 = 150) or (v1 = 152)) and v4) {
+                [Behold! Thou art worthy to cross to the Temple of Balance!];
+                v5 = ~GimmePathEgg(1, 0);
+                v6 = ~SetQuality(v1, v5);
+                v6 = ~PostInFuture(5, << _aNO_HALT_i, _aUSABLE_i, #LayChasmBridge_i >>, v5);
+                closeAllGumps();
+                Foreach v9 in v4 {
+                    v6 = ~PostInFuture(2, << _aNO_HALT_i, _aUSABLE_i, #Iron_Maiden >>, v9);
+                    v6 = ~PostInFuture(4, << _aNO_HALT_i, _aUSABLE_i, #Iron_Maiden >>, v9);
+                    v6 = ~PostInFuture(6, << _aNO_HALT_i, _aUSABLE_i, #Iron_Maiden >>, v9);
+                    v6 = ~PostInFuture(8, << _aNO_HALT_i, _aUSABLE_i, #Iron_Maiden >>, v9);
+                }
+                terminate;
+            } else {
+                [Within my pages lie the bridges to the great chasms. When thou dost reach the great pillars, stand between them and read my words once more.];
+            }
+        }
+    }
+}

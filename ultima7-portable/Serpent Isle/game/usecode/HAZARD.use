@@ -1,0 +1,73 @@
+Routine Trapper accepts a0 #locals(4) #uses(Bark_i, PartyFaces_i, AttackAvatar_i) {
+    v0 = false;
+    v1 = ~GetCoord(_Avatar);
+    v2 = v1::1;
+    v3 = v1::2;
+    if ((v2 > 1176) and ((v2 < 1272) and ((v3 > 431) and (v3 < 543)))) {
+        v0 = true;
+    }
+    if ((event = _NearDeath) and ~GetItemFlag_i(_Tournament, _Hazard)) {
+        SetSpeaker0_i(0, _LordBritish);
+        ["Argh! Thou thinkest thou canst save thy precious Gwani by slaying me? Fool! Thou hast the brain of a headless!" *"I laugh at thee, even as I lie here dying in mine own blood. The Gwani are doomed I tell thee, doomed like a feeble rabbit in my trap, hahaha..."];
+        CloseSpeaker0_i();
+        ClearItemFlag_i(_Tournament, _Hazard);
+        Bark_i(1, "@Taste my steel, trapper!@", _Avatar);
+        ReduceHits_i(0, 55, _Hazard);
+        $hazarddead = true;
+    }
+    if ((event = _Converse) and (v0 = false)) {
+        Item_bark("@Stand fast, trapper!@", _Avatar);
+        PartyFaces_i(917);
+        Bark_i(3, "@Thou shalt not take me!@", 917);
+        AttackAvatar_i(item);
+    }
+    if ((event = _Converse) and v0) {
+        Item_bark("@Stand fast, Trapper!@", _Avatar);
+        PartyFaces_i(917);
+        Bark_i(3, "@At last!@", 917);
+        SetWorkType(_Talk, item);
+    }
+    if (event = _Talking) {
+        Npc_schedule(item);
+        ClearBark_i(item);
+        SetSpeaker0_i(0, _LordBritish);
+        ["We have stalked each other long enough!"];
+        TurnOn(<< "Are you The Trapper?", "bye" >>);
+        converse {
+            key ("Are you The Trapper?") {
+                TurnOff("Are you The Trapper?");
+                ["Forgo the pretense, I am Hazard the Trapper as thou dost know well by now."];
+                TurnOn("Murderer!");
+            }
+            key ("Murderer!") {
+                TurnOff("Murderer!");
+                ["That charge is most unfair! The Gwani are merely animals! I kill them as I would a bear, or a leopard."* "Their skins keep many a man warm when they venture into these icy regions. Why, I would kill a man if he dared to steal mine."* "Aye, their skins are the most profitable, too."];
+                TurnOn(<< "animals", "profit", "Gwani" >>);
+            }
+            key ("profit") {
+                TurnOff("profit");
+                ["Aye, the best skins I take are those I peel from those beasts while they still live. I have not killed a Gwani before skinning it in years, and I shan't stop till the last one is gone!"];
+            }
+            key ("animals") {
+                TurnOff("animals");
+                ["Trapping them is too easy. 'Tis a wonder they survive out here at all! Why, they are as docile as sheep!"* "A leopard at least is sport. It would sever mine arm if I gave it the chance. Slaughtering the Gwani is doing them a favor."];
+                TurnOn("Stop the killing.");
+            }
+            key ("Gwani") {
+                TurnOff("Gwani");
+                ["They provide me a fat living. Thou art daft to be concerned for the likes of them!"* "And if thou hast a plan for stopping me then I think thou shouldst leave now, lest I skin thee alive, too!"];
+            }
+            key ("Stop the killing.") {
+                ["No one tells me what I can and cannot kill! Prepare to join thy Gwani friends on my wall, Avatar."];
+                AttackAvatar_i(item);
+                terminate;
+            }
+            key ("bye") {
+                ["From the look in thine eye I can see that this is far from over. Truly this is farewell, Avatar."];
+                AttackAvatar_i(item);
+                terminate;
+            }
+        }
+        clear_answers;
+    }
+}

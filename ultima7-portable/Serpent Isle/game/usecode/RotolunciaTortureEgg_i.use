@@ -1,0 +1,74 @@
+Routine RotolunciaTortureEgg_i accepts a0 #locals(5) #uses(AttackAvatar_i, Bark_i) {
+    if (~GetItemFlag_i(_Dead, _Rotoluncia) and (event = _Trigger)) {
+        Item_destroy(item);
+        terminate;
+    }
+    if (event = _Trigger) {
+        v0 = ~FindNearby_i(0, 30, _MgGremlin, item);
+        v1 = (6 - ~ListSize_i(v0));
+        While (v1 > 0) {
+            v2 = ~CreateCreature_i(<< (2149 + ~Random(19)), 2107, 0 >>, _MgGremlin);
+            if v2 {
+                if flag(328) {
+                    AttackAvatar_i(v2);
+                } else {
+                    SetWorkType(_TendShop, v2);
+                    Npc_setAlignment(_Neutral, v2);
+                }
+                v1 = (v1 - 1);
+            }
+        }
+    }
+    if flag(328) {
+        Bark_i(0, "@Aha!@", _Rotoluncia);
+        SetWorkType(_Combat_0, _Rotoluncia);
+    }
+    if ((~GetWorkType(_Rotoluncia) = _Combat_0) or (~GetWorkType(_Rotoluncia) = _Talk)) {
+        terminate;
+    }
+    ClearBark_i(_Rotoluncia);
+    v3 = ~Random(6);
+    if (v3 = 1) {
+        Bark_i(0, "@Tell me!@", _Rotoluncia);
+    }
+    if (v3 = 2) {
+        Bark_i(0, "@Bring tongs!@", _Rotoluncia);
+    }
+    if (v3 = 3) {
+        Bark_i(3, "@Tell me the secret!@", _Rotoluncia);
+    }
+    if (v3 = 4) {
+        Bark_i(0, "@Bring the prisoner!@", _Rotoluncia);
+    }
+    if (v3 = 5) {
+        Bark_i(0, "@Make him bleed.@", _Rotoluncia);
+    }
+    if (v3 = 6) {
+        Bark_i(0, "@Torture him...@", _Rotoluncia);
+    }
+    v0 = ~FindNearby_i(0, 30, _MgGremlin, item);
+    v4 = false;
+    if v0 {
+        v4 = v0::~Random(~ListSize_i(v0));
+        ClearBark_i(v4);
+        if (v3 = 1) {
+            v2 = ~PostInFuture(5, << _aNO_HALT_i, _aBARK_i, "@Or die!@" >>, v4);
+        }
+        if (v3 = 2) {
+            v2 = ~PostInFuture(5, << _aNO_HALT_i, _aBARK_i, "@Yes, Rotoluncia!@" >>, v4);
+        }
+        if (v3 = 3) {
+            v2 = ~PostInFuture(5, << _aNO_HALT_i, _aBARK_i, "@Tell about Daemons!@" >>, v4);
+        }
+        if (v3 = 4) {
+            v2 = ~PostInFuture(2, << _aNO_HALT_i, _aBARK_i, "@Let me do it!@" >>, v4);
+        }
+        if (v3 = 5) {
+            v2 = ~PostInFuture(7, << _aNO_HALT_i, _aBARK_i, "@I'm thirsty...@" >>, v4);
+        }
+        if (v3 = 6) {
+            v2 = ~PostInFuture(4, << _aNO_HALT_i, _aBARK_i, "@Then kill him!@" >>, v4);
+        }
+    }
+    v2 = ~PostInFuture((~Random(15) + 10), << _aNO_HALT_i, _aUSABLE_i, #RotolunciaTortureEgg_i >>, item);
+}

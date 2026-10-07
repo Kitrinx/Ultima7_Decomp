@@ -1,0 +1,746 @@
+Routine Rocco accepts a0 #locals(14) #uses(~LordOrLady, ~AvatarName, Bark_i, PartyFaces_i, ~PartyUtters, ~IsNPCNear, SayIfNear_i, RoccoSellsFood_i, RoccoSellsDrink_i, ~AskYesNo, ~GiveItemsOrDrop_i, MessengerBringsScroll_i) {
+    v0 = ~LordOrLady();
+    v1 = ~AvatarSex();
+    v2 = ~AvatarName();
+    v3 = false;
+    v4 = "him";
+    if v1 {
+        v5 = "her";
+    }
+    if (event = _Bark) {
+        v6 = ~Random(6);
+        if (v6 = 1) {
+            Item_bark("@Petra, bring wine!@", _Rocco);
+            Bark_i(2, "@In a minute...@", _Petra);
+        }
+        if (v6 = 2) {
+            Item_bark("@These are hard times...@", _Rocco);
+        }
+        if (v6 = 3) {
+            Item_bark("@Rooms for rent!@", _Rocco);
+        }
+        if (v6 = 4) {
+            Item_bark("@Care for a drink?@", _Rocco);
+        }
+        if (v6 = 5) {
+            Item_bark("@Hungry?@", _Rocco);
+        }
+        if (v6 = 6) {
+            Item_bark("@Have a seat...@", _Rocco);
+        }
+    }
+    if (event = _Converse) {
+        Item_bark("@Might I speak with thee?@", _Avatar);
+        PartyFaces_i(65506);
+        Bark_i(5, (("@Certainly, " + v0) + ".@"), _Rocco);
+        SetWorkType(_Talk, _Rocco);
+    }
+    if (event = _Talking) {
+        Npc_schedule(_Rocco);
+        ClearBark_i(_Rocco);
+        SetSpeaker0_i(0, _Rocco);
+        v7 = ~GetItemFlag_i(_Met, _Rocco);
+        if (v7 = false) {
+            if (~GetWorkType(_Rocco) = _TendShop) {
+                ["Welcome to the Blue Boar Inn. I am the innkeeper. My name is Rocco."];
+            } else {
+                ["I do not believe we've met. I'm Rocco, the innkeeper at the Blue Boar."];
+            }
+            ["'Tis good to have more visitors again. We had despaired, what with the storms and all."];
+            SetItemFlag_i(_Met, _Rocco);
+        } else {
+            ["So good to see thee again, <v0>. Always good to have visitors."];
+        }
+        TurnOn(<< "Blue Boar", "visitors" >>);
+        TurnOn(<< "food", "drink", "room" >>);
+        if ($foundsimonbottle and (~GetWorkType(_Simon) <> _Wait)) {
+            TurnOn("brown bottle");
+        }
+        if (flag(277) and not $knowslippers) {
+            TurnOn("slippers");
+        }
+        if (flag(234) and not ~GetItemFlag_i(_Dead, _Rotoluncia)) {
+            TurnOn("kidnap");
+        }
+        TurnOn("bye");
+        converse {
+            key ("kidnap") {
+                TurnOff("kidnap");
+                ["I cannot say that I'm surprised, <v2>. Thy coming hath mightily disturbed the Mages."];
+                ["Now there are many suspects -- Torrissio is certainly a sly one, and Mortegro doth have odd interests -- but we both know whom thy enemy must be..."];
+                flag(322) = true;
+                flag(319) = true;
+                ["'Tis that she-witch, Rotoluncia! Everyone knows that she doth work against thee."];
+                if ~IsNPCNear_i(_Petra) {
+                    SetSpeaker1_i(0, _Petra);
+                    ["Perhaps <v2> should go to Julia, dear. The Rangers must investigate this crime."];
+                    CloseSpeaker1_i();
+                    SetSpeakerSlot_i(0);
+                    ["Nah -- she'll only try to extort money from <v4>. Julia is a thief..."];
+                    ["If I wert thou, <v2>, I'd think about leaving town. Rotoluncia is not an enemy that a Mundane can handle!"];
+                }
+            }
+            key ("Blue Boar") {
+                TurnOff("Blue Boar");
+                ["Interesting name, is it not?"];
+                v8 = ~PartyUtters(false, "@I have heard of that name before.@", "@That sounds just like the one in Britannia!@", 1);
+                SetSpeakerSlot_i(0);
+                ["Anything is possible, I suppose. I inherited this inn from my parents, and they from theirs. 'Tis an old name... perhaps from the time of the crossing."];
+                TurnOn("crossing");
+            }
+            key ("crossing") {
+                TurnOff("crossing");
+                ["It hath been a long time since I heard the tale in full. Let me see if I remember it at all... For the most part it had something to do with an usurper king and the Mages. But for my folk, it was simply for money, I think."];
+                TurnOn(<< "usurper king", "Mages", "money" >>);
+            }
+            key ("usurper king") {
+                TurnOff("usurper king");
+                ["Back in the old lands, a domineering man named... Brattish, or Brutish, or somesuch, usurped the throne. His rule was hard and unjust, so many people fled across the seas to this land."];
+                v8 = ~PartyUtters(false, 0, "@It sounds like he is talking about Lord British!@", 1);
+                SetSpeakerSlot_i(0);
+                TurnOn(<< "old lands", "this land" >>);
+            }
+            key ("old lands") {
+                TurnOff("old lands");
+                ["Let me think a moment. I am terrible with names like this... Aha! I have it! The old lands were known as Sosaria."];
+            }
+            key ("this land") {
+                TurnOff("this land");
+                ["Well, when the people arrived here, they thought to name the land after their old home... ah, one moment... New Sosaria. But then they found the ruins scattered here and there, with all those snakes pictured on them, so most folks call this The Serpent Isle. Though some still refer to it by its proper name, New Sosaria."];
+                TurnOn(<< "ruins", "snakes" >>);
+            }
+            key ("ruins") {
+                TurnOff("ruins");
+                ["Well, the ruins are on the mainland anyway. I saw the ones around Monitor when I was just a lad. There is nothing special about them, merely piles of old stone from settlers way before the New Sosarians."];
+            }
+            key ("snakes") {
+                TurnOff("snakes");
+                ["Either this place had far more snakes when those people lived here, or they worshipped them, or something. There are snakes carved all over those ruins. I don't even think that the Mages know what they mean."];
+            }
+            key ("Mages") {
+                TurnOff("Mages");
+                ["As well as I can remember, most of the people that fled from the usurper were Mages. I don't think that any of them are still alive, but thou canst never tell. Perhaps the Mad Mage is that old, who knows? Certainly not the current MageLord."];
+                TurnOn(<< "Mad Mage", "MageLord" >>);
+            }
+            key ("Mad Mage") {
+                TurnOff("Mad Mage");
+                ["The Mad Mage is a crazy old man that lives on an island not far from here. Thinks he can create life... From what I hear, he once lived here in Moonshade -- was a teacher or something, 'til he went mad."];
+            }
+            key ("MageLord") {
+                TurnOff("MageLord");
+                ["Filbercio is the most recent MageLord, <v0>. He is a man of curious passions. Not what thou wouldst expect from most Mages."];
+                TurnOn("passions");
+            }
+            key ("passions") {
+                TurnOff("passions");
+                ["I'll simply say that I am mighty glad that my Petra is metal. That alone may keep her safe from his wandering eye."];
+            }
+            key ("money") {
+                TurnOff("money");
+                ["Aye, plain money. The folks that came over were lesser sons and daughters who could never hope to inherit anything. They came hoping to start their own businesses, like the Blue Boar. 'Twas named in honor of my great-great grandsire's inn."];
+            }
+            key ("visitors") {
+                TurnOff("visitors");
+                ["Of course, there's not much business now due to the terrible storms. But in better times our rooms are always full. Wert thou interested in anyone in particular?"];
+                PushKeys();
+                TurnOn(<< "the sage Batlin", "the scholar Gwenno", "nothing more" >>);
+            }
+            key ("the sage Batlin") {
+                TurnOff("the sage Batlin");
+                ["Such a one did come through here, perhaps two\x09months ago."];
+                if ~IsNPCNear(_Petra) {
+                    SayIfNear_i("@'Twas three months ago, Rocco.@", 65508);
+                    SetSpeaker0_i(0, _Rocco);
+                    ["Yes, she's right... it was three months ago."];
+                }
+                ["There was some sort of a scandal, as I recall. It was said that this Batlin stole an ancient artifact of some kind. He fled by ship -- perhaps Captain Hawk could tell thee more."];
+                v9 = true;
+            }
+            key ("the scholar Gwenno") {
+                TurnOff("the scholar Gwenno");
+                ["Thou dost know her! She and I are the closest of friends. She stayed here for many weeks."];
+                v8 = ~PartyUtters(false, "@Gwenno is my friend's missing wife.@", "@Just how well dost thou know Gwenno?@", 65533);
+                SetSpeaker0_i(0, _Rocco);
+                ["I swear I am innocent! We were only friends, <v0>."];
+                PushKeys();
+                TurnOn(<< "Where did she go?", "Why was she here?", "How long ago?", "change subject" >>);
+            }
+            key ("Where did she go?") {
+                TurnOff("Where did she go?");
+                ["When she had studied all of the materials which were available here, she determined to go to\x09the Isle of Monks to read the scrolls kept there."];
+                TurnOn("Isle of Monks");
+            }
+            key ("Isle of Monks") {
+                TurnOff("Isle of Monks");
+                ["The Xenkan Monks live north of here on a forested island. They tend to keep to themselves, studying the prophecies of long-dead mystics. But thou canst not go there, for there is no sailor crazy enough to make the journey. The magical\x09storms have destroyed every boat on this coast, save Hawk's -- and he won't sail."];
+            }
+            key ("Why was she here?") {
+                TurnOff("Why was she here?");
+                ["The good lady said that it was her task to study all of the cultures and beliefs there were in the Serpent Isles. She was planning to write a report, and she said that her discoveries would startle her countrymen."];
+            }
+            key ("How long ago?") {
+                TurnOff("How long ago?");
+                ["It hath been a long time since we last saw Gwenno. Many months."];
+                if ~IsNPCNear(_Petra) {
+                    SayIfNear_i("@Eight months, dear Rocco.@", 65508);
+                    SetSpeaker0_i(0, _Rocco);
+                }
+            }
+            key ("change subject", "nothing more") {
+                ["I am sorry I was not more helpful..."];
+                PopKeys();
+            }
+            key ("food") {
+                if ((~GetWorkType(_Rocco) = _TendShop) or (~GetWorkType(_Rocco) = _Waiter)) {
+                    ["We serve nothing pretentious, but it fills the belly and warms the soul."];
+                    if not v3 {
+                        ["Petra is a surprisingly good cook, considering that she is an automaton."];
+                        v3 = true;
+                        TurnOn(<< "automaton", "Petra" >>);
+                    }
+                    RoccoSellsFood_i();
+                } else {
+                    ["Return when we be open!"];
+                    TurnOff("food");
+                }
+            }
+            key ("automaton") {
+                TurnOff("automaton");
+                ["We have a lot of them around here -- magical creations, scavenged from the Serpent ruins and restored to service by our Mages. But Petra is unique, being an experiment by Torrissio the Sly. While all the others are mere machines, my Petra is a warm, caring person."];
+                if ~IsNPCNear(_Petra) {
+                    SetSpeaker1_i(0, _Petra);
+                    ["Do not mention that name again, Rocco! Why summon more trouble than we already have?"];
+                    CloseSpeaker1_i();
+                    SetSpeaker0_i(0, _Rocco);
+                    ["She doth not care much for Torrissio -- considering that he created her for vile and exploitive reasons. But Petra escaped, and now I care for her."];
+                }
+                TurnOn("Torrissio");
+            }
+            key ("Torrissio") {
+                TurnOff("Torrissio");
+                ["Torrissio is called the Sly for good reason. He doth meet with other people's wives on the sly. And he takes great delight in hurting people, but never enough to catch the Council's attention... Torrissio is not a nice man."];
+            }
+            key ("Petra") {
+                TurnOff("Petra");
+                ["She's my serving wench, as well as being a damn fine cook -- which, considering she can neither eat nor taste, is rather incredible."];
+            }
+            key ("drink") {
+                if ((~GetWorkType(_Rocco) = _TendShop) or (~GetWorkType(_Rocco) = _Waiter)) {
+                    ["We serve only the finest of beverages."];
+                    RoccoSellsDrink_i();
+                } else {
+                    ["Come talk to me when we be open for business!"];
+                    TurnOff("drink");
+                }
+            }
+            key ("room") {
+                TurnOff("room");
+                if ($roccosaidroom = false) {
+                    ["We've nothing fancy -- simply clean rooms, and we keep the ruffians out."];
+                    ["But thou lookest to be a respectable person."];
+                    $roccosaidroom = true;
+                }
+                ["The cost is 12 guilders per person. Wouldst thou like a room for the night?"];
+                if ~AskYesNo() {
+                    v10 = (~ListSize_i(~GetParty()) * 12);
+                    v11 = ~CountItem(_All, _All, _Moon_Money, _Party);
+                    if (v11 >= v10) {
+                        ["Here is thy key."];
+                        v12 = ~GiveItemsOrDrop_i(true, 0, 11, 184, 641, 1, _Avatar);
+                        v13 = ~TakeFromParty_i(0, _All, _All, _Moon_Money, v10);
+                        ["'Tis the northwest corner room."];
+                    } else {
+                        v8 = ~PartyUtters(false, 0, "@But Avatar, we do not have the guilders!@", 1);
+                        if (v8 <> 65180) {
+                            SetSpeaker0_i(0, _Rocco);
+                            ["Then thou canst not stay at the inn. In these hard times, I cannot afford to keep thee and thy companions for free."];
+                        } else {
+                            ["Thou hast not enough guilders for my rooms."];
+                        }
+                    }
+                } else {
+                    ["Some other time, perhaps."];
+                }
+            }
+            key ("brown bottle") {
+                TurnOff("brown bottle");
+                ["I do indeed recognize the description. Such bottles are used to contain that foul brew which the sailor-folk of Fawn prefer. I cannot tolerate the swill myself, nor can any of my customers. That's why I do not stock it."];
+                v8 = ~PartyUtters(false, 0, "@Perhaps we should investigate this place called Fawn.@", 1);
+                SetSpeaker0_i(0, _Rocco);
+                if (v8 <> 65180) {
+                    ["Good luck to thee! With no ships sailing, there is no way to go to Fawn from here."];
+                }
+                TurnOn("Fawn");
+            }
+            key ("Fawn") {
+                TurnOff("Fawn");
+                ["'Tis somewhere on the western portion of the mainland. I never went there. Though I heard tell that it is a city built on great piers out in the water."];
+                if ~IsNPCNear(_Petra) {
+                    SetSpeaker1_i(0, _Petra);
+                    ["Sounds dangerous to me..."];
+                    CloseSpeaker1_i();
+                    SetSpeakerSlot_i(0);
+                    ["That is because thou canst not swim, Petra."];
+                }
+            }
+            key ("Stefano") {
+                TurnOff("Stefano");
+                ["He looked as pale as a corpse, <v0>. He babbled something about a Death Knight and ran out as though his pants were on fire. Sounds like he's in trouble again."];
+                if ~IsNPCNear(_Petra) {
+                    SetSpeaker1_i(0, _Petra);
+                    ["Again?! When is Stefano not in trouble?"];
+                    CloseSpeaker1_i();
+                    SetSpeakerSlot_i(0);
+                }
+                TurnOn("Death Knight");
+            }
+            key ("Death Knight") {
+                TurnOff("Death Knight");
+                ["I would thank thee not to repeat that in here. As Petra says, no use borrowing trouble..."];
+                if ~IsNPCNear(_Petra) {
+                    SetSpeaker1_i(0, _Petra);
+                    ["I knew thou wert learning, Rocco."];
+                    CloseSpeaker1_i();
+                    SetSpeakerSlot_i(0);
+                    ["Oh, go on with thee!"];
+                }
+                ["Some say that it is a Daemon summoned to hunt the unfortunate person. Others say that it is an automaton designed to kill. I do not know, nor do I wish to ask!"];
+            }
+            key ("slippers") {
+                TurnOff("slippers");
+                ["They are not anything that I would wear, and Petra's metal feet are never cold... least not as she would notice."];
+                if ~IsNPCNear(_Petra) {
+                    SetSpeaker1_i(0, _Petra);
+                    ["I would know that it was cold, dear Rocco, but it would not trouble me."];
+                    SetSpeakerSlot_i(0);
+                    ["See there?"];
+                    SetSpeakerSlot_i(1);
+                    ["But thou mightest ask Bucia. She may sell something like that."];
+                    CloseSpeaker1_i();
+                    SetSpeakerSlot_i(0);
+                    ["Good idea, Petra!"];
+                }
+                TurnOn("Bucia");
+            }
+            key ("Bucia") {
+                TurnOff("Bucia");
+                ["Bucia is the proprietor of the Capessi Canton in the bazaar. She is Moonshade's only provisioner."];
+                if ~IsNPCNear(_Petra) {
+                    SetSpeaker1_i(0, _Petra);
+                    ["And its greatest gossip, as well!"];
+                    CloseSpeaker1_i();
+                    SetSpeakerSlot_i(0);
+                    ["Petra, honestly!"];
+                }
+                ["Bucia may be able to tell thee if she sells anything like them. And who purchased them."];
+            }
+            key ("bye") {
+                CloseSpeaker0_i();
+                Bark_i(0, "@Fare well@", _Avatar);
+                Bark_i(2, "@Come again!@", _Rocco);
+                MessengerBringsScroll_i();
+                break;
+            }
+        }
+        clear_answers;
+    }
+}
+
+Usable RoccoSellsFood_i #locals(19) #uses(~LordOrLady, ~AskOrdList, ~AskYesNo, ~RoccoHaggles_i, ~SellItem_i, ~PartyUtters) {
+    v0 = ~LordOrLady();
+    PushKeys();
+    v1 = true;
+    v2 = << "nothing", "jerky", "fish", "sausage", "roast lamb", "honey cake" >>;
+    v3 = << 0, 377, 377, 377, 377, 377 >>;
+    v4 = << 65177, 15, 13, 7, 14, 6 >>;
+    v5 = << 0, 20, 22, 25, 35, 10 >>;
+    v6 = << 0, 12, 13, 10, 19, 6 >>;
+    v7 = 952;
+    v8 = << 0, 2, 1, 1, 1, 1 >>;
+    v9 = << 0, 1, 1, 1, 1, 1 >>;
+    if ~AvatarSex() {
+        v10 = "Milady";
+    } else {
+        v10 = "Milord";
+    }
+    ["So what hast thou an appetite for, <v0>?"];
+    While v1 {
+        v11 = ~AskOrdList(v2);
+        if (v11 = 1) {
+            ["Perhaps another time, then."];
+            v1 = false;
+        } else {
+            v12 = v5::v11;
+            v13 = 0;
+            v14 = ~rndRange(5, 1);
+            if (v14 = 1) {
+                v15 = "Dost thou accept?";
+            }
+            if (v14 = 2) {
+                v15 = "Wilt thou have some?";
+            }
+            if (v14 = 3) {
+                v15 = "Wilt thou pay such a charge?";
+            }
+            if (v14 = 4) {
+                v15 = (v10 + ", dost thou agree?");
+            }
+            if (v14 = 5) {
+                v15 = (v10 + ", is this a price that thou canst pay?");
+            }
+            if (v11 = 2) {
+                ["I am afraid that the price is <v12> guilders for two strips of jerky... these being terrible times and all."];
+                ["<v15>"];
+                v16 = "strips of jerky, in bunches of two,";
+            }
+            if (v11 = 3) {
+                ["No one prepares fish better than my Petra!"];
+                ["The dinner costs <v12> guilders, but if I were not such an honest innkeeper I would charge more and make a fortune!"];
+                ["<v15>"];
+                v16 = "fish dinners";
+            }
+            if (v11 = 4) {
+                ["Petra's sausage is very good. <v12> guilders is my price."];
+                ["<v15>"];
+                v16 = "sausages";
+            }
+            if (v11 = 5) {
+                ["Personally, <v0>, this is my favorite meal that Petra prepares! <v12> guilders is what I charge."];
+                ["<v15>"];
+                v16 = "lamb roasts";
+            }
+            if (v11 = 6) {
+                ["<v12> guilders will buy thee the sweetest honey cake thou hast ever tasted."];
+                ["<v15>"];
+                v16 = "honey cakes";
+            }
+            if (v12 = v6::v11) {
+                if ~AskYesNo() {
+                    v17 = v12;
+                } else {
+                    v17 = 0;
+                }
+            } else {
+                v17 = ~RoccoHaggles_i(v6::v11, v5::v11);
+            }
+            if (v17 > 0) {
+                if (v9::v11 = 1) {
+                    ["How many <v16> wouldst thou like?"];
+                    v13 = ~SellItem_i(false, 1, 20, v17, v7, v8::v11, v4::v11, v3::v11);
+                } else {
+                    v13 = ~SellItem_i(false, 1, 0, v17, v7, v8::v11, v4::v11, v3::v11);
+                }
+            }
+            if (v13 = 1) {
+                ["I'm certain that thou wilt enjoy thy meal, <v0>."];
+            } else {
+                if (v13 = 2) {
+                    ["I believe thou canst not carry so much food, <v0>."];
+                } else {
+                    if (v13 = 3) {
+                        v18 = ~PartyUtters(false, 0, (("@But " + v0) + ", we have not the guilders to pay for this.@"), 1);
+                        if (v18 <> 65180) {
+                            SetSpeaker0_i(0, _Rocco);
+                            ["Well, I hate to see thee go hungry, but Petra and I can not afford to feed thee for free. I am sorry, <v0>."];
+                        } else {
+                            ["Thou dost not have enough guilders for that!"];
+                        }
+                        if (31 < (~GetNPCID_i(_Rocco) + 6)) {
+                            SetNPCID_i(31, _Rocco);
+                        } else {
+                            SetNPCID_i((~GetNPCID_i(_Rocco) + 6), _Rocco);
+                        }
+                    } else {
+                    }
+                }
+            }
+            ["Wouldst thou care for more?"];
+            v1 = ~AskYesNo();
+        }
+    }
+    PopKeys();
+}
+
+Usable RoccoSellsDrink_i #locals(17) #uses(~LordOrLady, ~AvatarName, ~AskOrdList, ~AskYesNo, ~RoccoHaggles_i, ~SellItem_i, ~PartyUtters) {
+    v0 = ~LordOrLady();
+    v1 = ~AvatarName();
+    PushKeys();
+    v2 = true;
+    v3 = << "nothing", "wine", "mead", "ale" >>;
+    v4 = << 0, 616, 616, 616 >>;
+    v5 = << 65177, 0, 5, 3 >>;
+    v6 = << 0, 15, 20, 7 >>;
+    v7 = << 0, 8, 11, 4 >>;
+    v8 = 952;
+    v9 = << 0, 1, 1, 1 >>;
+    v10 = << 0, 1, 1, 1 >>;
+    ["So what hast thou a thirst for, <v0>?"];
+    While v2 {
+        v11 = ~AskOrdList(v3);
+        if (v11 = 1) {
+            ["Remember, these wares shall be here when thou dost return!"];
+            v2 = false;
+        } else {
+            v12 = v6::v11;
+            v13 = 0;
+            if (v11 = 2) {
+                ["I must charge the steep fee of <v12> guilders, considering the terrible state of trade with the mainland. Is this a price that thou canst pay?"];
+                v14 = "wine bottles";
+            }
+            if (v11 = 3) {
+                ["We have a most delectable brew for thee, sweetly flavored with the honey of bees raised in the mountain highlands."];
+                ["Surely at a price of <v12> guilders, thou wilt accept some?"];
+                v14 = "bottles of mead";
+            }
+            if (v11 = 4) {
+                ["This ale is weak, imported from the mainland, but I must still charge <v12> guilders for it. Wilt thou pay such a charge?"];
+                v14 = "flasks of ale";
+            }
+            if (v12 = v7::v11) {
+                if ~AskYesNo() {
+                    v15 = v12;
+                } else {
+                    v15 = 0;
+                }
+            } else {
+                v15 = ~RoccoHaggles_i(v7::v11, v6::v11);
+            }
+            if (v15 > 0) {
+                if (v10::v11 = 1) {
+                    ["How many <v14> wouldst thou like?"];
+                    v13 = ~SellItem_i(false, 1, 20, v15, v8, v9::v11, v5::v11, v4::v11);
+                } else {
+                    v13 = ~SellItem_i(false, 1, 0, v15, v8, v9::v11, v5::v11, v4::v11);
+                }
+            }
+            if (v13 = 1) {
+                ["Cheers, <v0>!"];
+            } else {
+                if (v13 = 2) {
+                    ["Thou shouldst not travel so heavily burdened -- I do not think that thou canst bear the bottles that thou desirest!"];
+                } else {
+                    if (v13 = 3) {
+                        v16 = ~PartyUtters(false, 0, (("@But " + v1) + ", we lack adequate funds!@"), 1);
+                        if (v16 <> 65180) {
+                            SetSpeaker0_i(0, _Rocco);
+                            ["Then thou'rt not drinking here!"];
+                        } else {
+                            ["Thou dost not have the guilders to pay me!"];
+                        }
+                        if (31 < (~GetNPCID_i(_Rocco) + 6)) {
+                            SetNPCID_i(31, _Rocco);
+                        } else {
+                            SetNPCID_i((~GetNPCID_i(_Rocco) + 6), _Rocco);
+                        }
+                    } else {
+                    }
+                }
+            }
+            ["Wouldst thou care for more?"];
+            v2 = ~AskYesNo();
+        }
+    }
+    PopKeys();
+}
+
+Function ~RoccoHaggles_i accepts a0, a1 #locals(18) #uses(~LordOrLady, ~AskList, ~Haggle_i, ~IsNPCNear, ~PartyUtters, ~AskYesNo, SayIfNear_i) {
+    v2 = ~LordOrLady();
+    v3 = ~AvatarSex();
+    v4 = v1;
+    v5 = ((v0 / 3) * 2);
+    v6 = (15 - (~GetNPCID_i(_Rocco) / 2));
+    v7 = 0;
+    v8 = 1;
+    v9 = 0;
+    v10 = 2;
+    v11 = ~GetNPCID_i(_Rocco);
+    While v8 {
+        v12 = ~AskList(<< "yes", "no", "haggle" >>);
+        if (v12 = "no") {
+            return 0;
+        } else {
+            if (v12 = "yes") {
+                v13 = 0;
+                goto label_8;
+            }
+        }
+        v14 = ~Haggle_i(v7, v6, v9, v5, v10, v0, v4);
+        v9 = (v9 + 1);
+        v7 = v14::4;
+        v13 = v14::3;
+        v15 = v4;
+        v4 = v14::2;
+        v5 = v14::1;
+        label_8:
+        v16 = ~Random(3);
+        if (v13 < 2) {
+            if (v4 < (v0 + ((v1 - v0) / 4))) {
+                if (v16 = 1) {
+                    ["Please do not mention this to Petra -- she would never forgive me for lowering my prices like this."];
+                }
+                if (v16 = 2) {
+                    ["At this price, I might as well sell the inn and go live in a hut! Thou dost drive a hard bargain, <v2>."];
+                }
+                if (v16 = 3) {
+                    ["I cannot believe that thou hast out-bargained me so..."];
+                    if ~IsNPCNear(_Petra) {
+                        SetSpeaker1_i(0, _Petra);
+                        ["Thou art too old to be an innkeeper, Rocco! Thy mind grows soft, like an over-ripe fruit."];
+                        CloseSpeaker1_i();
+                        SetSpeaker0_i(0, _Rocco);
+                        ["Isn't that the truth..."];
+                    }
+                }
+            } else {
+                if (v4 < (v0 + ((v1 - v0) / 3))) {
+                    if (v16 = 1) {
+                        ["Our prices are fair here at the Blue Boar, eh?"];
+                    }
+                    if (v16 = 2) {
+                        ["Yesterday, thou wouldst not have found me in such a generous mood as this. I should starve, if I sold goods at this price every day!"];
+                    }
+                    if (v16 = 3) {
+                        ["Thou hast a bargaining tongue, my friend. It reminds me of when I was thine age..."];
+                        if v3 {
+                            v17 = "lass";
+                        } else {
+                            v17 = "lad";
+                        }
+                        ["Hast thou ever considered a change of employment? I'll be retiring someday, and perhaps a young <v17> such as thyself might be interested in running an inn..."];
+                        if v3 {
+                            v18 = "her";
+                        } else {
+                            v18 = "his";
+                        }
+                        v19 = ~PartyUtters(false, 0, (("@I think not, innkeeper. The Avatar is not one to let grass grow under " + v18) + " feet.@"), 1);
+                    }
+                } else {
+                    if (v4 < (v0 + ((v1 - v0) / 2))) {
+                        if (v16 = 1) {
+                            ["Most fair, if I do say so myself."];
+                        }
+                        if (v16 = 2) {
+                            ["I shall not become a rich man from customers like thee..."];
+                        }
+                        if (v16 = 3) {
+                            ["And let me remind thee that we give service with a smile around here. 'Tis why the Blue Boar Inn is famous throughout these parts."];
+                        }
+                    } else {
+                        if (v16 = 1) {
+                            ["Thou hast made me a happy man, <v2>."];
+                        }
+                        if (v16 = 2) {
+                            ["Thou art a blessing to this inn, thee and thy companions!"];
+                        }
+                        if (v16 = 3) {
+                            ["In times like these, I must charge high prices or close..."];
+                        }
+                    }
+                }
+            }
+            ["We have agreed on a price of <v4> guilders, <v2>?"];
+            if ~AskYesNo() {
+                if (v11 > 1) {
+                    SetNPCID_i((v11 - 2), _Rocco);
+                }
+                return v4;
+            } else {
+                if (v16 = 1) {
+                    ["What? I thought we had an agreement."];
+                }
+                if (v16 = 2) {
+                    ["Then be gone with thee -- I have no time to play games."];
+                }
+                if (v16 = 3) {
+                    ["Dost thou think me a fool, to argue with me only to change thy mind? I shall spread the word about thee in this town, wait and see!"];
+                }
+                if (31 < (v11 + 10)) {
+                    SetNPCID_i(31, _Rocco);
+                } else {
+                    SetNPCID_i((v11 + 10), _Rocco);
+                }
+                return 0;
+            }
+        }
+        if (v7 = 1) {
+            if (v13 = 5) {
+                ["Look, <v2>, I said that <v4> was my final offer. Dost thou accept?"];
+                if (v11 < 28) {
+                    SetNPCID_i((v11 + 4), _Rocco);
+                }
+                if ~AskYesNo() {
+                    return v4;
+                }
+                v8 = 0;
+            } else {
+                ["Very well. <v4> guilders is my final offer."];
+                if (v11 < 30) {
+                    SetNPCID_i((v11 + 2), _Rocco);
+                }
+            }
+        } else {
+            if (v13 = 2) {
+                if (v16 = 1) {
+                    ["It pleases me to do business with such a worthy soul. How doth <v4> guilders sound?"];
+                }
+                if (v16 = 2) {
+                    ["May the Spirit of Truth light thy way, dear friend. So, have we agreed on <v4> guilders?"];
+                }
+                if (v16 = 3) {
+                    ["My price is <v4> guilders -- a special price for my good friend, if I may call thee friend. Dost thou accept?"];
+                }
+            }
+            if (v13 = 3) {
+                if (v16 = 1) {
+                    ["These are hard times, and goods are scarce... <v4> guilders?"];
+                }
+                if (v16 = 2) {
+                    ["I'm not certain... Perhaps <v4>?"];
+                }
+                if (v16 = 3) {
+                    ["But I must make enough to pay for repairs on this inn, which is drafty in the winter... Perhaps <v4> guilders?"];
+                }
+            }
+            if (v13 = 4) {
+                if (v16 = 1) {
+                    ["Petra, come and hear this! The customer jests with me!"];
+                    if ~IsNPCNear(_Petra) {
+                        SayIfNear_i((("@We cannot possibly accept less than " + v4) + " guilders.@"), 65508);
+                        SetSpeaker0_i(0, _Rocco);
+                    } else {
+                        ["<v4> guilders is as low as I can go."];
+                    }
+                    ["What dost thou say to this?"];
+                }
+                if (v16 = 2) {
+                    ["But the storms have severed contact with the mainland, and my costs are soaring! Surely thou canst see that I can go no lower than <v4> guilders."];
+                }
+                if (v16 = 3) {
+                    ["Thou art not talking to a fool, <v2>. I deserve no less than <v4> guilders."];
+                }
+            }
+            if (v13 = 5) {
+                v4 = v15;
+                if (v16 = 1) {
+                    ["I would rather be eaten by rats than accept such a pitiful offer. My previous price stands, at <v4> guilders."];
+                }
+                if (v16 = 2) {
+                    ["Thou must think that I am deaf, blind and stupid, to accept such a deal. <v4> guilders, and no less!"];
+                }
+                if (v16 = 3) {
+                    ["Why, if I accepted such a price as this, I should have to break Petra into scrap metal and sell her to make ends meet!"];
+                    if ~IsNPCNear(_Petra) {
+                        SetSpeaker1_i(0, _Petra);
+                        ["This person is a lout, my dear. Cast the fool out the door."];
+                        CloseSpeaker1_i();
+                        SetSpeaker0_i(0, _Rocco);
+                    }
+                    ["<v4> guilders is where I stand."];
+                }
+                if (v11 < 31) {
+                    SetNPCID_i((v11 + 1), _Rocco);
+                }
+            }
+        }
+    }
+}

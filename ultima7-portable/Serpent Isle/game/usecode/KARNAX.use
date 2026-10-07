@@ -1,0 +1,446 @@
+Routine Karnax accepts a0 #locals(35) #uses(~LordOrLady, ~WhereAmI_i, ~AvatarName, PartyFaces_i, Bark_i, ~GimmePathEgg, ~InRect_i, ~PartyCompanions_i, ~GetStat, SetStat, ~MonkCoord_i, ~AskYesNo, ~IsInInv, ~IsBodyNear_i, ~GiveItemsOrDrop_i, ResurrectBodies_i, MonksSendParty_i, ~PartyUtters, MonkMakesPeace_i) {
+    v0 = ~LordOrLady();
+    v1 = ~AvatarSex();
+    v2 = "son";
+    v3 = ~WhereAmI_i();
+    v4 = "his";
+    if ~AvatarSex() {
+        v4 = "her";
+    }
+    if v1 {
+        v2 = "daughter";
+    }
+    v5 = ~AvatarName();
+    if (event = _Action) {
+        if $KARNAX_WITNESSED_SEED_PLANTING {
+            Item_bark("@What a wonder!@", _Karnax);
+            PartyFaces_i(65329);
+            SetSpeaker0_i(0, _Karnax);
+            ["I am honored to have been present for such a miracle! Even I had not expected anything this momentous.];
+            if $BANES_RELEASED {
+                ["Now that the Tree of Balance thrives in this hallowed glade, it's strong roots shall begin healing the wrents in our land.];
+                ["Once thou hast restored Balance to our world, who knows what miracles may occur? I have even heard it said that the souls of the dead shall be returned to life once Balance is restored.];
+                ["Only time shall tell. But now, my <v2>, it is time that I return thee to thy quest."];
+            } else {
+                ["With the Tree of Balance firmly rooted in this hallowed glade, thy task of restoring Balance to the world will be much easier, my <v2>.];
+                ["Now, my <v2>, it is time that you return to thy quest."];
+            }
+            CloseSpeaker0_i();
+            v6 = ~GetCoord(_Karnax);
+            createSprite(65535, 0, 0, 0, v6::2, v6::1, 26);
+            RemoveNPC_i(_Karnax);
+        } else {
+            Item_bark((("@Well done, my " + v2) + "!@"), _Karnax);
+            PartyFaces_i(65329);
+            SetSpeaker0_i(0, _Karnax);
+            ["Thou hast found the Silver Seed! Now all that remains is for thee to plant it here in this hallowed glade.];
+            ["Xenka's prophecies spoke of the Hero restoring the Tree of Balance. But even Xenka herself could not say where the seed of such a tree could be found.];
+            ["When the Forest Master first entered our world we thought that perhaps he was to be the Hero from Another World. But we learned that the seed he possessed had been warped by his passage through the Void. It will never grow..."];
+            ["Until Miggim found the Amulet of Balance, we had not even considered that the Ophidians knew anything of the Tree of Balance.];
+            ["Plant it here in this dark patch of rich ground in front of the waterfall, my <v2>. It looks just large enough for the seed, as if it were the seed's very own cradle. The water here will nourish it well."];
+            CloseSpeaker0_i();
+            Bark_i(2, "@Plant it now.@", _Karnax);
+        }
+    }
+    if (event = _Converse) {
+        if (~GetNPCID_i(_Karnax) <> 0) {
+            terminate;
+        }
+        Item_bark("@Pardon me...@", _Avatar);
+        PartyFaces_i(65329);
+        Bark_i(2, (("@Yes, my " + v2) + "?@"), _Karnax);
+        SetWorkType(_Talk, _Karnax);
+    }
+    if (event = _Bark) && ((~GetQuality(~GimmePathEgg(1, 5)) = 10) and not ~GetItemFlag_i(_Met, _XenkaMonk_215)) {
+        SetWorkType(_Wait, _Karnax);
+        v7 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #M_Bard >>, ~GimmePathEgg(3, 5));
+    }
+    if (event = _Talking) {
+        Npc_schedule(_Karnax);
+        ClearBark_i(_Karnax);
+        SetSpeaker0_i(0, _Karnax);
+        v8 = ~GetItemFlag_i(_Met, _Karnax);
+        v9 = false;
+        if (~GetNPCID_i(_Karnax) = 31) {
+            SetNPCID_i(0, _Karnax);
+            ["The bells are signaling the return of Xenka!"];
+            ["Thou art the Hero from Another World. It is for thee that she doth return. We must hurry!"];
+            v10 = ~GetCoord(_Avatar);
+            if ~InRect_i(<< 2430, 1158 >>, << 2384, 1136 >>, v10) {
+                ["Prepare yourselves for the coming of Xenka!"];
+            }
+            CloseSpeaker0_i();
+            ClearItemFlag_i(_Freeze, _Avatar);
+            v11 = ~PartyCompanions_i();
+            v11 = << 65180, v11 >>;
+            v12 = << 2407, 1148, 0 >>;
+            v13 = << 0, 65535, 1, 0, 65535, 1, 0, 65535, 1 >>;
+            v14 = << 65535, 65535, 65535, 0, 1, 1, 1, 0, 0 >>;
+            v15 = 1;
+            createSprite(65535, 0, 0, 0, v12::2, v12::1, 7);
+            Sfx(81);
+            Foreach v18 in v11 {
+                if not ~GetItemFlag_i(_Zombie, v18) {
+                    SetWorkType(_FollowAvt, v18);
+                }
+                SetTemperature_i(0, v18);
+                ClearItemFlag_i(_Asleep, v18);
+                ClearItemFlag_i(_Charmed, v18);
+                ClearItemFlag_i(_Cursed, v18);
+                ClearItemFlag_i(_Dead, v18);
+                ClearItemFlag_i(_Paralyzed, v18);
+                ClearItemFlag_i(_Poisoned, v18);
+                ClearItemFlag_i(_DontMove_i, v18);
+                v19 = ~GetStat(_Str, v18);
+                v20 = ~GetStat(_Hits, v18);
+                if (v19 > v20) {
+                    v21 = (v19 - v20);
+                    SetStat(v21, _Hits, v18);
+                }
+                v22 = ~GetStat(_FoodLevel, v18);
+                v23 = (31 - v22);
+                SetStat(v23, _FoodLevel, v18);
+                v24 = << (v12::1 + v13::v15), (v12::2 + v14::v15), v12::3 >>;
+                Item_move(v24, v18);
+                Kernel_resetRef(v18);
+                ClearBark_i(v18);
+                v7 = ~PostAction(<< _aFACE_i, _North >>, v18);
+                v15 = (v15 + 1);
+            }
+            v12 = << >>;
+            v24 = << >>;
+            v13 = << >>;
+            v14 = << >>;
+            v25 = << 65329, 65325, 65327, 65324, 65323, 65322, 65328, 65326 >>;
+            v26 = 10;
+            Foreach v18 in v25 {
+                v29 = ~MonkCoord_i(v26, v18);
+                Item_move(v29, v18);
+                NewSchedule_i(v29, _Wait, 0, v18);
+                Npc_schedule(v18);
+                SetWorkType(_Wait, v18);
+                v7 = ~PostAction(<< _aFACE_i, _North, _aSTAND_FRAME_i, _aUP_FRAME_i, _aSIT_FRAME_i >>, v18);
+            }
+            v7 = ~PostAction(<< _aUSABLE_i, #M_Bard >>, ~GimmePathEgg(1, 2));
+            terminate;
+        }
+        if not ~GetItemFlag_i(_Met, _Karnax) {
+            ["I am Karnax, a Xenkan monk. Please forgive our previous meeting, my <v2>."];
+            ["I have nothing against thee, but I fear that Thoxa's willful interference shall be the undoing of all for which we have prepared."];
+            SetItemFlag_i(_Met, _Karnax);
+            TurnOn(<< "previous meeting", "Thoxa", "interference" >>);
+        } else {
+            if (($needserpscroll = true) and not $gwennoiszombie) {
+                ["Hast thou returned with the scroll?"];
+                if (~AskYesNo() = true) {
+                    ["Very good! Now, if I may see it, I may be able to unlock the secret to restoring thy lady friend."];
+                    v30 = ~IsInInv(65177, 80, _Serp_Scroll, 1, _Party);
+                    if (v30 = true) {
+                        v7 = ~TakeFromParty_i(0, 0, 80, _Serp_Scroll, 1);
+                        $gwennoiszombie = true;
+                        ["I have it now."];
+                        TurnOn("the secret");
+                    } else {
+                        ["Thou dost not have the serpent scroll!"];
+                    }
+                } else {
+                    ["Without access to that scroll I can be of no further use to thee. Dost thou not remember what I told thee?"];
+                    ["Fedabiblio had something he referred to as the Scroll of the Serpent. I believe that it may have the information I need to help restore thy lady friend. Bring it to me, and I will aid thee as I can."];
+                }
+            } else {
+                ["Time grows short, my <v2>. I shall aid thee as I can."];
+            }
+            if ($gwennoiszombie = true) {
+                TurnOn("the secret");
+            }
+            TurnOn(<< "prophecies", "Thoxa" >>);
+        }
+        v11 = ~PartyCompanions_i();
+        v11 = << 65180, v11 >>;
+        Foreach v18 in v11 {
+            ClearItemFlag_i(_Asleep, v18);
+        }
+        ClearItemFlag_i(_DontMove_i, _Avatar);
+        if ($gwennoiszombie and not $gotdisciplinewater) {
+            TurnOn("the secret");
+        }
+        if $knowgwennodead {
+            TurnOn("Gwenno");
+        }
+        if flag(623) {
+            TurnOn("leave Monk Isle");
+        } else {
+            TurnOn(<< "bye" >>);
+        }
+        if ~IsBodyNear_i() {
+            ["Oh! One of thy friends hath met an untimely end. This should not be..."];
+            ["If thou art ready to see thy friend again, ask and I will return them to thee."];
+            TurnOn("resurrection");
+        }
+        if ($SERPENT_GWENNO_BANE_SPEECH and not $needserpscroll) {
+            TurnOn("Bane of Chaos");
+        }
+        if not $HAVE_AMULET_OF_BALANCE {
+            ["Lest I forget... We have recently made a discovery which I believe shall aid thee, my <v2>."];
+            TurnOn("discovery");
+        } else {
+            TurnOn("Amulet of Balance");
+        }
+        converse {
+            key ("discovery") {
+                TurnOff("discovery");
+                ["While searching for more materials for the library, Miggim discovered an ancient chest in the passages beneath our abbey, near the Serpent gate.];
+                ["Within this chest was a strange amulet and a scrap of decaying scroll. The scroll indicated that this is the Amulet of Balance. It is our thought that this amulet was meant for thee, my <v2>.];
+                ["I shall caution thee that we do not know what powers it has, for the scroll disintegrated before Miggim could fully translate it.];
+                ["But I am certain it is connected to the Serpent ruins in some manner. Perhaps if thou dost use it near the Serpent gate thou wilt trigger its power."];
+                v7 = ~GiveItemsOrDrop_i(true, 0, 9, 0, 955, 1, _Avatar);
+                v33 = ~GimmePathEgg(1, 0);
+                v7 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #InstallSilverSeed_i >>, v33);
+                $HAVE_AMULET_OF_BALANCE = true;
+            }
+            key ("Amulet of Balance") {
+                TurnOff("Amulet of Balance");
+                v7 = ~IsInInv(9, 0, _Amulet, 1, _Party);
+                if v7 {
+                    ["We are searching all of our references for further information on thy Amulet, my <v2>. But, as of yet, we have discovered nothing more than what I have already told thee...];
+                    ["It was used at the Serpent gates, but we know not what it does."];
+                } else {
+                    ["If thou hast lost the Amulet, my <v2>, I know not how to aid thee. As far as any of us know, there was but one... The one I gave thee.];
+                    ["I am sorry. Thou must needs search for it thyself. I fear I cannot aid thee in this."];
+                }
+            }
+            key ("resurrection") {
+                TurnOff("resurrection");
+                ResurrectBodies_i();
+            }
+            key ("leave Monk Isle") {
+                MonksSendParty_i();
+            }
+            key ("previous meeting") {
+                TurnOff("previous meeting");
+                ["When I came to try to dissuade Thoxa from aiding thee directly it was not an attack against thee."];
+                ["The prophecies state that those seeking to be thy friends shall bring about the downfall of thy quest. That is not why we have dedicated our lives."];
+                TurnOn(<< "dissuade", "prophecies", "dedicated" >>);
+            }
+            key ("dissuade") {
+                TurnOff("dissuade");
+                ["I sought to win her away from her foolishness by rational argument. Regrettably, it became a test of magics."];
+                ["As thou canst see, Thoxa and I are both skilled enough that we both yet live."];
+                TurnOn(<< "magics", "skilled" >>);
+            }
+            key ("magics") {
+                TurnOff("magics");
+                ["Unlike the unenlightened Mages of Moonshade, our powers come not from moldering reagents."];
+                ["The power of a Xenkan monk comes from a connection to the limitless Void that surrounds the universe."];
+                TurnOn(<< "Mages", "Void" >>);
+            }
+            key ("Mages") {
+                TurnOff("Mages");
+                ["The Mages of Moonshade are but mere children playing at the arts they have not the patience to learn."];
+                ["True magic comes after long years of meditation and self-sacrifice."];
+            }
+            key ("Void") {
+                TurnOff("Void");
+                ["Consider the Void to be the frame within which our Cosmos is bound. It is the source of unimagined power..."];
+                ["Power that thou mayest draw upon freely, if thou hast forged a gateway into it through long meditation."];
+            }
+            key ("skilled") {
+                TurnOff("skilled");
+                ["Unlike the silent novices that thou dost see among us, Thoxa and I have both forged gateways into the power of the Void."];
+                ["By tapping into this stream, any confirmed Xenkan monk can surmount his or her own death. But there are still some things that remain beyond any one monk's power and require the concerted effort of us all."];
+                TurnOn("some things");
+            }
+            key ("some things") {
+                TurnOff("some things");
+                ["Manipulation of time and space requires more power than one monk can channel."];
+                ["So teleportation and resurrection require that all the monks conjoin their power."];
+            }
+            key ("prophecies") {
+                TurnOff("prophecies");
+                ["Xenka was given visions of the ending of our world."];
+                ["However, she was barely literate, and needed others to act as scribes for her convoluted visions."];
+                TurnOn(<< "ending of the world", "Xenka" >>);
+            }
+            key ("ending of the world") {
+                TurnOff("ending of the world");
+                ["Xenka foresaw that people would turn from their basic goodness until the very land itself would rise up in revolt against their twisted ways."];
+                v34 = ~PartyUtters(false, 0, "@Grim tidings, indeed.@", 1);
+                SetSpeakerSlot_i(0);
+                ["Even now the storms flay the land. Soon the earthquakes will unleash the fire that will engulf the world."];
+                TurnOn(<< "storms", "earthquakes" >>);
+            }
+            key ("storms") {
+                TurnOff("storms");
+                ["The storms are what conveyed thee here, my <v2>."];
+                ["Doth natural lightning do aught but kill? Doth normal lightning transport an item thousands of leagues from where once it stood?"];
+                ["And the storms are growing more frequent and fierce with each passing day."];
+            }
+            key ("earthquakes") {
+                TurnOff("earthquakes");
+                ["The land is a living entity, my <v2>."];
+                ["Have no doubt that it will convulse as death draws near, even as a man."];
+                ["And where will we insignificant mortals be once the land which nurtures us heaves its last, explosive breath?"];
+            }
+            key ("Xenka") {
+                TurnOff("Xenka");
+                ["Xenka was a cross farm-wife who saw her visions as a means to have others do her work for her."];
+                ["Yet despite her human failings, her visions are true... Thou art here, even if she is not."];
+                TurnOn("she is not");
+            }
+            key ("she is not") {
+                TurnOff("she is not");
+                ["Xenka disappeared quite some time ago. Many think that she will return to deliver the final key to saving our doomed world."];
+                ["I think that her visions had left her and she slunk quietly away to die in obscurity."];
+                $knowxenka = true;
+            }
+            key ("dedicated") {
+                TurnOff("dedicated");
+                ["Those that live within this abbey believe that Xenka's prophecies hold the key to diverting the fiery end that awaits the world."];
+                ["Our numbers have decreased with time, for even Xenkan monks die from age. And few of the youths are willing to serve such a nihilistic prophecy."];
+                TurnOn("the key");
+            }
+            key ("the key") {
+                TurnOff("the key");
+                ["I do not know if Xenka's visions were full of diverse images or if she couched them in such terms out of peevishness."];
+                ["Whatever the case may be, her prophecies run round the edge of what must be known and it can take years to decipher the meaning of a single vision."];
+            }
+            key ("Thoxa") {
+                TurnOff("Thoxa");
+                ["Thoxa is a very bright young woman, who would like to feel that she hath single-handedly saved the world."];
+                ["It doth go against the grain of her youth to sit and wait for each event to come to pass. What is worse though, is that she hath pulled Miggim into her rashness as well."];
+                TurnOn("Miggim");
+            }
+            key ("Miggim") {
+                TurnOff("Miggim");
+                ["Miggim is by nature a quiet young man, not given to impetuousness. He is ideally suited to be our librarian."];
+                ["His greatest desire is to be helpful, as well as ordered. In fact, it was he who divined the passage that foretold of thy coming."];
+                TurnOn("librarian");
+            }
+            key ("librarian") {
+                TurnOff("librarian");
+                ["He hath taken the chaos of our library and turned it into a vastly more organized area."];
+                ["In fact, I believe that we have the most concise collection of Ophidian books and scrolls that still exists."];
+                ["Of course, it helps that we have the Lens of Translating."];
+                TurnOn(<< "Ophidian", "Lens" >>);
+            }
+            key ("Ophidian") {
+                TurnOff("Ophidian");
+                ["The Ophidians are commonly referred to as the Serpent people because of the embossed serpents found within the ruins of their cities."];
+                ["They had a fully-developed civilization here long before our forefathers fled from the invader British. I believe that they destroyed themselves in a bloody civil war."];
+                TurnOn(<< "invader British", "civil war" >>);
+            }
+            key ("invader British") {
+                TurnOff("invader British");
+                ["Our records are incomplete concerning the time of the resettlement. For that, thou shouldst see Fedabiblio in Moonshade."];
+                ["Thou shouldst bear in mind that their accounts are likely to be highly biased in their own favor."];
+                TurnOn("Fedabiblio");
+            }
+            key ("Fedabiblio") {
+                TurnOff("Fedabiblio");
+                ["Fedabiblio is the master archivist in the city of Mages. He is also a teacher, and will be able to help thee."];
+            }
+            key ("civil war") {
+                TurnOff("civil war");
+                ["I believe that the Ophidian government disintegrated and their society split into two opposing groups."];
+                ["In the end, one faction apparently slaughtered the other. But all traces of the victors disappear soon after the final battle took place. It is a mystery where they went."];
+            }
+            key ("interference") {
+                TurnOff("interference");
+                ["It was determined by all monks that the time for the Hero from Another World was at hand."];
+                ["It was also decided that we would take no direct action to influence the Hero in any way..."];
+                ["Thoxa overstepped her bounds by giving thee the Hourglass of Fate."];
+                TurnOn(<< "Hero", "Hourglass" >>);
+            }
+            key ("Hero") {
+                TurnOff("Hero");
+                ["All references to the one who can alter the course of destiny allude to the Hero from Another World."];
+                ["Art thou from this land, from New Sosaria?"];
+                if (~AskYesNo() = false) {
+                    ["Dost thou see? When taken with the other signs, it points to thee as the one who alone can save our land."];
+                } else {
+                    ["Hmmm. Perhaps we have misinterpreted the passage."];
+                    ["I shall meditate further on this matter."];
+                }
+            }
+            key ("Hourglass") {
+                TurnOff("Hourglass");
+                ["The damage hath been done. It is now thine to keep."];
+                ["It was designed so that we might be able to gauge when certain events were nigh. Perhaps it will serve thee better. I do not know."];
+            }
+            key ("Lens") {
+                TurnOff("Lens");
+                ["It is the large device that stands in the center of the library. Anyone using it is able to decipher the cryptic Ophidian writing for a short period of time."];
+            }
+            key ("Gwenno") {
+                TurnOff("Gwenno");
+                if $FREED_GWENNOS_BODY {
+                    if $GWENNO_IS_DEAD {
+                        ["I share thy grief over the loss of Goodwife Gwenno. I am sure that we can resurrect her, if thou dost wish."];
+                    } else {
+                        if not ~GetItemFlag_i(_Zombie, _Gwenno) {
+                            ["It hath been quite a pleasure having Gwenno here, <v0>. She is quite knowledgeable, and shares her wisdom willingly."];
+                        } else {
+                            ["Thy concern for this young woman is well warranted, I fear."];
+                            ["Something hath sorely affected her, for I do not believe that she could be so disturbed otherwise."];
+                        }
+                    }
+                } else {
+                    ["Gwenno was our last visitor here, <v0>. After she departed, the storms made travel to our island impossible. I was not able to speak with her as much as I wished. She spent quite a bit of time within our library."];
+                }
+            }
+            key ("Bane of Chaos") {
+                TurnOff("Bane of Chaos");
+                ["Curious, the Bane of Chaos is an Ophidian term."];
+                ["Fedabiblio had something he referred to as the Scroll of the Serpent. I believe that it may have the information I need to help restore thy lady friend. Bring it to me, and I will aid thee as I can."];
+                $needserpscroll = true;
+            }
+            key ("the secret") {
+                TurnOff("the secret");
+                ["It all becomes clear!"];
+                ["The Ophidians based all their beliefs on six virtues. And the consequences of an imbalance of these virtues are very dire..."];
+                ["In fact, it sounds as if they could destroy the world!"];
+                TurnOn(<< "six virtues", "consequences" >>);
+            }
+            key ("six virtues") {
+                TurnOff("six virtues");
+                ["The virtues are: Tolerance, Ethicality, Enthusiasm, Discipline, Emotion and Logic."];
+                ["The anti-virtues -- when there is no balance -- are: Amorality, Wantonness, Insanity, Prejudice, Apathy, and Ruthlessness."];
+                v9 = ~IsInInv(65177, 130, _Scroll, 1, _Party);
+                if (v9 = false) {
+                    ["I will draw thee a chart, so that it might be more clear."];
+                    v7 = ~GiveItemsOrDrop_i(true, 0, 0, 130, 797, 1, _Avatar);
+                    v9 = true;
+                } else {
+                    ["Thou dost have the chart in thy possession that will explain this further."];
+                }
+            }
+            key ("consequences") {
+                TurnOff("consequences");
+                ["Eventually the world will destroy itself... Much like what is happening now."];
+                ["Within a person, like thy friend Gwenno, the lack of Discipline would produce Wantonness... Much like the behavior she is exhibiting now."];
+                ["There does seem to be a cure, however."];
+                TurnOn("cure");
+            }
+            key ("cure") {
+                TurnOff("cure");
+                ["According to this, thou shouldst have the victim drink the water from the temple dedicated to that virtue which the person lacks."];
+                ["It sounds as though thou shouldst bring water from one of the temples... I think that Miggim doth have a book with maps of those ancient temples."];
+                $miggimhasmaps = true;
+            }
+            key ("bye") {
+                CloseSpeaker0_i();
+                Bark_i(0, "@Many thanks!@", _Avatar);
+                Bark_i(2, "@Good luck!@", item);
+                break;
+            }
+        }
+        clear_answers;
+        if flag(623) {
+            SetSpeaker0_i(0, _Karnax);
+            MonksSendParty_i();
+        }
+    }
+    if (event = _NearDeath) {
+        MonkMakesPeace_i(65329);
+    }
+}

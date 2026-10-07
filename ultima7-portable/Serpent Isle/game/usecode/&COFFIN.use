@@ -1,0 +1,73 @@
+Routine Coffin accepts a0 #locals(5) #uses(AttackAvatar_i) {
+    if (event = _Converse) {
+        v0 = ~GetQuality(item);
+        v1 = ~GetFrame(item);
+        if (v1 = 0) {
+            Sfx(106);
+            SetFrame(1, item);
+        }
+        if (v1 = 1) {
+            Sfx(105);
+            SetFrame(0, item);
+        }
+        if ((v1 = 4) and (v0 = 0)) {
+            Sfx(106);
+            SetFrame(5, item);
+        }
+        if (v1 = 5) {
+            Sfx(105);
+            SetFrame(4, item);
+        }
+        if ((v1 = 4) and (v0 = 1)) {
+            Sfx(106);
+            SetFrame(6, item);
+        }
+        if (v1 = 6) {
+            Sfx(105);
+            SetFrame(4, item);
+        }
+        if ((v1 = 4) and (v0 = 2)) {
+            SetFrame(5, item);
+            Sfx(106);
+            v2 = ~SetQuality(0, item);
+            v3 = ~GetCoord(item);
+            v3::1 = (v3::1 + 2);
+            v4 = ~CreateCreature_i(v3, _Undead);
+            AttackAvatar_i(v4);
+            CreateSpriteOn_i(65535, 0, 0, 0, 0, 0, 12, v4);
+            Sfx(123);
+        }
+        if ((v1 = 4) and (v0 = 3)) {
+            if $BANES_RELEASED {
+                SetFrame(5, item);
+                Sfx(106);
+                v2 = ~SetQuality(0, item);
+                v3 = ~GetCoord(item);
+                v3::1 = (v3::1 + 2);
+                v4 = ~CreateCreature_i(v3, _Undead);
+                AttackAvatar_i(v4);
+                CreateSpriteOn_i(65535, 0, 0, 0, 0, 0, 12, v4);
+                Sfx(123);
+            } else {
+                Sfx(106);
+                SetFrame(6, item);
+            }
+        }
+        if ((v1 = 4) and (v0 = 5)) {
+            if $BANES_RELEASED {
+                SetFrame(5, item);
+                Sfx(106);
+                v2 = ~SetQuality(0, item);
+                v3 = ~GetCoord(item);
+                v3::1 = (v3::1 + 2);
+                v4 = ~CreateCreature_i(v3, _Mummy);
+                AttackAvatar_i(v4);
+                CreateSpriteOn_i(65535, 0, 0, 0, 65534, 65534, 7, item);
+                Sfx(82);
+            } else {
+                Sfx(106);
+                SetFrame(6, item);
+            }
+        }
+    }
+}

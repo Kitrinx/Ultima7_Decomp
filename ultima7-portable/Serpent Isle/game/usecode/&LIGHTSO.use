@@ -1,0 +1,43 @@
+Routine Lightsource accepts a0 #locals(0) #uses(IgniteLight_i) {
+    if ((event = _Converse) or (event = _Action)) {
+        IgniteLight_i(_Lit_Lightsource, item);
+    }
+}
+
+Routine Lit_Lightsource accepts a0 #locals(2) #uses(~DirFrom_i, StartBurning_i) {
+    if ((event = _Converse) or (event = _Action)) {
+        Item_setType(_Lightsource, item);
+        Kernel_resetRef(item);
+    }
+    if (event = _Pathfind1) {
+        Item_setType(_Lightsource, item);
+        v0 = ~DirFrom_i(item, _Avatar);
+        v1 = ~PostAction(<< _aFACE_i, v0, _aCONTINUE_i, _aTHRUST2_FRAME_i, _aSTAND_FRAME_i >>, _Avatar);
+    }
+    if (event = _Equip) {
+        StartBurning_i(item);
+    }
+}
+
+Routine Sconce_Lit accepts a0 #locals(2) #uses(~DirFrom_i) {
+    if ((event = _Converse) or (event = _Action)) {
+        Item_setType(_Scon_Unlit, item);
+        Kernel_resetRef(item);
+    }
+    if (event = _Pathfind1) {
+        Item_setType(_Scon_Unlit, item);
+        v0 = ~DirFrom_i(item, _Avatar);
+        v1 = ~PostAction(<< _aFACE_i, v0, _aCONTINUE_i, _aTHRUST2_FRAME_i, _aSTAND_FRAME_i >>, _Avatar);
+    }
+}
+
+Routine Scon_Unlit accepts a0 #locals(1) #uses(IgniteLight_i) {
+    if ((event = _Converse) or (event = _Action)) {
+        v0 = ~GetFrame(item);
+        if (v0 > 1) {
+            Item_bark("Burnt out", item);
+        } else {
+            IgniteLight_i(_Sconce_Lit, item);
+        }
+    }
+}

@@ -1,0 +1,212 @@
+Routine ToggleSliders_i accepts a0, a1 #locals(9) #uses(OpenSlider_i, PostUsable_i) {
+    v2 = ~GetQuality(v1);
+    v3 = << >>;
+    if ((v0 = 1) or (v0 = 65177)) {
+        v3 = (v3 & ~GetAllInRegion(_NS_C_Slider));
+        v3 = (v3 & ~GetAllInRegion(_EW_C_Slider));
+    }
+    if ((v0 = 0) or (v0 = 65177)) {
+        v3 = (v3 & ~GetAllInRegion(_NS_Slider));
+        v3 = (v3 & ~GetAllInRegion(_EW_Slider));
+    }
+    if v3 {
+        Foreach v6 in v3 {
+            if (~GetQuality(v6) = v2) {
+                v7 = ~GetFrame(v6);
+                v8 = ~Item_getType(v6);
+                switch v8 {
+                    case 303 {
+                        v8 = 936;
+                        OpenSlider_i(v8, v6);
+                    }
+                    case 876 {
+                        v8 = 935;
+                        OpenSlider_i(v8, v6);
+                    }
+                    case 936 {
+                        v8 = 303;
+                        PostUsable_i(v8, v6);
+                    }
+                    case 935 {
+                        v8 = 876;
+                        PostUsable_i(v8, v6);
+                    }
+                    default {
+                    }
+                }
+            }
+        }
+        if (v2 = 123) {
+            v9 = ~FindNearby_i(0, 25, _Crtr1_Bodies, _Avatar);
+            if v9 {
+                SetItemFlag_i(_DontMove_i, _Avatar);
+                v10 = ~SetQuality(1, v9);
+                v10 = ~PostInFuture(10, << _aNO_HALT_i, _aUSABLE_i, #RaisePhoenix_i >>, v9);
+            }
+        }
+    }
+}
+
+Usable FuseReagents_i #locals(14) {
+    v0 = ~FindNearby_i(0, 10, _Pedestal, item);
+    v1 = ~FindNearby_i(0, 3, _Reagents, v0);
+    v2 = << 0, 0, 0 >>;
+    Foreach v5 in v1 {
+        if (~GetFrame(v5) = 11) {
+            v2::1 = (v2::1 + ~GetQuantity(0, v5));
+            v6 = true;
+        }
+        if (~GetFrame(v5) = 12) {
+            v2::2 = (v2::2 + ~GetQuantity(0, v5));
+            v7 = true;
+        }
+        if (~GetFrame(v5) = 13) {
+            v2::3 = (v2::3 + ~GetQuantity(0, v5));
+            v8 = true;
+        }
+        Item_destroy(v5);
+    }
+    if (v6 and (v7 and v8)) {
+        v9 = v2::1;
+        if (v2::2 < v9) {
+            v9 = v2::2;
+        }
+        if (v2::3 < v9) {
+            v9 = v2::3;
+        }
+        v10 = ~GetCoord(v0);
+        v10::3 = 2;
+        v11 = ~Item_create(_Reagents);
+        if v11 {
+            SetFrame(14, v11);
+            v12 = ~SetQuantity(v9, v11);
+            v12 = ~PopToMap(v10);
+        }
+        v13 = ~Item_create(_Blue_Flame);
+        if v13 {
+            SetFrame(0, v13);
+            v12 = ~PopToMap(v10);
+        }
+        v12 = ~PostInFuture(25, << _aNO_HALT_i, _aREMOVE_i >>, v13);
+    }
+    v6 = false;
+    v7 = false;
+    v8 = false;
+    terminate;
+}
+
+Routine ThrowSceneSwitch_i accepts a0 #locals(11) #uses(PleaseSlaves_i, Bark_i, SetWorkTypeAt_i, ~SwingDoor_i, SwingPartner_i, SayDoorBlocked_i) {
+    if (v0 = 23) {
+        PleaseSlaves_i();
+    }
+    if (v0 = 24) {
+        v1 = << 65365, 65364, 65363, 65362, 65361 >>;
+        v2 = ("@Thank thee!@" & ("@Bless thee!@" & ("@We are saved!@" & "@Praise the Hero!@")));
+        Foreach v5 in v1 {
+            ClearBark_i(v5);
+            Bark_i(~Random(10), v2::~Random(~ListSize_i(v2)), v5);
+            SetWorkTypeAt_i(_Dance, 0, 65535, v5);
+        }
+        $passedshaminoclonetest = true;
+        v6 = ~PostInFuture(15, << _aNO_HALT_i, _aUSABLE_i, #LeaveCloneTest_i >>, _Avatar);
+        terminate;
+    }
+    if ((v0 = 61) and (flag(551) and not ~GetItemFlag_i(_Polymorph_i, _Avatar))) {
+        v6 = ~GetCoord(_Petra);
+        if ((v6::1 = 1763) and ((v6::2 = 627) and (v6::3 = 1))) {
+            v7 = ~Item_create(_Path);
+            if v7 {
+                SetFrame(6, v7);
+                v6 = ~PopToMap(<< 1772, 627, 1 >>);
+                v6 = ~PostAction(<< _aUSABLE_i, #DNG_Floor >>, v7);
+            }
+        }
+    }
+    if ((v0 = 85) or (v0 = 89)) {
+        v8 = ~FindNearby_i(0, 30, _Door_NS, item);
+        Foreach v11 in v8 {
+            if (~GetQuality(v11) = v0) {
+                if ~SwingDoor_i(7, 0, 0, 1, _Door_EW, v11) {
+                    SwingPartner_i(7, 0, 65533, 1, _DDoor_EW, 2, 0, _DDoor_NS, v11);
+                    playSFX(v11, 32);
+                } else {
+                    SayDoorBlocked_i();
+                }
+            }
+        }
+    }
+}
+
+Usable PleaseSlaves_i #locals(9) #uses(~GimmePathEgg, Bark_i) {
+    SetMusic(~GimmePathEgg(1, 5), 28);
+    v0 = << 65365, 65364, 65363, 65362, 65361 >>;
+    v1 = << "@Ohh! Yes!@", "@Most pleasant!@", "@Oh, my!@", "@Do thou that again!@", "@Oh, baby...@" >>;
+    Foreach v4 in v0 {
+        v5 = ~rndRange(5, 1);
+        Bark_i(~Random(10), v1::v5, v4);
+    }
+    if (flag(494) = true) {
+        v6 = ~PostInFuture(25, << _aUSABLE_i, #CloneShamino >>, _CloneShamino);
+    } else {
+        if ~AvatarSex() {
+            ClearBark_i(_Sex05);
+            Bark_i(0, "@I can't resist...@", _Sex05);
+            v7 = ~FindNearby_i(0, 10, _Door_NS, item);
+            if v7 {
+                v8 = ~GetCoord(v7);
+                PathfindNPC_i(true, #CloneShamino, ~NPCToItem_i(_Sex05), _NearDeath, << (v8::1 + 1), v8::2, v8::3 >>, _Sex05);
+            }
+        } else {
+            ClearBark_i(_Sex03);
+            Bark_i(0, "@I can't resist...@", _Sex03);
+            v7 = ~FindNearby_i(0, 10, _Door_NS, item);
+            if v7 {
+                v8 = ~GetCoord(v7);
+                PathfindNPC_i(true, #CloneShamino, ~NPCToItem_i(_Sex03), _NearDeath, << (v8::1 + 1), v8::2, v8::3 >>, _Sex03);
+            }
+        }
+    }
+    terminate;
+}
+
+Routine ThrowDoorSwitch_i accepts a0 #locals(10) #uses(SetDoorState_i, ~SwingSDoorEW_i, SwitchDrawbridges_i, ~DoorState_i) {
+    if (v0 = 101) {
+        v1 = ~FindNearby_i(0, 10, _SDoor_EW, item);
+        if v1 {
+            SetDoorState_i(0, v1::1);
+            v1 = ~SwingSDoorEW_i(v1::1);
+        }
+    }
+    if ((v0 > 119) and (v0 < 151)) {
+        SwitchDrawbridges_i();
+    }
+    if (v0 = 111) {
+        v2 = ~FindNearby_i(0, 30, _Field_Energy, item);
+        Foreach v5 in v2 {
+            v6 = ~GetCoord(v5);
+            createSprite(65535, 0, 0, 0, v6::2, v6::1, 12);
+            Item_destroy(v5);
+        }
+    }
+    if (v0 = 112) {
+        v2 = ~FindNearby_i(176, 10, _Door_EW, _Avatar);
+        v2 = (v2 & ~FindNearby_i(176, 10, _Door_NS, _Avatar));
+        v2 = (v2 & ~FindNearby_i(176, 10, _DDoor_NS, _Avatar));
+        v2 = (v2 & ~FindNearby_i(176, 10, _DDoor_EW, _Avatar));
+        v2 = (v2 & ~FindNearby_i(176, 10, _SDoor_NS, _Avatar));
+        v2 = (v2 & ~FindNearby_i(176, 10, _SDoor_EW, _Avatar));
+        v7 = v2::1;
+        Foreach v5 in v2 {
+            if (~GetDist(v5, item) < ~GetDist(v7, item)) {
+                v7 = v5;
+            }
+        }
+        v10 = ~DoorState_i(v7);
+        if (v10 = 2) {
+            SetDoorState_i(0, v7);
+        }
+        if (v10 = 0) {
+            SetDoorState_i(2, v7);
+        }
+    }
+}

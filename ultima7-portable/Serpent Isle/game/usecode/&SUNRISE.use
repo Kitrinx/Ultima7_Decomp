@@ -1,0 +1,1084 @@
+Routine Living_Serpent accepts a0 #locals(2) #uses(PlaySpeechOrText_i) {
+    if (event = _Action) {
+        PlaySpeechOrText_i(9);
+        flag(739) = true;
+        v0 = ~FindNearby_i(0, 45, _Living_Serpent, item);
+        if v0 {
+            v1 = ~ChangeNPCStat_i(1, _Hits, v0);
+        }
+    }
+}
+
+Routine BalanceScalesEgg_i accepts a0 #locals(38) #uses(~GimmePathEgg, UnfreezeAvatar_i, Bark_i) {
+    if (event = _Path_Failure) {
+        ClearItemFlag_i(_DontMove_i, _Avatar);
+        v0 = ~GetQuality(~GimmePathEgg(1, 0));
+        if ((v0 = 0) or (v0 = 1)) {
+            v1 = << 1678, 256, 0 >>;
+        }
+        if ((v0 = 2) or (v0 = 3)) {
+            v1 = << 1678, 285, 0 >>;
+        }
+        Item_move(v1, _Avatar);
+        createSprite(65535, 0, 0, 0, v1::2, v1::1, 7);
+        terminate;
+    }
+    if (((flag(677) = true) and (flag(676) = true)) or (event = _Pathfind1)) {
+        UnfreezeAvatar_i();
+        terminate;
+    }
+    if (event = _Action) {
+        v0 = ~GetQuality(item);
+        v2 = ~FindNearby_i(0, 10, _Pedestal, item);
+        if ((v0 = 0) or (v0 = 1)) {
+            flag(677) = true;
+            v3 = ~Item_create(_Serp_Artifact);
+            if v3 {
+                ClearItemFlag_i(_IsTemporary_i, v3);
+                SetFrame(4, v3);
+            }
+            v3 = ~Item_create(_Serp_Artifact);
+            if v3 {
+                ClearItemFlag_i(_IsTemporary_i, v3);
+                SetFrame(6, v3);
+            }
+            v3 = ~Item_create(_Serp_Artifact);
+            if v3 {
+                ClearItemFlag_i(_IsTemporary_i, v3);
+                SetFrame(8, v3);
+            }
+            Foreach v6 in v2 {
+                v1 = ~GetCoord(v6);
+                v1::3 = 2;
+                v7 = ~PopToMap(v1);
+                Sfx(119);
+                createSprite(65535, 0, 0, 0, (v1::2 - 2), (v1::1 - 2), 7);
+            }
+            v2 = ~FindNearby_i(0, 25, _Serp_NS, item);
+            Foreach v7 in v2 {
+                v3 = ~GetFrame(v7);
+                SetFrame((v3 - 2), v7);
+                createSprite(65535, 0, 0, 0, (v1::2 - 2), (v1::1 - 2), 21);
+            }
+            v2 = ~FindNearby_i(0, 25, _DDSerpNS, item);
+            Foreach v7 in v2 {
+                v3 = ~GetFrame(v7);
+                SetFrame((v3 - 2), v7);
+                createSprite(65535, 0, 0, 0, (v1::2 - 2), (v1::1 - 2), 21);
+            }
+        } else {
+            flag(676) = true;
+            v3 = ~Item_create(_Serp_Artifact);
+            if v3 {
+                ClearItemFlag_i(_IsTemporary_i, v3);
+                SetFrame(3, v3);
+            }
+            v3 = ~Item_create(_Serp_Artifact);
+            if v3 {
+                ClearItemFlag_i(_IsTemporary_i, v3);
+                SetFrame(7, v3);
+            }
+            v3 = ~Item_create(_Serp_Artifact);
+            if v3 {
+                ClearItemFlag_i(_IsTemporary_i, v3);
+                SetFrame(18, v3);
+            }
+            Foreach v6 in v2 {
+                v1 = ~GetCoord(v6);
+                v1::3 = 2;
+                v7 = ~PopToMap(v1);
+                Sfx(119);
+                createSprite(65535, 0, 0, 0, v1::2, v1::1, 26);
+            }
+            v2 = ~FindNearby_i(0, 25, _Serp_NS, item);
+            Foreach v7 in v2 {
+                v3 = ~GetFrame(v7);
+                SetFrame((v3 - 2), v7);
+                createSprite(65535, 0, 0, 0, v1::2, v1::1, 21);
+            }
+            v2 = ~FindNearby_i(0, 25, _DDSerpNS, item);
+            Foreach v7 in v2 {
+                v3 = ~GetFrame(v7);
+                SetFrame((v3 - 2), v7);
+                createSprite(65535, 0, 0, 0, v1::2, v1::1, 21);
+            }
+        }
+        terminate;
+    }
+    v18 = ~FindNearby_i(0, 1, _Glass_Items, item);
+    v19 = false;
+    v20 = false;
+    v21 = false;
+    v22 = false;
+    v23 = ~FindNearby_i(0, 10, _Scales, item);
+    v24 = ~GetCoord(item);
+    Foreach v27 in v23 {
+        v28 = ~GetCoord(v27);
+        if not ((v24::1 = v28::1) and (v24::2 = v28::2)) {
+            v29 = ~GetFrame(v27);
+            if (v29 = 0) {
+                v30 = v27;
+            } else {
+                v31 = v27;
+            }
+        }
+    }
+    if (not v18 or (~ListSize_i(v18) > 1)) {
+        v32 = ~GetFrame(v31);
+        if ((v32 = 1) or (v32 = 2)) {
+            Sfx(105);
+            v7 = ~PostAction(<< _aNO_HALT_i, _aFRAME, 2, _aWAIT_i, 2, _aFRAME, 3 >>, v31);
+        }
+        if ((v32 = 4) or (v32 = 5)) {
+            Sfx(105);
+            v7 = ~PostAction(<< _aNO_HALT_i, _aFRAME, 4, _aWAIT_i, 2, _aFRAME, 3 >>, v31);
+        }
+        terminate;
+    }
+    v33 = ~GetFrame(v18);
+    if ((v33 = 12) or (v33 = 13)) {
+        v19 = true;
+    } else {
+        if ((v33 = 18) or (v33 = 19)) {
+            v20 = true;
+        }
+    }
+    if (not v19 and not v20) {
+        terminate;
+    }
+    v34 = ~FindNearby_i(0, 1, _Glass_Items, v30);
+    if v34 {
+        v33 = ~GetFrame(v34);
+        if ((v33 = 12) or (v33 = 13)) {
+            v21 = true;
+        } else {
+            if ((v33 = 18) or (v33 = 19)) {
+                v22 = true;
+            }
+        }
+    }
+    v0 = ~GetQuality(item);
+    if ((v19 and v22) or (v20 and v21)) {
+        if ((v0 = 0) or (v0 = 2)) {
+            Sfx(105);
+            v7 = ~PostAction(<< _aNO_HALT_i, _aFRAME, 4, _aWAIT_i, 1, _aFRAME, 3 >>, v31);
+        }
+        if ((v0 = 1) or (v0 = 3)) {
+            Sfx(105);
+            v7 = ~PostAction(<< _aNO_HALT_i, _aFRAME, 2, _aWAIT_i, 1, _aFRAME, 3 >>, v31);
+        }
+        if ((v0 = 0) or (v0 = 1)) {
+            v35 = 2;
+        }
+        if ((v0 = 2) or (v0 = 3)) {
+            v35 = 65534;
+        }
+        v36 = ~GetDist(v31, _Avatar);
+        Bark_i(2, "@That should do it.@", _Avatar);
+        SetItemFlag_i(_DontMove_i, _Avatar);
+        v1 = ~GetCoord(v31);
+        PathfindNPC_i(false, #BalanceScalesEgg_i, item, _Pathfind1, << v1::1, (v1::2 + v35), 0 >>, _Avatar);
+        v37 = ~GimmePathEgg(1, 0);
+        if v37 {
+            v7 = ~SetQuality(v0, v37);
+            v7 = ~PostInFuture((v36 + 4), << _aNO_HALT_i, _aUSABLE_i, #BalanceScalesEgg_i >>, v37);
+        }
+        terminate;
+    }
+    if ((v0 = 0) or (v0 = 2)) {
+        Sfx(105);
+        v7 = ~PostAction(<< _aNO_HALT_i, _aFRAME, 2, _aWAIT_i, 1, _aFRAME, 1 >>, v31);
+    }
+    if ((v0 = 1) or (v0 = 3)) {
+        Sfx(105);
+        v7 = ~PostAction(<< _aNO_HALT_i, _aFRAME, 4, _aWAIT_i, 1, _aFRAME, 5 >>, v31);
+    }
+}
+
+Routine FlameAndDiamondEgg_i accepts a0 #locals(11) {
+    if ((flag(681) = true) and (flag(682) = true)) {
+        terminate;
+    }
+    v0 = ~GetQuality(item);
+    v1 = ~FindNearby_i(0, 1, _Serp_Artifact, item);
+    if v1 {
+        v2 = ~GetCoord(v1);
+        v3 = ~GetFrame(v1);
+    }
+    if (v0 = 1) && (v3 = 0) {
+        createSprite(65535, 0, 0, 0, (v2::2 - 2), (v2::1 - 2), 26);
+        flag(681) = true;
+        Sfx(130);
+    }
+    if (v0 = 0) && (v3 = 5) {
+        createSprite(65535, 0, 0, 0, (v2::2 - 2), (v2::1 - 2), 7);
+        flag(682) = true;
+        Sfx(71);
+    }
+    if ((flag(681) = true) and (flag(682) = true)) {
+        v4 = ~FindNearby_i(0, 15, _DDSerpNS, item);
+        v4 = (v4 & ~FindNearby_i(0, 15, _Serp_NS, item));
+        Foreach v7 in v4 {
+            v3 = ~GetFrame(v7);
+            if ((v3 = 2) or (v3 = 18)) {
+                v3 = (v3 - 2);
+                SetFrame(v3, v7);
+                v8 = v7;
+                v2 = ~GetCoord(v7);
+                createSprite(65535, 0, 0, 0, v2::2, v2::1, 21);
+                Sfx(81);
+            }
+        }
+        v9 = ~Item_getType(v8);
+        if (v9 = 246) {
+            v10 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #Serp_NS, 0 >>, v8);
+        } else {
+            v10 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #DDSerpNS >>, v8);
+        }
+    }
+}
+
+Routine SerpentSlotsEgg_i accepts a0 #locals(26) #uses(UnfreezeAvatar_i, AnimateWalls_i, PlaySpeechOrText_i, Bark_i) {
+    v0 = ~GetCoord(_Avatar);
+    if (v0::3 = 0) {
+        SetSpeaker0_i(0, _Avatar);
+        ["It seems that I cannot put the serpent in the slot. Perhaps I should step up a level..."];
+        CloseSpeaker0_i();
+        terminate;
+    }
+    if ((event = _Pathfind1) or (event = _Path_Failure)) {
+        UnfreezeAvatar_i();
+        AnimateWalls_i(true);
+        SetWorkType(_Wait, _Avatar);
+        v1 = ~FindNearby_i(0, 45, _Living_Serpent, item);
+        v2 = ~PostInFuture(15, << _aNO_HALT_i, _aUSABLE_i, #SerpentSlotsEgg_i >>, v1);
+        v2 = ~PostAction(<< _aNO_HALT_i, _aKNEEL_FRAME_i, _aWAIT_i, 5 >>, _Avatar);
+        terminate;
+    }
+    if (event = _Action) {
+        ClearItemFlag_i(_DontMove_i, _Avatar);
+        ClearSpeakers_i();
+        PlaySpeechOrText_i(8);
+        flag(740) = true;
+        SetWorkType(_FollowAvt, _Avatar);
+        terminate;
+    }
+    if flag(696) {
+        terminate;
+    }
+    v3 = ~GetQuality(item);
+    v4 = false;
+    v5 = ~FindNearby_i(0, 1, _Brserp, item);
+    if v5 {
+        v6 = ~GetFrame(v5);
+        if ((v6 + 1) <> v3) {
+            v7 = ~GetParty();
+            v8 = 3;
+            Foreach v11 in v7 {
+                v2 = ~PostInFuture(v8, << _aNO_HALT_i, _aUSABLE_i, #CallLightning_i >>, v11);
+                Bark_i(v8, "@Ahhhh!@", v11);
+                v8 = (v8 + 7);
+                Bark_i(v8, "@That was wrong...@", _Avatar);
+            }
+            v4 = true;
+        } else {
+            SetItemFlag_i(_IsTemporary_i, v5);
+            Item_destroy(v5);
+            v12 = ~FindNearby_i(0, 1, _Serp_Slots, item);
+            if v12 {
+                v13 = ~GetCoord(v12);
+                v14 = ~GetFrame(v12);
+                Item_destroy(v12);
+                v15 = ~Item_create(_Serp_Slots);
+                if v15 {
+                    SetFrame((v14 + 4), v15);
+                    v2 = ~PopToMap(v13);
+                    Sfx(4);
+                    createSprite(65535, 0, 0, 0, (v13::2 - 1), v13::1, 21);
+                }
+            }
+            if (v3 = 2) {
+                flag(678) = true;
+            }
+            if (v3 = 3) {
+                flag(679) = true;
+            }
+            if (v3 = 4) {
+                flag(680) = true;
+            }
+        }
+    }
+    if (not v5 or v4) {
+        if (v3 = 2) {
+            v16 = 7;
+            v17 = (~rndRange(10, 5) * 65535);
+            v18 = 0;
+        }
+        if (v3 = 3) {
+            v16 = 7;
+            v17 = 0;
+            v18 = ~rndRange(10, 5);
+        }
+        if (v3 = 4) {
+            v16 = 26;
+            v17 = ~rndRange(10, 5);
+            v18 = 0;
+        }
+        v19 = << 927, 463, 513 >>;
+        v20 = ~FindNearby_i(0, 1, _All, item);
+        Foreach v23 in v20 {
+            if not (~Item_getType(v23) in v19) {
+                v24 = ~GetCoord(item);
+                v2 = ~Item_push(v23);
+                if v2 {
+                    v2 = ~PopToMap(<< (v24::1 + v17), (v24::2 + v18), v24::3 >>);
+                }
+                Sfx(67);
+                createSprite(65535, 0, 0, 0, (v24::2 + v18), (v24::1 + v17), v16);
+            }
+        }
+    }
+    if (flag(678) and (flag(679) and flag(680))) {
+        Sfx(119);
+        SetItemFlag_i(_DontMove_i, _Avatar);
+        flag(696) = true;
+        v24 = << 1671, 28, 0 >>;
+        createSprite(65535, 0, 5, 5, v24::2, v24::1, 26);
+        createSprite(65535, 0, 65531, 65531, v24::2, v24::1, 7);
+        createSprite(65535, 0, 5, 65531, v24::2, v24::1, 7);
+        createSprite(65535, 0, 65531, 5, v24::2, v24::1, 26);
+        v25 = << 1675, 21, 2 >>;
+        PathfindNPC_i(true, #SerpentSlotsEgg_i, item, _Pathfind1, v25, _Avatar);
+        SetPathFailure_i(_Pathfind1, item, #SerpentSlotsEgg_i);
+    }
+}
+
+Routine SerpentEyesEgg_i accepts a0 #locals(25) #uses(UnfreezeAvatar_i, ~GimmePathEgg, Bark_i) {
+    if not flag(696) {
+        terminate;
+    }
+    if (event = _Action) {
+        v0 = ~GetCoord(item);
+        v1 = ~rndRange(3, 65533);
+        v2 = ~rndRange(3, 65533);
+        createSprite(65535, 0, 0, 0, (v0::2 + v2), (v0::1 + v1), 17);
+        Sfx(42);
+        createSprite(65535, 0, 0, 0, (v0::2 - 3), (v0::1 - 3), 7);
+        createSprite(65535, 0, 0, 0, (v0::2 - 3), (v0::1 - 3), 7);
+        createSprite(65535, 0, 0, 0, (v0::2 - 3), (v0::1 - 3), 26);
+        terminate;
+    }
+    if ((event = _Pathfind1) or (event = _Path_Failure)) {
+        UnfreezeAvatar_i();
+        v3 = ~FindNearby_i(0, 45, _Living_Serpent, item);
+        v4 = 0;
+        While ((v4 < 10) and v3) {
+            v5 = ~rndRange(4, 2);
+            event = 2;
+            v6 = ~PostInFuture((v4 * v5), << _aNO_HALT_i, _aUSABLE_i, #SerpentEyesEgg_i >>, v3);
+            v4 = (v4 + 1);
+            Sfx(116);
+        }
+        v7 = ~GimmePathEgg(2, 0);
+        if v7 {
+            v6 = ~PostInFuture(70, << _aNO_HALT_i, _aUSABLE_i, #Living_Serpent >>, v7);
+        }
+        SetFrame(6, v3);
+        ClearItemFlag_i(_DontMove_i, _Avatar);
+        ClearSpeakers_i();
+        SetWorkType(_FollowAvt, _Avatar);
+        terminate;
+    }
+    v8 = ~FindNearby_i(0, 1, _All, item);
+    v9 = false;
+    v10 = false;
+    v11 = << 898, 829, 927, 463, 724, 743, 388, 1016, 992, 209, 941 >>;
+    v12 = false;
+    Foreach v15 in v8 {
+        v16 = ~Item_getType(v15);
+        if not (v16 in v11) {
+            v17 = v15;
+            v12 = true;
+        }
+        if (v16 = 209) {
+            v18 = ~GetFrame(v15);
+            if ((v18 = 19) or (v18 = 20)) {
+                if (v18 = 19) {
+                    v9 = true;
+                    v0 = ~GetCoord(v15);
+                    createSprite(65535, 0, 0, 0, (v0::2 - 1), v0::1, 7);
+                    Sfx(76);
+                }
+                if (v18 = 20) {
+                    v10 = true;
+                    v0 = ~GetCoord(v15);
+                    createSprite(65535, 0, 0, 0, (v0::2 - 1), v0::1, 26);
+                    Sfx(76);
+                }
+            }
+        }
+    }
+    if v12 {
+        v7 = ~GimmePathEgg(1, 0);
+        if v7 {
+            v6 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #Tremor >>, v7);
+        }
+        v1 = ~rndRange(15, 65521);
+        v2 = ~rndRange(15, 8);
+        v0 = ~GetCoord(item);
+        v6 = ~Item_push(v17);
+        if v6 {
+            v6 = ~PopToMap(<< (v0::1 + v1), (v0::2 + v2), v0::3 >>);
+            createSprite(65535, 0, 0, 0, v0::2, v0::1, 17);
+            createSprite(65535, 0, 0, 0, v0::2, v0::1, 9);
+            Sfx(116);
+            v19 = ~GetParty();
+            v20 = 3;
+            Foreach v23 in v19 {
+                v6 = ~PostInFuture(v20, << _aNO_HALT_i, _aUSABLE_i, #CallLightning_i >>, v23);
+                Sfx(116);
+                Bark_i(v20, "@Yowww!@", v23);
+                v20 = (v20 + 7);
+                Bark_i(20, "@That was wrong...@", _Avatar);
+            }
+        }
+        terminate;
+    }
+    if (v9 and v10) {
+        Bark_i(0, "@That did it!@", _Avatar);
+        SetItemFlag_i(_DontMove_i, _Avatar);
+        v24 = << 1675, 21, 2 >>;
+        PathfindNPC_i(true, #SerpentEyesEgg_i, item, _Pathfind1, v24, _Avatar);
+        SetPathFailure_i(_Pathfind1, item, #SerpentEyesEgg_i);
+    }
+}
+
+Routine ArtifactPedestalEgg_i accepts a0 #locals(23) #uses(~GimmePathEgg, Bark_i, ConsumeOne_i) {
+    if (event = _Action) {
+        v0 = << 511, 529, 536, 706, 524, 861 >>;
+        Foreach v3 in v0 {
+            v4 = ~FindNearby_i(0, 20, v3, item);
+            Foreach v7 in v4 {
+                v8 = ~GetCoord(v7);
+                Sfx(116);
+                createSprite(65535, 0, 0, 0, v8::2, v8::1, 17);
+            }
+        }
+        terminate;
+    }
+    v9 = ~GetQuality(item);
+    v10 = ~FindNearby_i(0, 1, _Serp_Artifact, item);
+    v11 = ~GetFrame(v10);
+    v3 = true;
+    if (v9 = 0) && (v11 = 3) {
+        flag(683) = true;
+        v3 = false;
+    }
+    if (v9 = 1) && (v11 = 18) {
+        flag(684) = true;
+        v3 = false;
+    }
+    if (v9 = 2) && (v11 = 4) {
+        flag(685) = true;
+        v3 = false;
+    }
+    if (v9 = 3) && (v11 = 8) {
+        flag(686) = true;
+        v3 = false;
+    }
+    if (v9 = 4) && (v11 = 6) {
+        flag(687) = true;
+        v3 = false;
+    }
+    if (v9 = 5) && (v11 = 7) {
+        flag(688) = true;
+        v3 = false;
+    }
+    if v3 {
+        v12 = ~FindNearby_i(16, 25, _Egg_Type, item);
+        Foreach v15 in v12 {
+            v16 = ~PostAction(<< _aHATCH_i >>, v15);
+            v17 = ~GimmePathEgg(1, 0);
+            if v17 {
+                v16 = ~PostInFuture(5, << _aNO_HALT_i, _aUSABLE_i, #ArtifactPedestalEgg_i >>, v17);
+            }
+        }
+    } else {
+        v8 = ~GetCoord(item);
+        createSprite(65535, 0, 0, 0, (v8::2 - 1), v8::1, 21);
+        Bark_i(5, "@That did it!@", _Avatar);
+        v0 = << 511, 529, 536, 706, 524, 861 >>;
+        Foreach v3 in v0 {
+            v4 = ~FindNearby_i(0, 40, v3, item);
+            Foreach v7 in v4 {
+                v8 = ~GetCoord(v7);
+                Sfx(116);
+                createSprite(65535, 0, 0, 0, v8::2, v8::1, 17);
+                KillNPC_i(v7);
+            }
+        }
+        if (flag(683) and (flag(684) and (flag(685) and (flag(686) and (flag(687) and flag(688)))))) {
+            createSprite(65535, 0, 0, 0, (v8::2 - 1), v8::1, 7);
+            v22 = ~Item_create(_Serp_Book);
+            if v22 {
+                ClearItemFlag_i(_IsTemporary_i, v22);
+                v16 = ~SetQuality(241, v22);
+                v10 = ~FindNearby_i(0, 1, _Serp_Artifact, item);
+                if v10 {
+                    v8 = ~GetCoord(v10);
+                    ConsumeOne_i(v10);
+                }
+                v16 = ~PopToMap(v8);
+            }
+        }
+    }
+}
+
+Routine LayChasmBridge_i accepts a0 #locals(10) {
+    if (event = _Action) {
+        v0 = ~GetQuality(item);
+        if ((v0 = 150) or (v0 = 151)) {
+            v1 = << 1691, 1691, 1691 >>;
+            v2 = << 231, 223, 215 >>;
+            v3 = 1;
+            v4 = ~ListSize_i(v1);
+            While (v3 <= v4) {
+                v5 = ~Item_create(_Roof_Inv);
+                if v5 {
+                    SetFrame(2, v5);
+                    SetItemFlag_i(_IsTemporary_i, v5);
+                    v6 = ~PopToMap(<< v1::v3, v2::v3, 0 >>);
+                }
+                v3 = (v3 + 1);
+            }
+            v7 = << 1683, 231, 0 >>;
+            v3 = 0;
+            While (v3 < 8) {
+                v8 = 0;
+                While (v8 > 65512) {
+                    v9 = ~Item_create(_Fire_Pillar);
+                    if v9 {
+                        SetItemFlag_i(_IsTemporary_i, v9);
+                        SetFrame(~rndRange(11, 6), v9);
+                        Sfx(41);
+                        v6 = ~PopToMap(<< (v7::1 + v3), (v7::2 + v8), 1 >>);
+                    }
+                    v8 = (v8 - 2);
+                }
+                v3 = (v3 + 2);
+            }
+        }
+        if ((v0 = 152) or (v0 = 153)) {
+            v1 = << 1675, 1675, 1675 >>;
+            v2 = << 199, 191, 183 >>;
+            v3 = 1;
+            v4 = ~ListSize_i(v1);
+            While (v3 <= v4) {
+                v5 = ~Item_create(_Roof_Inv);
+                if v5 {
+                    SetFrame(2, v5);
+                    SetItemFlag_i(_IsTemporary_i, v5);
+                    v6 = ~PopToMap(<< v1::v3, v2::v3, 0 >>);
+                }
+                v3 = (v3 + 1);
+            }
+            v7 = << 1667, 199, 0 >>;
+            v3 = 0;
+            While (v3 < 8) {
+                v8 = 0;
+                While (v8 > 65512) {
+                    v9 = ~Item_create(_Fire_Pillar);
+                    if v9 {
+                        SetItemFlag_i(_IsTemporary_i, v9);
+                        Sfx(41);
+                        SetFrame(~rndRange(5, 0), v9);
+                        v6 = ~PopToMap(<< (v7::1 + v3), (v7::2 + v8), 1 >>);
+                    }
+                    v8 = (v8 - 2);
+                }
+                v3 = (v3 + 2);
+            }
+        }
+    }
+}
+
+Routine IceWallLavaBridgeEgg_i accepts a0 #locals(19) #uses(Bark_i) {
+    v0 = ~GetQuality(item);
+    if ($temp1flag and flag(690)) {
+        v1 = ~FindNearby_i(0, 20, _Ice_Door, item);
+        Foreach v4 in v1 {
+            v5 = ~GetCoord(v4);
+            Item_destroy(v4);
+            v6 = ~Item_create(_Flat_Burn_Mark);
+            if v6 {
+                SetFrame(~rndRange(11, 8), v6);
+                v6 = ~PopToMap(v5);
+            }
+        }
+    }
+    if ((v0 = 0) and (flag(690) = false)) {
+        v7 = ~FindNearby_i(0, 2, _Serp_Artifact, item);
+        if v7 {
+            v8 = ~GetFrame(v7);
+            if (v8 = 22) {
+                SetFrame(23, item);
+                Bark_i(4, "@'Tis working...@", _Avatar);
+                CreateSpriteOn_i(65535, 0, 0, 0, 0, 0, 12, item);
+                v6 = ~PostAction(<< _aNO_HALT_i, _aWAIT_i, 20, _aFRAME, 21 >>, v7);
+                Sfx(104);
+                v8 = 23;
+            }
+            if (v8 <> 23) {
+                Bark_i(4, "@That did naught!@", _Avatar);
+                Sfx(48);
+                terminate;
+            } else {
+                flag(690) = true;
+                $temp1flag = true;
+                v1 = ~FindNearby_i(0, 20, _Ice_Door, item);
+                if v1 {
+                    Foreach v4 in v1 {
+                        v5 = ~GetCoord(v4);
+                        v11 = 4;
+                        While (v11 >= 1) {
+                            v12 = ~Item_create(_Artifacts);
+                            if v12 {
+                                SetFrame(5, v12);
+                                v13 = ~rndRange(4, 65532);
+                                v14 = ~rndRange(4, 65532);
+                                v6 = ~PopToMap(<< (v5::1 + v13), (v5::2 + v14), 0 >>);
+                            }
+                            v11 = (v11 - 1);
+                        }
+                    }
+                }
+                v1 = ~FindNearby_i(0, 20, _Ice_Door, item);
+                Foreach v4 in v1 {
+                    v5 = ~GetCoord(v4);
+                    Sfx(119);
+                    createSprite(65535, 0, 0, 0, (v5::2 - 2), v5::1, 7);
+                    v6 = ~PostAction(<< _aNO_HALT_i, _aFRAME, 1, _aWAIT_i, 1, _aFRAME, 2, _aWAIT_i, 1, _aFRAME, 3, _aWAIT_i, 1, _aFRAME, 4 >>, v4);
+                }
+                Sfx(95);
+                v6 = ~PostInFuture(12, << _aNO_HALT_i, _aUSABLE_i, #IceWallLavaBridgeEgg_i >>, item);
+            }
+        }
+    }
+    if ((v0 = 1) and (flag(691) = false)) {
+        v1 = ~FindNearby_i(0, 1, _Artifacts, item);
+        if v1 {
+            v8 = ~GetFrame(v1);
+            if (v8 = 5) {
+                v5 = << 1753, 122, 0 >>;
+                v17 = 0;
+                While (v17 < 8) {
+                    v18 = ~Item_create(_EW_Serp1x4);
+                    if v18 {
+                        SetFrame(10, v18);
+                        v6 = ~PopToMap(<< v5::1, (v5::2 + v17), v5::3 >>);
+                        v6 = ~Item_create(_Field_Fire);
+                        if v6 {
+                            v6 = ~PopToMap(<< (v5::1 + 2), (v5::2 + v17), 0 >>);
+                        }
+                        v6 = ~Item_create(_Field_Fire);
+                        if v6 {
+                            v6 = ~PopToMap(<< (v5::1 - 4), (v5::2 + v17), 0 >>);
+                        }
+                        Sfx(39);
+                    }
+                    v17 = (v17 + 1);
+                }
+                flag(691) = true;
+            }
+        }
+    }
+}
+
+Routine EnergonStairsEgg_i accepts a0 #locals(16) #uses(ConsumeOne_i) {
+    if (event = _Action) {
+        ConsumeOne_i(item);
+        terminate;
+    }
+    v0 = ~FindNearby_i(0, 1, _Serp_Artifact, item);
+    if v0 {
+        v1 = ~GetFrame(v0);
+        if not ((v1 = 1) or (v1 = 2)) {
+            v2 = true;
+            goto label_54;
+        }
+        v3 = ~GetCoord(v0);
+        ConsumeOne_i(v0);
+        v4 = 0;
+        if (v1 = 1) {
+            v4 = 561;
+            if (flag(692) = true) {
+                if (flag(693) = true) {
+                    Sfx(82);
+                    createSprite(65535, 0, 0, 0, (v3::2 - 2), (v3::1 - 2), 9);
+                    terminate;
+                } else {
+                    flag(693) = true;
+                }
+            } else {
+                flag(692) = true;
+            }
+        }
+        if (v1 = 2) {
+            v4 = 895;
+            if (flag(694) = true) {
+                if (flag(695) = true) {
+                    Sfx(82);
+                    createSprite(65535, 0, 0, 0, (v3::2 - 2), (v3::1 - 2), 9);
+                    terminate;
+                } else {
+                    flag(695) = true;
+                }
+            } else {
+                flag(694) = true;
+            }
+        }
+        v5 = ~Item_create(v4);
+        if v5 {
+            ClearItemFlag_i(_IsTemporary_i, v5);
+            v6 = ~PopToMap(v3);
+            v6 = ~PostInFuture(12, << _aNO_HALT_i, _aUSABLE_i, #EnergonStairsEgg_i >>, v5);
+        }
+        v7 = ~GetQuality(item);
+        v6 = ~SetQuality((v7 + 1), item);
+        v7 = (v7 + 1);
+        v8 = 0;
+        if (v7 = 4) {
+            v9 = << 1667, 1671, 1675, 1679, 1667, 1671, 1675, 1679 >>;
+            v10 = << 131, 131, 131, 131, 135, 135, 135, 135 >>;
+            v11 = << 8, 9, 9, 9, 10, 11, 11, 11 >>;
+            Sfx(130);
+            createSprite(65535, 0, 0, 0, 130, 1670, 26);
+            While (v8 < 8) {
+                v12 = ~Item_create(_Serpgate);
+                v8 = (v8 + 1);
+                if v12 {
+                    SetFrame(v11::v8, v12);
+                    ClearItemFlag_i(_IsTemporary_i, v12);
+                    v6 = ~PopToMap(<< v9::v8, v10::v8, 0 >>);
+                }
+            }
+        }
+        if (v7 = 3) {
+            v9 = << 1669, 1673, 1677, 1669, 1673, 1677 >>;
+            v10 = << 131, 131, 131, 135, 135, 135 >>;
+            v11 = << 8, 9, 9, 10, 11, 11 >>;
+            Sfx(130);
+            createSprite(65535, 0, 0, 0, 130, 1670, 7);
+            While (v8 < 6) {
+                v12 = ~Item_create(_Serpgate);
+                v8 = (v8 + 1);
+                if v12 {
+                    SetFrame(v11::v8, v12);
+                    ClearItemFlag_i(_IsTemporary_i, v12);
+                    v6 = ~PopToMap(<< v9::v8, v10::v8, 1 >>);
+                }
+            }
+        }
+        if (v7 = 2) {
+            v9 = << 1671, 1671, 1675, 1675 >>;
+            v10 = << 131, 135, 131, 135 >>;
+            v11 = << 8, 10, 9, 11 >>;
+            Sfx(130);
+            createSprite(65535, 0, 0, 0, 130, 1670, 26);
+            While (v8 < 4) {
+                v12 = ~Item_create(_Serpgate);
+                v8 = (v8 + 1);
+                if v12 {
+                    SetFrame(v11::v8, v12);
+                    ClearItemFlag_i(_IsTemporary_i, v12);
+                    v6 = ~PopToMap(<< v9::v8, v10::v8, 2 >>);
+                }
+            }
+        }
+        if (v7 = 1) {
+            v9 = << 1673, 1673 >>;
+            v10 = << 131, 135 >>;
+            v11 = << 8, 10 >>;
+            Sfx(130);
+            createSprite(65535, 0, 0, 0, 130, 1670, 7);
+            While (v8 < 2) {
+                v12 = ~Item_create(_Serpgate);
+                v8 = (v8 + 1);
+                if v12 {
+                    SetFrame(v11::v8, v12);
+                    ClearItemFlag_i(_IsTemporary_i, v12);
+                    v6 = ~PopToMap(<< v9::v8, v10::v8, 3 >>);
+                }
+            }
+        }
+        if (v7 = 4) {
+            Sfx(119);
+            createSprite(65535, 0, 0, 0, 130, 1670, 7);
+            v13 = ~Item_create(_Teleport_Platform);
+            if v13 {
+                SetFrame(7, v13);
+                v6 = ~PopToMap(<< 1673, 133, 4 >>);
+            }
+            v13 = ~Item_create(_Serp_Scroll);
+            if v13 {
+                SetFrame(3, v13);
+                v6 = ~SetQuality(123, v13);
+                v6 = ~PopToMap(<< 1672, 132, 5 >>);
+            }
+        }
+    } else {
+        v2 = true;
+    }
+    label_54:
+    if v2 {
+        v3 = ~GetCoord(item);
+        v14 = ~rndRange(10, 3);
+        v15 = ~rndRange(1, 0);
+        if (v15 = 0) {
+            v14 = (v14 * 65535);
+        }
+        v6 = ~Item_push(v0);
+        if v6 {
+            v6 = ~PopToMap(<< (v3::1 + v14), v3::2, 0 >>);
+        }
+        createSprite(65535, 0, 0, 0, v3::2, (v3::1 + v14), 21);
+    }
+}
+
+Routine ShrineTeleportEgg_i accepts a0 #locals(6) #uses(~GimmePathEgg, PlaySpeechOrText_i) {
+    if (event = _Trigger) {
+        v0 = ~GetCoord(_Avatar);
+        if (v0::3 <> 5) {
+            terminate;
+        }
+        v0 = ~GimmePathEgg(1, 0);
+        v1 = ~GimmePathEgg(2, 0);
+        if (v0 and v1) {
+            v2 = ~SetQuality(0, v0);
+            v2 = ~SetQuality(1, v1);
+            v2 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #DismissParty_i >>, v0);
+            SetItemFlag_i(_DontMove_i, _Avatar);
+            v3 = ~GetCoord(item);
+            CreateSpriteOn_i(65535, 0, 0, 0, 0, 0, 26, _Avatar);
+            CreateSpriteOn_i(65535, 0, 0, 0, 0, 0, 7, _Avatar);
+            CreateSpriteOn_i(65535, 0, 0, 0, 0, 0, 13, _Avatar);
+            v2 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #ShrineTeleportEgg_i >>, v0);
+            v2 = ~PostInFuture(2, << _aNO_HALT_i, _aUSABLE_i, #ShrineTeleportEgg_i >>, v0);
+            v2 = ~PostInFuture(4, << _aNO_HALT_i, _aUSABLE_i, #ShrineTeleportEgg_i >>, v0);
+            v2 = ~PostInFuture(20, << _aNO_HALT_i, _aUSABLE_i, #ShrineTeleportEgg_i >>, v1);
+        }
+        Sfx(81);
+        terminate;
+    }
+    if ((event = _Action) and ($temp3flag = false)) {
+        v4 = ~GetQuality(item);
+        if (v4 = 0) {
+            v3 = ~GetCoord(_Avatar);
+            v3::1 = (v3::1 - (v3::3 / 2));
+            v3::2 = (v3::2 - (v3::3 / 2));
+            createSprite(65535, 0, 0, 0, v3::2, v3::1, 17);
+            Sfx(116);
+        }
+        if (v4 = 1) {
+            FadePalette_i(0, 1, 12);
+            Item_move(<< 2364, 70, 1 >>, _Avatar);
+            ClearItemFlag_i(_DontMove_i, _Avatar);
+            $temp3flag = true;
+            v2 = ~PostInFuture(10, << _aNO_HALT_i, _aUSABLE_i, #FadeInArrival_i >>, item);
+            v2 = ~PostInFuture(18, << _aNO_HALT_i, _aUSABLE_i, #ShrineTeleportEgg_i >>, item);
+        }
+        terminate;
+    }
+    if ((event = _Action) and ($temp3flag = true)) {
+        $temp3flag = false;
+        if not flag(689) {
+            PlaySpeechOrText_i(4);
+        }
+        v5 = true;
+    }
+}
+
+Routine ShrineEntryEgg_i accepts a0 #locals(8) #uses(Bark_i, PlaySpeechOrText_i) {
+    if ((event = _Action) and $temp4flag) {
+        $temp4flag = false;
+        FadePalette_i(0, 1, 12);
+        Bark_i(27, "@Where didst thou go?@", _Iolo);
+    }
+    if (event = _Action) {
+        Item_move(<< 1668, 123, 0 >>, _Avatar);
+        v0 = ~PostInFuture(5, << _aNO_HALT_i, _aUSABLE_i, #RecallParty_i >>, _Avatar);
+        v0 = ~PostInFuture(10, << _aNO_HALT_i, _aUSABLE_i, #FadeInArrival_i >>, _Avatar);
+    }
+    if (event = _Trigger) {
+        if flag(689) {
+            PlaySpeechOrText_i(4);
+            terminate;
+        }
+        v1 = ~NPCToItem_i(_Avatar);
+        v2 = ~FindItem(_All, _All, _Staff_Serp, v1);
+        v3 = ~FindItem(_All, _All, _Armour_Serp, v1);
+        v4 = ~FindItem(2, _All, _Leath_Helm, v1);
+        v5 = ~FindItem(1, _All, _Brserp, v1);
+        v6 = ~FindItem(2, _All, _Brserp, v1);
+        v7 = ~FindItem(3, _All, _Brserp, v1);
+        if not (v2 and (v3 and v4)) {
+            PlaySpeechOrText_i(5);
+            flag(743) = true;
+            $temp4flag = true;
+            v0 = ~PostInFuture(10, << _aNO_HALT_i, _aUSABLE_i, #ShrineEntryEgg_i >>, _Avatar);
+            CreateSpriteOn_i(65535, 0, 0, 0, 0, 0, 7, _Avatar);
+            Sfx(81);
+            terminate;
+        }
+        if not (v6 and (v5 and v7)) {
+            PlaySpeechOrText_i(6);
+            flag(742) = true;
+            $temp4flag = true;
+            v0 = ~PostInFuture(8, << _aNO_HALT_i, _aUSABLE_i, #ShrineEntryEgg_i >>, _Avatar);
+            CreateSpriteOn_i(65535, 0, 0, 0, 0, 0, 26, _Avatar);
+            Sfx(81);
+            terminate;
+        }
+        terminate;
+    }
+}
+
+Routine RegaliaAltarEgg_i accepts a0 #locals(22) #uses(PlaySpeechOrText_i, Bark_i, ~GiveItemsOrDrop_i) {
+    if ((event = _Action) and ($temp1flag = true)) {
+        $temp1flag = false;
+        PlaySpeechOrText_i(7);
+        flag(741) = true;
+        v0 = ~FindNearby_i(0, 25, _Staff_Serp, item);
+        v1 = ~FindNearby_i(0, 25, _Armour_Serp, item);
+        v2 = ~FindNearby_i(0, 25, _Leath_Helm, item);
+        v3 = ~GetCoord(v0);
+        createSprite(65535, 0, 0, 65531, (v3::2 - 3), (v3::1 - 3), 21);
+        Item_destroy(v0);
+        v3 = ~GetCoord(v1);
+        createSprite(65535, 0, 65531, 0, (v3::2 - 3), (v3::1 - 3), 13);
+        Item_destroy(v1);
+        v3 = ~GetCoord(v2);
+        createSprite(65535, 0, 0, 5, (v3::2 - 3), (v3::1 - 3), 21);
+        createSprite(65535, 0, 5, 0, (v3::2 - 3), (v3::1 - 3), 13);
+        Item_destroy(v2);
+        Sfx(119);
+        v4 = ~PostInFuture(27, << _aNO_HALT_i, _aUSABLE_i, #RegaliaAltarEgg_i >>, _Avatar);
+        v5 = ~GetCoord(_Avatar);
+        createSprite(65535, 0, 0, 0, (v5::2 - 4), (v5::1 - 4), 7);
+        createSprite(65535, 0, 0, 0, (v5::2 - 3), (v5::1 - 3), 26);
+        v6 = ~FindNearby_i(0, 15, _Serp_Artifact, item);
+        Foreach v4 in v6 {
+            v9 = ~GetFrame(v4);
+            if (v9 = 20) {
+                $temp4flag = true;
+                v3 = ~GetCoord(v4);
+                createSprite(65533, 0, 0, 5, (v3::2 - 3), (v3::1 - 3), 33);
+                Item_destroy(v4);
+            }
+            if (v9 = 19) {
+                Bark_i(65, "@I forgot the eye!@", _Avatar);
+            }
+        }
+        terminate;
+    }
+    if (event = _Action) {
+        if ($temp3flag = true) {
+            $temp3flag = false;
+            v10 = ~FindNearby_i(0, 15, _DDSerpNS, item);
+            v10 = (v10 & ~FindNearby_i(0, 15, _Serp_NS, item));
+            Foreach v13 in v10 {
+                v9 = ~GetFrame(v13);
+                if ((v9 = 14) or (v9 = 30)) {
+                    v9 = (v9 - 2);
+                    SetFrame(v9, v13);
+                    v14 = v13;
+                    v15 = ~GetCoord(v13);
+                    Sfx(89);
+                    createSprite(65535, 0, 3, 3, (v15::2 - 2), (v15::1 - 2), 13);
+                    createSprite(65535, 0, 3, 65533, (v15::2 - 3), (v15::1 - 3), 13);
+                    createSprite(65535, 0, 65533, 65533, (v15::2 - 2), (v15::1 - 2), 21);
+                    createSprite(65535, 0, 65533, 3, (v15::2 - 3), (v15::1 - 3), 21);
+                }
+            }
+            v16 = ~Item_getType(v14);
+            if (v16 = 246) {
+                v4 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #Serp_NS, 0 >>, v14);
+            }
+            if (v16 = 516) {
+                v4 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #DDSerpNS >>, v14);
+            }
+            terminate;
+        }
+        if ($temp2flag = false) {
+            FadePalette_i(0, 1, 12);
+            Sfx(81);
+            Item_move(<< 1671, 114, 0 >>, _Avatar);
+            $temp2flag = true;
+            v4 = ~PostInFuture(1, << _aNO_HALT_i, _aUSABLE_i, #RecallParty_i >>, _Avatar);
+            v4 = ~PostInFuture(2, << _aNO_HALT_i, _aUSABLE_i, #RegaliaAltarEgg_i >>, _Avatar);
+            terminate;
+        } else {
+            $temp3flag = true;
+            $temp2flag = false;
+            v4 = ~GiveItemsOrDrop_i(false, 0, 0, 0, 640, 1, _Avatar);
+            v4 = ~GiveItemsOrDrop_i(false, 0, 0, 0, 638, 1, _Avatar);
+            v4 = ~GiveItemsOrDrop_i(false, 0, 2, 0, 1004, 1, _Avatar);
+            ClearItemFlag_i(_DontMove_i, _Avatar);
+            if $temp4flag {
+                v4 = ~GiveItemsOrDrop_i(false, 0, 20, 0, 209, 1, _Avatar);
+                $temp4flag = false;
+            }
+            v4 = ~PostInFuture(5, << _aNO_HALT_i, _aUSABLE_i, #FadeInArrival_i >>, _Avatar);
+            v4 = ~PostInFuture(17, << _aNO_HALT_i, _aUSABLE_i, #RegaliaAltarEgg_i >>, _Avatar);
+            terminate;
+        }
+    }
+    if (event = _Trigger) {
+        $temp1flag = 0;
+        $temp2flag = 0;
+        $temp3flag = 0;
+        $temp4flag = 0;
+        v0 = ~FindNearby_i(0, 5, _Staff_Serp, item);
+        v1 = ~FindNearby_i(0, 5, _Armour_Serp, item);
+        v2 = ~FindNearby_i(0, 5, _Leath_Helm, item);
+        if v2 && (~GetFrame(v2) <> 2) {
+            v2 = 0;
+        }
+        if v0 {
+            CreateSpriteOn_i(65535, 0, 0, 0, 0, 0, 21, v0);
+        }
+        if v1 {
+            CreateSpriteOn_i(65535, 0, 0, 0, 0, 0, 21, v1);
+        }
+        if v2 {
+            CreateSpriteOn_i(65535, 0, 0, 0, 0, 0, 21, v2);
+        }
+        if (v0 and (v1 and v2)) {
+            SetFrame(0, _Avatar);
+            SetItemFlag_i(_DontMove_i, _Avatar);
+            if not flag(689) {
+                v17 = ~Item_create(_Serp_Artifact);
+                if v17 {
+                    SetFrame(20, v17);
+                    ClearItemFlag_i(_IsTemporary_i, v17);
+                    v4 = ~FindNearby_i(176, 10, _Snakecrv, item);
+                    Foreach v20 in v4 {
+                        v21 = ~GetCoord(v20);
+                        Item_destroy(v20);
+                    }
+                    v4 = ~PopToMap(v21);
+                    if v4 {
+                        flag(689) = true;
+                    }
+                    createSprite(65535, 0, 0, 0, (v21::2 - 3), (v21::1 - 3), 33);
+                    createSprite(65535, 0, 0, 0, (v21::2 - 3), (v21::1 - 4), 26);
+                    createSprite(65533, 10, 0, 0, (v21::2 - 4), (v21::1 - 3), 7);
+                    Sfx(67);
+                    Bark_i(5, "@The Eye of Order!@", _Avatar);
+                }
+            }
+            $temp1flag = true;
+            v4 = ~PostInFuture(20, << _aNO_HALT_i, _aUSABLE_i, #RegaliaAltarEgg_i >>, _Avatar);
+        }
+    }
+}

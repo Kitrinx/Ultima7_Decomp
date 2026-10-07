@@ -1,0 +1,410 @@
+Routine Stones_Colored accepts a0 #locals(3) #uses(~IsNextStone_i, ResetStones_i, ToggleSliders_i) {
+    v0 = ~GetCoord(item);
+    v1 = ~GetFrame(item);
+    if ((v0::1 = 935) and ((v0::2 = 1054) and (v0::3 = 2))) {
+        if ((v1 = 19) and ~IsNextStone_i(1)) {
+            flag(579) = true;
+            goto label_27;
+        } else {
+            goto label_26;
+        }
+    }
+    if ((v0::1 = 943) and ((v0::2 = 1051) and (v0::3 = 2))) {
+        if ((v1 = 20) and ~IsNextStone_i(2)) {
+            flag(580) = true;
+            goto label_27;
+        } else {
+            goto label_26;
+        }
+    }
+    if ((v0::1 = 937) and ((v0::2 = 1048) and (v0::3 = 2))) {
+        if ((v1 = 21) and ~IsNextStone_i(3)) {
+            flag(581) = true;
+            goto label_27;
+        } else {
+            goto label_26;
+        }
+    }
+    if ((v0::1 = 939) and ((v0::2 = 1061) and (v0::3 = 2))) {
+        if ((v1 = 22) and ~IsNextStone_i(4)) {
+            flag(582) = true;
+            goto label_27;
+        } else {
+            goto label_26;
+        }
+    }
+    if ((v0::1 = 951) and ((v0::2 = 1055) and (v0::3 = 2))) {
+        if ((v1 = 19) and ~IsNextStone_i(5)) {
+            flag(583) = true;
+            goto label_27;
+        } else {
+            flag(583) = false;
+            goto label_26;
+        }
+    }
+    terminate;
+    label_26:
+    ResetStones_i();
+    createSprite(65535, 0, 0, 0, (v0::2 - 2), (v0::1 - 2), 9);
+    Sfx(33);
+    terminate;
+    label_27:
+    if (flag(579) and (flag(580) and (flag(581) and (flag(582) and flag(583))))) {
+        v2 = ~FindNearest_i(20, _NS_C_Slider, item);
+        if not v2 {
+            v2 = ~FindNearest_i(20, _NS_Slider, item);
+            if not v2 {
+                terminate;
+            }
+        }
+        createSprite(65535, 0, 0, 0, (v0::2 - 2), (v0::1 - 2), 26);
+        Sfx(30);
+        ToggleSliders_i(65177, v2);
+        ResetStones_i();
+    } else {
+        createSprite(65535, 0, 0, 0, (v0::2 - 2), (v0::1 - 2), 13);
+        Sfx(70);
+    }
+}
+
+Routine SkullcrusherEgg_i accepts a0 #locals(1) #uses(CaptivePleadsEgg_i, ScratchingCoffinEgg_i, ResetStones_i, SummonXenkaEgg_i) {
+    if (event = _Trigger) {
+        v0 = ~GetQuality(item);
+        if not v0 {
+            PrintError_i("Invalid Egg!");
+        }
+        if (v0 = 1) {
+            CaptivePleadsEgg_i();
+        }
+        if (v0 = 2) {
+            CaptivePleadsEgg_i();
+        }
+        if (v0 = 3) {
+            ScratchingCoffinEgg_i();
+        }
+        if (v0 = 4) {
+            ResetStones_i();
+        }
+        if (v0 = 5) {
+            ScratchingCoffinEgg_i();
+        }
+        if (v0 = 6) {
+            ScratchingCoffinEgg_i();
+        }
+        if (v0 = 7) {
+            SummonXenkaEgg_i();
+        }
+        if (v0 = 8) {
+            SummonXenkaEgg_i();
+        }
+        if (v0 = 9) {
+            SummonXenkaEgg_i();
+        }
+        if (v0 = 10) {
+            SummonXenkaEgg_i();
+        }
+        if (v0 = 11) {
+            SummonXenkaEgg_i();
+        }
+    }
+    if (event = _Action) {
+        if (~Item_getType(item) = _Skeleton) {
+            CaptivePleadsEgg_i();
+        }
+        if (~Item_getType(item) = _Coffin) {
+            ScratchingCoffinEgg_i();
+        }
+        if (~Item_getType(item) = _Brserp) {
+            SummonXenkaEgg_i();
+        }
+        if (~Item_getType(item) = _Chaos_Wall) {
+            SummonXenkaEgg_i();
+        }
+    }
+}
+
+Usable CaptivePleadsEgg_i #locals(5) {
+    if (event = _Trigger) {
+        if (~GetQuality(item) = 1) {
+            v0 = ~GetCoord(item);
+            v1 = ~FindNearest_i(0, _Skeleton, item);
+            if not v1 {
+                v1 = ~CreateCreature_i(v0, _Skeleton);
+            }
+            if v1 {
+                SetWorkType(_Wait, v1);
+                v2 = ~PostAction(<< _aNO_HALT_i, _aFACE_i, _South, _aUSABLE_i, #SkullcrusherEgg_i >>, v1);
+            }
+        }
+        if (~GetQuality(item) = 2) {
+            v1 = 0;
+        }
+    }
+    if (event = _Action) {
+        v1 = false;
+        if (~Item_getType(item) = _Skeleton) {
+            v1 = item;
+        }
+        if v1 {
+            if (~GetDist(_Avatar, v1) <= 8) {
+                v3 = ~rndRange(5, 1);
+                if (v3 = 1) {
+                    v4 = "@Avatar, please assist me.@";
+                }
+                if (v3 = 2) {
+                    v4 = "@Will no one help me?@";
+                }
+                if (v3 = 3) {
+                    v4 = "@Please... help me.@";
+                }
+                if (v3 = 4) {
+                    v4 = "@I beg of thee, aid me.@";
+                }
+                if (v3 = 5) {
+                    v4 = "@Will I never be free?@";
+                }
+                v3 = ~rndRange(15, 0);
+                v2 = ~PostInFuture((20 + v3), << _aBARK_i, v4, _aWAIT_i, 15, _aUSABLE_i, #SkullcrusherEgg_i >>, v1);
+            } else {
+                v2 = ~PostAction(<< _aWAIT_i, 3, _aUSABLE_i, #SkullcrusherEgg_i >>, v1);
+            }
+        }
+    }
+}
+
+Usable ScratchingCoffinEgg_i #locals(5) #uses(Door_NS) {
+    if (event = _Trigger) {
+        if (~GetQuality(item) = 3) {
+            v0 = ~FindNearby_i(0, 40, _Coffin, _Avatar);
+            if v0 && not flag(584) {
+                v1 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #SkullcrusherEgg_i >>, v0);
+            }
+        }
+        if (~GetQuality(item) = 5) {
+            v2 = (~GetCoord(item) & (73 & 22));
+            v3 = ~FindNearby_i(0, 5, _Door_NS, v2);
+            v2::5 = 14;
+            v4 = ~FindNearby_i(0, 5, _DDoor_NS, v2);
+            if (v3 and v4) {
+                SetFrame(20, v3);
+                SetFrame(12, v4);
+                event = 1;
+                Door_NS(v3);
+                v2 = (~GetCoord(_Avatar) & (222 & 0));
+                v0 = ~FindNearby_i(0, 40, _Coffin, v2);
+                if v0 {
+                    v1 = ~PostAction(<< _aWAIT_i, 5, _aUSABLE_i, #Vasculio >>, v0);
+                }
+            }
+        }
+        if (~GetQuality(item) = 6) && not flag(584) {
+            flag(584) = true;
+            v1 = ~PostAction(<< _aNO_HALT_i, _aWAIT_i, 15, _aUSABLE_i, #Vasculio >>, _Avatar);
+            Item_destroy(item);
+        }
+    }
+    if (event = _Action) && ((~Item_getType(item) = _Coffin) and not flag(584)) {
+        v1 = ~PostInFuture(10, << _aNO_HALT_i, _aBARK_i, "Scratch... scratch.", _aWAIT_i, 15, _aUSABLE_i, #SkullcrusherEgg_i >>, item);
+    }
+}
+
+Usable ResetStones_i #locals(0) {
+    flag(579) = false;
+    flag(580) = false;
+    flag(581) = false;
+    flag(582) = false;
+    flag(583) = false;
+}
+
+Function ~IsNextStone_i accepts a0 #locals(0) {
+    if (v0 = 1) && flag(579) {
+        return false;
+    }
+    if (v0 = 2) && (not flag(579) or flag(580)) {
+        return false;
+    }
+    if (v0 = 3) && (not flag(580) or flag(581)) {
+        return false;
+    }
+    if (v0 = 4) && (not flag(581) or flag(582)) {
+        return false;
+    }
+    if (v0 = 5) && (not flag(582) or flag(583)) {
+        return false;
+    }
+    return true;
+}
+
+Usable SummonXenkaEgg_i #locals(30) #uses(Bark_i, ~IsAltarReady_i, AnimateWalls_i, PlaySpeechOrText_i) {
+    if (event = _Trigger) {
+        if ((~GetQuality(item) = 7) and (flag(574) and (flag(577) and (flag(576) and flag(575))))) {
+            flag(578) = false;
+            v0 = ~FindNearby_i(0, 1, _Urn, item);
+            Foreach v3 in v0 {
+                v4 = ~GetCoord(v3);
+                v5 = ~GetCoord(item);
+                if ((~GetQuality(v3) = 1) and ((~GetFrame(v3) = 0) and (v4::3 = 2))) {
+                    ClearBark_i(_Avatar);
+                    Bark_i(0, "@In pri kli ort ailem!@", _Avatar);
+                    Bark_i(7, "@Priin ort inten mani!@", _Avatar);
+                    createSprite(65535, 0, 0, 0, v5::2, v5::1, 48);
+                    Sfx(8);
+                    flag(578) = true;
+                    Item_destroy(v3);
+                    v6 = (~FindNearby_i(0, 50, _Field_Fire, item) & ~FindNearby_i(16, 30, _Egg_Type, item));
+                    Foreach v9 in v6 {
+                        v10 = ~GetCoord(v9);
+                        createSprite(65535, 0, 0, 0, v10::2, v10::1, 4);
+                        Item_destroy(v9);
+                    }
+                    if ~IsAltarReady_i() {
+                        v11 = ~FindNearest_i(20, _Chaos_Wall, _Avatar);
+                        if v11 {
+                            v12 = ~PostInFuture(27, << _aUSABLE_i, #SkullcrusherEgg_i >>, v11);
+                        }
+                    }
+                }
+                terminate;
+            }
+        }
+        if (~GetQuality(item) = 8) {
+            flag(574) = false;
+            v13 = ~FindNearby_i(0, 2, _Brserp, item);
+            Foreach v16 in v13 {
+                v17 = ~GetCoord(v16);
+                v5 = ~GetCoord(item);
+                if ((v17::1 <= v5::1) and ((v17::3 = 2) and (~GetFrame(v16) = 3))) {
+                    v12 = ~Item_push(v16);
+                    if v12 {
+                        v5::2 = (v5::2 + 2);
+                        v12 = ~PopToMap(v5);
+                    }
+                    flag(574) = true;
+                    AnimateWalls_i(true);
+                    v12 = ~PostInFuture(20, << _aUSABLE_i, #SkullcrusherEgg_i >>, v16);
+                    terminate;
+                }
+            }
+            AnimateWalls_i(false);
+        }
+        if ((~GetQuality(item) = 9) and flag(574)) {
+            flag(577) = false;
+            v18 = ~FindNearby_i(0, 1, _Soul_Prism, item);
+            Foreach v21 in v18 {
+                if (~GetFrame(v21) = 5) {
+                    flag(577) = true;
+                    v5 = ~GetCoord(item);
+                    Item_destroy(v21);
+                    Item_destroy(item);
+                    v22 = ~Item_create(_Field_Fire);
+                    if v22 {
+                        Sfx(97);
+                        v22 = ~PopToMap(v5);
+                        createSprite(65535, 0, 0, 0, v5::2, v5::1, 39);
+                    }
+                }
+            }
+        }
+        if ((~GetQuality(item) = 10) and flag(574)) {
+            flag(576) = false;
+            v18 = ~FindNearby_i(0, 1, _Soul_Prism, item);
+            Foreach v21 in v18 {
+                if (~GetFrame(v21) = 6) {
+                    flag(576) = true;
+                    v5 = ~GetCoord(item);
+                    Item_destroy(item);
+                    Item_destroy(v21);
+                    v22 = ~Item_create(_Field_Fire);
+                    if v22 {
+                        Sfx(97);
+                        v22 = ~PopToMap(v5);
+                        createSprite(65535, 0, 0, 0, v5::2, v5::1, 39);
+                    }
+                }
+            }
+        }
+        if ((~GetQuality(item) = 11) and flag(574)) {
+            flag(575) = false;
+            v18 = ~FindNearby_i(0, 1, _Soul_Prism, item);
+            Foreach v21 in v18 {
+                if (~GetFrame(v21) = 7) {
+                    flag(575) = true;
+                    v5 = ~GetCoord(item);
+                    Item_destroy(item);
+                    Item_destroy(v21);
+                    v22 = ~Item_create(_Field_Fire);
+                    if v22 {
+                        Sfx(97);
+                        v22 = ~PopToMap(v5);
+                        createSprite(65535, 0, 0, 0, v5::2, v5::1, 39);
+                    }
+                }
+            }
+        }
+    }
+    if (event = _Action) {
+        if (~Item_getType(item) = _Brserp) && ~IsAltarReady_i() {
+            v11 = ~FindNearest_i(40, _Chaos_Wall, _Avatar);
+            v12 = ~PostInFuture(2, << _aUSABLE_i, #SkullcrusherEgg_i >>, v11);
+        }
+        if (~Item_getType(item) = _Chaos_Wall) {
+            if flag(586) {
+                v27 = false;
+                v28 = ~GetCoord(_Avatar);
+                if (v28::2 <= 1190) {
+                    v28::1 = 1023;
+                    v28::2 = 1194;
+                    v28::3 = 0;
+                    v27 = 0;
+                    SetFrame(12, _XenkaMonk_215);
+                } else {
+                    v28::1 = 1023;
+                    v28::2 = 1186;
+                    v28::3 = 0;
+                    v27 = 4;
+                    SetFrame(28, _XenkaMonk_215);
+                }
+                v29 = ~GetTime();
+                Item_move(v28, _XenkaMonk_215);
+                Bark_i(0, "@Wait!@", _XenkaMonk_215);
+                SetWorkType(_Talk, _XenkaMonk_215);
+                NewSchedule_i(v28, _Talk, 0, _XenkaMonk_215);
+                v12 = ~PostAction(<< _aKNEEL_FRAME_i, _aWAIT_i, 3, _aBEND_FRAME_i, _aWAIT_i, 2, _aSTAND_FRAME_i, _aWAIT_i, 3 >>, _XenkaMonk_215);
+                CreateSpriteOn_i(65535, 0, 0, 0, 1, 1, 7, _XenkaMonk_215);
+                Sfx(81);
+            } else {
+                flag(586) = true;
+                PlaySpeechOrText_i(25);
+                AnimateWalls_i(false);
+                v11 = ~FindNearest_i(40, _Chaos_Wall, _Avatar);
+                v12 = ~PostInFuture(30, << _aUSABLE_i, #SkullcrusherEgg_i >>, v11);
+            }
+        }
+    }
+}
+
+Routine AnimateWalls_i accepts a0 #locals(8) #uses(~GimmePathEgg) {
+    v1 = ~FindNearby_i(0, 40, _Bal_Wall, _Avatar);
+    v1 = (v1 & ~FindNearby_i(0, 40, _Chaos_Wall, _Avatar));
+    v1 = (v1 & ~FindNearby_i(0, 40, _Order_Wall, _Avatar));
+    if v0 {
+        v2 = ~GimmePathEgg(1, 7);
+        if v2 {
+            SetMusic(v2, 65);
+        }
+        Foreach v5 in v1 {
+            v6 = ~PostAction(<< _aFINISH_i, _aNO_HALT_i, _aNEXT_FRAME_MAX_i, _aWAIT_i, 1, _aLOOP_i, 65533, 8 >>, v5);
+        }
+    } else {
+        Foreach v5 in v1 {
+            v6 = ~PostAction(<< _aFINISH_i, _aNO_HALT_i, _aPREV_FRAME_MIN_i, _aWAIT_i, 1, _aLOOP_i, 65533, 8 >>, v5);
+        }
+    }
+}
+
+Function ~IsAltarReady_i #locals(0) {
+    if (flag(577) and (flag(576) and (flag(575) and (flag(578) and (flag(574) and not flag(586)))))) {
+        return true;
+    }
+    return false;
+}

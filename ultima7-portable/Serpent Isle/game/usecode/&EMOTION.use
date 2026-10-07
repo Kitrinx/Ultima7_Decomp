@@ -1,0 +1,347 @@
+Routine FieldEgg_i accepts a0 #locals(6) {
+    v0 = ~GetQuality(item);
+    v1 = ~GetCoord(item);
+    v2 = 768;
+    if (v0 = 2) {
+        v2 = 561;
+        v3 = 40;
+    }
+    if (v0 = 3) {
+        v2 = 895;
+        v3 = 41;
+    }
+    if (v0 = 4) {
+        v2 = 900;
+        v3 = 104;
+    }
+    if (v0 = 5) {
+        v2 = 902;
+        v3 = 69;
+    }
+    v4 = ~Item_create(v2);
+    if v4 {
+        v5 = ~PopToMap(v1);
+        Sfx(v3);
+        ClearItemFlag_i(_IsTemporary_i, v4);
+    }
+}
+
+Routine EmotionStoneEgg_i accepts a0 #locals(10) {
+    if (event = _Trigger) {
+        v0 = ~GetQuality(item);
+        v1 = ~FindNearby_i(0, 1, _Serp_Artifact, item);
+        v2 = 0;
+        Foreach v5 in v1 {
+            v6 = ~GetFrame(v5);
+            v7 = ~GetCoord(item);
+            v8 = ~GetCoord(v5);
+            if ((v0 > 0) and ((v6 > 9) and ((v6 < 14) and (v7::3 = v8::3)))) {
+                v2 = v5;
+                break;
+            }
+        }
+        if v2 {
+            if (v6 = 10) {
+                if not flag(717) {
+                    flag(717) = true;
+                } else {
+                    return;
+                }
+            }
+            if (v6 = 11) {
+                if not flag(718) {
+                    flag(718) = true;
+                } else {
+                    return;
+                }
+            }
+            if (v6 = 12) {
+                if not flag(719) {
+                    flag(719) = true;
+                } else {
+                    return;
+                }
+            }
+            if (v6 = 13) {
+                if not flag(720) {
+                    flag(720) = true;
+                } else {
+                    return;
+                }
+            }
+            v9 = ~GetCoord(item);
+            v9::1 = (v9::1 - (v9::3 / 2));
+            v9::2 = (v9::2 - (v9::3 / 2));
+            createSprite(65535, 0, 0, 0, v9::2, v9::1, 21);
+            Sfx(57);
+            Item_destroy(v2);
+            Item_destroy(item);
+        }
+    }
+}
+
+Routine ShowTemptation_i accepts a0 #locals(11) #uses(AltarHealsParty_i, AltarGivesArtifact_i, AltarPleasesParty_i, AltarCheersParty_i, ~RandomMember_i) {
+    if (~GetQuality(item) = 200) {
+        v0 = ~FindNearby_i(176, 15, _Switch, item);
+        v1 = ~PostInFuture(2, << _aFRAME, 8, _aFINISH_i >>, item);
+        Foreach v4 in v0 {
+            if (~GetQuality(v4) = 209) {
+                v5 = (~GetFrame(v4) modulo 2);
+            }
+            if (~GetQuality(v4) = 208) {
+                v6 = (~GetFrame(v4) modulo 2);
+            }
+            if (~GetQuality(v4) = 206) {
+                v7 = (~GetFrame(v4) modulo 2);
+            }
+        }
+        if (not v5 and (not v6 and (not v7 and not flag(708)))) {
+            v0 = ~FindNearby_i(0, 25, _Altar, item);
+            v8 = ~GetCoord(v0);
+            createSprite(65535, 0, 0, 0, v8::2, v8::1, 18);
+            Sfx(85);
+            v1 = ~SetQuality(201, item);
+            v1 = ~PostInFuture(5, << _aNO_HALT_i, _aUSABLE_i, #ShowTemptation_i >>, item);
+            flag(708) = true;
+        }
+        if (v5 and (not v6 and (not v7 and not flag(709)))) {
+            v0 = ~FindNearby_i(0, 15, _Altar, item);
+            v4 = ~Item_create(_Bucket);
+            if v4 {
+                SetFrame(3, v4);
+                v8 = ~GetCoord(v0);
+                v8::3 = 1;
+                v1 = ~PopToMap(v8);
+                if v1 {
+                    createSprite(65535, 0, 0, 0, v8::2, v8::1, 18);
+                    Sfx(57);
+                    v1 = ~SetQuality(202, item);
+                    v1 = ~PostInFuture(5, << _aNO_HALT_i, _aUSABLE_i, #ShowTemptation_i >>, item);
+                    flag(709) = true;
+                }
+            }
+        }
+        if (not v5 and (v6 and (not v7 and not flag(710)))) {
+            v0 = ~FindNearby_i(0, 15, _Altar, item);
+            v4 = ~Item_create(_Gems);
+            if v4 {
+                v8 = ~GetCoord(v0);
+                v8::3 = 1;
+                v1 = ~PopToMap(v8);
+                if v1 {
+                    createSprite(65535, 0, 0, 0, v8::2, v8::1, 18);
+                    Sfx(57);
+                    v1 = ~SetQuality(203, item);
+                    v1 = ~PostInFuture(5, << _aNO_HALT_i, _aUSABLE_i, #ShowTemptation_i >>, item);
+                    flag(710) = true;
+                }
+            }
+        }
+        if (v5 and (v6 and (not v7 and not flag(711)))) {
+            v0 = ~FindNearby_i(0, 15, _Altar, item);
+            v4 = ~Item_create(_Food);
+            if v4 {
+                v8 = ~GetCoord(v0);
+                v8::3 = 1;
+                v1 = ~PopToMap(v8);
+                if v1 {
+                    createSprite(65535, 0, 0, 0, v8::2, v8::1, 18);
+                    Sfx(57);
+                    v1 = ~SetQuality(204, item);
+                    v1 = ~PostInFuture(5, << _aNO_HALT_i, _aUSABLE_i, #ShowTemptation_i >>, item);
+                    flag(711) = true;
+                }
+            }
+        }
+        if (not v5 and (not v6 and (v7 and not flag(712)))) {
+            AltarHealsParty_i();
+        } else {
+            if (v5 and (not v6 and v7)) {
+                AltarGivesArtifact_i();
+            } else {
+                if (not v5 and (v6 and (v7 and not flag(714)))) {
+                    AltarPleasesParty_i();
+                } else {
+                    if (v5 and (v6 and (v7 and not flag(715)))) {
+                        AltarCheersParty_i();
+                    } else {
+                        AltarGivesArtifact_i();
+                    }
+                }
+            }
+        }
+    }
+    if (event = _Action) {
+        v9 = ~GetQuality(item);
+        v10 = ~RandomMember_i(3);
+        if (v10 <> 69) {
+            if (v9 = 201) {
+                SetSpeaker0_i(0, v10);
+                ["What pleasant music! 'Tis strangely soothing... I could stand here for hours and listen to it..."];
+                ["Surely it would not hurt to tarry for a bit..."];
+                CloseSpeaker0_i();
+            }
+            if (v9 = 202) {
+                SetSpeaker0_i(0, v10);
+                ["Wine! Praise the Virtues! I could use a drink right now..."];
+                ["Come, let us toast our friendship and hope for a speedy end to this journey!"];
+                CloseSpeaker0_i();
+            }
+            if (v9 = 203) {
+                SetSpeaker0_i(0, v10);
+                ["Look! A wondrous gem! This would easily buy enough provisions to last the entire quest!"];
+                ["Or think what a fine gift this would be for Lord British! He would be impressed, to be sure."];
+                CloseSpeaker0_i();
+            }
+            if (v9 = 204) {
+                SetSpeaker0_i(0, v10);
+                ["I have not seen food this rich in a long time! The aroma is marvelous!"];
+                ["'Twould be a shame for all this to go to waste..."];
+                CloseSpeaker0_i();
+            }
+            if (v9 = 205) {
+                SetSpeaker0_i(0, v10);
+                ["Perhaps something more needs to be done."];
+                CloseSpeaker0_i();
+            }
+        }
+        v1 = ~SetQuality(200, item);
+    }
+}
+
+Function ~RandomMember_i accepts a0 #locals(4) #uses(~OrderList_i) {
+    v1 = 1;
+    v2 = 1;
+    v3 = ~GetParty();
+    v4 = (65180 & ~OrderList_i());
+    if (v0 < 2) {
+        v1 = ~Random(~ListSize_i(v3));
+        if (v0 = 0) {
+            return v3::v1;
+        } else {
+            While (~NPCToItem_i(v4::v2) <> v3::v1) {
+                v2 = (v2 + 1);
+            }
+            return v4::v2;
+        }
+    } else {
+        if (~ListSize_i(v3) < 2) {
+            return 69;
+        }
+        v1 = ~Random(~ListSize_i(v3));
+        While (v3::v1 = ~NPCToItem_i(_Avatar)) {
+            v1 = ~Random(~ListSize_i(v3));
+        }
+        if (v0 = 2) {
+            return v3::v1;
+        } else {
+            While (~NPCToItem_i(v4::v2) <> v3::v1) {
+                v2 = (v2 + 1);
+                if (v2 > ~ListSize_i(v4)) {
+                    return 69;
+                }
+            }
+            return v4::v2;
+        }
+    }
+}
+
+Usable CollapseColumn_i #locals(10) {
+    v0 = ~GetCoord(item);
+    v1 = ~FindNearby_i(176, 13, _Force, item);
+    v2 = ~FindNearby_i(4, 8, _All, item);
+    createSprite(65535, 0, 0, 0, v0::2, v0::1, 4);
+    v3 = (~Item_create(_Serp_Artifact) & (~Item_create(_Debris) & (~Item_create(_Debris) & (~Item_create(_Debris) & (~Item_create(_Debris) & ~Item_create(_Debris))))));
+    SetFrame(13, v3::1);
+    SetFrame(13, v3::2);
+    SetFrame(14, v3::3);
+    SetFrame(14, v3::4);
+    SetFrame(15, v3::5);
+    SetFrame(15, v3::6);
+    v4 = << (v0::1 - 3), (v0::2 + 1), 0 >>;
+    v5 = ~PopToMap(v4);
+    v4 = << (v0::1 + 2), (v0::2 - 2), 0 >>;
+    v5 = ~PopToMap(v4);
+    v4 = << (v0::1 + 1), (v0::2 + 2), 0 >>;
+    v5 = ~PopToMap(v4);
+    v4 = << (v0::1 - 1), (v0::2 - 3), 0 >>;
+    v5 = ~PopToMap(v4);
+    v4 = << (v0::1 + 3), v0::2, 0 >>;
+    v5 = ~PopToMap(v4);
+    v5 = ~PopToMap(v0);
+    Foreach v8 in v2 {
+        v9 = ~GetNPCStat_i(_Hits, v8);
+        v5 = ~DamageItem_i(v8, 1, ((v9 / 3) * 2), ~GetNPCStat_i(_Str, v8));
+    }
+    if (~GetFrame(v1) = 1) {
+        SetFrame(2, v1);
+        v5 = ~PostInFuture(5, << _aNO_HALT_i, _aBARK_i, "@Thank thee.@" >>, v1);
+    }
+}
+
+Usable AltarHealsParty_i #locals(10) #uses(Bark_i) {
+    v0 = 1;
+    v1 = << "I feel well!", "I feel younger!", "Amazing!", "I'm not tired now!", "I am rejuvenated!", "What was that?!", "That was nice..." >>;
+    v2 = ~GetParty();
+    Foreach v5 in v2 {
+        v6 = ~GetCoord(v5);
+        v7 = ~GetNPCStat_i(_Str, v5);
+        v8 = ~GetNPCStat_i(_Hits, v5);
+        v9 = ~ChangeNPCStat_i((v7 - v8), _Hits, v5);
+        createSprite(65535, 0, 0, 0, v6::2, v6::1, 13);
+        Sfx(64);
+        if (v0 < 8) {
+            Bark_i(v0, v1::v0, v5);
+            v0 = (v0 + 1);
+        }
+    }
+    flag(712) = true;
+}
+
+Usable AltarGivesArtifact_i #locals(4) {
+    if (flag(708) and (flag(709) and (flag(710) and (flag(711) and (flag(712) and (flag(714) and (flag(715) and not flag(716)))))))) {
+        v0 = ~FindNearby_i(0, 25, _Altar, item);
+        v1 = ~GetCoord(v0);
+        v1::3 = 1;
+        v2 = ~Item_create(_Serp_Artifact);
+        if v2 {
+            SetFrame(11, v2);
+            if ~PopToMap(v1) {
+                flag(716) = true;
+            }
+            createSprite(65535, 0, 0, 0, v1::2, v1::1, 18);
+            Sfx(108);
+        }
+    } else {
+        v0 = ~FindNearby_i(0, 25, _Altar, item);
+        v1 = ~GetCoord(v0);
+        createSprite(65535, 0, 0, 0, v1::2, v1::1, 9);
+        Sfx(43);
+        if not flag(713) {
+            v3 = ~SetQuality(205, item);
+            v3 = ~PostInFuture(5, << _aNO_HALT_i, _aUSABLE_i, #ShowTemptation_i >>, item);
+        }
+        flag(713) = true;
+    }
+}
+
+Usable AltarPleasesParty_i #locals(7) #uses(Bark_i) {
+    v0 = 1;
+    v1 = ~GetParty();
+    v2 = << "Ohh, ahh!", "That feels wonderful!", "Do thou that again!", "'Tis a marvel!", "More! More!", "Wondrous!", "What a sensation!" >>;
+    Foreach v5 in v1 {
+        v6 = ~GetCoord(v5);
+        createSprite(65535, 0, 0, 0, v6::2, v6::1, 21);
+        Bark_i(v0, v2::v0, v5);
+        v0 = (v0 + 1);
+    }
+    flag(714) = true;
+}
+
+Usable AltarCheersParty_i #locals(1) #uses(~RandomMember_i, Bark_i) {
+    v0 = ~RandomMember_i(1);
+    Item_bark("@Happy happy!@", v0);
+    v0 = ~RandomMember_i(1);
+    Bark_i(3, "@Joy joy!@", v0);
+    flag(715) = true;
+}

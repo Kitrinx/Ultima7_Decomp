@@ -1,0 +1,54 @@
+Routine Fishing_Rod accepts a0 #locals(5) #uses(MemberBarks_i, Bark_i) {
+    if ((event = _Converse) or (event = _Combat)) {
+        closeAllGumps();
+        v0 = ~GetTarget();
+        v1 = ~PostAction(<< _aTHRUST1_FRAME_i, _aSTAND_FRAME_i >>, _Avatar);
+        if not ~IsWater_i(<< v0::2, v0::3, v0::4 >>) {
+            FlashMouse_i(0);
+            return;
+        }
+        v2 = ~GetCoord(_Avatar);
+        v2::1 = (v2::1 + 1);
+        if (~rndRange(20, 1) > 17) {
+            v3 = ~Item_create(_Food);
+            if v3 {
+                SetFrame(12, v3);
+                SetItemFlag_i(_OkayToTake_i, v3);
+                v1 = ~PopToMap(v2);
+                v4 = ~rndRange(3, 1);
+                if (v4 = 1) {
+                    MemberBarks_i("@Indeed, a whopper!@");
+                    if ~IsNPCNear_i(_Shamino) {
+                        Bark_i(16, "@I have seen bigger.@", _Shamino);
+                    }
+                }
+                if (v4 = 2) {
+                    MemberBarks_i("@What a meal!@");
+                }
+                if (v4 = 3) {
+                    MemberBarks_i(<< "@That doth not look right.@" >>);
+                }
+            }
+        } else {
+            v4 = ~rndRange(4, 1);
+            if (v4 = 1) {
+                Bark_i(0, "@Not even a bite!@", _Avatar);
+            }
+            if (v4 = 2) {
+                Bark_i(0, "@It did escape!@", _Avatar);
+                if ~IsNPCNear_i(_Iolo) {
+                    Bark_i(16, "@I'm certain thou hadst one!@", _Iolo);
+                }
+            }
+            if (v4 = 3) {
+                Bark_i(0, "@I've lost my bait!@", _Avatar);
+            }
+            if (v4 = 4) {
+                Bark_i(0, "@I felt a nibble...@", _Avatar);
+                if ~IsNPCNear_i(_Dupre) {
+                    Bark_i(16, "@We should hunt instead, Avatar!@", _Dupre);
+                }
+            }
+        }
+    }
+}

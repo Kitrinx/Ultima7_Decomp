@@ -1,0 +1,54 @@
+Routine Bwundiai accepts a0 #locals(5) #uses(Bark_i, ~IsNPCNear, ~IsInInv, ~PartyUtters) {
+    if (event = _Converse) {
+        Item_bark("@Hail there!@", _Avatar);
+        Bark_i(3, "@Aruk nok! Raag!@", _Bwundiai);
+        SetWorkType(_Talk, _Bwundiai);
+    }
+    if (event = _Talking) {
+        Npc_schedule(_Bwundiai);
+        ClearBark_i(_Bwundiai);
+        SetSpeaker0_i(0, _Bwundiai);
+        v0 = ~IsNPCNear(_Mwaerno);
+        v1 = ~IsInInv(8, 65177, _Skinrug, 1, _Party);
+        v2 = ~IsInInv(4, 65177, _Water_1, 1, _Party);
+        v3 = ~GetItemFlag_i(_Met, item);
+        if (v1 or v2) {
+            ["Botoka na guta!" *This creature looks at you with eyes so filled with hate that it is painful to look at them.];
+            if v0 {
+                SetSpeaker1_i(0, _Mwaerno);
+                SetSpeakerSlot_i(1);
+                ["Umgabar fotuba na Gwani!" *This one looks at you with eyes that are cold and feral.];
+                CloseSpeaker1_i();
+            }
+            v4 = ~PartyUtters(false, "@They smell the Gwani pelts!@", "@Avatar, they smell the Gwani pelts!@", 65533);
+        } else {
+            if v3 {
+                ["Be good very much to meet again."];
+            } else {
+                ["Thou... the one... Gwenno spoke." ~You can tell the creature obviously has great trouble with your language.];
+            }
+            TurnOn(<< "name", "Gwani", "bye" >>);
+            converse {
+                key ("name") {
+                    TurnOff("name");
+                    ["Bwundai my name is."];
+                    SetItemFlag_i(_Met, item);
+                }
+                key ("Gwani") {
+                    TurnOff("Gwani");
+                    ["Our village near. But, thou seek Gwenno..." ~He pauses thoughtfully before speaking to you again. ~"Gwani Death Temple on island north. West of Ice dragon caves."];
+                }
+                key ("bye") {
+                    CloseSpeaker0_i();
+                    CloseSpeaker1_i();
+                    SetWorkType(_Shy, item);
+                    NewSchedule_i(<< 932, 872, 1073, 840, 1063, 845 >>, << 11, 16, 14 >>, << 1, 3, 6 >>, _Bwundiai);
+                    Bark_i(0, "@Farewell, little fellow.@", _Avatar);
+                    Bark_i(3, "@Fare -- well@", _Bwundiai);
+                    terminate;
+                }
+            }
+            clear_answers;
+        }
+    }
+}

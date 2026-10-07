@@ -1,0 +1,448 @@
+Routine Stefano accepts a0 #locals(20) #uses(~LordOrLady, ~AvatarName, ~WhereAmI_i, PartyFaces_i, Bark_i, StefanoReturnsBelongings_i, SetWorkTypeAt_i, ~GiveItemsOrDrop_i, ~PartyUtters, ~GimmePathEgg) {
+    v0 = ~LordOrLady();
+    v1 = ~AvatarSex();
+    v2 = ~AvatarName();
+    v3 = ~WhereAmI_i();
+    v4 = ~GetTime();
+    v5 = false;
+    if ((v4 > 1) or (v4 < 6)) {
+        v4 = "day";
+    } else {
+        v4 = "evening";
+    }
+    if (event = _Converse) {
+        Item_bark("@Hello!@", _Avatar);
+        PartyFaces_i(65368);
+        Bark_i(2, (("@Felicitations, " + v0) + ".@"), _Stefano);
+        SetWorkType(_Talk, _Stefano);
+    }
+    if (event = _Talking) {
+        Npc_schedule(_Stefano);
+        ClearBark_i(_Stefano);
+        SetSpeaker0_i(0, _Stefano);
+        if ~GetItemFlag_i(_InParty_i, _Stefano) {
+            SetWorkType(_FollowAvt, _Stefano);
+            TurnOn("leave");
+        } else {
+            Npc_schedule(_Stefano);
+            TurnOn("join");
+        }
+        v6 = ~GetItemFlag_i(_Met, _Stefano);
+        if $BANES_RELEASED {
+            if not ~GetItemFlag_i(_Dead, _DeathKnight) {
+                ["I am not a cowardly man, <v0>, but I am powerfully glad to see thee again. I am in terrible trouble."];
+                if (~ListSize_i(~GetParty_i()) < 5) {
+                    ["In fact, I think that I will stay close by thee -- that will be safest for me!"];
+                    JoinParty(_Stefano);
+                    $STEFANO_HAS_BELONGINGS = true;
+                    TurnOff("join");
+                    TurnOn("leave");
+                }
+                TurnOn("trouble");
+            } else {
+                if flag(311) {
+                    ["I hope that thy quest doth fare well, <v0>. Hast thou yet recovered the Rock Serpent?"];
+                    TurnOn("Rock Serpent");
+                } else {
+                    if flag(251) {
+                        ["I hope that thy quest doth fare well, <v0>. How might a humble man such as myself be of aid to thee?"];
+                    } else {
+                        ["If I were not quaking with fear, <v0>, I would go down on both knees before thee. I am so grateful for thine aid."];
+                        if ~GetItemFlag_i(_InParty_i, _Stefano) {
+                            LeaveParty(_Stefano);
+                            StefanoReturnsBelongings_i();
+                            TurnOff("leave");
+                        }
+                        NewSchedule_i(<< 2471, 1912, 2247, 1812, 2463, 1935, 2238, 1799, 2230, 1804 >>, << 14, 26, 12, 26, 4 >>, << 0, 4, 5, 6, 7 >>, _Stefano);
+                        SetWorkType(_Wander, _Stefano);
+                        TurnOn("grateful");
+                    }
+                }
+            }
+            TurnOn("happenings");
+            if flag(329) {
+                TurnOn("thy death");
+            }
+        } else {
+            if (v3 = 15) {
+                if (v6 = false) {
+                    SetItemFlag_i(_Met, _Stefano);
+                    SetWorkTypeAt_i(_Wander, 0, 65535, _Stefano);
+                    SetWorkType(_Shy, _Stefano);
+                    ["I am Stefano, late of Moonshade, and obtainer of rarities..."];
+                    ["I was unjustly imprisoned here, <v0>! I'll freely admit that I am no fighter... But I have a quick wit and information that should help us pass out of this foul place. Perhaps if we join together, we have some small chance of escape."];
+                } else {
+                    ["How may I aid thee, Avatar?"];
+                }
+                TurnOn(<< "Moonshade", "rarities", "information" >>);
+            } else {
+                ["I see that thou art still hale and whole, Avatar!"];
+                TurnOn(<< "Moonshade", "rarities" >>);
+            }
+        }
+        if ($STEFANO_HAS_BELONGINGS and (not ~GetItemFlag_i(_InParty_i, _Stefano) and ~GetContents(_All, _All, _All, _Stefano))) {
+            TurnOn("belongings");
+        }
+        TurnOn(<< "bye" >>);
+        converse {
+            key ("thy death") {
+                TurnOff("thy death");
+                flag(329) = false;
+                ["Thou dost recall correctly -- I was dead when last we met...];
+                ["Next I remember, this beautiful woman was standing over me. She kissed me, and a warmth spread throughout my body..."];
+                ["She said her name was Thoxa, and that I had to live in order to fulfill thy destiny, <v2>. And so I'm here."];
+            }
+            key ("nothing more", "change subject") {
+                PopKeys();
+                if v5 {
+                    ["Umm... I apologize for droning on and on. What wouldst thou like to speak about?"];
+                } else {
+                    ["My talk bores thee, eh? So thou dost think that I drone on and on with my long-winded stories..."];
+                    ["Well, actually, 'tis the truth. A bad habit that I'd like to be rid of."];
+                    ["At any rate, what dost thou desire to speak of?"];
+                    v5 = true;
+                }
+            }
+            key ("belongings") {
+                TurnOff("belongings");
+                StefanoReturnsBelongings_i();
+            }
+            key ("Rock Serpent") {
+                TurnOff("Rock Serpent");
+                ["Thou hast but to look within the vault behind mine old house, <v2>. I will not touch it again. It hath brought me enough bad luck..."];
+                ["I am not a bold adventurer like thee, <v2>. I have no need of such things, but I am sure that thou wilt find it useful."];
+                ["And I thank thee once again for saving my life. I shall never forget thee."];
+                flag(251) = true;
+            }
+            key ("happenings") {
+                TurnOff("happenings");
+                ["A terrible, glowing being came to Moonshade, and battled against all of the Mages! I believe them to be dead..."];
+                ["I did not stay to be sure, but came here to hide myself. 'Tis the end of the world, <v2>!"];
+            }
+            key ("grateful") {
+                TurnOff("grateful");
+                ["I thank thee a thousand times over for saving my life, <v2>! There is no way for me to repay thee, but something I possess might be of use to thee on thy quest."];
+                ["This is the key to the vault behind mine old house, which is west of the city. With it, thou wilt be able to retrieve the cursed Rock Serpent that hath caused me such trouble. Take it with my blessings!"];
+                v7 = ~GiveItemsOrDrop_i(true, 0, 9, 194, 641, 1, _Avatar);
+                flag(311) = true;
+            }
+            key ("trouble") {
+                TurnOff("trouble");
+                ["This all started with a piece of work I did for the late MageLord, which involved procuring some stockings..."];
+                ["'Tis a long story, but to be brief, Columna the Green Witch hated me for what I did. She is dead now, but her curse lives on."];
+                PushKeys();
+                TurnOn(<< "curse", "stockings", "Columna", "change subject" >>);
+            }
+            key ("curse") {
+                TurnOff("curse");
+                ["I'd spit on her grave, if she had one, the hag!"];
+                ["From the depths of some hell, she hath summoned up a tireless warrior to pursue me!"];
+                ["'Tis a Death Knight, whose sole purpose is to slay the victim he is promised. Columna pledged my soul to this one."];
+                ["Surely, thou canst save me! Slay him for me, and thou shalt have my most priceless reward!"];
+                TurnOn(<< "slay", "reward", "Where is he?" >>);
+            }
+            key ("slay") {
+                TurnOff("slay");
+                ["Well, I don't know how to kill him. I only know that he is very, very tough. Mayhap immortal."];
+                v8 = ~PartyUtters(false, 0, 0, 1);
+                if ((v8 <> 65368) and (v8 <> 65180)) {
+                    SetSpeaker1_i(0, v8);
+                    ["Perhaps nothing can stop a Death Knight."];
+                    CloseSpeaker1_i();
+                    SetSpeakerSlot_i(0);
+                }
+                ["Don't let me discourage thee from making the attempt to slay the thing. My life depends on it, friend!"];
+            }
+            key ("reward") {
+                TurnOff("reward");
+                ["Well, thou dost see, I have this item which might interest thee. In fact, I think it belongs to thee. I suspect one of those magic storms brought it my way."];
+                ["If I was an honorable man, I suppose I'd give it to thee straight away. But I'm not. So if thou canst kill the Death Knight, the Rock Serpent is thine. If not..."];
+                ["And do not think of killing me and taking the Serpent. I have it well hidden."];
+            }
+            key ("Where is he?") {
+                TurnOff("Where is he?");
+                ["Wish I knew. He doth charge at me when I least expect it. Sometimes he appears from thin air!"];
+            }
+            key ("Moonshade") {
+                TurnOff("Moonshade");
+                ["No, I'm no mage... Though they tell me that I have a bit of the ability. But what good is that when the entire city is ruled by Adepts? No, no, 'tis not for me!"];
+                ["Give me a good challenging search any day! The harder something is to find, the better I like it."];
+                PushKeys();
+                TurnOn(<< "ability", "Adepts", "search", "change subject" >>);
+            }
+            key ("stockings") {
+                TurnOff("stockings");
+                ["Filbercio promised me a small but substantial fortune if I could procure a certain pair of moonsilk stockings."];
+                ["It seems that he was eager to enjoy the pleasures of one of the female Mages, and felt that these stockings would provide leverage for his arguments -- if thou dost see where I am reaching..."];
+                ["So I stole -- er, acquired -- the stockings for him. But then the lightning stole them from me. Filbercio accused me of swindling him, and tossed me in Dungeon Freedom!"];
+            }
+            key ("Columna") {
+                TurnOff("Columna");
+                ["If thou must know -- Columna is married to Melino, an old and doddering Mage but no fool. 'Tis no surprise that she lusts for young Torrissio!"];
+                ["The stockings were evidence, since only Columna wears this sort, and because I found them in Torrissio's manor."];
+                ["However, Columna found out that I stole them, and she wants mine head on a platter. Literally!"];
+                ["I'm glad the old witch is dead. I only wish her curse had died with her..."];
+            }
+            key ("ability") {
+                TurnOff("ability");
+                ["Magic! It seems as if some dark magic is following me these days..."];
+                ["I sometimes carry a spell scroll or two... May as well make use of any edge I can acquire."];
+                if (v3 = 15) {
+                    ["In fact, if we escape, I suggest that thou shouldst acquire as many spell scrolls as thou canst -- they come in very handy!"];
+                }
+            }
+            key ("Adepts") {
+                TurnOff("Adepts");
+                ["If Moonshade weren't ruled by the Adepts, canst thou imagine what it would be like trying to govern all those powerful mages? With all their fragile egos? -- LARGE, fragile egos."];
+                ["If there's one central problem with the Adepts, 'tis that they have no regard for those with little or no magic. However, in some ways, that makes my life easier."];
+                TurnOn(<< "egos", "easier" >>);
+            }
+            key ("egos") {
+                TurnOff("egos");
+                ["Thou dost not know the half of it! One time I was passing time at the Blue Boar while Frigidazzi was there."];
+                ["Rotoluncia entered and rather pointedly remarked that Frigidazzi was looking excessively rumpled that day. And suddenly they were at each other..."];
+                ["Of course, they were pretty much evenly matched. Until Celennia showed up that is. But 'tis that I refer to... Fragile egos and hot tempers, and magic to top it. Not a safe combination."];
+                PushKeys();
+                TurnOn(<< "Frigidazzi", "Rotoluncia", "Celennia", "nothing more" >>);
+            }
+            key ("Frigidazzi") {
+                TurnOff("Frigidazzi");
+                ["Thou knowest the kind of beauty that artisans create? 'Tis like unto Frigidazzi -- like a cold marble carving."];
+                ["Oh, I'll grant that there's a hot predator under that shroud of ice, but few have seen it."];
+                ["Like the cold spells she excels in, Frigidazzi certainly knows how to lower the temperature in a room..."];
+                ["'Tis a wonder that Filbercio hath not died of frostbite by now! I cannot discern if he's a brave man... or merely stupid!"];
+            }
+            key ("Rotoluncia") {
+                TurnOff("Rotoluncia");
+                ["Dead, is she? At thine hand?"];
+                ["I'm impressed at thy skills, <v0>! Most could not have killed the Red Witch."];
+            }
+            key ("Celennia") {
+                TurnOff("Celennia");
+                ["I would rather face the ire of Frigidazzi AND Rotoluncia than that of Celennia! She's worse than a cat, <v0>! She'll toy with thee before she kills thee -- She wants thee to have time to consider what will happen to thee, and why."];
+                ["Celennia was Frigidazzi's dearest friend until they had a fight. I do not know what it was about but I wouldn't be surprised if it was caused by Frigidazzi being friendly with the MageLord... I think Celennia thought she was to be his next companion."];
+                ["All I know is that the fight was spectacular, and Celennia was on Hawk's ship the next day, bound for Sleeping Bull. They say she doth have relatives in Monitor..."];
+                v9 = true;
+            }
+            key ("Vasculio") {
+                TurnOff("Vasculio");
+                ["I'm not sure I can speak of it here, in this awful place. Old Fedabiblio uses it as a tale to frighten the novices... And I'll admit that it made an impression on me."];
+                ["Vasculio was an Adept who lived outside of the Strictures. He tortured and killed without restraint, using death agony to feed power into his spells."];
+                ["The Council put him to death, but his power had grown beyond even that limitation. They found his grave empty not long after burial... And they say he still wanders the world looking for new victims."];
+                TurnOn("Strictures");
+            }
+            key ("Strictures") {
+                TurnOff("Strictures");
+                ["The Strictures are the rules that all mages must obey, novice and Adept alike. They address what experimentation can be done, what reagents can be used or sold... things like that."];
+                ["The Strictures are meant to keep mages from abandoning all bonds of civilized behavior in pursuit of knowledge. As thou shouldst know, <v0>, there are some things in the world that would be better unknown."];
+            }
+            key ("easier") {
+                TurnOff("easier");
+                ["As I said, <v0>, I acquire rarities. And sometimes those items are... previously owned, shall we say?"];
+                ["But Adepts, being the pompous lot they are, fail to see anything other than a magical attack as a threat."];
+                ["Most Adepts resort to simple physical traps to guard their mansions. Of course, there's always the automatons to deal with... But once I know that secret, their home is as good as mine!"];
+                TurnOn(<< "physical traps", "automatons" >>);
+            }
+            key ("physical traps") {
+                TurnOff("physical traps");
+                ["Oh, it could be anything from sliding walls, to fireballs that shoot out of the wall, to secret doors.  And dealing with most of those are easy enough, if thou art careful."];
+                ["The automatons are harder to deal with..."];
+            }
+            key ("automatons") {
+                TurnOff("automatons");
+                ["Those are the constructs that Torrissio makes. They are quite fast and fierce fighters. Definitely not what thou wouldst care to encounter in a dark hallway, I'll tell thee! I still have the scars to prove it..."];
+            }
+            key ("search") {
+                TurnOff("search");
+                ["When people hire my services, they know exactly what they need and where it is. Or perhaps I should say that they know whose mansion it is in."];
+                ["From there I must determine how to enter, and when. And then I have to outwit the Adept who wished to keep it hidden from my talents. I have yet to be outdone, I might add."];
+            }
+            key ("rarities") {
+                TurnOff("rarities");
+                ["I'll admit that that title covers quite a bit... Scrolls, magical apparatus, lab equipment, reagents. Anything that a client thinks is of value -- that's what I mean by rarities."];
+                PushKeys();
+                TurnOn(<< "magical apparatus", "client", "change subject" >>);
+            }
+            key ("magical apparatus") {
+                TurnOff("magical apparatus");
+                ["Wands, crystal balls... things like that."];
+                ["Of course I'll never admit to anything in specific. I value my life too much. Unless I'm actually caught in the act, no one can prove anything... And I stay alive a bit longer. Thou mightest say it's a game of sorts."];
+            }
+            key ("client") {
+                TurnOff("client");
+                ["Oh, no! Ask no more! I guarantee my clients complete secrecy."];
+                ["If I ever forget that promise, dealing with mages, I'll be very dead, very fast. Or at least I hope I'll be dead... There are a few drawbacks to knowing anything about magic, <v0>. All the alternatives to being dead come too readily to mind!"];
+            }
+            key ("information") {
+                TurnOff("information");
+                ["Somewhere, within this labyrinth, there are two switches that must be thrown... at the same time, in order to continue to the exit. I do not know where it is exactly, but I'm sure that it will be apparent."];
+                ["Without me to aid thee, thou hast no chance of winning free of this place for all thy prowess. And without thee, I have no hope of surmounting what lies in the next room."];
+                PushKeys();
+                TurnOn(<< "next room", "change subject" >>);
+            }
+            key ("next room") {
+                TurnOff("next room");
+                ["One of the things I bless about my peculiar line of work is the ability to move silently, <v0>. It may be the only thing that saved my life this time..."];
+                ["When I came into this room, I heard some sort of commotion in the next room. When I sneaked into the entrance, all I saw was a mage and a VERY, VERY large monster before I ran back in here."];
+                ["Last time I looked, they were still in there..."];
+                TurnOn(<< "mage", "monster" >>);
+            }
+            key ("mage") {
+                TurnOff("mage");
+                ["I did not recognize him. But by the robes, I judged him a mage. I have heard that a few foolhardy mages have attempted to sneak into these tunnels in search of Stoneheart. Few who try ever return to the outside world."];
+                TurnOn("Stoneheart");
+            }
+            key ("Stoneheart") {
+                TurnOff("Stoneheart");
+                ["It is forbidden to possess Stoneheart, <v0>, and for good reason. It is the basis for the reagent that fueled all of Vasculio's spells -- and some say it can steal a man's wits. It is very dangerous."];
+                TurnOn("Vasculio");
+            }
+            key ("monster") {
+                TurnOff("monster");
+                ["I... I think it was a... a dragon!"];
+                ["Oh, please, <v0>! Thou must let me join thee!"];
+                ["Without mine aid thou canst not hope to escape, and I am no fighter! Without thee I am a dead man!"];
+            }
+            key ("join") {
+                if flag(569) {
+                    ["No, but thank thee for asking."];
+                } else {
+                    TurnOff("join");
+                    TurnOn("leave");
+                    ["Thou and I, we'll do good together!"];
+                    JoinParty(_Stefano);
+                    $STEFANO_HAS_BELONGINGS = true;
+                }
+            }
+            key ("leave") {
+                TurnOff("leave");
+                if $BANES_RELEASED {
+                    ["But that thing will kill me, <v0>!"];
+                } else {
+                    ["But thou needest mine aid, <v0>!"];
+                }
+            }
+            key ("bye") {
+                if ($BANES_RELEASED and not flag(250)) {
+                    ["Wait. I almost forgot about this..."];
+                    ["Found this object when I happened to be passing through one of the manors, if thou knowest what I mean..."];
+                    ["Let me give this to thee, as a token of my great esteem for thine ability to save my life."];
+                    ["It looks to be one of the Serpent Teeth that Mad Erstam used to collect."];
+                    v7 = ~GiveItemsOrDrop_i(true, 0, 14, 0, 559, 1, _Avatar);
+                    v7 = ~PostInFuture(20, << _aNO_HALT_i, _aUSABLE_i, #Stefano >>, ~GimmePathEgg(2, 5));
+                    flag(250) = true;
+                }
+                CloseSpeaker0_i();
+                if ~GetItemFlag_i(_InParty_i, _Stefano) {
+                    Bark_i(2, "@Pleased to be of service.@", _Stefano);
+                    Bark_i(0, "@Thanks!@", _Avatar);
+                } else {
+                    Bark_i(0, "@So long!@", _Avatar);
+                    if ($BANES_RELEASED and not ~GetItemFlag_i(_Dead, _DeathKnight)) {
+                        Bark_i(0, "@Please protect me...@", _Stefano);
+                    } else {
+                        Bark_i(2, "@'Til we meet again!@", _Stefano);
+                    }
+                }
+                terminate;
+            }
+        }
+        clear_answers;
+    }
+    if (event = _Path_Failure) {
+        Bark_i(2, "@Eeek! A spider!@", _Stefano);
+        Bark_i(22, "@Kill it, Avatar!@", _Stefano);
+        terminate;
+    }
+    if (event = _Pathfind1) {
+        v10 = ~FindNearest_i(3, _Lever, _Avatar);
+        v11 = ~FindNearest_i(3, _Lever, _Stefano);
+        if (v10 and v11) {
+            v12 = ~GetDirToward_i(v10, _Avatar);
+            v13 = ~GetDirToward_i(v11, _Stefano);
+            v14 = ~PostAction(<< _aNO_HALT_i, _aWAIT_i, 5, _aFACE_i, v12, _aBARK_i, "@Now, Stefano!@", _aWAIT_i, 4, _aBEND_FRAME_i, _aWAIT_i, 2, _aSTAND_FRAME_i >>, _Avatar);
+            v14 = ~PostAction(<< _aNO_HALT_i, _aWAIT_i, 5, _aWAIT_i, 2, _aFACE_i, v13, _aWAIT_i, 2, _aBARK_i, "@All right!@", _aBEND_FRAME_i, _aWAIT_i, 2, _aSTAND_FRAME_i >>, _Stefano);
+            v14 = ~PostAction(<< _aNO_HALT_i, _aWAIT_i, 12, _aUSABLE_i, #Lever >>, v10);
+            v14 = ~PostAction(<< _aNO_HALT_i, _aWAIT_i, 12, _aUSABLE_i, #Lever, _aUSABLE_i, #Stefano >>, v11);
+        }
+        SetWorkType(_FollowAvt, _Stefano);
+    }
+    if (event = _Action) {
+        if $temp1flag {
+            $temp1flag = false;
+            SetSpeaker0_i(0, _Stefano);
+            ["We are back in Moonshade! This means that we have won our freedom!" *"What a team we made! With thy muscle and mine intellect we showed them who they can and cannot keep in that prison. Thank thee, Avatar." *"I must away now for other duties call. But if thou art ever in need of my talents, do but call and I shall accommodate thee."];
+            Bark_i(0, "@See thee someday...@", _Stefano);
+            Bark_i(5, "@So long, Stefano.@", _Avatar);
+            LeaveParty(_Stefano);
+            StefanoReturnsBelongings_i();
+            NewSchedule_i(<< 2471, 1912, 2247, 1812, 2463, 1935, 2238, 1799, 2230, 1804 >>, << 14, 26, 12, 26, 4 >>, << 0, 4, 5, 6, 7 >>, _Stefano);
+            SetWorkType(_Shy, _Stefano);
+            Npc_schedule(_Stefano);
+            terminate;
+        } else {
+            if $BANES_RELEASED {
+                if ~GetItemFlag_i(_Dead, _DeathKnight) {
+                    terminate;
+                }
+                v7 = ~PostInFuture((~Random(100) + 50), << _aNO_HALT_i, _aUSABLE_i, #Stefano >>, ~GimmePathEgg(2, 5));
+                if ~IsNPCNear_i(_Stefano) {
+                    SetMusic(~GimmePathEgg(1, 5), 30);
+                    v7 = ~ApproachAvatar_i(40, 120, _DeathKnight);
+                    if not v7 {
+                        v7 = ~GetCoord(_Avatar);
+                        v7::1 = (v7::1 + 10);
+                        Item_move(v7, _DeathKnight);
+                        createSprite(65535, 0, 0, 0, v7::2, v7::1, 26);
+                        Sfx(130);
+                    }
+                    Npc_setAlignment(_Evil, _DeathKnight);
+                    SetWorkType(_Combat_0, _DeathKnight);
+                    Npc_setTarget(_Stefano, _DeathKnight);
+                    SetAttacker_i(_Stefano, _DeathKnight);
+                    ClearBark_i(_DeathKnight);
+                    Bark_i(0, "@Die, Stefano!@", _DeathKnight);
+                    ClearBark_i(_Stefano);
+                    Bark_i(2, "@Save me!@", _Stefano);
+                    SetWorkType(_Combat_0, _Stefano);
+                    SetAttackMode_i(_Fleeing, _Stefano);
+                }
+            } else {
+                v15 = ~FindNearby_i(0, 40, _Teleport_Platform, item);
+                Foreach v18 in v15 {
+                    if (~GetFrame(v18) = 2) {
+                        SetFrame(1, v18);
+                        v19 = ~GetCoord(v18);
+                        createSprite(65535, 0, 0, 0, (v19::2 - 2), (v19::1 - 2), 13);
+                        Sfx(67);
+                    }
+                }
+            }
+        }
+    }
+}
+
+Usable StefanoReturnsBelongings_i #locals(1) #uses(~AskYesNo, ~ReturnBelongings_i) {
+    if ~GetContents(_All, _All, _All, _Stefano) {
+        ["I have many of thy belongings in my possession. Dost thou want them returned?"];
+        if ~AskYesNo() {
+            ["Here they are."];
+            $STEFANO_HAS_BELONGINGS = false;
+            v0 = ~ReturnBelongings_i(65368);
+            if (v0::1 <> 0) {
+                ["Thy companions will have to help thee with this burden."];
+            }
+            if (v0::2 > 0) {
+                v0 = v0::2;
+                if (v0 > 1) {
+                    ["Since thou canst not carry these remaining <v0> items, I will place them on the ground."];
+                } else {
+                    ["Since thou dost not have enough room for this last item, I will place it on the ground."];
+                }
+            }
+        } else {
+            $STEFANO_HAS_BELONGINGS = true;
+            ["Then I will continue to keep thy belongings for thee. Thou hast but to return and ask for them again."];
+        }
+    }
+}

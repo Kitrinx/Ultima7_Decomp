@@ -1,0 +1,73 @@
+Routine Sails accepts a0 #locals(5) #uses(MemberSays_i, ~IsPartySeated_i, LaunchShip_i, ~LoadBarge_i, SetSails_i) {
+    if (event <> _Converse) {
+        return;
+    }
+    if ~InGumpMode_i() {
+        closeAllGumps();
+    }
+    if ~GetBarge_i(item) {
+        v0 = ~FindNearby_i(0, 5, _Ship_Mast, item);
+        v1 = ~FindNearby_i(0, 5, _Sails, item);
+        if not (item in v1) {
+            v1 = (v1 & item);
+        }
+        if not ~GetItemFlag_i(_OnMovingBarge_i, _Avatar) {
+            v2 = ~GetQuality(item);
+            v3 = ~CountItem(_All, v2, _Scroll, _Party);
+            if ((not v3 and not flag(5)) and not ((v2 = 1) and $bargecheatflag)) {
+                if (~ListSize_i(~GetParty()) = 1) {
+                    MemberSays_i("@This vessel doth have an owner.@");
+                } else {
+                    MemberSays_i("@We do not own this vessel.@");
+                }
+                return;
+            }
+            if ~IsPartySeated_i() {
+                LaunchShip_i(item);
+            } else {
+                v4 = ~LoadBarge_i(v0::1);
+                SetItemFlag_i(20, item);
+            }
+        } else {
+            ClearItemFlag_i(20, item);
+            SetSails_i(0, v1);
+            ClearItemFlag_i(_OnMovingBarge_i, item);
+            ClearItemFlag_i(_ActiveBarge_i, item);
+        }
+    }
+}
+
+Routine Assim_Belt accepts a0 #locals(3) #uses(MemberSays_i, ~IsPartySeated_i, ~LoadBarge_i) {
+    if (event <> _Converse) {
+        return;
+    }
+    if ~InGumpMode_i() {
+        closeAllGumps();
+    }
+    if ~GetBarge_i(item) {
+        if not ~GetItemFlag_i(_OnMovingBarge_i, _Avatar) {
+            v0 = ~GetQuality(item);
+            v1 = ~CountItem(_All, v0, _Scroll, _Party);
+            if ((not v1 and not flag(5)) and not ((v0 = 1) and $bargecheatflag)) {
+                if (~ListSize_i(~GetParty()) = 1) {
+                    MemberSays_i("@This vessel belongs to another.@");
+                } else {
+                    MemberSays_i("@This vessel doth not belong to us.@");
+                }
+                return;
+            }
+            if ~IsPartySeated_i() {
+                ClearItemFlag_i(20, _Avatar);
+                SetItemFlag_i(_OnMovingBarge_i, _Avatar);
+                SetItemFlag_i(_ActiveBarge_i, ~GetBarge_i(_Avatar));
+            } else {
+                v2 = ~LoadBarge_i(item);
+                SetItemFlag_i(20, item);
+            }
+        } else {
+            ClearItemFlag_i(20, item);
+            ClearItemFlag_i(_OnMovingBarge_i, item);
+            ClearItemFlag_i(_ActiveBarge_i, item);
+        }
+    }
+}

@@ -1,0 +1,186 @@
+Routine CloneDupre accepts a0 #locals(14) #uses(~LordOrLady, ~AvatarName, ~IsInInv, BarkIfNear_i, ~PopToNPCNumber_i, LeaveCloneTest_i, FillRewardChest_i, ~AskYesNo, Bark_i, ~GimmePathEgg, CreateWorm_i) {
+    v0 = ~LordOrLady();
+    v1 = ~AvatarSex();
+    v2 = ~AvatarName();
+    if ((event = _Converse) and (flag(499) = true)) {
+        SetSpeaker0_i(0, _CloneDupre);
+        ["No time to talk, Avatar. There is exploring to be done!"];
+        CloseSpeaker0_i();
+        terminate;
+    }
+    if (event = _Bark) {
+        if ~IsInInv(65177, 65177, _Glass_Sword, 65177, item) {
+            BarkIfNear_i(<< "@Look!@", "@A glass sword!@", "@So much treasure!@" >>, item);
+        } else {
+            v3 = ~Item_create(_Glass_Sword);
+            if ~PopToNPCNumber_i(item) {
+                v4 = ~IsEquipped_i(0, _Glass_Sword, 1, item);
+            }
+        }
+    }
+    if (event = _Trigger) {
+        if (flag(499) and not $passeddupreclonetest) {
+            LeaveCloneTest_i(item);
+        } else {
+            FillRewardChest_i();
+        }
+    }
+    if (event = _Action) {
+        Item_move(<< 167, 1621, 0 >>, _CloneDupre);
+        NewSchedule_i(<< 166, 1636 >>, _Talk, 0, _CloneDupre);
+        SetWorkType(_Talk, item);
+    }
+    if (event = _Talking) {
+        NewSchedule_i(<< 171, 1585 >>, _TendShop, 0, _CloneDupre);
+        Npc_schedule(_CloneDupre);
+        ClearItemFlag_i(_DontMove_i, _Avatar);
+        v5 = ~FindNearby_i(0, 80, _Door_EW, _Avatar);
+        Foreach v8 in v5 {
+            v9 = ~GetQuality(v8);
+            if (v9 = 7) {
+                v10 = v8;
+            }
+        }
+        if v10 {
+            v11 = ~GetCoord(v10);
+            v12 = ~Item_create(_Door_NS);
+            if v12 {
+                Item_destroy(v10);
+                SetFrame(22, v12);
+                v3 = ~PopToMap(v11);
+            }
+        }
+        SetSpeaker0_i(0, _CloneDupre);
+        if ((flag(499) = true) and ((flag(503) = true) and not (flag(504) = true))) {
+            ["Avatar! Thou must come and look at what I have found! Come now... Zhelkas may not allow thee the time to see this. Wilt thou come look? Thou canst finish off the last Worm when thou dost return."];
+            if (~AskYesNo() = true) {
+                ["'Tis just through here..."];
+                Bark_i(0, "@Follow me!@", _CloneDupre);
+            } else {
+                ["It looks important, though I am no judge of such things. Thou shouldst come look while thou hast the chance..."];
+                Bark_i(0, "@'Tis thy loss...@", _CloneDupre);
+                $passeddupreclonetest = true;
+            }
+            flag(504) = true;
+            terminate;
+        }
+        if ((flag(499) = true) and ((flag(502) = true) and not (flag(504) = true))) {
+            ["There is no wine, Avatar. But thou shouldst see the weapons! If thou dost not finish soon, I cannot promise to share..."];
+            Bark_i(0, "@This is wonderful!@", _CloneDupre);
+            terminate;
+        }
+        if ((flag(499) = true) and ((flag(501) = true) and not (flag(504) = true))) {
+            ["Avatar! Thou shouldst see the treasure that I have found! Stay and finish the Game. I shall try to bring some to thee..."];
+            Bark_i(0, "@Wait here...@", _CloneDupre);
+            terminate;
+        }
+        if ((flag(499) = true) and ((flag(500) = true) and not (flag(504) = true))) {
+            ["This is boring, indeed. I will leave thee to the Game, Avatar. I am going exploring..."];
+            Bark_i(0, "@So long...@", _CloneDupre);
+            terminate;
+        }
+        if ((flag(499) = true) and ((flag(500) = true) and (flag(504) = true))) {
+            ["Damn thee, Avatar! Damn thee! Thou hast destroyed the worms. Perhaps with such a weapon, thou dost not have any need for what I have found here..."];
+            Bark_i(0, "@Damn thee!@", _CloneDupre);
+            v3 = ~PostInFuture(25, << _aNO_HALT_i, _aUSABLE_i, #LeaveCloneTest_i >>, _Avatar);
+            terminate;
+        }
+        ["Zhelkas hath appointed me moderator of the Game, Avatar. He hath also given me leave to explore..." *"Art thou ready to begin?"];
+        TurnOn(<< "moderator", "Game", "explore", "begin" >>);
+        converse {
+            key ("moderator") {
+                ["It is my duty as moderator to see that thou dost know the rules. After I have informed thee, I cannot aid thee... In any way."];
+                TurnOff("moderator");
+                TurnOn(<< "rules", "aid" >>);
+            }
+            key ("rules") {
+                ["The rules are few..." *"Thou shalt face ten Worms. Thou canst not leave until the last Worm hath been dispatched."];
+                TurnOff("rules");
+                TurnOn(<< "Worm", "dispatched" >>);
+            }
+            key ("Worm") {
+                ["Thou shalt face each Worm singly, one after the other. Each Worm shall seek thy death, Avatar. So be prepared."];
+                TurnOff("Worm");
+            }
+            key ("dispatched") {
+                ["The Worms can only be killed by a hammer. Each Worm can be slain only by hammer blows."];
+                TurnOff("dispatched");
+                TurnOn("hammer");
+            }
+            key ("hammer") {
+                ["They are Worms, Avatar! Everyone knows that if thou dost use a sword against a Worm, thou wilt face twice the number of foes after each stroke." *"There is a small hammer on the floor near thee..."];
+                TurnOff("hammer");
+                TurnOn("everyone knows");
+            }
+            key ("everyone knows") {
+                ["'Tis common knowledge, Avatar! I am surprised at thee... Cease such questions and put thine attention to the Game!"];
+                TurnOff("everyone knows");
+            }
+            key ("aid") {
+                ["I cannot assist thee in thy struggle against the Worms, either directly or indirectly."];
+                TurnOff("aid");
+                TurnOn(<< "directly", "indirectly" >>);
+            }
+            key ("directly") {
+                ["I cannot join thy fight against the Worms. If I do, thou wilt lose the Game."];
+                TurnOff("directly");
+            }
+            key ("indirectly") {
+                ["I cannot give thee anything I find while exploring. If I give thee anything, thou wilt lose the Game."];
+                TurnOff("indirectly");
+            }
+            key ("Game") {
+                ["That is how Zhelkas referred to it, Avatar. Perhaps it is a test of thy skill or versatility as a warrior."];
+                TurnOff("Game");
+                TurnOn(<< "skill", "versatility" >>);
+            }
+            key ("skill") {
+                ["If thou art the Hero Zhelkas seeks, surely thou art a skilled enough fighter to stand alone against the Worms. If thou canst not best the Worms, how canst thou expect to stop the very destruction of the world?"];
+                TurnOff("skill");
+                TurnOn("destruction");
+            }
+            key ("destruction") {
+                ["Why dost thou ask me? Everyone fears that the world will end soon if these storms are not stopped..." *"Turn thy mind to the task at hand. The sooner thou dost finish this Game, the sooner we can be on our way..."];
+                TurnOff("destruction");
+            }
+            key ("versatility") {
+                ["A true warrior doth not rely on only one weapon, Avatar. What would happen if thou didst not have thy sword and had to battle the Guardian? A true Hero would make anything a weapon if need be..."];
+                TurnOff("versatility");
+            }
+            key ("explore") {
+                ["Zhelkas said there were rooms in this area that I would find interesting. By acting as moderator, perhaps I may find something to benefit our quest."];
+                TurnOff("explore");
+                TurnOn(<< "interesting", "benefit" >>);
+            }
+            key ("interesting") {
+                ["Well, unless Zhelkas was talking about wine casks... I'd say he might have been referring to weapons."];
+                TurnOff("interesting");
+                TurnOn(<< "wine casks", "weapons" >>);
+            }
+            key ("wine casks") {
+                ["Do not worry, old friend! I shall try to save thee a drop or two." *"But thou shouldst be quick, lest I forget..."];
+                TurnOff("wine casks");
+            }
+            key ("weapons") {
+                ["If there is time after the Game, perhaps thou canst join me. If I can carry it... Perhaps I'll bring thee something."];
+                TurnOff("weapons");
+            }
+            key ("benefit") {
+                ["Information, weapons..." *"I bring back what I can... As long as there isn't too much wine!"];
+                TurnOff("benefit");
+            }
+            key ("begin") {
+                Bark_i(0, "@Then let the Game begin!@", _CloneDupre);
+                flag(499) = true;
+                SetNPCID_i(1, _CloneDupre);
+                v13 = ~GimmePathEgg(1, 4);
+                v3 = ~SetQuality(1, v13);
+                v13 = ~GimmePathEgg(2, 4);
+                v3 = ~SetQuality(0, v13);
+                CreateWorm_i();
+                terminate;
+            }
+        }
+        clear_answers;
+    }
+}

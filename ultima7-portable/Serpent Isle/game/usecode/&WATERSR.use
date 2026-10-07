@@ -1,0 +1,182 @@
+Routine pool accepts a0 #locals(7) #uses(~DirFrom_i, ChangeHits_i) {
+    if (event = _Pathfind1) {
+        v0 = ~DirFrom_i(item, _Avatar);
+        v1 = ~PostAction(<< _aFACE_i, v0, _aCONTINUE_i, _aBEND_FRAME_i >>, _Avatar);
+        v1 = ~PostInFuture(2, << _aNO_HALT_i, _aUSABLE_i, #EW_Water_Trough >>, item);
+    }
+    if (event = _Action) {
+        v1 = ~FindNearest_i(10, _Pool, _Avatar);
+        v2 = ~GetCoord(v1);
+        v2::1 = (v2::1 + 1);
+        v2::2 = (v2::2 + 1);
+        v1 = ~Item_push(item);
+        if v1 {
+            if (~GetFrame(item) = 0) {
+                SetFrame(1, item);
+            } else {
+                if (~GetFrame(item) < 6) {
+                    SetFrame(0, item);
+                }
+            }
+        }
+        v1 = ~PopToMap(v2);
+    }
+    if (event = _Converse) {
+        v3 = ~GetQuality(item);
+        v4 = ~GetTarget();
+        if $BANES_RELEASED && not (v3 = 2) {
+            SetFrame(13, item);
+            v1 = ~SetQuality(4, item);
+        }
+        if ((v3 > 1) and (v3 < 8)) && (~Item_getType(v4) = _Bottles) {
+            Item_setType(_Potion, v4);
+            SetFrame((v3 - 1), v4);
+            v1 = ~PostInFuture(500, << _aSFX_i, 48, _aREMOVE_i >>, v4);
+        }
+        playSFX(item, 36);
+        if (v3 = 1) {
+            SetItemFlag_i(_Asleep, v4);
+        }
+        if (v3 = 2) {
+            v5 = ~rndRange(10, 1);
+            v6 = (13 - v5);
+            ChangeHits_i(v6, v4);
+        }
+        if (v3 = 3) {
+            ClearItemFlag_i(_Poisoned, v4);
+            ClearItemFlag_i(_Paralyzed, v4);
+            ClearItemFlag_i(_Asleep, v4);
+            ClearItemFlag_i(_Charmed, v4);
+            ClearItemFlag_i(_Cursed, v4);
+        }
+        if (v3 = 4) {
+            SetItemFlag_i(_Poisoned, v4);
+        }
+        if (v3 = 5) {
+            ClearItemFlag_i(_Asleep, v4);
+        }
+        if (v3 = 6) {
+            SetItemFlag_i(_Protected, v4);
+        }
+        if (v3 = 7) {
+            StartLight_i(100);
+        }
+        if (v3 = 8) {
+            SetItemFlag_i(_Invisible, v4);
+        }
+    }
+}
+
+Routine Basin2 accepts a0 #locals(3) #uses(~DirFrom_i, ~WhereAmI_i) {
+    if (event = _Pathfind2) {
+        v0 = ~DirFrom_i(item, _Avatar);
+        v1 = ~PostAction(<< _aFACE_i, v0, _aCONTINUE_i, _aBEND_FRAME_i >>, _Avatar);
+        v1 = ~PostInFuture(2, << _aNO_HALT_i, _aUSABLE_i, #Basin2 >>, item);
+    }
+    if (event = _Action) {
+        v1 = ~FindNearest_i(15, _Basin2, _Avatar);
+        v2 = ~GetCoord(v1);
+        v2::1 = (v2::1 + 1);
+        v2::2 = (v2::2 - 3);
+        v1 = ~Item_push(item);
+        if v1 {
+            if (~GetFrame(item) = 0) {
+                SetFrame(1, item);
+                if (~WhereAmI_i() = 21) {
+                    v1 = ~SetQuality(13, item);
+                    ClearItemFlag_i(_IsTemporary_i, item);
+                    flag(546) = true;
+                }
+                if ((~WhereAmI_i() = 20) and flag(539)) {
+                    v1 = ~SetQuality(14, item);
+                    ClearItemFlag_i(_IsTemporary_i, item);
+                    flag(545) = true;
+                }
+                if (~WhereAmI_i() = 17) {
+                    v1 = ~SetQuality(15, item);
+                    ClearItemFlag_i(_IsTemporary_i, item);
+                    $gotdisciplinewater = true;
+                }
+            } else {
+                if (~GetFrame(item) < 6) {
+                    SetFrame(0, item);
+                }
+            }
+        }
+        v1 = ~PopToMap(v2);
+    }
+}
+
+Routine Basin3 accepts a0 #locals(2) #uses(~DirFrom_i) {
+    if (event = _Pathfind2) {
+        v0 = ~DirFrom_i(item, _Avatar);
+        v1 = ~PostAction(<< _aFACE_i, v0, _aCONTINUE_i, _aBEND_FRAME_i >>, _Avatar);
+        v1 = ~PostInFuture(2, << _aNO_HALT_i, _aUSABLE_i, #Basin2 >>, item);
+    }
+}
+
+Routine NS_Water_Trough accepts a0 #locals(5) #uses(~DirFrom_i) {
+    if ((event = _Pathfind1) or (event = _Pathfind2)) {
+        v0 = ~DirFrom_i(item, _Avatar);
+        v1 = ~PostAction(<< _aFACE_i, v0, _aCONTINUE_i, _aBEND_FRAME_i >>, _Avatar);
+        v1 = ~PostInFuture(2, << _aNO_HALT_i, _aUSABLE_i, #NS_Water_Trough >>, item);
+    }
+    if (event = _Action) {
+        v2 = ~FindNearest_i(10, _NS_Water_Trough, _Avatar);
+        v3 = ~GetFrame(v2);
+        v4 = ~GetCoord(v2);
+        v4::1 = (v4::1 + 1);
+        v4::2 = (v4::2 + 1);
+        v1 = ~Item_push(item);
+        if v1 {
+            if (~GetFrame(item) = 0) {
+                if (v3 > 0) {
+                    SetFrame((v3 - 1), v2);
+                    SetFrame(1, item);
+                }
+            } else {
+                if (v3 < 3) {
+                    SetFrame((v3 + 1), v2);
+                    if (~GetFrame(item) < 6) {
+                        SetFrame(0, item);
+                    }
+                }
+            }
+            v1 = ~PopToMap(v4);
+        }
+    }
+}
+
+Routine EW_Water_Trough accepts a0 #locals(5) #uses(~DirFrom_i) {
+    if ((event = _Pathfind1) or (event = _Pathfind2)) {
+        v0 = ~DirFrom_i(item, _Avatar);
+        v1 = ~PostAction(<< _aFACE_i, v0, _aCONTINUE_i, _aBEND_FRAME_i >>, _Avatar);
+        v1 = ~PostInFuture(2, << _aNO_HALT_i, _aUSABLE_i, #EW_Water_Trough >>, item);
+    }
+    if (event = _Action) {
+        v2 = ~FindNearest_i(10, _EW_Water_Trough, _Avatar);
+        v3 = ~GetFrame(v2);
+        v4 = ~GetCoord(v2);
+        v4::1 = (v4::1 + 1);
+        v4::2 = (v4::2 + 1);
+        v1 = ~Item_push(item);
+        if v1 {
+            if (~GetFrame(item) = 0) {
+                if (v3 > 0) {
+                    if (~Item_getType(v2) <> _Pool) {
+                        SetFrame((v3 - 1), v2);
+                    }
+                    SetFrame(1, item);
+                }
+            } else {
+                if (v3 < 3) {
+                    SetFrame((v3 + 1), v2);
+                    if (~GetFrame(item) < 6) {
+                        SetFrame(0, item);
+                    }
+                }
+            }
+            v1 = ~PopToMap(v4);
+        }
+    }
+}

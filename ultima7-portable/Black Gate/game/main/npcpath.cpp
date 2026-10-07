@@ -383,7 +383,7 @@ uint8_t Route::plan(uint8_t usePath, int8_t buildPath, int8_t avoid, int16_t lim
 		}
 		prev = dir;
 		dir = w.chooseStep();
-		if (w.destZ != w.z && dir == -1) {
+		if ((uint8_t)w.destZ != w.z && dir == -1) {
 			detour = 1;
 			savedDir = prev;
 			continue;
@@ -428,7 +428,7 @@ uint8_t Route::followWall(Walker *w, StepList *out, int8_t heading, int16_t *cou
 	StepList trail[2];
 	trail[0].count = 0;
 	trail[1].count = 0;
-	NearestPathDistance[0] = NearestPathDistance[1] = w->z == w->destZ ? w->getDistance() : 9999;
+	NearestPathDistance[0] = NearestPathDistance[1] = w->z == (uint8_t)w->destZ ? w->getDistance() : 9999;
 	dir[0] = dir[1] = heading;
 	turn[0] = turn[1] = 0;
 	Walker end[2];
@@ -613,14 +613,14 @@ uint8_t Route::straighten(StepList *list, int8_t avoid, int16_t *length, int8_t 
 				if (w.blocked()) {
 					if ((MAX(GetMagnitude(GetDelta(list->list[i].x, w.x)),
 						GetMagnitude(GetDelta(list->list[i].y, w.y))) > 3 ||
-						list->list[i].z != w.z) && Coord(-1) != last.x) {
+						(uint8_t)list->list[i].z != w.z) && Coord(-1) != last.x) {
 						if (!found.add(last.x, last.y, last.z))
 							return 0;
 					}
 					stepped = 1;
 				} else if (stepped) {
 					if (list->list[i].x == w.x && list->list[i].y == w.y &&
-						list->list[i].z == w.z) {
+						(uint8_t)list->list[i].z == w.z) {
 						shortcut = 0;
 						break;
 					}

@@ -1,6 +1,6 @@
-# Builds the portable Black Gate for macOS, Windows and Linux. A pushed tag starting with "v"
-# also publishes the three archives as a GitHub release; a manual run only keeps them as
-# workflow artifacts.
+# Builds the portable Black Gate (Ultima7) and Serpent Isle (Serpent) for macOS, Windows and
+# Linux, both programs in one archive per platform. A pushed tag starting with "v" also publishes
+# the archives as a GitHub release; a manual run only keeps them as workflow artifacts.
 name: Release builds
 
 on:
@@ -12,7 +12,9 @@ permissions:
   contents: write
 
 env:
-  SOURCE_DIR: ultima7-portable/Black Gate
+  SHARED_DIR: ultima7-portable
+  BG_DIR: ultima7-portable/Black Gate
+  SI_DIR: ultima7-portable/Serpent Isle
 
 jobs:
   build:
@@ -22,13 +24,13 @@ jobs:
         include:
           - name: linux-x64
             os: ubuntu-24.04
-            exe: Ultima7
+            suffix: ""
           - name: macos-arm64
             os: macos-14
-            exe: Ultima7.app
+            suffix: .app
           - name: windows-x64
             os: windows-2022
-            exe: Ultima7.exe
+            suffix: .exe
     runs-on: ${{ matrix.os }}
     env:
       # Forks and unconfigured repos have no signing secrets; their Mac build stays self-signed.
@@ -43,11 +45,13 @@ jobs:
       - name: Build (macOS, Linux)
         if: runner.os != 'Windows'
         run: |
-          cmake -S "$SOURCE_DIR" -B build -DCMAKE_BUILD_TYPE=Release
-          cmake --build build --target u7 --parallel
+          cmake -S "$BG_DIR" -B build-bg -DCMAKE_BUILD_TYPE=Release
+          cmake --build build-bg --target u7 --parallel
+          cmake -S "$SI_DIR" -B build-si -DCMAKE_BUILD_TYPE=Release
+          cmake --build build-si --target serpent --parallel
 
-      # Developer ID signature, then Apple's notarization ticket stapled to the app, so macOS
-      # opens it without "Open Anyway".
+      # Developer ID signature, then Apple's notarization ticket stapled to each app, so macOS
+      # opens them without "Open Anyway".
       - name: Sign and notarize (macOS)
         if: runner.os == 'macOS' && env.HAS_SIGNING == 'true'
         env:
@@ -57,7 +61,6 @@ jobs:
           APPLE_API_KEY_ID: ${{ secrets.APPLE_API_KEY_ID }}
           APPLE_API_ISSUER_ID: ${{ secrets.APPLE_API_ISSUER_ID }}
         run: |
-          app=build/Ultima7.app
           keychain="$RUNNER_TEMP/signing.keychain-db"
           keychain_password=$(openssl rand -base64 24)
           security create-keychain -p "$keychain_password" "$keychain"
@@ -72,10 +75,12 @@ jobs:
           identity=$(security find-identity -v -p codesigning "$keychain" \
             | awk '/Developer ID Application/ { print $2; exit }')
           echo "SIGNING_IDENTITY=$identity" >> "$GITHUB_ENV"
-          codesign --force --options runtime --timestamp --sign "$identity" "$app"
-          codesign --verify --strict --verbose=2 "$app"
-          "$SOURCE_DIR/packaging/notarize.sh" "$app"
-          spctl --assess --type execute --verbose=2 "$app"
+          for app in build-bg/Ultima7.app build-si/Serpent.app; do
+            codesign --force --options runtime --timestamp --sign "$identity" "$app"
+            codesign --verify --strict --verbose=2 "$app"
+            "$SHARED_DIR/packaging/notarize.sh" "$app"
+            spctl --assess --type execute --verbose=2 "$app"
+          done
 
       # libmatoya's makefile needs cmd's mkdir, so Git's usr\bin comes off the PATH.
       - name: Build (Windows)
@@ -87,25 +92,27 @@ jobs:
           Import-Module "$vs\Common7\Tools\Microsoft.VisualStudio.DevShell.dll"
           Enter-VsDevShell -VsInstallPath $vs -SkipAutomaticLocation -DevCmdArguments '-arch=x64 -host_arch=x64'
           $env:PATH = ($env:PATH -split ';' | Where-Object { $_ -notmatch 'Git\\usr\\bin' }) -join ';'
-          cmake -S "$env:SOURCE_DIR" -B build -G Ninja -DCMAKE_BUILD_TYPE=Release `
-            -DCMAKE_C_COMPILER=clang-cl -DCMAKE_CXX_COMPILER=clang-cl
-          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-          cmake --build build --target u7
-          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          foreach ($game in @(@("$env:BG_DIR", "build-bg", "u7"), @("$env:SI_DIR", "build-si", "serpent"))) {
+            cmake -S $game[0] -B $game[1] -G Ninja -DCMAKE_BUILD_TYPE=Release `
+              -DCMAKE_C_COMPILER=clang-cl -DCMAKE_CXX_COMPILER=clang-cl
+            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+            cmake --build $game[1] --target $game[2]
+            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          }
 
-      # Windows and Linux: a zip of a folder to put next to the game. macOS: a disk image to
-      # drag Ultima7.app from into Applications.
+      # Windows and Linux: a zip of a folder holding both programs, each to go next to its game.
+      # macOS: a disk image to drag the apps from into Applications.
       - name: Package
         shell: bash
         run: |
           # The archive name tells the platforms apart; the folder inside is just Ultima7.
           name="ultima7-portable-${GITHUB_REF_NAME//\//-}-${{ matrix.name }}"
           mkdir -p package/Ultima7/licenses
-          cp -R "build/${{ matrix.exe }}" package/Ultima7/
-          cp "$SOURCE_DIR/packaging/README.txt" package/Ultima7/
-          cp "$SOURCE_DIR/third_party/libmatoya/LICENSE" package/Ultima7/licenses/libmatoya-LICENSE
-          cp "$SOURCE_DIR/third_party/munt/mt32emu/COPYING.LESSER.txt" package/Ultima7/licenses/munt-COPYING.LESSER.txt
-          cp "$SOURCE_DIR/third_party/munt/mt32emu/COPYING.txt" package/Ultima7/licenses/munt-COPYING.txt
+          cp -R "build-bg/Ultima7${{ matrix.suffix }}" "build-si/Serpent${{ matrix.suffix }}" package/Ultima7/
+          cp "$SHARED_DIR/packaging/README.txt" package/Ultima7/
+          cp "$SHARED_DIR/third_party/libmatoya/LICENSE" package/Ultima7/licenses/libmatoya-LICENSE
+          cp "$SHARED_DIR/third_party/munt/mt32emu/COPYING.LESSER.txt" package/Ultima7/licenses/munt-COPYING.LESSER.txt
+          cp "$SHARED_DIR/third_party/munt/mt32emu/COPYING.txt" package/Ultima7/licenses/munt-COPYING.txt
           cd package
           if [ "$RUNNER_OS" = "macOS" ]; then
             ln -s /Applications Ultima7/Applications
@@ -128,7 +135,7 @@ jobs:
           APPLE_API_ISSUER_ID: ${{ secrets.APPLE_API_ISSUER_ID }}
         run: |
           codesign --force --timestamp --sign "$SIGNING_IDENTITY" "$ARCHIVE"
-          "$SOURCE_DIR/packaging/notarize.sh" "$ARCHIVE"
+          "$SHARED_DIR/packaging/notarize.sh" "$ARCHIVE"
           spctl --assess --type open --context context:primary-signature --verbose=2 "$ARCHIVE"
 
       - uses: actions/upload-artifact@v7

@@ -1,0 +1,701 @@
+Routine Brunt accepts a0 #locals(6) #uses(Bark_i, ToggleSliders_i) {
+    v0 = ~GetQuality(item);
+    if (event = _Polymorph) {
+        Polymorph_i(_Cyclops, item);
+    }
+    if ((event = _Path_Success) or (event = _Path_Failure)) {
+        SetWorkType(_Wait, _Brunt);
+        v1 = ~PostAction(<< _aNO_HALT_i, _aBEND_FRAME_i, _aKNEEL_FRAME_i, _aBARK_i, "@Master!@" >>, _Brunt);
+    }
+    if ((event = _Action) and (($temp1flag = false) and (flag(595) = false))) {
+        flag(595) = true;
+        Item_move(<< 1943, 651, 0 >>, _Brunt);
+        PathfindNPC_i(true, #Brunt, _Brunt, _Pathfind1, << 1945, 639, 0 >>, _Brunt);
+    }
+    if ((event = _Action) and $temp1flag) {
+        $temp1flag = false;
+        PathfindNPC_i(true, #Brunt, _Brunt, _Pathfind2, << 1940, 655, 0 >>, _Brunt);
+    }
+    if (event = _Pathfind1) {
+        SetSpeaker0_i(0, _Brunt);
+        ["Avatar! That fiend Batlin will destroy us all if he is not stopped!"* "'Twill be our destruction! He is attempting to open that cursed Wall of Lights!"* "Quickly, follow me! I will lead thee straight to him."];
+        CloseSpeaker1_i();
+        $temp1flag = true;
+        Bark_i(0, "@Follow me!@", _Brunt);
+        Bark_i(5, "@Wait!@", _Avatar);
+        v1 = ~PostInFuture(2, << _aNO_HALT_i, _aUSABLE_i, #Brunt >>, item);
+        terminate;
+    }
+    if ((event = _Pathfind2) or (event = _Path_Failure)) {
+        v2 = ~FindNearby_i(0, 20, _Switch, item);
+        Foreach v5 in v2 {
+            v0 = ~GetQuality(v5);
+            if (v0 = 146) {
+                ToggleSliders_i(65177, v5);
+            }
+        }
+        RemoveNPC_i(_Brunt);
+        $bruntspoketoavatar = true;
+        terminate;
+    }
+}
+
+Routine Deadeye accepts a0 #locals(6) #uses(Bark_i, ToggleSliders_i) {
+    if (event = _Polymorph) {
+        Polymorph_i(_Cyclops, item);
+    }
+    if ((event = _Path_Success) or (event = _Path_Failure)) {
+        SetWorkType(_Wait, _Deadeye);
+        v0 = ~PostAction(<< _aNO_HALT_i, _aBEND_FRAME_i, _aKNEEL_FRAME_i, _aBARK_i, "@Arrr, Master!@" >>, _Deadeye);
+    }
+    if ((event = _Action) and (($temp1flag = false) and (flag(597) = false))) {
+        flag(597) = true;
+        Item_move(<< 2342, 644, 0 >>, _Deadeye);
+        PathfindNPC_i(true, #Deadeye, _Deadeye, _Pathfind1, << 2343, 653, 0 >>, _Deadeye);
+    }
+    if ((event = _Action) and $temp1flag) {
+        $temp1flag = false;
+        PathfindNPC_i(true, #Deadeye, _Deadeye, _Pathfind2, << 2346, 644, 0 >>, _Deadeye);
+    }
+    if (event = _Pathfind1) {
+        SetSpeaker0_i(0, _Deadeye);
+        ["The time hath come for thee to feel me steel!"* "Face me, Avatar, if thou dost have the courage!"* "I shall cut thee for bait, then feed thee to the minnows shouldst thou try to cross me sword!"];
+        CloseSpeaker1_i();
+        $temp1flag = true;
+        Bark_i(0, "@Ha,ha,ha!@", _Deadeye);
+        Bark_i(5, "@Hold!@", _Avatar);
+        v0 = ~PostInFuture(2, << _aNO_HALT_i, _aUSABLE_i, #Deadeye >>, item);
+        terminate;
+    }
+    if ((event = _Pathfind2) or (event = _Path_Failure)) {
+        v1 = ~FindNearby_i(0, 20, _Switch, item);
+        Foreach v4 in v1 {
+            v5 = ~GetQuality(v4);
+            if (v5 = 147) {
+                ToggleSliders_i(65177, v4);
+            }
+        }
+        RemoveNPC_i(_Deadeye);
+        $deadeyespoketoavatar = true;
+        terminate;
+    }
+}
+
+Routine Palos accepts a0 #locals(6) #uses(Bark_i, ToggleSliders_i) {
+    if (event = _Polymorph) {
+        Polymorph_i(_Cyclops, item);
+    }
+    if ((event = _Path_Success) or (event = _Path_Failure)) {
+        SetWorkType(_Wait, _Palos);
+        v0 = ~PostAction(<< _aNO_HALT_i, _aBEND_FRAME_i, _aKNEEL_FRAME_i, _aBARK_i, "@To serve thee!@" >>, _Palos);
+    }
+    if ((event = _Action) and (($temp1flag = false) and (flag(596) = false))) {
+        flag(596) = true;
+        Item_move(<< 2223, 710, 0 >>, _Palos);
+        PathfindNPC_i(true, #Palos, _Palos, _Pathfind1, << 2210, 710, 0 >>, _Palos);
+    }
+    if ((event = _Action) and $temp1flag) {
+        $temp1flag = false;
+        PathfindNPC_i(true, #Palos, _Palos, _Pathfind2, << 2226, 712, 0 >>, _Palos);
+    }
+    if (event = _Pathfind1) {
+        SetSpeaker0_i(0, _Meelose);
+        ["To meet at last the false hero! To serve my master and to avenge the death of many of my people thou didst slay in ancient times." *"To see thy bones with thy skin burned from thy body! To smell thy flesh as it is eaten away by fire and flame!" *"To avenge and to serve my master! To thy death, false hero!"];
+        CloseSpeaker1_i();
+        $temp1flag = true;
+        Bark_i(0, "@To kill thee!@", _Palos);
+        Bark_i(5, "@Stop!@", _Avatar);
+        v0 = ~PostInFuture(2, << _aNO_HALT_i, _aUSABLE_i, #Palos >>, item);
+        terminate;
+    }
+    if ((event = _Pathfind2) or (event = _Path_Failure)) {
+        v1 = ~FindNearby_i(0, 40, _Switch, item);
+        Foreach v4 in v1 {
+            v5 = ~GetQuality(v4);
+            if (v5 = 145) {
+                ToggleSliders_i(65177, v4);
+            }
+        }
+        RemoveNPC_i(_Palos);
+        $palosspoketoavatar = true;
+        terminate;
+    }
+}
+
+Routine SerpentAltarEgg_i accepts a0 #locals(26) #uses(Bark_i) {
+    v0 = ~GetCoord(item);
+    v1 = ~GetQuality(item);
+    v2 = ~FindNearby_i(0, 2, _All, item);
+    Foreach v5 in v2 {
+        v6 = ~Item_getType(v5);
+        if ((v1 = 1) and (v6 = 707)) {
+            v0 = ~GetCoord(v5);
+            createSprite(65535, 0, 0, v0::3, (v0::2 - 5), (v0::1 - 3), 13);
+            createSprite(65535, 0, 0, v0::3, (v0::2 - 3), (v0::1 - 5), 21);
+            Sfx(40);
+            Item_destroy(v5);
+            v7 = ~SetQuality(2, item);
+            v8 = ~FindNearby_i(0, 5, _Serp_Plaque, item);
+            Foreach v11 in v8 {
+                v7 = ~SetQuality(151, v11);
+            }
+            Bark_i(0, "@The plaque!@", _Avatar);
+            Bark_i(16, "@It hath changed!@", _Avatar);
+            terminate;
+        }
+        if ((v1 = 2) and (v6 = 636)) {
+            v0 = ~GetCoord(v5);
+            createSprite(65535, 0, 0, v0::3, (v0::2 - 5), (v0::1 - 3), 13);
+            createSprite(65535, 0, 0, v0::3, (v0::2 - 3), (v0::1 - 5), 21);
+            Sfx(41);
+            Item_destroy(v5);
+            v7 = ~SetQuality(3, item);
+            Bark_i(2, "@The plaque hath changed!@", _Avatar);
+            v8 = ~FindNearby_i(0, 5, _Serp_Plaque, item);
+            Foreach v14 in v8 {
+                v7 = ~SetQuality(152, v14);
+            }
+            terminate;
+        }
+        if ((v1 = 3) and (v6 = 209)) {
+            v0 = ~GetCoord(v5);
+            createSprite(65535, 0, 0, v0::3, (v0::2 - 5), (v0::1 - 3), 13);
+            createSprite(65535, 0, 0, v0::3, (v0::2 - 3), (v0::1 - 5), 21);
+            Sfx(42);
+            Item_destroy(v5);
+            v7 = ~SetQuality(4, item);
+            Bark_i(5, "@The door opened!@", _Avatar);
+            v15 = ~FindNearby_i(0, 20, _Door_NS, item);
+            Foreach v18 in v15 {
+                v0 = ~GetCoord(v18);
+                createSprite(65535, 0, 0, v0::3, (v0::2 - 3), (v0::1 - 3), 7);
+                Item_destroy(v18);
+                v19 = ~Item_create(_Door_EW);
+                if v19 {
+                    SetFrame(20, v19);
+                    v7 = ~PopToMap(v0);
+                }
+            }
+            terminate;
+        }
+        if ((v1 = 5) and (v6 = 926)) {
+            v20 = false;
+            v0 = << 2295, 611, 1 >>;
+            Item_move(v0, _Party);
+            Sfx(81);
+            Bark_i(5, "@By the Virtues!@", _Avatar);
+            CreateSpriteOn_i(65535, 0, 0, 0, 0, 0, 7, _Avatar);
+            CreateSpriteOn_i(65535, 0, 0, 0, 0, 0, 17, _Avatar);
+            terminate;
+        }
+    }
+    v20 = false;
+    v2 = ~FindNearby_i(0, 2, _All, item);
+    Foreach v23 in v2 {
+        v0 = ~GetCoord(v23);
+        v24 = ~GetCoord(item);
+        v7 = ~Item_getType(v23);
+        if (v0::3 >= 4) {
+            v20 = true;
+        }
+    }
+    if v20 {
+        v25 = ~rndRange(6, 1);
+        if (v25 = 1) {
+            Bark_i(2, "@That did nothing...@", _Avatar);
+        }
+        if (v25 = 2) {
+            Bark_i(1, "@'Twas not it...@", _Avatar);
+        }
+        if (v25 = 3) {
+            Bark_i(1, "@Wrong item...@", _Avatar);
+        }
+        if (v25 = 4) {
+            Bark_i(1, "@Maybe something else?@", _Avatar);
+        }
+    }
+    terminate;
+}
+
+Routine SpringTrapsEgg_i accepts a0 #locals(6) {
+    if (event = _Trigger) {
+        v0 = ~GetQuality(item);
+        if (v0 = 0) {
+            v1 = ~SetQuality(1, item);
+        }
+        if (v0 = 1) {
+            v2 = ~FindNearby_i(16, 20, _Trap_Type, item);
+            Foreach v5 in v2 {
+                v1 = ~PostAction(<< _aHATCH_i >>, v5);
+            }
+            Item_destroy(item);
+        }
+    }
+    if (v0 = 2) {
+        flag(595) = true;
+    }
+}
+
+Routine SelinaFinalBattleEgg_i accepts a0 #locals(6) {
+    if (event = _Trigger) {
+        v0 = ~GetCoord(item);
+        if not ~GetItemFlag_i(_InParty_i, _Selina) {
+            Item_move(<< 2340, 463, 0 >>, _Selina);
+            SetNPCID_i(1, _Selina);
+            createSprite(65535, 0, 0, 0, 463, 2340, 7);
+        }
+        SetWorkType(_Combat_0, _Selina);
+        Npc_setAlignment(_Evil, _Selina);
+        Npc_setTarget(_Avatar, _Selina);
+        SetAttackMode_i(_Strongest, _Selina);
+        SetAttacker_i(_Avatar, _Selina);
+        SetItemFlag_i(_Tournament, _Selina);
+        flag(590) = true;
+        Item_bark("@This should stop thee!@", _Selina);
+        v1 = ~Item_create(_Field_Energy);
+        if v1 {
+            v2 = ~PopToMap(<< 2344, 478, 0 >>);
+        }
+        v3 = 2325;
+        v4 = 457;
+        While (v3 < 2367) {
+            v1 = ~Item_create(_Field_Energy);
+            if v1 {
+                v2 = ~PopToMap(<< v3, v4, 0 >>);
+            }
+            v3 = (v3 + 3);
+        }
+        Item_move(<< 2342, 463, 0 >>, _Palos);
+        createSprite(65535, 0, 0, 0, 463, 2342, 7);
+        SetWorkType(_Combat_0, _Palos);
+        Npc_setAlignment(_Evil, _Palos);
+        Npc_setTarget(_Avatar, _Palos);
+        SetAttackMode_i(_Strongest, _Palos);
+        SetAttacker_i(_Avatar, _Palos);
+        ClearItemFlag_i(_Tournament, _Palos);
+        Item_move(<< 2344, 463, 0 >>, _Deadeye);
+        createSprite(65535, 0, 0, 0, 463, 2344, 7);
+        SetWorkType(_Combat_0, _Deadeye);
+        Npc_setAlignment(_Evil, _Deadeye);
+        Npc_setTarget(_Avatar, _Deadeye);
+        SetAttackMode_i(_Strongest, _Deadeye);
+        SetAttacker_i(_Avatar, _Deadeye);
+        ClearItemFlag_i(_Tournament, _Deadeye);
+        Item_move(<< 2346, 463, 0 >>, _Brunt);
+        createSprite(65535, 0, 0, 0, 463, 2346, 7);
+        SetWorkType(_Combat_0, _Brunt);
+        Npc_setAlignment(_Evil, _Brunt);
+        Npc_setTarget(_Avatar, _Brunt);
+        SetAttackMode_i(_Strongest, _Brunt);
+        SetAttacker_i(_Avatar, _Brunt);
+        ClearItemFlag_i(_Tournament, _Brunt);
+        v5 = ~NPCToItem_i(_Selina);
+        v2 = ~PostInFuture(25, << _aNO_HALT_i, _aUSABLE_i, #Selina >>, v5);
+    }
+}
+
+Routine ReleaseBanesEgg_i accepts a0 #locals(25) #uses(~PartyUtters, Bark_i, ~GimmePathEgg, AnimateWalls_i, PlaySpeechOrText_i, StartMidgame_i, SetWorkTypeAt_i) {
+    if ((~GetQuality(item) = 255) and (event = _Trigger)) {
+        SetWeather_i(_Sparkle);
+        Sfx(130);
+        v0 = ~GetCoord(item);
+        v1 = ~CreateCreature_i(<< v0::1, (v0::2 + 1), v0::3 >>, _Batlin_Type);
+        SetWorkType(_Wait, v1);
+        Npc_setAlignment(_Good, v1);
+        SetItemFlag_i(_Tournament, v1);
+        v2 = ~PartyUtters(true, "@I must hurry!@", "@We must hurry!@", 1);
+        if not ~GetItemFlag_i(_InParty_i, _Iolo) {
+            JoinParty(_Iolo);
+            Bark_i(0, "@Wait, Avatar!@", _Iolo);
+        }
+        if not ~GetItemFlag_i(_InParty_i, _Shamino) {
+            JoinParty(_Shamino);
+            Bark_i(0, "@Hold, Avatar!@", _Shamino);
+        }
+        if not ~GetItemFlag_i(_InParty_i, _Dupre) {
+            JoinParty(_Dupre);
+            Bark_i(0, "@Stop, Avatar!@", _Dupre);
+        }
+        terminate;
+    }
+    v3 = ~GimmePathEgg(1, 2);
+    if (event = _Trigger) {
+        v2 = ~SetQuality(0, v3);
+        v1 = ~FindNearby_i(0, 40, _Batlin_Type, _Avatar);
+        v2 = ~PartyUtters(true, "@Batlin!@", "@Batlin!@", 1);
+        v2 = ~PostAction(<< _aNO_HALT_i, _aFACE_i, _North, _aWAIT_i, 7, _aUP_FRAME_i, _aWAIT_i, 2, _aOUT_FRAME_i, _aWAIT_i, 2, _aRAISE1_FRAME_i, _aWAIT_i, 2, _aRAISE2_FRAME_i, _aRAISE2_FRAME_i, _aWAIT_i, 2, _aTHRUST2_FRAME_i, _aWAIT_i, 2, _aSTAND_FRAME_i, _aGO_N, _aWAIT_i, 2, _aGO_N, _aWAIT_i, 1, _aGO_N, _aWAIT_i, 1, _aUP_FRAME_i, _aWAIT_i, 5 >>, v1);
+        AnimateWalls_i(true);
+        v2 = ~SetQuality(1, item);
+        v2 = ~PostInFuture(30, << _aNO_HALT_i, _aUSABLE_i, #SurroundBatlin_i >>, _Avatar);
+        SetItemFlag_i(_DontMove_i, _Avatar);
+        EndConverse_i();
+        terminate;
+    }
+    if (event = _Action) {
+        v4 = ~GetQuality(v3);
+        if (v4 = 0) {
+            v1 = ~FindNearby_i(0, 20, _Batlin_Type, _Avatar);
+            SetSpeaker0_i(1, _Cindy);
+            ["Fool! Thou art too late. Now I shall enter the Wall of Lights and become immortal!"];
+            ["Then I shall return to destroy thy mortal soul!"];
+            CloseSpeaker0_i();
+            v2 = ~PostAction(<< _aNO_HALT_i, _aKNEEL_FRAME_i, _aWAIT_i, 4, _aSTAND_FRAME_i, _aWAIT_i, 3, _aUP_FRAME_i, _aWAIT_i, 3, _aOUT_FRAME_i, _aWAIT_i, 4, _aRAISE1_FRAME_i, _aRAISE2_FRAME_i, _aWAIT_i, 3, _aRAISE2_FRAME_i, _aWAIT_i, 3, _aTHRUST2_FRAME_i, _aWAIT_i, 1, _aTHRUST1_FRAME_i, _aWAIT_i, 1, _aTHRUST2_FRAME_i, _aWAIT_i, 1, _aRAISE1_FRAME_i, _aRAISE2_FRAME_i, _aWAIT_i, 3, _aRAISE2_FRAME_i, _aWAIT_i, 3, _aEXTEND2_FRAME_i, _aWAIT_i, 3, _aUSABLE_i, #ReleaseBanesEgg_i >>, v1);
+            v0 = ~GetCoord(v1);
+            createSprite(65535, 0, 0, v0::3, v0::2, v0::1, 7);
+            v2 = ~SetQuality(1, v3);
+        }
+        if (v4 = 1) {
+            v1 = ~FindNearby_i(0, 20, _Batlin_Type, _Avatar);
+            if not v1 {
+                PrintError_i("No Batlin");
+            }
+            SetSpeaker0_i(1, _Cindy);
+            ["Wait... No! The wall is not opening for me! This cannot be!"];
+            ["No... The banes, they have... Oh, what have I done!"];
+            ["I have been tricked! Avatar! I beseech thee! Help me before..."];
+            CloseSpeaker0_i();
+            ClearItemFlag_i(_Tournament, v1);
+            AnimateWalls_i(false);
+            CreateSpriteOn_i(65535, 0, 0, 0, 0, 0, 42, v1);
+            CreateSpriteOn_i(65535, 0, 0, 0, 0, 0, 27, v1);
+            v5 = ~GetParty();
+            Sfx(42);
+            v2 = ~SetQuality(2, v3);
+            v2 = ~PostAction(<< _aNO_HALT_i, _aWAIT_i, 20, _aUSABLE_i, #ReleaseBanesEgg_i >>, v3);
+            EndConverse_i();
+            terminate;
+        }
+        if (v4 = 2) {
+            v1 = ~FindNearby_i(0, 20, _Batlin_Type, _Avatar);
+            if not v1 {
+                PrintError_i("No Batlin");
+            }
+            v0 = ~GetCoord(v1);
+            v6 = ~Item_create(_Unique_Key);
+            if v6 {
+                SetFrame(1, v6);
+                v2 = ~SetQuality(134, v6);
+                v2 = ~PopToNPC(v1);
+                if not v2 {
+                    v2 = ~PopToMap(v0);
+                }
+            }
+            v6 = ~Item_create(_Brserp);
+            if v6 {
+                SetFrame(3, v6);
+                v2 = ~PopToNPC(v1);
+                if not v2 {
+                    v2 = ~PopToMap(v0);
+                }
+            }
+            v7 = ~Item_create(_Jawbone);
+            if v7 {
+                SetFrame(0, v7);
+                v6 = ~Item_create(_Teeth);
+                if v6 {
+                    SetFrame(9, v6);
+                    v2 = ~PopToNPC(v7);
+                    if not v2 {
+                        v2 = ~PopToMap(v0);
+                    }
+                }
+                v6 = ~Item_create(_Teeth);
+                if v6 {
+                    SetFrame(4, v6);
+                    v2 = ~PopToNPC(v7);
+                    if not v2 {
+                        v2 = ~PopToMap(v0);
+                    }
+                }
+                v6 = ~Item_create(_Teeth);
+                if v6 {
+                    SetFrame(2, v6);
+                    v2 = ~PopToNPC(v7);
+                    if not v2 {
+                        v2 = ~PopToMap(v0);
+                    }
+                }
+                v6 = ~Item_create(_Teeth);
+                if v6 {
+                    SetFrame(13, v6);
+                    v2 = ~PopToNPC(v7);
+                    if not v2 {
+                        v2 = ~PopToMap(v0);
+                    }
+                }
+                v6 = ~Item_create(_Teeth);
+                if v6 {
+                    SetFrame(17, v6);
+                    v2 = ~PopToNPC(v7);
+                    if not v2 {
+                        v2 = ~PopToMap(v0);
+                    }
+                }
+                v6 = ~Item_create(_Teeth);
+                if v6 {
+                    SetFrame(3, v6);
+                    v2 = ~PopToNPC(v7);
+                    if not v2 {
+                        v2 = ~PopToMap(v0);
+                    }
+                }
+                v2 = ~PopToNPC(v1);
+                if not v2 {
+                    v2 = ~PopToMap(v0);
+                }
+            }
+            ClearItemFlag_i(_Tournament, v1);
+            KillNPC_i(v1);
+            v2 = ~SetQuality(3, v3);
+            v2 = ~PostAction(<< _aNO_HALT_i, _aWAIT_i, 15, _aUSABLE_i, #ReleaseBanesEgg_i >>, v3);
+            terminate;
+        }
+        if (v4 = 3) {
+            PlaySpeechOrText_i(22);
+            $BANES_RELEASED = true;
+            StartMidgame_i(0);
+            v6 = ~GimmePathEgg(1, 0);
+            SetMusic(v6, 51);
+            v2 = ~SetQuality(4, v3);
+            v2 = ~PostAction(<< _aNO_HALT_i, _aWAIT_i, 10, _aUSABLE_i, #ReleaseBanesEgg_i >>, v3);
+        }
+        if ((v4 > 3) and (v4 < 7)) {
+            v5 = << 65534, 65535, 65533 >>;
+            v8 = v5::(v4 - 3);
+            Sfx(119);
+            if (v4 > 4) {
+                v0 = ~GetCoord(v8);
+                createSprite(65535, 0, 0, 0, v0::2, v0::1, 7);
+            }
+            v9 = ~FindItem(16, _All, _NPC2_Bodies, _All);
+            v10 = ~GetDir(v9, v8);
+            v11 = << 0, 0 >>;
+            if (v10 = 0) {
+                v11 = << 0, 65535 >>;
+            }
+            if (v10 = 1) {
+                v11 = << 1, 65535 >>;
+            }
+            if (v10 = 2) {
+                v11 = << 1, 0 >>;
+            }
+            if (v10 = 3) {
+                v11 = << 1, 1 >>;
+            }
+            if (v10 = 4) {
+                v11 = << 0, 1 >>;
+            }
+            if (v10 = 5) {
+                v11 = << 65535, 1 >>;
+            }
+            if (v10 = 6) {
+                v11 = << 65535, 0 >>;
+            }
+            if (v10 = 7) {
+                v11 = << 65535, 65535 >>;
+            }
+            v12 = ~GetDist(v9, v8);
+            v11::1 = (v11::1 * v12);
+            v11::2 = (v11::2 * v12);
+            v0 = ~GetCoord(v8);
+            v0::1 = (v0::1 + v11::1);
+            v0::2 = (v0::2 + v11::2);
+            v11::1 = (v11::1 * 65535);
+            v11::2 = (v11::2 * 65535);
+            createSprite(v12, 0, v11::2, v11::1, v0::2, v0::1, 32);
+            v2 = ~SetQuality((v4 + 1), v3);
+            v2 = ~PostAction(<< _aNO_HALT_i, _aWAIT_i, (v12 + 10), _aUSABLE_i, #ReleaseBanesEgg_i >>, v3);
+        }
+        if (v4 = 4) && ~GetItemFlag_i(_InParty_i, _Shamino) {
+            v0 = ~GetCoord(_Shamino);
+            v13 = ~GetFrame(_Shamino);
+            LeaveParty(_Shamino);
+            Item_move(<< 101, 54, 0 >>, _Shamino);
+            SetWorkTypeAt_i(_Wait, 54, 101, _Shamino);
+            v14 = ~CreateCreature_i(v0, _Anti_Shamino);
+            SetFrame(v13, v14);
+            SetWorkType(_Wait, v14);
+            createSprite(65535, 0, 0, 0, v0::2, v0::1, 7);
+            SetItemFlag_i(_Dead, _Shamino);
+        }
+        if (v4 = 5) && ~GetItemFlag_i(_InParty_i, _Dupre) {
+            v0 = ~GetCoord(_Dupre);
+            v13 = ~GetFrame(_Dupre);
+            LeaveParty(_Dupre);
+            Item_move(<< 104, 54, 0 >>, _Dupre);
+            SetWorkTypeAt_i(_Wait, 54, 104, _Dupre);
+            v14 = ~CreateCreature_i(v0, _Snake_Dupre);
+            SetFrame(v13, v14);
+            SetWorkType(_Wait, v14);
+            createSprite(65535, 0, 0, 0, v0::2, v0::1, 7);
+            SetItemFlag_i(_Dead, _Dupre);
+        }
+        if (v4 = 6) && ~GetItemFlag_i(_InParty_i, _Iolo) {
+            v0 = ~GetCoord(_Iolo);
+            v13 = ~GetFrame(_Iolo);
+            LeaveParty(_Iolo);
+            Item_move(<< 98, 54, 0 >>, _Iolo);
+            SetWorkTypeAt_i(_Wait, 54, 98, _Iolo);
+            v14 = ~CreateCreature_i(v0, _Mad_Iolo);
+            SetFrame(v13, v14);
+            SetWorkType(_Wait, v14);
+            createSprite(65535, 0, 0, 0, v0::2, v0::1, 7);
+            SetItemFlag_i(_Dead, _Iolo);
+        }
+        if (v4 = 7) {
+            SetSpeaker0_i(0, _Ratman1);
+            ["I am Anarchy! Hahaha!"];
+            ["The world shall quail before me! Wrong shall become right! And right shall become lost! Nothing shall escape my touch!"];
+            CloseSpeaker0_i();
+            SetSpeaker0_i(0, _Shreela);
+            ["Hahaha! I am the Wantonness Bane!"];
+            ["Wherever I pass, people shall frolic and sate their wild desires! I shall drive thee to feed thy darkest hungers!"];
+            CloseSpeaker0_i();
+            SetSpeaker0_i(0, _Sliptha);
+            ["I -- hahaha! -- am the Insanity Bane! Hahaha!"];
+            ["All those who fall within my shadow shall have their reason clouded and their wits addled! Their greatest love shall lie in the rubbish they once loathed! Hahaha!"];
+            CloseSpeaker0_i();
+            v0 = ~GetCoord(_Avatar);
+            createSprite(65535, 0, 0, 0, v0::2, v0::1, 7);
+            v15 = ~FindNearby_i(0, 40, _Mad_Iolo, _Avatar);
+            if v15 {
+                v0 = ~GetCoord(v15);
+                Item_destroy(v15);
+                v16 = ~GetContents(_All, _All, _All, _Iolo);
+                if v16 {
+                    Foreach v19 in v16 {
+                        v20 = ~Item_push(v19);
+                        if v20 {
+                            v20 = ~PopToMap(v0);
+                            if not v20 {
+                                v20 = ~PopToMap(<< 2337, 378, 0 >>);
+                            }
+                            if not v20 {
+                                v20 = ~PopToMap(<< 2339, 376, 0 >>);
+                            }
+                            if not v20 {
+                                v20 = ~PopToMap(<< 2341, 378, 0 >>);
+                            }
+                            if not v20 {
+                                v20 = ~PopToMap(<< 2339, 380, 0 >>);
+                            }
+                        }
+                    }
+                }
+            }
+            createSprite(65535, 0, 0, 0, v0::2, v0::1, 31);
+            v15 = ~FindNearby_i(0, 40, _Snake_Dupre, _Avatar);
+            if v15 {
+                v0 = ~GetCoord(v15);
+                Item_destroy(v15);
+                v16 = ~GetContents(_All, _All, _All, _Dupre);
+                if v16 {
+                    Foreach v19 in v16 {
+                        v20 = ~Item_push(v19);
+                        if v20 {
+                            v20 = ~PopToMap(v0);
+                            if not v20 {
+                                v20 = ~PopToMap(<< 2347, 372, 0 >>);
+                            }
+                            if not v20 {
+                                v20 = ~PopToMap(<< 2349, 370, 0 >>);
+                            }
+                            if not v20 {
+                                v20 = ~PopToMap(<< 2351, 372, 0 >>);
+                            }
+                            if not v20 {
+                                v20 = ~PopToMap(<< 2349, 374, 0 >>);
+                            }
+                        }
+                    }
+                }
+            }
+            createSprite(65535, 0, 0, 0, v0::2, v0::1, 31);
+            v15 = ~FindNearby_i(0, 40, _Anti_Shamino, _Avatar);
+            if v15 {
+                v0 = ~GetCoord(v15);
+                Item_destroy(v15);
+                v16 = ~GetContents(_All, _All, _All, _Shamino);
+                if v16 {
+                    Foreach v19 in v16 {
+                        v20 = ~Item_push(v19);
+                        if v20 {
+                            v20 = ~PopToMap(v0);
+                            if not v20 {
+                                v20 = ~PopToMap(<< 2346, 378, 0 >>);
+                            }
+                            if not v20 {
+                                v20 = ~PopToMap(<< 2348, 376, 0 >>);
+                            }
+                            if not v20 {
+                                v20 = ~PopToMap(<< 2350, 378, 0 >>);
+                            }
+                            if not v20 {
+                                v20 = ~PopToMap(<< 2348, 380, 0 >>);
+                            }
+                        }
+                    }
+                }
+            }
+            createSprite(65535, 0, 0, 0, v0::2, v0::1, 31);
+            if ~IsNPCNear_i(_Boydon) {
+                v0 = ~GetCoord(_Boydon);
+                v2 = ~PostAction(<< _aNO_HALT_i, _aWAIT_i, 7, _aHIT_i, 55, 0 >>, _Boydon);
+            }
+            Sfx(42);
+            $SERPENT_GWANI_HORN_SPEECH = true;
+            v2 = ~PostInFuture(40, << _aNO_HALT_i, _aUSABLE_i, #Ring >>, ~GimmePathEgg(4, 5));
+            v2 = ~SetQuality(0, v3);
+            ClearItemFlag_i(_DontMove_i, _Avatar);
+            ClearSpeakers_i();
+            SetWeather_i(_Clear);
+        }
+    }
+}
+
+Routine ThoxaWarnsEgg_i accepts a0 #locals(3) #uses(~IsTrioNear_i) {
+    if ((event = _Trigger) and not ~IsTrioNear_i()) {
+        v0 = ~GetCoord(_Avatar);
+        v1 = ~rndRange(3, 65533);
+        v2 = ~rndRange(3, 65533);
+        v0::1 = (v0::1 + v1);
+        v0::2 = (v0::2 + v2);
+        Item_move(v0, _Thoxa);
+        v0::1 = (v0::1 - (v0::3 / 2));
+        v0::2 = (v0::2 - (v0::3 / 2));
+        createSprite(65535, 0, 0, 0, v0::2, v0::1, 7);
+        SetWorkType(_Talk, _Thoxa);
+        Npc_setAlignment(_Neutral, _Thoxa);
+    }
+}
+
+Function ~IsTrioNear_i #locals(0) #uses(~IsNPCNear) {
+    if not ~IsNPCNear(_Iolo) {
+        return false;
+    }
+    if not ~IsNPCNear(_Shamino) {
+        return false;
+    }
+    if not ~IsNPCNear(_Dupre) {
+        return false;
+    }
+    if not ~GetItemFlag_i(_InParty_i, _Iolo) {
+        return false;
+    }
+    if not ~GetItemFlag_i(_InParty_i, _Shamino) {
+        return false;
+    }
+    if not ~GetItemFlag_i(_InParty_i, _Dupre) {
+        return false;
+    }
+    if ~GetItemFlag_i(_Dead, _Iolo) {
+        return false;
+    }
+    if ~GetItemFlag_i(_Dead, _Shamino) {
+        return false;
+    }
+    if ~GetItemFlag_i(_Dead, _Dupre) {
+        return false;
+    }
+    return true;
+}

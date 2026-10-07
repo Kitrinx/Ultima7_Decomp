@@ -1,0 +1,43 @@
+Routine Brk_Items accepts a0 #locals(5) #uses(FlashBlocked_i, SetWorkTypeAt_i) {
+    v0 = ~GetFrame(item);
+    if (v0 = 0) {
+        v1 = ~GetTarget();
+        if (v1 = ~NPCToItem_i(_Avatar)) {
+            SetFrame(1, item);
+        } else {
+            FlashBlocked_i(60);
+        }
+    }
+    if (v0 = 1) {
+        v1 = ~GetTarget();
+        if (~Item_getType(v1) = _Urn) {
+            if (~GetFrame(v1) = 1) {
+                SetFrame(0, item);
+                Sfx(57);
+                v2 = ~GetCoord(v1);
+                createSprite(65535, 0, 0, 0, v2::2, v2::1, 9);
+                Sfx(130);
+                v3 = ~CreateCreature_i(<< v2::1, (v2::2 + 2), 0 >>, _Wolf);
+                if not v3 {
+                    PrintError_i("Wolf Creation Failed!");
+                }
+                SetItemFlag_i(_Tournament, v3);
+                ClearItemFlag_i(_IsTemporary_i, v3);
+                SetWorkType(_Combat_0, v3);
+                SetAttacker_i(v3, _Avatar);
+                Npc_setAlignment(_Evil, v3);
+                v4 = ~GiveToCont_i(false, 4, 61, _Unique_Key, 1, v3);
+                v4 = ~GiveToCont_i(false, 3, _All, _Mage_Food, 3, v3);
+                SetWorkTypeAt_i(_Wait, 46, 160, _Cantra);
+                RemoveNPC_i(_Cantra);
+                $doneknightstest = true;
+                Npc_setAlignment(_Chaotic, _Shmed);
+                SetItemFlag_i(_Tournament, _Shmed);
+            } else {
+                FlashBlocked_i(60);
+            }
+        } else {
+            FlashBlocked_i(60);
+        }
+    }
+}

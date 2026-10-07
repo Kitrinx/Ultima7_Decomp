@@ -1,0 +1,40 @@
+Routine Lit_Lamp_Post accepts a0 #locals(7) {
+    if ((event = _Converse) or (event = _Action)) {
+        v0 = ~GetFrame(item);
+        if ((v0 = 0) or ((v0 = 1) or ((v0 = 4) or (v0 = 5)))) {
+            return;
+        }
+        v1 = ~FindNearby_i(128, 10, _Pool_Of_Light, item);
+        v2 = ~GetCoord(item);
+        v2::1 = (v2::1 + 3);
+        v2::2 = (v2::2 + 3);
+        Foreach v5 in v1 {
+            v6 = ~GetCoord(v5);
+            if ((v2::1 = v6::1) and ((v2::2 = v6::2) and (v2::3 = v6::3))) {
+                Item_destroy(v5);
+                Item_setType(_Lamp_Post, item);
+                playSFX(item, 33);
+            }
+        }
+    }
+}
+
+Routine Lamp_Post accepts a0 #locals(3) {
+    if ((event = _Converse) or (event = _Action)) {
+        v0 = ~GetFrame(item);
+        if ((v0 = 0) or ((v0 = 1) or ((v0 = 4) or (v0 = 5)))) {
+            return;
+        }
+        v1 = ~Item_create(_Pool_Of_Light);
+        if v1 {
+            v2 = ~GetCoord(item);
+            v2::1 = (v2::1 + 3);
+            v2::2 = (v2::2 + 3);
+            SetFrame(~rndRange(7, 0), v1);
+            if ~PopToMap(v2) {
+                Item_setType(_Lit_Lamp_Post, item);
+                playSFX(item, 65);
+            }
+        }
+    }
+}

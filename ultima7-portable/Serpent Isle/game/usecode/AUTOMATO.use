@@ -1,0 +1,233 @@
+Routine Serv01 accepts a0 #locals(2) #uses(ServantUsable_i) {
+    v0 = "Columna and Melino";
+    v1 = 2;
+    ServantUsable_i(v1, v0);
+}
+
+Routine Serv02 accepts a0 #locals(2) #uses(ServantUsable_i) {
+    v0 = "Gustacio";
+    v1 = 2;
+    ServantUsable_i(v1, v0);
+}
+
+Routine Serv03 accepts a0 #locals(2) #uses(ServantUsable_i) {
+    v0 = "Torrissio";
+    v1 = 2;
+    ServantUsable_i(v1, v0);
+}
+
+Routine Serv04 accepts a0 #locals(2) #uses(ServantUsable_i) {
+    v0 = "Ducio";
+    v1 = 3;
+    ServantUsable_i(v1, v0);
+}
+
+Routine Serv05 accepts a0 #locals(2) #uses(ServantUsable_i) {
+    v0 = "Ducio";
+    v1 = 4;
+    ServantUsable_i(v1, v0);
+}
+
+Routine Serv06 accepts a0 #locals(2) #uses(ServantUsable_i) {
+    v0 = "Filbercio";
+    v1 = 5;
+    ServantUsable_i(v1, v0);
+}
+
+Routine Serv07 accepts a0 #locals(2) #uses(ServantUsable_i) {
+    v0 = "Rotoluncia";
+    v1 = 2;
+    ServantUsable_i(v1, v0);
+}
+
+Routine Serv08 accepts a0 #locals(2) #uses(ServantUsable_i) {
+    v0 = "Canton";
+    v1 = 6;
+    ServantUsable_i(v1, v0);
+}
+
+Routine Serv09 accepts a0 #locals(2) #uses(ServantUsable_i) {
+    v0 = "Stefano";
+    v1 = 2;
+    ServantUsable_i(v1, v0);
+}
+
+Routine Serv10 accepts a0 #locals(2) #uses(ServantUsable_i) {
+    v0 = "Mortegro";
+    v1 = 2;
+    ServantUsable_i(v1, v0);
+}
+
+Routine Serv11 accepts a0 #locals(2) #uses(ServantUsable_i) {
+    v0 = "Seminarium";
+    v1 = 2;
+    ServantUsable_i(v1, v0);
+}
+
+Routine Serv12 accepts a0 #locals(2) #uses(ServantUsable_i) {
+    v0 = "Pothos";
+    v1 = 7;
+    ServantUsable_i(v1, v0);
+}
+
+Routine Music01 accepts a0 #locals(2) #uses(ServantUsable_i) {
+    v0 = "Rocco";
+    v1 = 8;
+    ServantUsable_i(v1, v0);
+}
+
+Routine Music02 accepts a0 #locals(2) #uses(ServantUsable_i) {
+    v0 = "Rocco";
+    v1 = 9;
+    ServantUsable_i(v1, v0);
+}
+
+Routine Music03 accepts a0 #locals(2) #uses(ServantUsable_i) {
+    v0 = "Rocco";
+    v1 = 10;
+    ServantUsable_i(v1, v0);
+}
+
+Routine ServSew accepts a0 #locals(2) #uses(ServantUsable_i) {
+    v0 = "Ducio";
+    v1 = 11;
+    ServantUsable_i(v1, v0);
+}
+
+Routine AutoGard accepts a0 #locals(2) #uses(ServantUsable_i) {
+    v0 = "Pothos";
+    v1 = 7;
+    ServantUsable_i(v1, v0);
+}
+
+Routine ServantUsable_i accepts a0, a1 #locals(7) #uses(AutomatonUsable_i, ~LordOrLady, Bark_i, PartyFaces_i, FaceAvatar_i, ~PartyUtters) {
+    if ~GetItemFlag_i(_Zombie, item) {
+        AutomatonUsable_i();
+        terminate;
+    }
+    v2 = "";
+    v3 = ~LordOrLady();
+    v4 = ~AvatarSex();
+    if ((event = _Bark) and (~GetWorkType(item) = _Hound)) {
+        if (~Random(10) < 6) {
+            terminate;
+        }
+        v5 = << "@Leave this place!@", "@Intrude not!@", "@Call the Rangers!@", "@Anger not the Mages...@", "@Take nothing!@", "@Thief! Thief!@" >>;
+        Bark_i(0, v5::~Random(6), item);
+    }
+    if ((event = _Converse) and (~GetWorkType(item) <> _Stand)) {
+        Item_bark("Hold!", _Avatar);
+        PartyFaces_i(item);
+        Bark_i(2, "@Yes?@", item);
+        v6 = ~ItemToNPC_i(item);
+        if ((v6 = 65338) or ((v6 = 65337) or (v6 = 65336))) {
+            SetWorkType(_Stand, item);
+            FaceAvatar_i(item);
+            v6 = (1024 - v6);
+            v6 = ~PostAction(<< _aNO_HALT_i, _aWAIT_i, 7, _aUSABLE_i, v6 >>, item);
+            terminate;
+        }
+        SetWorkType(_Talk, item);
+    }
+    if ((event = _Talking) or (event = _Action)) {
+        Npc_schedule(item);
+        ClearBark_i(item);
+        SetSpeaker0_i(0, _Forskis);
+        if ((v1 = "Canton") or (v1 = "Seminarium")) {
+            ["I am the servant and protector here at the <v1>. If thou wishest to conduct any business, thou must speak to my master. If thou dost not have any concern here, <v3>, I must ask thee to please depart."];
+        } else {
+            ["I am the servant and protector of <v1>. If thou dost not belong here, <v3>, I must ask thee to please depart. I cannot help thee with matters of importance. My duty is only to protect my master and my master's possessions."];
+        }
+        TurnOn(<< "servant", "bye" >>);
+        converse {
+            key ("servant") {
+                TurnOff("servant");
+                if (v0 = 2) {
+                    ["As I have said, I serve and protect my master's household."];
+                }
+                if (v0 = 3) {
+                    ["As I have said, I serve and protect my master's household. I must work..."];
+                    Bark_i(0, "@Where be the pan?@", item);
+                    terminate;
+                }
+                if (v0 = 4) {
+                    ["As I have said, I serve and protect my master's household. I do not have time for talk."];
+                    Bark_i(0, "@Back to work!@", item);
+                    terminate;
+                }
+                if (v0 = 5) {
+                    ["As I have said, I serve and protect my master's household. This have I done for a great many years."];
+                    v7 = ~PartyUtters(false, 0, "@Why, this being doth move so silently!@", 65533);
+                    if (v7 <> 65180) {
+                        SetSpeakerSlot_i(0);
+                        ["Master Filbercio hath enchanted my feet to prevent them from clattering as I walk. He was greatly disturbed by the noise."];
+                    }
+                    TurnOn(<< "many years" >>);
+                }
+                if (v0 = 6) {
+                    v8 = ~GetTime();
+                    if ((v8 = 7) or ((v8 = 0) or (v8 = 1))) {
+                        v2 = ", especially at this time of night";
+                    }
+                    ["As I have said, I serve and protect my master's possessions from the many thieves who would take them<v2>."];
+                }
+                if (v0 = 7) {
+                    if not $filberciobanquet {
+                        v2 = ", especially when Master Pothos is away";
+                    }
+                    ["As I have said, I serve and protect my master's household. The apothecary's shop is a prime target for thievery<v2>."];
+                }
+                if (v0 = 11) {
+                    ["As I have said, I serve and protect my master's household."];
+                    Bark_i(0, "@I must go...@", item);
+                    terminate;
+                }
+                if (v0 = 8) {
+                    ["I serve by playing melodies for the patrons. I prefer to play the songs I memorized long ago, but the residents here do not seem to like them."];
+                }
+                if (v0 = 9) {
+                    ["I perform music for those who would listen. Music is a difficult art."];
+                    if ~IsNPCNear_i(_Rocco) {
+                        SetSpeaker1_i(0, _Rocco);
+                        ["And thou art indeed a master, musician automaton."];
+                        CloseSpeaker1_i();
+                        SetSpeakerSlot_i(0);
+                    } else {
+                        if ~IsNPCNear_i(_Petra) {
+                            SetSpeaker1_i(0, _Petra);
+                            ["There are some who say that when it comes to music, we automatons have a tin ear."];
+                            CloseSpeaker1_i();
+                            SetSpeakerSlot_i(0);
+                            ["That is patently untrue."];
+                            SetSpeaker1_i(0, _Petra);
+                            ["I was making a humorous remark, musician."];
+                            CloseSpeaker1_i();
+                            SetSpeakerSlot_i(0);
+                            ["I do not understand humor, milady."];
+                        }
+                    }
+                }
+                if (v0 = 10) {
+                    ["I am both a musician and a dancer, <v3>. Ofttimes I will accompany my fellows, other times I will rise and perform a jig for the patrons. Some who drink here even join in the dancing."];
+                }
+            }
+            key ("many years") {
+                TurnOff("many years");
+                ["There is much I have witnessed in these halls, but I am forbidden to speak of it."];
+            }
+            key ("bye") {
+                Bark_i(0, "@Goodbye.@", _Avatar);
+                if ((v1 = "Canton") or ((v1 = "Filbercio") or (v1 = "Rocco"))) {
+                    SetWorkType(_HorPace, item);
+                    Bark_i(5, "@Goodbye@", item);
+                    terminate;
+                } else {
+                    SetWorkType(_Hound, item);
+                    Bark_i(10, "@Move along...@", item);
+                    terminate;
+                }
+            }
+        }
+        clear_answers;
+    }
+}

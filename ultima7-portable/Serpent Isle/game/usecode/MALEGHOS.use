@@ -1,0 +1,126 @@
+Routine Male_Ghost accepts a0 #locals(3) #uses(~GimmePathEgg, ~AskYesNo, ~GiveItemsOrDrop_i, Bark_i) {
+    if (event = _Action) {
+        v0 = ~GetCoord(item);
+        if (~GetNPCID_i(item) = 15) {
+            v1 = ~Item_create(_Field_Fire);
+            if v1 {
+                v2 = ~PopToMap(v0);
+            }
+            Item_destroy(item);
+            ClearItemFlag_i(_DontMove_i, _Avatar);
+            ClearSpeakers_i();
+            terminate;
+        }
+        createSprite(65535, 0, 0, 0, (v0::2 - ~GetNPCID_i(item)), (v0::1 + ~GetNPCID_i(item)), 8);
+        SetNPCID_i((~GetNPCID_i(item) + 1), item);
+        v2 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #Male_Ghost >>, item);
+        terminate;
+    }
+    SetMusic(~GimmePathEgg(1, 5), 53);
+    SetSpeaker0_i(0, _Pibb);
+    ["Who dares to disturb the restless repose of the Hierophant of Chaos!"];
+    ["Wait -- I know thee! The Void hath whispered to me of thy coming, Hero from a Distant Land. But dost thou dare to hear the answers to thy questions?"];
+    $metchaoshierophant = true;
+    TurnOn(<< "restless repose", "whispers from the Void", "questions", "bye" >>);
+    converse {
+        key ("restless repose") {
+            TurnOff("restless repose");
+            ["Did not faithful Sethys tell thee of my fate? I was slain on this very spot centuries ago, at the hands of the Soldiers of Order."];
+            ["My spirit hath lingered here, for my final duties remain unfinished..."];
+            ["Once I have passed my knowledge to thee, I shall be free to ascend to the Void. However, my soul shall not have rest until the Chaos Serpent is restored."];
+        }
+        key ("whispers from the Void") {
+            TurnOff("whispers from the Void");
+            ["Do not toy with me, Hero! Though our purposes may be the same, our philosophies are not -- I know thee to be no friend of Chaos!"];
+            ["Yet we both can sense the messages from the Void Between the Worlds. The wisdom of the Great Earth Serpent..."];
+            ["We thought him dead, or deposed, yet he again speaks to Men -- though his power is a pale imitation of his former glory."];
+        }
+        key ("change subject") {
+            PopKeys();
+            ["Must we? Very well..."];
+        }
+        key ("nothing more") {
+            PopKeys();
+            ["If thou art certain..."];
+        }
+        key ("questions") {
+            TurnOff("questions");
+            ["I know what thou dost seek, Hero, and I am opposed to it. Chaos must reign supreme, and not be unequally yoked to Order in the prison known as Balance!"];
+            ["Yet even servitude would be better than the damnation that Chaos now endures, with its Forces driven apart and broken."];
+            ["Listen carefully -- I shall give thee mine aid this one time, but we must be enemies ever afterward!"];
+            PushKeys();
+            TurnOn(<< "aid", "damnation", "change subject" >>);
+        }
+        key ("damnation") {
+            TurnOff("damnation");
+            ["Behold the mystery of Balance! When Order struck down the Serpent of Chaos, the act undid the tapestry of Balance."];
+            ["Thus, both Chaos and Order were doomed!"];
+            ["When the Serpent was broken, the three Forces of Chaos were driven to insanity -- but so was the Order Serpent..."];
+            TurnOn(<< "Forces of Chaos", "Order Serpent" >>);
+        }
+        key ("Forces of Chaos") {
+            TurnOff("Forces of Chaos");
+            ["The Forces of Chaos -- the sacred embodiment of the philosophies of Chaos -- were corrupted, and became the Banes which thou hast fought against!"];
+            ["Didst thou suppose the Banes to be innately evil? False supposition!"];
+            ["The Banes are only insane because of the Imbalance. Restore Balance, and they shall be healed!"];
+        }
+        key ("Order Serpent") {
+            TurnOff("Order Serpent");
+            ["The Serpent of Order thought itself victorious in the War of Imbalance, but the act of destroying the Chaos Serpent brought despair!"];
+            ["With the Great Earth Serpent lost, and the Chaos Serpent struck down, only the Order Serpent remains to rule in the Void."];
+            ["Yet due to the Imbalance, the Serpent of Order hath lost its mind! It floats mindlessly in the Void, able to coalesce a thought with only the most supreme effort!"];
+        }
+        key ("aid") {
+            TurnOff("aid");
+            ["I shall now tell thee the way to restore the Serpent of Chaos. Until thou dost do this, Balance cannot be restored."];
+            ["I have no love for Balance, but I also know that Chaos cannot reign in Imbalance..."];
+            ["Ask me these things: where thou must go, what thou must bring, and the rite thou must perform."];
+            PushKeys();
+            TurnOn(<< "where I must go", "what I must bring", "the rite", "nothing more" >>);
+        }
+        key ("where I must go") {
+            TurnOff("where I must go");
+            ["The Shrine of Chaos doth lie within the heart of the Skullcrusher Mountains. I know that thou hast been in this dungeon, but hast thou found the secret passageways?"];
+            ["I see a shadow of a vision -- a mighty detonation, shattering the great bronze doors. Is this of the future, or hast thou done this in the past?"];
+            ["The rite is to be performed in the most sacred precincts of the Shrine, before the Wall of Lights."];
+        }
+        key ("what I must bring") {
+            TurnOff("what I must bring");
+            ["The rite cannot succeed unless thou dost bring the Serpent of Blackrock, to open the Wall of Lights and admit the energy from the Void."];
+            ["Any of the three Serpents shall do, though the Serpent of Chaos would be most appropriate."];
+            ["Thou must also bring the Banes, imprisoned within the Prisms which thou hast fashioned."];
+        }
+        key ("the rite") {
+            TurnOff("the rite");
+            ["Thou must begin by opening the Wall of Lights, for this provides the energy source which the Rite requires. This is done by placing the Serpent of Blackrock in the stone slot on the floor."];
+            ["Next, thou must place the Banes upon the altars of Chaos. Thou must place each Bane upon the altar which is dedicated to its native Force!"];
+            ["When thou hast placed each correctly, a flame of Chaos shall appear as thy sign."];
+            ["The time is now right to restore the Serpent of Chaos to completeness. Recite this mantra..."];
+            ["In pri kli ort ailem, Priin ort inten mani!"];
+        }
+        key ("bye") {
+            ["Wait, Hero -- I can only speak with thee this once! Dost thou understand all that I have said?"];
+            if not ~AskYesNo() {
+                ["Then ask of me again, and I shall explain once more."];
+                ClearKeys();
+                TurnOn(<< "restless repose", "whispers from the Void", "questions", "bye" >>);
+            } else {
+                ["I disbelieve thee, mortal. Take this scroll. It shall bring our conversation to thy remembrance, in thine hour of need."];
+                v2 = ~GiveItemsOrDrop_i(true, 0, 0, 99, 707, 1, _Avatar);
+                ["I must confess, Avatar, that there is a mystery which even I cannot explain."];
+                ["The Rite cannot succeed without an allied force strong enough to weld the Banes together into the Serpent. It is a greater task to restore than to destroy."];
+                ["Seek the answer to this mystery, or thou shalt not succeed! Now, I must go..."];
+                CloseSpeaker0_i();
+                SetMusic(~GimmePathEgg(1, 5), 53);
+                SetWorkType(_Wait, item);
+                Bark_i(0, "@Many thanks!@", _Avatar);
+                SetItemFlag_i(_DontMove_i, _Avatar);
+                EndConverse_i();
+                SetWorkType(_Wait, item);
+                v2 = ~PostAction(<< _aNO_HALT_i, _aUP_FRAME_i, _aOUT_FRAME_i, _aBARK_i, "@Into the Void!@", _aUSABLE_i, #Male_Ghost >>, item);
+                terminate;
+            }
+        }
+    }
+    clear_answers;
+}

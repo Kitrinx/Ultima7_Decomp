@@ -1,0 +1,260 @@
+Routine Voldin accepts a0 #locals(8) #uses(~LordOrLady, ~AvatarName, Bark_i, PartyFaces_i, FaceAvatar_i, ~AskYesNo, SendAssassin_i, JorvinBringsInvitation_i) {
+    v0 = ~LordOrLady();
+    v1 = ~AvatarSex();
+    v2 = ~AvatarName();
+    if (event = _NearDeath) {
+        v3 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #Green_Noble >>, item);
+    }
+    if ((event = _Bark) and (~GetWorkType(_Voldin) = _TendShop)) {
+        v4 = << "@Garth will save me...@", (("@Damn " + v2) + "!@"), "@I need more food!@", "@Jailer!@", "@Be patient.@", "@Curse that weaver!@" >>;
+        if ~IsNPCNear_i(_Kylista) {
+            v4 = (v4 & ("@Be silent, Priestess!@" & ("@Pleasure me, Kylista!@" & "@Our time shall come...@")));
+        }
+        Bark_i(0, v4::~Random(~ListSize_i(v4)), _Voldin);
+    }
+    if ((event = _Converse) and (~GetWorkType(_Voldin) <> _Wait)) {
+        PartyFaces_i(65485);
+        if (($AUDIENCE_WITH_YELINDA and $FAWN_TRIAL_DONE) and not $oraclesaysinnocent) {
+            Item_bark("@Hail, criminal!@", _Avatar);
+            SetWorkType(_Wait, _Voldin);
+            Bark_i(2, "@Not thee!@", _Voldin);
+            FaceAvatar_i(65485);
+            v3 = ~PostInFuture(7, << _aNO_HALT_i, _aUSABLE_i, #Voldin >>, _Voldin);
+        } else {
+            Item_bark("@A moment of thy time, sir.@", _Avatar);
+            Bark_i(5, (("@At thy service, " + v0) + ".@"), _Voldin);
+            SetWorkType(_Talk, _Voldin);
+        }
+    }
+    if (event = _Action) {
+        Npc_schedule(_Voldin);
+        ClearBark_i(_Voldin);
+        SetSpeaker0_i(0, _Voldin);
+        ["So thou hast come to pity me, eh, <v2>? Well, I'm not done yet!"];
+        TurnOn(<< "false Oracle", "Kylista", "not done yet" >>);
+        goto label_27;
+    }
+    if (event = _Talking) {
+        Npc_schedule(_Voldin);
+        ClearBark_i(_Voldin);
+        SetSpeaker0_i(0, _Voldin);
+        v5 = ~GetItemFlag_i(_Met, _Voldin);
+        if ($FAWN_TRIAL_RECESS or ($AUDIENCE_WITH_YELINDA and not $FAWN_TRIAL_DONE)) {
+            ["Thou dost dare to confront me? Thou, that didst bring the blasphemer to Lady Yelinda!"];
+            CloseSpeaker0_i();
+            Bark_i(0, "@Spare me thy presence!@", _Voldin);
+            SetWorkType(_Shy, _Voldin);
+            terminate;
+        }
+        if (v5 = false) {
+            if ($gottattoo = true) {
+                if (v1 = true) {
+                    ["Another of Monitor's female Pikemen, I see. Odd that they encourage women to disfigure themselves." *"I am Great Captain Voldin."];
+                } else {
+                    ["Welcome, good Pikeman. Thy presence honors us." *"I am Great Captain Voldin."];
+                }
+            } else {
+                if (v1 = true) {
+                    ["Thy Beauty enriches us. Welcome to Fawn, <v0>." *"I am Great Captain Voldin."];
+                } else {
+                    ["It is a pleasure to meet thee. I am Great Captain Voldin." *"Fawn is in sore need of more men to help hold the Goblins at bay."];
+                }
+            }
+            SetItemFlag_i(_Met, _Voldin);
+        } else {
+            ["How might I be of service this time, <v2>?"];
+        }
+        TurnOn(<< "storms", "Goblins" >>);
+        label_27:
+        TurnOn("bye");
+        converse {
+            key ("false Oracle") {
+                TurnOff("false Oracle");
+                ["The Oracle hath always been a fraud! Dost thou not comprehend?"];
+                ["Even in our ancient homeland, the Statue of Beauty was controlled by the Great Captains. It said what we told it to."];
+                TurnOn(<< "fraud", "Why?" >>);
+            }
+            key ("fraud") {
+                TurnOff("fraud");
+                ["For centuries, the women of our culture have believed themselves to be divine. Yet the men governed secretly, through the revelations issued by the Oracle."];
+                ["Thou hast destroyed a great tradition, foreigner! It was glorious, while it lasted..."];
+            }
+            key ("Why?") {
+                TurnOff("Why?");
+                if ~AvatarSex() {
+                    ["Thou wouldst not understand..."];
+                } else {
+                    ["Learn from our experience, <v2>! Women are easily controlled by their vanity. Tell them that they are superior -- and then manipulate them. That's the key!"];
+                    ["The females of our race are exceedingly willful, yet they lack common sense. Without men to dominate them, they would ruin everything."];
+                }
+            }
+            key ("Kylista") {
+                TurnOff("Kylista");
+                ["She was merely our pawn -- a pretty thing, clever in a limited way, but always our tool."];
+                if ~IsNPCNear_i(_Kylista) {
+                    SetSpeaker1_i(0, _Kylista);
+                    ["Close thy trap, Voldin, or I'll scratch thine eyes out!"];
+                    CloseSpeaker1_i();
+                    SetSpeakerSlot_i(0);
+                    ["Such a clever threat, girl! Dost thou not realize that thou dost live at my pleasure?"];
+                    if not ~AvatarSex() {
+                        ["Fear not -- so long as the nights remain cold, I shall have a use for thee..."];
+                    }
+                }
+            }
+            key ("not done yet") {
+                TurnOff("not done yet");
+                ["Surely, thou dost not think that Leon the Preacher and Alyssand the Weaver have won? They don't have the strength to govern."];
+                ["Give it time. Perhaps three moons. And then the people will clamor for the old ways, and remember Voldin in his jail cell."];
+                ["Then I shall rule as I always deserved, as King of Fawn!"];
+            }
+            key ("storms") {
+                ["The storms are a regrettable consequence of incurring the heavens' displeasure. I'm certain that our punishment will end soon if we adhere to Beauty's truth."];
+                TurnOff("storms");
+                TurnOn(<< "the heavens' displeasure", "Beauty's truth" >>);
+            }
+            key ("the heavens' displeasure") {
+                ["Out of misguided kindness, we allowed infidels to enter our city. They spread their contagion, corrupting many of our people to their misguided ways. This displeased the heavens. The storms were clearly sent to punish us."];
+                TurnOff("the heavens' displeasure");
+                TurnOn(<< "infidels", "misguided ways" >>);
+            }
+            key ("infidels") {
+                ["The sailors camped outside of the city are infidels. They do not follow the path of Beauty." *"They came to our city claiming to be from Britannia, which -- as any sailor knows -- is pure fiction. The Priestess was right to remove their ugly dishonesty from our midst."];
+                TurnOff("infidels");
+                TurnOn("Priestess");
+            }
+            key ("Priestess") {
+                ["Kylista is the Priestess of Beauty. She receives the wisdom of the Oracle and interprets it for those of us who cannot understand the words of the heavens." *"Kylista tried to dissuade us from allowing that false prophet into our city. Now we are paying for our folly."];
+                TurnOff("Priestess");
+                TurnOn("Oracle");
+            }
+            key ("Oracle") {
+                ["The Oracle is an instrument of the heavens. Its words are divine revelations to those who follow Beauty's truth."];
+                TurnOff("Oracle");
+                TurnOn("revelations");
+            }
+            key ("revelations") {
+                ["Thou hast not heard a revelation from the Oracle yet?"];
+                v6 = ~AskYesNo();
+                if v6 {
+                    ["Then thou knowest that these are words meant to enlighten and guide our lives to Beauty."];
+                } else {
+                    ["Thou shouldst go to the Temple. Judging by the time, there will be another revelation soon." *"I'm certain that thou wilt find it an enlightening experience."];
+                }
+                TurnOff("revelations");
+            }
+            key ("misguided ways") {
+                ["There is one among them, Leon, who preaches of something they call The Fellowship. While I'll grant that he is a powerful speaker, he is clearly a misguided fool." *"Who in their right mind would believe that the world could be changed by such simplistic views?"];
+                TurnOff("misguided ways");
+                TurnOn("simplistic views");
+            }
+            key ("simplistic views") {
+                if (v1 = true) {
+                    ["Forgive me, <v0>. I did not intend to enter a philosophical discussion. Thy Beauty distracted me, I must confess."];
+                } else {
+                    ["What man could honestly expect that the neighbor who covets thy land would not do everything possible to acquire it?" *"Wouldst thou, like a trusting woman, trust such a neighbor to act in Unity with thee, and work to become Worthy of owning thy land?"];
+                    v7 = ~AskYesNo();
+                    if v7 {
+                        ["Then thou art destined for a dismal life, my friend. For the world is what thou makest of it. Thou canst acquire only what thou takest."];
+                    } else {
+                        ["Of course not! Thou art a man of the world. Thou knowest that thou canst acquire only what thou takest."];
+                    }
+                }
+                TurnOff("simplistic views");
+            }
+            key ("Beauty's truth") {
+                ["Everyone is drawn to that which is beautiful. Therefore, if we strive to honor and protect all things beautiful, our lives will be fulfilled." *"All good and honest people are Beautiful."];
+                TurnOff("Beauty's truth");
+            }
+            key ("Goblins") {
+                if ($gottattoo = true) {
+                    if ($fawntowerretaken = true) {
+                        if (v1 = true) {
+                            ["Please convey Fawn's thanks to thy fellow Pikemen who retook the tower from Pomdirgun and the Goblins. 'Twas most nobly done and Monitor doth have Lady Yelinda's gratitude."];
+                        } else {
+                            ["Thou hast Fawn's thanks, noble Pikeman. Lady Yelinda was quite distraught until thou didst retake the tower from Pomdirgun and the Goblins."];
+                        }
+                    } else {
+                        if (v1 = true) {
+                            ["Not to belittle thy prowess, <v0>, but thou shouldst remain here in safety with Lady Yelinda. Leave the retaking of the tower to thy larger male companions." *"The battle will likely be more fierce than thou canst imagine with Pomdirgun goading them on."];
+                        } else {
+                            ["I will feel more secure in the knowledge that thou wilt be among the fighters seeking to reclaim our tower. With Pomdirgun goading them on, the battle will most likely be quite fierce." *"I wish it were not my duty to protect Lady Yelinda. I would join thee in the fray if I could."];
+                        }
+                    }
+                } else {
+                    if (v1 = true) {
+                        ["Thou shouldst have remained in the safety of the city, noble <v0>. The Pikemen have been driven from the tower by Pomdirgun and his Goblin hordes." *"I have advised Lady Yelinda to order that the gates remain closed at night until the tower is retaken."];
+                    } else {
+                        ["Thou art just in time for a fine fight, brave <v0>! Pomdirgun and his Goblin hordes must be driven from the Pikeman tower." *"Lady Yelinda will be most grateful to all who join in the fray."];
+                    }
+                }
+                TurnOff("Goblins");
+                TurnOn(<< "Lady Yelinda", "Pomdirgun" >>);
+            }
+            key ("Lady Yelinda") {
+                ["Lady Yelinda is the most beautiful woman in the city. She rules Fawn with the aid of the Chancellor and the Great Captain's Council."];
+                TurnOff("Lady Yelinda");
+                TurnOn(<< "Chancellor", "Great Captain's Council" >>);
+            }
+            key ("Chancellor") {
+                ["The Chancellor is Lady Yelinda's chief assistant. He conveys messages to and from the Council to her Ladyship and makes public proclamations of Lady Yelinda's judgments." *"If thou wishest a matter brought before her Ladyship, thou must first speak with Zulith. Look for a small man wearing bright green robes. That will be the Chancellor."];
+                TurnOff("Chancellor");
+            }
+            key ("Great Captain's Council") {
+                ["The Great Captains take much of the weight of mundane affairs from Lady Yelinda's schedule. Garth, Joth and I oversee trade and the disposition of the fleets."];
+                TurnOff("Great Captain's Council");
+                TurnOn(<< "Garth", "Joth", "fleet" >>);
+            }
+            key ("Garth") {
+                ["Garth is merely a lad. He could never have gotten a Council seat without his family's money." *"He spends his days chasing skirts. Which is just as well, as it keeps him out from under foot."];
+                TurnOff("Garth");
+            }
+            key ("Joth") {
+                ["Joth is an old fishing captain who had to be forcibly removed from the fleet, I'm afraid. I don't think that he quite realizes that he isn't on the deck of a ship anymore, poor man." *"He thinks we can rebuild the fleet with little or no money. We humor him as best we can."];
+                TurnOff("Joth");
+            }
+            key ("fleet") {
+                ["These severe storms have caused the total loss of all our fishing ships. Fawn once supplied fish to the other cities. But that is a thing of the past, I'm afraid." *"Even if we were able to rebuild the ships, we have almost no able-bodied men to crew them. This may be the death knell of Fawn without the proper guidance."];
+                TurnOff("fleet");
+            }
+            key ("Pomdirgun") {
+                ["I do not know what evil spawned such a fearful creature. Pomdirgun is easily larger than the other Goblins, and twice as fierce. All the other Goblins fear him." *"His first foray against Fawn cost us our healer, Seth. And now he hath led the Goblins to overtake the Pikeman tower. I'd give much to see his head on a pike!"];
+                TurnOff("Pomdirgun");
+                TurnOn("Seth");
+            }
+            key ("Seth") {
+                ["Seth was a stubborn man. But a good healer. He refused to take a guard contingent along with him to hunt herbs. He said that the guards did nothing but trample what he was looking for." *"Unfortunately, such stubbornness cost him his life."];
+                if (v1 = true) {
+                    ["The details are best left unmentioned. 'Tis not a tale for a beautiful lady." *"The result is that Delphynia is all Fawn doth have in the way of a healer."];
+                } else {
+                    ["By the time the guards caught up with the foul creatures, they had eaten all but his head!" *"But perhaps the worst part of the tale is that Fawn is left with only Delphynia as a healer!"];
+                }
+                TurnOff("Seth");
+                TurnOn("Delphynia");
+            }
+            key ("Delphynia") {
+                ["Delphynia is a nice enough woman. But she is no healer. She's a horticulturist. Not even an herbalist. But she's all we have until these cursed storms lighten."];
+                ["I fear, however, that she hath fallen under the spell of one of those infidels! Ruggs, I think his name is."];
+                TurnOff("Delphynia");
+                TurnOn("Ruggs");
+            }
+            key ("Ruggs") {
+                ["Ruggs is so ugly that his sins are written plain for all to see. But Delphynia seems to find him compelling. I'm told he speaks sweetly, as doth his companion Leon." *"But I expect all evil things are compelling in some manner. Else how would any good person be tempted by them?"];
+                TurnOff("Ruggs");
+            }
+            key ("bye") {
+                SendAssassin_i();
+                CloseSpeaker0_i();
+                Bark_i(0, "@Goodbye.@", _Avatar);
+                if (($AUDIENCE_WITH_YELINDA and $FAWN_TRIAL_DONE) and not $oraclesaysinnocent) {
+                    Bark_i(2, "@Thou shalt see!@", _Voldin);
+                } else {
+                    Bark_i(2, "@Walk in Beauty.@", _Voldin);
+                }
+                JorvinBringsInvitation_i();
+                break;
+            }
+        }
+        clear_answers;
+    }
+}

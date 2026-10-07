@@ -1,0 +1,69 @@
+Routine Monk accepts a0 #locals(15) #uses(~GimmePathEgg, ~WhereAmI_i, Bark_i, ~MonkWorkType_i, ~MonkCoord_i) {
+    v0 = ~GimmePathEgg(1, 5);
+    v1 = ~GimmePathEgg(2, 5);
+    if ((item = v0) or (item = v1)) {
+        v2 = << 65329, 65325, 65327, 65324, 65323 >>;
+        if $xenkareturned {
+            v2 = (v2 & 65321);
+        }
+        v3 = (v2 & << 65322, 65328, 65326 >>);
+        v4 = ~GetQuality(v0);
+        if (item = v0) {
+            if (~WhereAmI_i() <> 2) {
+                terminate;
+            }
+            While (v4 = ~GetQuality(item)) {
+                v4 = ~Random(9);
+            }
+            if ($antishaminodead and ($antiiolodead and ($antidupredead and (not ~GetItemFlag_i(_Zombie, _Shamino) and (not ~GetItemFlag_i(_Zombie, _Iolo) and (not ~GetItemFlag_i(_Zombie, _Dupre) and not ~GetItemFlag_i(_Met, _XenkaMonk_215))))))) {
+                v4 = 10;
+            }
+            v5 = ~SetQuality(v4, item);
+            flag(625) = false;
+            v5 = ~PostAction(<< _aNO_HALT_i, _aSFX_i, 6, _aWAIT_i, 7, _aLOOP_i, 65532, v4 >>, ~GimmePathEgg(3, 5));
+            if (v4 = 10) {
+                v6 = << "@The time hath come!@", "@The sacred bells!@", "@Xenka comes!@", "@What joy!@", "@To the chapel!@", "@The prophetess comes!@" >>;
+            } else {
+                if $xenkareturned {
+                    v6 = << "@The bells!@", "@The end is near!@", "@It is time!@", "@Hasten!@", "@Quickly!@", "@Hear the bells!@" >>;
+                } else {
+                    v6 = << "@The bells!@", "@Xenka calls!@", "@It is time!@", "@Hasten!@", "@Quickly!@", "@Hear the bells!@" >>;
+                }
+            }
+            Foreach v9 in v2 {
+                Bark_i(~Random(20), v6::~Random(~ListSize_i(v6)), v9);
+            }
+            Foreach v9 in v3 {
+                v12 = ~GetWorkType(v9);
+                if ((v12 <> 15) and (v12 <> 3)) {
+                    SetWorkType(_Wander, v9);
+                }
+            }
+            flag(626) = false;
+            v5 = ~PostInFuture(20, << _aNO_HALT_i, _aUSABLE_i, #Monk, 0 >>, v1);
+            terminate;
+        }
+        if (item = v1) {
+            Foreach v9 in v3 {
+                v12 = ~GetWorkType(v9);
+                if (((v12 <> 15) and ((v12 <> 3) and (v12 <> ~MonkWorkType_i(v4, v9)))) or (v12 = 12)) {
+                    NewSchedule_i(~MonkCoord_i(v4, v9), ~MonkWorkType_i(v4, v9), 0, v9);
+                    Npc_schedule(v9);
+                } else {
+                    if ((v12 = 3) or (v12 = 15)) {
+                        flag(626) = true;
+                    }
+                }
+            }
+            if flag(626) {
+                v5 = ~PostInFuture(20, << _aNO_HALT_i, _aUSABLE_i, #Monk, 0 >>, v1);
+            }
+            if not flag(625) {
+                flag(625) = true;
+                if (v4 <> 10) {
+                    v5 = ~PostInFuture(1000, << _aNO_HALT_i, _aUSABLE_i, #Monk, 0 >>, v0);
+                }
+            }
+        }
+    }
+}

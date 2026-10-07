@@ -1,0 +1,12 @@
+Routine Thief3 accepts a0 #locals(3) {
+    if (event = _Converse) {
+        Item_bark("@Dammit, I need water!@", _Thief3);
+    }
+    if ((event = _Talking) or (event = _Bark)) {
+        v0 = ~rndRange(3, 1);
+        v1 = << "Just a drop!", "Water, dammit!", "I have to have water!!!" >>;
+        v2 = v1::v0;
+        Item_bark(v2, _Thief3);
+        SetWorkType(_TendShop, _Thief3);
+    }
+}

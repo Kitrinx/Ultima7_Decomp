@@ -1,0 +1,336 @@
+Routine MadnessKillEgg_i accepts a0 #locals(4) {
+    if $BANES_RELEASED {
+        v0 = ~GetQuality(item);
+        v1 = ~NPCToItem_i((0 - v0));
+        if v1 {
+            if (~GetDist(item, v1) < 30) {
+                KillNPC_i(v1);
+            } else {
+                if not ~GetItemFlag_i(_Dead, v1) {
+                    v2 = ~GetCoord(item);
+                    v3 = ~GetCoord(v1);
+                    PrintError_i(<< "Trying to kill npc#", v0, ". Teleporting him to", v2, ". He was at ", v3, "." >>);
+                    Item_move(v2, v1);
+                    KillNPC_i(v1);
+                }
+            }
+        }
+        Item_destroy(item);
+    }
+}
+
+Routine MadnessHatchEgg_i accepts a0 #locals(7) {
+    if ($BANES_RELEASED <> 0) {
+        v0 = ~GetQuality(item);
+        v1 = ~FindNearby_i(16, 10, _Egg_Type, item);
+        Foreach v4 in v1 {
+            if ((~GetFrame(v4) = 0) or (~GetFrame(v4) = 4)) {
+                v5 = ~rndRange(v0, 1);
+                if (v5 < v0) {
+                    v6 = ~PostAction(<< _aHATCH_i >>, v4);
+                }
+            }
+        }
+    }
+}
+
+Routine FawnDrawbridgeEgg_i accepts a0 #locals(3) #uses(~ToggleDrawbridges_i) {
+    if (event = _Trigger) {
+        if ($IOLO_ACCUSED or ($DUPRE_ACCUSED or $SHAMINO_ACCUSED)) {
+            v0 = ~GetAllInRegion(_Drawbridge);
+            if ~ListSize_i(v0) {
+                v1 = ~ToggleDrawbridges_i(v0);
+            }
+            terminate;
+        }
+        v0 = ~GetAllInRegion(_Drawbridge);
+        v2 = ~GetAllInRegion(_Closed_Drawbridge);
+        v0 = (v0 & v2);
+        v2 = << >>;
+        v1 = ~ToggleDrawbridges_i(v0);
+    }
+}
+
+Routine FawnStormEgg_i accepts a0 #locals(10) #uses(~GimmePathEgg, ~IsNPCNear, ~PartyUtters, ~RandomCoord_i, CreateDebris_i, ~GiveItemsOrDrop_i, Bark_i) {
+    v0 = ~GimmePathEgg(1, 2);
+    v1 = 6;
+    if (event = _Trigger) {
+        if flag(400) {
+            Item_destroy(item);
+        }
+        v2 = ~GetQuality(item);
+        if (not flag(396) and ~IsNPCNear(_Iolo)) {
+            SetMusic(~GimmePathEgg(1, 5), 23);
+            v3 = ~SetQuality(0, v0);
+            flag(396) = true;
+            SetWeather_i(_Rain);
+            v4 = ~PartyUtters(true, 0, "@Looks like a storm coming...@", 1);
+            v3 = ~PostInFuture(30, << _aNO_HALT_i, _aUSABLE_i, #FawnStormEgg_i >>, v0);
+        }
+    }
+    if (event = _Action) {
+        v2 = ~GetQuality(v0);
+        if (v2 < v1) {
+            v3 = ~PostInFuture(10, << _aNO_HALT_i, _aUSABLE_i, #FawnStormEgg_i >>, v0);
+            v3 = ~SetQuality((v2 + 1), v0);
+            v5 = ~RandomCoord_i(15, ~GetCoord(_Avatar));
+            Sfx(116);
+            createSprite(65535, 0, 0, 0, v5::2, v5::1, 21);
+            createSprite(65535, 0, 0, 0, v5::2, v5::1, 41);
+            CreateDebris_i(v5);
+            v6 = ("@Run!@" & ("@'Tis a magic storm!@" & ("@Help!@" & ("@That almost hit me!@" & ("@Whoa!@" & "@I wish I were home!@")))));
+            v4 = ~PartyUtters(true, 0, v6::~Random(~ListSize_i(v6)), 1);
+            terminate;
+        }
+        if (v2 = v1) {
+            SetItemFlag_i(_DontMove_i, _Avatar);
+            v7 = ~Item_create(_Lute);
+            if v7 {
+                SetFrame(2, v7);
+                v8 = ~GetCoord(_Iolo);
+                v8::2 = (v8::2 + 1);
+                v3 = ~PopToMap(v8);
+                if v3 {
+                    v8::1 = (v8::1 - (v8::3 / 2));
+                    v8::2 = (v8::2 - (v8::3 / 2));
+                    createSprite(65535, 0, 0, 0, v8::2, v8::1, 21);
+                    v9 = ~GetDir(v7, _Iolo);
+                    v3 = ~PostAction(<< _aNO_HALT_i, _aWAIT_i, 1, _aFACE_i, v9, _aBARK_i, "@Look, Avatar!@", _aWAIT_i, 5, _aBEND_FRAME_i, _aWAIT_i, 9, _aUSABLE_i, #FawnStormEgg_i >>, _Iolo);
+                    v3 = ~SetQuality((v2 + 1), v0);
+                    SetWeather_i(_Clear);
+                } else {
+                    v3 = ~PostInFuture(10, << _aNO_HALT_i, _aUSABLE_i, #FawnStormEgg_i >>, v0);
+                }
+            } else {
+                v3 = ~PostInFuture(10, << _aNO_HALT_i, _aUSABLE_i, #FawnStormEgg_i >>, v0);
+            }
+            terminate;
+        }
+        if (v2 = (v1 + 1)) {
+            v7 = ~FindNearby_i(0, 25, _Lute, _Iolo);
+            if v7 {
+                Item_destroy(v7);
+                v3 = ~GiveItemsOrDrop_i(false, 0, 2, 0, 692, 1, _Iolo);
+            }
+            v3 = ~PostAction(<< _aNO_HALT_i, _aSTAND_FRAME_i >>, _Iolo);
+            v3 = ~PostInFuture(3, << _aNO_HALT_i, _aUSABLE_i, #FawnStormEgg_i >>, v0);
+            v3 = ~SetQuality((v2 + 1), v0);
+            ClearItemFlag_i(_DontMove_i, _Avatar);
+            Bark_i(0, "@A lute!@", _Iolo);
+        }
+        if (v2 = (v1 + 2)) {
+            v3 = ~SetQuality((v2 + 1), v0);
+            v3 = ~PostInFuture(45, << _aNO_HALT_i, _aUSABLE_i, #Olon >>, ~GimmePathEgg(1, 5));
+            v3 = ~ApproachAvatar_i(40, 120, _Delphynia);
+            if v3 {
+                SetWorkType(_Hound, _Delphynia);
+                Bark_i(0, "@The storm is over!@", _Delphynia);
+            }
+            v3 = ~PostInFuture(10, << _aNO_HALT_i, _aUSABLE_i, #FawnStormEgg_i >>, v0);
+        }
+        if (v2 = (v1 + 3)) {
+            v3 = ~SetQuality((v2 + 1), v0);
+            v3 = ~ApproachAvatar_i(40, 120, _Jorvin);
+            if v3 {
+                SetWorkType(_Hound, _Jorvin);
+                Bark_i(0, "@All is safe now!@", _Jorvin);
+            }
+            v3 = ~PostInFuture(10, << _aNO_HALT_i, _aUSABLE_i, #FawnStormEgg_i >>, v0);
+        }
+        if (v2 = (v1 + 4)) {
+            v3 = ~ApproachAvatar_i(40, 120, _Kylista);
+            if v3 {
+                SetWorkType(_Hound, _Kylista);
+                Bark_i(0, "@Praise Beauty!@", _Kylista);
+            }
+        }
+    }
+}
+
+Routine FawnWolfEgg_i accepts a0 #locals(3) #uses(~IsNPCNear) {
+    if (event = _Trigger) {
+        v0 = ~AvatarSex();
+        v1 = ~IsNPCNear(_Zulith);
+        if (v0 and ($gottattoo and not v1)) {
+            v2 = ~Summon_i(false, _Fawn_Guard);
+            SetWorkType(_Hound, v2);
+        }
+    }
+}
+
+Routine LeonSermonEgg_i accepts a0 #locals(2) {
+    if $BANES_RELEASED {
+        Item_destroy(item);
+        terminate;
+    }
+    v0 = ~GetTime();
+    if ((event = _Trigger) and ((v0 > 1) and (v0 < 6))) {
+        v1 = ~PostInFuture(5, << _aMUSIC_i, 26 >>, _Avatar);
+        if not ~IsDead(_Leon) {
+            Item_move(<< 1176, 1893, 0 >>, _Leon);
+            SetFrame(16, _Leon);
+            SetWorkType(_Loiter, _Leon);
+            v1 = ~PostAction(<< _aNO_HALT_i, _aWAIT_i, 24, _aBARK_i, "@Go in Unity!@", _aWAIT_i, 48, _aBARK_i, "@Come again@" >>, _Leon);
+        }
+        if not ~IsDead(_Kalen) {
+            Item_move(<< 1171, 1898, 0 >>, _Kalen);
+            SetWorkType(_Loiter, _Kalen);
+            v1 = ~PostAction(<< _aNO_HALT_i, _aWAIT_i, 16, _aBARK_i, "@Very uplifting...@" >>, _Kalen);
+        }
+        if not ~IsDead(_Ruggs) {
+            Item_move(<< 1174, 1899, 0 >>, _Ruggs);
+            SetWorkType(_Loiter, _Ruggs);
+            v1 = ~PostAction(<< _aNO_HALT_i, _aWAIT_i, 32, _aBARK_i, "@The Fellowship is the way...@" >>, _Ruggs);
+        }
+        if not ~IsDead(_Scots) {
+            Item_move(<< 1179, 1897, 0 >>, _Scots);
+            SetWorkType(_Loiter, _Scots);
+            v1 = ~PostAction(<< _aNO_HALT_i, _aWAIT_i, 64, _aBARK_i, "@Good sermon, Leon...@" >>, _Kylista);
+        }
+        if not ~IsDead(_Alyssand) {
+            Item_move(<< 1180, 1903, 0 >>, _Alyssand);
+            SetWorkType(_Loiter, _Alyssand);
+            v1 = ~PostAction(<< _aNO_HALT_i, _aWAIT_i, 48, _aBARK_i, "@His words are truth!@" >>, _Alyssand);
+        }
+        Item_destroy(item);
+    }
+}
+
+Routine FawnOracleEgg_i accepts a0 #locals(1) #uses(Oracle) {
+    if (event = _Trigger) {
+        if not $AUDIENCE_WITH_YELINDA {
+            v0 = ~GetHour();
+            if ((v0 > 6) and (v0 < 20)) {
+                Oracle(item);
+            }
+        } else {
+            Oracle(item);
+        }
+    }
+}
+
+Routine YelindaEgg_i accepts a0 #locals(1) {
+    if (event = _Trigger) {
+        v0 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #Yelinda >>, _Avatar);
+    }
+    if (event = _Action) {
+        v0 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #Yelinda >>, _Avatar);
+    }
+}
+
+Routine FawnGateGuardEgg_i accepts a0 #locals(8) {
+    if (event = _Trigger) {
+        v0 = ~GetAllInRegion(_Fawn_Guard);
+        v1 = true;
+        Foreach v4 in v0 {
+            v5 = ~GetNPCID_i(v4);
+            if (v5 = 1) {
+                v1 = false;
+                SetWorkType(_Talk, v4);
+            }
+        }
+        v0 = << >>;
+        if v1 {
+            v6 = ~GetCoord(item);
+            v7 = ~CreateCreature_i(v6, _Fawn_Guard);
+            if v7 {
+                SetNPCID_i(1, v7);
+                SetWorkType(_Talk, v7);
+                ClearItemFlag_i(_Asleep, v7);
+            }
+        }
+    }
+}
+
+Routine TravelSerpentGate_i accepts a0 #locals(7) {
+    v0 = ~FindNearby_i(16, 8, _Egg_Type, item);
+    v1 = 0;
+    Foreach v4 in v0 {
+        if (~GetFrame(v4) = 6) {
+            v1 = ~GetQuality(v4);
+        }
+    }
+    if v1 {
+        v5 = false;
+        if (v1 <= 18) {
+            if (v1 = 1) {
+                v5 = << 1679, 271, 6 >>;
+                SetItemFlag_i(_Freeze, _Avatar);
+            }
+            if (v1 = 2) {
+                v5 = << 1431, 959, 1 >>;
+                SetItemFlag_i(_Freeze, _Avatar);
+            }
+            if (v1 = 3) {
+                v5 = << 1227, 907, 1 >>;
+                SetItemFlag_i(_Freeze, _Avatar);
+            }
+            if (v1 = 4) {
+                v5 = << 2128, 664, 3 >>;
+                SetItemFlag_i(_Freeze, _Avatar);
+            }
+            if (v1 = 5) {
+                SetItemFlag_i(_Freeze, _Avatar);
+                v5 = << 1784, 648, 1 >>;
+            }
+            if (v1 = 6) {
+                ClearItemFlag_i(_Freeze, _Avatar);
+                v5 = << 2743, 1143, 1 >>;
+            }
+            if (v1 = 7) {
+                SetItemFlag_i(_Freeze, _Avatar);
+                v5 = << 227, 840, 1 >>;
+            }
+            if (v1 = 8) {
+                ClearItemFlag_i(_Freeze, _Avatar);
+                v5 = << 1079, 1559, 1 >>;
+            }
+            if (v1 = 9) {
+                ClearItemFlag_i(_Freeze, _Avatar);
+                v5 = << 1712, 1176, 1 >>;
+            }
+            if (v1 = 10) {
+                ClearItemFlag_i(_Freeze, _Avatar);
+                v5 = << 399, 1551, 1 >>;
+            }
+            if (v1 = 11) {
+                ClearItemFlag_i(_Freeze, _Avatar);
+                v5 = << 2902, 1636, 1 >>;
+            }
+            if (v1 = 12) {
+                ClearItemFlag_i(_Freeze, _Avatar);
+                v5 = << 2037, 1384, 1 >>;
+            }
+            if (v1 = 13) {
+                ClearItemFlag_i(_Freeze, _Avatar);
+                v5 = << 2456, 2087, 1 >>;
+            }
+            if (v1 = 14) {
+                SetItemFlag_i(_Freeze, _Avatar);
+                v5 = << 2344, 311, 1 >>;
+            }
+            if (v1 = 15) {
+                SetItemFlag_i(_Freeze, _Avatar);
+                v5 = << 1575, 501, 1 >>;
+            }
+            if (v1 = 16) {
+                ClearItemFlag_i(_Freeze, _Avatar);
+                v5 = << 719, 2609, 1 >>;
+            }
+            if (v1 = 17) {
+                ClearItemFlag_i(_Freeze, _Avatar);
+                v5 = << 2639, 955, 1 >>;
+            }
+            if (v1 = 18) {
+                SetItemFlag_i(_Freeze, _Avatar);
+                v5 = << 1586, 841, 1 >>;
+            }
+        } else {
+            SetItemFlag_i(_Freeze, _Avatar);
+            v5 = << 2808, 504, 1 >>;
+        }
+        Item_move(v5, _Party);
+        flag(623) = false;
+        v6 = ~PostAction(<< _aWAIT_i, 4, _aUSABLE_i, #FadeThroughGate_i >>, item);
+    }
+}

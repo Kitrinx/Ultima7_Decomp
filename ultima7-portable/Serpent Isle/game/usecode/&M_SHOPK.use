@@ -1,0 +1,514 @@
+Routine M_Shopkeeper accepts a0 #locals(29) #uses(~LordOrLady, ~AvatarName, FaceAvatar_i, CondemnToFreedom_i, BarkIfNear_i, Bark_i, ~GimmePathEgg, IntroduceNPC_i, ~AskList, ~OrderList_i, ~RemoveFromList_i, PartyFaces_i) {
+    v0 = ~LordOrLady();
+    v1 = ~AvatarSex();
+    v2 = "his";
+    v3 = "him";
+    v4 = "he";
+    v5 = "man";
+    if ~AvatarSex() {
+        v2 = "her";
+        v4 = "she";
+        v3 = "her";
+        v5 = "woman";
+    }
+    v6 = ~AvatarName();
+    v7 = ~GetTime();
+    v8 = 0;
+    if ((~GetNPCID_i(_Frigidazzi) > 6) and (~GetNPCID_i(_Frigidazzi) <> 17)) {
+        v8 = 2;
+    }
+    if ((v7 > 1) or (v7 < 6)) {
+        v7 = "day";
+    } else {
+        v7 = "evening";
+    }
+    if (event = _Path_Failure) {
+        if ((~GetNPCID_i(_Filbercio) = 13) and (item = ~NPCToItem_i(_Avatar))) {
+            v9 = ~GetCoord(_Avatar);
+            v9::1 = (v9::1 - (v9::3 / 2));
+            v9::2 = (v9::2 - (v9::3 / 2));
+            createSprite(65535, 0, 0, 0, v9::2, v9::1, 7);
+            v9 = ~GetCoord(_Avatar);
+            Item_move(<< 2359, 1843, 1 >>, _Avatar);
+            Sfx(130);
+            event = 13;
+        }
+        if ((~GetNPCID_i(_Filbercio) = 12) and (item = ~NPCToItem_i(_Avatar))) {
+            v9 = ~GetCoord(_Avatar);
+            v9::1 = (v9::1 - (v9::3 / 2));
+            v9::2 = (v9::2 - (v9::3 / 2));
+            createSprite(65535, 0, 0, 0, v9::2, v9::1, 7);
+            v9 = ~GetCoord(_Avatar);
+            Item_move(<< 2364, 1856, 0 >>, _Avatar);
+            Sfx(130);
+            event = 13;
+        }
+        if ((~GetNPCID_i(_Filbercio) = 1) and (item = ~NPCToItem_i(_Filbercio))) && (~GetDist(_Avatar, _Filbercio) > 2) {
+            FaceAvatar_i(65518);
+            v10 = ~PostInFuture(8, << _aNO_HALT_i, _aUSABLE_i, #M_Shopkeeper >>, _Filbercio);
+            terminate;
+        }
+    }
+    if ((event = _Path_Success) and flag(226)) {
+        if ((~GetNPCID_i(_Filbercio) = 13) and (item = ~NPCToItem_i(_Avatar))) {
+            CondemnToFreedom_i();
+            terminate;
+        }
+        if ((~GetNPCID_i(_Filbercio) = 12) and (~ItemToNPC_i(item) = 65180)) {
+            v11 = << 376, 270, 432, 433 >>;
+            v12 = << >>;
+            Foreach v15 in v11 {
+                v12 = (v12 & ~FindNearby_i(0, 10, v15, _Avatar));
+            }
+            v16 = false;
+            Foreach v15 in v12 {
+                if (~GetQuality(v15) = 212) {
+                    v16 = v15;
+                    v9 = ~GetCoord(v15);
+                    createSprite(65535, 0, 0, 0, v9::2, v9::1, 21);
+                    Sfx(64);
+                }
+            }
+            if v16 {
+                v19 = (~GetFrame(v16) - 1);
+                SetFrame(v19, v16);
+            }
+            v10 = (~FindNearby_i(0, 40, _Door_EW, _Avatar) & ~FindNearby_i(0, 40, _DDoor_EW, _Avatar));
+            Foreach v15 in v10 {
+                if (~GetQuality(v15) = 211) {
+                    SetFrame((~GetFrame(v15) - 2), v15);
+                }
+            }
+            v10 = ~PostInFuture(1, << _aNO_HALT_i, _aUSABLE_i, #M_Shopkeeper >>, _Filbercio);
+        }
+    }
+    if ((event = _Action) and flag(226)) {
+        if (~GetNPCID_i(_Filbercio) = 12) {
+            SetNPCID_i(13, _Filbercio);
+            PathfindNPC_i(false, #M_Shopkeeper, ~NPCToItem_i(_Avatar), _Path_Success, << 2359, 1843, 1 >>, _Avatar);
+            terminate;
+        }
+        if (~GetNPCID_i(_Filbercio) = 11) {
+            SetNPCID_i(12, _Filbercio);
+            Sfx(64);
+            v9 = ~GetCoord(_Avatar);
+            createSprite(65535, 0, 0, 0, v9::2, v9::1, 13);
+            v10 = << "@What's going on?@", "@Cannot stop...@", "@Where am I going?@" >>;
+            BarkIfNear_i(v10, _Avatar);
+            PathfindNPC_i(false, #M_Shopkeeper, ~NPCToItem_i(_Avatar), _Path_Success, << 2364, 1856, 0 >>, _Avatar);
+            SetNPCID_i(0, _Frigidazzi);
+            terminate;
+        }
+        if (~GetNPCID_i(_Filbercio) = 10) {
+            SetNPCID_i(11, _Filbercio);
+            ClearSpeakers_i();
+            SetSpeaker0_i(0, _Bucia);
+            ["Not that place! <v4> shall never be seen alive again!"];
+            SetSpeaker1_i(0, _Gustacio);
+            ["It shall be with this criminal as with all others -- if <v4> can find <v2> way back to the surface world, then <v4> shall be a free <v5>."];
+            CloseSpeaker1_i();
+            CloseSpeaker0_i();
+            SetSpeaker0_i(0, _Filbercio);
+            ["Enough of this jabbering. Let justice be done!"];
+            EndConverse_i();
+            v10 = ~PostAction(<< _aNO_HALT_i, _aWAIT_i, 5, _aBEND_FRAME_i, _aSTAND_FRAME_i, _aFACE_i, _South, _aBARK_i, "@Oh, cease thy prattle!@" >>, _Frigidazzi);
+            Bark_i(20, "@Poor fool...@", _Gustacio);
+            Bark_i(25, "@Keep thy wits, Avatar!@", _Dupre);
+            Bark_i(20, "@Do not despair!@", _Iolo);
+            Bark_i(12, "@We shall wait for thee!@", _Shamino);
+            Bark_i(0, (((("@" + v4) + " is a dead ") + v5) + "!@"), _Boydon);
+            Bark_i(12, "@He made me do it...@", _Flindo);
+            v10 = ~PostAction(<< _aNO_HALT_i, _aWAIT_i, 2, _aFACE_i, _South, _aWAIT_i, 2, _aFACE_i, _West >>, _Avatar);
+            v10 = ~PostAction(<< _aNO_HALT_i, _aFACE_i, _West, _aBEND_FRAME_i, _aSIT_FRAME_i, _aBARK_i, (("@" + v4) + " is doomed...@") >>, _Bucia);
+            v10 = ~PostAction(<< _aNO_HALT_i, _aFACE_i, _North, _aBEND_FRAME_i, _aSIT_FRAME_i >>, _Mortegro);
+            v10 = ~SetAttack_i(_M_Ignite, _Avatar, _Filbercio);
+            v10 = ~PostAction(<< _aNO_HALT_i, _aEXTEND2_FRAME_i, _aTHRUST2_FRAME_i, _aATTACK_i, _aSFX_i, 57, _aSTAND_FRAME_i, _aWAIT_i, 4, _aUSABLE_i, #M_Shopkeeper >>, _Filbercio);
+            terminate;
+        }
+        if (~GetNPCID_i(_Filbercio) = 9) {
+            SetNPCID_i(10, _Filbercio);
+            ClearSpeakers_i();
+            SetSpeaker0_i(0, _Mortegro);
+            ["As with all who offend the MageLord, this criminal must be sent to the hellhole known as Dungeon Freedom."];
+            SetMusic(~GimmePathEgg(1, 5), 23);
+            EndConverse_i();
+            v10 = ~PostAction(<< _aNO_HALT_i, _aBARK_i, "@Oh, no!@", _aWAIT_i, 2, _aBEND_FRAME_i, _aSTAND_FRAME_i, _aFACE_i, _North, _aREADY_FRAME_i, _aWAIT_i, 4, _aUSABLE_i, #M_Shopkeeper >>, _Bucia);
+            v10 = ~PostAction(<< _aNO_HALT_i, _aWAIT_i, 2, _aFACE_i, _East >>, _Mortegro);
+            v10 = ~PostAction(<< _aNO_HALT_i, _aWAIT_i, 4, _aFACE_i, _East >>, _Avatar);
+            v10 = ~PostAction(<< _aNO_HALT_i, _aWAIT_i, 2, _aFACE_i, _East >>, _Filbercio);
+            terminate;
+        }
+        if (~GetNPCID_i(_Filbercio) = 8) {
+            SetNPCID_i(9, _Filbercio);
+            ClearSpeakers_i();
+            SetSpeaker0_i(0, _Gustacio);
+            ["For the crime of entering the bedchamber of the MageLord's mistress, we must find <v3> guilty, MageLord."];
+            SetSpeaker1_i(0, _Filbercio);
+            ["Guilty!"];
+            EndConverse_i();
+            Bark_i(0, "@And the sentence?@", _Filbercio);
+            IntroduceNPC_i(455, 4, _Mortegro, _Gustacio);
+            v10 = ~PostAction(<< _aNO_HALT_i, _aWAIT_i, 2, _aFACE_i, _South >>, _Avatar);
+            v10 = ~PostAction(<< _aNO_HALT_i, _aFACE_i, _East, _aWAIT_i, 1, _aFACE_i, _South >>, _Filbercio);
+            terminate;
+        }
+        if (~GetNPCID_i(_Filbercio) = 7) {
+            SetNPCID_i(8, _Filbercio);
+            ClearSpeakers_i();
+            SetSpeaker0_i(0, _Filbercio);
+            ["Lords and Adepts, you have heard the evidence! <v6> did come amongst us like a disease, to bring destruction upon us all."];
+            ["Worst of all, <v4> hath dared to tamper with the affections of she whom I hold most dear, the good sorceress Frigidazzi."];
+            ["How do you judge <v3>?"];
+            EndConverse_i();
+            v10 = ~PostAction(<< _aNO_HALT_i, _aWAIT_i, 2, _aFACE_i, _North >>, _Avatar);
+            v10 = ~PostAction(<< _aNO_HALT_i, _aWAIT_i, 2, _aBEND_FRAME_i, _aSTAND_FRAME_i, _aWAIT_i, 4, _aUSABLE_i, #M_Shopkeeper >>, _Gustacio);
+            v10 = ~PostAction(<< _aNO_HALT_i, _aFACE_i, _North >>, _Filbercio);
+            terminate;
+        }
+        if (~GetNPCID_i(_Filbercio) = 6) {
+            SetNPCID_i(7, _Filbercio);
+            ClearSpeakers_i();
+            SetSpeaker0_i(0, _Flindo);
+            ["I did travel with this person upon my recent voyage from the Inn of the Sleeping Bull, and I had many long talks with <v3>."];
+            ["I must report that <v2> character is not to be trusted. <v4> is a liar, a fraud, and is known to consort with people of the lowest type."];
+            v22 = ~AskList(<< "Oh, like thyself?", "I deny this charge", "say nothing" >>);
+            if (v22 = "Oh, like thyself?") {
+                ["See, lords? <v4> doth have a wicked tongue, which is why <v6> is so often in great trouble..."];
+                ["The only reason <v4> came to Moonshade was to flee justice at the hands of the Knights of Monitor!"];
+                ["They accuse <v3> of bribing the Tower guards in order to release one of their prisoners..."];
+            } else {
+                if (v22 = "I deny this charge") {
+                    ["Denial will do thee no good, <v6>. Dost thou not understand that the MageLord will have his way?"];
+                } else {
+                    ["Yet <v4> was a good travelling companion, able with sword and bow -- so I ask for thy leniency, MageLord."];
+                }
+            }
+            SetSpeaker1_i(0, _Filbercio);
+            ["Thanks for thy witness, good merchant."];
+            EndConverse_i();
+            Bark_i(0, "@Thou mayest be seated.@", _Filbercio);
+            v10 = ~PostAction(<< _aNO_HALT_i, _aBEND_FRAME_i, _aSIT_FRAME_i, _aWAIT_i, 12, _aUSABLE_i, #M_Shopkeeper >>, _Flindo);
+            v10 = ~PostAction(<< _aNO_HALT_i, _aWAIT_i, 2, _aFACE_i, _West >>, _Avatar);
+            terminate;
+        }
+        if (~GetNPCID_i(_Filbercio) = 5) {
+            SetNPCID_i(6, _Filbercio);
+            ClearSpeakers_i();
+            SetSpeaker0_i(0, _Bucia);
+            ["This stranger came into my shop and asked many strange and personal questions concerning the Sorceress Frigidazzi."];
+            v22 = ~AskList(<< "That's a lie", "I was only curious", "say nothing" >>);
+            if (v22 = "That's a lie") {
+                SetSpeaker1_i(0, _Filbercio);
+                ["How darest thou defame the good lady Bucia, my good and dear friend!"];
+                ["Adepts, be sure to remember this offensive behavior when it comes time to render your verdict."];
+            } else {
+                if (v22 = "I was only curious") {
+                    SetSpeaker1_i(0, _Gustacio);
+                    ["Such curiosity seems most impudent, considering that thou art a stranger in this land..."];
+                    CloseSpeaker1_i();
+                    SetSpeakerSlot_i(0);
+                    ["And <v4> did ask many questions about many other people, and about strange objects which I was not familiar with..."];
+                    SetSpeaker1_i(0, _Filbercio);
+                    ["Hardly the act of the casual adventurer <v4> pretends to be..."];
+                } else {
+                    SetSpeaker1_i(0, _Filbercio);
+                    ["Aha! The cad doth not even rise in <v2> own defense -- <v4> must be guilty!"];
+                }
+            }
+            ["Let us hear from the next witness."];
+            EndConverse_i();
+            Bark_i(0, "@Merchant Flindo!@", _Filbercio);
+            v10 = ~PostAction(<< _aNO_HALT_i, _aBEND_FRAME_i, _aSIT_FRAME_i >>, _Bucia);
+            v10 = ~PostInFuture(5, << _aNO_HALT_i, _aBEND_FRAME_i, _aSTAND_FRAME_i, _aWAIT_i, 2, _aBEND_FRAME_i, _aKNEEL_FRAME_i, _aBEND_FRAME_i, _aBARK_i, "@Lord Filbercio...@", _aWAIT_i, 2, _aBEND_FRAME_i, _aSTAND_FRAME_i, _aWAIT_i, 2, _aUSABLE_i, #M_Shopkeeper >>, _Flindo);
+            terminate;
+        }
+        if (~GetNPCID_i(_Filbercio) = 4) {
+            SetNPCID_i(5, _Filbercio);
+            ClearSpeakers_i();
+            SetSpeaker0_i(0, _Frigidazzi);
+            ["I beg of thee, MageLord Filbercio, to spare this person's life. It was all my fault."];
+            if ((~GetNPCID_i(_Frigidazzi) > 11) and (~GetNPCID_i(_Frigidazzi) <> 17)) {
+                ["After all, no mortal can resist the Dance of Passion."];
+            }
+            v22 = ~AskList(<< "It's her fault", "It's my fault", "Nothing happened", "say nothing" >>);
+            SetSpeaker1_i(0, _Filbercio);
+            if (v22 = "It's her fault") {
+                ["What a cad! This whoreson thinks to escape punishment for the crime by blaming it all on dear Frigidazzi."];
+            } else {
+                if (v22 = "It's my fault") {
+                    ["See -- you have heard it from <v2> own mouth!"];
+                } else {
+                    if (v22 = "Nothing happened") {
+                        ["My fellow wizards, I am sure that you are able to see beyond this criminal's denials!"];
+                        ["After all, I caught <v3> in the bedchamber of dear Frigidazzi..."];
+                    }
+                }
+            }
+            ["Please be seated, Frigidazzi. We shall now hear from the character witnesses."];
+            EndConverse_i();
+            v10 = ~PostAction(<< _aNO_HALT_i, _aBEND_FRAME_i, _aSIT_FRAME_i >>, _Frigidazzi);
+            v10 = ~PostInFuture(5, << _aNO_HALT_i, _aBEND_FRAME_i, _aSTAND_FRAME_i, _aWAIT_i, 2, _aBEND_FRAME_i, _aKNEEL_FRAME_i, _aBEND_FRAME_i, _aBARK_i, "@MageLord...@", _aWAIT_i, 2, _aBEND_FRAME_i, _aSTAND_FRAME_i, _aWAIT_i, 2, _aUSABLE_i, #M_Shopkeeper >>, _Bucia);
+            Bark_i(0, "@The good lady Bucia...@", _Filbercio);
+            terminate;
+        }
+        if (~GetNPCID_i(_Filbercio) = 3) {
+            SetNPCID_i(4, _Filbercio);
+            ClearSpeakers_i();
+            SetSpeaker0_i(0, _Filbercio);
+            ["Order in the court!"];
+            ["We have convened this day to hear the case of <v6>, who hath committed treason. This criminal is charged with lusting after the mistress of the MageLord."];
+            if ~IsNPCNear_i(_Iolo) {
+                SetSpeaker1_i(0, _Iolo);
+                ["Since when is this a crime? What doth the lady say?"];
+                CloseSpeaker1_i();
+                SetSpeakerSlot_i(0);
+                ["Be silent, or thou too wilt be sentenced to the Pit -- for thine insolence!"];
+            }
+            EndConverse_i();
+            v10 = ~PostAction(<< _aWAIT_i, 4, _aFACE_i, _East >>, _Avatar);
+            v10 = ~PostAction(<< _aWAIT_i, 2, _aBEND_FRAME_i, _aSTAND_FRAME_i, _aBARK_i, "@Let me speak...@", _aWAIT_i, 7, _aUSABLE_i, #M_Shopkeeper >>, _Frigidazzi);
+            terminate;
+        }
+        if (~GetNPCID_i(_Filbercio) = 2) {
+            SetNPCID_i(3, _Filbercio);
+            FadePalette_i(0, 1, 12);
+            SetMusic(~GimmePathEgg(1, 5), 39);
+            v23 = ~OrderList_i();
+            v23 = ~RemoveFromList_i(v23, 65508);
+            v23 = ~RemoveFromList_i(v23, 65510);
+            v23 = ~RemoveFromList_i(v23, 65368);
+            v24 = 0;
+            Foreach v22 in v23 {
+                if ~IsNPCInArea_i(v22) {
+                    SetWorkType(_Wait, v22);
+                    Item_move(<< 2360, (1866 + v24), 0 >>, v22);
+                    v10 = ~PostAction(<< _aNO_HALT_i, _aFACE_i, _West, _aSIT_FRAME_i >>, v22);
+                    SetNPCID_i(30, v22);
+                    v24 = (v24 + 2);
+                }
+            }
+            v10 = ~GetCoord(_Boydon);
+            if (((v10::1 > 2137) and ((v10::1 < 2740) and ((v10::2 > 1280) and (v10::2 < 2452)))) or (((v10::1 > 1890) and ((v10::1 < 2139) and ((v10::2 > 1413) and (v10::2 < 2391)))) or (((v10::1 > 1860) and ((v10::1 < 1892) and ((v10::2 > 1785) and (v10::2 < 1853)))) or (((v10::1 > 1822) and ((v10::1 < 1892) and ((v10::2 > 2088) and (v10::2 < 2189)))) or (((v10::1 > 1788) and ((v10::1 < 1892) and ((v10::2 > 1958) and (v10::2 < 2090)))) or ((v10::1 > 1868) and ((v10::1 < 1892) and ((v10::2 > 1817) and (v10::2 < 1960))))))))) {
+                SetNPCID_i(30, _Boydon);
+            }
+            v10 = ~GetCoord(_Iolo);
+            if (((v10::1 > 2137) and ((v10::1 < 2740) and ((v10::2 > 1280) and (v10::2 < 2452)))) or (((v10::1 > 1890) and ((v10::1 < 2139) and ((v10::2 > 1413) and (v10::2 < 2391)))) or (((v10::1 > 1860) and ((v10::1 < 1892) and ((v10::2 > 1785) and (v10::2 < 1853)))) or (((v10::1 > 1822) and ((v10::1 < 1892) and ((v10::2 > 2088) and (v10::2 < 2189)))) or (((v10::1 > 1788) and ((v10::1 < 1892) and ((v10::2 > 1958) and (v10::2 < 2090)))) or ((v10::1 > 1868) and ((v10::1 < 1892) and ((v10::2 > 1817) and (v10::2 < 1960))))))))) {
+                SetNPCID_i(30, _Iolo);
+            }
+            v10 = ~GetCoord(_Dupre);
+            if (((v10::1 > 2137) and ((v10::1 < 2740) and ((v10::2 > 1280) and (v10::2 < 2452)))) or (((v10::1 > 1890) and ((v10::1 < 2139) and ((v10::2 > 1413) and (v10::2 < 2391)))) or (((v10::1 > 1860) and ((v10::1 < 1892) and ((v10::2 > 1785) and (v10::2 < 1853)))) or (((v10::1 > 1822) and ((v10::1 < 1892) and ((v10::2 > 2088) and (v10::2 < 2189)))) or (((v10::1 > 1788) and ((v10::1 < 1892) and ((v10::2 > 1958) and (v10::2 < 2090)))) or ((v10::1 > 1868) and ((v10::1 < 1892) and ((v10::2 > 1817) and (v10::2 < 1960))))))))) {
+                SetNPCID_i(30, _Dupre);
+            }
+            SetNPCID_i(30, _Shamino);
+            v10 = ~GetCoord(_Shamino);
+            if not (((v10::1 > 2137) and ((v10::1 < 2740) and ((v10::2 > 1280) and (v10::2 < 2452)))) or (((v10::1 > 1890) and ((v10::1 < 2139) and ((v10::2 > 1413) and (v10::2 < 2391)))) or (((v10::1 > 1860) and ((v10::1 < 1892) and ((v10::2 > 1785) and (v10::2 < 1853)))) or (((v10::1 > 1822) and ((v10::1 < 1892) and ((v10::2 > 2088) and (v10::2 < 2189)))) or (((v10::1 > 1788) and ((v10::1 < 1892) and ((v10::2 > 1958) and (v10::2 < 2090)))) or ((v10::1 > 1868) and ((v10::1 < 1892) and ((v10::2 > 1817) and (v10::2 < 1960))))))))) && not ~GetItemFlag_i(_Dead, _Shamino) {
+                $SHAMINO_TELEPORTED_BY_MONKS = true;
+            }
+            Bark_i(7, "@Hush...@", v22);
+            Item_move(<< 2352, 1870, 0 >>, _Avatar);
+            v10 = ~PostInFuture(10, << _aNO_HALT_i, _aFACE_i, _West, _aUSABLE_i, #FadeInArrival_i, _aMUSIC_i, 32 >>, _Avatar);
+            Item_move(<< 2341, 1871, 1 >>, _Filbercio);
+            v10 = ~PostInFuture(12, << _aNO_HALT_i, _aFACE_i, _East, _aBEND_FRAME_i, _aSIT_FRAME_i, _aSFX_i, 56, _aWAIT_i, 8, _aLOOP_i, 65532, 3, byte(108), byte(97), byte(82), "@Order!@", byte(39), 8, byte(85), 455 >>, _Filbercio);
+            SetWorkType(_Wait, _Gustacio);
+            Item_move(<< 2351, 1862, 1 >>, _Gustacio);
+            v10 = ~PostInFuture(12, << _aNO_HALT_i, _aFACE_i, _South, _aBEND_FRAME_i, _aSIT_FRAME_i >>, _Gustacio);
+            SetWorkType(_Wait, _Mortegro);
+            Item_move(<< 2351, 1880, 1 >>, _Mortegro);
+            v10 = ~PostInFuture(12, << _aNO_HALT_i, _aFACE_i, _North, _aBEND_FRAME_i, _aSIT_FRAME_i, _aWAIT_i, 10, _aBARK_i, "@Let us finish this matter...@" >>, _Mortegro);
+            Item_move(<< 2360, 1873, 0 >>, _Frigidazzi);
+            v10 = ~PostInFuture(12, << _aNO_HALT_i, _aFACE_i, _West, _aBEND_FRAME_i, _aSIT_FRAME_i >>, _Frigidazzi);
+            SetWorkType(_Wait, _Bucia);
+            Item_move(<< 2360, 1878, 0 >>, _Bucia);
+            v10 = ~PostInFuture(12, << _aNO_HALT_i, _aWAIT_i, 4, _aBARK_i, "@This should be interesting...@", _aFACE_i, _West, _aBEND_FRAME_i, _aSIT_FRAME_i >>, _Bucia);
+            SetWorkType(_Wait, _Flindo);
+            Item_move(<< 2360, 1876, 0 >>, _Flindo);
+            v10 = ~PostInFuture(12, << _aNO_HALT_i, _aFACE_i, _West, _aBEND_FRAME_i, _aSIT_FRAME_i, _aWAIT_i, 8, _aBARK_i, (("@" + v4) + "'s guilty!@") >>, _Flindo);
+            Polymorph_i(_Blonde_Mage, _Frigidazzi);
+            Polymorph_i(_Avatar_Type, _Avatar);
+            terminate;
+        }
+        if (~GetNPCID_i(_Filbercio) = 1) {
+            SetNPCID_i(2, _Filbercio);
+            v10 = ~FindNearby_i(0, 20, _Fish, item);
+            if v10 {
+                SetWorkType(_Shy, v10);
+            }
+            ClearSpeakers_i();
+            SetSpeaker0_i(0, _Filbercio);
+            ["What!? Frigidazzi, why is this stranger in thy chambers?!"];
+            if ((~GetNPCID_i(_Frigidazzi) > 6) and (~GetNPCID_i(_Frigidazzi) <> 17)) {
+                ["And where are thy clothes?"];
+            }
+            SetSpeaker1_i(v8, _Frigidazzi);
+            ["Darling! This is such a surprise... I have an explanation for everything..."];
+            CloseSpeaker1_i();
+            SetSpeakerSlot_i(0);
+            ["I am not daft, sorceress. I can see very well what hath been happening here."];
+            ["What dost thou have to say in thy defense, <v6>?"];
+            v22 = ~AskList(<< "I'm guilty", "I'm innocent", "I'm leaving" >>);
+            if (v22 = "I'm guilty") {
+                ["I knew it!"];
+                SetSpeaker1_i(v8, _Frigidazzi);
+                ["Oh, <v6>! Thou shouldst not have said such a thing -- the wrath of the MageLord is legendary!"];
+                CloseSpeaker1_i();
+                SetSpeakerSlot_i(0);
+            } else {
+                if (v22 = "I'm innocent") {
+                    if (~GetNPCID_i(_Frigidazzi) = 12) {
+                        ["Idiot! Dost thou not think that I recognize the after-effects of the Dance of Passion?!"];
+                        SetSpeaker1_i(v8, _Frigidazzi);
+                        ["Oh, no..."];
+                        CloseSpeaker1_i();
+                        SetSpeakerSlot_i(0);
+                    } else {
+                        if ((~GetNPCID_i(_Frigidazzi) > 12) and (~GetNPCID_i(_Frigidazzi) <> 17)) {
+                            ["Thou dost stand there without clothes, and claim to be innocent? Ha!"];
+                        } else {
+                            ["A likely story! Listen here, swine -- thou art not the first to try to steal my favorite mistress..."];
+                            SetSpeaker1_i(v8, _Frigidazzi);
+                            ["No! Do not do to <v3> what thou didst to the others..."];
+                            CloseSpeaker1_i();
+                            SetSpeakerSlot_i(0);
+                        }
+                    }
+                } else {
+                    ["Not so fast, peasant! I have a special punishment reserved for those who dare to play games with my mistresses..."];
+                    SetSpeaker1_i(v8, _Frigidazzi);
+                    ["No! Do not, Filbercio! Spare this one from thy wrath! Do not send <v3> into the Pit..."];
+                    CloseSpeaker1_i();
+                    SetSpeakerSlot_i(0);
+                }
+            }
+            ["I demand that this criminal be punished by the Council of Mages. Let the quorum of Mages be convened instantly!"];
+            Sfx(130);
+            EndConverse_i();
+            v23 = (<< 65180, 65516, 65518 >> & ~OrderList_i());
+            v23 = ~RemoveFromList_i(v23, 65508);
+            v23 = ~RemoveFromList_i(v23, 65510);
+            v23 = ~RemoveFromList_i(v23, 65368);
+            Foreach v22 in v23 {
+                v10 = ~GetNPCName_i(v22);
+                if ~IsNPCNear_i(v22) {
+                    v9 = ~GetCoord(v22);
+                    createSprite(65535, 0, 0, 0, v9::2, v9::1, 7);
+                }
+            }
+            Bark_i(0, "@Vas Ibex Ort!@", _Filbercio);
+            SetWorkType(_Wait, _Filbercio);
+            Bark_i(9, "@Hey!@", _Avatar);
+            Bark_i(11, (("@Do not hurt " + v3) + "!@"), _Frigidazzi);
+            if (~GetNPCID_i(_Frigidazzi) = 16) {
+                v10 = ~PostAction(<< _aNO_HALT_i, _aBEND_FRAME_i, _aSTAND_FRAME_i >>, _Frigidazzi);
+            }
+            v10 = ~PostInFuture(15, << _aNO_HALT_i, _aUSABLE_i, #M_Shopkeeper >>, _Filbercio);
+            terminate;
+        }
+        SetNPCID_i(1, _Filbercio);
+        Bark_i(0, "@What is happening?!@", _Filbercio);
+        v9 = ~GetCoord(_Avatar);
+        PathfindNPC_i(true, #M_Shopkeeper, ~NPCToItem_i(_Filbercio), _Trigger, v9, _Filbercio);
+        PartyFaces_i(65518);
+        v10 = ~PostAction(<< _aNO_HALT_i, _aWAIT_WHILE_FAR_i, 2, _aWAIT_i, 2, _aUSABLE_i, #M_Shopkeeper >>, _Avatar);
+        terminate;
+    }
+}
+
+Usable CondemnToFreedom_i #locals(15) #uses(~IsContainer_i, AbortTournament_i, SetWorkTypeAt_i) {
+    ClearItemFlag_i(_Invisible, _Avatar);
+    v0 = ~Item_create(_Chest);
+    if v0 {
+        SetFrame(0, v0);
+        v1 = ~SetQuality(61, v0);
+        ClearItemFlag_i(_IsTemporary_i, v0);
+        v1 = ~PopToMap(<< 2359, 1848, 0 >>);
+        if v1 {
+            createSprite(65535, 0, 0, 0, 1842, 2361, 21);
+            v2 = 0;
+            v3 = ~GetContents(_All, _All, _All, _Avatar);
+            While (v2 < 2) {
+                Foreach v6 in v3 {
+                    if (~IsContainer_i(v6) or (v2 = 1)) {
+                        v1 = ~Item_getType(v6);
+                        if not ((v1 = 486) or (v1 = 607)) {
+                            if not ~Item_push(v6) {
+                                AbortTournament_i(17, _Avatar);
+                            }
+                            if not ~Item_popToEnd(v0) {
+                                AbortTournament_i(18, _Avatar);
+                            }
+                        }
+                    }
+                }
+                v2 = (v2 + 1);
+                v3 = ~GetContents(_All, _All, _All, _Avatar);
+            }
+            v1 = ~GiveToCont_i(0, 0, _All, _Backpack, 1, _Avatar);
+            v7 = 0;
+            v2 = 0;
+            v3 = ~GetContents(_All, _All, _All, v0);
+            While (v2 < 2) {
+                Foreach v6 in v3 {
+                    if (~IsContainer_i(v6) or (v2 = 1)) {
+                        v1 = ~Item_getType(v6);
+                        if ((v1 = 761) or ((v1 = 842) or ((v1 = 839) or ((v1 = 485) or ((v1 = 296) and (~GetFrame(v6) = 3)))))) {
+                            if not ~Item_push(v6) {
+                                AbortTournament_i(17, _Avatar);
+                            }
+                            if not ~Item_popToEnd(_Avatar) {
+                                AbortTournament_i(18, _Avatar);
+                            }
+                        }
+                    }
+                }
+                v2 = (v2 + 1);
+                v3 = ~GetContents(_All, _All, _All, v0);
+            }
+            v1 = ~GiveToCont_i(0, 0, _All, _Staff, 1, _Avatar);
+            v1 = ~GiveToCont_i(0, 0, _All, _Scale_Armour, 1, _Avatar);
+        }
+    }
+    ClearItemFlag_i(_DontMove_i, _Avatar);
+    if ~GetItemFlag_i(_Dead, _Shamino) {
+        ResurrectNPC_i(_Shamino);
+        LeaveParty(_Shamino);
+        SetNPCID_i(30, _Shamino);
+        $SHAMINO_RESURRECTED_BY_MONKS = true;
+        v1 = ~TakeFromCont_i(18, 19, _All, _NPC2_Bodies, _All, _Avatar);
+        v1 = ~TakeFromCont_i(18, 19, _All, _NPC2_Bodies, _All, _Dupre);
+        v1 = ~TakeFromCont_i(18, 19, _All, _NPC2_Bodies, _All, _Iolo);
+        v1 = ~TakeFromCont_i(18, 19, _All, _NPC2_Bodies, _All, _Boydon);
+    }
+    ClearSpeakers_i();
+    RemoveNPC_i(_Filbercio);
+    RemoveNPC_i(_Frigidazzi);
+    RevertSchedule_i(_Bucia);
+    SetWorkType(_MajorSit, _Bucia);
+    RevertSchedule_i(_Gustacio);
+    SetWorkType(_MajorSit, _Gustacio);
+    v10 = << 2357, 1763 >>;
+    v11 = << 2233, 1803 >>;
+    v12 = << 2251, 1866 >>;
+    v13 = << 2174, 1863 >>;
+    v14 = << 2370, 1918 >>;
+    NewSchedule_i(<< v10, v11, v12, v13, v14 >>, << 14, 26, 7, 7, 7 >>, << 0, 3, 5, 6, 7 >>, _Flindo);
+    SetWorkType(_MajorSit, _Flindo);
+    NewSchedule_i(<< 2470, 2040 >>, _MajorSit, 0, _Kane);
+    Npc_schedule(_Kane);
+    NewSchedule_i(<< 2471, 2039 >>, _Wander, 0, _Ale);
+    Npc_schedule(_Ale);
+    SetWorkTypeAt_i(_TendShop, 527, 1550, _Mortegro);
+    if (~GetNPCID_i(_Dupre) = 30) {
+        SetWorkTypeAt_i(_EatAtInn, 1797, 2236, _Dupre);
+    }
+    if (~GetNPCID_i(_Iolo) = 30) {
+        SetWorkTypeAt_i(_MajorSit, 2041, 2462, _Iolo);
+    }
+    if (~GetNPCID_i(_Shamino) = 30) {
+        SetWorkTypeAt_i(_Wander, 1945, 2040, _Shamino);
+    }
+    if (~GetNPCID_i(_Boydon) = 30) {
+        NewSchedule_i(<< 2322, 1745, 2261, 1876, 2244, 1803 >>, << 10, 12, 16 >>, << 0, 3, 7 >>, _Boydon);
+        Npc_schedule(_Boydon);
+    }
+    terminate;
+}

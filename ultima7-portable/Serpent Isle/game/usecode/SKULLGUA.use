@@ -1,0 +1,155 @@
+Routine Guard18 accepts a0 #locals(1) #uses(AutomatonUsable_i, PartyFaces_i, Bark_i, FaceAvatar_i, AttackAvatar_i) {
+    if ~GetItemFlag_i(_Zombie, item) {
+        AutomatonUsable_i();
+        terminate;
+    }
+    if ((event = _Converse) and (~GetWorkType(_Guard18) <> _Wait)) {
+        Item_bark("@Hello!@", _Avatar);
+        PartyFaces_i(65350);
+        Bark_i(5, "@Intruder!@", _Guard18);
+        FaceAvatar_i(65350);
+        SetWorkType(_Wait, _Guard18);
+        v0 = ~PostInFuture(10, << _aNO_HALT_i, _aUSABLE_i, #Guard18 >>, _Guard18);
+    }
+    if (event = _Action) {
+        if (item <> ~NPCToItem_i(_Guard18)) {
+            Bark_i(5, "@Intruder!@", _Guard18);
+            FaceAvatar_i(65350);
+            SetWorkType(_Wait, _Guard18);
+            v0 = ~PostInFuture(10, << _aNO_HALT_i, _aUSABLE_i, #Guard18 >>, _Guard18);
+        } else {
+            ClearBark_i(_Guard18);
+            Npc_schedule(_Guard18);
+            SetSpeaker0_i(0, _Forskis);
+            ["These doors have been sealed by the Serpent of Order, and none shall enter. By approaching thus far, thou hath shown thyself to be mine enemy."];
+            ["Now I must kill thee, lest the Serpent judge me unworthy. Bless my blade, master!"];
+            Bark_i(0, "@I shall prevail!@", _Guard18);
+            AttackAvatar_i(_Guard18);
+            AttackAvatar_i(_Guard19);
+        }
+    }
+}
+
+Routine Guard19 accepts a0 #locals(0) #uses(AutomatonUsable_i, Guard18) {
+    if ~GetItemFlag_i(_Zombie, item) {
+        AutomatonUsable_i();
+        terminate;
+    }
+    Guard18(item);
+}
+
+Routine Guard20 accepts a0 #locals(3) #uses(AutomatonUsable_i, PartyFaces_i, Bark_i, FaceAvatar_i, AttackAvatar_i) {
+    if ~GetItemFlag_i(_Zombie, item) {
+        AutomatonUsable_i();
+        terminate;
+    }
+    if ((event = _Converse) and (~GetWorkType(_Guard20) <> _Wait)) {
+        Item_bark("@Greetings!@", _Avatar);
+        PartyFaces_i(65348);
+        Bark_i(5, "@Keep away!@", _Guard20);
+        FaceAvatar_i(65348);
+        SetWorkType(_Wait, _Guard20);
+        v0 = ~PostInFuture(10, << _aNO_HALT_i, _aUSABLE_i, #Guard20 >>, _Guard20);
+    }
+    if (event = _Action) {
+        if (item <> ~NPCToItem_i(_Guard20)) {
+            Bark_i(5, "@Keep Away!@", _Guard20);
+            FaceAvatar_i(65348);
+            SetWorkType(_Wait, _Guard20);
+            v0 = ~PostInFuture(10, << _aNO_HALT_i, _aUSABLE_i, #Guard20 >>, _Guard20);
+        } else {
+            ClearBark_i(_Guard20);
+            SetWorkType(_Hound, _Guard20);
+            SetSpeaker0_i(0, _Forskis);
+            ["Thou art not permitted here. It is dangerous here. The forces beyond these doors are not of mortal understanding."];
+            Bark_i(0, "@Be on thy way!@", _Guard20);
+        }
+    }
+    if (event = _Bark) {
+        v1 = ~Random(10);
+        if (v1 = 6) {
+            Bark_i(0, "@I asked nicely...@", _Guard20);
+            AttackAvatar_i(_Guard20);
+            terminate;
+        }
+        if (v1 < 6) {
+            v2 = << "@Move on!@", "@Dangers lurk here.@", "@Thou must go!@", "@I beg thee to go...@", "@Please leave.@" >>;
+            Bark_i(0, v2::v1, _Guard20);
+        }
+    }
+}
+
+Routine Guard21 accepts a0 #locals(0) #uses(AutomatonUsable_i, PartyFaces_i, Bark_i, AttackAvatar_i) {
+    if ~GetItemFlag_i(_Zombie, item) {
+        AutomatonUsable_i();
+        terminate;
+    }
+    if ((event = _Converse) and (~GetWorkType(_Guard21) <> _Wait)) {
+        Item_bark("@Hello!@", _Avatar);
+        PartyFaces_i(65347);
+        Bark_i(5, "@Die, fool!@", _Guard21);
+        AttackAvatar_i(_Guard21);
+    }
+    if (event = _Action) && (item <> ~NPCToItem_i(_Guard21)) {
+        Bark_i(5, "@Die, intruder!@", _Guard21);
+        AttackAvatar_i(_Guard21);
+    }
+}
+
+Routine Guard17 accepts a0 #locals(2) #uses(AutomatonUsable_i, PartyFaces_i, Bark_i, FaceAvatar_i, ~AskYesNo, ~LordOrLady, ~PartyUtters, AttackAvatar_i) {
+    if ~GetItemFlag_i(_Zombie, item) {
+        AutomatonUsable_i();
+        terminate;
+    }
+    if ((event = _Converse) and (~GetWorkType(_Guard17) <> _Wait)) {
+        Item_bark("@Pardon me...@", _Avatar);
+        PartyFaces_i(65346);
+        Bark_i(5, "@Hold!@", _Guard17);
+        FaceAvatar_i(65346);
+        SetWorkType(_Wait, _Guard17);
+        v0 = ~PostInFuture(10, << _aNO_HALT_i, _aUSABLE_i, #Guard17 >>, _Guard17);
+    }
+    if (event = _Action) {
+        if (item <> ~NPCToItem_i(_Guard17)) {
+            Bark_i(5, "@Hold!@", _Guard17);
+            FaceAvatar_i(65346);
+            SetWorkType(_Wait, _Guard17);
+            v0 = ~PostInFuture(10, << _aNO_HALT_i, _aUSABLE_i, #Guard17 >>, _Guard17);
+        } else {
+            ClearBark_i(_Guard17);
+            Npc_schedule(_Guard17);
+            SetSpeaker0_i(0, _Forskis);
+            ["Thou art not permitted here! I and my kind are the only beings allowed to prowl these tunnels. We are here to maintain Order."];
+            ["Unless thou canst show me thy Medallion of Order, I shall have to slay thee. Dost thou have one?"];
+            if ~AskYesNo() {
+                v0 = (("@But " + ~LordOrLady()) + ", we have no such thing!@");
+                v1 = ~PartyUtters(false, 0, v0, 1);
+                if (v1 <> 65180) {
+                    SetSpeakerSlot_i(0);
+                    ["Aha! Then die, Spawn of Chaos!"];
+                    Bark_i(0, "@To battle!@", _Guard17);
+                } else {
+                    ["Thou dost lie! Now I must certainly slay thee."];
+                    Bark_i(0, "@Die, Spawn of Chaos!@", _Guard17);
+                }
+            } else {
+                ["Then die, Spawn of Chaos!"];
+                Bark_i(0, "@To battle!@", _Guard17);
+            }
+            AttackAvatar_i(_Guard17);
+        }
+    }
+}
+
+Routine RouseAutomatonEgg_i accepts a0 #locals(6) #uses(~RemoveFromList_i) {
+    v0 = ~FindNearby_i(0, 20, _M_Automaton, item);
+    Foreach v3 in v0 {
+        if ~GetItemFlag_i(_Zombie, v3) {
+            v0 = ~RemoveFromList_i(v0, v3);
+        }
+    }
+    if v0 {
+        v4 = (~ItemToNPC_i(v0) + 1024);
+        v5 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, v4 >>, item);
+    }
+}

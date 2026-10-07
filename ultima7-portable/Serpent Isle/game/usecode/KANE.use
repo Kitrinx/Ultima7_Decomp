@@ -1,0 +1,204 @@
+Routine Kane accepts a0 #locals(10) #uses(~LordOrLady, ~AvatarName, ~WhereAmI_i, PartyFaces_i, Bark_i) {
+    v0 = ~LordOrLady();
+    v1 = ~AvatarSex();
+    v2 = ~AvatarName();
+    v3 = ~WhereAmI_i();
+    v4 = ~GetWorkType(_Kane);
+    if (event = _Bark) && (v4 = 29) {
+        v5 = ~FindNearby_i(16, 2, _Path, _Kane);
+        v6 = ~GetQuality(v5);
+        if (v6 = 15) {
+            SetWorkType(_Wait, _Kane);
+            v7 = ~PostAction(<< _aNO_HALT_i, _aGO_S >>, item);
+            v8 = ~GetNPCID_i(_Hawk);
+            v8 = (v8 + 1);
+            SetNPCID_i(v8, _Hawk);
+        }
+    }
+    if (event = _Converse) {
+        Item_bark("@A moment, young sir!@", _Avatar);
+        PartyFaces_i(65493);
+        Bark_i(2, "@Who, me?@", _Kane);
+        SetWorkType(_Talk, _Kane);
+    }
+    if (event = _Talking) {
+        Npc_schedule(_Kane);
+        ClearBark_i(_Kane);
+        v9 = ~GetItemFlag_i(_Met, _Kane);
+        SetSpeaker0_i(0, _Kane);
+        if (v9 = false) {
+            if ($gottattoo = true) {
+                ["I am not in trouble, am I?" ~"I did not do anything!"];
+                ["M'name's Kane. I be a sheepherder..."];
+                if $hawksailedtomoonshade {
+                    if ($RESTORED_EDRIN = true) {
+                        ["Edrin is returned, <v0>!" ~"Edrin was Ale!" *"I mean, the storm trans... er, changed, Edrin into that parrot I found!" ~"All that time I was searchin' for him, and I had him right there wit me!"];
+                        ["I knew one of them Mages could help me!" *"We be goin' home soon..." ~"After Edrin finds a ship to return on."];
+                    } else {
+                        ["I be searchin' for a Mage to help me find my brother what was lost in the storms, if thou pleasest."];
+                    }
+                    TurnOn("storms");
+                } else {
+                    ["I am waitin' for passage to Moonshade, if thou pleasest."];
+                    TurnOn("passage");
+                }
+            } else {
+                ["How may I serve thee, <v0>?"];
+                if $hawksailedtomoonshade {
+                    if ($RESTORED_EDRIN = true) {
+                        ["Edrin is returned! Edrin was Ale!" *"I mean, the storm trans... er, changed, Edrin into that parrot I found!" ~"All that time I was searchin' for him, and I had him right there wit me!"];
+                        ["I knew one of them Mages could help me!" *"We be goin' home soon..." ~"After Edrin finds a ship to return on."];
+                    } else {
+                        ["M'name's Kane. I be searchin' for a Mage to help me find my brother what was lost in the storms, if thou pleasest."];
+                    }
+                    TurnOn("storms");
+                } else {
+                    ["M'name's Kane. I be a sheepherder..." ~"I be waitin' for passage to Moonshade, if thou pleasest."];
+                    TurnOn("passage");
+                }
+            }
+            SetItemFlag_i(_Met, _Kane);
+        } else {
+            ["Welcome back, <v0>."];
+            if $hawksailedtomoonshade {
+                if ($RESTORED_EDRIN = true) {
+                    ["Edrin is returned, <v0>!" ~"Edrin was Ale!" *"I mean, the storm trans... er, changed, Edrin into that parrot I found!" ~"All that time I was searchin' for him, and I had him right there wit me!"];
+                    ["Did I not tell thee that one of them Mages could help me?" ~"I knew it!" *"We be goin' home soon..." ~"After Edrin finds a ship to return on."];
+                    TurnOn("storms");
+                } else {
+                    ["Is not this place marvelous, <v0>? There be so much to see... Everything is so fancy! I wish Edrin was here wit me. I be certain he could show me around."];
+                    ["I hope some of these powerful Mages will help me find him."];
+                    TurnOn("passage");
+                }
+            }
+        }
+        TurnOn("bye");
+        converse {
+            key ("passage") {
+                if $hawksailedtomoonshade {
+                    ["Now that we are here in Moonshade it seems that thou canst not find passage to go elsewhere. Not even Captain Hawk will brave those Teleport Storms again."];
+                } else {
+                    ["I was told by Mistress Devra that I could buy passage with Captain Hawk to Moonshade." ~"But when the Cap'n came to the dock, he swore that he'd not go out in these storms again." *"I do not blame him, to tell thee the honest truth, <v0>." ~"But I do wish there was some way for me to talk to the mages there."];
+                    TurnOn("Devra");
+                }
+                TurnOff("passage");
+                TurnOn(<< "Hawk", "storms" >>);
+            }
+            key ("Devra") {
+                if $hawksailedtomoonshade {
+                    ["I wish Edrin and I were back with Mistress Devra. She was nice to me, and said that I could return to Sleeping Bull and be her helper. I'd like that."];
+                } else {
+                    ["Oh, she be a nice lady, <v0>!" ~"Mistress Devra helped me to count my money when I came."];
+                    ["She put part of it in a little sack and told me that I was to give it to Captain Hawk to buy passage." ~"And when she counted the rest I could not afford to stay here until the Captain decided it was safe to sail." *"But she said if I helped by choppin' wood and such I could stay as a servant, like." ~"That was terrible kind of her."];
+                }
+                TurnOff("Devra");
+            }
+            key ("Hawk") {
+                if $hawksailedtomoonshade {
+                    ["After that terrible crossing, Hawk swore he'd drink all of Moonshade dry. I doubt that thou wilt find him far from a mug of strong spirits."];
+                } else {
+                    ["Cap'n Hawk sails the Arabella, that's the ship at the dock out there a ways." ~"He was staying here until he got in a fight and the Pikemen took him away..."];
+                    if ($gottattoo = true) {
+                        ["Thou art not here to take me too, art thou?" ~"I didn't fight, honest. I hid under the table when Cap'n Hawk and Master Flindo started shoutin' at one another."];
+                    } else {
+                        ["I didn't fight, honest. I hid under the table when Cap'n Hawk and Master Flindo started shoutin' at one another." ~"I hope they don't think I did anything..."];
+                    }
+                    TurnOn(<< "Pikemen", "Flindo" >>);
+                }
+                TurnOff("Hawk");
+            }
+            key ("Pikemen") {
+                if ($gottattoo = true) {
+                    ["Beggin' thy pardon, <v0>." ~"I don't mean any disrespect..."];
+                    ["Master Flindo came in with several Pikemen and said something to Cap'n Hawk that I didn't hear." ~"Then the two of them began yellin', and well, then someone began swinging..." ~"I did not see who, bein' under the table and all."];
+                    ["Someone clouted Captain Hawk pretty hard and then the Pikemen were draggin' him away." ~"Master Argus shouted at them to leave him be, but, thy pardon, they told him to mind his own innkeepin' and nothin' else." *"Master Argus was mighty angry, and was for goin' after them. But Mistress Devra stopped him." ~"He said words I ain't never heard before..."];
+                } else {
+                    ["Master Flindo came in with several Pikemen and said something to Captain Hawk that I didn't hear." ~"Then the two of them began shoutin', and well, then someone began swinging..." ~"I didn't see who, bein' under the table and all."];
+                    ["Someone clouted Cap'n Hawk pretty hard and then the Pikemen were draggin' him away." ~"Master Argus yelled at them to leave him be, but they told him to mind his innkeepin' and nothin' else." *"Master Argus was mighty angry, and was for goin' after them. But Mistress Devra stopped him." ~"He said words I ain't never heard before..."];
+                }
+                flag(461) = true;
+                TurnOff("Pikemen");
+                TurnOn("Argus");
+            }
+            key ("Argus") {
+                ["Ain't he big and strong, though? I'll wager he could lift even more than my brother." ~"And Edrin can lift two full-grown ewes all by himself!"];
+                ["I can tell that Master Argus is... or was... a Pikeman." ~"He doth have those marks on his face." *"But I do not understand why those other fellows treated him like they did." ~"Mayhaps they were angry at him for talkin' like that in front of his mother..."];
+                TurnOff("Argus");
+            }
+            key ("Flindo") {
+                if $hawksailedtomoonshade {
+                    ["First this Flindo was unhappy that we would not sail to Moonshade, now he is unhappy that we will not sail back! I have had enough of him and his lust for commerce. Let us change the subject."];
+                } else {
+                    ["Master Flindo is a merchant of some sort, I think." ~"He is not very nice."];
+                    ["All he doth do is complain about Cap'n Hawk not wantin' to sail to Moonshade." ~"He says that Cap'n Hawk only wants more money... But the Cap'n refused all his offers of more money."];
+                    ["I think the Cap'n doth not want to put any of us in danger, is all." ~"And Master Flindo was not very happy when the Pikemen took Cap'n Hawk away."];
+                }
+                TurnOff("Flindo");
+            }
+            key ("storms") {
+                if $hawksailedtomoonshade {
+                    if ($RESTORED_EDRIN = true) {
+                        ["'Tis strange what them storms can do, <v0>. To think that they could change mine own brother into a bird -- wondrous strange!"];
+                        ["I am most glad to have Edrin back."];
+                    } else {
+                        ["I was frightened during that storm when Edrin disappeared. But it weren't nothing compared to that sea crossing in Hawk's ship."];
+                        ["I am not looking forward to sailing again, I can tell thee."];
+                    }
+                } else {
+                    ["Enough to make a man's blood turn to ice, <v0>!" ~"Why one moment Edrin was not more than five paces from me, and then he weren't nowhere to be found." *"'Course it took a minute or two for mine eyes to clear and mine ears to cease ringing, after that lightnin' strike." ~"But I went searchin' right away, and I couldn't find hide nor hair of him."];
+                }
+                TurnOff("storms");
+                TurnOn("Edrin");
+            }
+            key ("Edrin") {
+                if $hawksailedtomoonshade {
+                    if ($RESTORED_EDRIN = true) {
+                        ["He is doing fine now that he's not a parrot any more. Though he says that he hath been having bad dreams of late. I do not blame him."];
+                        ["I'll wager being a bird would give anyone nightmares..."];
+                    } else {
+                        ["I have not yet spoken with any of them Mages. I'll admit that they frighten me..."];
+                        ["But I know that I have to do it sometime. They are mine only hope of finding Edrin again."];
+                    }
+                } else {
+                    ["Edrin is mine older brother, <v0>." ~"We were herdin' the sheep into the pen one night when one of these strange storms hit outta a clear sky." *"I looked and looked and looked, but ain't no one seen him." ~"All I found was this here parrot, which I brought along for the company to Moonshade."];
+                    TurnOn(<< "parrot", "Moonshade" >>);
+                }
+                TurnOff("Edrin");
+            }
+            key ("parrot") {
+                ["I'd been searchin' for Edrin a little over a day, I suppose, when I found this here parrot sittin' under a tree, all pitiful like." ~"Well, now I was awful lonesome, so I asked the bird what it was doin' out in the forest instead of home in a cage." *"Like to leapt out of my skin when the thing croaked 'Ale!'." ~"But Cap'n Hawk said that's the way of such birds."];
+                ["Still and all, I think Ale -- 'tis his name now -- is smarter than some of the folks I know." ~"And he doth have a powerful fondness for ale." *"I hope Edrin will allow me to keep Ale..." ~"After all, he doth have his crystal and I do not have nothin'."];
+                TurnOff("parrot");
+                TurnOn("crystal");
+            }
+            key ("crystal") {
+                ["When I was not very old, Da took Edrin to Moonshade with him." ~"I remember I cried and cried, but Mother said I was too young to go. She promised I'd be allowed to go the next time."];
+                ["Only there wasn't a next time because Da died that fall, and Edrin and I have been too busy with the sheep to go since then." ~"But sometimes, when I was scared at night, Edrin would let me hold the crystal until I fell asleep..." *"And I never had any dreams then." ~"Who would've thought I'd travel all alone to Moonshade like this one day?"];
+                TurnOff("crystal");
+            }
+            key ("Moonshade") {
+                ["Well, <v0>, as near as I can surmise, if these storms ain't natural then that means they must be magic-like." ~"And ever'one knows that if thou dost want anything magic-like, thou shouldst go to Moonshade." *"If these storms took Edrin away and they're magic-like, then one of them mages must be able to tell me how to find him." ~"All I have to do is go there and ask..."];
+                ["Mistress Devra told me I might ask Master Ensorcio if he could help me." ~"She said he was one of them mages." *"I wondered a little about that... because ever'one doth know that all mages live in Moonshade." ~"But I asked anyhow..."];
+                TurnOff("Moonshade");
+                TurnOn("Ensorcio");
+            }
+            key ("Ensorcio") {
+                ["I do not like to speak ill of anyone, <v0>." ~"But Master Ensorcio doth have the worst temper I've ever seen!" *"All I did was ask if he was a mage and could he help me..." ~"And he threatened to change me to a frog!"];
+                ["All he would have had to do was tell me to go away and leave him alone." ~"And I would've not bothered him no more." ~"Now I know why Da used to say if we were bad the mages would come and take us away..." ~"Mayhap Master Ensorcio never had a Da to teach him manners."];
+                TurnOff("Ensorcio");
+            }
+            key ("bye") {
+                CloseSpeaker0_i();
+                Bark_i(0, "@Good luck, Kane!@", _Avatar);
+                Bark_i(2, "@Luck to thee, too!@", _Kane);
+                break;
+            }
+        }
+        clear_answers;
+    }
+    if (event = _NearDeath) {
+        Bark_i(0, "@Yowie!@", _Kane);
+        SetAttacker_i(_Kane, _Avatar);
+        SetAttackMode_i(_Fleeing, _Kane);
+    }
+}

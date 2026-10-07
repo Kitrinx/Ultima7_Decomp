@@ -1,0 +1,360 @@
+Routine Siranush accepts a0 #locals(28) #uses(~LordOrLady, ~AvatarName, ~IsInInv, Bark_i, PartyFaces_i, ~GimmePathEgg, ~GetStat, SetStat, RecallParty_i, ~PartyCompanions_i, GivePartyExp_i, ~IsContainer_i, AbortTournament_i, ~AskYesNo, ~TransferItems_i) {
+    v0 = ~LordOrLady();
+    v1 = ~AvatarSex();
+    v2 = ~AvatarName();
+    v3 = ~IsInInv(10, 65177, _Artifacts, 1, _Party);
+    v4 = ~GetItemFlag_i(_Met, _Edrin);
+    if (event = _Converse) {
+        Bark_i(0, "@Hello, there!@", _Avatar);
+        Bark_i(2, "@Yes?@", _Siranush);
+        SetWorkType(_Talk, _Siranush);
+        PartyFaces_i(65354);
+    }
+    if (event = _Action) {
+        if $hasserpentnecklace {
+            FadePalette_i(0, 1, 12);
+            SetMusic(~GimmePathEgg(1, 5), 22);
+            v5 = ~GimmePathEgg(1, 2);
+            v6 = ~PostInFuture(12, << _aNO_HALT_i, _aUSABLE_i, #FadeInArrival_i >>, v5);
+            v7 = ~GetStat(_Str, _Avatar);
+            v8 = ~GetStat(_Hits, _Avatar);
+            if (v7 > v8) {
+                v9 = (v7 - v8);
+                SetStat(v9, _Hits, _Avatar);
+            }
+            RecallParty_i(item);
+            v10 = ~PartyCompanions_i();
+            Foreach v13 in v10 {
+                ClearItemFlag_i(_Asleep, v13);
+                SetWorkType(_FollowAvt, v13);
+                v6 = ~PostAction(<< _aNO_HALT_i, _aSTAND_FRAME_i >>, v13);
+            }
+            if v13 {
+                Bark_i(14, "@What dreams!@", v13);
+            }
+            Item_move(<< 1460, 1618, 0 >>, _Avatar);
+        } else {
+            SetSpeaker0_i(0, _Siranush);
+            ["Edrin! Thou hast come..."];
+            SetSpeaker1_i(0, _Edrin);
+            ["Siranush! I had despaired of seeing thee again! How I wish I could be with thee always..."];
+            CloseSpeaker1_i();
+            SetSpeakerSlot_i(0);
+            ["Thou hast filled my world with the love I never knew while my body lived. For that, I have called thee here for one last sight of thee..."];
+            SetSpeaker1_i(0, _Edrin);
+            ["Then the Hero hath succeeded in destroying the Dream Crystal?"];
+            CloseSpeaker1_i();
+            SetSpeakerSlot_i(0);
+            ["No, dear one, only I can undo what Rabindrinath hath done... The Hero hath defeated Rabindrinath and brought me the Crystal." *"It is mine to destroy it."];
+            SetSpeaker1_i(0, _Edrin);
+            ["Although I know it would be wrong, I wish with all mine heart that thou wouldst not. If I could join thee, I would gladly."];
+            CloseSpeaker1_i();
+            SetSpeakerSlot_i(0);
+            ["I know that, dear Edrin. But thou hast life yet to live." *"I must destroy the Crystal. My people and I must move on to what lies beyond... I will look for thee, and hope that thou dost join me in what waits ahead."];
+            SetSpeaker1_i(0, _Edrin);
+            ["I have no wish to bind thee here, for all that I love thee. I will live my life and pray to meet thee beyond this world."];
+            CloseSpeaker1_i();
+            SetSpeakerSlot_i(0);
+            ["Thou canst add my prayers to thine, Edrin. I love thee, now and always." *"Although we will not meet here again, dream of me... Farewell, my love."];
+            SetSpeaker1_i(0, _Edrin);
+            ["I love thee... And I shall dream of thee all the rest of my days." *"Farewell..."];
+            CloseSpeaker1_i();
+            SetSpeakerSlot_i(0);
+            RemoveNPC_i(_Edrin);
+            ["Thou hast freed the tormented souls of my people, Avatar. Thy good deed shall be rewarded as promised." *"I wish thee luck in thy quest. May thy sleep be peaceful..."];
+            CloseSpeaker0_i();
+            GivePartyExp_i(400);
+            $DREAM_REALM_COMPLETE = true;
+            v6 = ~PostInFuture(100, << _aNO_HALT_i, _aUSABLE_i, #Ring >>, ~GimmePathEgg(4, 5));
+            v14 = ~GetContents(_All, _All, _All, _Avatar);
+            Foreach v17 in v14 {
+                if not ((~Item_getType(v17) = _Serp_Bracers) or (~Item_getType(v17) = _Path)) {
+                    Item_destroy(v17);
+                }
+            }
+            v6 = ~GiveToCont_i(0, 2, _All, _Amulet, 1, _Avatar);
+            v18 = 0;
+            v14 = ~GetContents(_All, _All, _All, _AUTO_3);
+            While (v18 < 2) {
+                Foreach v17 in v14 {
+                    if (~IsContainer_i(v17) or (v18 = 1)) {
+                        if not ~Item_push(v17) {
+                            AbortTournament_i(13, _Avatar);
+                        }
+                        if not ~Item_popToEnd(_Avatar) {
+                            AbortTournament_i(14, _Avatar);
+                        }
+                    }
+                }
+                v18 = (v18 + 1);
+                v14 = ~GetContents(_All, _All, _All, _AUTO_3);
+            }
+            $hasserpentnecklace = true;
+            v6 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #Siranush >>, _Siranush);
+        }
+        terminate;
+    }
+    if (event = _Talking) {
+        Npc_schedule(_Siranush);
+        ClearBark_i(_Siranush);
+        SetSpeaker0_i(0, _Siranush);
+        v21 = ~GetItemFlag_i(_Met, _Siranush);
+        if (flag(525) = true) {
+            if v3 {
+                ["Hast thou reconsidered my request, Avatar? Wilt thou give to me the Dream Crystal?"];
+                if (~AskYesNo() = true) {
+                    ["I knew that Edrin could not be so misled..."];
+                    v22 = ~TransferItems_i(true, 10, 65177, _Artifacts, 65177, _Siranush, _Avatar);
+                    ["After all these centuries of waiting... I had almost given up hope." *"But there is one that I must see one last time, before our paths forever separate."];
+                    CloseSpeaker0_i();
+                    v23 = ~GetCoord(_Siranush);
+                    v23::1 = (v23::1 + 2);
+                    Item_move(v23, _Edrin);
+                    createSprite(65535, 0, 0, v23::3, v23::2, v23::1, 7);
+                    SetWorkType(_Wait, _Edrin);
+                    SetWorkType(_Wait, _Siranush);
+                    v24 = ~GetDir(_Siranush, _Edrin);
+                    v25 = ~GetDir(_Edrin, _Siranush);
+                    v6 = ~PostAction(<< _aNO_HALT_i, _aFACE_i, v24, _aTHRUST2_FRAME_i >>, _Edrin);
+                    v6 = ~PostAction(<< _aNO_HALT_i, _aFACE_i, v25, _aTHRUST2_FRAME_i >>, _Siranush);
+                    v6 = ~PostInFuture(15, << _aNO_HALT_i, _aUSABLE_i, #Siranush >>, item);
+                    terminate;
+                } else {
+                    ["Then do not return unless thou hast had a change of heart! I am saddened beyond bearing!"];
+                    terminate;
+                }
+            } else {
+                ["Hast thou reconsidered my request, Avatar? Wilt thou bring to me the Dream Crystal?"];
+                if (~AskYesNo() = true) {
+                    ["I knew that Edrin could not be so misled..."];
+                    TurnOn("defeat");
+                } else {
+                    ["Then do not return unless thou hast had a change of heart! I am saddened beyond bearing!"];
+                    terminate;
+                }
+            }
+        }
+        if ((v4 = true) and not flag(525)) {
+            if (v21 = false) {
+                v26 = ~GetItemFlag_i(_Dead, _Rabindrinath);
+                if v26 {
+                    ["I am Siranush. I have been expecting thee..."];
+                    ["Now that the foul mage Rabindrinath is dead, we have some hope of escaping his evil spell."];
+                    SetItemFlag_i(_Met, _Siranush);
+                    TurnOn(<< "expecting", "Rabindrinath", "evil spell" >>);
+                } else {
+                    ["Thou hast come at last! I am Siranush. I have been expecting thee... I knew that thou wert the one destined to free us from Rabindrinath's evil spell."];
+                    SetItemFlag_i(_Met, _Siranush);
+                    TurnOn(<< "expecting", "Rabindrinath", "evil spell" >>);
+                }
+            } else {
+                ["Thou hast returned. Hast thou brought to me the Dream Crystal, <v2>?"];
+                if (~AskYesNo() = true) {
+                    if (v3 = true) {
+                        v22 = ~TransferItems_i(true, 10, 65177, _Artifacts, 65177, _Siranush, _Avatar);
+                        ["After all these centuries of waiting... I had almost given up hope." *"But there is one that I must see one last time, before our paths forever separate."];
+                        CloseSpeaker0_i();
+                        v23 = ~GetCoord(_Siranush);
+                        v23::1 = (v23::1 + 2);
+                        Item_move(v23, _Edrin);
+                        createSprite(65535, 0, 0, v23::3, v23::2, v23::1, 7);
+                        SetWorkType(_Wait, _Edrin);
+                        SetWorkType(_Wait, _Siranush);
+                        v24 = ~GetDir(_Siranush, _Edrin);
+                        v25 = ~GetDir(_Edrin, _Siranush);
+                        v6 = ~PostAction(<< _aNO_HALT_i, _aFACE_i, v24, _aTHRUST2_FRAME_i >>, _Edrin);
+                        v6 = ~PostAction(<< _aNO_HALT_i, _aFACE_i, v25, _aTHRUST2_FRAME_i >>, _Siranush);
+                        v6 = ~PostInFuture(15, << _aNO_HALT_i, _aUSABLE_i, #Siranush >>, item);
+                        terminate;
+                    } else {
+                        ["Perhaps thou wert dreaming, Avatar. I do not see the Dream Crystal." *"Without the Crystal, our souls remain trapped. Bring to me the Dream Crystal and the Serpent Necklace is thine..."];
+                        terminate;
+                    }
+                } else {
+                    ["Without the Crystal, our souls remain trapped. Bring to me the Dream Crystal and the Serpent Necklace is thine..."];
+                    terminate;
+                }
+            }
+        } else {
+            if not $RESTORED_EDRIN {
+                ["Thou must not enter the realm of dreams before thou hast transformed the lost brother! His true form bears not wings.... Seek the answers, for I must have thine aid!"];
+                ["To exit this place, thou must remember that from death a dreamer awakes. Seek the pillar of flame."];
+            } else {
+                ["The lost brother hath lost his wings, but thou hast not sought the memories of a bird. Thou must not enter this realm without that knowledge. Seek the answers, for I must have thine aid!"];
+                ["Remember, death is a dreamer's fiery door to life."];
+            }
+            CloseSpeaker0_i();
+            Bark_i(0, "@Go quickly!@", _Siranush);
+            terminate;
+        }
+        converse {
+            key ("expecting") {
+                ["As Edrin hath told thee of me, he hath dreamed of thee. I knew that thou wouldst come... 'Twas only a matter of time."];
+                TurnOff("expecting");
+                TurnOn("matter of time");
+            }
+            key ("matter of time") {
+                ["In mine own dreams, I saw that thou wouldst need the Serpent Necklace. I knew that thou wouldst have to come here before thou couldst complete thy quest."];
+                TurnOff("matter of time");
+                TurnOn(<< "Serpent Necklace", "quest" >>);
+            }
+            key ("Serpent Necklace") {
+                ["'Tis a thing of power from the people who settled this land after the village of Gorlab existed. It is to be thy reward."];
+                TurnOff("Serpent Necklace");
+                TurnOn(<< "thing of power", "Gorlab", "reward" >>);
+            }
+            key ("thing of power") {
+                ["I do not know what it will do... I only know that it was part of a set of such jewelry. And it was a symbol of authority of some sort."];
+                TurnOff("thing of power");
+                TurnOn("authority");
+            }
+            key ("authority") {
+                ["I have been trapped for a very long time, Avatar." *"All I know is that the Ophidians seemed to worship serpents and that artifacts with the serpent symbol were often of magical origin. I have no idea what it will do."];
+                TurnOff("authority");
+            }
+            key ("Gorlab") {
+                ["The ruins that lie within the swamp are those of my village. Though Gorlab was not always a swamp." *'Long ago, Gorlab was once a prosperous community, Avatar."];
+                TurnOff("Gorlab");
+                TurnOn("swamp");
+            }
+            key ("swamp") {
+                ["When I was Gorlab's healer, the village stood on firm ground. We held back the swamp and farmed the rich soil." *"But after we became trapped in this forsaken place, the earthworks we had built crumbled and the swamp rose to engulf the village."];
+                TurnOff("swamp");
+            }
+            key ("reward") {
+                if v26 {
+                    ["Thou wert our only hope, Avatar. Our souls are trapped here, unable to go to what awaits beyond the realm of life."];
+                    if v3 {
+                        ["Thou dost have what will free us... If thou wilt help us, I shall reward thee with the Serpent Necklace."];
+                    } else {
+                        ["If thou wilt undertake the task I ask, I shall reward thee with the Serpent necklace."];
+                    }
+                } else {
+                    ["Thou art our only hope, Avatar. Our souls are trapped here, unable to go to what awaits beyond the realm of life." *"If thou wilt undertake the task I ask, I shall reward thee with the Serpent necklace."];
+                }
+                TurnOff("reward");
+            }
+            key ("quest") {
+                ["Thou art the only one that can hope to save the land from tearing itself apart, Avatar."];
+                ["I do not know what thou must do... I only know that thou must possess the Serpent Necklace before thou hast hope of succeeding."];
+                ["But first, thou must free us."];
+                TurnOff("quest");
+                TurnOn("free");
+            }
+            key ("free") {
+                ["Although it was Rabindrinath's spell that trapped us within the Dream Realm, it is the Dream Crystal that keeps us from leaving."];
+                ["It is also the Crystal that traps any who enter the swamp."];
+                if v3 {
+                    ["If thou wilt give me the Dream Crystal, we will all be freed."];
+                } else {
+                    ["Bring to me the Dream Crystal and we will all be freed."];
+                }
+                TurnOff("free");
+                TurnOn("Dream Crystal");
+            }
+            key ("Dream Crystal") {
+                if v3 {
+                    ["Before thou didst slay Rabindrinath, thou hadst seen a small part of the whole..."];
+                    ["The crystal that Edrin wears is a shard of the Dream Crystal. That is how I was able to speak with him."];
+                    ["The entire crystal is what thou didst find in Rabindrinath's Keep when thou didst kill him."];
+                } else {
+                    ["Thou hast already seen a small part of the whole... The crystal that Edrin wears is a shard of the Dream Crystal. That is how I was able to speak with him."];
+                    ["To find the Dream Crystal, thou must venture into Rabindrinath's Keep somewhere within the Dream Realm."];
+                    TurnOn("Rabindrinath's Keep");
+                }
+                TurnOff("Dream Crystal");
+            }
+            key ("Rabindrinath's Keep") {
+                ["I would go with thee, if I could. But I am all that keeps Rabindrinath's madness at bay. Without mine opposition, all our souls would have been destroyed long ago." *"Rabindrinath will have the Crystal well-hidden, and I doubt that thou canst take it from his keep without killing him. Be wary, Avatar. He is quite mad."];
+                TurnOff("Rabindrinath's Keep");
+            }
+            key ("Rabindrinath") {
+                ["Rabindrinath was a haughty mage who moved into our town shortly after I became the healer there. He was very angry when we did not immediately name him to the village Council." *"Rabindrinath stormed back to his keep, swearing that we would soon see that he was no one to trifle with. I wish I had understood what he was planning when he began collecting the crystals."];
+                TurnOff("Rabindrinath");
+                TurnOn("crystals");
+            }
+            key ("crystals") {
+                ["Rabindrinath bought a vast quantity of Dream Crystals. I thought them harmless..." *"Small Dream Crystals were often exchanged by lovers. So that they might see each other in their dreams. I had no idea that he could pervert them so."];
+                TurnOff("crystals");
+                TurnOn("pervert");
+            }
+            key ("pervert") {
+                ["I am no mage, Avatar. The Dream Crystals were little more than hedge magic. I had no idea that Rabindrinath could use them for anything sinister." *"Else I would have brought him before the Judicar... And had his powers riven from him."];
+                TurnOff("pervert");
+            }
+            key ("evil spell") {
+                ["Rabindrinath thought to harness the villager's dreams, hoping to gain great power. He intended to use that power to make the village submit to his rule." *"But his spell went awry..."];
+                TurnOff("evil spell");
+                TurnOn("awry");
+            }
+            key ("awry") {
+                ["I do not know if Rabindrinath thought that he would tap our dreams and exploit what we feared. Or if he planned to steal some of our essence while we lay dreaming." *"Whatever his true plans, when he cast his spell the power was so great that a rift opened into the Dream Realm. The people of Gorlab, including the spellcaster himself, were trapped within this land of altered reality."];
+                TurnOff("awry");
+                TurnOn("trapped");
+            }
+            key ("trapped") {
+                ["We became trapped here, unable to return to our bodies that still lay within the village. Most of the villagers quickly went insane here -- where things that are not, are."];
+                ["Those who resisted initially soon joined their neighbors in insanity when their bodies died. I have done what I can for them. But I cannot cure insanity."];
+                if v26 {
+                    ["And it was all I could do to keep Rabindrinath's insanity from destroying us."];
+                } else {
+                    ["And I can do little more than keep Rabindrinath's insanity from destroying us."];
+                }
+                TurnOff("trapped");
+                TurnOn("destroying");
+            }
+            key ("destroying") {
+                ["Rabindrinath soon discovered that he could alter the Dream Realm by will alone. I repulsed his attacks until his body at last died too. And with this, what little sanity he had departed."];
+                ["Rabindrinath blamed the people of Gorlab and swore to destroy us all..." *"Our bodies are long moldered away, and our souls remain bound here. If any of us should die here, we will be lost forever."];
+                if v3 {
+                    ["Wilt thou give to me the Dream Crystal so that we may at last find peace?"];
+                    if (~AskYesNo() = true) {
+                        v22 = ~TransferItems_i(true, 10, 65177, _Artifacts, 65177, _Siranush, _Avatar);
+                        ["After all these centuries of waiting... I had almost given up hope." *"But there is one that I must see one last time, before our paths forever separate."];
+                        CloseSpeaker0_i();
+                        v23 = ~GetCoord(_Siranush);
+                        v23::1 = (v23::1 + 2);
+                        Item_move(v23, _Edrin);
+                        createSprite(65535, 0, 0, v23::3, v23::2, v23::1, 7);
+                        SetWorkType(_Wait, _Edrin);
+                        SetWorkType(_Wait, _Siranush);
+                        v24 = ~GetDir(_Siranush, _Edrin);
+                        v25 = ~GetDir(_Edrin, _Siranush);
+                        v6 = ~PostAction(<< _aNO_HALT_i, _aFACE_i, v24, _aTHRUST2_FRAME_i >>, _Edrin);
+                        v6 = ~PostAction(<< _aNO_HALT_i, _aFACE_i, v25, _aTHRUST2_FRAME_i >>, _Siranush);
+                        v6 = ~PostInFuture(15, << _aNO_HALT_i, _aUSABLE_i, #Siranush >>, item);
+                        terminate;
+                    } else {
+                        ["Edrin hath thought thee kind... I see that he was misled."];
+                        ["Without thine aid we are doomed to eternal limbo, not dead and never to be alive again. Trapped forever in insanity."];
+                        ["Return if thou dost reconsider... I doubt that thou canst finish thine own quest without mine aid."];
+                        v27 = true;
+                        terminate;
+                    }
+                } else {
+                    ["Wilt thou bring me the Dream Crystal so that we may at last find peace? I fear that soon my strength will fail, and the people of Gorlab and I will be far worse than dead."];
+                    if (~AskYesNo() = true) {
+                        ["Thou art truly as brave as Edrin pictured thee! I can tell thee how to defeat Rabindrinath..."];
+                        TurnOff("destroying");
+                        TurnOn("defeat");
+                    } else {
+                        ["Edrin hath thought thee brave... I see that he was misled." *"Without thine aid we are doomed to eternal limbo, not dead and never to be alive again. Trapped forever in insanity."];
+                        ["Return if thou dost reconsider... I doubt that thou canst finish thine own quest without mine aid."];
+                        v27 = true;
+                        terminate;
+                    }
+                }
+            }
+            key ("defeat") {
+                ["Rabindrinath hath styled himself a god here. He cannot be killed as thou wouldst a normal man. He can only be overpowered by the application of Truth, Love and Courage."];
+                ["In order to do this, thou must be armed with three artifacts... the Artifact of Courage, the Artifact of Love, and the Artifact of Truth."];
+                ["Bring to me the Dream Crystal from Rabindrinath's keep and we shall at last be free!"];
+                flag(526) = true;
+                flag(527) = true;
+                flag(528) = true;
+                terminate;
+            }
+        }
+        clear_answers;
+    }
+}

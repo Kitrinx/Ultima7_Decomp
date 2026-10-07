@@ -1,0 +1,32 @@
+Routine VoldinEgg_i accepts a0 #locals(3) #uses(Bark_i, ~JailedNPC_i, AttackAvatar_i) {
+    if (event = _Trigger) {
+        v0 = ~GetCoord(_Avatar);
+        if (v0::3 < 2) {
+            flag(422) = true;
+            Bark_i(0, "@Ah, 'tis thee...@", _Voldin);
+            SetItemFlag_i(_DontMove_i, _Avatar);
+            ClearItemFlag_i(_Tournament, _Voldin);
+            v1 = ~PostAction(<< _aSTAND_FRAME_i, _aCONTINUE_i, _aFACE_i, _North, _aWAIT_i, 7, _aNO_HALT_i, _aUSABLE_i, #VoldinEgg_i >>, _Voldin);
+            Item_destroy(item);
+        }
+    }
+    if (event = _Action) {
+        ClearBark_i(_Voldin);
+        v2 = ~JailedNPC_i(false);
+        SetSpeaker0_i(0, _Voldin);
+        ["Kylista, the levers have been set, and the traitor's fate is sealed..."];
+        ["Wait, thou art not Kylista!"];
+        ["So, thou hast found out our little scheme, hast thou?"];
+        if ~AvatarSex() {
+            ["I'm certain that thou hadst help from thy companions to come this far, girl."];
+            Bark_i(0, "@Die, wench!@", _Voldin);
+        } else {
+            ["Thou shouldst have understood -- a woman cannot be left to control a city! They have not the brains for such matters!"];
+            ["But thou hast no doubt been swayed by the ploys of a woman... Did Alyssand give her favors willingly, or did she force thee to bargain for them?"];
+            Bark_i(0, "@Ha ha ha!@", _Voldin);
+        }
+        ["Of course, I can never allow thee to leave this chamber alive..."];
+        AttackAvatar_i(_Voldin);
+        ClearItemFlag_i(_DontMove_i, _Avatar);
+    }
+}

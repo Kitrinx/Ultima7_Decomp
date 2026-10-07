@@ -1,0 +1,115 @@
+Routine NowSettleDownBoys accepts a0 #locals(4) #uses(~InListField_i, ~TournamentDoor_i, AbortTournament_i, PathToItem_i) {
+    v1 = << 65473, 65457, 65462, 65465, 65386 >>;
+    v1 = (v1 & v0);
+    EndConverse_i();
+    SetItemFlag_i(_DontMove_i, _Avatar);
+    Foreach v4 in v1 {
+        if ~InListField_i(v4) {
+            Npc_setTarget(_Dupre, v4);
+            SetAttackMode_i(_Fleeing, v4);
+            SetAttacker_i(_Dupre, v4);
+            SetItemFlag_i(_Dead, v4);
+            $temp3flag = true;
+            if (v4 = v0) {
+                if not $temp4flag {
+                    if not $LEAVING_LIST_FIELD {
+                        $LEAVING_LIST_FIELD = true;
+                        SetItemFlag_i(_Dead, v0);
+                        v4 = ~PostInFuture(12, << _aUSABLE_i, #Brendan2Usable >>, v0);
+                    }
+                } else {
+                    ClearItemFlag_i(_Dead, v0);
+                    v4 = ~TournamentDoor_i(60, _Door_NS, v0);
+                    if not v4 {
+                        AbortTournament_i(1, v0);
+                    }
+                    if ((v0 = ~NPCToItem_i(_Avatar)) or (v0 = 65180)) {
+                        SetWorkType(_FollowAvt, _Avatar);
+                        EndConverse_i();
+                        PathToItem_i(8, v0, #BrendanUsable, 0, << 65535, 65534, 0, 65533, 65535 >>, << 65532, 65532, 65532, 65532, 65532 >>, v4);
+                        SetPathFailure_i(_Path_Failure, v0, #BrendanUsable);
+                    } else {
+                        SetWorkType(_Wait, v0);
+                        v4 = ~GetCoord(v4);
+                        PathfindNPC_i(true, #BrendanUsable, v0, _Polymorph, << (v4::1 - 4), (v4::2 - 1), v4::3 >>, v0);
+                    }
+                }
+            }
+        }
+    }
+}
+
+Routine AbortTournament_i accepts a0, a1 #locals(1) {
+    ClearSpeakers_i();
+    SetSpeaker0_i(0, _Hazard);
+    if (v0 = 1) {
+        ["Failure in NowSettleDownBoys() because we could not find the tournament door."];
+    }
+    if (v0 = 2) {
+        ["Failure in Brendan2Usable(_Action, $Temp1Flag) because we\x09//$ couldn't find the wall at the top of the stairs."];
+    }
+    if (v0 = 3) {
+        ["Failure in Brendan2Usable(_Action, $Temp2Flag) because we\x09//$ couldn't find the door."];
+    }
+    if (v0 = 4) {
+        ["Failure in BrendanUsable(_Polymorph) because we couldn't find the door."];
+    }
+    if (v0 = 5) {
+        ["Failure in BrendanUsable(_Polymorph) because we couldn't pop a path egg next to the door."];
+    }
+    if (v0 = 6) {
+        ["Failure in BrendanUsable(_Talking) because we couldn't find the door."];
+    }
+    if (v0 = 7) {
+        ["Failure in BrendanUsable(_Path_Failure) because we failed in our pathfind."];
+    }
+    if (v0 = 8) {
+        ["Failure in BrendanUsable(_Pathfind1) because we couldn't find the guard of the list fields."];
+    }
+    if (v0 = 9) {
+        ["Failure in BrendanUsable(_Pathfind2) because we couldn't find the door."];
+    }
+    if (v0 = 10) {
+        ["Failure in BrendanUsable(_Pathfind2) because we failed in our pop of a path egg."];
+    }
+    if (v0 = 11) {
+        ["Failure in BrendanUsable(_Action, not $Temp1Flag) because\x09//$ we were unable to find the guard."];
+    }
+    if (v0 = 12) {
+        ["Failure in BrendanUsable(_Path_Success) because we couldn't find the door."];
+    }
+    if (v0 = 13) {
+        ["Failure in CleanUpTournament() because we couldn't push an item into the ethereal void. We were doing this during the transfer of inventory from the chest into the student."];
+    }
+    if (v0 = 14) {
+        ["Failure in CleanUpTournament() because we couldn't pop an item into the student's inventory."];
+    }
+    if (v0 = 15) {
+        ["Failure in CleanUpTournament() because we couldn't find the guard."];
+    }
+    if (v0 = 16) {
+        ["Failure in StartTournament() because we couldn't find the chest."];
+    }
+    if (v0 = 17) {
+        ["Failure in StartTournament() because we couldn't push an item into the ethereal void."];
+    }
+    if (v0 = 18) {
+        ["Failure in StartTournament() because we couldn't pop an item into the chest."];
+    }
+    if (v0 = 19) {
+        ["Failure in ContStartOfTournament() because we couldn't find the door."];
+    }
+    if (v0 = 20) {
+        ["Failure in ContStartOfTournament() because we couldn't find the guard."];
+    }
+    if (v0 = 21) {
+        ["Failure in Brendan2Usable(_Path_Failure) because we failed in our pathfind."];
+    }
+    if (v0 = 22) {
+        ["Failure in Brendan2Usable(_Action) because we couldn't find the guard that is supposedly pathfinding to the door."];
+    }
+    CloseSpeaker0_i();
+    ClearItemFlag_i(_DontMove_i, _Avatar);
+    v2 = ~PostInFuture(1, << _aUSABLE_i, #ResetTournament_i >>, v1);
+    terminate;
+}

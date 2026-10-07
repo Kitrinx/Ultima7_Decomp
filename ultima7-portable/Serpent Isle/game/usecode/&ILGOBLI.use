@@ -1,0 +1,11 @@
+Routine Il_Goblin accepts a0 #locals(1) {
+    if (event = _NearDeath) {
+        v0 = ~GetCoord(item);
+        v0::1 = (v0::1 - (v0::3 / 2));
+        v0::2 = (v0::2 - (v0::3 / 2));
+        createSprite(65535, 0, 0, 0, v0::2, v0::1, 12);
+        Item_destroy(item);
+    } else {
+        Item_bark("Kill the Avatar!", item);
+    }
+}

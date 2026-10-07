@@ -1,0 +1,451 @@
+Routine Mad_Iolo accepts a0 #locals(2) {
+    if (event = _Path_Success) {
+        v0 = ~PostAction(<< _aNO_HALT_i, _aFACE_i, _East, _aBEND_FRAME_i, _aSIT_FRAME_i >>, item);
+    }
+    if (event = _Path_Failure) {
+        SetWorkType(_Wander, item);
+    }
+    if (event = _NearDeath) {
+        if not flag(206) {
+            terminate;
+        }
+        if $daemoninsword {
+            terminate;
+        }
+        if (~GetAttacker_i(item) = 0) && (~GetWeapon_i(_Avatar) = _Daemon_Sword) {
+            SetSpeaker0_i(0, _Brax);
+            ["Thou hast beaten me, vile human. I will remember this day!"];
+            CloseSpeaker0_i();
+            v1 = ~GetCoord(item);
+            SetWorkType(_Wait, item);
+            Npc_setTarget(1, _Avatar);
+            Item_move(<< 142, 46, 0 >>, item);
+            ClearItemFlag_i(_Dead, _Iolo);
+            SetItemFlag_i(_Zombie, _Iolo);
+            ClearItemFlag_i(_Tournament, _Iolo);
+            Item_move(v1, _Iolo);
+            ReduceHits_i(0, 55, _Iolo);
+            flag(210) = true;
+            $antiiolodead = true;
+        }
+    }
+}
+
+Routine Iolo accepts a0 #locals(28) #uses(~LordOrLady, ~AvatarName, DeclareWinner_i, NowSettleDownBoys, Bark_i, PartyFaces_i, ~DoorState_i, FaceAvatar_i, ~IsNPCNear, SetGotFlags_i, ~AskYesNo, ~GiveItemsOrDrop_i, ~ListCount_i, ChooseMeetingPlace_i, ~AskOrdList, SingSong_i, ~WhereAmI_i) {
+    v0 = ~GetNPCID_i(_Iolo);
+    v1 = ~LordOrLady();
+    v2 = ~AvatarName();
+    if (event = _NearDeath) && $tournamentflag {
+        v3 = ~GetAttacker_i(_Iolo);
+        v3 = (0 - v3);
+        if not $temp1flag {
+            $temp1flag = true;
+            DeclareWinner_i(~NPCToItem_i(_Iolo), ~NPCToItem_i(v3));
+            return;
+        }
+        NowSettleDownBoys(item);
+        return;
+    }
+    if (event = _Converse) {
+        Bark_i(0, "@Dear friend...@", _Avatar);
+        PartyFaces_i(65533);
+        if not ~GetItemFlag_i(_Zombie, _Iolo) {
+            if ($tookinventory and not $IOLO_MADE_EQUIPMENT_LIST) {
+                v4 = false;
+                v5 = ~FindNearby_i(0, 15, _Door_NS, _Iolo);
+                Foreach v8 in v5 {
+                    if ((~GetQuality(v8) = 104) and (~DoorState_i(v8) <> 2)) {
+                        v4 = true;
+                    }
+                }
+                v5 = ~FindNearby_i(0, 15, _Door_EW, _Iolo);
+                Foreach v8 in v5 {
+                    if (~GetQuality(v8) = 104) {
+                        v4 = true;
+                    }
+                }
+                if v4 {
+                    Bark_i(2, "@I am free!@", _Iolo);
+                    SetWorkType(_Talk, _Iolo);
+                } else {
+                    FaceAvatar_i(65533);
+                    Bark_i(2, "@Help me, Avatar!@", _Iolo);
+                    v11 = ~PostInFuture(7, << _aNO_HALT_i, _aUSABLE_i, #Iolo_Type >>, _Iolo);
+                    SetWorkType(_Wait, _Iolo);
+                }
+            } else {
+                Bark_i(2, "@Yes?@", _Iolo);
+                SetWorkType(_Talk, _Iolo);
+            }
+        } else {
+            v12 = ~Random(4);
+            if (v12 = 1) {
+                Bark_i(2, "@Wrong is right!@", _Iolo);
+            }
+            if (v12 = 2) {
+                Bark_i(2, "@Life is a farce!@", _Iolo);
+            }
+            if (v12 = 3) {
+                Bark_i(2, "@Sing the dirge of love...@", _Iolo);
+            }
+            if (v12 = 4) {
+                Bark_i(2, "@Futility is the answer!@", _Iolo);
+            }
+        }
+    }
+    if (event = _Talking) {
+        ClearBark_i(_Iolo);
+        ClearBark_i(_Avatar);
+        if not $iolosaidinfo {
+            ClearSpeakers_i();
+            SetSpeaker0_i(0, _Iolo);
+            ["'Twas a fearsome passage, <v2>. After we sailed between the Serpent Pillars, I could have sworn that we were flying..."];
+            ["Yet here we are on the ship. I wonder if I lost anything..."];
+            SetSpeaker1_i(0, _Dupre);
+            ["We may be on the ship, but the ship is upon dry land! I think that thou art correct, Iolo. We did fly!"];
+            CloseSpeaker1_i();
+            SetSpeakerSlot_i(0);
+            ["Brrr. Dost thou notice the chill in the air? 'Tis much colder here than at home."];
+            ["I hope Gwenno brought enough warm clothing..."];
+            SetSpeaker1_i(0, _Shamino);
+            ["Do not worry so, old friend. We shall find thy wife soon enough."];
+            CloseSpeaker1_i();
+            SetSpeaker1_i(0, _Dupre);
+            ["And that fiend, Batlin, I hope!"];
+            CloseSpeaker1_i();
+            SetSpeakerSlot_i(0);
+            ["Look, <v2>! A strange storm is nearly upon us. This is certainly not Britannia!"];
+            CloseSpeaker0_i();
+            Bark_i(5, "@Where are we?@", _Shamino);
+            Bark_i(15, "@Let us find Batlin!@", _Dupre);
+            Bark_i(35, "@Do not forget about Gwenno...@", _Iolo);
+            JoinParty(_Iolo);
+            JoinParty(_Dupre);
+            JoinParty(_Shamino);
+            $iolosaidinfo = true;
+            ClearItemFlag_i(_DontMove_i, _Avatar);
+            terminate;
+        }
+        if ($tookinventory and not $IOLO_MADE_EQUIPMENT_LIST) {
+            SetSpeaker0_i(0, _Iolo);
+            ["I thank thee for freeing me from this hellhole! The natives of this place are ignorant sots. Imagine, thinking me to be a sorcerer!"];
+            ["Hast thou looked in thy packs since the storm, <v1>? Nothing in my backpack is as it was when Lord British gave us the list, Avatar!"];
+            if ~IsNPCNear(_Shamino) {
+                SetSpeaker1_i(0, _Shamino);
+                ["I am making a list of the strange items which the storm gave us."];
+                CloseSpeaker1_i();
+                SetSpeakerSlot_i(0);
+                ["Then I shall add to it."];
+            } else {
+                if ~IsNPCNear(_Dupre) {
+                    SetSpeaker1_i(0, _Dupre);
+                    ["I have a list of the strange items which the storm gave us."];
+                    CloseSpeaker1_i();
+                    SetSpeakerSlot_i(0);
+                    ["I shall add to it."];
+                } else {
+                    ["I shall make a list of the strange things I have found in my packs. Perhaps these are clues to where our real belongings have gone."];
+                }
+            }
+            JoinParty(_Iolo);
+            NewSchedule_i(<< 2428, 1124 >>, _EatAtInn, 0, _Iolo);
+            $IOLO_HAS_BELONGINGS = true;
+            SetGotFlags_i();
+            $IOLO_MADE_EQUIPMENT_LIST = true;
+            terminate;
+        }
+        SetSpeaker0_i(0, _Iolo);
+        if ~GetItemFlag_i(_InParty_i, _Iolo) {
+            SetWorkType(_FollowAvt, _Iolo);
+            TurnOn("leave");
+        } else {
+            Npc_schedule(_Iolo);
+            TurnOn("join");
+        }
+        if (v0 = 30) {
+            TurnOff("join");
+            ["Thank the Virtues! Thou art whole and hale, <v1>!"];
+            ["I feared that I had lost both thee and my beloved wife, but thou hast survived the depths even as Dupre assured me that thou wouldst..."];
+            if ~IsNPCNear(_Gustacio) {
+                SetSpeaker1_i(0, _Gustacio);
+                ["'Tis said that only a superb Mage can leave the Mountains of Freedom alive."];
+                CloseSpeaker1_i();
+                SetSpeakerSlot_i(0);
+            }
+            ["The Sorcerer Gustacio hath been instructing me somewhat in the magic of this land, <v1>. I think that he doth have information that shall interest thee."];
+            $AFTER_FREEDOM_NEWS = true;
+            SetNPCID_i(0, _Iolo);
+            JoinParty(_Iolo);
+            $IOLO_HAS_BELONGINGS = true;
+            TurnOn("leave");
+        } else {
+            ["Wouldst thou enjoy some idle conversation, <v1>, or shall I embrace my lute and provide a musical interlude?"];
+            TurnOn("a song");
+        }
+        if (~GetNPCID_i(_Shamino) = 30) {
+            TurnOn("Shamino's whereabouts");
+        }
+        if (~GetNPCID_i(_Dupre) = 30) {
+            TurnOn("Dupre's whereabouts");
+        }
+        if (~GetNPCID_i(_Boydon) = 30) {
+            TurnOn("Boydon's whereabouts");
+        }
+        if ($IOLO_HAS_BELONGINGS and (~GetContents(_All, _All, _All, _Iolo) and not ~GetItemFlag_i(_InParty_i, _Iolo))) {
+            TurnOn("belongings");
+        }
+        SetSpeaker0_i(0, _Iolo);
+        TurnOn(<< "Gwenno", "bye" >>);
+        converse {
+            key ("belongings") {
+                TurnOff("belongings");
+                if ~GetContents(_All, _All, _All, _Iolo) {
+                    ["I am carrying many items, some of which may be of use to thee. Wouldst thou care to have these?"];
+                    if ~AskYesNo() {
+                        ["Here they are."];
+                        $IOLO_HAS_BELONGINGS = false;
+                        v13 = << false, 0 >>;
+                        v14 = ~GetContents(_All, _All, _All, _Iolo);
+                        Foreach v17 in v14 {
+                            if not ((~Item_getType(v17) = _Magic_Rings) and (~GetFrame(v17) = 2)) {
+                                v11 = ~GiveItemsOrDrop_i(false, ~GetItemFlag_i(_IsTemporary_i, v17), ~GetFrame(v17), ~GetQuality(v17), ~Item_getType(v17), ~GetQuantity(0, v17), _Avatar);
+                                if (v13::1 = 0) {
+                                    v13::1 = v11::1;
+                                }
+                                v13::2 = (v13::2 + v11::~ListCount_i(v11));
+                                Item_destroy(v17);
+                            }
+                        }
+                        v11 = v13;
+                        if (v11::1 <> 0) {
+                            ["Thy friends will have to help carry these things."];
+                        }
+                        if (v11::2 > 0) {
+                            v11 = v11::2;
+                            if (v11 > 1) {
+                                ["Since thou canst not carry these remaining <v11> items, I will place them at thy feet."];
+                            } else {
+                                ["Since thou dost not have enough room for this last item, I will place it at thy feet."];
+                            }
+                        }
+                    } else {
+                        $IOLO_HAS_BELONGINGS = true;
+                        ["If thou changest thy mind, thou hast but to return and ask again."];
+                    }
+                }
+            }
+            key ("join") {
+                if ($begunknightstest and not $doneknightstest) {
+                    if ~IsNPCNear(_Shmed) {
+                        ["But <v1>, the Guardian of the Test is standing right here. If thou desirest to cheat, thou shouldst at least do so\x09covertly..."];
+                        SetSpeaker1_i(0, _Shmed);
+                        ["No cheating, stranger!"];
+                        CloseSpeaker1_i();
+                        Bark_i(2, "@No cheating!@", _Shmed);
+                    } else {
+                        ["I cannot join thee, friend. Even if thou wouldst cheat at the Test, I cannot aid thee in so doing. I am thy true friend."];
+                    }
+                    Bark_i(0, "@Sorry...@", _Iolo);
+                    terminate;
+                }
+                TurnOff("join");
+                if (~ListSize_i(~GetParty_i()) < 5) {
+                    TurnOn("leave");
+                    ["'Tis always an adventure to travel with thee, <v2>! I shall be proud to accompany thee."];
+                    JoinParty(_Iolo);
+                    $IOLO_HAS_BELONGINGS = true;
+                } else {
+                    ["I would be glad to accompany thee, <v1>. However, I am an old man, and I can see that thou hast many companions at thy side."];
+                    ["I think that perhaps I should remain where I am..."];
+                }
+            }
+            key ("leave") {
+                TurnOff("leave");
+                if not $tookinventory {
+                    ["Thy concern for an old man is appreciated, my old friend. However, we have barely begun this adventure, and I am spry enough to keep up with thee!"];
+                } else {
+                    TurnOn("join");
+                    ["Whatever thou dost wish, Avatar."];
+                    LeaveParty(_Iolo);
+                    if ~GetContents(_All, _All, _All, _Iolo) {
+                        ["I am carrying many items, some of which may be of use to thee. Wouldst thou care to have these before I depart?"];
+                        if ~AskYesNo() {
+                            ["Here they are."];
+                            $IOLO_HAS_BELONGINGS = false;
+                            v13 = << false, 0 >>;
+                            v14 = ~GetContents(_All, _All, _All, _Iolo);
+                            Foreach v17 in v14 {
+                                if not ((~Item_getType(v17) = _Magic_Rings) and (~GetFrame(v17) = 2)) {
+                                    v11 = ~GiveItemsOrDrop_i(false, ~GetItemFlag_i(_IsTemporary_i, v17), ~GetFrame(v17), ~GetQuality(v17), ~Item_getType(v17), ~GetQuantity(0, v17), _Avatar);
+                                    if (v13::1 = 0) {
+                                        v13::1 = v11::1;
+                                    }
+                                    v13::2 = (v13::2 + v11::~ListCount_i(v11));
+                                    Item_destroy(v17);
+                                }
+                            }
+                            v11 = v13;
+                            if (v11::1 <> 0) {
+                                ["Thy friends will have to help carry these things."];
+                            }
+                            if (v11::2 > 0) {
+                                v11 = v11::2;
+                                if (v11 > 1) {
+                                    ["Since thou canst not carry these remaining <v11> items, I will place them at thy feet."];
+                                } else {
+                                    ["Since thou dost not have enough room for this last item, I will place it at thy feet."];
+                                }
+                            }
+                        } else {
+                            $IOLO_HAS_BELONGINGS = true;
+                            ["If thou changest thy mind, thou hast but to return and ask again."];
+                        }
+                    }
+                    ChooseMeetingPlace_i(_Iolo);
+                }
+            }
+            key ("Gwenno") {
+                TurnOff("Gwenno");
+                v11 = ~IsNPCNear(_Gwenno);
+                if (~GetItemFlag_i(_InParty_i, _Gwenno) or (v11 and not ~GetItemFlag_i(_Zombie, _Gwenno))) {
+                    ["No truer friend have I had in all of my life than thee, <v2>. With my lady love Gwenno returned to my side where she doth belong, my life is once again complete."];
+                } else {
+                    if not $knowgwennodead {
+                        ["I miss Gwenno so much, Avatar. I hope that it is not long before we find her and I may hold her in mine arms again."];
+                    } else {
+                        if not $FREED_GWENNOS_BODY {
+                            ["Mine heart is broken! My life hath no meaning without my lady love! Oh, <v2>, how could our good and noble quest have ended in such tragedy!"];
+                        } else {
+                            if $GWENNO_IS_DEAD {
+                                ["Now that we have succeeded in freeing Gwenno's body, perhaps the Monks of Monk Isle -- the self-professed masters of life and death -- may be able to help her."];
+                            } else {
+                                if ~GetItemFlag_i(_Zombie, _Gwenno) {
+                                    ["We must find some way of restoring Gwenno's mind! Unless we can do that her precious spirit is lost to me."];
+                                } else {
+                                    ["My soul is at peace. Joy is to know Gwenno, and to have her once more in thriving good health."];
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            key ("a song") {
+                TurnOff("a song");
+                v20 = ~GetItemFlag_i(_Met, _Byrin);
+                if v20 {
+                    ["Dost thou wish me to repeat a song thou hast already heard? Or dost thou wish to hear a new song?"];
+                    v21 = << >>;
+                    if (~AskOrdList(<< "old song", "new song" >>) = 1) {
+                        if ($sangbeatrix = true) {
+                            v21 = (v21 & 1);
+                        }
+                        if ($sangsunrise = true) {
+                            v21 = (v21 & 2);
+                        }
+                        if ($sanggwani = true) {
+                            v21 = (v21 & 3);
+                        }
+                        if ($sangforestmaster = true) {
+                            v21 = (v21 & 4);
+                        }
+                        if ($sanggorlab = true) {
+                            v21 = (v21 & 5);
+                        }
+                        if ($sangwhitedragon = true) {
+                            v21 = (v21 & 6);
+                        }
+                    } else {
+                        if ($sangbeatrix = false) {
+                            v21 = (v21 & 1);
+                        }
+                        if ($sangsunrise = false) {
+                            v21 = (v21 & 2);
+                        }
+                        if ($sanggwani = false) {
+                            v21 = (v21 & 3);
+                        }
+                        if ($sangforestmaster = false) {
+                            v21 = (v21 & 4);
+                        }
+                        if ($sanggorlab = false) {
+                            v21 = (v21 & 5);
+                        }
+                        if ($sangwhitedragon = false) {
+                            v21 = (v21 & 6);
+                        }
+                    }
+                    if (v21 = << >>) {
+                        ["I'm sorry... Thou hast heard all of my songs."];
+                    } else {
+                        v22 = ~Random(~ListSize_i(v21));
+                        v23 = v21::v22;
+                        SingSong_i(v23);
+                    }
+                } else {
+                    ["I cannot think of anything to sing at the moment, <v1>. Perhaps if thou didst ask me later..."];
+                }
+            }
+            key ("Shamino's whereabouts") {
+                TurnOff("Shamino's whereabouts");
+                if $SHAMINO_RESURRECTED_BY_MONKS {
+                    ["Thou hast no doubt heard by now the news? That Shamino doth live again! The monks brought him to us."];
+                    ["I think he was more disturbed by thy departure than he cared to show. Or else they have told him something..."];
+                } else {
+                    ["I think he was more disturbed by thine abrupt departure than he cared to show."];
+                }
+                ["He went west into the woods, to be alone."];
+            }
+            key ("Dupre's whereabouts") {
+                TurnOff("Dupre's whereabouts");
+                ["At the nearest tavern, of course!"];
+            }
+            key ("Boydon's whereabouts") {
+                TurnOff("Boydon's whereabouts");
+                ["Um... well, I am not sure. Perhaps Dupre or Shamino might know."];
+            }
+            key ("bye") {
+                Bark_i(0, "@Thanks!@", _Avatar);
+                Bark_i(2, "@A pleasure!@", _Iolo);
+                CloseSpeaker0_i();
+                break;
+            }
+        }
+        clear_answers;
+    }
+    if (event = _Trigger) {
+        v24 = ~WhereAmI_i();
+        v25 = ~GetQuality(item);
+        if (v24 = 31) {
+            SetSpeaker0_i(0, _Iolo);
+            ["Avatar! Why art thou in my dream? I was looking for Gwenno..."];
+            ["Oh. Perhaps I have intruded upon thy dream."];
+            ["Forgive me. I shall go seeking my wife and leave thee to thy dream."];
+            CloseSpeaker0_i();
+            Bark_i(2, "@Pleasant dreams!@", _Iolo);
+            v26 = ~GetCoord(_CloneIolo);
+            createSprite(65535, 0, 0, 0, v26::2, v26::1, 26);
+            Sfx(81);
+            v11 = ~SetQuality(3, item);
+            v11 = ~PostInFuture(10, << _aNO_HALT_i, _aUSABLE_i, #DreamScenesEgg_i >>, item);
+            terminate;
+        }
+        if (v24 = 22) {
+            SetSpeaker0_i(0, _Iolo);
+            ["More snakes! Destroy the vile creatures, Avatar!"];
+            CloseSpeaker0_i();
+            Bark_i(2, "@I hate snakes!@", _Iolo);
+            terminate;
+        }
+        if (v24 = 8) {
+            SetSpeaker0_i(0, _Iolo);
+            ["Oh, my poor Gwenno!" *"Now she is truly frigid."];
+            CloseSpeaker0_i();
+            Bark_i(2, "@My love hath now departed!@", _Iolo);
+            terminate;
+        }
+    }
+    if (event = _Bark) && (~GetWorkType(_Iolo) = _Patrol) && ($tookinventory and not $IOLO_MADE_EQUIPMENT_LIST) {
+        v27 = << "@Woe is me!@", "@I feel cold.@", "@I am hungry.@", "@Release me!@", "@I'm innocent!@", "@Pity an old man...@" >>;
+        Bark_i(0, v27::~Random(~ListSize_i(v27)), _Iolo);
+    }
+}

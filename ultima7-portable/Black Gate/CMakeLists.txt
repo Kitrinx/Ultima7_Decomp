@@ -19,7 +19,7 @@ endif()
 
 set(U7_GAME_DIR "${CMAKE_CURRENT_SOURCE_DIR}/game")
 set(U7_PLATFORM_DIR "${CMAKE_CURRENT_SOURCE_DIR}/platform")
-set(U7_THIRD_PARTY_DIR "${CMAKE_CURRENT_SOURCE_DIR}/third_party")
+set(U7_THIRD_PARTY_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../third_party")
 
 option(U7_BACKEND_MATOYA "Build the libmatoya backend" ON)
 option(U7_RESET_CHECK "Test only: report game globals a reset leaves changed (clang, macOS or Linux)" OFF)
@@ -154,7 +154,11 @@ if(U7_BACKEND_MATOYA)
         set(U7_ICNS "${U7_ICON_DIR}/macos/u7.icns")
         set_source_files_properties("${U7_ICNS}" PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
         target_sources(u7 PRIVATE "${U7_ICNS}")
-        set(U7_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/packaging/Info.plist.in")
+        set(U7_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/../packaging/Info.plist.in")
+        set(U7_EXE_NAME Ultima7)
+        set(U7_ICON_NAME u7)
+        set(U7_BUNDLE_ID com.ultima7.blackgate)
+        set(U7_DISPLAY_NAME "Ultima VII: The Black Gate")
         # LINK_DEPENDS relinks, and so re-signs, when only the plist or icon changed.
         set_target_properties(u7 PROPERTIES MACOSX_BUNDLE TRUE MACOSX_BUNDLE_INFO_PLIST "${U7_PLIST}"
             LINK_DEPENDS "${U7_PLIST};${U7_ICNS}")

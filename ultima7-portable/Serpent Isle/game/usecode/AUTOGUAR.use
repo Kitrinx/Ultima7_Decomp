@@ -1,0 +1,25 @@
+Routine Guard11 accepts a0 #locals(1) #uses(AutomatonUsable_i, Bark_i, ~PartyUtters) {
+    if ~GetItemFlag_i(_Zombie, item) {
+        AutomatonUsable_i();
+        terminate;
+    }
+    if (event = _Converse) {
+        Item_bark("A guard of metal!@", _Avatar);
+        Bark_i(3, "@Thou art a fool!@", _Guard11);
+        SetWorkType(_Talk, item);
+    }
+    if (event = _Talking) {
+        SetSpeaker0_i(0, _Forskis);
+        ["Avatar, thou shalt fail!"];
+        v0 = ~PartyUtters(false, "@I recognize that voice! Batlin!@", "@Why, Avatar! Canst thou not hear it?! This automaton speaks with Batlin's voice!@", 65535);
+        SetSpeakerSlot_i(0);
+        CloseSpeaker1_i();
+        ["Canst thou hear me, Avatar? Thou art too late! By the time thou hast found the Shrine of Order, I shall have become as powerful as the Guardian himself!"];
+        ["Come! Come and witness mine ascent to power."];
+        ["Come, Avatar... Come and meet thy death!"];
+        SetWorkType(_Combat_0, _Guard11);
+        Npc_setAlignment(_Evil, _Guard11);
+        SetAttacker_i(_Guard11, _Avatar);
+        CloseSpeaker0_i();
+    }
+}

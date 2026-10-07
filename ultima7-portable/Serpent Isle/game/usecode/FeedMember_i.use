@@ -1,0 +1,51 @@
+Routine FeedMember_i accepts a0 #locals(5) #uses(Bark_i, ~FindInParty_i, EatFood_i, ~IsInInv) {
+    v0 = ~GetTarget();
+    if not v0 {
+        terminate;
+    }
+    if not ~Item_isNpc(v0) {
+        terminate;
+    }
+    if not ~GetItemFlag_i(_InParty_i, v0) {
+        terminate;
+    }
+    if (~GetNPCStat_i(_FoodLevel, v0) > 24) {
+        v1 = ~rndRange(5, 1);
+        ClearBark_i(v0);
+        if ((v1 = 1) or (v1 = 2)) {
+            Bark_i(0, "@No thank thee.@", v0);
+        }
+        if ((v1 = 3) or (v1 = 4)) {
+            Bark_i(0, "@I am quite full.@", v0);
+        }
+        if (v1 = 5) {
+            Bark_i(0, "@I hunger not.@", v0);
+        }
+        terminate;
+    }
+    event = 8;
+    v2 = << 4, 6, 2, 5, 6, 6, 1, 12, 24, 16, 24, 24, 4, 8, 16, 10, 2, 3, 2, 1, 4, 3, 1, 24, 3, 1, 9, 2, 20, 8, 6, 31 >>;
+    v3 = ~FindInParty_i(65177, 65177, _Food);
+    While v3 {
+        v4 = v2::(~GetFrame(v3) + 1);
+        EatFood_i(v0, 38, v4, v3);
+        v3 = ~FindInParty_i(65177, 65177, _Food);
+    }
+    v2 = << 15, 12, 8, 14, 20, 4, 4, 4, 4 >>;
+    v3 = ~FindInParty_i(65177, 65177, _Mage_Food);
+    While v3 {
+        v4 = v2::(~GetFrame(v3) + 1);
+        EatFood_i(v0, 38, v4, v3);
+        v3 = ~FindInParty_i(65177, 65177, _Mage_Food);
+    }
+    v3 = ~FindInParty_i(65177, 65177, _Bottles);
+    While v3 {
+        EatFood_i(v0, 38, 1, v3);
+        v3 = ~FindInParty_i(65177, 65177, _Bottles);
+    }
+    ClearBark_i(_Avatar);
+    Bark_i(0, "@No more food.@", _Avatar);
+    if ~IsInInv(4, 65177, _Reagents, 1, _Party) {
+        Bark_i(17, "@Except for some garlic.@", _Avatar);
+    }
+}

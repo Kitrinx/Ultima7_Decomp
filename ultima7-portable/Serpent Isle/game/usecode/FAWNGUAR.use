@@ -1,0 +1,332 @@
+Routine Fawn_Guard accepts a0 #locals(17) #uses(~AvatarName, ~GimmePathEgg, ~LordOrLady, Bark_i, ~AskList, ~ToggleDrawbridges_i) {
+    v0 = ~AvatarName();
+    if ((event = _Path_Success) or (event = _Path_Failure)) {
+        SetWorkType(_Combat_0, item);
+    }
+    if (event = _NearDeath) {
+        v1 = ~GetCoord(item);
+        if (v1::3 > 0) {
+            v1::1 = (v1::1 - 1);
+            v1::2 = (v1::2 - 1);
+            v1::3 = (v1::3 - 2);
+        }
+        createSprite(65535, 0, 0, 0, (v1::2 - 1), (v1::1 - 1), 7);
+        Polymorph_i(_Fawn_Guard, item);
+        ClearItemFlag_i(_Tournament, item);
+        KillNPC_i(item);
+    }
+    if (event = _Polymorph) {
+        v2 = ~FindNearby_i(8, 30, _Fawn_Guard, _Avatar);
+        if v2 {
+            Polymorph_i(_Skeletal_Dragon, v2);
+        }
+    }
+    v3 = ~GetNPCID_i(item);
+    if (v3 = 0) {
+        SetNPCID_i((~Random(4) + 2), item);
+        v3 = ~GetNPCID_i(item);
+    }
+    if (v3 = 7) {
+        SetSpeaker0_i(0, _HoundOfDoskar);
+        ["Thou art a dog, to have brutalized an innocent townsperson. Thy place is behind stout iron bars!!!"];
+        FadePalette_i(0, 1, 12);
+        Item_move(<< 988, 1573, 0 >>, _Avatar);
+        v4 = ~PostInFuture(30, << _aNO_HALT_i, _aUSABLE_i, #FadeInArrival_i >>, ~GimmePathEgg(1, 5));
+    }
+    if (v3 = 1) {
+        v5 = ~LordOrLady();
+        v6 = ~AvatarSex();
+        v7 = ~AvatarName();
+        if (event = _Action) {
+            Bark_i(5, "@Stand and be recognized, stranger!@", item);
+            SetWorkType(_Talk, item);
+        }
+        if (event = _Converse) {
+            Bark_i(5, "@Stand and be recognized, stranger!@", item);
+            SetWorkType(_Talk, item);
+        }
+        if (event = _Talking) {
+            SetWorkType(_Stand, item);
+            ClearBark_i(item);
+            SetSpeaker0_i(0, _HoundOfDoskar);
+            if ($firsttimefawn = true) {
+                if (flag(360) = false) {
+                    v8 = ~GetWorkType(_Ruggs);
+                    if (v8 <> 3) {
+                        ["There hath been trouble of late here in Fawn..."];
+                        ["...And here comes part of it now."];
+                        v9 = ~GetCoord(item);
+                        v9::2 = (v9::2 + 20);
+                        Item_move(<< v9::1, v9::2, 0 >>, _Ruggs);
+                        SetItemFlag_i(_DontMove_i, _Avatar);
+                        SetWorkType(_Talk, _Ruggs);
+                        NewSchedule_i(<< v9::1, v9::2 >>, << 3 >>, << 0 >>, _Ruggs);
+                        terminate;
+                    }
+                } else {
+                    ["Be careful of that one. He is nothing but trouble."];
+                    ["Thou must state thy name and business, before thou canst pass, <v5>."];
+                    v10 = ~AskList(<< ("I am " + v0), "I am the Avatar.", "It is not thy business." >>);
+                    if (v10 = ("I am " + v0)) {
+                        ["Pleased to meet thee, <v7>. What is thy business here in Fawn?"];
+                        TurnOn(<< "I am merely visiting.", "I am missing a companion.", "It is not thy business." >>);
+                    }
+                    if (v10 = "I am the Avatar.") {
+                        ["And I am the Lady of Fawn! Thou wilt not go far with such here, stranger." *"What is thy business here in Fawn?"];
+                        TurnOn(<< "I am merely visiting.", "I am missing a companion.", "It is not thy business." >>);
+                    }
+                    if (v10 = "It is not thy business.") {
+                        ["If thou wilt not tell me thy name and business, thou canst not enter the city. Come back when thou art feeling more talkative."];
+                        terminate;
+                    }
+                }
+            } else {
+                ["Thou shouldst avoid trouble whilst thou art here."];
+                if ~GetAllInRegion(_Closed_Drawbridge) {
+                    TurnOn(<< "duty", "pass" >>);
+                } else {
+                    TurnOn(<< "duty", "bye" >>);
+                }
+            }
+            converse {
+                key ("I am merely visiting.") {
+                    ["Welcome to Fawn, then! Keep away from trouble whilst thou art here." *"We have enough to worry about, what with storms, goblins, and Fellowship troublemakers."];
+                    $firsttimefawn = false;
+                    TurnOff(<< "I am merely visiting.", "I am missing a companion.", "It is not thy business." >>);
+                    TurnOn(<< "storms", "goblins", "Fellowship troublemakers", "pass" >>);
+                }
+                key ("storms") {
+                    ["They start without warning, <v5>. So do not stray too far from shelter." *"Be warned, we have orders to close the gate during a storm. So if thou art caught outside of the gate, thine only choice is the traveller's shelter."];
+                    TurnOff("storms");
+                }
+                key ("goblins") {
+                    if ($fawntowerretaken = false) {
+                        ["Now that those savages have overtaken the Pikeman tower, the gates must be closed at night. We cannot open them for anyone until morning. So have a care if thou dost venture outside near dark."];
+                    } else {
+                        ["If those foul savages would dare attack the Pikemen, we cannot leave the gates open at night. Fawn's gates are now closed at night. They cannot be opened for anyone until morning." *"So have a care if thou dost venture outside near dark."];
+                    }
+                    TurnOff("goblins");
+                }
+                key ("Fellowship troublemakers") {
+                    ["I should not have said that, <v5>." ~"Be assured that the Captain is quick with the Wand of Detainment."];
+                    TurnOff("Fellowship troublemakers");
+                    TurnOn("Wand of Detainment");
+                }
+                key ("duty") {
+                    ["I am a Fawn Guardsman! Thou wouldst do well to stay out of mischief while visiting our city!"];
+                    TurnOff("duty");
+                }
+                key ("Wand of Detainment") {
+                    ["The Wand of Detainment is a fine gift from the people of Moonshade. With the Wand, the Captain can capture any criminal." *"Keep that in mind if thou shouldst feel mischievous..."];
+                    TurnOff("Wand of Detainment");
+                }
+                key ("I am missing a companion.") {
+                    ["Thou shouldst try inquiring at The Broken Oar. Keep away from trouble whilst thou art here." *"We have enough to worry about, what with storms, goblins, and Fellowship troublemakers."];
+                    $firsttimefawn = false;
+                    TurnOff(<< "I am merely visiting.", "I am missing a companion.", "It is not thy business." >>);
+                    TurnOn(<< "The Broken Oar", "storms", "goblins", "Fellowship troublemakers", "pass" >>);
+                }
+                key ("The Broken Oar") {
+                    ["The Broken Oar is a tavern. It is the only establishment in Fawn that offers rooms to rent." *"Most strangers stay there."];
+                    TurnOff("The Broken Oar");
+                }
+                key ("It is not thy business.") {
+                    ["If thou wilt not tell me thy name and business, thou canst not enter the city. Come back when thou art feeling more talkative."];
+                    terminate;
+                }
+                key ("pass") {
+                    CloseSpeaker0_i();
+                    Bark_i(0, (("@Pass through, " + v5) + ".@"), item);
+                    $firsttimefawn = false;
+                    v11 = ~GetAllInRegion(_Closed_Drawbridge);
+                    v4 = ~ToggleDrawbridges_i(v11);
+                    goto label_135;
+                }
+                key ("bye") {
+                    CloseSpeaker0_i();
+                    Bark_i(5, (("@Pass through, " + v5) + ".@"), item);
+                    $firsttimefawn = false;
+                    v11 = ~GetAllInRegion(_Closed_Drawbridge);
+                    v4 = ~ToggleDrawbridges_i(v11);
+                    goto label_135;
+                }
+            }
+            clear_answers;
+        }
+    }
+    if (v3 = 2) {
+        v5 = ~LordOrLady();
+        v6 = ~AvatarSex();
+        v7 = ~AvatarName();
+        if ((event = _Bark) and (~GetWorkType(item) = _Hound)) {
+            if (~Random(10) < 6) {
+                terminate;
+            }
+            v12 = << "@A tattooed woman!@", "@I'll show thee mine...@", "@A painted lady!@", "@Want a good time?@", "@I'll protect thee.@", "@Buy thee a drink?@" >>;
+            Bark_i(0, v12::~Random(6), item);
+        }
+        if (event = _Converse) {
+            Item_bark("@Thou... guard!@", _Avatar);
+            Bark_i(5, (("@Yes, " + v5) + "?@"), item);
+            SetWorkType(_Talk, item);
+        }
+        if (event = _Talking) {
+            SetWorkType(_Stand, item);
+            ClearBark_i(item);
+            SetSpeaker0_i(0, _HoundOfDoskar);
+            v13 = ~rndRange(4, 1);
+            if (v13 = 1) {
+                ["Thou shouldst address me by rank while I am on duty, <v5>. I am a Private in Fawn's Guard." *"Dost thou require some assistance?"];
+                v14 = "Private";
+                TurnOn(<< "Why art thou following me?", "Stop following me!", "Never mind." >>);
+            }
+            if (v13 = 2) {
+                ["I am on duty now, <v5>. Thou mayest address me as Corporal." *"Dost thou require some assistance?"];
+                v14 = "Corporal";
+                TurnOn(<< "Why art thou following me?", "Stop following me!", "Never mind." >>);
+            }
+            if (v13 = 3) {
+                ["While I am on duty, <v5>, thou must address me as Sergeant." *"Dost thou require some assistance?"];
+                v14 = "Sergeant";
+                TurnOn(<< "Why art thou following me?", "Stop following me!", "Never mind." >>);
+            }
+            if (v13 = 4) {
+                ["I am a Lieutenant in Fawn's Guard. Thou must address me as such, <v5>." *"Dost thou require some assistance?"];
+                v14 = "Lieutenant";
+                TurnOn(<< "Why art thou following me?", "Stop following me!", "Never mind." >>);
+            }
+            converse {
+                key ("Why art thou following me?") {
+                    ["Forgive me, <v5>. But, by Law, I must follow thee."];
+                    TurnOff(<< "Why art thou following me?", "Stop following me!", "Never mind." >>);
+                    TurnOn("Law");
+                }
+                key ("Law") {
+                    ["By Law, all Beauty must be protected, <v5>. Therefore, I am to ensure that thou dost not endanger thyself."];
+                    TurnOff("Law");
+                    TurnOn("endanger");
+                }
+                key ("endanger") {
+                    ["Thou shouldst not provoke arguments, or stray too close to the docks where thou couldst be injured. I must intervene in any situation in which thy Beauty might be marred. That is my duty."];
+                    terminate;
+                }
+                key ("Stop following me!") {
+                    ["I am sorry, <v5>, thou art not my Captain. I may only take orders from the Captain of the Guard."];
+                    TurnOff(<< "Why art thou following me?", "Stop following me!", "Never mind." >>);
+                    TurnOn("Captain of the Guard");
+                }
+                key ("Captain of the Guard") {
+                    ["His name is Jorvin. Thou canst ask him to reassign me, if thou wishest. But by Law he must assign another guard to the job."];
+                    TurnOff("Captain of the Guard");
+                    TurnOn("Law");
+                }
+                key ("Never mind.") {
+                    ["I am ever at thy service, <v5>. Call on me any time."];
+                    TurnOff(<< "Why art thou following me?", "Stop following me!", "Never mind." >>);
+                    terminate;
+                }
+            }
+            clear_answers;
+        }
+    }
+    if ((v3 > 2) and (v3 < 7)) {
+        v5 = ~LordOrLady();
+        v6 = ~AvatarSex();
+        v7 = ~AvatarName();
+        if (event = _Converse) {
+            Item_bark("@Might I speak with thee, guard?@", _Avatar);
+            Bark_i(5, (("@What dost thou need, " + v5) + "?@"), item);
+            SetWorkType(_Talk, item);
+        }
+        if (event = _Talking) {
+            SetWorkType(_Stand, item);
+            ClearBark_i(item);
+            SetSpeaker0_i(0, _HoundOfDoskar);
+            v13 = ~rndRange(4, 1);
+            if (v3 = 3) {
+                ["Thou shouldst address me by rank while I am on duty, <v5>. I am a Private in Fawn's Guard."];
+                v14 = "Private";
+                TurnOn(<< "storms", "goblins", "bye" >>);
+            }
+            if (v3 = 4) {
+                ["I am on duty now, <v5>. Thou mayest address me as Corporal."];
+                v14 = "Corporal";
+                TurnOn(<< "storms", "goblins", "bye" >>);
+            }
+            if (v3 = 5) {
+                ["While I am on duty, <v5>, thou must address me as Sergeant."];
+                v14 = "Sergeant";
+                TurnOn(<< "storms", "goblins", "bye" >>);
+            }
+            if (v3 = 6) {
+                ["I am a Lieutenant in Fawn's Guard. Thou must address me as such, <v5>."];
+                v14 = "Lieutenant";
+                TurnOn(<< "storms", "goblins", "bye" >>);
+            }
+            converse {
+                key ("storms") {
+                    v15 = ~rndRange(6, 1);
+                    if (v15 = 1) {
+                        ["Be thou careful to stay close to shelter, <v5>. Thou dost never know when one of these freak storms will appear."];
+                        TurnOff("storms");
+                    }
+                    if (v15 = 2) {
+                        ["'Tis unnatural, for sure. I wouldn't wander too far from safety, if I were thee, <v5>."];
+                        TurnOff("storms");
+                    }
+                    if (v15 = 3) {
+                        ["The storms are no great cause for alarm. Remain in sight of shelter and thou shouldst be fine, <v5>."];
+                        TurnOff("storms");
+                    }
+                    if (v15 = 4) {
+                        ["Between thee and me, <v5>, I would not be out here if I weren't on duty. These storms are not natural."];
+                        TurnOff("storms");
+                    }
+                    if (v15 = 5) {
+                        ["I tell thee, we are all cursed! These storms are a punishment for our transgressions against the heavens!" *"Thou canst run to shelter all thou wishest, but if thou hast transgressed, it will avail thee not!"];
+                        TurnOff("storms");
+                    }
+                    if (v15 = 6) {
+                        ["Use the sense that the heavens gave thee... If a storm starts, seek shelter. 'Tis simple enough."];
+                        TurnOff("storms");
+                    }
+                }
+                key ("goblins") {
+                    v16 = ~rndRange(6, 1);
+                    if (v16 = 1) {
+                        ["The goblins have been nothing but trouble of late. Thou shouldst remain within the city gates."];
+                        TurnOff("goblins");
+                    }
+                    if (v16 = 2) {
+                        ["Goblins are filthy savages, <v5>. I yearn for the day when we are allowed to kill them all!" *"'Tis unsafe to venture outside the city with them out there."];
+                        TurnOff("goblins");
+                    }
+                    if (v16 = 3) {
+                        ["Make no mistake, <v5>. Those goblins would sooner make a meal out of us as look at us. No one is safe as long as one goblin is left alive!"];
+                        TurnOff("goblins");
+                    }
+                    if (v16 = 4) {
+                        ["Don't go out of the city gates, <v5>! 'Tis not safe even in broad daylight!"];
+                        TurnOff("goblins");
+                    }
+                    if (v16 = 5) {
+                        ["Thou hast nothing to fear from the goblins, <v5>, as long as thou stayest within the confines of the city."];
+                        TurnOff("goblins");
+                    }
+                    if (v16 = 6) {
+                        ["Fawn is caught between the storms and the goblins, <v5>. 'Tis not a safe place to be!"];
+                        TurnOff("goblins");
+                    }
+                }
+                key ("bye") {
+                    CloseSpeaker0_i();
+                    Bark_i(0, (("@Goodbye, " + v14) + ".@"), _Avatar);
+                    Bark_i(5, (("@Walk in Beauty, " + v5) + ".@"), item);
+                    break;
+                }
+            }
+            label_135:
+            clear_answers;
+        }
+    }
+}

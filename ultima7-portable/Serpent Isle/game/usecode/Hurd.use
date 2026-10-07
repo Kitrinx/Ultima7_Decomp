@@ -1,0 +1,29 @@
+Routine Hurd accepts a0 #locals(1) #uses(~WhereAmI_i, ~GimmePathEgg, PartyFaces_i, Bark_i) {
+    if (event = _Action) {
+        if (~GetItemFlag_i(_Dead, _Draygan) or ((~WhereAmI_i() <> 7) or (~GetItemFlag_i(_Dead, _Hurd) or (~GetNPCID_i(_Hurd) > 3)))) {
+            terminate;
+        }
+        v0 = ~PostInFuture((100 + ~Random(500)), << _aNO_HALT_i, _aUSABLE_i, #Hurd >>, ~GimmePathEgg(1, 5));
+        if (~IsNPCNear_i(_Ivor) or (~IsNPCNear_i(_Draygan) or (~IsNPCNear_i(_Beryl) or ~IsNPCNear_i(_Morghrim)))) {
+            terminate;
+        }
+        v0 = ~ApproachAvatar_i(40, 120, _Hurd);
+        if v0 {
+            SetWorkType(_Thief, _Hurd);
+        }
+        terminate;
+    }
+    if (event = _Converse) {
+        Item_bark("@Pardon me...@", _Avatar);
+        PartyFaces_i(65379);
+        if ~IsNPCNear_i(_Draygan) {
+            Bark_i(3, "@Go away!@", _Hurd);
+            SetWorkType(_Hound, _Draygan);
+            Bark_i(5, "@Leave him alone!@", _Draygan);
+        } else {
+            Bark_i(3, "@I am not a spy...@", _Hurd);
+            SetNPCID_i((~GetNPCID_i(_Hurd) + 1), _Hurd);
+        }
+        SetWorkType(_Shy, _Hurd);
+    }
+}

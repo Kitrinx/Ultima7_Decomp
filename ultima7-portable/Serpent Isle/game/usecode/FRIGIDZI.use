@@ -1,0 +1,137 @@
+Routine Frigidazzi accepts a0 #locals(15) #uses(~LordOrLady, ~AvatarName, ~GimmePathEgg, FaceAvatar_i, PartyFaces_i, Bark_i, ~IsInInv, ~GiveItemsOrDrop_i, ~AskYesNo, SetDoorState_i, MessengerBringsScroll_i) {
+    v0 = ~GetItemFlag_i(_Met, _Frigidazzi);
+    v1 = ~LordOrLady();
+    v2 = ~AvatarSex();
+    v3 = ~AvatarName();
+    v4 = ~GetTime();
+    if ((v4 > 1) or (v4 < 6)) {
+        v4 = "day";
+    } else {
+        v4 = "evening";
+    }
+    v5 = "his";
+    if v2 {
+        v5 = "her";
+    }
+    v6 = ~GetDist(_Avatar, _Frigidazzi);
+    v7 = << 2421, 1864, 0 >>;
+    v8 = ~GetCoord(_Frigidazzi);
+    v9 = << 2438, 1894 >>;
+    v10 = ~GimmePathEgg(3, 5);
+    if ((event = _NearDeath) and ~GetItemFlag_i(_Tournament, item)) {
+        v11 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #Black_Mage >>, item);
+    }
+    if ((event = _Converse) and (~GetWorkType(_Frigidazzi) <> _Wait)) {
+        if (~GetNPCID_i(_Frigidazzi) <> 0) {
+            SetNPCID_i(0, _Frigidazzi);
+        }
+        v8 = ~GetCoord(_Frigidazzi);
+        if ($frigidazziinvited and ((v8::1 > 1415) and ((v8::1 < 2442) and ((v8::2 > 1856) and (v8::2 < 1872))))) {
+            FaceAvatar_i(65516);
+            PartyFaces_i(65516);
+            SetWorkType(_Wait, _Frigidazzi);
+            Bark_i(2, "@Oh, 'tis thee!@", _Frigidazzi);
+            v11 = ~PostInFuture(5, << _aNO_HALT_i, _aUSABLE_i, #Mama_Type, 0 >>, _Frigidazzi);
+        } else {
+            Item_bark("Pardon me...", _Avatar);
+            PartyFaces_i(65516);
+            if v2 {
+                Bark_i(2, "@Yes, love?@", _Frigidazzi);
+            } else {
+                Bark_i(2, "@Yes, handsome?@", _Frigidazzi);
+            }
+            SetWorkType(_Talk, _Frigidazzi);
+        }
+    }
+    if (event = _Talking) {
+        Npc_schedule(_Frigidazzi);
+        ClearBark_i(_Frigidazzi);
+        SetSpeaker0_i(0, _Frigidazzi);
+        if (v0 = false) {
+            SetItemFlag_i(_Met, _Frigidazzi);
+            ["Yes, we met at the MageLord's banquet. I am Frigidazzi, of course."];
+        } else {
+            ["Back so soon? But of course."];
+        }
+        if $knowfurcap {
+            TurnOn("fur cap");
+        }
+        TurnOn(<< "spells", "goblin", "Batlin", "Moonshade", "Gwenno", "bye" >>);
+        converse {
+            key ("fur cap") {
+                TurnOff("fur cap");
+                v11 = ~IsInInv(4, 65177, _Leath_Helm, 1, _Party);
+                if v11 {
+                    ["Why, thou dost have my favorite fur cap! I have been looking for it everywhere! In fact, I have not seen it since that storm we had a while ago. Hmmm, that would mean that I have something that belongs to thee. I shall trade thee thine helm for my fur cap."];
+                    $knowfurcap = false;
+                    v11 = ~TakeFromParty_i(0, 4, _All, _Leath_Helm, 1);
+                    v11 = ~GiveItemsOrDrop_i(true, 0, 0, 65177, 383, 1, _Avatar);
+                } else {
+                    ["Thou must me talking about my favorite fur cap! I have been looking for it everywhere! In fact, I have not seen it since that storm we had a while ago. Hmmm, perhaps that means I have something that belongs to thee. If thou dost return my fur cap to me I shall see what I have of thine."];
+                }
+            }
+            key ("goblin") {
+                TurnOff("goblin");
+                ["Yes, I have a goblin for a servant. What of it? She is a perfect servant because she is almost completely impervious to the cold. But surely we can think of more interesting things to talk about..."];
+            }
+            key ("Gwenno") {
+                TurnOff("Gwenno");
+                ["Yes, I saw her briefly a few times while she was in our city. She spent a lot of time at the Seminarium. Gwenno had a lot of interest in the exotic races of our land."];
+            }
+            key ("Batlin") {
+                TurnOff("Batlin");
+                ["That disgusting oaf! He wanted to buy a serpent relic from me, but I did not sell it to him!"];
+                ["Cannot we find a different topic of conversation?"];
+                TurnOn("serpent relic");
+            }
+            key ("serpent relic") {
+                TurnOff("serpent relic");
+                ["It was not very remarkable -- merely a stone in the shape of a serpent's tooth. It had no powers that I know of..."];
+                ["Many of us have these stones. In fact, it is a tradition for the best Mages to own one or more of them."];
+                ["Canst thou keep a secret?"];
+                if ~AskYesNo() {
+                    ["I can tell thee from whence the Serpent Teeth came..."];
+                    ["The Mages of Moonshade steal them from Erstam, the Mad Mage who lives on the island! It is such fine sport, but if he catches thee, he turns thee into a newt!"];
+                    ["We do not know why he values them so. And since he now hates us, I doubt that he shall explain the matter to us."];
+                } else {
+                    ["Neither can I! But I had best not share my secrets with thee..."];
+                }
+            }
+            key ("Moonshade") {
+                TurnOff("Moonshade");
+                ["A beautiful city, is it not? But ever so much more beautiful at night when the moon is shining down upon it. Dost thou not agree?"];
+            }
+            key ("spells") {
+                TurnOff("spells");
+                ["I could teach thee many things, <v3>. Come after midnight, alone, to my manor, and I shall reveal such knowledge as thou hast never before beheld."];
+                ["I am a heavy sleeper, so thou shalt most likely have to awaken me..."];
+                $frigidazziinvited = true;
+                v11 = ~FindNearby_i(0, 60, _Door_EW, _Avatar);
+                Foreach v14 in v11 {
+                    if (~GetQuality(v14) = 200) {
+                        SetDoorState_i(1, v14);
+                    }
+                }
+                TurnOn(<< "knowledge" >>);
+            }
+            key ("knowledge") {
+                TurnOff("knowledge");
+                ["I am the mistress of cold-fire magic, a specialty I learned during my many travels to the north."];
+                ["Extreme cold is in its own way just as powerful a force as extreme heat. Over time, I have learned to bend it to my will."];
+                TurnOn("travels to the north");
+            }
+            key ("travels to the north") {
+                TurnOff("travels to the north");
+                ["Some of my most memorable experiences have been on my various expeditions to the north. It is a harsh and unforgiving environment, that brings out the passionate will in one's heart to survive. It is extremely invigorating. All I shall tell thee is that if thou shouldst ever travel there thou shouldst dress warmly!"];
+            }
+            key ("bye") {
+                CloseSpeaker0_i();
+                Bark_i(0, "@So long!@", _Avatar);
+                Bark_i(2, "@Until next time!@", _Frigidazzi);
+                MessengerBringsScroll_i();
+                break;
+            }
+        }
+        clear_answers;
+    }
+}

@@ -1,0 +1,580 @@
+Routine M_Noble accepts a0 #locals(34) #uses(~LordOrLady, ~AvatarName, Bark_i, ~GimmePathEgg, ~ReactToTestTale_i, FaceAvatar_i, ~PartyUtters, ~RemoveFromList_i, SetDoorState_i, SetWorkTypeAt_i) {
+    v0 = ~LordOrLady();
+    v1 = ~AvatarName();
+    v2 = "he";
+    if ~AvatarSex() {
+        v2 = "she";
+    }
+    if (event = _Action) {
+        if ((~GetNPCID_i(_Marsten) = 12) and (item = ~NPCToItem_i(_Krayg))) {
+            Bark_i(0, "@Keep him away from me!@", _Krayg);
+            SetItemFlag_i(_Met, _Krayg);
+            PathfindNPC_i(false, #M_Noble, item, _Path_Success, << 1043, 2699, 0 >>, _Krayg);
+            SetPathFailure_i(_Path_Failure, item, #M_Noble);
+            terminate;
+        }
+        if ((~GetNPCID_i(_Marsten) = 1) and (item = ~NPCToItem_i(_Krayg))) {
+            PathfindNPC_i(false, #M_Noble, item, _Path_Success, << 1045, 2685, 0 >>, _Krayg);
+            SetPathFailure_i(_Path_Failure, item, #M_Noble);
+            terminate;
+        }
+        if (~GetNPCID_i(_Marsten) = 14) {
+            SetNPCID_i(15, _Marsten);
+            Npc_setAlignment(_Good, _Avatar);
+            Bark_i(0, "@Stop this!@", _Marsten);
+            SetItemFlag_i(_Met, _Marsten);
+            SetItemFlag_i(_Dead, _Shazzana);
+            SetWorkType(_Wait, _Shazzana);
+            Npc_setAlignment(_Neutral, _Shazzana);
+            SetItemFlag_i(_Dead, _Luther);
+            SetWorkType(_Wait, _Luther);
+            Npc_setAlignment(_Neutral, _Luther);
+            v3 = ~PostInFuture(10, << _aNO_HALT_i, _aUSABLE_i, #M_Noble >>, _Marsten);
+            SetMusic(~GimmePathEgg(1, 5), 29);
+            v4 = ~GetNPCStat_i(_Hits, _Shazzana);
+            v3 = ~ChangeNPCStat_i((~GetNPCStat_i(_Str, _Shazzana) - v4), _Hits, _Shazzana);
+            v4 = ~GetNPCStat_i(_Hits, _Luther);
+            v3 = ~ChangeNPCStat_i((~GetNPCStat_i(_Str, _Shazzana) - v4), _Hits, _Luther);
+            terminate;
+        }
+        if (~GetNPCID_i(_Marsten) = 13) {
+            SetNPCID_i(14, _Marsten);
+            Npc_setAlignment(_Neutral, _Avatar);
+            SetAttackMode_i(_Nearest, _Luther);
+            SetAttackMode_i(_Nearest, _Shazzana);
+            Npc_setAlignment(_Evil, _Luther);
+            SetWorkType(_Combat_0, _Luther);
+            Npc_setTarget(_Shazzana, _Luther);
+            SetAttacker_i(_Shazzana, _Luther);
+            Npc_setAlignment(_Good, _Shazzana);
+            SetWorkType(_Combat_0, _Shazzana);
+            Npc_setTarget(_Luther, _Shazzana);
+            SetAttacker_i(_Luther, _Shazzana);
+            Bark_i(15, "@Strike for his eyes!@", _Brendann);
+            SetItemFlag_i(_Met, _Brendann);
+            Bark_i(25, "@Tell them to stop.@", _Spektor);
+            SetItemFlag_i(_Met, _Spektor);
+            Bark_i(10, "@Strike, Luther!@", _Caladin);
+            SetItemFlag_i(_Met, _Caladin);
+            Bark_i(5, "@Hey, careful!@", _Avatar);
+            v3 = ~PostInFuture(35, << _aNO_HALT_i, _aBEND_FRAME_i, _aSTAND_FRAME_i, _aUP_FRAME_i, _aUSABLE_i, #M_Noble >>, _Marsten);
+            terminate;
+        }
+        if (~GetNPCID_i(_Marsten) = 12) {
+            SetNPCID_i(13, _Marsten);
+            PathfindNPC_i(false, #M_Noble, ~NPCToItem_i(_Shazzana), _Path_Success, << 1051, 2692, 0 >>, _Shazzana);
+            SetPathFailure_i(_Path_Failure, ~NPCToItem_i(_Shazzana), #M_Noble);
+            terminate;
+        }
+        if (~GetNPCID_i(_Marsten) = 11) {
+            SetNPCID_i(12, _Marsten);
+            ClearSpeakers_i();
+            SetSpeaker0_i(0, _Krayg);
+            ["I am weary of thine insults, Luther! I am no more of a traitor than thou art!"];
+            EndConverse_i();
+            SetWorkType(_Combat_0, _Shazzana);
+            PathfindNPC_i(false, #M_Noble, ~NPCToItem_i(_Luther), _Path_Success, << 1061, 2690, 0 >>, _Luther);
+            SetPathFailure_i(_Path_Failure, ~NPCToItem_i(_Luther), #M_Noble);
+            v3 = ~PostInFuture(10, << _aNO_HALT_i, _aUSABLE_i, #M_Noble >>, _Krayg);
+            Bark_i(2, "@I shall make him talk!@", _Luther);
+            $templaraccuseskrayg = true;
+            Bark_i(0, "@This is unseemly...@", _Spektor);
+            Bark_i(2, "@Cease!@", _Shazzana);
+            Bark_i(0, "@Leave me alone!@", _Krayg);
+            terminate;
+        }
+        if (~GetNPCID_i(_Marsten) = 10) {
+            SetNPCID_i(11, _Marsten);
+            ClearSpeakers_i();
+            SetSpeaker0_i(0, _Luther);
+            ["Listen, Knights -- it doth not take a wizard to untangle this skein. Who among us acts strangely, doth do things in secret, and avoids his knightly duties?"];
+            SetItemFlag_i(_Met, _Luther);
+            EndConverse_i();
+            SetMusic(~GimmePathEgg(1, 5), 16);
+            v3 = ~PostAction(<< _aNO_HALT_i, _aWAIT_i, 3, _aEXTEND1_FRAME_i, _aTHRUST1_FRAME_i, _aBARK_i, "@'Tis him!@", _aWAIT_i, 7, _aBARK_i, "@Krayg!@" >>, _Luther);
+            v3 = ~PostInFuture(5, << _aNO_HALT_i, _aBEND_FRAME_i, _aSIT_FRAME_i >>, _Spektor);
+            v3 = ~PostAction(<< _aNO_HALT_i, _aWAIT_i, 7, _aBARK_i, "@Curse thee, Luther!@", _aBEND_FRAME_i, _aSTAND_FRAME_i, _aWAIT_i, 4, _aUSABLE_i, #M_Noble >>, _Krayg);
+            PathfindNPC_i(false, #M_Noble, ~NPCToItem_i(_Lucilla), _Path_Success, << 1081, 2679, 0 >>, _Lucilla);
+            SetPathFailure_i(_Path_Failure, ~NPCToItem_i(_Lucilla), #M_Noble);
+            terminate;
+        }
+        if (~GetNPCID_i(_Marsten) = 9) {
+            SetNPCID_i(10, _Marsten);
+            ClearSpeakers_i();
+            SetSpeaker0_i(0, _Spektor);
+            ["I think this talk of a traitor in Monitor is all rather speculative. Surely, no one suspects anyone at this table of being a Goblin spy."];
+            EndConverse_i();
+            Bark_i(6, "@Sit down, Luther!@", _Shazzana);
+            v3 = ~PostAction(<< _aNO_HALT_i, _aBARK_i, "@I do!@", _aWAIT_i, 4, _aBEND_FRAME_i, _aSTAND_FRAME_i, _aWAIT_i, 5, _aUSABLE_i, #M_Noble >>, _Luther);
+            terminate;
+        }
+        if (~GetNPCID_i(_Marsten) = 8) {
+            SetNPCID_i(9, _Marsten);
+            ClearSpeakers_i();
+            SetSpeaker0_i(0, _Templar);
+            ["Forgive me, lord, but I, too, have a serious matter to put before the leaders of Monitor."];
+            SetItemFlag_i(_Met, _Templar);
+            SetSpeaker1_i(0, _Shazzana);
+            ["Dost thou not need to rest thyself, Templar? Thou hast had no time to heal from thy wounds."];
+            CloseSpeaker1_i();
+            SetItemFlag_i(_Met, _Shazzana);
+            SetSpeakerSlot_i(0);
+            ["I am right enough, Shazzana. And I cannot rest until I have aired my concerns."];
+            SetSpeaker1_i(0, _Marsten);
+            ["Speak thy mind, then, warrior."];
+            CloseSpeaker1_i();
+            SetSpeakerSlot_i(0);
+            ["As thou knowest, I am the sole survivor of the patrol which the Goblins ambushed -- when Astrid was taken."];
+            ["The Goblins were ready for us, milord! It could not have been by accident."];
+            ["Lord Marsten, there is a traitor in our midst."];
+            EndConverse_i();
+            Bark_i(8, "@Templar is right!@", _Brendann);
+            Bark_i(0, "@Damn spy!@", _Luther);
+            Bark_i(5, "@What shall we do?@", _Lucilla);
+            v3 = ~PostAction(<< _aNO_HALT_i, _aBEND_FRAME_i, _aSIT_FRAME_i >>, _Templar);
+            v3 = ~PostAction(<< _aNO_HALT_i, _aWAIT_i, 15, _aBEND_FRAME_i, _aSTAND_FRAME_i, _aBARK_i, "@Now, now...@", _aWAIT_i, 6, _aUSABLE_i, #M_Noble >>, _Spektor);
+            terminate;
+        }
+        if (~GetNPCID_i(_Marsten) = 7) {
+            SetNPCID_i(8, _Marsten);
+            ClearSpeakers_i();
+            SetSpeaker0_i(0, _Flicken);
+            ["What didst thou think of the Knight's Test? Didst thou have any harrowing experiences?"];
+            SetSpeaker1_i(0, _Luther);
+            ["Oh, it isn't that much of a challenge. After all, thou didst survive it, Flicken!"];
+            CloseSpeaker1_i();
+            SetSpeakerSlot_i(0);
+            ["Never mind that lout. What part of the dungeon was the most difficult, <v1>?"];
+            v5 = 0;
+            TurnOn(<< "the gremlins", "the explosions", "the Cyclops", "the invisible man", "change subject" >>);
+            converse {
+                key ("the gremlins") {
+                    TurnOff("the gremlins");
+                    ["Gremlins? Thou art merely trying to impress us, <v1>. There aren't any gremlins in the Knight's Test!"];
+                    v5 = ~ReactToTestTale_i(v5);
+                    if (v5 = 4) {
+                        goto label_40;
+                    }
+                }
+                key ("the explosions") {
+                    TurnOff("the explosions");
+                    ["But those are so easy to avoid..."];
+                    SetSpeaker1_i(0, _Caladin);
+                    ["Perhaps thou didst not walk fast enough. If thou dost lag, the explosions will catch thee."];
+                    CloseSpeaker1_i();
+                    SetSpeakerSlot_i(0);
+                    v5 = ~ReactToTestTale_i(v5);
+                    if (v5 = 4) {
+                        goto label_40;
+                    }
+                }
+                key ("the Cyclops") {
+                    TurnOff("the Cyclops");
+                    ["Didst thou hear what <v2> didst say? There are magical beasts in the Knight's Test!"];
+                    SetSpeaker1_i(0, _Brendann);
+                    ["We must speak with Shmed about this. Our dungeon is strictly a test of fighting ability -- no magic allowed!"];
+                    CloseSpeaker1_i();
+                    SetSpeakerSlot_i(0);
+                    v5 = ~ReactToTestTale_i(v5);
+                    if (v5 = 4) {
+                        goto label_40;
+                    }
+                }
+                key ("the invisible man") {
+                    TurnOff("the invisible man");
+                    ["Oh, surely thou art mistaken!"];
+                    SetSpeaker1_i(0, _Templar);
+                    ["Perhaps in the darkness, thou didst become disoriented and imagine such an enemy."];
+                    CloseSpeaker1_i();
+                    SetSpeakerSlot_i(0);
+                    v5 = ~ReactToTestTale_i(v5);
+                    if (v5 = 4) {
+                        goto label_40;
+                    }
+                }
+                key ("change subject") {
+                    TurnOff("change subject");
+                    goto label_40;
+                }
+            }
+            clear_answers;
+            label_40:
+            SetSpeaker1_i(0, _Marsten);
+            if (v5 = 0) {
+                ["It is good to see a Knight who is not boastful. Luther, thou couldst learn from this one."];
+                Bark_i(0, "@I doubt it...@", _Luther);
+            } else {
+                if (v5 < 3) {
+                    ["Shmed is the Master of Knight's Test. If I were thee, I would speak to him about thy strange experiences."];
+                    Bark_i(0, "@Such a story!@", _Flicken);
+                } else {
+                    ["My friend, I am convinced thou hast been the victim of an evil scheme! Tomorrow, I shall speak with Shmed personally."];
+                    Bark_i(0, "@An outrage!@", _Flicken);
+                }
+            }
+            EndConverse_i();
+            Item_move(<< 1079, 2684, 0 >>, _Harnna);
+            PathfindNPC_i(false, #M_Noble, ~NPCToItem_i(_Harnna), _Path_Success, << 1057, 2676, 0 >>, _Harnna);
+            SetPathFailure_i(_Path_Failure, ~NPCToItem_i(_Harnna), #M_Noble);
+            Bark_i(10, "@Terrible news!@", _Harnna);
+            SetItemFlag_i(_Met, _Harnna);
+            SetMusic(~GimmePathEgg(1, 5), 30);
+            terminate;
+        }
+        if (~GetNPCID_i(_Marsten) = 6) {
+            SetNPCID_i(7, _Marsten);
+            ClearSpeakers_i();
+            SetSpeaker0_i(0, _Marsten);
+            ["Lucilla hath prepared this feast, the main dish of which includes meat from the wolf which thou didst slay in the Knight's Test."];
+            ["Now let us eat, and as we do so, let us extend our fellowship to this new Knight."];
+            EndConverse_i();
+            v3 = ~PostAction(<< _aNO_HALT_i, _aBARK_i, "@Let us eat...@", _aWAIT_i, 2, _aBEND_FRAME_i, _aSIT_FRAME_i, _aWAIT_i, 16, _aUSABLE_i, #M_Noble >>, _Marsten);
+            Bark_i(4, "@Hurry, Lucilla!@", _Luther);
+            Bark_i(8, "@This knife is dull...@", _Cellia);
+            SetItemFlag_i(_Met, _Cellia);
+            Bark_i(16, (("@" + v1) + "...@"), _Flicken);
+            SetMusic(~GimmePathEgg(1, 5), 34);
+            terminate;
+        }
+        if (~GetNPCID_i(_Marsten) = 5) {
+            SetNPCID_i(6, _Marsten);
+            ClearSpeakers_i();
+            SetSpeaker0_i(0, _Marsten);
+            ["And I am here, both as the Lord of Monitor, and as the leader of the Leopards."];
+            if (~GetWorkType(_Lucilla) = _Wait) {
+                SetWorkType(_Waiter, _Lucilla);
+            }
+            EndConverse_i();
+            Bark_i(0, "@Hurrah!@", _Spektor);
+            Bark_i(2, "@Leopards!@", _Shazzana);
+            v3 = ~PostAction(<< _aNO_HALT_i, _aEXTEND1_FRAME_i, _aWAIT_i, 6, _aSTAND_FRAME_i, _aWAIT_i, 2, _aUSABLE_i, #M_Noble >>, _Marsten);
+            terminate;
+        }
+        if (~GetNPCID_i(_Marsten) = 4) {
+            SetNPCID_i(5, _Marsten);
+            ClearSpeakers_i();
+            SetSpeaker0_i(0, _Brendann);
+            ["As the leader of the Wolves -- "];
+            ["which, unlike the Bears, prefer to rely on our wits rather than brute strength -- "];
+            ["I, too, welcome thee to the ranks of the Knights."];
+            if ~AvatarSex() {
+                ["And, if I might say so, thou art no doubt the most beautiful Knight in the city!"];
+            }
+            ["Since thou art under my Command, I expect to know thee much better in the days to come."];
+            EndConverse_i();
+            v3 = ~PostAction(<< _aNO_HALT_i, _aWAIT_i, 4, _aBEND_FRAME_i, _aSIT_FRAME_i, _aWAIT_i, 6, _aUSABLE_i, #M_Noble >>, _Brendann);
+            v3 = ~PostInFuture(3, << _aNO_HALT_i, _aFACE_i, _South >>, _Marsten);
+            Bark_i(0, "@Welcome, warrior.@", _Cellia);
+            Bark_i(1, "@Wolves!@", _Krayg);
+            if not ~AvatarSex() {
+                SetWorkType(_Wait, _Lucilla);
+                FaceAvatar_i(65466);
+                Bark_i(3, "@I like his looks.@", _Lucilla);
+            } else {
+                Bark_i(3, "@Glad to meet thee.@", _Lucilla);
+            }
+            SetItemFlag_i(_Met, _Lucilla);
+            terminate;
+        }
+        if (~GetNPCID_i(_Marsten) = 3) {
+            SetNPCID_i(4, _Marsten);
+            ClearSpeakers_i();
+            SetSpeaker0_i(0, _Caladin);
+            ["On behalf of the Bears -- which, by the way, are the mightiest warriors in the land -- I welcome thee to thy Knighthood Banquet."];
+            EndConverse_i();
+            Bark_i(2, "@Welcome!@", _Flicken);
+            Bark_i(1, "@Aye! Bears!@", _Templar);
+            Bark_i(0, "@Hear! Hear!@", _Luther);
+            v3 = ~PostAction(<< _aNO_HALT_i, _aBEND_FRAME_i, _aSIT_FRAME_i >>, _Caladin);
+            v3 = ~PostInFuture(10, << _aNO_HALT_i, _aBEND_FRAME_i, _aSTAND_FRAME_i >>, _Brendann);
+            v3 = ~PostAction(<< _aNO_HALT_i, _aFACE_i, _South, _aWAIT_i, 6, _aFACE_i, _West, _aBARK_i, "@The Wolves...@", _aWAIT_i, 10, _aUSABLE_i, #M_Noble >>, _Marsten);
+            terminate;
+        }
+        if (~GetNPCID_i(_Marsten) = 2) {
+            SetNPCID_i(3, _Marsten);
+            ClearSpeakers_i();
+            SetSpeaker0_i(0, _Marsten);
+            ["Congratulations on successfully completing the Knight's Test."];
+            ["Thus thou hast proven thyself worthy of joining an elite band of warriors."];
+            ["In thine honor, all of the Commands of Monitor have sent their representatives to thy Knighthood Banquet."];
+            EndConverse_i();
+            v3 = ~PostAction(<< _aNO_HALT_i, _aFACE_i, _East, _aBARK_i, "@The Bears...@" >>, _Marsten);
+            v3 = ~PostInFuture(4, << _aNO_HALT_i, _aBEND_FRAME_i, _aSTAND_FRAME_i, _aWAIT_i, 4, _aUSABLE_i, #M_Noble >>, _Caladin);
+            terminate;
+        }
+        if (~GetNPCID_i(_Marsten) = 1) {
+            PathfindNPC_i(false, #M_Noble, item, _Path_Success, << 1055, 2683, 0 >>, _Avatar);
+            SetPathFailure_i(_Path_Failure, item, #M_Noble);
+            v3 = ~PostInFuture(15, << _aNO_HALT_i, _aUSABLE_i, #M_Noble >>, _Krayg);
+            terminate;
+        }
+        if (~GetNPCID_i(_Marsten) = 0) {
+            SetMusic(~GimmePathEgg(1, 5), 15);
+            SetItemFlag_i(_DontMove_i, _Avatar);
+            v4 = ~GetNPCStat_i(_Hits, _Shazzana);
+            v3 = ~ChangeNPCStat_i((~GetNPCStat_i(_Str, _Shazzana) - v4), _Hits, _Shazzana);
+            v4 = ~GetNPCStat_i(_Hits, _Luther);
+            v3 = ~ChangeNPCStat_i((~GetNPCStat_i(_Str, _Shazzana) - v4), _Hits, _Luther);
+            EndConverse_i();
+            v6 = ~PartyUtters(true, 0, 0, 1);
+            v3 = "We";
+            if (~ListSize_i(~GetParty()) < 3) {
+                v3 = "I";
+            }
+            Bark_i(5, (("@" + v3) + " shall wait for thee here!@"), v6);
+            v3 = ~RemoveFromList_i(~GetParty_i(), ~NPCToItem_i(_Avatar));
+            Foreach v9 in v3 {
+                LeaveParty(v9);
+                v5 = ~GetCoord(v9);
+                NewSchedule_i(<< v5::1, v5::2 >>, _Stand, 0, v9);
+                Npc_schedule(v9);
+            }
+            Item_bark("@This must be the place!@", _Avatar);
+            PathfindNPC_i(true, #M_Noble, item, _Path_Success, << 1055, 2704, 0 >>, _Avatar);
+            SetPathFailure_i(_Path_Failure, item, #M_Noble);
+            $MONITOR_BANQUET_STARTED = true;
+            v10 = (~GetCoord(_Avatar) & (65177 & 6));
+            v11 = ~FindNearby_i(16, 40, _Egg_Type, v10);
+            Foreach v14 in v11 {
+                v15 = ~GetCoord(v14);
+                v16 = ~GetQuality(v14);
+                v17 = false;
+                if (v16 = 1) {
+                    v18 = 4;
+                    v17 = 65467;
+                }
+                if (v16 = 2) {
+                    v18 = 4;
+                    v17 = 65459;
+                }
+                if (v16 = 4) {
+                    v18 = 4;
+                    v17 = 65462;
+                }
+                if (v16 = 6) {
+                    v18 = 2;
+                    v17 = 65386;
+                }
+                if (v16 = 8) {
+                    v18 = 2;
+                    v17 = 65471;
+                }
+                if (v16 = 10) {
+                    v18 = 2;
+                    v17 = 65468;
+                }
+                if (v16 = 12) {
+                    Item_move(v15, _Lucilla);
+                    SetWorkType(_Wait, _Lucilla);
+                    v19 = ~PostAction(<< _aFACE_i, _West, _aSTAND_FRAME_i >>, _Lucilla);
+                }
+                if (v16 = 5) {
+                    v18 = 4;
+                    v17 = 65456;
+                }
+                if (v16 = 7) {
+                    v18 = 6;
+                    v17 = 65473;
+                }
+                if (v16 = 9) {
+                    v18 = 6;
+                    v17 = 65457;
+                }
+                if (v16 = 11) {
+                    v18 = 6;
+                    v17 = 65465;
+                }
+                if (v17 and not ~GetItemFlag_i(_Dead, v17)) {
+                    Item_move(v15, v17);
+                    SetWorkType(_Wait, v17);
+                    v19 = ~PostAction(<< _aFACE_i, v18, _aCONTINUE_i, _aSIT_FRAME_i >>, v17);
+                }
+            }
+            v10 = (~GetCoord(_Avatar) & (0 & 7));
+            v11 = ~FindNearby_i(16, 30, _Egg_Type, v10);
+            Foreach v14 in v11 {
+                Item_destroy(v14);
+            }
+            terminate;
+        }
+        ClearItemFlag_i(_DontMove_i, _Avatar);
+        ClearItemFlag_i(_Dead, _Luther);
+        ClearItemFlag_i(_Dead, _Shazzana);
+        ClearSpeakers_i();
+        SetSpeaker0_i(0, _Marsten);
+        ["Lay down thine arms, Knights! Such fighting belongs on the List Field, not in the banquet hall."];
+        ["Thy behavior hath disrupted this celebration. In the interest of calming all of our tempers, I declare this banquet to be over."];
+        ["<v1>, couldst thou please speak to Harnna about her daughter? Perhaps thou mightest have some new insights."];
+        v3 = ~FindNearby_i(0, 40, _DDoor_EW, _Avatar);
+        Foreach v9 in v3 {
+            if (~GetQuality(v9) = 51) {
+                SetDoorState_i(1, v9);
+            }
+        }
+        Bark_i(0, "@Go home!@", _Marsten);
+        Bark_i(4, "@Until next time...@", _Shazzana);
+        Bark_i(8, "@Coward!@", _Luther);
+        Bark_i(10, "@I'm hungry!@", _Caladin);
+        $AVATAR_IS_KNIGHT = true;
+        v24 = << 65468, 65471, 65386, 65459, 65462, 65467, 65469, 65456, 65473, 65466, 65457, 65465 >>;
+        Foreach v5 in v24 {
+            RevertSchedule_i(v5);
+            Npc_schedule(v5);
+        }
+        v24 = << 65456, 65473, 65457, 65465 >>;
+        Foreach v5 in v24 {
+            SetWorkType(_EatAtInn, v5);
+        }
+        SetWorkType(_Waiter, _Lucilla);
+        v3 = ~PostAction(<< _aNO_HALT_i, _aBEND_FRAME_i, _aSTAND_FRAME_i >>, _Cellia);
+        v3 = ~PostAction(<< _aNO_HALT_i, _aKNEEL_FRAME_i, _aBEND_FRAME_i, _aSTAND_FRAME_i >>, _Harnna);
+        v29 = << 65471, 65456, 65469, 65468, 65466, 65467, 65459 >>;
+        Foreach v5 in v29 {
+            ClearItemFlag_i(_Tournament, v5);
+        }
+    }
+    if (event = _Path_Failure) {
+        if ((item = ~NPCToItem_i(_Cellia)) and (~GetNPCID_i(_Marsten) = 8)) {
+            SetWorkType(_Wait, _Cellia);
+            Item_bark("@Poor Cantra...@", _Cellia);
+            terminate;
+        }
+        if ((item = ~NPCToItem_i(_Shazzana)) and (~GetNPCID_i(_Marsten) = 12)) {
+            SetNPCID_i(13, _Marsten);
+            SetWorkType(_Wait, _Shazzana);
+            v3 = ~PostAction(<< _aNO_HALT_i, _aREADY_FRAME_i, _aBARK_i, "@Restrain thyself, Luther!@", _aWAIT_i, 11, _aUSABLE_i, #M_Noble >>, _Shazzana);
+            v3 = ~PostAction(<< _aNO_HALT_i, _aWAIT_i, 8, _aREADY_FRAME_i, _aBARK_i, "@Thou must make me!@" >>, _Luther);
+            terminate;
+        }
+        if ((item = ~NPCToItem_i(_Luther)) and (~GetNPCID_i(_Marsten) = 12)) {
+            SetWorkType(_Wait, _Luther);
+            ClearSpeakers_i();
+            SetSpeaker0_i(0, _Shazzana);
+            ["Leave him alone, Luther."];
+            SetSpeaker1_i(0, _Luther);
+            ["Thou shouldst stay out of this, woman..."];
+            EndConverse_i();
+            Bark_i(4, "@No, Shazzana...@", _Brendann);
+            Bark_i(2, "@Thou shalt not tell me what to do!@", _Shazzana);
+            PathfindNPC_i(false, #M_Noble, ~NPCToItem_i(_Shazzana), _Path_Success, << 1052, 2689, 0 >>, _Shazzana);
+            SetPathFailure_i(_Path_Failure, ~NPCToItem_i(_Shazzana), #M_Noble);
+            terminate;
+        }
+        if (item = ~NPCToItem_i(_Harnna)) {
+            Item_move(<< 1057, 2676, 0 >>, _Harnna);
+            event = 13;
+        }
+        if ((item = ~NPCToItem_i(_Krayg)) and (~GetNPCID_i(_Marsten) = 12)) {
+            SetWorkType(_Wait, _Krayg);
+            terminate;
+        }
+        if ((item = ~NPCToItem_i(_Krayg)) and (~GetNPCID_i(_Marsten) = 2)) {
+            Item_move(<< 1045, 2685, 0 >>, _Krayg);
+            event = 13;
+        }
+        if ((~GetNPCID_i(_Marsten) = 1) and (item = ~NPCToItem_i(_Avatar))) {
+            Item_move(<< 1055, 2683, 0 >>, _Avatar);
+            event = 13;
+        }
+        if ((~GetNPCID_i(_Marsten) = 0) and ((~Item_getType(item) = _DDoor_EW) or (~Item_getType(item) = _Door_EW))) {
+            Item_move(<< 1055, 2704, 0 >>, _Avatar);
+            event = 13;
+        }
+    }
+    if (event = _Path_Success) {
+        if ((item = ~NPCToItem_i(_Cellia)) and (~GetNPCID_i(_Marsten) = 8)) {
+            SetWorkType(_Wait, _Cellia);
+            v3 = ~PostAction(<< _aNO_HALT_i, _aFACE_i, _South, _aWAIT_i, 2, _aFACE_i, _West, _aWAIT_i, 2, _aBEND_FRAME_i, _aKNEEL_FRAME_i, _aBARK_i, "@Do not cry...@" >>, _Cellia);
+            terminate;
+        }
+        if ((item = ~NPCToItem_i(_Shazzana)) and (~GetNPCID_i(_Marsten) = 12)) {
+            SetNPCID_i(13, _Marsten);
+            SetWorkType(_Wait, _Shazzana);
+            v3 = ~PostAction(<< _aNO_HALT_i, _aREADY_FRAME_i, _aBARK_i, "@Leave him alone, Luther!@", _aWAIT_i, 11, _aUSABLE_i, #M_Noble >>, _Shazzana);
+            v3 = ~PostAction(<< _aNO_HALT_i, _aWAIT_i, 8, _aREADY_FRAME_i, _aBARK_i, "@Thou must make me!@" >>, _Luther);
+            terminate;
+        }
+        if ((item = ~NPCToItem_i(_Luther)) and (~GetNPCID_i(_Marsten) = 12)) {
+            SetWorkType(_Wait, _Luther);
+            ClearSpeakers_i();
+            SetSpeaker0_i(0, _Shazzana);
+            ["Leave him alone, Luther."];
+            SetSpeaker1_i(0, _Luther);
+            ["Thou shouldst stay out of this, woman..."];
+            EndConverse_i();
+            Bark_i(4, "@No, Shazzana...@", _Brendann);
+            Bark_i(2, "@Thou shalt not tell me what to do!@", _Shazzana);
+            PathfindNPC_i(false, #M_Noble, ~NPCToItem_i(_Shazzana), _Path_Success, << 1052, 2689, 0 >>, _Shazzana);
+            SetPathFailure_i(_Path_Failure, ~NPCToItem_i(_Shazzana), #M_Noble);
+            terminate;
+        }
+        if (item = ~NPCToItem_i(_Harnna)) {
+            $cantrataken = true;
+            SetWorkType(_Wait, _Harnna);
+            ClearSpeakers_i();
+            SetSpeaker0_i(0, _Harnna);
+            ["My daughter Cantra is gone! I have looked everywhere for her. We need to send out a patrol!"];
+            SetSpeaker1_i(0, _Templar);
+            ["The Goblins have struck again!"];
+            ["I am sorry, Harnna, but if the Goblins have her, she is lost. There is not an ounce of mercy or remorse within them."];
+            CloseSpeaker1_i();
+            SetSpeakerSlot_i(0);
+            ["But the Goblins did not take her!"];
+            SetSpeaker1_i(0, _Brendann);
+            ["Thou canst not know any such thing. It must have been the Goblins. Remember, they killed thine husband right outside this city, not even leaving a body!"];
+            EndConverse_i();
+            v3 = ~PostAction(<< _aNO_HALT_i, _aBARK_i, "@My daughter!@", _aBEND_FRAME_i, _aKNEEL_FRAME_i, _aWAIT_i, 7, _aBARK_i, "@Oh!@", _aWAIT_i, 7, _aFACE_i, _North, _aBEND_FRAME_i, _aBARK_i, "@We must find her!@", _aBEND_FRAME_i, _aKNEEL_FRAME_i, _aLIE_FRAME_i >>, _Harnna);
+            v3 = ~PostInFuture(20, << _aNO_HALT_i, _aBARK_i, "@Lord Marsten...@", _aWAIT_i, 2, _aBEND_FRAME_i, _aSTAND_FRAME_i, _aWAIT_i, 4, _aUSABLE_i, #M_Noble >>, _Templar);
+            Bark_i(5, "@Kill the Goblins!@", _Caladin);
+            Bark_i(2, "@Poor dear!@", _Cellia);
+            PathfindNPC_i(false, #M_Noble, ~NPCToItem_i(_Cellia), _Path_Success, << 1058, 2675, 0 >>, _Cellia);
+            SetPathFailure_i(_Path_Failure, ~NPCToItem_i(_Cellia), #M_Noble);
+            CloseSpeaker1_i();
+            terminate;
+        }
+        if ((item = ~NPCToItem_i(_Krayg)) and (~GetNPCID_i(_Marsten) = 12)) {
+            SetWorkType(_Wait, _Krayg);
+            terminate;
+        }
+        if ((item = ~NPCToItem_i(_Krayg)) and (~GetNPCID_i(_Marsten) = 2)) {
+            v3 = ~PostAction(<< _aNO_HALT_i, _aBARK_i, "@I am sorry that I am late...@", _aFACE_i, _East, _aBEND_FRAME_i, _aSIT_FRAME_i >>, _Krayg);
+            SetWorkType(_Wait, _Krayg);
+            terminate;
+        }
+        if ((~GetNPCID_i(_Marsten) = 1) and (item = ~NPCToItem_i(_Avatar))) {
+            SetNPCID_i(2, _Marsten);
+            Bark_i(3, (("@Please be seated, " + v1) + ".@"), _Marsten);
+            v3 = ~PostInFuture(2, << _aNO_HALT_i, _aBEND_FRAME_i, _aSTAND_FRAME_i >>, _Marsten);
+            v3 = ~PostInFuture(5, << _aNO_HALT_i, _aBARK_i, "@Yes, milord.@", _aFACE_i, _North, _aBEND_FRAME_i, _aSIT_FRAME_i, _aWAIT_i, 8, _aUSABLE_i, #M_Noble >>, _Avatar);
+            SetWorkTypeAt_i(_Waiter, 0, 65535, _Lucilla);
+            terminate;
+        }
+        if ((~GetNPCID_i(_Marsten) = 0) and ((~Item_getType(item) = _DDoor_EW) or (~Item_getType(item) = _Door_EW))) {
+            SetNPCID_i(1, _Marsten);
+            Bark_i(3, "@Look! Everyone is here...@", _Avatar);
+            Bark_i(23, "@Where is Harnna?@", _Flicken);
+            Bark_i(22, "@Our guest is here...@", _Spektor);
+            v3 = (~FindNearby_i(0, 10, _Door_EW, _Avatar) & ~FindNearby_i(0, 10, _DDoor_EW, _Avatar));
+            Foreach v9 in v3 {
+                Item_destroy(v9);
+            }
+            v9 = ~Item_create(_DDoor_NS);
+            if v9 {
+                v3 = ~SetQuality(0, v9);
+                SetFrame(9, v9);
+                ClearItemFlag_i(_IsTemporary_i, v9);
+                v3 = ~PopToMap(<< 1052, 2703, 0 >>);
+            }
+            v9 = ~Item_create(_Door_NS);
+            if v9 {
+                v3 = ~SetQuality(0, v9);
+                SetFrame(13, v9);
+                ClearItemFlag_i(_IsTemporary_i, v9);
+                v3 = ~PopToMap(<< 1059, 2703, 0 >>);
+            }
+            playSFX(item, 32);
+            v3 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #M_Noble >>, _Avatar);
+            terminate;
+        }
+    }
+}

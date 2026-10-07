@@ -1,0 +1,73 @@
+Routine Powder_Keg accepts a0 #locals(17) #uses(~CreateItemAt_i) {
+    v0 = ~GetCoord(item);
+    if ((event = _Converse) or ((event = _Action) or (event = _Trigger))) {
+        v1 = ~Item_getContainer(item);
+        if not ~Item_isNpc(v1) {
+            closeAllGumps();
+            v2 = ~Attack_i(_Powder_Keg, item, ~AvatarItem_i());
+            v3 = v0::1;
+            v4 = v0::2;
+            if (((v3 > 1218) and ((v3 < 1230) and ((v4 > 875) and (v4 < 885)))) and (flag(587) = false)) {
+                v5 = ~FindNearby_i(0, 60, _Serp_NS, _Avatar);
+                Foreach v8 in v5 {
+                    v9 = ~GetCoord(v8);
+                    if (~GetFrame(v8) = 2) {
+                        Item_destroy(v8);
+                        v2 = ~CreateItemAt_i(v9, 0, 0, 1, _Melted_Door);
+                    }
+                    if (~GetFrame(v8) = 18) {
+                        Item_destroy(v8);
+                        v2 = ~CreateItemAt_i(v9, 0, 0, 3, _Melted_Door);
+                    }
+                }
+                v5 = ~FindNearby_i(0, 60, _DDSerpNS, _Avatar);
+                Foreach v8 in v5 {
+                    v9 = ~GetCoord(v8);
+                    if (~GetFrame(v8) = 2) {
+                        Item_destroy(v8);
+                        v2 = ~CreateItemAt_i(<< (v9::1 - 2), v9::2, 0 >>, 0, 0, 0, _Melted_Door);
+                    }
+                    if (~GetFrame(v8) = 18) {
+                        Item_destroy(v8);
+                        v2 = ~CreateItemAt_i(<< (v9::1 - 2), v9::2, 4 >>, 0, 0, 2, _Melted_Door);
+                    }
+                }
+                v12 = 1;
+                v13 = << 1221, 1223, 1225, 1227, 1221, 1223, 1225, 1227, 1221, 1223, 1225, 1227, 1221, 1223, 1225, 1227, 1219, 1219 >>;
+                v14 = << 877, 877, 877, 877, 879, 879, 879, 879, 881, 881, 881, 881, 883, 883, 883, 883, 882, 882 >>;
+                v15 = << 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 1, 1, 1, 1, 3, 3 >>;
+                While (v12 < 18) {
+                    v2 = ~Item_create(_Flat_Burn_Mark);
+                    if v2 {
+                        SetFrame(v15::v12, v2);
+                        v9 = << v13::v12, v14::v12, 0 >>;
+                        v2 = ~PopToMap(v9);
+                    }
+                    v12 = (v12 + 1);
+                }
+                v2 = ~Item_create(_Ew_Burn_Mark);
+                if v2 {
+                    SetFrame(0, v2);
+                    v2 = ~PopToMap(<< 1219, 880, 0 >>);
+                }
+                v2 = ~Item_create(_Field_Fire);
+                if v2 {
+                    SetFrame(1, v2);
+                    v2 = ~PopToMap(<< 1226, 883, 0 >>);
+                }
+                v2 = ~Item_create(_Field_Fire);
+                if v2 {
+                    SetFrame(0, v2);
+                    v2 = ~PopToMap(<< 1221, 882, 0 >>);
+                }
+                flag(587) = true;
+            }
+            if ((v3 > 1414) and ((v3 < 1427) and ((v4 > 981) and (v4 < 990)))) {
+                v16 = ~FindNearest_i(65, _Big_Debris, _Avatar);
+                if v16 {
+                    Item_destroy(v16);
+                }
+            }
+        }
+    }
+}

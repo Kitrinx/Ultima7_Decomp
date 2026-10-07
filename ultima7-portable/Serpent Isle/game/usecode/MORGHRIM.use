@@ -1,0 +1,261 @@
+Routine Morghrim accepts a0 #locals(8) #uses(~LordOrLady, ~AvatarName, ~IsInInv, SetWorkTypeAt_i, Bark_i, PartyFaces_i, GivePartyExp_i, ~GiveItemsOrDrop_i, ~AskYesNo) {
+    v0 = ~GetNPCID_i(_Morghrim);
+    v1 = ~LordOrLady();
+    v2 = ~AvatarName();
+    v3 = ~IsInInv(0, 65177, _Magic_Orbs, 1, _Party);
+    if (event = _Action) {
+        if ~GetItemFlag_i(_Zombie, _Morghrim) {
+            SetWorkTypeAt_i(_Talk, 0, 65535, _Morghrim);
+        } else {
+            Sfx(119);
+            SetItemFlag_i(_Zombie, _Morghrim);
+            ClearItemFlag_i(_Asleep, _Morghrim);
+            SetFrame(30, _Morghrim);
+            Item_move(<< 1598, 1101, 0 >>, _Morghrim);
+            SetWorkType(_Wait, _Morghrim);
+            createSprite(65535, 0, 0, 0, 1101, 1598, 7);
+            createSprite(65533, 12, 0, 0, 1101, 1598, 7);
+            Bark_i(3, "Draygan's power is broken!", _Morghrim);
+            v4 = ~PostInFuture(10, << _aNO_HALT_i, _aUSABLE_i, #Morghrim >>, _Morghrim);
+        }
+    }
+    if (event = _Converse) {
+        Item_bark("@Greetings, old man...@", _Avatar);
+        PartyFaces_i(65377);
+        Bark_i(2, "@Who calleth me old?@", _Morghrim);
+        SetWorkType(_Talk, _Morghrim);
+    }
+    if (event = _Talking) {
+        Npc_schedule(_Morghrim);
+        ClearBark_i(_Morghrim);
+        SetSpeaker0_i(0, _Morghrim);
+        TurnOn(<< "Master" >>);
+        v5 = ~GetItemFlag_i(_Met, _Morghrim);
+        if (~GetItemFlag_i(_Dead, _Draygan) and not flag(699)) {
+            if ~IsInInv(0, 65177, _Magic_Orbs, 1, _Party) {
+                SetWorkTypeAt_i(_Wander, 0, 65535, _Morghrim);
+                ["Thou must return the Heart of Elerion to me! I need it to restore balance to the forest and its creatures."];
+                SetWorkType(_Hound, _Morghrim);
+                SetWorkType(_Hound, _Beryl);
+                Npc_setAlignment(_Neutral, _Beryl);
+                TurnOn("give Orb");
+                TurnOff("Master");
+            } else {
+                SetWorkType(_Hound, _Beryl);
+                Npc_setAlignment(_Neutral, _Beryl);
+                SetWorkType(_Hound, _Morghrim);
+                ["I must have the Heart of Elerion. Draygan had it, but it belongs to me. If thou canst find it, I shall reward thee."];
+                TurnOn("reward");
+                TurnOff("Master");
+            }
+        } else {
+            if (v5 = false) {
+                ["I am Morghrim, Master of these forests."];
+            } else {
+                ["There thou art! I knew thou wert here somewhere!"];
+            }
+            if (flag(697) and not ~GetItemFlag_i(_Dead, _Draygan)) {
+                TurnOn("King's Savior");
+            }
+        }
+        if (~GetItemFlag_i(_Dead, _Draygan) and flag(699)) {
+            ["I thank thee for all that thou hast done. The forest and its animals are free from the evil that Draygan had instilled in them."];
+            ["Stay here as long as thou wishest, friend."];
+            TurnOn("Hound of Doskar");
+            TurnOff("Master");
+        }
+        TurnOn("bye");
+        converse {
+            key ("change subject") {
+                PopKeys();
+                ["What wouldst thou have me speak of, stranger?"];
+            }
+            key ("give Orb") {
+                TurnOff("give Orb");
+                flag(699) = true;
+                ["I thank thee for thy kind deed! In return I shall give thee the whistle to summon the Hound of Doskar."];
+                ["He will tend to range away from thee when thou hast not given him something to track. If thou dost ever need him, all that thou must do is blow the magic whistle."];
+                v4 = ~TakeFromParty_i(0, 0, _All, _Magic_Orbs, 1);
+                GivePartyExp_i(300);
+                v4 = ~GiveItemsOrDrop_i(true, false, 4, 0, 649, 1, _Avatar);
+                RevertSchedule_i(_Morghrim);
+                Npc_schedule(_Morghrim);
+            }
+            key ("reward") {
+                TurnOff("reward");
+                ["Give the Orb to me, and thou shalt have a most peculiar reward -- the Whistle of Doskar."];
+                ["Use it and thou shalt summon one of the great supernatural hounds from my world. Such a hound can track anything, over any distance."];
+            }
+            key ("King's Savior") {
+                TurnOff("King's Savior");
+                ["Thou art looking for the plant they call King's Savior? It is a green plant with spiked foliage and tiny yellow blossoms."];
+                ["Thou shalt find King's Savior growing near mushrooms, along the western shore of this land, beyond the mountain ridge."];
+                ["I won't be asking what thou dost want it for. It is none of my business."];
+            }
+            key ("Master") {
+                TurnOff("Master");
+                ["That is correct! I am the Forest Master! Friend to Windrunner! Former protector of Elerion, and now refugee of Pagan! Of course that will mean nothing to a foreigner like thyself. Dost thou know that I can speak to animals and trees? Do not smirk, knave!"];
+                SetItemFlag_i(_Met, _Morghrim);
+                TurnOn(<< "Windrunner", "Pagan", "Elerion", "speak to animals and trees" >>);
+            }
+            key ("Windrunner") {
+                TurnOff("Windrunner");
+                ["He is a great gray wolf, and my longtime friend. He is also a refugee, like myself. We have been through many adventures together."];
+            }
+            key ("Pagan") {
+                TurnOff("Pagan");
+                ["Ah, Pagan! A wondrous world, far better than this miserable place. At least, it was before it was destroyed by the Evil One and his followers."];
+                PushKeys();
+                TurnOn(<< "Evil One", "followers", "change subject" >>);
+            }
+            key ("Evil One") {
+                TurnOff("Evil One");
+                ["He is the Destructor of Worlds, the one who calls himself the Guardian. Ah, but why do I speak of this to thee? What wouldst thou knowest of him? Bah!"];
+            }
+            key ("followers") {
+                TurnOff("followers");
+                ["The followers of the Evil One were legion, and they declared war upon all who did not fall in tribute to their master. I am proud to count myself among the enemies of the Evil One and am proud to have earned his wrath. But his followers in their cowardice set fire to my forest. Even the Great Tree of Life, Elerion, burned. Using all my powers I was able to obtain the Silver Seed from within Elerion, but in the effort the flames took away my sight. The agony was unbearable and I would have surely died there, in my dead forest, on my dead world, if not for my one true friend, Windrunner. He saved me, so that one day I could become the protector of a new forest. But I have been blind since that day."];
+                TurnOn(<< "saved thee", "new forest" >>);
+            }
+            key ("saved thee") {
+                TurnOff("saved thee");
+                ["Through his efforts, we escaped, and I used the last of my magic to escape. We found ourselves here -- on the Serpent Isle."];
+            }
+            key ("new forest") {
+                TurnOff("new forest");
+                ["That would be this place. I have been the caretaker of the trees of these lands for several centuries. It seems that time doth not pass at the same rate here as on my world. But I am sad to say that my powers are not what they once were. Now this forest, this entire world, is dying -- even as mine old world did. But this world will not die with a scream, but with a whimper. Not torn asunder by some terrible devil, but gently fallen into the slumber of death as great cosmic forces shift out of alignment."];
+            }
+            key ("Elerion") {
+                TurnOff("Elerion");
+                ["Elerion was the magnificent tree of life on the world of Pagan! How couldst thou not know such a thing! It stood as a symbol of peace and endurance for more than a millennium, its branches stretched across the sky. I was the last in a long line of noble and dutiful protectors of Elerion. It was the bearer of the Silver Seed and the prime target of the Evil One and his followers."];
+                PushKeys();
+                TurnOn(<< "Silver Seed", "prime target", "change subject" >>);
+            }
+            key ("Silver Seed") {
+                TurnOff("Silver Seed");
+                if $USED_AMULET_OF_BALANCE {
+                    ["<v1>, fate has burdened me with a tremendous weight!  The Silver Seed was split open in the destruction and discord and its magical powers have seeped from it.  The task was mine to plant the Silver Seed, if I survived the cataclysmic end this land faces. I have failed in that duty now, too.  Hrumph!  If only the tales were true!"];
+                    TurnOn(<< "tales", "split open" >>);
+                } else {
+                    ["One day in the far, far future, if this world doth somehow manage to survive its myriad cataclysms, it will be time for me to plant the Silver Seed. Only I will know when and only I will know what to do. Hmmph! I will speak of this no more! Do not ask me of it again!"];
+                }
+            }
+            key ("prime target") {
+                TurnOff("prime target");
+                ["It seemed to be the way of this Guardian to try and destroy all goodness and life in the world. I spit upon him! Why, if this Evil One were here right now I would tear off his head and feed the rest of him to Windrunner! That is what I would do!"];
+            }
+            key ("speak to animals and trees") {
+                TurnOff("speak to animals and trees");
+                ["It is far more interesting to speak to an animal or tree than it is to speak to thee, I can assure thee of that! Much better conversation! Why, it is through this talent that I am able to speak to the Hound of Doskar, for instance."];
+                if not flag(699) {
+                    ["Unfortunately, I am having a problem with most of mine other magical powers."];
+                }
+                PushKeys();
+                TurnOn(<< "Hound of Doskar", "magical powers", "change subject" >>);
+            }
+            key ("Hound of Doskar") {
+                TurnOff("Hound of Doskar");
+                ["The stories that Hound can tell! I can talk with the Hound of Doskar for hours! It is a great mystical beast capable of tracking any sort of creature. It can track across worlds and is often ranging, on the scent of one unusual thing or another."];
+                TurnOn("tracking");
+            }
+            key ("tracking") {
+                TurnOff("tracking");
+                ["Before the Hound of Doskar can track, thou must show it an item belonging to the person whom thou dost wish to seek."];
+                ["Not any old item -- it must be something which reflects the soul of the lost one! Something personal, something of the heart."];
+                ["Then the Hound can guide thee to the general vicinity where the sought being doth dwell. Nothing can stop the beast."];
+            }
+            key ("magical powers") {
+                TurnOff("magical powers");
+                ["I confess I am not comfortable with the ways magic is practiced on this world, as prescribed by the sorcerers of Moonshade. I suppose I am simply not used to it. This world is plagued by such chaos and imbalance. Long ago, I grew so frustrated by not understanding the way it worked that I put all of my power into a living Orb -- the Heart of Elerion."];
+                TurnOn(<< "chaos and imbalance", "Heart of Elerion" >>);
+            }
+            key ("chaos and imbalance") {
+                TurnOff("chaos and imbalance");
+                ["For example, these bizarre storms! Surely thou art familiar with them! We had nothing like this on Pagan! It hath completely interfered with me using my powers!"];
+            }
+            key ("Heart of Elerion") {
+                TurnOff("Heart of Elerion");
+                ["With the Orb I am as one with the animals and plants of the forest, and I am its Master, servant and devoted protector. The Orb is spiritually connected to me."];
+                TurnOn("connected");
+                if not flag(699) {
+                    ["But it hath been stolen!"];
+                    TurnOn("stolen");
+                }
+            }
+            key ("connected") {
+                TurnOff("connected");
+                ["My thoughts, emotions, perceptions -- my soul -- it is all tied to the Orb. The Heart of Elerion is like unto mine own heart beating in my chest."];
+                if not flag(699) {
+                    ["Having lost the Orb I am as a dead man walking. I cannot heal the land! I cannot even summon the Hound of Doskar for a decent conversation!"];
+                } else {
+                    ["Through it I have the power to heal the land when harm hath come to it, and I can summon the Hound of Doskar."];
+                }
+                TurnOn(<< "heal the land", "summon the Hound" >>);
+            }
+            key ("heal the land") {
+                TurnOff("heal the land");
+                ["And the land doth sorely need it. Thou hast travelled this forest.\x09The trees are tall, but brittle-dry. Soon they will be lifeless and bare. The wolves in this forest are already becoming quite mean, as I am certain thou hast noticed. It is all the wicked result of forces out of balance."];
+            }
+            key ("summon the Hound") {
+                TurnOff("summon the Hound");
+                if not flag(699) {
+                    ["Ever since I have lost contact with the Orb, I am so weakened that I have not been able to produce a call that the Hound is capable of hearing -- even with those long floppy ears on that miserable mongrel! Bah! Didst thou require the hound for some reason?"];
+                    v6 = ~AskYesNo();
+                    if v6 {
+                        ["I cannot help thee until mine Orb, the Heart of Elerion, is returned..."];
+                    } else {
+                        ["Then why are we talking about the Hound of Doskar?! Bah! I have heard more coherent conversations from trees!"];
+                        Bark_i(0, "@Bah!@", _Morghrim);
+                        terminate;
+                    }
+                } else {
+                    ["But I already gave thee the whistle to summon the Hound! I hope thou hast not lost it, for if thou hast lost the whistle, I cannot help thee."];
+                }
+            }
+            key ("stolen") {
+                TurnOff("stolen");
+                ["Draygan, the leader of a mining camp that is elsewhere in the forest, came traipsing through here with some of his friends one day. They reached my Sanctuary while I was away and stole mine Orb! I had mine hands full with another problem at the time so I sent Windrunner and his mates after them.\x09The wolves killed all of them save for Draygan himself. But he threatened to destroy the Orb if I did not let him go. Since that time, he hath escaped me."];
+                PushKeys();
+                TurnOn(<< "another problem", "miner's camp", "Draygan", "change subject" >>);
+            }
+            key ("another problem") {
+                TurnOff("another problem");
+                ["That would be Hazard the Trapper. Perhaps thou hast heard of him. I am told he is a man of some renown in certain circles. He and I have come against each other before. I bear no grudge against any who hunt in my forest for food, nor one who makes their living as a hunter. But this Hazard is as he is named. No sense nor love for anything save the kill. He hunts and kills without ceasing, with bloody and painful methods. None of the predator's grace -- like the wolves. I cannot abide a man such as he!"];
+            }
+            key ("miner's camp") {
+                TurnOff("miner's camp");
+                ["A group of miners driven delirious with gold fever sold everything they owned and came here some time ago. They found nothing and were driven to the brink of starvation. Most of the miners tried to leave but they were eaten by the wolves. They were driven away because of Draygan's demands of constant work. A terrible tragedy."];
+            }
+            key ("tales") {
+                TurnOff("tales");
+                ["I did go to the Xenkan Monks for aid in my quest to make whole the seed.  They could not heal it, but they told me of a passage in a decrepit book.  It was penned by a scribe of the long-dead folk who once peopled this isle, and it hinted that they, too, possessed a Silver Seed!  Alas, the scribe made no mention of its whereabouts, so it may as well be myth!"];
+            }
+            key ("split open") {
+                TurnOff("split open");
+                ["Magical as it may be, it is naught but a seed, susceptible to the rigors of the world around it.  I know not when, but the thin shell of the seed split apart.  The contents, wherein the magic of the seed did dwell, were mashed and beaten unknowingly by my own body whilst I tried to escape.  The magic within died."];
+            }
+            key ("Draygan") {
+                TurnOff("Draygan");
+                ["Now that Draygan possesses the Orb, he is nearly as powerful as I. Yet I am not as powerful as I once was. Over time my powers have diminished even more and I am no longer capable of challenging him for possession of the Orb. He is virtually impervious to all forms of harm. I doubt thou wouldst fare better than I have against him and the conflicts have all but killed me! If I were thee, I would try to reason with Draygan. He'll not listen to me for we are enemies. But thou mightest have a chance."];
+                ["Wouldst thou try to retrieve mine Orb?"];
+                v7 = ~AskYesNo();
+                if v7 {
+                    ["Thou art a true friend, if a strange one. So I shall give thee a word of warning. The wolves and bears and boars of this forest are very hungry. There was a time not so long ago when I could have assured that no harm would come to thee, not only while thou wert in my forest, but all across this world. But not only hath my magic gone, but as I am certain thou dost know, this world is off kilter. Nothing is certain anymore. Good luck to thee."];
+                    flag(698) = true;
+                } else {
+                    ["Then I have nothing more to say to thee!"];
+                    Bark_i(0, "@I am alone...@", _Morghrim);
+                    terminate;
+                }
+            }
+            key ("bye") {
+                CloseSpeaker0_i();
+                CloseSpeaker1_i();
+                Bark_i(0, "@Goodbye.@", _Avatar);
+                Bark_i(3, "@Take care!@", _Morghrim);
+                break;
+            }
+        }
+        clear_answers;
+    }
+}

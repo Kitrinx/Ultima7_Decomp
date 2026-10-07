@@ -1,0 +1,43 @@
+Routine Hench1 accepts a0 #locals(5) #uses(~LordOrLady, ~AvatarName, PartyFaces_i, AttackAvatar_i, Bark_i, ~GimmePathEgg) {
+    v0 = ~LordOrLady();
+    v1 = ~AvatarSex();
+    v2 = ~AvatarName();
+    if (event = _Converse) {
+        Item_bark("Could we speak?", _Avatar);
+        PartyFaces_i(65331);
+        AttackAvatar_i(_Hench1);
+    }
+    if (event = _Bark) {
+        v3 = ~GetDist(_Avatar, _Hench1);
+        if (~Random(12) > v3) {
+            Bark_i(5, "@'Tis him!@", item);
+            AttackAvatar_i(_Hench1);
+        } else {
+            if (~GetMusic() <> 12) {
+                SetMusic(~GimmePathEgg(1, 5), 12);
+            }
+            v4 = ~Random(6);
+            if (v4 = 1) {
+                Item_bark("@I am hungry!@", _Hench1);
+            }
+            if (v4 = 2) {
+                Item_bark("@Where is the food?@", _Hench1);
+            }
+            if (v4 = 3) {
+                Item_bark("@Nothing but dust...@", _Hench1);
+            }
+            if (v4 = 4) {
+                Item_bark("@Must eat...@", _Hench1);
+            }
+            if (v4 = 5) {
+                Item_bark("@There must be food!@", _Hench1);
+            }
+            if (v4 = 6) {
+                Item_bark("@So hungry!@", _Hench1);
+            }
+        }
+    }
+    if ((event = _NearDeath) and ~GetItemFlag_i(_Tournament, item)) {
+        ClearItemFlag_i(_Tournament, item);
+    }
+}

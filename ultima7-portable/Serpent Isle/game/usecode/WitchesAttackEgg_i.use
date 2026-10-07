@@ -1,0 +1,91 @@
+Routine WitchesAttackEgg_i accepts a0 #locals(19) #uses(FaceAvatar_i, PartyFaces_i, ~GimmePathEgg, Bark_i) {
+    if (event = _Trigger) {
+        $HAVE_SILVER_SEED = true;
+        v0 = << 2629, 2599, 2629, 2596, 2631, 2594 >>;
+        v1 = << 240, 239, 238 >>;
+        v2 = 1;
+        While (v2 <= 3) {
+            v3 = (v2 * 2);
+            v4 = ~CreateCreature_i(<< v0::(v3 - 1), v0::v3, 0 >>, _Xenka);
+            if v4 {
+                SetWorkType(_Wait, v4);
+                v5 = ~GiveToCont_i(false, v3, v1::v2, _Unique_Key, 1, v4);
+                v2 = (v2 + 1);
+                createSprite(65535, 0, 0, 0, v0::v3, v0::(v3 - 1), 26);
+                Sfx(81);
+                FaceAvatar_i(v4);
+                SetNPCID_i(v2, v4);
+                Npc_setAlignment(_Evil, v4);
+                ClearItemFlag_i(_IsTemporary_i, v4);
+                ClearItemFlag_i(_Tournament, v4);
+                SetNPCID_i((v2 + 10), v4);
+                v6 = ~GetNPCStat_i(_Str, v4);
+                v7 = (11 - v6);
+                v5 = ~ChangeNPCStat_i(v7, _Str, v4);
+                v6 = ~GetNPCStat_i(_Dex, v4);
+                v7 = (13 - v6);
+                v5 = ~ChangeNPCStat_i(v7, _Dex, v4);
+                v6 = ~GetNPCStat_i(_Int, v4);
+                v7 = (20 - v6);
+                v5 = ~ChangeNPCStat_i(v7, _Int, v4);
+                v6 = ~GetNPCStat_i(_Cbt, v4);
+                v7 = (12 - v6);
+                v5 = ~ChangeNPCStat_i(v7, _Cbt, v4);
+                v6 = ~GetNPCStat_i(_Hits, v4);
+                v7 = (11 - v6);
+                v5 = ~ChangeNPCStat_i(v7, _Hits, v4);
+                if (v2 = 3) {
+                    PartyFaces_i(v4);
+                }
+            }
+        }
+        v8 = ~GimmePathEgg(1, 0);
+        v5 = ~PostInFuture(14, << _aNO_HALT_i, _aUSABLE_i, #WitchesAttackEgg_i >>, v8);
+        terminate;
+    }
+    if (event = _Action) {
+        v9 = ~AvatarSex();
+        v10 = "he";
+        v11 = "him";
+        v12 = "his";
+        if v9 {
+            v10 = "she";
+            v11 = "her";
+            v12 = "her";
+        }
+        SetSpeaker0_i(0, 65222);
+        ["Not so fast, deary! Ye don't think that ye kin just dance outta here with that little seed so easy, now do ye?"];
+        SetSpeaker1_i(0, _Avatar);
+        ["And who will stop me, hag? Thou?"];
+        SetSpeakerSlot_i(0);
+        ["Hag, now is it?! Well, we shall see about that, deary!"];
+        SetSpeaker0_i(0, 65224);
+        ["I don't know about thee, Drusilla, but I think that lout would do well as a candlestick. What thinkest thou?"];
+        CloseSpeaker1_i();
+        SetSpeaker1_i(0, 65222);
+        ["With such a bright wit, I think it would be fitting indeed!"];
+        SetSpeakerSlot_i(0);
+        ["Bright wit?! I would have said half-wit, trying to keep this flawed world alive!];
+        ["One would think that a pawn of prophecy would be... I don't know, more intelligent!"];
+        CloseSpeaker1_i();
+        SetSpeaker1_i(0, 65223);
+        ["Oh, don't be so hard on <v11>! It's not <v12> fault that <v10> doesn't have the wisdom of the Guardian to guide <v11>...];
+        ["Besides, I think <v10> is rather cute..."];
+        SetSpeakerSlot_i(0);
+        ["Hsssst! Solaria! Thou shouldst not speak of the Guide to outsiders! Now thou hast sealed <v12> fate! Wilt thou never learn to think beyond thy bed?!"];
+        CloseSpeaker0_i();
+        CloseSpeaker1_i();
+        v13 = ~FindNearby_i(0, 30, _Xenka, _Avatar);
+        v14 = << "@Oh dear...@", "@Fool!@", "@Take that!@" >>;
+        v15 = 1;
+        Foreach v18 in v13 {
+            Bark_i((v15 * 4), v14::v15, v18);
+            if (v15 = 3) {
+                v5 = ~PostInFuture(10, << _aNO_HALT_i, 2002, byte(39), 2, byte(111), byte(88), 67 >>, v18);
+            }
+            v15 = (v15 + 1);
+        }
+        v5 = ~PostInFuture(20, << _aNO_HALT_i, _aUSABLE_i, #SilverSeedAmbush_i >>, item);
+        $temp1flag = false;
+    }
+}

@@ -238,7 +238,7 @@ void Walker::setTarget(Coord x, Coord y, int8_t z)
 
 uint8_t Walker::isAtTarget()
 {
-	return destX == x && destY == y && destZ == z;
+	return destX == x && destY == y && (uint8_t)destZ == z;
 }
 
 int16_t Walker::getDistance()
@@ -460,7 +460,7 @@ int8_t Route::walk(int16_t steps)
 		}
 		if (cachedValid) {
 			stepper.rejectObstacle = 1;
-			if (cached.x == stepper.x && cached.y == stepper.y && cached.z == stepper.z)
+			if (cached.x == stepper.x && cached.y == stepper.y && (uint8_t)cached.z == stepper.z)
 				cachedValid = 0;
 		} else {
 			stepper.rejectObstacle = 0;

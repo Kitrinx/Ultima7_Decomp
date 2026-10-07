@@ -1,0 +1,50 @@
+Routine Sheep accepts a0 #locals(7) #uses(~PartyUtters, PathToItem_i, ~DirFrom_i) {
+    if (event = _Converse) {
+        v0 = ~GetNPCID_i(item);
+        if (v0 < 3) {
+            SetNPCID_i((v0 + 1), item);
+            terminate;
+        } else {
+            if (~rndRange(10, 1) = 1) {
+                SetNPCID_i(0, item);
+                v1 = ~PartyUtters(true, "@I'm baaaad!@", "@That's baaaad!@", 1);
+                Kernel_resetRef(item);
+                SetWorkType(_Wait, item);
+                v2 = << 1, 1 >>;
+                v3 = << 0, 0 >>;
+                v4 = 65535;
+                PathToItem_i(10, item, #Sheep, v4, v3, v2, item);
+            }
+        }
+    }
+    if (event = _Pathfind1) {
+        v5 = ~DirFrom_i(item, _Avatar);
+        v6 = ~DirFrom_i(_Avatar, item);
+        Kernel_resetRef(_Avatar);
+        SetItemFlag_i(_DontMove_i, _Avatar);
+        if ~AvatarSex() {
+            v1 = ~PostAction(<< _aFACE_i, v5, _aLIE_FRAME_i >>, _Avatar);
+            if not v1 {
+                ClearItemFlag_i(_DontMove_i, _Avatar);
+            }
+            v1 = ~PostAction(<< _aFACE_i, v6, _aWAIT_i, 20, _aUSABLE_i, #Sheep >>, item);
+            if not v1 {
+                ClearItemFlag_i(_DontMove_i, _Avatar);
+            }
+        } else {
+            v1 = ~PostAction(<< _aFACE_i, v5, _aKNEEL_FRAME_i >>, _Avatar);
+            if not v1 {
+                ClearItemFlag_i(_DontMove_i, _Avatar);
+            }
+            v1 = ~PostAction(<< _aFACE_i, v5, _aWAIT_i, 20, _aUSABLE_i, #Sheep >>, item);
+            if not v1 {
+                ClearItemFlag_i(_DontMove_i, _Avatar);
+            }
+        }
+    }
+    if (event = _Action) {
+        ClearItemFlag_i(_DontMove_i, _Avatar);
+        SetWorkType(_Shy, item);
+        v1 = ~PartyUtters(true, "@That felt good!@", "@Thou art SICK!@", 1);
+    }
+}

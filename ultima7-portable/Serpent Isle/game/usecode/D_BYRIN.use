@@ -1,0 +1,291 @@
+Routine DByrin accepts a0 #locals(8) #uses(~LordOrLady, ~AvatarName, PartyFaces_i, Bark_i, ~AskOrdList, SingSong_i, ~AskYesNo) {
+    v0 = ~LordOrLady();
+    v1 = ~AvatarSex();
+    v2 = ~AvatarName();
+    v3 = ~GetItemFlag_i(_Met, _Byrin);
+    if (event = _NearDeath) {
+        SetSpeaker0_i(0, _Byrin);
+        ["Art thou insane? Why art thou attacking me? This is my dream!" *"If I had a two-handed sword, I would make mincemeat of thee!" *"I must awaken..."];
+        CloseSpeaker0_i();
+        v4 = ~GetCoord(item);
+        Sfx(76);
+        createSprite(65535, 0, 0, 0, v4::2, v4::1, 7);
+        RemoveNPC_i(_DByrin);
+    }
+    if (event = _Converse) {
+        Item_bark("@Hail, minstrel!@", _Avatar);
+        PartyFaces_i(65318);
+        Bark_i(5, (("@Greetings, " + v0) + "!@"), _DByrin);
+        SetWorkType(_Talk, _DByrin);
+    }
+    if (event = _Talking) {
+        SetWorkType(_Wander, _DByrin);
+        SetSpeaker0_i(0, _Byrin);
+        if (v3 = true) {
+            ["I had wondered when I would encounter thee here, Avatar." ~"I expect that thou wouldst like some answers, no doubt." *"Or perhaps I could sing thee a song to ease thy way."];
+        } else {
+            ["Welcome, fellow dreamer!" ~"I am Byrin, a gleeman by trade." *"Thou dost look perplexed. I'll warrant that thou wouldst like some answers." ~"Or perhaps I could sing thee a song to ease thy way."];
+        }
+        TurnOn(<< "answers", "song", "bye" >>);
+        converse {
+            key ("answers") {
+                ["Thou mayest find that the answers only give rise to more questions." ~"But I shall do my best to help thee." *"First thou shouldst know that thou dost walk in the land of dreamers." ~"There are only two ways to enter or exit here."];
+                TurnOff("answers");
+                TurnOn("two ways");
+            }
+            key ("two ways") {
+                ["The first way to enter this realm is from the safety of thy bed..." ~"In thy nightly slumber." *"The second way to enter here is far more perilous..." ~"By falling prey to the enchantments in Gorlab Swamp."];
+                TurnOff("two ways");
+                TurnOn("Gorlab Swamp");
+            }
+            key ("Gorlab Swamp") {
+                ["Long ago -- even before the serpent people made this land their home -- a sorceror named Rabindrinath swore to destroy the peaceful town of Gorlab." ~"But the town healer, Siranush, opposed him and the evil spell went awry." *"The inhabitants of the town were not destroyed, but were instead trapped\x09within the realm of dreams..." ~"Along with the mad sorceror..." ~"And any who dare enter the environs of Gorlab."];
+                TurnOff("Gorlab Swamp");
+                TurnOn(<< "Rabindrinath", "Siranush" >>);
+            }
+            key ("Rabindrinath") {
+                ["Rabindrinath hath struggled mightily against Siranush across the span of time." ~"Each of his attacks have been repelled..." ~"Much to his displeasure."];
+                TurnOff("Rabindrinath");
+                TurnOn("displeasure");
+            }
+            key ("displeasure") {
+                ["Rabindrinath releases his anger by troubling the thoughts of those who venture here within their dreams."];
+                TurnOff("displeasure");
+            }
+            key ("Siranush") {
+                ["Siranush is a strong-willed woman who hath repelled all of Rabindrinath's attacks on her people." ~"She is no sorceror, and I fear that her strength will one day fail her." *"Were Siranush to be vanquished, I am sure that Rabindrinath would turn his evil intent on the wandering dreamers." ~"Without Siranush's guidance, those who enter here might never leave."];
+                TurnOff("Siranush");
+                TurnOn("leave");
+            }
+            key ("leave") {
+                ["As I said before, there are two ways to enter the land of dreamers." ~"If thou didst come here from the comfort of thy bed, thou canst simply awaken and thou wilt return to the land of waking men." *"But, if thou didst come here through the enchantments in the Swamp, thou must die here to return to thy body."];
+                TurnOff("leave");
+                TurnOn("die");
+            }
+            key ("die") {
+                ["By die, I do not mean that thou must cease living." ~"I mean that thy perceived life here must end..." *"Thy death here returns thee to thy body." ~"So long as Siranush prevails and thy body lives, thou canst return to the world of waking men." *"But if Siranush should fall, or thy body die..." ~"thou shalt remain trapped here for all time."];
+                TurnOff("die");
+            }
+            key ("song") {
+                ["I know many songs..." ~"Dost thou wish to hear one I have already sung?" ~"Or dost thou wish to hear a new song?"];
+                v5 = << >>;
+                if (~AskOrdList(<< "old song", "new song" >>) = 1) {
+                    if ($sangbeatrix = true) {
+                        v5 = (v5 & 1);
+                    }
+                    if ($sangsunrise = true) {
+                        v5 = (v5 & 2);
+                    }
+                    if ($sanggwani = true) {
+                        v5 = (v5 & 3);
+                    }
+                    if ($sangforestmaster = true) {
+                        v5 = (v5 & 4);
+                    }
+                    if ($sanggorlab = true) {
+                        v5 = (v5 & 5);
+                    }
+                    if ($sangwhitedragon = true) {
+                        v5 = (v5 & 6);
+                    }
+                } else {
+                    if ($sangbeatrix = false) {
+                        v5 = (v5 & 1);
+                    }
+                    if ($sangsunrise = false) {
+                        v5 = (v5 & 2);
+                    }
+                    if ($sanggwani = false) {
+                        v5 = (v5 & 3);
+                    }
+                    if ($sangforestmaster = false) {
+                        v5 = (v5 & 4);
+                    }
+                    if ($sanggorlab = false) {
+                        v5 = (v5 & 5);
+                    }
+                    if ($sangwhitedragon = false) {
+                        v5 = (v5 & 6);
+                    }
+                }
+                if (v5 = << >>) {
+                    ["I'm sorry... ~Thou hast heard all of my songs."];
+                } else {
+                    v6 = ~Random(~ListSize_i(v5));
+                    v7 = v5::v6;
+                    SingSong_i(v7);
+                }
+            }
+            key ("tales") {
+                ["For those with an adventurous spirit, I can tell thee of the northern savages."];
+                ["For those who wish to hear of a lost civilization, I can tell thee of the people who left the ruins on this continent."];
+                ["For those who would hear a tale of bitter bravery, I can tell thee of the lost king."];
+                TurnOff("tales");
+                TurnOn(<< "northern savages", "lost culture", "lost king" >>);
+            }
+            key ("northern savages") {
+                ["Once thou leavest the warm lands of Man, thou dost come into the realm of the northern savages." ~"These creatures have faces that strongly resemble that of a normal man, but they are covered head to foot in a shaggy fur pelt."];
+                ["Some say that these creatures are some lost tribe of Man that hath adapted to the cold." ~"Still others claim that the savages are a mage-created race that guards some great, mystical secret."];
+                ["None can say if they are intelligent." ~"They build no structures and speak no recognizable language."];
+                if ($sanggwani = false) {
+                    ["There is also a song about the northern savages. ~Wouldst thou care to hear it?"];
+                    if (~AskYesNo() = true) {
+                        ["All right, then..."];
+                        SingSong_i(1);
+                    } else {
+                        ["Perhaps some other time, then."];
+                    }
+                }
+                TurnOff("northern savages");
+            }
+            key ("lost culture") {
+                ["Long ago, before any of the cities thou knowest today were built, there was a race of Man who worshipped three great elemental serpents." ~"Some followed one of fire. Others followed one of ice. And still others followed one of earth."];
+                ["As only the serpent of earth could withstand both the fire and the ice of the other serpents, it did possess the most power." ~"The fire and ice serpents were violently opposed to each other, but were held in check by the serpent of earth."];
+                ["Then the serpent of earth lost power. The fire and ice serpents warred for supremacy." ~"When the battle ended, it mattered not which serpent had won..." ~"for the land was destroyed and all the worshippers lay dead."];
+                TurnOff("lost culture");
+            }
+            key ("lost king") {
+                ["To the north of here stand two castles, seemingly empty from the ravages of time." ~"But neither is truly empty, for they both hold the ghosts of trust betrayed."];
+                ["In one majestic castle a lady waits for her faithless lover who pledged his love and never returned." ~"In the other, a father and ruler, driven mad by the loss of daughter and erstwhile friend, took his people beyond the cares of time."];
+                ["All the trapped souls await the return of the one whose desertion forever changed the land he had sworn to protect." ~"All wait for the return of the lost king... and revenge!"];
+                if ($sangbeatrix = false) {
+                    ["There is a song about the lady." ~"Wouldst thou care to hear it?"];
+                    if (~AskYesNo() = true) {
+                        ["It is a sad ballad indeed..."];
+                        SingSong_i(1);
+                    } else {
+                        ["Another time, then."];
+                    }
+                }
+                if ($sangwhitedragon = false) {
+                    ["There is a song about the other castle, as well." ~"Wouldst thou care to hear it?"];
+                    if (~AskYesNo() = true) {
+                        ["Prepare thyselves..."];
+                        SingSong_i(1);
+                    } else {
+                        ["Another time, then."];
+                    }
+                }
+                TurnOff("lost king");
+            }
+            key ("tunes") {
+                if ($gottattoo = true) {
+                    if (v1 = true) {
+                        ["For thee, brave lady, I would sing of dreams, or perhaps of tragedy." ~"Of course, although I sing to entertain others, I hope for some small token of appreciation..." ~"if possible. Singing is thirsty business."];
+                        TurnOn(<< "dreams", "tragedy" >>);
+                    } else {
+                        ["For thee, noble sir, I would sing a heart-rending ballad, or perhaps long-lost lore." ~"Of course, although I sing to entertain others, I hope for some small token of appreciation..." ~"if possible. Singing is thirsty business."];
+                        TurnOn(<< "ballad", "lore" >>);
+                    }
+                } else {
+                    ["I sense that thou dost like adventure." ~"For thee I would sing of strange beings and strange places." ~"Of course, although I sing to entertain others, I hope for some small token of appreciation..." ~"if possible. Singing is thirsty business."];
+                    TurnOn(<< "strange beings", "strange places" >>);
+                }
+                TurnOff("tunes");
+            }
+            key ("dreams") {
+                if ($sanggorlab = true) {
+                    ["I believe that thou hast already heard that one." ~"Wouldst thou like to hear it again?"];
+                    if (~AskYesNo() = true) {
+                        ["My pleasure..."];
+                        SingSong_i(1);
+                    } else {
+                        ["Perhaps I could find another song for thee..."];
+                        TurnOn("song");
+                    }
+                } else {
+                    ["I hope thou dost enjoy it..."];
+                    SingSong_i(1);
+                }
+                TurnOff("dreams");
+            }
+            key ("tragedy") {
+                if ($sangwhitedragon = true) {
+                    ["I seem to remember singing this for thee before..." ~"Wouldst thou like to hear it again?"];
+                    if (~AskYesNo() = true) {
+                        ["One more time, then..."];
+                        SingSong_i(1);
+                    } else {
+                        ["Perhaps I could find another song for thee..."];
+                        TurnOn("song");
+                    }
+                } else {
+                    ["Relax and be at ease..."];
+                    SingSong_i(1);
+                }
+                TurnOff("tragedy");
+            }
+            key ("ballad") {
+                if ($sangbeatrix = true) {
+                    ["I'm certain that thou hast before..." ~"Wouldst thou like to hear it again?"];
+                    if (~AskYesNo() = true) {
+                        ["As thou wishest..."];
+                        SingSong_i(1);
+                    } else {
+                        ["Perhaps I could find another song for thee..."];
+                        TurnOn("song");
+                    }
+                } else {
+                    ["I do hope I remember it..."];
+                    SingSong_i(1);
+                }
+                TurnOff("ballad");
+            }
+            key ("lore") {
+                if ($sangsunrise = true) {
+                    ["I fear that thou dost already know this one..." ~"Wouldst thou like to hear it again?"];
+                    if (~AskYesNo() = true) {
+                        ["Thou canst sing along if thou wishest..."];
+                        SingSong_i(1);
+                    } else {
+                        ["Perhaps I could find another song for thee..."];
+                        TurnOn("song");
+                    }
+                } else {
+                    ["I think I am in the right key..."];
+                    SingSong_i(1);
+                }
+                TurnOff("lore");
+            }
+            key ("strange beings") {
+                if ($sanggwani = true) {
+                    ["I have done this one for thee before..." ~"Wouldst thou like to hear it again?"];
+                    if (~AskYesNo() = true) {
+                        ["Very well..."];
+                        SingSong_i(1);
+                    } else {
+                        ["Perhaps I could find another song for thee..."];
+                        TurnOn("song");
+                    }
+                } else {
+                    ["Thou wilt like the tempo on this one..."];
+                    SingSong_i(1);
+                }
+                TurnOff("strange beings");
+            }
+            key ("strange places") {
+                if ($sangforestmaster = true) {
+                    ["Thou knowest this one..." ~"Wouldst thou like to hear it again?"];
+                    if (~AskYesNo() = true) {
+                        ["I am cheered in that thou dost like it..."];
+                        SingSong_i(1);
+                    } else {
+                        ["Perhaps I could find another song for thee..."];
+                        TurnOn("song");
+                    }
+                } else {
+                    ["Listen carefully..."];
+                    SingSong_i(1);
+                }
+                TurnOff("strange places");
+            }
+            key ("bye") {
+                CloseSpeaker0_i();
+                Bark_i(0, "@Farewell, gleeman!@", _Avatar);
+                Bark_i(5, "@May thy path be smooth!@", _Byrin);
+                break;
+            }
+        }
+        clear_answers;
+    }
+}

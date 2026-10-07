@@ -1,0 +1,713 @@
+Routine Topo accepts a0 #locals(7) #uses(~LordOrLady, ~AvatarName, PartyFaces_i, Bark_i, ~IsNPCNear, SayIfNear_i, ~IsInInv, ~PartyUtters, TopoSellsProvisions_i, TopoBuysGems_i, MessengerBringsScroll_i) {
+    v0 = ~LordOrLady();
+    v1 = ~GetTime();
+    v2 = ~AvatarSex();
+    v3 = ~AvatarName();
+    v4 = ~GetTime();
+    if ((v4 > 1) or (v4 < 6)) {
+        v4 = "day";
+    } else {
+        v4 = "evening";
+    }
+    if (event = _Converse) {
+        Item_bark("@Pardon me...@", _Avatar);
+        PartyFaces_i(65504);
+        Bark_i(2, (("@Yes " + v0) + "?@"), _Topo);
+        SetWorkType(_Talk, _Topo);
+    }
+    if (event = _Talking) {
+        Npc_schedule(_Topo);
+        ClearBark_i(_Topo);
+        SetSpeaker0_i(0, _Topo);
+        v5 = ~GetItemFlag_i(_Met, _Topo);
+        if (v5 = false) {
+            ["Allow me to introduce myself. I'm Topo the Artisan, apprenticed to Master Ducio."];
+            SetItemFlag_i(_Met, _Topo);
+            if ~IsNPCNear(_Ducio) {
+                ["I'm a lucky man, to serve such a talented craftsman."];
+                SayIfNear_i("@He's a good boy.@", 65521);
+                SetSpeakerSlot_i(0);
+            } else {
+                ["Someday I hope to be as rich and lazy as my master!"];
+                ["He spends all his time asleep or at the inn, except when he comes here to make me crazy with his nagging."];
+            }
+            TurnOn(<< "Artisan", "Ducio" >>);
+        } else {
+            if ~IsNPCNear(_Ducio) {
+                ["Again, welcome! Might I be able to help thee today?"];
+                SayIfNear_i("@Do not be so wordy.@", 65521);
+                CloseSpeaker1_i();
+                SetSpeakerSlot_i(0);
+                ["Yes, master..."];
+            } else {
+                ["Again, welcome! As thou canst see, Master Ducio is not here at present. Perhaps I can help thee."];
+                TurnOn("Ducio's whereabouts");
+            }
+        }
+        if ($topoknowsurn and not $knowurn) {
+            TurnOn("urn");
+        }
+        if ($ducioknowslab and not $knowlabitem) {
+            TurnOn("apparatus");
+        }
+        if (flag(277) and not $knowslippers) {
+            TurnOn("slippers");
+        }
+        if ($topoknowsbrushes and not $knowgoblinhairbrush) {
+            TurnOn("strange brush");
+        }
+        if (~GetWorkType(_Topo) = _Wander) {
+            TurnOn("buy");
+        }
+        if (flag(234) and not ~GetItemFlag_i(_Dead, _Rotoluncia)) {
+            TurnOn("kidnap");
+        }
+        if ~IsInInv(65177, 65177, _Gems, 1, _Party) {
+            TurnOn("sell gems");
+        }
+        TurnOn(<< "buy", "bye" >>);
+        converse {
+            key ("kidnap") {
+                TurnOff("kidnap");
+                ["I am terribly sorry for thee at this sensitive time. Grief is a natural emotion..."];
+                v6 = ~PartyUtters(false, "@Canst thou be of aid?@", "@Our friend is missing -- not DEAD!@", 1);
+                SetSpeakerSlot_i(0);
+                ["Thou shouldst bring this matter to the attention of the Rangers. Julia would not let such an injustice stand, I am sure of it."];
+                flag(320) = true;
+            }
+            key ("Artisan") {
+                TurnOff("Artisan");
+                ["I have worked with Master Ducio for several years now. Soon I'll be able to open a shop of mine own... Topo's Treasures, I'll call it."];
+                if ~IsNPCNear(_Ducio) {
+                    SetSpeaker1_i(0, _Ducio);
+                    ["Thou art an apprentice, boy! Thou dost not work with me. Thou dost work for me! Understand?"];
+                    CloseSpeaker1_i();
+                    SetSpeakerSlot_i(0);
+                    ["Yes, master..."];
+                }
+                ["I work with the pottery. The automatons have trouble handling the slip... They generally crush a piece before 'tis fully formed and ready to fire. After firing, they are fine, but before -- that is where I work."];
+                TurnOn(<< "automatons", "slip", "firing" >>);
+            }
+            key ("automatons") {
+                TurnOff("automatons");
+                ["My Master is one of the wealthiest Mundanes in Moonshade. There is no comparison to the Mages, of course. We have three automatons -- one for sewing, one for blacksmith work, and one for baking."];
+                if not ~IsNPCNear(_Ducio) {
+                    ["That is what my Master actually specializes in... making everyone else do his work!"];
+                }
+                TurnOn(<< "Mages", "Mundanes" >>);
+            }
+            key ("Mages") {
+                TurnOff("Mages");
+                ["That is where the true money lies in Moonshade, <v0>. But if thou dost not possess magic, thou must work for a living..."];
+                if not ~IsNPCNear(_Ducio) {
+                    ["Unless thou art my Master, that is!"];
+                }
+                ["The only thing a lowly Mundane can hope for is to be able to afford an automaton from Torrissio, to help with the work load."];
+                TurnOn("Torrissio");
+            }
+            key ("Torrissio") {
+                TurnOff("Torrissio");
+                ["Torrissio is the Adept that makes the automatons. No one knows how he does it..."];
+                if ~IsNPCNear(_Ducio) {
+                    SetSpeaker1_i(0, _Ducio);
+                    ["Art thou a Mage, Topo?"];
+                    SetSpeakerSlot_i(0);
+                    ["No, master... I am a Mundane apprentice."];
+                    SetSpeakerSlot_i(1);
+                    ["Then thou dost not know what a Mage may or may not know!"];
+                    CloseSpeaker1_i();
+                    SetSpeakerSlot_i(0);
+                    ["Yes, master..."];
+                }
+                ["Though most of the automatons Torrissio makes are strictly utilitarian, he is capable of making far more sophisticated models... Thou hast only to look at Petra."];
+                TurnOn("Adept");
+            }
+            key ("Adept") {
+                TurnOff("Adept");
+                ["Those who are blessed with magical ability are not all equal, <v0>. Some, like Andrio, are novices who still have yet to learn their craft. And some, like Stefano, have little power to command even after they learn."];
+                TurnOn(<< "Andrio", "Stefano" >>);
+            }
+            key ("Andrio") {
+                TurnOff("Andrio");
+                ["Andrio is my friend... which is surprising since he is also a novice Mage. Perhaps the outrageous arrogance hath not developed in him yet."];
+                if ~IsNPCNear(_Ducio) {
+                    SetSpeaker1_i(0, _Ducio);
+                    ["Enough talk! Back to work!"];
+                    CloseSpeaker1_i();
+                    SetSpeakerSlot_i(0);
+                    ["Yes, master..."];
+                }
+            }
+            key ("Stefano") {
+                TurnOff("Stefano");
+                ["Thou wouldst like Stefano, I'm certain! Although he can cast a spell or two, he is not very good at it. So he makes his living by stealing things from one Mage for another."];
+                ["'Tis actually very amusing. He shuns his magic and those who would look down on him must deal with him to acquire things they want... Perhaps there is some justice in the world, after all."];
+                if ~IsNPCNear(_Ducio) {
+                    SetSpeaker1_i(0, _Ducio);
+                    ["How many times have I told thee to stay away from that thief, boy?! Dost thou think stealing is funny?"];
+                    SetSpeakerSlot_i(0);
+                    ["Nooo, master..."];
+                    SetSpeakerSlot_i(1);
+                    ["I should hope not! Or I'd break thine head for thee!"];
+                    CloseSpeaker1_i();
+                    SetSpeakerSlot_i(0);
+                    ["Yes, master..."];
+                } else {
+                    ["Now, if only someone would turn Ducio into a workbench, it would be the most useful he's ever been!"];
+                }
+            }
+            key ("Mundanes") {
+                TurnOff("Mundanes");
+                ["That is the title that Mages give those who cannot cast spells, <v0>. They assume that there is little to note of a person's life if it is not spent in pursuit of magic and pomposity."];
+                ["Yet they will never know the thrill of having a fine pot shape itself under their hand from a formless piece of mud..."];
+                if ~IsNPCNear(_Ducio) {
+                    SetSpeaker1_i(0, _Ducio);
+                    ["Mud?! Mud! Back to work! Thou must lack for things to do..."];
+                    CloseSpeaker1_i();
+                    SetSpeakerSlot_i(0);
+                    ["Yes, master... I mean, no, Master..."];
+                }
+            }
+            key ("slip") {
+                TurnOff("slip");
+                ["Slip is the wet clay that is formed into cups, or plates, or jugs... Almost anything! If thou hast a patient enough hand, thou canst create a world of goods from mere clay."];
+                if not ~IsNPCNear(_Ducio) {
+                    ["And heavens know that I'm patient enough... dealing with my slug of a Master!"];
+                }
+            }
+            key ("firing") {
+                TurnOff("firing");
+                ["Firing is where a piece of shaped clay is turned into the ceramic utensils thou art familiar with. By heating the clay to a great temperature, the water dries from the piece and it becomes tough and resilient."];
+                ["But if the piece is heated or cooled too quickly, it becomes brittle and fragile. 'Tis a very exacting task."];
+                if ~IsNPCNear(_Ducio) {
+                    SetSpeaker1_i(0, _Ducio);
+                    ["Who made thee a teacher, apprentice?! Back to work!"];
+                    CloseSpeaker1_i();
+                    SetSpeakerSlot_i(0);
+                    ["Yes, master..."];
+                }
+            }
+            key ("Ducio") {
+                TurnOff("Ducio");
+                if ~IsNPCNear(_Ducio) {
+                    ["Ducio is my Master. He produces the finest goods in all the city! His pottery is famed throughout the other islands as well..."];
+                    SetSpeaker1_i(0, _Ducio);
+                    ["Enough bragging. Humility. Thou must learn humility.\@"];
+                    SetSpeakerSlot_i(0);
+                } else {
+                    ["If ever I believed in shape changing, I believe it with Ducio! That man is too lazy to be human... a slug, maybe. But a human, no."];
+                    ["If it weren't for me and the automatons, he'd have to join old Mosh out begging!"];
+                    TurnOn("Mosh");
+                }
+            }
+            key ("Mosh") {
+                TurnOff("Mosh");
+                ["Mosh is the town beggar. She's very ugly... and crazy, too."];
+                ["She claims to be Columna's twin sister!"];
+            }
+            key ("Columna") {
+                TurnOff("Columna");
+                ["She is also known as the Green Enchantress. She's quite pretty, in her own way. For a Mage..."];
+            }
+            key ("Ducio's whereabouts") {
+                TurnOff("Ducio's whereabouts");
+                if (v1 > 5) {
+                    ["The Master doth dine at the inn at this hour. Thou canst find him there."];
+                    ["Canst thou imagine? He doth leave his\x09apprentice here, with nothing but a loaf of dry bread, while he doth gorge himself on Petra's baked fish!"];
+                    TurnOn(<< "inn", "Petra" >>);
+                } else {
+                    if (v1 < 3) {
+                        ["No doubt the Master is yet at home, getting his rest after a long day."];
+                        ["Yet I, who work far harder and longer than he, must be here promptly at dawn."];
+                        ["'Tis a dirty business, this apprenticeship thing. I despise it."];
+                    } else {
+                        ["I haven't a clue, except that I'm here doing all of the work, and he's not."];
+                    }
+                }
+            }
+            key ("inn") {
+                TurnOff("inn");
+                ["The Blue Boar inn. 'Tis in the northern part of the city, just west of the Palace. Many of the Mages eat there as well."];
+                ["Thou canst bargain Rocco down on his prices, if thou dost try hard enough."];
+                TurnOn("Rocco");
+            }
+            key ("Rocco") {
+                TurnOff("Rocco");
+                ["Rocco is the innkeeper at the Blue Boar. He's a gruff man, whose sole pleasure in life seems to be haggling. Well, besides Petra, that is."];
+            }
+            key ("Petra") {
+                TurnOff("Petra");
+                ["Petra is an automaton. She is Torrissio's master work... She looks exactly like a real woman, but of metal. She's quite remarkable."];
+                ["Petra looks after Rocco, and cooks for the inn. In fact, she serves the finest baked fish around. Thou shouldst try it some time."];
+            }
+            key ("urn") {
+                TurnOff("urn");
+                ["As thou hast probably deduced, I am an expert\x09craftsman -- particularly with pots and urns."];
+                ["Show me thine urn, and I shall unlock its secrets for thee."];
+                if ~IsNPCNear(_Ducio) {
+                    SayIfNear_i("@Don't be so boastful. Thou art making a\x0D\n\x09\x09\x09\x09\x09\x09fool of thyself!@", 65521);
+                    SetSpeakerSlot_i(0);
+                    ["Yes, master."];
+                }
+                if ~IsInInv(0, 65177, _Urn, 1, _Party) {
+                    ["Indeed. Note the simple scrollwork, the plain\x09glazing, the orange hue of the clay..."];
+                    ["Now look within. Dost thou see the ashes which fill this urn?"];
+                    ["Thou dost carry the funeral remains of one of\x09the good citizens of Monitor, the warrior city."];
+                    $knowurn = true;
+                    SayIfNear_i("@They'll want it back. Monitorians revere\x0D\n\x09\x09\x09\x09\x09\x09their dead.@", 65521);
+                    SetSpeakerSlot_i(0);
+                    TurnOn("Monitor");
+                } else {
+                    v6 = ~PartyUtters(false, "@I've not brought it with me.@", "@But we don't have it with\x0D\n\x09\x09\x09\x09\x09\x09\x09\x09us...@", 65533);
+                    SetSpeakerSlot_i(0);
+                    ["Bring it by, and I shall give thee thine answer."];
+                }
+            }
+            key ("Monitor") {
+                TurnOff("Monitor");
+                ["I have never left Moonshade, <v0>, so I don't know much about it. I'm told that all the citizens of Monitor are mighty warriors. Though that sounds a bit odd, to me."];
+                ["Couldst thou imagine what would happen if thou wert to disagree with a shopkeeper over the prices of his wares? Why, thou couldst find thyself very dead! Or badly hurt at the least..."];
+                ["Thou couldst see if Hawk is at the Blue Boar. He's a sailor and might know more than a man who's never left this island."];
+                if ~IsNPCNear(_Ducio) {
+                    SetSpeaker1_i(0, _Ducio);
+                    ["Since when art thou a guide? Back to work!"];
+                    CloseSpeaker1_i();
+                    SetSpeakerSlot_i(0);
+                    ["Yes, master..."];
+                }
+            }
+            key ("apparatus") {
+                TurnOff("apparatus");
+                ["Zounds, I don't know... 'Tis like nothing I've seen before."];
+            }
+            key ("slippers") {
+                TurnOff("slippers");
+                ["Definitely do not look like anything that a Mage would have lost. They have much more expensive tastes..."];
+                ["Thou couldst try asking Bucia, though. If anyone might know where these slippers came from, it would be her."];
+                TurnOn("Bucia");
+            }
+            key ("Bucia") {
+                TurnOff("Bucia");
+                ["Bucia runs the Capessi Canton for Flindo. She is the provisioner here in Moonshade. She will be able to tell thee who buys what, I'm sure. Bucia adores gossip..."];
+                if ~IsNPCNear(_Ducio) {
+                    SetSpeaker1_i(0, _Ducio);
+                    ["Thou art a fine one to talk! Work! Or I shall rip out thy tongue!"];
+                    CloseSpeaker1_i();
+                    SetSpeakerSlot_i(0);
+                    ["Yes, master..."];
+                }
+            }
+            key ("strange brush") {
+                TurnOff("strange brush");
+                ["As an expert craftsman, I can tell thee what most materials are, if I can examine the item."];
+                if ~IsNPCNear(_Ducio) {
+                    SayIfNear_i("@Thou art a braggart. Thou art trying my\x0D\n\x09\x09\x09\x09\x09\x09patience!@", 65521);
+                    SetSpeakerSlot_i(0);
+                    ["Yes, master."];
+                }
+                if ~IsInInv(5, 65177, _Brush, 1, _Party) {
+                    ["Odd brush... Certainly doth not seem like anything a lady would want."];
+                    ["Look. See how porous the handle is... This definitely isn't wood. And I don't think it would last with strenuous use."];
+                    ["From the looks of it, <v0>, I'd say that it was made of bone. Thou couldst ask Mortegro, to be sure though."];
+                    TurnOn("Mortegro");
+                } else {
+                    v6 = ~PartyUtters(false, "@I've not brought it with me.@", "@But it's not here...@", 65533);
+                    SetSpeakerSlot_i(0);
+                    ["Bring it with thee some time and I shall tell thee what it is made of."];
+                }
+            }
+            key ("Mortegro") {
+                TurnOff("Mortegro");
+                ["Mortegro is an Adept that specializes in the realm of the dead. He's a bit eerie, but if that truly is bone, he would be able to tell thee for sure."];
+                ["Last time I heard, Mortegro was helping Gustacio on some sort of weather experiment. Thou mightest look for him there, or at the Blue Boar."];
+            }
+            key ("buy") {
+                if (~GetWorkType(_Topo) = _Wander) {
+                    TopoSellsProvisions_i();
+                } else {
+                    ["If thou wouldst talk to me when I am at work, I would gladly sell thee something."];
+                }
+            }
+            key ("sell gems") {
+                if (~GetWorkType(_Topo) = _Wander) {
+                    TopoBuysGems_i();
+                } else {
+                    ["I can buy thy gems when I am at work, <v0>."];
+                }
+                TurnOff("sell gems");
+            }
+            key ("bye") {
+                CloseSpeaker0_i();
+                Bark_i(0, "@So long!@", _Avatar);
+                Bark_i(2, "@Come again!@", _Topo);
+                MessengerBringsScroll_i();
+                break;
+            }
+        }
+        clear_answers;
+    }
+}
+
+Usable TopoBuysGems_i #locals(7) #uses(~GiveItemsOrDrop_i) {
+    v0 = ~CountItem(_All, _All, _Gems, _Party);
+    ["Ah, thou dost wish to sell me gems? But, of course I will buy all that thou dost have! Master Ducio has a constant need for gems in his most important works! I will buy gems from thee for 100 guilders each."];
+    ["How many gems wouldst thou like to sell?"];
+    if (v0 <> 0) {
+        v1 = ~AskBarInput(0, 1, v0, 0);
+        if (v1 <> 0) {
+            v2 = (v1 * 100);
+            v3 = 952;
+            v4 = "gems";
+            if (v1 = 1) {
+                v4 = "gem";
+            }
+            v5 = ~TakeFromParty_i(false, _All, _All, _Gems, v1);
+            ["Very well...~Here, take thy <v2> guilders, and I wilt take thy <v1> <v4> in exchange."];
+            v6 = ~GiveItemsOrDrop_i(true, false, 65177, 65177, v3, v2, _Avatar);
+        } else {
+            ["Perhaps another time, then..."];
+        }
+    } else {
+        ["Thou dost not have any gems to sell!"];
+    }
+}
+
+Usable TopoSellsProvisions_i #locals(21) #uses(~LordOrLady, ~IsNPCNear, SayIfNear_i, ~AskOrdList, ~AskYesNo, ~TopoHaggles_i, ~SellItem_i, ~PartyUtters) {
+    v0 = ~LordOrLady();
+    v1 = false;
+    v2 = ~rndRange(4, 1);
+    PushKeys();
+    v3 = true;
+    v4 = << "nothing", "cloak", "sword", "shovel", "torch", "pick", "bucket", "pitcher", "lamp", "cloth", "bread", "rolls", "cake" >>;
+    v5 = << 0, 227, 599, 625, 595, 624, 810, 824, 336, 851, 377, 377, 377 >>;
+    v6 = << 65177, 0, 0, 0, 0, 0, 0, 2, 2, v2, 1, 2, 4 >>;
+    v7 = << 0, 200, 350, 100, 10, 140, 28, 30, 12, 20, 8, 5, 10 >>;
+    v8 = << 0, 80, 160, 50, 5, 75, 14, 15, 6, 10, 4, 3, 5 >>;
+    v9 = 952;
+    v10 = << 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 >>;
+    v11 = << 0, 1, 0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1 >>;
+    if ~AvatarSex() {
+        v12 = "Milady";
+    } else {
+        v12 = "Milord";
+    }
+    if (v1 = false) {
+        if ~IsNPCNear(_Ducio) {
+            ["Oh, we sell all manner of things. Cloaks, swords..."];
+            SayIfNear_i("@Shovels, too...@", 65521);
+            CloseSpeaker1_i();
+            SetSpeakerSlot_i(0);
+            ["Yes, Master, shovels too. Pitchers and other containers. Cloth and a few weapons. We also sell baked goods."];
+        } else {
+            ["Oh, we sell all manner of things. Cloaks, swords, and shovels, too. Pitchers and other containers. Cloth and a few weapons. We also sell baked goods."];
+        }
+        v1 = true;
+    }
+    ["So, <v0>, what dost thou wish to buy?"];
+    While v3 {
+        v13 = ~AskOrdList(v4);
+        if (v13 = 1) {
+            ["Perhaps another time, <v0>."];
+            v3 = false;
+        } else {
+            v14 = v7::v13;
+            v15 = 0;
+            v16 = ~rndRange(5, 1);
+            if (v16 = 1) {
+                v17 = (("Dost thou accept, " + v0) + "?");
+            }
+            if (v16 = 2) {
+                v17 = "What dost thou think?";
+            }
+            if (v16 = 3) {
+                v17 = "Wilt thou pay my master's price?";
+            }
+            if (v16 = 4) {
+                v17 = (v12 + ", dost thou agree?");
+            }
+            if (v16 = 5) {
+                v17 = (v12 + ", is the price acceptable?");
+            }
+            if (v13 = 2) {
+                ["Well, our cloaks are not fancy, but they are warm." *"If thou dost want one, it will cost thee <v14> guilders."];
+                [<v17>"];
+                v18 = "cloaks";
+            }
+            if (v13 = 3) {
+                ["\["Oh, we sell swords that the blacksmith automaton makes. They are very durable blades..." *"For <v14> guilders I can sell thee one of our fine swords."];
+                ["<v17>"];
+                v18 = "swords";
+            }
+            if (v13 = 4) {
+                ["Our shovels are very well made. I believe that even Mortegro hath bought a couple of them. I can sell thee one for <v14> guilders."];
+                ["<v17>"];
+                v18 = "shovels";
+            }
+            if (v13 = 5) {
+                ["The torches we sell are soaked in pitch, so they burn for a very long time." *"I will sell a torch to thee for <v14> guilders."];
+                ["<v17>"];
+                v18 = "torches";
+            }
+            if (v13 = 6) {
+                ["I believe our picks have been used in the Mountains of Freedom. Only <v14> guilders will buy thee one."];
+                ["<v17>"];
+                v18 = "picks";
+            }
+            if (v13 = 7) {
+                ["<v14> guilders and one of our finely crafted buckets can be thine, <v0>."];
+                ["<v17>"];
+                v18 = "buckets";
+            }
+            if (v13 = 8) {
+                ["Even Petra uses our pitchers! I can sell thee a fine piece of crockery for <v14> guilders."];
+                ["<v17>"];
+                v18 = "pitchers";
+            }
+            if (v13 = 9) {
+                ["One of our oil lamps will last a long time, <v0>. I can sell thee one for <v14> guilders."];
+                ["<v17>"];
+                v18 = "oil lamps";
+            }
+            if (v13 = 10) {
+                ["I can sell thee a bolt of dyed cloth for <v14> guilders."];
+                ["<v17>"];
+                v18 = "bolts of cloth";
+            }
+            if (v13 = 11) {
+                ["The bread baked by the automaton baker is quite filling, <v0>. For <v14> guilders I will sell thee a fresh loaf."];
+                ["<v17>"];
+                v18 = "loaves of bread";
+            }
+            if (v13 = 12) {
+                ["<v14> guilders will buy thee a delicious roll."];
+                ["<v17>"];
+                v18 = "rolls";
+            }
+            if (v13 = 13) {
+                ["The baker automaton makes a very sweet cake, <v0>. For <v14> guilders thou canst have one."];
+                ["<v17>"];
+                v18 = "cakes";
+            }
+            if (v14 = v8::v13) {
+                if ~AskYesNo() {
+                    v19 = v14;
+                } else {
+                    v19 = 0;
+                }
+            } else {
+                v19 = ~TopoHaggles_i(v8::v13, v7::v13);
+            }
+            if (v19 > 0) {
+                if (v11::v13 = 1) {
+                    ["How many <v18> wouldst thou like?"];
+                    v15 = ~SellItem_i(false, 1, 10, v19, v9, 1, v6::v13, v5::v13);
+                } else {
+                    v15 = ~SellItem_i(false, 1, 0, v19, v9, 1, v6::v13, v5::v13);
+                }
+            }
+            if (v15 = 1) {
+                ["Enjoy thy purchase!"];
+            } else {
+                if (v15 = 2) {
+                    ["Thine hands are full!"];
+                } else {
+                    if (v15 = 3) {
+                        v20 = ~PartyUtters(false, 0, (("@But " + v0) + ", we do not have the guilders to purchase this.@"), 1);
+                        if (v20 <> 65180) {
+                            SetSpeaker0_i(0, _Topo);
+                            ["Please leave if thou canst not pay."];
+                        } else {
+                            ["Thou dost not have enough guilders to purchase this..."];
+                        }
+                        if (31 < (~GetNPCID_i(_Topo) + 6)) {
+                            SetNPCID_i(31, _Topo);
+                        } else {
+                            SetNPCID_i((~GetNPCID_i(_Topo) + 6), _Topo);
+                        }
+                    } else {
+                    }
+                }
+            }
+            ["Dost thou care for something else?"];
+            v3 = ~AskYesNo();
+        }
+    }
+    PopKeys();
+}
+
+Function ~TopoHaggles_i accepts a0, a1 #locals(16) #uses(~LordOrLady, ~AskList, ~Haggle_i, ~AskYesNo) {
+    v2 = ~LordOrLady();
+    v3 = ~AvatarSex();
+    if ~AvatarSex() {
+        v4 = "Milady";
+    } else {
+        v4 = "Milord";
+    }
+    v5 = v1;
+    v6 = ((v0 / 3) * 2);
+    v7 = (15 - (~GetNPCID_i(_Topo) / 2));
+    v8 = 0;
+    v9 = 1;
+    v10 = 0;
+    v11 = 2;
+    v12 = ~GetNPCID_i(_Topo);
+    While v9 {
+        v13 = ~AskList(<< "yes", "no", "haggle" >>);
+        if (v13 = "no") {
+            return 0;
+        } else {
+            if (v13 = "yes") {
+                v14 = 0;
+                goto label_11;
+            }
+        }
+        v15 = ~Haggle_i(v8, v7, v10, v6, v11, v0, v5);
+        v10 = (v10 + 1);
+        v8 = v15::4;
+        v14 = v15::3;
+        v16 = v5;
+        v5 = v15::2;
+        v6 = v15::1;
+        label_11:
+        v17 = ~Random(3);
+        if (v14 < 2) {
+            if (v5 < (v0 + ((v1 - v0) / 4))) {
+                if (v17 = 1) {
+                    ["Thou art a shrewd bargainer, <v2>. I would be hard pressed to make a profit with such a price."];
+                }
+                if (v17 = 2) {
+                    ["<v4>, thy skill at bargaining is excellent. I believe I have actually lost money in this deal."];
+                }
+                if (v17 = 3) {
+                    ["Thy trading skills are very sharp, <v2>."];
+                }
+            } else {
+                if (v5 < (v0 + ((v1 - v0) / 3))) {
+                    if (v17 = 1) {
+                        ["Thou art lucky I am in such a good mood today, <v2>! 'Tis not often I lower my prices such..."];
+                    }
+                    if (v17 = 2) {
+                        ["<v4>, thou art a scoundrel! I would be penniless very soon if I bargained such a price more than a few times!"];
+                    }
+                    if (v17 = 3) {
+                        ["'Tis not often I practically give my goods away! Thou art a skilled trader, <v2>!"];
+                    }
+                } else {
+                    if (v5 < (v0 + ((v1 - v0) / 2))) {
+                        if (v17 = 1) {
+                            ["My prices are just, <v2>. Thou shouldst travel to Fawn if thou dost believe mine steep."];
+                        }
+                        if (v17 = 2) {
+                            ["'Tis a pleasure to trade with thee, <v2>."];
+                        }
+                        if (v17 = 3) {
+                            ["<v4>, I shall remember thee! Please come to my shop whenever thou art in Monitor!"];
+                        }
+                    } else {
+                        if (v17 = 1) {
+                            ["<v4>, thou hast my gratitude!"];
+                        }
+                        if (v17 = 2) {
+                            ["A blessing upon thee, <v2>!"];
+                        }
+                        if (v17 = 3) {
+                            ["My prices are steep, <v2>, for supplies are very scarce due to the Goblin raids."];
+                        }
+                    }
+                }
+            }
+            ["Thou hast agreed to a price of <v5> guilders, <v2>?"];
+            if ~AskYesNo() {
+                if (v12 > 1) {
+                    SetNPCID_i((v12 - 2), _Topo);
+                }
+                return v5;
+            } else {
+                if (v17 = 1) {
+                    ["Thou shouldst not argue with me only to change thy mind when we have agreed to a firm price!"];
+                }
+                if (v17 = 2) {
+                    ["What of our bargain? Thou hast disappointed me, <v2>."];
+                }
+                if (v17 = 3) {
+                    ["This is not honorable! I do not have time to play games with thee! Begone!"];
+                    terminate;
+                }
+                if (31 < (v12 + 10)) {
+                    SetNPCID_i(31, _Topo);
+                } else {
+                    SetNPCID_i((v12 + 10), _Topo);
+                }
+                return 0;
+            }
+        }
+        if (v8 = 1) {
+            if (v14 = 5) {
+                ["I said that <v5> was my final offer. Dost thou accept?"];
+                if (v12 < 28) {
+                    SetNPCID_i((v12 + 4), _Topo);
+                }
+                if ~AskYesNo() {
+                    return v5;
+                }
+                v9 = 0;
+            } else {
+                ["<v5> guilders is my final offer."];
+                if (v12 < 30) {
+                    SetNPCID_i((v12 + 2), _Topo);
+                }
+            }
+        } else {
+            if (v14 = 2) {
+                if (v17 = 1) {
+                    ["'Tis a pleasure to trade with thee, <v2>. How doth <v5> guilders sound?"];
+                }
+                if (v17 = 2) {
+                    ["<v4>, only for thee I will give a special price. How doth <v5> guilders sound to thee?"];
+                }
+                if (v17 = 3) {
+                    ["My price is <v5> guilders, <v2>. Dost thou accept?"];
+                }
+            }
+            if (v14 = 3) {
+                if (v17 = 1) {
+                    ["I am not sure. Wouldst thou consider <v5> guilders?"];
+                }
+                if (v17 = 2) {
+                    ["Hmmm... I am not certain... <v5> guilders?"];
+                }
+                if (v17 = 3) {
+                    ["The cost of my goods hath increased. Perhaps <v5> guilders?"];
+                }
+            }
+            if (v14 = 4) {
+                if (v17 = 1) {
+                    ["If I did not know better, I would believe thou dost jest with me. <v5> guilders is as low as I can go."];
+                    ["What dost thou say to this?"];
+                }
+                if (v17 = 2) {
+                    ["Even if the storms are driving away my customers, I still cannot accept less than <v5> guilders."];
+                }
+                if (v17 = 3) {
+                    ["Thou dost think too highly of thyself, my friend. I can accept no less than <v5> guilders."];
+                }
+            }
+            if (v14 = 5) {
+                v5 = v16;
+                if (v17 = 1) {
+                    ["Thou art touched by the storms if thou dost think I would accept such a ridiculous offer! My previous price stands, at <v5> guilders."];
+                }
+                if (v17 = 2) {
+                    ["I do not give my goods away! <v5> guilders, and no less!"];
+                }
+                if (v17 = 3) {
+                    ["I would rather belong to the Bear Command than accept such an offer!"];
+                    ["<v5> guilders is as low as I will go!"];
+                }
+                if (v12 < 31) {
+                    SetNPCID_i((v12 + 1), _Topo);
+                }
+            }
+        }
+    }
+}

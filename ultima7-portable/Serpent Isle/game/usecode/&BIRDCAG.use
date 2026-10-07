@@ -1,0 +1,29 @@
+Routine Bird_Cage accepts a0 #locals(2) #uses(~IsNPCNear, PathToItem_i, Bark_i) {
+    closeAllGumps();
+    if (~GetFrame(item) = 0) {
+        if ~IsNPCNear(_Ale) {
+            if (~GetDist(_Ale, _Avatar) < 3) {
+                v0 = ~Item_push(item);
+                v1 = ~GetCoord(_Ale);
+                v0 = ~PopToMap(v1);
+                SetFrame(1, item);
+                RemoveNPC_i(_Ale);
+            } else {
+                v0 = ~Item_push(item);
+                v0 = ~PopToNPC(_Avatar);
+                SetWorkType(_Stand, _Ale);
+                PathToItem_i(1, item, #Bird_Cage, 65533, 65535, 65535, _Ale);
+            }
+        } else {
+            Bark_i(0, "@Ale? Where art thou?@", _Avatar);
+        }
+    } else {
+        SetFrame(0, item);
+        v1 = ~GetCoord(item);
+        v1::1 = (v1::1 - 1);
+        v1::2 = (v1::2 - 1);
+        Item_move(<< v1::1, v1::2, 0 >>, _Ale);
+        NewSchedule_i(<< v1::1, v1::2 >>, _Graze, 0, _Ale);
+        Npc_schedule(_Ale);
+    }
+}

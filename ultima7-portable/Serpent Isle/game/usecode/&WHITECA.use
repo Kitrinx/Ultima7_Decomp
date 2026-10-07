@@ -1,0 +1,781 @@
+Routine WhiteDragonGhostEgg_i accepts a0 #locals(18) #uses(~AbsValue_i, SetDoorState_i) {
+    v0 = ~GetCoord(_Avatar);
+    v1 = ~GetCoord(item);
+    if ((event = _Trigger) and (~AbsValue_i((v0::3 - v1::3)) < 3)) && ($BANES_RELEASED = true) {
+        SetItemFlag_i(_DontMove_i, _Avatar);
+        v2 = ~GetCoord(item);
+        v2::2 = (v2::2 - 7);
+        v3 = ~CreateCreature_i(v2, _Ghost_337);
+        if v3 {
+            SetWorkType(_Wait, v3);
+            v4 = ~PostAction(<< _aNO_HALT_i, _aFACE_i, byte(52) >>, v3);
+            Sfx(83);
+        }
+        v4 = ~PostInFuture(10, << _aNO_HALT_i, _aUSABLE_i, #WhiteDragonGhostEgg_i >>, _Avatar);
+        Item_destroy(item);
+    }
+    if (event = _Action) {
+        v5 = ~GetParty();
+        v3 = ~FindNearby_i(0, 10, _Ghost_337, item);
+        if (65534 in v5) {
+            if v3 {
+                SetSpeaker0_i(2, _SmithzHorse);
+                ["Traitor! Foul murderer! Thou didst kill my Beatrix, faithless liar!"];
+                ["Thou shalt see the power of the King of the White Dragon!"];
+                CloseSpeaker0_i();
+            }
+        } else {
+            if v3 {
+                SetSpeaker0_i(2, _SmithzHorse);
+                ["I am the King of the White Dragon!"];
+                ["I shall protect thee... I shall take thee beyond all mortal concerns -- into my kingdom of death!"];
+                CloseSpeaker0_i();
+            }
+        }
+        ClearItemFlag_i(_DontMove_i, _Avatar);
+        if v3 {
+            v2 = ~GetCoord(v3);
+            v2::1 = (v2::1 - (v2::3 / 2));
+            v2::2 = (v2::2 - (v2::3 / 2));
+            createSprite(65535, 0, 0, 0, v2::2, v2::1, 12);
+            Sfx(57);
+            v2 = ~GetCoord(v3);
+            v6 = ~FindNearby_i(16, 10, _Egg_Type, item);
+            Foreach v9 in v6 {
+                v10 = ~GetFrame(v9);
+                if (v10 = 0) {
+                    v4 = ~PostInFuture(5, << _aHATCH_i >>, v9);
+                }
+            }
+            Item_destroy(v3);
+            v11 = ~FindNearby_i(0, 20, _DDoor_EW, item);
+            v12 = ~FindNearby_i(0, 20, _Door_EW, item);
+            if v11 {
+                Foreach v15 in v11 {
+                    SetDoorState_i(0, v15);
+                }
+            }
+            if v12 {
+                Foreach v15 in v12 {
+                    SetDoorState_i(0, v15);
+                }
+            }
+        }
+    }
+}
+
+Routine WhiteScrollEgg_i accepts a0 #locals(2) {
+    if ($BANES_RELEASED = true) {
+        v0 = ~Item_create(_Scroll);
+        if v0 {
+            v1 = ~PopToMap(<< 1799, 1472, 0 >>);
+            v1 = ~SetQuality(62, v0);
+        }
+        Item_destroy(item);
+    }
+}
+
+Routine MirrorTrapEgg_i accepts a0 #locals(16) #uses(~AbsValue_i, Bark_i, ResetBanes_i, AttackAvatar_i) {
+    if $antiiolodead {
+        terminate;
+    }
+    v0 = ~GetCoord(_Avatar);
+    v1 = ~GetCoord(item);
+    if ((event = _Trigger) and (~AbsValue_i((v0::3 - v1::3)) < 3)) {
+        v2 = ~GetQuality(item);
+        if (v2 = 0) {
+            createSprite(65535, 0, 0, 0, 1446, 1822, 21);
+            Item_move(<< 1822, 1446, 0 >>, _AntiIolo);
+            SetWorkType(_Wait, _AntiIolo);
+            v3 = ~PostAction(<< _aNO_HALT_i, _aSTAND_FRAME_i, _aFACE_i, byte(50) >>, _AntiIolo);
+            v3 = ~PostInFuture(10, << _aNO_HALT_i, _aUSABLE_i, #MirrorTrapEgg_i >>, _AntiIolo);
+            Item_destroy(item);
+            terminate;
+        }
+        if (v2 = 1) {
+            SetItemFlag_i(_DontMove_i, _Avatar);
+            Bark_i(5, "@What...?@", _Avatar);
+            Bark_i(40, "@NO!@", _Avatar);
+            v4 = ~FindNearby_i(0, 15, _EW_Full_Length_Mirror, item);
+            v4 = (v4 & ~FindNearby_i(0, 15, _Full_Length_Mirror_NS, item));
+            Foreach v7 in v4 {
+                SetFrame(4, v7);
+            }
+            v3 = ~PostInFuture(20, << _aNO_HALT_i, _aUSABLE_i, #MirrorTrapEgg_i >>, _Avatar);
+            $temp1flag = true;
+            Item_destroy(item);
+            terminate;
+        }
+    }
+    if (event = _Action) {
+        if (($temp1flag = false) and ($temp2flag = false)) {
+            SetSpeaker0_i(0, _Brax);
+            ["Come and see the freak show, Avatar!"];
+            CloseSpeaker0_i();
+            ResetBanes_i();
+            terminate;
+        }
+        if ($temp1flag = true) {
+            v4 = ~FindNearby_i(0, 15, _EW_Full_Length_Mirror, item);
+            v4 = (v4 & ~FindNearby_i(0, 15, _Full_Length_Mirror_NS, item));
+            Foreach v7 in v4 {
+                SetFrame(5, v7);
+            }
+            Sfx(95);
+            v3 = ~PostInFuture(20, << _aNO_HALT_i, _aUSABLE_i, #MirrorTrapEgg_i >>, _Avatar);
+            $temp1flag = false;
+            $temp2flag = true;
+            terminate;
+        }
+        if ($temp2flag = true) {
+            v4 = ~FindNearby_i(0, 15, _EW_Full_Length_Mirror, item);
+            Foreach v7 in v4 {
+                v12 = ~GetCoord(v7);
+                v12::1 = (v12::1 - (v12::3 / 2));
+                v12::2 = (v12::2 - (v12::3 / 2));
+                createSprite(65535, 0, 0, 0, v12::2, v12::1, 9);
+                v12 = ~GetCoord(v7);
+                v13 = ~CreateCreature_i(v12, _Neck_Man);
+                if v13 {
+                    v3 = ~ChangeNPCStat_i(20, _Int, v13);
+                    Polymorph_i(_Avatar_Type, v13);
+                    v3 = ~PostAction(<< _aNO_HALT_i, _aFACE_i, byte(50) >>, v13);
+                    AttackAvatar_i(v13);
+                    Item_destroy(v7);
+                }
+            }
+            v4 = ~FindNearby_i(0, 15, _Full_Length_Mirror_NS, item);
+            Foreach v7 in v4 {
+                v12 = ~GetCoord(v7);
+                v12::1 = (v12::1 - (v12::3 / 2));
+                v12::2 = (v12::2 - (v12::3 / 2));
+                createSprite(65535, 0, 0, 0, v12::2, v12::1, 9);
+                v12 = ~GetCoord(v7);
+                v13 = ~CreateCreature_i(v12, _Neck_Man);
+                if v13 {
+                    v3 = ~ChangeNPCStat_i(20, _Int, v13);
+                    Polymorph_i(_Avatar_Type, v13);
+                    v3 = ~PostAction(<< _aNO_HALT_i, _aFACE_i, byte(52) >>, v13);
+                    AttackAvatar_i(v13);
+                    Item_destroy(v7);
+                }
+            }
+            Sfx(82);
+            $temp2flag = false;
+            ClearItemFlag_i(_DontMove_i, _Avatar);
+        }
+    }
+}
+
+Routine SpinTrapEgg_i accepts a0 #locals(11) #uses(~IsAnyBaneDead_i, ~AbsValue_i, ~GimmePathEgg, ResetBanes_i) {
+    if ~IsAnyBaneDead_i() {
+        terminate;
+    }
+    v0 = ~GetCoord(_Avatar);
+    v1 = ~GetCoord(item);
+    if ((event = _Trigger) and (~AbsValue_i((v0::3 - v1::3)) < 3)) {
+        createSprite(65535, 0, 0, 0, 1425, 1752, 21);
+        Sfx(81);
+        Item_move(<< 1752, 1425, 0 >>, _AntiIolo);
+        SetWorkType(_Wait, _AntiIolo);
+        v2 = ~PostAction(<< _aNO_HALT_i, _aSTAND_FRAME_i, _aFACE_i, byte(52) >>, _AntiIolo);
+        v2 = ~PostInFuture(10, << _aNO_HALT_i, _aUSABLE_i, #SpinTrapEgg_i >>, _AntiIolo);
+        v3 = ~FindNearby_i(0, 6, _Door_EW, item);
+        if v3 {
+            v2 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #Door_EW >>, v3);
+        }
+        $temp1flag = false;
+        Item_destroy(item);
+        terminate;
+    }
+    if ((event = _Action) and ($temp1flag = false)) {
+        SetSpeaker0_i(0, _Brax);
+        ["Want to try some spinning..."* "...and dying, Avatar?"];
+        CloseSpeaker0_i();
+        v4 = ~FindNearby_i(0, 10, _Door_NS, item);
+        if v4 {
+            SetFrame(2, v4);
+        }
+        $temp1flag = true;
+        v5 = ~GimmePathEgg(1, 0);
+        if v5 {
+            v2 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #SpinTrapEgg_i >>, v5);
+        }
+        terminate;
+    }
+    if ((event = _Action) and ($temp1flag = true)) {
+        v6 = ~FindNearby_i(16, 30, _Trap_Type, item);
+        Foreach v9 in v6 {
+            v10 = ~GetFrame(v9);
+            if ((v10 > 1) and (v10 < 6)) {
+                v2 = ~PostAction(<< _aSET_EGG_i, _AvatarNear, 15 >>, v9);
+            }
+        }
+        ResetBanes_i();
+        $temp1flag = false;
+    }
+}
+
+Routine OperaTrapEgg_i accepts a0 #locals(13) #uses(~IsAnyBaneDead_i, ~AbsValue_i, ResetBanes_i) {
+    if ~IsAnyBaneDead_i() {
+        terminate;
+    }
+    v0 = ~GetCoord(_Avatar);
+    v1 = ~GetCoord(item);
+    if ((event = _Trigger) and (~AbsValue_i((v0::3 - v1::3)) < 3)) {
+        createSprite(65535, 0, 0, 0, 1445, 1778, 21);
+        Sfx(81);
+        Item_move(<< 1778, 1445, 0 >>, _AntiIolo);
+        SetWorkType(_Wait, _AntiIolo);
+        v2 = ~PostAction(<< _aNO_HALT_i, _aSTAND_FRAME_i, _aFACE_i, byte(48) >>, _AntiIolo);
+        v2 = ~PostInFuture(10, << _aNO_HALT_i, _aUSABLE_i, #OperaTrapEgg_i >>, _AntiIolo);
+        v3 = ~FindNearby_i(0, 15, _Harpsichord_NS, item);
+        if v3 {
+            v2 = ~PostInFuture(5, << _aNO_HALT_i, _aUSABLE_i, #Harpsichord_NS >>, v3);
+        }
+        v4 = ~FindNearby_i(0, 20, _Lute, item);
+        if v4 {
+            v2 = ~PostInFuture(25, << _aNO_HALT_i, _aUSABLE_i, #Lute >>, v4);
+        }
+        v5 = ~FindNearby_i(0, 15, _NS_Xylophone, item);
+        if v5 {
+            v2 = ~PostInFuture(45, << _aNO_HALT_i, _aUSABLE_i, #NS_Xylophone >>, v5);
+        }
+        v6 = ~FindNearby_i(0, 15, _Harp, item);
+        if v6 {
+            v2 = ~PostInFuture(65, << _aNO_HALT_i, _aUSABLE_i, #Harp >>, v6);
+        }
+        v7 = ~FindNearby_i(0, 20, _Panpipes, item);
+        if v7 {
+            v2 = ~PostInFuture(85, << _aNO_HALT_i, _aUSABLE_i, #Panpipes >>, v7);
+        }
+        v8 = ~FindNearby_i(16, 20, _Egg_Type, item);
+        Foreach v11 in v8 {
+            v12 = ~GetFrame(v11);
+            if (v12 = 0) {
+                v2 = ~PostInFuture(100, << _aHATCH_i >>, v11);
+            }
+        }
+        Item_destroy(item);
+    }
+    if ((event = _Action) and ($temp1flag = false)) {
+        SetSpeaker0_i(0, _Brax);
+        ["Want to sing an opera, Avatar?"];
+        CloseSpeaker0_i();
+        ResetBanes_i();
+    }
+}
+
+Routine AntiTauntEgg_i accepts a0 #locals(13) #uses(~IsAnyBaneDead_i, ~AbsValue_i, ~GimmePathEgg, ResetBanes_i, ~CreateAttacker_i) {
+    if ~IsAnyBaneDead_i() {
+        terminate;
+    }
+    v0 = ~GetCoord(_Avatar);
+    v1 = ~GetCoord(item);
+    if ((event = _Trigger) and (~AbsValue_i((v0::3 - v1::3)) < 3)) {
+        v2 = ~GetQuality(item);
+        v3 = 0;
+        v4 = 0;
+        v5 = << 65274, 65272, 65273 >>;
+        v6 = v5::~rndRange(3, 1);
+        if (v2 = 0) {
+            createSprite(65535, 0, 0, 0, 1410, 1813, 21);
+            Sfx(81);
+            Item_move(<< 1813, 1410, 0 >>, v6);
+            v7 = ~PostAction(<< _aNO_HALT_i, _aSTAND_FRAME_i, _aFACE_i, byte(52) >>, v6);
+            v4 = ~GimmePathEgg(1, 0);
+            if v4 {
+                v7 = ~SetQuality(0, v4);
+            }
+        }
+        if (v2 = 1) {
+            createSprite(65535, 0, 0, 0, 1410, 1777, 21);
+            Sfx(81);
+            Item_move(<< 1777, 1410, 0 >>, v6);
+            v7 = ~PostAction(<< _aNO_HALT_i, _aSTAND_FRAME_i, _aFACE_i, byte(50) >>, v6);
+            v4 = ~GimmePathEgg(1, 0);
+            if v4 {
+                v7 = ~SetQuality(1, v4);
+            }
+        }
+        if (v2 = 2) {
+            createSprite(65535, 0, 0, 0, 1382, 1734, 21);
+            Sfx(81);
+            Item_move(<< 1734, 1382, 0 >>, v6);
+            v7 = ~PostAction(<< _aNO_HALT_i, _aSTAND_FRAME_i, _aFACE_i, byte(52) >>, v6);
+            v4 = ~GimmePathEgg(1, 0);
+            if v4 {
+                v7 = ~SetQuality(2, v4);
+            }
+        }
+        if (v2 = 3) {
+            createSprite(65535, 0, 0, 0, 1365, 1745, 21);
+            Sfx(81);
+            Item_move(<< 1745, 1365, 0 >>, v6);
+            v7 = ~PostAction(<< _aNO_HALT_i, _aSTAND_FRAME_i, _aFACE_i, byte(50) >>, v6);
+            v4 = ~GimmePathEgg(1, 0);
+            if v4 {
+                v7 = ~SetQuality(3, v4);
+            }
+        }
+        if (v2 = 4) {
+            createSprite(65535, 0, 0, 0, 1393, 1797, 21);
+            Sfx(81);
+            Item_move(<< 1797, 1393, 0 >>, v6);
+            v7 = ~PostAction(<< _aNO_HALT_i, _aSTAND_FRAME_i, _aFACE_i, byte(54) >>, v6);
+            v4 = ~GimmePathEgg(1, 0);
+            if v4 {
+                v7 = ~SetQuality(4, v4);
+            }
+        }
+        if (v2 = 5) {
+            createSprite(65535, 0, 0, 0, 1385, 1841, 21);
+            Sfx(81);
+            Item_move(<< 1841, 1385, 0 >>, v6);
+            v7 = ~PostAction(<< _aNO_HALT_i, _aSTAND_FRAME_i, _aFACE_i, byte(50) >>, v6);
+            v4 = ~GimmePathEgg(1, 0);
+            if v4 {
+                v7 = ~SetQuality(5, v4);
+            }
+        }
+        if (v2 = 6) {
+            createSprite(65535, 0, 0, 0, 1395, 1830, 21);
+            Sfx(81);
+            Item_move(<< 1830, 1395, 0 >>, v6);
+            v7 = ~PostAction(<< _aNO_HALT_i, _aSTAND_FRAME_i, _aFACE_i, byte(52) >>, v6);
+            v4 = ~GimmePathEgg(1, 0);
+            if v4 {
+                v7 = ~SetQuality(6, v4);
+            }
+        }
+        if (v2 = 7) {
+            createSprite(65535, 0, 0, 0, 80, 2465, 21);
+            Sfx(81);
+            Item_move(<< 2465, 80, 0 >>, v6);
+            v7 = ~PostAction(<< _aNO_HALT_i, _aSTAND_FRAME_i, _aFACE_i, byte(52) >>, v6);
+            v4 = ~GimmePathEgg(1, 0);
+            if v4 {
+                v7 = ~SetQuality(7, v4);
+            }
+        }
+        if (v2 = 8) {
+            createSprite(65535, 0, 0, 0, 88, 2496, 21);
+            Sfx(81);
+            Item_move(<< 2496, 88, 0 >>, v6);
+            v7 = ~PostAction(<< _aNO_HALT_i, _aSTAND_FRAME_i, _aFACE_i, byte(50) >>, v6);
+            v4 = ~GimmePathEgg(1, 0);
+            if v4 {
+                v7 = ~SetQuality(8, v4);
+            }
+        }
+        SetWorkType(_Wait, v6);
+        v7 = ~PostInFuture(10, << _aNO_HALT_i, _aUSABLE_i, #AntiTauntEgg_i >>, v6);
+        Item_destroy(item);
+        terminate;
+    }
+    if (event = _Action) {
+        v6 = ~ItemToNPC_i(item);
+        v8 = "";
+        v4 = ~GimmePathEgg(1, 0);
+        if v4 {
+            v2 = ~GetQuality(v4);
+        }
+        if (v2 = 0) {
+            v8 = "Dost thou like to read, Avatar? I have some hot new titles for thee.";
+        }
+        if (v2 = 1) {
+            v8 = "Come in and relax, Avatar.";
+        }
+        if (v2 = 2) {
+            v8 = "Come and meet the sweet ladies, Avatar.";
+        }
+        if (v2 = 3) {
+            v8 = "Wilt thou watch the children for me, Avatar?";
+        }
+        if (v2 = 4) {
+            v8 = "Come and dance a jig with these fine fellows, Avatar.";
+        }
+        if (v2 = 5) {
+            v9 = ~GetTime();
+            if ((v9 = 0) or (v9 = 1)) {
+                v10 = "a late night morsel";
+            }
+            if ((v9 = 2) or (v9 = 3)) {
+                v10 = "breakfast";
+            }
+            if ((v9 = 4) or (v9 = 5)) {
+                v10 = "lunch";
+            }
+            if ((v9 = 6) or (v9 = 7)) {
+                v10 = "dinner";
+            }
+            v8 = (("Thou'rt just in time for " + v10) + ", Avatar.");
+        }
+        if (v2 = 6) {
+            v8 = "Come in, come in, Avatar. I have cooked something special for thee.";
+        }
+        if (v2 = 7) {
+            v8 = "So, thou hast found my playroom...";
+        }
+        if (v2 = 8) {
+            v8 = "Thou'rt almost there, Avatar.";
+            v4 = ~GimmePathEgg(1, 0);
+            SetMusic(v4, 51);
+        }
+        if (v6 = 65274) {
+            SetSpeaker0_i(0, _Brax);
+        }
+        if (v6 = 65273) {
+            SetSpeaker0_i(0, _Watson);
+        }
+        if (v6 = 65272) {
+            SetSpeaker0_i(0, _Brenda);
+        }
+        append v8;
+        append "";
+        say;
+        CloseSpeaker0_i();
+        v11 = ~GetCoord(v6);
+        ResetBanes_i();
+        if (v2 = 6) {
+            v12 = ~CreateCreature_i(v11, _Ghost_337);
+            if v12 {
+                Npc_setAlignment(_Evil, v12);
+                SetWorkType(_Combat_0, v12);
+                SetAttacker_i(~NPCToItem_i(_Avatar), v7);
+            }
+            v7 = ~CreateAttacker_i(_Ghost_337);
+        }
+    }
+}
+
+Routine ShootingGalleryEgg_i accepts a0 #locals(10) #uses(~IsAnyBaneDead_i, ~AbsValue_i, ResetBanes_i) {
+    if ~IsAnyBaneDead_i() {
+        terminate;
+    }
+    v0 = ~GetCoord(_Avatar);
+    v1 = ~GetCoord(item);
+    if ((event = _Trigger) and (~AbsValue_i((v0::3 - v1::3)) < 3)) {
+        createSprite(65535, 0, 0, 0, 1416, 1737, 21);
+        Sfx(81);
+        Item_move(<< 1737, 1416, 0 >>, _AntiIolo);
+        v2 = ~PostAction(<< _aNO_HALT_i, _aSTAND_FRAME_i, _aFACE_i, byte(52) >>, _AntiIolo);
+        v2 = ~PostInFuture(10, << _aNO_HALT_i, _aUSABLE_i, #ShootingGalleryEgg_i >>, _AntiIolo);
+        v3 = ~FindNearby_i(0, 6, _Door_EW, item);
+        if v3 {
+            v2 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #Door_EW >>, v3);
+        }
+        Item_destroy(item);
+    }
+    if (event = _Action) {
+        SetSpeaker0_i(0, _Brax);
+        ["Welcome to mine own private shooting gallery, Avatar."];
+        CloseSpeaker0_i();
+        ResetBanes_i();
+        v4 = ~FindNearby_i(0, 10, _Door_NS, item);
+        if v4 {
+            SetFrame(2, v4);
+        }
+        v5 = ~FindNearby_i(16, 30, _Trap_Type, item);
+        Foreach v8 in v5 {
+            v9 = ~GetFrame(v8);
+            if (((v9 > 1) and (v9 < 6)) or ((v9 > 8) and (v9 < 13))) {
+                v2 = ~PostAction(<< _aSET_EGG_i, _AvatarNear, 15 >>, v8);
+            }
+        }
+    }
+}
+
+Routine ArmTrapsEgg_i accepts a0 #locals(7) #uses(~AbsValue_i, ResetBanes_i) {
+    v0 = ~GetCoord(_Avatar);
+    v1 = ~GetCoord(item);
+    if ((event = _Trigger) and (~AbsValue_i((v0::3 - v1::3)) < 3)) {
+        v2 = ~FindNearby_i(16, 40, _Trap_Type, item);
+        Foreach v5 in v2 {
+            v6 = ~PostAction(<< _aSET_EGG_i, _AvatarNear, 15 >>, v5);
+        }
+        ResetBanes_i();
+        Item_destroy(item);
+    }
+}
+
+Routine FireFieldsEgg_i accepts a0 #locals(14) #uses(~FireFieldSpot_i) {
+    if (event = _Trigger) {
+        v0 = ~FindNearby_i(16, 130, _Trap_Type, item);
+        Foreach v3 in v0 {
+            v4 = ~GetFrame(v3);
+            if (((v4 > 2) and (v4 < 7)) or ((v4 > 8) and (v4 < 13))) {
+                Item_destroy(v3);
+            }
+        }
+        v5 = ~GetCoord(item);
+        v6 = 0;
+        Sfx(44);
+        While (v6 < 14) {
+            v7 = ~rndRange(2, 1);
+            if (~rndRange(1, 0) = 0) {
+                v7 = (v7 * 65535);
+            }
+            v8 = (v6 + v7);
+            v9 = ~Item_create(_Field_Fire);
+            if v9 {
+                SetItemFlag_i(_IsTemporary_i, v9);
+                v10 = ~PopToMap(~FireFieldSpot_i((v5::2 + v8), v5::1));
+            }
+            v11 = ~Item_create(_Field_Fire);
+            if v11 {
+                SetItemFlag_i(_IsTemporary_i, v11);
+                v10 = ~PopToMap(~FireFieldSpot_i((v5::2 - v8), v5::1));
+            }
+            v6 = (v6 + 1);
+        }
+        v6 = 0;
+        Sfx(44);
+        While (v6 < 15) {
+            v5 = ~GetCoord(item);
+            v12 = ~rndRange(8, 1);
+            v13 = ~rndRange(8, 1);
+            if (~rndRange(1, 0) = 0) {
+                v12 = (v12 * 65535);
+            }
+            if (~rndRange(1, 0) = 0) {
+                v13 = (v13 * 65535);
+            }
+            v5::1 = (v5::1 + v12);
+            v5::2 = (v5::2 + v13);
+            v9 = ~Item_create(_Field_Fire);
+            if v9 {
+                SetItemFlag_i(_IsTemporary_i, v9);
+                v10 = ~PopToMap(~FireFieldSpot_i(v5::2, v5::1));
+            }
+            v6 = (v6 + 1);
+        }
+        Item_destroy(item);
+    }
+}
+
+Routine AntiAttackEgg_i accepts a0 #locals(1) #uses(AttackAvatar_i) {
+    if (event = _Trigger) {
+        if not $antiiolodead {
+            SetSpeaker0_i(0, _Brax);
+            ["I had almost tired of waiting for thee, Avatar. Thou'rt some hero... it\x09took thee long enough."];
+            CloseSpeaker0_i();
+        }
+        v0 = << 65274, 65273, 65272 >>;
+        if not $antiiolodead {
+            SetItemFlag_i(_Tournament, _AntiIolo);
+            Npc_setAlignment(_Evil, _AntiIolo);
+            SetWorkType(_Combat_0, _AntiIolo);
+            AttackAvatar_i(_AntiIolo);
+        }
+        if not $antidupredead {
+            SetItemFlag_i(_Tournament, _AntiDupre);
+            Npc_setAlignment(_Evil, _AntiDupre);
+            SetWorkType(_Combat_0, _AntiDupre);
+            AttackAvatar_i(_AntiDupre);
+        }
+        if not $antishaminodead {
+            SetItemFlag_i(_Tournament, _AntiSham);
+            Npc_setAlignment(_Evil, _AntiSham);
+            SetWorkType(_Combat_0, _AntiSham);
+            AttackAvatar_i(_AntiSham);
+        }
+    }
+}
+
+Routine HurryTauntEgg_i accepts a0 #locals(14) #uses(ResetBanes_i) {
+    if (event = _Trigger) {
+        v0 = ~FindNearby_i(16, 15, _Egg_Type, item);
+        v1 = 0;
+        Foreach v4 in v0 {
+            v5 = ~GetFrame(v4);
+            if (v5 = 0) {
+                v1 = v4;
+            }
+        }
+        if v1 {
+            createSprite(65535, 0, 0, 0, 39, 2483, 21);
+            Sfx(81);
+            Item_move(<< 2483, 39, 0 >>, _AntiIolo);
+            v6 = ~PostAction(<< _aNO_HALT_i, _aSTAND_FRAME_i, _aFACE_i, byte(50) >>, _AntiIolo);
+            v6 = ~PostInFuture(10, << _aNO_HALT_i, _aUSABLE_i, #HurryTauntEgg_i >>, _AntiIolo);
+        } else {
+            v7 = ~FindNearby_i(0, 20, _Mad_Iolo, item);
+            v7 = (v7 & ~FindNearby_i(0, 20, _Snake_Dupre, item));
+            v7 = (v7 & ~FindNearby_i(0, 20, _Anti_Shamino, item));
+            Foreach v10 in v7 {
+                v11 = ~GetCoord(v10);
+                createSprite(65535, 0, 0, 0, v11::2, v11::1, 26);
+                Sfx(81);
+            }
+            ResetBanes_i();
+        }
+    }
+    if (event = _Action) {
+        v0 = ~FindNearby_i(16, 15, _Egg_Type, item);
+        v1 = 0;
+        Foreach v4 in v0 {
+            v5 = ~GetFrame(v4);
+            if (v5 = 0) {
+                v6 = ~PostAction(<< _aHATCH_i >>, v4);
+                v1 = v4;
+            }
+        }
+        if v1 {
+            SetSpeaker0_i(0, _Brax);
+            ["Hurry, Avatar, I am waiting for thee..."];
+            CloseSpeaker0_i();
+        }
+        ResetBanes_i();
+    }
+}
+
+Routine BedroomTauntEgg_i accepts a0 #locals(6) #uses(~IsAnyBaneDead_i, ~AbsValue_i, ResetBanes_i) {
+    if ~IsAnyBaneDead_i() {
+        terminate;
+    }
+    v0 = ~GetCoord(_Avatar);
+    v1 = ~GetCoord(item);
+    if ((event = _Trigger) and (~AbsValue_i((v0::3 - v1::3)) < 3)) {
+        if not flag(601) {
+            v2 = 0;
+            v3 = ~GetQuality(item);
+            if (v3 = 0) {
+                createSprite(65535, 0, 0, 0, 39, 2464, 21);
+                Sfx(81);
+                Item_move(<< 2464, 39, 0 >>, _AntiIolo);
+                v4 = byte(50);
+            }
+            if (v3 = 1) {
+                createSprite(65535, 0, 0, 0, 36, 2497, 21);
+                Sfx(81);
+                Item_move(<< 2497, 36, 0 >>, _AntiIolo);
+                v4 = byte(52);
+            }
+            if (v3 = 2) {
+                createSprite(65535, 0, 0, 0, 53, 2463, 21);
+                Sfx(81);
+                Item_move(<< 2463, 53, 0 >>, _AntiIolo);
+                v4 = byte(50);
+            }
+            if (v3 = 3) {
+                createSprite(65535, 0, 0, 0, 49, 2503, 21);
+                Sfx(81);
+                Item_move(<< 2503, 49, 0 >>, _AntiIolo);
+                v4 = byte(52);
+            }
+            if 65274 {
+                v5 = ~PostAction(<< _aNO_HALT_i, _aSTAND_FRAME_i, _aFACE_i, v4 >>, _AntiIolo);
+                v5 = ~PostInFuture(10, << _aNO_HALT_i, _aUSABLE_i, #BedroomTauntEgg_i >>, _AntiIolo);
+            }
+        }
+        flag(601) = true;
+        Item_destroy(item);
+    }
+    if (event = _Action) {
+        SetSpeaker0_i(0, _Brax);
+        ["Thou'rt not here to sleep, Avatar."];
+        CloseSpeaker0_i();
+        ResetBanes_i();
+    }
+}
+
+Routine uegg_269 accepts a0 #locals(12) #uses(~AbsValue_i, DoDamage_i) {
+    v0 = ~GetCoord(_Avatar);
+    v1 = ~GetCoord(item);
+    if ((event = _Trigger) and (~AbsValue_i((v0::3 - v1::3)) < 3)) {
+        v2 = ~GetQuality(item);
+        if (v2 = 0) {
+            PrintError_i("Error: Quality not set for usecode egg. (uegg_269)");
+        }
+        if ((v2 = 1) or (v2 = 11)) {
+            if (v2 = 1) {
+                v3 = 3;
+            } else {
+                v3 = 16;
+            }
+            v4 = ~FindNearby_i(0, v3, _E_W_Flameshooter, item);
+            v5 = ~GetQuantity(0, item);
+            if v4 {
+                v6 = ~PostInFuture(v5, << _aNO_HALT_i, _aNEXT_FRAME_MAX_i, _aSFX_i, 53, _aUSABLE_i, #uegg_269, _aLOOP_i, 65530, 17, byte(70), 0 >>, v4);
+            }
+        }
+        if ((v2 = 2) or (v2 = 12)) {
+            if (v2 = 2) {
+                v3 = 3;
+            } else {
+                v3 = 16;
+            }
+            v7 = ~FindNearby_i(0, v3, _E_W_Sawblade, item);
+            v5 = ~GetQuantity(0, item);
+            if v7 {
+                v6 = ~PostInFuture(v5, << _aNO_HALT_i, _aNEXT_FRAME, _aSFX_i, 5, _aUSABLE_i, #uegg_269, _aLOOP_i, 65530, 8, byte(70), 0 >>, v7);
+            }
+        }
+        if ((v2 = 3) or (v2 = 13)) {
+            if (v2 = 3) {
+                v3 = 3;
+            } else {
+                v3 = 16;
+            }
+            v7 = ~FindNearby_i(0, v3, _Horiz_Saw, item);
+            v5 = ~GetQuantity(0, item);
+            if v7 {
+                v6 = ~PostInFuture(v5, << _aNO_HALT_i, _aNEXT_FRAME, _aSFX_i, 5, _aUSABLE_i, #uegg_269, _aLOOP_i, 65530, 10, byte(70), 0 >>, v7);
+            }
+        }
+    }
+    if (event = _Action) {
+        v8 = ~FindNearby_i(0, 3, _All, item);
+        Foreach v11 in v8 {
+            if not ((~Item_getType(v11) = _E_W_Sawblade) or ((~Item_getType(v11) = _E_W_Flameshooter) or (~Item_getType(v11) = _Horiz_Saw))) && ~Item_isNpc(v11) && (~GetNPCStat_i(_Hits, v11) >= 6) {
+                DoDamage_i(5, v11);
+            }
+        }
+    }
+}
+
+Usable ResetBanes_i #locals(0) {
+    if not $antiiolodead {
+        Item_move(<< 2453, 110, 2 >>, _AntiIolo);
+        Npc_setAlignment(_Neutral, _AntiIolo);
+        SetWorkType(_MajorSit, _AntiIolo);
+    }
+    if not $antidupredead {
+        Item_move(<< 2457, 117, 1 >>, _AntiDupre);
+        Npc_setAlignment(_Neutral, _AntiDupre);
+        SetWorkType(_MajorSit, _AntiDupre);
+    }
+    if not $antishaminodead {
+        Item_move(<< 2457, 105, 1 >>, _AntiSham);
+        Npc_setAlignment(_Neutral, _AntiSham);
+        SetWorkType(_MajorSit, _AntiSham);
+    }
+}
+
+Function ~FireFieldSpot_i accepts a0, a1 #locals(1) {
+    if (v1 = 2463) {
+        if (~rndRange(1, 0) = 0) {
+            v1 = (v1 + 1);
+        } else {
+            v1 = (v1 - 1);
+        }
+    }
+    if (v0 = 111) {
+        if (~rndRange(1, 0) = 0) {
+            v0 = (v0 + 1);
+        } else {
+            v0 = (v0 - 1);
+        }
+    }
+    v2 = << v1, v0, 0 >>;
+    return v2;
+}
+
+Function ~IsAnyBaneDead_i #locals(0) {
+    if ($antidupredead or ($antishaminodead or $antiiolodead)) {
+        return true;
+    } else {
+        return false;
+    }
+}

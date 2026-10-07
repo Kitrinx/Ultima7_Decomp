@@ -1,0 +1,327 @@
+Routine Jorvin accepts a0 #locals(9) #uses(~LordOrLady, ~AvatarName, ~IsInInv, ~WhereAmI_i, ~GimmePathEgg, Bark_i, PartyFaces_i, ~AskYesNo, AlyssandSeeksAvatar_i, SendAssassin_i) {
+    v0 = ~LordOrLady();
+    v1 = ~AvatarSex();
+    v2 = ~AvatarName();
+    v3 = ~IsInInv(0, 65177, _Ring, 1, _Party);
+    v4 = ~WhereAmI_i();
+    if ((event = _Path_Success) or (event = _Path_Failure)) {
+        SetWorkType(_Stand, _Jorvin);
+    }
+    if (event = _Action) {
+        if flag(348) {
+            terminate;
+        }
+        if (~WhereAmI_i() = 3) {
+            v5 = ~PostInFuture(75, << _aNO_HALT_i, _aUSABLE_i, #Jorvin >>, ~GimmePathEgg(1, 5));
+            v5 = ~ApproachAvatar_i(40, 120, _Jorvin);
+            SetWorkType(_Talk, _Jorvin);
+            Bark_i(2, (("@Hail, " + v2) + "!@"), _Jorvin);
+        } else {
+            v5 = ~PostInFuture(150, << _aNO_HALT_i, _aUSABLE_i, #Jorvin >>, ~GimmePathEgg(1, 5));
+        }
+    }
+    if (event = _NearDeath) {
+        v5 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #Green_Noble >>, item);
+    }
+    if (event = _Converse) {
+        Item_bark("@Hail, guardsman!@", _Avatar);
+        PartyFaces_i(65483);
+        Bark_i(5, (("@Hail, " + v0) + "!@"), _Jorvin);
+        SetWorkType(_Talk, _Jorvin);
+    }
+    if (event = _Talking) {
+        Npc_schedule(_Jorvin);
+        ClearBark_i(_Jorvin);
+        SetSpeaker0_i(0, _Jorvin);
+        v6 = ~GetItemFlag_i(_Met, _Jorvin);
+        if (flag(438) and not flag(348)) {
+            SetSpeaker0_i(0, _Jorvin);
+            ["Greetings, visitors! Thanks to the beautiful songs of the bard Iolo, thou hast found favor in our good city."];
+            ["The Lady would welcome thee formally to Fawn. Thou mayest attend her within her throne room at the palace, after noon."];
+            ["Be certain to bring that fellow Iolo with thee -- the Lady doth wish to confer an honor upon him."];
+            CloseSpeaker0_i();
+            Bark_i(2, "@Such an honor...@", _Jorvin);
+            flag(348) = true;
+            terminate;
+        }
+        if (v6 = false) {
+            if ($gottattoo = true) {
+                if ($fawntowerretaken = true) {
+                    ["Finely done, brave Monitorian! We had despaired when those vile goblins seized the tower." *"I am Jorvin, Captain of the guard. How may I be of service?"];
+                } else {
+                    ["A Monitorian! I hope this means that Monitor plans to retake the Fawn tower from those vile goblins." *"I am Jorvin, Captain of the guard. How may I be of service?"];
+                }
+                TurnOn("tower");
+            } else {
+                ["Thou art new here, <v0>. I am Jorvin, Captain of the guard. How may I be of service?"];
+            }
+            SetItemFlag_i(_Met, _Jorvin);
+        } else {
+            ["Well met, <v2>! 'Tis good to see thee again."];
+        }
+        TurnOn(<< "goblins", "storms", "Fellowship troublemakers", "Wand of Detainment" >>);
+        if ($knowsassassin = true) {
+            TurnOn("Assassin");
+        }
+        if ($jorvinknowsbrushes and not $knowgoblinhairbrush) {
+            TurnOn("strange hairbrush");
+        }
+        if ($jorvinknowsskull and not $KNOWS_BEAR_SKULL_ORIGIN) {
+            TurnOn("skull");
+        }
+        if ($jorvinknowsarms and not $knowmonitorshield) {
+            TurnOn("plain shield");
+        }
+        TurnOn("bye");
+        converse {
+            key ("tower") {
+                if ($gottattoo = true) {
+                    if ($fawntowerretaken = true) {
+                        ["When the goblins took the tower, we feared that Fawn would be crushed without the Pikemen. 'Twas a horrible thought -- trapped between the storms and the goblins with no escape." *"'Twas certainly the bravest of Monitorians that led the assault to retake the tower." ~"Wert thou there?"];
+                        v7 = ~AskYesNo();
+                        if v7 {
+                            if (v1 = true) {
+                                ["How remarkable! Thou art surely as beautiful as Lady Yelinda, and as brave as any Pikeman." *"Pray, forgive mine astonishment. In Fawn, all females -- especially the beautiful ones -- are forbidden to endanger themselves. We could not bear to see Beauty such as thine marred in any way."];
+                            } else {
+                                ["Oh, how I wish I could have been at thy side! My duty to Lady Yelinda is such that -- even had we enough able-bodied men to attempt it -- I could not leave her unprotected to undertake the task." *"I envy thee, <v0>."];
+                            }
+                        } else {
+                            if (v1 = true) {
+                                ["Perhaps 'twas for the best. Do not mistake me, <v0>. I do not mean to imply that thou wouldst not have fought valiantly." *"In Fawn, all females -- especially the beautiful ones -- are forbidden to endanger themselves. Beauty that rivals even that of Lady Yelinda should not be marred in any way."];
+                            } else {
+                                ["No doubt there will be another day for thee, <v0>." *"Mine own duty to Lady Yelinda kept me from joining in the fray. I could not leave her unprotected in a city so besieged."];
+                            }
+                        }
+                    } else {
+                        ["I fear that Fawn will be crushed without the aid of thee and thy Pikemen comrades. 'Tis a horrible thought -- trapped between the storms and the goblins with no escape." *"'Twill certainly take the bravest of Monitorians to lead the assault to retake the tower. I fear that my duty to Lady Yelinda doth not allow me to undertake the attempt myself."];
+                    }
+                } else {
+                    if ($fawntowerretaken = true) {
+                        ["The Monitorians have guard towers along the central roads between cities. The Pikemen are often the only thing that stands between the goblins and the travellers." *"Lady Yelinda is much relieved now that the Pikemen have wrested control of the Fawn tower from those vile goblins. 'Twas a frightening notion to be caught between the goblins and the storms... with no hope of escape."];
+                    } else {
+                        ["The Monitorians had guard towers along the central roads between cities. The Pikemen were often the only thing that stood between the goblins and the travellers." *"Lady Yelinda is very concerned now that those vile goblins have wrested control of the Fawn tower from the Pikemen. 'Tis a frightening notion, being caught between the goblins and the storms... with no hope of escape."];
+                    }
+                }
+                TurnOff("tower");
+                TurnOn(<< "Monitorians", "Pikemen", "Lady Yelinda" >>);
+            }
+            key ("Monitorians") {
+                if ($gottattoo = true) {
+                    if ($jorvinaskedtatoo = false) {
+                        ["By the mark that thou dost wear on thy face, I judged thee as a Monitorian. Perhaps I am mistaken. Art thou from Monitor, <v0>?"];
+                        v8 = ~AskYesNo();
+                        if v8 {
+                            ["I am honored to meet thee. I have always valued the brave Pikemen that guard our roads."];
+                        } else {
+                            ["Then thou must be brave indeed! Monitor hath never before welcomed outsiders into the ranks of the Pikemen." *"I am honored to meet thee."];
+                        }
+                    } else {
+                        ["I am certain that Lady Yelinda will wish to receive thee formally once she knows that thou art in the city. I will see that thou art properly escorted when she doth wish to see thee."];
+                    }
+                    $jorvinaskedtatoo = true;
+                } else {
+                    ["The Monitorians come from a city dedicated to bravery. Their soldiers are called the Pikemen. Thou mayest know them by the tattoos on their faces."];
+                }
+                TurnOff("Monitorians");
+            }
+            key ("Pikemen") {
+                if ($gottattoo = true) {
+                    if ($jorvinaskedtatoo = false) {
+                        ["By the mark that thou dost wear on thy face, I judged thee as a Pikeman. Perhaps I am mistaken. Art thou from Monitor, <v0>?"];
+                        v8 = ~AskYesNo();
+                        if v8 {
+                            ["I am honored to meet thee. I have always valued the brave Pikemen that guard our roads."];
+                        } else {
+                            ["Then thou must be brave indeed! Monitor hath never before welcomed outsiders into the ranks of the Pikemen." *"I am honored to meet thee."];
+                        }
+                    } else {
+                        ["I am certain that Lady Yelinda will wish to receive thee formally once she knows that thou art in the city. I will see that thou art properly escorted when she doth wish to see thee."];
+                    }
+                    $jorvinaskedtatoo = true;
+                } else {
+                    if ($fawntowerretaken = true) {
+                        ["They are the finest warriors in the land. Though some may grumble at the tribute they ask, I think it is a small price to pay. Their bravery hath been the only thing that hath kept the goblins at bay all these years."];
+                    } else {
+                        ["They are the finest warriors in the land. Though some feel that the tribute they asked was too much, now that they have failed to hold the tower."];
+                    }
+                    TurnOn("tribute");
+                }
+                TurnOff("Pikemen");
+            }
+            key ("tribute") {
+                if ($fawntowerretaken = true) {
+                    ["The Fawn tower Pikemen levy a toll for every person that travels along this length of road." *"The Pikemen must not only protect the travellers, but also insure the upkeep of the tower and this portion of the road. I do not feel that the charge is unwarranted."];
+                } else {
+                    ["The Fawn tower Pikemen levied a toll for every person that travelled along this length of road." *"The Pikemen not only protected the travellers, but also insured the upkeep of the tower and this portion of the road. I did not feel that the charge was unwarranted, although there are those in the city that disagree with me now that the tower hath fallen to the goblins."];
+                }
+                TurnOff("tribute");
+            }
+            key ("Lady Yelinda") {
+                ["Lady Yelinda is the ruler of Fawn, and is the most beautiful of all women within the city. If thou seekest an audience with her, thou must speak with the Chancellor."];
+                TurnOff("Lady Yelinda");
+                TurnOn("Chancellor");
+            }
+            key ("Chancellor") {
+                TurnOff("Chancellor");
+                ["His name is Zulith. Thou mayest know him by his green robes of state. Thou canst not miss them.];
+                if ($AUDIENCE_WITH_YELINDA and ($FAWN_TRIAL_DONE and not $oraclesaysinnocent)) {
+                    ["Thou canst most often find Zulith in the palace, acting as Lady Yelinda's secretary."];
+                } else {
+                    ["Thou canst most often find Zulith either in the palace, acting as Lady Yelinda's envoy to the Great Captains, or in the Temple. He seems to be a fervent follower of Beauty."];
+                    TurnOn(<< "Great Captains", "Temple" >>);
+                }
+            }
+            key ("Great Captains") {
+                ["The Great Captains serve as counselors to Lady Yelinda. They deal with most trade matters, and oversee the disposition of the fleets. Thou canst find them near the docks most times."];
+                TurnOff("Great Captains");
+                TurnOn("fleets");
+            }
+            key ("fleets") {
+                ["Until the storms began, Fawn's means of livelihood was fishing. Now our economy is all but ruined. The storms have destroyed all of our ships." *"Our fishermen must fish from the docks. We have only enough fish to feed the city. We have none to trade to the other cities. Only Alyssand still finds a way to bring money into the city."];
+                TurnOff("fleets");
+                TurnOn("Alyssand");
+            }
+            key ("Alyssand") {
+                ["Alyssand is the daughter of Delin the shopkeeper. She makes fishnet stockings that she exports to wealthy customers in Moonshade." *"Ever since her betrothed disappeared, Alyssand hath taken to listening to the babble of The Fellowship followers. I hope she doth not go astray."];
+                TurnOff("Alyssand");
+                TurnOn("betrothed");
+            }
+            key ("betrothed") {
+                ["Alyssand's betrothed was a fisherman named Keth. He was without shelter during one of these freak storms. No one hath seen him since." *"Alyssand took it well enough -- until a storm took away the engagement ring he had specially made for her in Moonshade. I suspect that she always hoped that he would come back. Now that the ring is gone, Alyssand hath had to face the truth that Keth might well be a tree now, for all we know."];
+                TurnOff("betrothed");
+                if (v3 = true) {
+                    TurnOn("engagement ring");
+                }
+            }
+            key ("engagement ring") {
+                ["'Tis the one, in truth! I would recognize it anywhere. Keth showed it to me when he did bring it back from Moonshade." *"Alyssand will be thrilled, no doubt. Perhaps this will turn her mind from the false path she now follows." *"Thou mayest ask for her at Delin's shop. He should know where she is."];
+                AlyssandSeeksAvatar_i();
+                TurnOff("engagement ring");
+            }
+            key ("Temple") {
+                ["The Temple is located beyond the palace, on the waterfront. 'Tis dedicated to Beauty, as is all of Fawn."];
+                TurnOff("Temple");
+            }
+            key ("goblins") {
+                if ($fawntowerretaken = false) {
+                    if ($gottattoo = true) {
+                        ["We did defeat them handily with the help of the Monitorians. But now that they have organized under one leader and taken control of the tower, 'tis all we can do to hold them at bay."];
+                        TurnOn("leader");
+                    } else {
+                        ["The Monitorians were our only hope of withstanding the new unity of the goblins. But with the tower taken, 'tis only a matter of time before Fawn is lost. With the fleets destroyed, we dare not hope to escape their cookpots."];
+                    }
+                    TurnOn(<< "unity", "cookpots" >>);
+                } else {
+                    ["We had despaired of falling to their newfound unity. But we have hope again now that the tower hath been retaken."];
+                }
+                TurnOn("unity");
+                TurnOff("goblins");
+            }
+            key ("leader") {
+                ["A huge brute that calls himself Pomdirgun. Leastways I think that is it... hard to understand anything a goblin says." *"He killed all the other goblin leaders and made himself the head chief. He is very dangerous. 'Tis almost as though he doth have a brain."];
+                TurnOff("leader");
+            }
+            key ("unity") {
+                ["For these many years the goblins fought more amongst themselves than with us. Raided the towns a time or two, but nothing truly serious." *"Now they are all following one crafty goblin. Always seems to outwit the soldiers sent to kill him."];
+                TurnOff("unity");
+            }
+            key ("cookpots") {
+                ["Anyone knows that goblins devour people! Why soon before the storms began, they abducted the healer who was gathering herbs."];
+                TurnOff("cookpots");
+                TurnOn("healer");
+            }
+            key ("healer") {
+                ["We took an armed band after them as quickly as possible, but all we found of him was his head... The rest was doubtless in the cookpot or the grinder. Delphynia doth do her best to take his place."];
+                TurnOff("healer");
+                TurnOn("Delphynia");
+            }
+            key ("Delphynia") {
+                ["She is the town herbalist, actually. She doth spend her time between her greenhouse and the healer's hall." *"We tried to send word to Moonshade or Monitor for another healer, but no one was willing to come -- what with the storms and all."];
+                TurnOff("Delphynia");
+            }
+            key ("storms") {
+                ["We expect bad weather, being located on the water as we are. But these storms seem... well... evil somehow. Lightning that causes things to disappear. Not burnt to ashes, mind thee, completely gone. Lightning that takes something and leaves something else in its place." *"Thou must find shelter quickly when thou dost think a storm is approaching."];
+                TurnOff("storms");
+            }
+            key ("Fellowship troublemakers") {
+                TurnOff("Fellowship troublemakers");
+                if ($AUDIENCE_WITH_YELINDA and ($FAWN_TRIAL_DONE and not $oraclesaysinnocent)) {
+                    ["Now, do not speak of Leon's followers in such a manner! We of Fawn have learned tolerance, thanks to the Lady's example."];
+                } else {
+                    ["I see the guards are still spreading that gossip..." *"Before these strange storms started, a ship came into our port bearing no resemblance to any ship we knew. Those aboard her told us that they had voyaged from Old Sosaria. Though our seamen found this hard to believe, we accepted them." *"Leon began preaching about some strange notion called The Fellowship right before the storms started. Kylista took this as a sign that the heavens were angry with us for allowing this foreign belief into the city. After seeking counsel with the Great Captains, Lady Yelinda regretfully banned the sailors and the passengers from the city."];
+                    TurnOn("Kylista");
+                }
+            }
+            key ("Kylista") {
+                ["Kylista is the Priestess of Beauty. 'Tis her duty to see to the spiritual well-being of the people of Fawn. Her task hath not been easy since the fleet was destroyed. Many people are disillusioned." *"Our only comfort lies in the revelations of the Oracle."];
+                TurnOff("Kylista");
+                TurnOn(<< "revelations", "Oracle" >>);
+            }
+            key ("revelations") {
+                ["The revelations assure us that the heavens have not totally turned their eyes from Fawn."];
+                ["If thou dost visit the Temple whilst thou art here, I am sure that thou wilt be able to hear for thyself."];
+                TurnOff("revelations");
+            }
+            key ("Oracle") {
+                ["'Tis quite a marvel. Before the storms began, people came from all around to hear its revelations." *"'Twas built by some mage from Moonshade for Lady Fawn. If thou wishest to know more, though, thou shouldst ask Kylista."];
+                TurnOff("Oracle");
+            }
+            key ("Wand of Detainment") {
+                ["'Tis the only thing the guards have performed correctly. We make no secret of the fact that I possess the Wand of Detainment. I find that the knowledge that I can stop even the greatest brute, or the fastest thief, doth do much to deter those who would cause mischief in our city."];
+                TurnOff("Wand of Detainment");
+            }
+            key ("Assassin") {
+                ["I arrived too late to stop the culprit, <v0>. I am sorry. But everyone seems to agree that the person was not dressed as a citizen of Fawn. Some say that it was one of the sailors outside the city, but that may be too hasty a decision. I will look into it further. Thou hast my word."];
+                TurnOff("Assassin");
+            }
+            key ("strange hairbrush") {
+                TurnOff("strange hairbrush");
+                if ~IsInInv(6, 65177, _Brush, 1, _Party) {
+                    ["I will not ask thee where thou didst come upon this hideous object, <v0>. That is thy business."];
+                    ["I only ask that thou not show it around overly much... Thou seest, it is a hairbrush used by the goblins, and it is fashioned out of human bone."];
+                    ["I saw several like this in empty goblin campsites when we tried to route the goblins from this area."];
+                } else {
+                    ["It sounds like thou art describing a hairbrush used by the goblins. It is fashioned out of human bone..."];
+                    ["I saw several in empty goblin campsites when we tried to route the goblins from this area."];
+                }
+            }
+            key ("skull") {
+                TurnOff("skull");
+                if ~IsInInv(65177, 65177, _Bearskull, 1, _Party) {
+                    ["Thou canst tell Jendon that this is no goblin skull. He will have to find something else to hang above his door."];
+                    ["'Tis a bear's skull. Bears are common in this area and to the south of here as well."];
+                } else {
+                    ["No, Jendon would not know what this is. Jendon is a city man and hath never been hunting with the guards."];
+                    ["'Tis a bear's skull. Bears are common in this area and to the south of here as well."];
+                }
+            }
+            key ("plain shield") {
+                TurnOff("plain shield");
+                if ~IsInInv(65177, 65177, _Shield_Heirarchy, 1, _Party) {
+                    ["Jendon was right to send thee to me. I doubt that anyone else in Fawn takes much notice of such things..."];
+                    ["This is a Monitorian shield, <v0>."];
+                    if ($gottattoo = true) {
+                        ["I am surprised that thou hast not realized by now... One of thy Pikeman companions will be looking for this."];
+                    } else {
+                        ["Some Pikeman will be looking for this."];
+                    }
+                } else {
+                    ["I believe thou art describing a Monitorian shield, <v0>."];
+                    if ($gottattoo = true) {
+                        ["Thou dost concentrate on the battle so much that thou dost not notice thine own equipment any longer, <v0>."];
+                    } else {
+                        ["Look at any Pikeman thou dost meet. Thou wilt most likely see another shield precisely like the one thou hast described."];
+                    }
+                }
+            }
+            key ("bye") {
+                SendAssassin_i();
+                CloseSpeaker0_i();
+                Bark_i(0, "@Until we meet again.@", _Avatar);
+                Bark_i(2, "@Walk in Beauty!@", _Jorvin);
+                break;
+            }
+        }
+        clear_answers;
+    }
+}

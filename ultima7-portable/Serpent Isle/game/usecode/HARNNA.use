@@ -1,0 +1,1396 @@
+Routine Harnna accepts a0 #locals(15) #uses(~IsInInv, ~LordOrLady, SetWorkTypeAt_i, PartyFaces_i, Bark_i, ~AskYesNo, ~GiveItemsOrDrop_i, ~PartyUtters, HarnnaHeals_i, HarnnaSellsProduce_i, ~UsePatience_i, ~RemoveFromList_i) {
+    v0 = ~GetTime();
+    v1 = ~IsInInv(15, 65177, _Reagents, 1, _Party);
+    v2 = ~LordOrLady();
+    if ((v0 > 1) or (v0 < 6)) {
+        v0 = "day";
+    } else {
+        v0 = "evening";
+    }
+    v3 = false;
+    if (event = _NearDeath) {
+        v4 = ~PostAction(<< _aUSABLE_i, #Paladin >>, item);
+    }
+    if (event = _Action) {
+        SetWorkTypeAt_i(_Talk, 65535, 65535, _Harnna);
+    }
+    if (event = _Converse) {
+        Item_bark("@Greetings, milady.@", _Avatar);
+        PartyFaces_i(65469);
+        Bark_i(2, "@Greetings to thee.@", _Harnna);
+        SetWorkType(_Talk, _Harnna);
+    }
+    if (event = _Talking) {
+        ClearBark_i(_Harnna);
+        Npc_schedule(_Harnna);
+        SetSpeaker0_i(0, _Harnna);
+        if ($harnnasaidcrystalball and not $takencantraquest) {
+            if $cantravisiondone {
+                RevertSchedule_i(_Harnna);
+                Npc_schedule(_Harnna);
+                ["As thou hast now seen, the peril that faces Cantra doth go beyond merely being taken by the Goblins. Some foul thing doth possess her."];
+                ["The worst the Goblins could do would be to kill her and destroy her body. This new uncertain danger is nothing less than a threat to her spirit, the very essence of her being!"];
+                ["I implore thee, please find her and rescue her. It is certain to be a perilous undertaking and I cannot blame thee if thou wouldst refuse the pleas of a simple woman."];
+                ["But none of the other Knights believe in the visions of the crystal ball. They believe that Cantra hath been taken away by the goblins, and that she is already dead."];
+                ["Thou art mine only hope! Wilt thou please find my daughter Cantra and return her to me?"];
+                if ~AskYesNo() {
+                    $takencantraquest = true;
+                    ["Oh, I thank thee from the bottom of mine heart for thy kindness and thy bravery!"];
+                    ["To find Cantra, thou wilt need two things. The first of these is Cantra's practice sword. I can give that to thee now."];
+                    v4 = ~GiveItemsOrDrop_i(true, 0, 0, 65177, 520, 1, _Avatar);
+                    ["This is the very same practice sword that Cantra used every day."];
+                    ["Now that thou hast my daughter's sword, thou shouldst find one of the legendary Hounds of Doskar. They will be able to sniff Cantra's essence from the sword, and then track her to anywhere in the Serpent Isle."];
+                    ["The only dilemma thou dost face now is to find one of the Hounds of Doskar. I do not know where one may be found, but I foresee that thou must find the Hound before thou canst rescue my daughter."];
+                    SetWorkType(_Shy, _Harnna);
+                } else {
+                    ["Then mine only daughter Cantra shall soon be dead... or worse. Leave thou me now."];
+                    SetWorkType(_Shy, _Harnna);
+                    Bark_i(0, "@Oh...@", _Harnna);
+                    terminate;
+                }
+            } else {
+                ["Thou must find the crystal and gaze into it. Go to mine home. It is there, on the table."];
+                ["I beg of thee, for thy sake as well as the sake of my missing child, look into the glass."];
+                Bark_i(0, "@The crystal!@", _Harnna);
+                terminate;
+            }
+        } else {
+            if $AVATAR_IS_KNIGHT {
+                if not $cantrataken {
+                    ["My daughter Cantra is missing! I know she would never run away from me, but I feel certain that the Goblins did not take her."];
+                    $cantrataken = true;
+                    if not ~GetItemFlag_i(_Met, _Harnna) {
+                        ["Pray excuse my poor manners, stranger! I am Widow Harnna, the Healer of Monitor. I also sell vegetables from my garden."];
+                        TurnOn(<< "widow", "healing", "food", "information" >>);
+                        SetItemFlag_i(_Met, _Harnna);
+                    } else {
+                        ["Pray excuse mine outburst, <v2>! How may I help thee now? Dost thou have need of healing, or dost thou wish to buy my vegetables?"];
+                    }
+                    TurnOn(<< "healing", "food", "information" >>);
+                } else {
+                    if not ~GetItemFlag_i(_Met, _Harnna) {
+                        ["I am Widow Harnna, the Healer of Monitor. I also sell vegetables from my garden."];
+                        TurnOn(<< "widow", "healing", "food", "information" >>);
+                        SetItemFlag_i(_Met, _Harnna);
+                    } else {
+                        ["How may I help thee now? Dost thou have need of healing, or dost thou wish to buy my vegetables?"];
+                    }
+                    TurnOn(<< "healing", "food", "information" >>);
+                }
+            } else {
+                v4 = ~FindNearby_i(0, 20, _Plaque, _Harnna);
+                Foreach v7 in v4 {
+                    if (~GetQuality(v7) = 72) {
+                        ["Perhaps we may speak at another time. Mine husband is recently dead, and I am in mourning."];
+                        terminate;
+                    }
+                }
+                if not ~GetItemFlag_i(_Met, _Harnna) {
+                    ["How may I help thee? I am Widow Harnna, the Healer of Monitor. I also grow mine own food."];
+                    TurnOn(<< "widow", "healing", "food", "information" >>);
+                    SetItemFlag_i(_Met, _Harnna);
+                } else {
+                    ["How may I help thee now? Dost thou have need of healing, or dost thou wish to buy my vegetables?"];
+                }
+                TurnOn(<< "healing", "food", "information" >>);
+            }
+        }
+        if ($takencantraquest and not $BATLIN_FLED_SHAMINOS_KEEP) {
+            TurnOn("prophecy");
+            v3 = true;
+        }
+        if $cantrataken {
+            TurnOn("Cantra");
+        }
+        if ($FOUND_CANTRAS_FATHER and not $TOLD_HARNNA_FOUND_SCROLL) {
+            TurnOn("found scroll");
+        }
+        if ($KNOWS_ABOUT_VARO_LEAVES and (not flag(421) and ($poisonedbylydia and not $CURED_LYDIA_POISON))) {
+            TurnOn(<< "Varo leaves", "pox" >>);
+        }
+        if $POMDIRGUN_IS_DEAD {
+            TurnOn("Pomdirgun");
+        }
+        if ($KNOWS_ABOUT_VARO_LEAVES and $poisonedbylydia) {
+            TurnOn("pox");
+        }
+        if ($TOLD_MARSTEN_SERVES_LORD_BRITISH and not $RENOUNCED_BRITISH) {
+            TurnOn("Marsten");
+        }
+        v8 = 2;
+        if $AVATAR_IS_KNIGHT {
+            v8 = 6;
+        }
+        if $takencantraquest {
+            v8 = 12;
+        }
+        v9 = 0;
+        TurnOn("bye");
+        converse {
+            key ("Marsten") {
+                TurnOff("Marsten");
+                if $marstenarrested {
+                    ["I am glad that miserable traitor is no longer Lord of Monitor!"];
+                } else {
+                    ["He is the Lord of the Town. Thou shouldst talk to him if thou hast not already."];
+                }
+            }
+            key ("widow") {
+                TurnOff("widow");
+                ["My beloved husband was slain while doing his duty, so I should have no complaints. Though Goblins have taken his life, they too shall die."];
+                ["But it hath been hard on Cantra. A girl at her age needs a father, dost not thou agree?"];
+                TurnOn(<< "Cantra", "father" >>);
+            }
+            key ("Pomdirgun") {
+                TurnOff("Pomdirgun");
+                ["I truly believe it is wrong to wish harm to any living creature, but the world is far better without that foul creature Pomdirgun alive. Thy deed was fair."];
+            }
+            key ("Cantra") {
+                TurnOff("Cantra");
+                if $BATLIN_FLED_SHAMINOS_KEEP {
+                    if $TOLD_CANTRA_IS_ALIVE {
+                        ["It is a comfort to know that my daughter is among the monks. Yet I have a foreboding..."];
+                        ["Something is coming to me... a thought... a premonition..."];
+                        ["Go! The monks have need of thee. My daughter hath need of thee!"];
+                        Bark_i(0, "@Go to Monk Isle!@", _Harnna);
+                        terminate;
+                    } else {
+                        ["I know that mine only daughter Cantra is now dead. Her spirit hath been haunting me. She is suffering and tormented."];
+                        v10 = ~PartyUtters(false, "@The monks have taken Cantra to their island.@", "@The monks have taken Cantra to their island.@", 65534);
+                        SetSpeakerSlot_i(0);
+                        ["I thank thee! Perhaps now there is hope that my daughter shall return home to me."];
+                        $TOLD_CANTRA_IS_ALIVE = true;
+                    }
+                } else {
+                    if not $cantrataken {
+                        ["Cantra misses her father terribly. He hath been gone for many weeks..."];
+                        ["She is nearly ready to become a Knight herself now. Her father would be so proud of her!"];
+                        ["She is so serious about becoming a Knight. All she ever does is practice with her wooden sword."];
+                        TurnOn("father");
+                    } else {
+                        if not $harnnasaidcrystalball {
+                            ["Dost thou believe in magic?"];
+                            if ~AskYesNo() {
+                                ["That is good, for what I have to show thee would befuddle the minds of most of this town's inhabitants."];
+                            } else {
+                                ["I would wager that there is some tiny bit of belief in thine heart, but if not, then it is time that thou wert properly enlightened."];
+                                ["What I have to show thee should quell any doubts thou mayest yet have."];
+                            }
+                            $harnnasaidcrystalball = true;
+                            if (~GetWorkType(_Harnna) <> _Patrol) {
+                                ["Go to mine home. There thou shalt find a crystal ball. Gaze into it, and let thy mind be clear."];
+                            } else {
+                                ["Look into my crystal ball. Thou shalt find it on the table within mine home. Let thy mind be clear."];
+                            }
+                            Bark_i(0, "@The crystal!@", _Harnna);
+                            terminate;
+                        } else {
+                            if not $cantraresurrected {
+                                ["I am so grateful that thou hast taken on the quest of saving my daughter. If I can help thee, ask."];
+                            } else {
+                                if ~GetItemFlag_i(_Zombie, _Cantra) {
+                                    ["I am glad that my daughter is alive, but I have a strange foreboding that all is not as it should be with her. A small private part of her is still awash in madness and death."];
+                                } else {
+                                    ["I am so happy my daughter hath been found, resurrected by the monks, and that thou hast restored her mind."];
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            key ("father") {
+                TurnOff("father");
+                ["The Knights say that there is glory in the way that Cantra's father died, but they do not see the truth. He did his duty, not to earn their respect, but out of love for his family."];
+                ["This type of courage, and the source of it, is something the Knights of Monitor do not understand. And until they gain that understanding, there will be no winning this war with the Goblins."];
+            }
+            key ("healing") {
+                ["I am not a magical healer. Monitorians are quite suspicious of magic. I use a natural healing method, which uses herbs. Art thou in need of a healer?"];
+                if ($poisonedbylydia and (flag(194) and not $CURED_LYDIA_POISON)) {
+                    v10 = ~PartyUtters(false, "@Oh... yes... mine head...@", "@The Avatar is burning with fever!@", 65533);
+                    SetSpeakerSlot_i(0);
+                    if ($KNOWS_ABOUT_VARO_LEAVES = false) {
+                        ["I can temporarily restore thy body, but thou art suffering from an affliction that cannot easily be cured."];
+                        ["Such a pox may wear off in time if thou art extremely lucky, but thou canst only be permanently cured by a special ointment made from Varo leaves."];
+                        TurnOn("pox");
+                        if (flag(421) = true) {
+                            ["Ah, thou hast spoken with Delphynia already! Dost thou have the Varo leaves?"];
+                            if ~AskYesNo() {
+                                goto label_102;
+                            } else {
+                                ["Go thou quickly to Fawn and see if she doth have more of the leaves!"];
+                            }
+                        } else {
+                            TurnOn("Varo leaves");
+                        }
+                        $KNOWS_ABOUT_VARO_LEAVES = true;
+                        HarnnaHeals_i();
+                        goto label_107;
+                    }
+                    label_102:
+                    if ~TakeFromParty_i(false, 3, _All, _Magic_Plants, 5) {
+                        ["Now that I have the proper ingredients, it is a simple matter to cure thee."];
+                        ["Hold thou still while I apply these directly upon thy tattoo..."];
+                        ["There, 'tis done. Thine infection hath been healed."];
+                        $CURED_LYDIA_POISON = true;
+                        ClearItemFlag_i(_Poisoned, _Avatar);
+                    } else {
+                        if ~GetItemFlag_i(_Poisoned, _Avatar) {
+                            ["My cure can have only a temporary effect, for thou art enthralled by a powerful disease."];
+                        }
+                        ["In order for me to provide a permanent cure to thine affliction, thou must bring me five leaves of the Varo plant."];
+                        HarnnaHeals_i();
+                        Bark_i(0, "@Quickly...@", _Harnna);
+                        terminate;
+                    }
+                    label_107:
+                } else {
+                    if ~AskYesNo() {
+                        HarnnaHeals_i();
+                    } else {
+                        ["If thou art ever in need of a healer, I shall be ready to assist thee."];
+                    }
+                }
+            }
+            key ("Varo leaves") {
+                TurnOff("Varo leaves");
+                ["These leaves are now scarce, as the Varo grows only with abundant sunlight, and we have had clouded skies for many months."];
+                ["Go thou and see Delphynia, the horticulturist in Fawn. Perhaps she will have a supply of leaves."];
+            }
+            key ("pox") {
+                TurnOff("pox");
+                if ($LYDIA_CONFESSES = true) {
+                    ["Didst thou speak with Lydia?"];
+                    SetSpeaker1_i(0, _Avatar);
+                    ["Indeed, the wench hath confessed to her crime!"];
+                    if ~GetItemFlag_i(_Dead, _Lydia) {
+                        ["Moreover, she hath paid for her treachery in blood. She is slain."];
+                    }
+                    CloseSpeaker1_i();
+                    SetSpeakerSlot_i(0);
+                    ["I see. Thou dost appear to have many enemies in my land, <v2>. Be thou careful whom thou dost trust!"];
+                } else {
+                    ["Thy suffering came from no accidental affliction -- the venom which mixes with thy blood is not common."];
+                    v10 = ~PartyUtters(false, 0, "@Who did this to the Avatar?@", 65535);
+                    if (v10 <> 65180) {
+                        SetSpeakerSlot_i(0);
+                    }
+                    ["I strongly suspect that the source of thine infection is the tattoo thou hast been given."];
+                    ["I know that Lydia must have given thee this tattoo, yet I find it difficult to believe she would poison a stranger."];
+                    ["Thou shouldst have words with her, I think."];
+                    $CAN_ASK_LYDIA_ABOUT_POISON = true;
+                    Npc_setAlignment(_Chaotic, _Lydia);
+                    SetItemFlag_i(_Tournament, _Lydia);
+                }
+                flag(203) = true;
+            }
+            key ("food") {
+                ["I grow vegetables to feed the town, and sometimes to trade. What dost thou wish to purchase?"];
+                HarnnaSellsProduce_i();
+            }
+            key ("prophecy") {
+                TurnOff("prophecy");
+                if $hasserpentnecklace {
+                    ["I sense that thou hast completed the Quest of the Three Artifacts."];
+                } else {
+                    ["Thou shalt need three ancient and powerful artifacts to complete thy tasks. One of these is a helm. It seems very familiar to me..."];
+                    if $gothelmofmonitor {
+                        ["But of course! It is the Helm of Monitor, which thou didst recover from the Goblins!"];
+                        ["Thou shalt yet need that artifact in thy journeys."];
+                    }
+                }
+                ["Thy quest shall be long and difficult. Many are the adventures that thou must undertake. Seemingly unconnected events shall prosper thee in thy seeking of my lost daughter."];
+                if $AUDIENCE_WITH_YELINDA {
+                    ["Thou mayest find this hard to believe, but my dreams tell me that thy sojourn in Fawn hath been of benefit to thy quest."];
+                }
+                ["Thy travels shall take thee north. Far north through caves that lie to the west... I can feel the cold wind blowing upon thee."];
+                if ($AUDIENCE_WITH_YELINDA and $gothelmofmonitor) {
+                    ["I sense that now is the time to go north. All is ready for thy success."];
+                }
+                ["I see no more."];
+            }
+            key ("information") {
+                if (not $startharnnagossip or (~GetClock(2) > 4)) {
+                    ["What dost thou desire to know?"];
+                    PushKeys();
+                    v9 = 1;
+                    TurnOn(<< "people", "places", "strange objects", "nothing more" >>);
+                } else {
+                    ["I must be about my duties. We must discuss this another time."];
+                }
+            }
+            key ("people") {
+                if not $knowcommands {
+                    ["The citizens of Monitor are all Knights, and they belong to one of three Commands: the Bears, Wolves, or Leopards."];
+                }
+                ["About which Command dost thou desire to inquire?"];
+                PushKeys();
+                v9 = 2;
+                TurnOn(<< "Bears", "Wolves", "Leopards", "visitors", "nothing more" >>);
+            }
+            key ("Bears") {
+                TurnOff("Bears");
+                ["The Bears are strong and brave, and known for their triumphs in the arena. About whom dost thou wish to inquire?"];
+                PushKeys();
+                v9 = 3;
+                TurnOn(<< "Caladin", "Luther", "Simon", "Flicken", "Templar", "Lydia", "nothing more" >>);
+            }
+            key ("Caladin") {
+                TurnOff("Caladin");
+                ["He is the leader of the Bear Command, and the commander of the Pikemen. A good, decent man and a hardened veteran of many a tough battle. He doth hate Goblins with a passion."];
+                v8 = ~UsePatience_i(v8);
+            }
+            key ("Luther") {
+                TurnOff("Luther");
+                ["Luther is one of the Bear Command. He is a proven and respected fighter on the battlefield, but off the field he is somewhat of a bully. Best to stay clear of him, I say."];
+                ["'Tis said that he doth have a terrible temper. Luther loses control and simply begins swinging."];
+                v8 = ~UsePatience_i(v8);
+            }
+            key ("found scroll") {
+                TurnOff("found scroll");
+                ["A scroll? What dost thou mean?"];
+                SetSpeaker1_i(0, _Avatar);
+                ["I found a scroll, obviously written by Cantra, upon the body of a slain Pikeman. 'Twas thine husband I fear. He was betrayed..."];
+                CloseSpeaker1_i();
+                SetSpeakerSlot_i(0);
+                ["I thank thee, <v2>, for solving the mystery of mine husband's disappearance. 'Tis better to know what truly happened than to be left knowing nothing. I have grieved for mine husband, and I shed tears not for him, but for myself and the waste that all hath become."];
+                $TOLD_HARNNA_FOUND_SCROLL = true;
+            }
+            key ("Simon") {
+                TurnOff("Simon");
+                if not $simonshedsskin {
+                    ["He is the innkeeper of The Sleeping Soldier. He is a quiet man, and the oldest person in Monitor. He enjoys his drink -- especially an unusual type of ale from Fawn."];
+                    ["I have told him to cease drinking that swill, but he insists. From a healer's point of view, that ale should be banned!"];
+                } else {
+                    ["That foul imposter! I spit upon all goblins!"];
+                }
+                v8 = ~UsePatience_i(v8);
+            }
+            key ("Flicken") {
+                TurnOff("Flicken");
+                ["He is the guard at the south gate of Monitor. He hath a keen eye, despite his getting along in years."];
+                ["Flicken is one of the Bear Command. He may seem argumentative, but he is simply a good fellow, doing his job."];
+                v8 = ~UsePatience_i(v8);
+            }
+            key ("Templar") {
+                TurnOff("Templar");
+                ["Templar is a virtuous knight of the Bear Command and oftimes a winner of our local tournaments. He also is our local expert on the Goblins."];
+                v8 = ~UsePatience_i(v8);
+            }
+            key ("Lydia") {
+                TurnOff("Lydia");
+                if not $LYDIA_CONFESSES {
+                    ["She provides the Knights of Monitor with their tattoos, which they receive upon completing Knight's Test or carrying out some difficult quest."];
+                } else {
+                    ["'Tis simply beyond belief that she would have poisoned thee... yet thou dost say she confessed to her crime."];
+                    ["It must have had something to do with that older sister of hers. Selene was taken by the Mages of Moonshade when a mere child."];
+                    ["Lydia was so happy when her sister visited last month, after all these years. The two were inseparable."];
+                    ["Selene must have ensorcelled her! How else could one explain how Lydia would commit the dishonorable crime of poisoning a stranger?"];
+                }
+                v8 = ~UsePatience_i(v8);
+            }
+            key ("Wolves") {
+                TurnOff("Wolves");
+                ["The Wolves are known for their cunning and stealth, preferring dexterity over brute strength. Brendann is their leader."];
+                ["About whom dost thou wish to inquire?"];
+                PushKeys();
+                v9 = 3;
+                TurnOn(<< "Brendann", "Lucilla", "Renfry", "Krayg", "Cellia", "Shmed", "nothing more" >>);
+            }
+            key ("Brendann") {
+                TurnOff("Brendann");
+                ["Brendann is the leader of the Wolf Command. He is a cunning fighter, a clever strategist and a bit of a rogue. He considers himself to be a ladies' man, and not without justification."];
+                v8 = ~UsePatience_i(v8);
+            }
+            key ("Lucilla") {
+                TurnOff("Lucilla");
+                ["Lucilla is the barmaid and the owner of the local pub. To tell thee the truth, she is also the town flirt. I do not mean to be catty. She doth have a good heart."];
+                v8 = ~UsePatience_i(v8);
+            }
+            key ("Renfry") {
+                TurnOff("Renfry");
+                ["He is a most unusual person. Renfry operates the Crematorium and is the undertaker of the town. He is a pleasant enough fellow, but he doth enjoy his work too much."];
+                v8 = ~UsePatience_i(v8);
+            }
+            key ("Krayg") {
+                TurnOff("Krayg");
+                ["Krayg was a fighter, but his arm was mangled in battle a while ago. He is now the Provisioner of the town. He is still haunted by his fighting days. He doth go for long walks alone."];
+                v8 = ~UsePatience_i(v8);
+            }
+            key ("Cellia") {
+                TurnOff("Cellia");
+                ["Cellia is the furrier, tanner and tailor of the city of Monitor. She buys her fur from a trapper who passes through town on occasion. Cellia is a hard-working, earthy woman."];
+                v8 = ~UsePatience_i(v8);
+            }
+            key ("Shmed") {
+                TurnOff("Shmed");
+                if ~GetItemFlag_i(_Dead, _Shmed) {
+                    ["They say that Shmed was the traitor who sold our secrets to the Goblins."];
+                    ["Mine heart tells me that they were wrong. Shmed was a coward, a fool, and a reprobate -- but not a traitor."];
+                } else {
+                    ["Shmed hath retired early from his career as a soldier and now operates the Knight's Test -- "];
+                    ["The dungeon where would-be knights test themselves. He is a good man for that job."];
+                }
+                v8 = ~UsePatience_i(v8);
+            }
+            key ("Leopards") {
+                TurnOff("Leopards");
+                ["The Leopards are the glue which holds this community together. We keep the Bears and Wolves from tearing each other apart."];
+                ["About whom dost thou wish to know?"];
+                PushKeys();
+                v9 = 3;
+                TurnOn(<< "Lord Marsten", "Spektor", "Standarr", "Andral", "Shazzana", "nothing more" >>);
+            }
+            key ("Lord Marsten") {
+                TurnOff("Lord Marsten");
+                if $marstenarrested {
+                    ["I am ashamed that he is a Leopard! I hope that he doth rot in jail for a very long time!"];
+                } else {
+                    ["Marsten is the commander of the Leopard Command. He may be a bit small, but a more tenacious fighter thou shalt not find in the Serpent Isle. He is rough and tough, but gregarious."];
+                }
+                v8 = ~UsePatience_i(v8);
+            }
+            key ("Spektor") {
+                TurnOff("Spektor");
+                if not $spektorarrested {
+                    ["A very intelligent man who is part of the Leopard Command. He is the town's treasurer and I understand he doth have quite a collection of books at his house."];
+                    ["He suffers from insomnia a great deal, and doth have a nervous digestion. When he cannot sleep, he comes to me and I make him a special elixir."];
+                    ["I think he is worried about the thief. After all, Spektor is the town treasurer, so when money starts disappearing, everyone suspects him."];
+                } else {
+                    ["I am glad that traitor Spektor hath been arrested!"];
+                }
+                $heardaboutthief = true;
+                v8 = ~UsePatience_i(v8);
+            }
+            key ("Standarr") {
+                TurnOff("Standarr");
+                ["Standarr is the armourer and blacksmith of our town. He is an honorable fighter and skilled craftsman. He also sells weapons and armour."];
+                v8 = ~UsePatience_i(v8);
+            }
+            key ("Andral") {
+                TurnOff("Andral");
+                ["Andral is not a fighter, which is a good thing since as I hear that he was miserable at it. Instead, he is an artist. Many of the knights hire him to create statues of them."];
+                v8 = ~UsePatience_i(v8);
+            }
+            key ("Shazzana") {
+                TurnOff("Shazzana");
+                ["Shazzana is a trainer in the fighting arts and also a knight of the Leopard Command. It is said that one day she may very well become a Champion Knight of Monitor, which would suit her fine!"];
+                v8 = ~UsePatience_i(v8);
+            }
+            key ("visitors") {
+                TurnOff("visitors");
+                if $simonshedsskin {
+                    ["I doubt that we shall have as many visitors as memorable as thou art come through town for quite a while!"];
+                } else {
+                    ["I cannot keep track of all who come and go in this place. Thou shouldst talk to Simon, he is the innkeeper here."];
+                    if not $IOLO_MADE_EQUIPMENT_LIST {
+                        ["Visitors who do not reside in our inn can usually be found in our prison. For instance, a mad enchanter who was captured in the crematorium recently. Marsten will know more than I about him."];
+                    }
+                    v8 = ~UsePatience_i(v8);
+                }
+            }
+            key ("places") {
+                ["Of which type of place wouldst thou have me tell?"];
+                PushKeys();
+                v9 = 2;
+                TurnOn(<< "cities", "wilderness" >>);
+            }
+            key ("cities") {
+                TurnOff("cities");
+                ["There are three cities in the Serpent Isles, and a small hamlet. Of which can I tell thee?"];
+                PushKeys();
+                v9 = 3;
+                TurnOn(<< "Moonshade", "Fawn", "Sleeping Bull", "Monitor", "nothing more" >>);
+            }
+            key ("Moonshade") {
+                TurnOff("Moonshade");
+                ["Moonshade is a city filled with mages who look down on any who are inexperienced in the ways of magic. Moonshade is ruled by a MageLord and a council of sorcerors. It is an excellent place to learn magic, however."];
+                v8 = ~UsePatience_i(v8);
+            }
+            key ("Fawn") {
+                TurnOff("Fawn");
+                ["Fawn is a city of sailors. As thou canst well imagine these teleport storms have grievously harmed their livelihood. Fawn is also a city that worships beauty."];
+                v8 = ~UsePatience_i(v8);
+            }
+            key ("Sleeping Bull") {
+                TurnOff("Sleeping Bull");
+                ["This is an inn along the Serpent Highway. It is said that one could obtain passage on ships from there."];
+                v8 = ~UsePatience_i(v8);
+            }
+            key ("Monitor") {
+                TurnOff("Monitor");
+                ["Why, it is the city thou dost find thyself in now! It is a city of fighters and knights. Here in Monitor is where the Pikemen that protect the highway are trained."];
+                v8 = ~UsePatience_i(v8);
+            }
+            key ("wilderness") {
+                TurnOff("wilderness");
+                ["The wilderness is the place in which a warrior can test himself against fearsome beasts and challenges of nature. Of which place wouldst thou learn?"];
+                PushKeys();
+                v9 = 3;
+                TurnOn(<< "Furnace", "Gorlab Swamp", "Great Northern Forest", "nothing more" >>);
+            }
+            key ("Furnace") {
+                TurnOff("Furnace");
+                ["This is a dungeon located to the east of here that is said to be so hot that humans cannot survive within its cavernous depths."];
+                v8 = ~UsePatience_i(v8);
+            }
+            key ("Gorlab Swamp") {
+                TurnOff("Gorlab Swamp");
+                ["Follow the Serpent Road north and thou shalt come to it. But thou mayest not return."];
+                v8 = ~UsePatience_i(v8);
+            }
+            key ("Great Northern Forest") {
+                TurnOff("Great Northern Forest");
+                ["It is said that this forest lies beyond the swamp, but we have precious little contact with the people there."];
+                v8 = ~UsePatience_i(v8);
+            }
+            key ("strange objects") {
+                v9 = (v9 + 1);
+                TurnOff("strange objects");
+                v11 = << >>;
+                if ($gotpinecone and not $knowpinecone) {
+                    v11 = (v11 & "pinecone");
+                }
+                if ($gotmoonsilkstockings and not $knowmoonsilkstockings) {
+                    v11 = (v11 & "moonsilk stockings");
+                }
+                if ($goturn and not $knowurn) {
+                    v11 = (v11 & "urn");
+                }
+                if ($gotlabitem and not $knowlabitem) {
+                    v11 = (v11 & "apparatus");
+                }
+                if ($gotpumice and not $knowpumice) {
+                    v11 = (v11 & "pumice");
+                }
+                if ($gotengagementring and not $knowengagementring) {
+                    v11 = (v11 & "lost ring");
+                }
+                if ($gotfurcap and not $knowfurcap) {
+                    v11 = (v11 & "fur cap");
+                }
+                if ($gotslippers and not $knowslippers) {
+                    v11 = (v11 & "slippers");
+                }
+                if ($gotbreastplate and not $knowbreastplate) {
+                    v11 = (v11 & "breastplate");
+                }
+                if ($gotpenguinegg and not $knowpenguinegg) {
+                    v11 = (v11 & "blue egg");
+                }
+                if ($gotgoblinhairbrush and not $knowgoblinhairbrush) {
+                    v11 = (v11 & "strange hairbrush");
+                }
+                if ($gotmagicwine and not $knowmagicwine) {
+                    v11 = (v11 & "bottle of wine");
+                }
+                if ($STORM_FILARI and not $KNOWS_FILARI_OWNER) {
+                    v11 = (v11 & "strange coins");
+                }
+                if ($gotbearskull and not $KNOWS_BEAR_SKULL_ORIGIN) {
+                    v11 = (v11 & "skull");
+                }
+                if ($gotbloodyhand and not $knowbloodyhand) {
+                    v11 = (v11 & "bloody hand");
+                }
+                if ($gotmonitorshield and not $knowmonitorshield) {
+                    v11 = (v11 & "plain shield");
+                }
+                if ($gotstoneheart and not $knowstoneheart) {
+                    v11 = (v11 & "glowing rock");
+                }
+                if ($gotfishnetstockings and not $knowfishnetstockings) {
+                    v11 = (v11 & "fish-net stockings");
+                }
+                if ($foundsimonbottle and (~GetWorkType(_Simon) <> _Wait)) {
+                    v11 = (v11 & "brown bottle");
+                }
+                if (v11 = << >>) {
+                    v10 = ~PartyUtters(false, 0, (("@But we have no strange objects to ask about, " + v2) + ".@"), 1);
+                    SetSpeakerSlot_i(0);
+                    ["I do not think I can assist thee, but if I think of anything, I will let thee know!"];
+                } else {
+                    ["What sort of items art thou inquiring about?"];
+                    PushKeys();
+                    v12 = 5;
+                    While (v12 > 0) {
+                        v13 = v11::~Random(~ListSize_i(v11));
+                        v11 = ~RemoveFromList_i(v11, v13);
+                        if (v11 = << >>) {
+                            v12 = 0;
+                            v14 = true;
+                        }
+                        TurnOn(v13);
+                        v12 = (v12 - 1);
+                    }
+                    TurnOn("nothing more");
+                }
+            }
+            key ("pinecone") {
+                TurnOff("pinecone");
+                if ~IsInInv(65177, 65177, _Pinecone, 1, _Party) {
+                    ["'Tis a pinecone! They are not normally found anywhere near here. They come from pine trees in the great forests to the north."];
+                } else {
+                    ["It sounds as though thou art describing a pinecone. They come from trees far to the north of here."];
+                }
+                v8 = ~UsePatience_i(v8);
+                if not v14 {
+                    v13 = v11::~Random(~ListSize_i(v11));
+                    v11 = ~RemoveFromList_i(v11, v13);
+                    if (v11 = << >>) {
+                        v14 = true;
+                    }
+                    TurnOn(v13);
+                }
+            }
+            key ("moonsilk stockings") {
+                TurnOff("moonsilk stockings");
+                if ~IsInInv(0, 65177, _Stockings, 1, _Party) {
+                    ["My, those are fine stockings! Being a simple woman I could never wear such things -- nor would most of the women of Monitor, for they are Knights!"];
+                    ["Perhaps thou shouldst speak with Brendann. He hath had the most -- ahem -- experience with women from outside the town."];
+                    $brendannknowsstockings = true;
+                } else {
+                    ["Oh, I know nothing of such frills. But Brendann would be well familiar with how to remove them from a woman."];
+                }
+                v8 = ~UsePatience_i(v8);
+                if not v14 {
+                    v13 = v11::~Random(~ListSize_i(v11));
+                    v11 = ~RemoveFromList_i(v11, v13);
+                    if (v11 = << >>) {
+                        v14 = true;
+                    }
+                    TurnOn(v13);
+                }
+            }
+            key ("urn") {
+                TurnOff("urn");
+                if ~IsInInv(0, 65177, _Urn, 1, _Party) {
+                    ["Why, that looks to be a funeral urn. In our city, it is our custom to burn our dead, and keep their remains in such urns."];
+                    $knowurn = true;
+                } else {
+                    ["It sounds like the object thou art describing may be a funeral urn."];
+                }
+                ["I wonder... Caladin hath been angry because the ashes of his grandfather were missing. Perhaps that is what that urn contains."];
+                $askcaladinurn = true;
+                v8 = ~UsePatience_i(v8);
+                if not v14 {
+                    v13 = v11::~Random(~ListSize_i(v11));
+                    v11 = ~RemoveFromList_i(v11, v13);
+                    if (v11 = << >>) {
+                        v14 = true;
+                    }
+                    TurnOn(v13);
+                }
+            }
+            key ("apparatus") {
+                TurnOff("apparatus");
+                if ~IsInInv(1, 65177, _Al_App_1, 1, _Party) {
+                    ["That strange apparatus doth look like nothing I have ever seen before! Could it be some kind of statue, or mayhaps a magical implement?"];
+                    ["Fawn is known for its statuary, while Moonshade is the City of Mages. Perhaps thou shouldst inquire there."];
+                } else {
+                    ["That sounds as if it may be some sort of instrument of mages. They may know of such things in Moonshade, but not here I fear."];
+                }
+                v8 = ~UsePatience_i(v8);
+                if not v14 {
+                    v13 = v11::~Random(~ListSize_i(v11));
+                    v11 = ~RemoveFromList_i(v11, v13);
+                    if (v11 = << >>) {
+                        v14 = true;
+                    }
+                    TurnOn(v13);
+                }
+            }
+            key ("pumice") {
+                TurnOff("pumice");
+                if ~IsInInv(65177, 65177, _Pumice, 1, _Party) {
+                    ["This type of rock is not common around here. Now if thou didst speak with Krayg, perhaps he could help thee..."];
+                    ["He is fond of long walks, and sometimes he discovers odd rocks and plants. He brings me mandrake roots sometimes."];
+                    $askkraygrock = true;
+                } else {
+                    ["I do not recall having ever seen the type of rock thou hast described before. Krayg is much more familiar with the rocks and plants of this area than I am."];
+                }
+                v8 = ~UsePatience_i(v8);
+                if not v14 {
+                    v13 = v11::~Random(~ListSize_i(v11));
+                    v11 = ~RemoveFromList_i(v11, v13);
+                    if (v11 = << >>) {
+                        v14 = true;
+                    }
+                    TurnOn(v13);
+                }
+            }
+            key ("lost ring") {
+                TurnOff("lost ring");
+                if ~IsInInv(0, 65177, _Ring, 1, _Party) {
+                    ["That looks to be a special ring, although it doth not appear to be magical. Lucilla is more interested in such baubles and trinkets than I. Perhaps she will be able to tell thee more."];
+                    $asklucillaring = true;
+                } else {
+                    ["It sounds as though it could be a magic ring, or most likely just an ordinary ring of betrothal. Lucilla is more interested in such things than I am."];
+                }
+                v8 = ~UsePatience_i(v8);
+                if not v14 {
+                    v13 = v11::~Random(~ListSize_i(v11));
+                    v11 = ~RemoveFromList_i(v11, v13);
+                    if (v11 = << >>) {
+                        v14 = true;
+                    }
+                    TurnOn(v13);
+                }
+            }
+            key ("fur cap") {
+                TurnOff("fur cap");
+                if ~IsInInv(4, 65177, _Leath_Helm, 1, _Party) {
+                    ["Cellia here in town is a tanner and a furrier. This hat looks like it could be her work."];
+                    $askcelliacap = true;
+                } else {
+                    ["Cellia is the tanner and furrier in town. I know nothing of such things."];
+                }
+                v8 = ~UsePatience_i(v8);
+                if not v14 {
+                    v13 = v11::~Random(~ListSize_i(v11));
+                    v11 = ~RemoveFromList_i(v11, v13);
+                    if (v11 = << >>) {
+                        v14 = true;
+                    }
+                    TurnOn(v13);
+                }
+            }
+            key ("slippers") {
+                TurnOff("slippers");
+                if ~IsInInv(5, 65177, _Leath_Boots, 1, _Party) {
+                    ["Surely, these belong to no one in this city. Krayg the provisioner might know who would sell something like these slippers."];
+                    $askkraygslippers = true;
+                } else {
+                    ["Perhaps thou mayest buy such things from Krayg, our town's provisioner. But I doubt that even he would carry such footwear."];
+                }
+                v8 = ~UsePatience_i(v8);
+                if not v14 {
+                    v13 = v11::~Random(~ListSize_i(v11));
+                    v11 = ~RemoveFromList_i(v11, v13);
+                    if (v11 = << >>) {
+                        v14 = true;
+                    }
+                    TurnOn(v13);
+                }
+            }
+            key ("breastplate") {
+                TurnOff("breastplate");
+                ["Thou shouldst ask Standarr the armourer about that."];
+                $askstandarrarmor = true;
+                v8 = ~UsePatience_i(v8);
+                if not v14 {
+                    v13 = v11::~Random(~ListSize_i(v11));
+                    v11 = ~RemoveFromList_i(v11, v13);
+                    if (v11 = << >>) {
+                        v14 = true;
+                    }
+                    TurnOn(v13);
+                }
+            }
+            key ("blue egg") {
+                TurnOff("blue egg");
+                if ~IsInInv(3, 65177, _Gwani_Artifacts, 1, _Party) {
+                    ["It appears to be an egg from some kind of bird. The shell appears to be thick, yet it is not exceedingly hard. The shell seems to be intended to protect the baby bird from the cold. I would surmise that this egg came from a bird that lives in the north."];
+                } else {
+                    ["I once heard that the strange birds of the north lay blue eggs."];
+                }
+                v8 = ~UsePatience_i(v8);
+                if not v14 {
+                    v13 = v11::~Random(~ListSize_i(v11));
+                    v11 = ~RemoveFromList_i(v11, v13);
+                    if (v11 = << >>) {
+                        v14 = true;
+                    }
+                    TurnOn(v13);
+                }
+            }
+            key ("strange hairbrush") {
+                TurnOff("strange hairbrush");
+                if ~IsInInv(6, 65177, _Brush, 1, _Party) {
+                    ["Do not bring that thing near me! If thou dost desire to know its nature, ask of Templar..."];
+                    ["...but never bring that object here again!"];
+                    $asktemplarbrush = true;
+                } else {
+                    ["It sounds simply horrid. Templar may know of such things, but I do not."];
+                }
+                v8 = ~UsePatience_i(v8);
+                if not v14 {
+                    v13 = v11::~Random(~ListSize_i(v11));
+                    v11 = ~RemoveFromList_i(v11, v13);
+                    if (v11 = << >>) {
+                        v14 = true;
+                    }
+                    TurnOn(v13);
+                }
+            }
+            key ("bottle of wine") {
+                TurnOff("bottle of wine");
+                if not $simonshedsskin {
+                    ["Simon is the barkeep at the inn. He knows more than anyone in town about exotic beverages."];
+                    $asksimonwine = true;
+                } else {
+                    ["I know of no one that could help thee with this. I know nothing of beverages. Perhaps Lucilla knows something..."];
+                }
+                v8 = ~UsePatience_i(v8);
+                if not v14 {
+                    v13 = v11::~Random(~ListSize_i(v11));
+                    v11 = ~RemoveFromList_i(v11, v13);
+                    if (v11 = << >>) {
+                        v14 = true;
+                    }
+                    TurnOn(v13);
+                }
+            }
+            key ("strange coins") {
+                if ~IsInInv(65177, 65177, _Fawn_Money, 1, _Party) {
+                    ["They appear to be coins from another town. Spektor would recognize them, I am certain."];
+                    ["He is the town treasurer, and exchanges foreign coins for the good coins of Monitor."];
+                    $askspektorcoins = true;
+                } else {
+                    ["Spektor the treasurer is the expert on currency in the town of Monitor."];
+                }
+                v8 = ~UsePatience_i(v8);
+                if not v14 {
+                    v13 = v11::~Random(~ListSize_i(v11));
+                    v11 = ~RemoveFromList_i(v11, v13);
+                    if (v11 = << >>) {
+                        v14 = true;
+                    }
+                    TurnOn(v13);
+                }
+            }
+            key ("skull") {
+                TurnOff("skull");
+                if ~IsInInv(65177, 65177, _Bearskull, 1, _Party) {
+                    ["That is a bear skull. Bears are commonly found in the south and west portions of our land."];
+                    $KNOWS_BEAR_SKULL_ORIGIN = true;
+                } else {
+                    ["It sounds like thou art describing a bear skull. Bears are usually found in the south and west."];
+                }
+                v8 = ~UsePatience_i(v8);
+                if not v14 {
+                    v13 = v11::~Random(~ListSize_i(v11));
+                    v11 = ~RemoveFromList_i(v11, v13);
+                    if (v11 = << >>) {
+                        v14 = true;
+                    }
+                    TurnOn(v13);
+                }
+            }
+            key ("bloody hand") {
+                TurnOff("bloody hand");
+                if ~IsInInv(0, 65177, _Creeping_Limb, 1, _Party) {
+                    ["It seems it was lost on the field of battle, so whoever lost it probably did not survive. Yet there are no signs of decay -- a recent injury..."];
+                    ["Thou mightest ask Renfry if he hath encountered a body with such an injury lately."];
+                    $askrenfrybloodyhand = true;
+                } else {
+                    ["What a puzzling mystery! Thou shouldst ask Renfry, our undertaker, about it."];
+                }
+                v8 = ~UsePatience_i(v8);
+                if not v14 {
+                    v13 = v11::~Random(~ListSize_i(v11));
+                    v11 = ~RemoveFromList_i(v11, v13);
+                    if (v11 = << >>) {
+                        v14 = true;
+                    }
+                    TurnOn(v13);
+                }
+            }
+            key ("plain shield") {
+                TurnOff("plain shield");
+                if ~IsInInv(65177, 65177, _Shield_Heirarchy, 1, _Party) {
+                    ["That shield could belong to anyone in this town. Green and white are the colors of Monitor and its warriors."];
+                    ["Thou shouldst inquire if anyone is missing a shield."];
+                } else {
+                    ["Such a shield could belong to anyone in Monitor."];
+                }
+                v8 = ~UsePatience_i(v8);
+                if not v14 {
+                    v13 = v11::~Random(~ListSize_i(v11));
+                    v11 = ~RemoveFromList_i(v11, v13);
+                    if (v11 = << >>) {
+                        v14 = true;
+                    }
+                    TurnOn(v13);
+                }
+            }
+            key ("glowing rock") {
+                TurnOff("glowing rock");
+                if v1 {
+                    ["This glowing rock must have come from some strange, unnatural place. I have never seen such a rock in any sort of place near here."];
+                    ["I sense that it doth have unusual powers... incredible energies... hidden abilities..."];
+                } else {
+                    ["I have never before heard of such an item. It sounds as though it might possess great power."];
+                }
+                v8 = ~UsePatience_i(v8);
+                if not v14 {
+                    v13 = v11::~Random(~ListSize_i(v11));
+                    v11 = ~RemoveFromList_i(v11, v13);
+                    if (v11 = << >>) {
+                        v14 = true;
+                    }
+                    TurnOn(v13);
+                }
+            }
+            key ("fish-net stockings") {
+                TurnOff("fish-net stockings");
+                if ~IsInInv(1, 65177, _Stockings, 1, _Party) {
+                    ["There is a knight in town by the name of Brendann. He hath had more experience in removing these from ladies than I have ever had wearing them, I am afraid."];
+                    $brendannknowsstockings = true;
+                } else {
+                    ["Brendann is more well-acquainted with finery of ladies than a simple farm woman such as I, I am afraid."];
+                }
+                v8 = ~UsePatience_i(v8);
+                if not v14 {
+                    v13 = v11::~Random(~ListSize_i(v11));
+                    v11 = ~RemoveFromList_i(v11, v13);
+                    if (v11 = << >>) {
+                        v14 = true;
+                    }
+                    TurnOn(v13);
+                }
+            }
+            key ("brown bottle") {
+                TurnOff("brown bottle");
+                if ~IsInInv(9, 65177, _Bottles, 1, _Party) {
+                    ["May I see the bottle?"];
+                    ["That looks like the type of bottle that usually contains the ale Simon drinks. In Monitor, only he drinks that bitter Fawnish ale."];
+                    $knowsimonbottle = true;
+                } else {
+                    ["How strange -- a bottle in the woods? Perhaps Templar can help thee. He is the expert on Goblins and their habits."];
+                }
+                v8 = ~UsePatience_i(v8);
+                if not v14 {
+                    v13 = v11::~Random(~ListSize_i(v11));
+                    v11 = ~RemoveFromList_i(v11, v13);
+                    if (v11 = << >>) {
+                        v14 = true;
+                    }
+                    TurnOn(v13);
+                }
+            }
+            key ("nothing more") {
+                if (v9 = 1) {
+                    PopKeys();
+                    ["I wish I could have been of more help to thee..."];
+                } else {
+                    While (v9 > 1) {
+                        PopKeys();
+                        v9 = (v9 - 1);
+                    }
+                    ["Is there anything else I can help thee with?"];
+                }
+            }
+            key ("bye") {
+                if ($takencantraquest and not v3) {
+                    ["But wait... I feel the primal forces drawing near... I hear the voices of the Void..."];
+                    ["I have a prophecy for thee, Avatar."];
+                    TurnOn("prophecy");
+                    v3 = true;
+                } else {
+                    CloseSpeaker0_i();
+                    CloseSpeaker1_i();
+                    Bark_i(0, (("@Good " + v0) + "!@"), _Avatar);
+                    Bark_i(2, "@And to thee.@", _Harnna);
+                    terminate;
+                }
+            }
+        }
+        clear_answers;
+    }
+}
+
+Usable HarnnaHeals_i #locals(20) #uses(~AvatarName, ~AskYesNo, ~PartyNoAutomatons_i, ~AskOrdList, ~GetStat, SetStat) {
+    v0 = ~AvatarName();
+    v1 = 951;
+    v2 = ~CountItem(_All, _All, v1, _Party);
+    v3 = false;
+    v4 = false;
+    v5 = true;
+    if not $takencantraquest {
+        ["I charge 30 monetari, and no less, to perform mine healing. Is this acceptable?"];
+        if ~AskYesNo() {
+            if (v2 < 30) {
+                ["Thou dost not have the monetari to pay me!"];
+                terminate;
+            }
+            ["Whom dost thou wish to heal?"];
+            label_5:
+            if v5 {
+                label_6:
+                v6 = 30;
+                if (v3 = true) {
+                    v6 = 0;
+                }
+                v7 = ~PartyNoAutomatons_i();
+                v7 = (0 & v7);
+                v8 = << "nobody" >>;
+                Foreach v11 in v7 {
+                    if not (v11 = 0) {
+                        v8 = (v8 & ~GetNPCName_i(v11));
+                    }
+                }
+                v12 = ~AskOrdList(v8);
+                v12 = v7::v12;
+                if (v12 = 0) {
+                    goto label_40;
+                }
+                v13 = ~ItemToNPC_i(v12);
+                v14 = ~GetItemFlag_i(_Poisoned, v12);
+                v15 = ~GetStat(_Str, v12);
+                v16 = ~GetStat(_Hits, v12);
+                v17 = ~GetNPCName_i(v12);
+                if (v15 > v16) {
+                    v18 = (v15 - v16);
+                    SetStat(v18, _Hits, v13);
+                    v19 = ~TakeFromParty_i(true, _All, _All, v1, v6);
+                    v4 = true;
+                    ["The bodily wounds have been healed."];
+                    goto label_29;
+                }
+                if (v14 = false) {
+                    if (v13 = 65180) {
+                        ["Thou seemest quite healthy!"];
+                    } else {
+                        ["<v17> is already healthy!"];
+                    }
+                    goto label_29;
+                }
+                if (v13 = 65180) {
+                    if ($poisonedbylydia and not $CURED_LYDIA_POISON) {
+                        ["Before I can cure this affliction, thou must needs bring me five Varo leaves from Delphynia, the horticulturist in Fawn!"];
+                        goto label_40;
+                    } else {
+                        ["Thou art poisoned! Fortunately, the poison can easily be removed from thy body."];
+                    }
+                } else {
+                    ["<v17> is poisoned! At least it is a simple venom to cure."];
+                }
+                label_29:
+                if ((v13 = 65180) and (($poisonedbylydia = true) and ($CURED_LYDIA_POISON = false))) {
+                    ["I have healed thy body of the ravages of the poison, but the effects shall keep occurring until thou art dead. Thou must bring me five Varo leaves from Delphynia, the horticulturist in Fawn, before I can permanently cure thee of this affliction!"];
+                    goto label_40;
+                }
+                if (v14 = true) {
+                    if (v4 = false) {
+                        v19 = ~TakeFromParty_i(true, _All, _All, v1, v6);
+                    }
+                    ClearItemFlag_i(_Poisoned, v12);
+                    ["The poisoning hath been healed."];
+                }
+                goto label_5;
+            }
+        } else {
+            ["Some other time, then."];
+        }
+        goto label_40;
+    }
+    ["As thou hast aided me so shall I help thee, <v0>. I will perform mine healing free of charge."];
+    ["Whom dost thou wish to heal?"];
+    v3 = true;
+    goto label_6;
+    label_40:
+}
+
+Usable HarnnaSellsProduce_i #locals(21) #uses(~LordOrLady, ~AskOrdList, ~AskYesNo, ~HarnnaHaggles_i, ~SellItem_i, ~PartyUtters) {
+    v0 = ~LordOrLady();
+    PushKeys();
+    v1 = true;
+    v2 = << "nothing", "garlic", "ginseng", "onion", "apple", "carrot", "banana", "grapes" >>;
+    v3 = << 0, 842, 842, 377, 377, 377, 377, 377 >>;
+    v4 = << 65177, 4, 5, 22, 16, 18, 17, 19 >>;
+    v5 = << 0, 8, 9, 1, 6, 2, 6, 2 >>;
+    v6 = << 0, 4, 5, 1, 3, 2, 3, 2 >>;
+    v7 = 951;
+    v8 = << 0, 3, 2, 1, 3, 1, 2, 1 >>;
+    v9 = << 0, 1, 1, 1, 1, 1, 1, 1 >>;
+    if ~AvatarSex() {
+        v10 = "Milady";
+    } else {
+        v10 = "Milord";
+    }
+    While v1 {
+        v11 = ~AskOrdList(v2);
+        if (v11 = 1) {
+            v12 = ~rndRange(3, 1);
+            if (v12 = 1) {
+                v13 = "Perhaps later,";
+            }
+            if (v12 = 2) {
+                v13 = "Another time, then,";
+            }
+            if (v12 = 3) {
+                v13 = "Come again,";
+            }
+            ["<v13> <v0>."];
+            v1 = false;
+        } else {
+            v14 = v5::v11;
+            v15 = 0;
+            v16 = ~rndRange(4, 1);
+            if (v16 = 1) {
+                v17 = "Dost thou accept?";
+            }
+            if (v16 = 2) {
+                v17 = "Wilt thou pay my price?";
+            }
+            if (v16 = 3) {
+                v17 = "Dost thou agree?";
+            }
+            if (v16 = 4) {
+                v17 = "Is the price acceptable?";
+            }
+            if (v11 = 2) {
+                ["I can sell thee three cloves for <v14> monetari."];
+                [<v17>"];
+                v18 = "cloves of garlic, in bunches of three,";
+            }
+            if (v11 = 3) {
+                ["<v14> monetari is what I ask for two bunches of ginseng roots."];
+                ["<v17>"];
+                v18 = "ginseng roots, in bunches of two,";
+            }
+            if (v11 = 4) {
+                ["For an onion, I ask <v14> monetari."];
+                ["<v17>"];
+                v18 = "onions";
+            }
+            if (v11 = 5) {
+                ["<v14> monetari will buy thee three apples, <v0>."];
+                [<v17>"];
+                v18 = "apples, in bunches of three,";
+            }
+            if (v11 = 6) {
+                ["My carrots are exceptionally good this season! <v14> monetari is the price."];
+                ["<v17>"];
+                v18 = "carrots";
+            }
+            if (v11 = 7) {
+                ["<v10>, thou shouldst try my bananas! I can sell thee two for <v14> monetari."];
+                [<v17>"];
+                v18 = "bananas, in bunches of two,";
+            }
+            if (v11 = 8) {
+                ["I can sell thee one bunch of grapes for <v14> monetari."];
+                [<v17>"];
+                v18 = "bunches of grapes";
+            }
+            if (v14 = v6::v11) {
+                if ~AskYesNo() {
+                    v19 = v14;
+                } else {
+                    v19 = 0;
+                }
+            } else {
+                v19 = ~HarnnaHaggles_i(v6::v11, v5::v11);
+            }
+            if (v19 > 0) {
+                if (v9::v11 = 1) {
+                    ["How many <v18> wouldst thou like?"];
+                    v15 = ~SellItem_i(false, 1, 10, v19, v7, v8::v11, v4::v11, v3::v11);
+                } else {
+                    v15 = ~SellItem_i(false, 1, 0, v19, v7, 1, v4::v11, v3::v11);
+                }
+            }
+            if (v15 = 1) {
+                ["<v10>, I hope thou dost enjoy thy purchase!"];
+            } else {
+                if (v15 = 2) {
+                    ["I believe that thine hands are full, <v0>!"];
+                } else {
+                    if (v15 = 3) {
+                        v20 = ~PartyUtters(false, 0, (("@But " + v0) + ", we have not the monetari to purchase this.@"), 1);
+                        if (v20 <> 65180) {
+                            SetSpeaker0_i(0, _Harnna);
+                            ["Then I am afraid thou canst not purchase any of my goods, <v0>."];
+                        } else {
+                            ["I am afraid thou dost not have enough to pay for this..."];
+                        }
+                        if (31 < (~GetNPCID_i(_Harnna) + 6)) {
+                            SetNPCID_i(31, _Harnna);
+                        } else {
+                            SetNPCID_i((~GetNPCID_i(_Harnna) + 6), _Harnna);
+                        }
+                        break;
+                    }
+                }
+            }
+            ["Dost thou desire another purchase?"];
+            v1 = ~AskYesNo();
+        }
+    }
+    PopKeys();
+}
+
+Function ~HarnnaHaggles_i accepts a0, a1 #locals(15) #uses(~LordOrLady, ~AskList, ~Haggle_i, ~AskYesNo) {
+    v2 = ~LordOrLady();
+    if ~AvatarSex() {
+        v3 = "Milady";
+    } else {
+        v3 = "Milord";
+    }
+    v4 = v1;
+    v5 = ((v0 / 3) * 2);
+    v6 = (15 - (~GetNPCID_i(_Harnna) / 2));
+    v7 = 0;
+    v8 = 1;
+    v9 = 0;
+    v10 = 2;
+    v11 = ~GetNPCID_i(_Harnna);
+    While v8 {
+        v12 = ~AskList(<< "yes", "no", "haggle" >>);
+        if (v12 = "no") {
+            return 0;
+        } else {
+            if (v12 = "yes") {
+                v13 = 0;
+                goto label_11;
+            }
+        }
+        v14 = ~Haggle_i(v7, v6, v9, v5, v10, v0, v4);
+        v9 = (v9 + 1);
+        v7 = v14::4;
+        v13 = v14::3;
+        v15 = v4;
+        v4 = v14::2;
+        v5 = v14::1;
+        label_11:
+        v16 = ~Random(3);
+        if (v13 < 2) {
+            if (v4 < (v0 + ((v1 - v0) / 4))) {
+                if (v16 = 1) {
+                    ["Please do not tell anyone in town of this, <v2>! Else I will no longer be able to make a living..."];
+                }
+                if (v16 = 2) {
+                    ["<v3>, thou hast the heart of a true trader..."];
+                }
+                if (v16 = 3) {
+                    ["I must be losing my mind to agree to such a price!"];
+                }
+            } else {
+                if (v4 < (v0 + ((v1 - v0) / 3))) {
+                    if (v16 = 1) {
+                        ["Thou canst see that my prices are fair..."];
+                    }
+                    if (v16 = 2) {
+                        ["<v3>, thou hast charmed me, I am certain! I would never offer prices this low!"];
+                    }
+                    if (v16 = 3) {
+                        ["Who would have thought I would lose my mind so young! To accept such a price..."];
+                    }
+                } else {
+                    if (v4 < (v0 + ((v1 - v0) / 2))) {
+                        if (v16 = 1) {
+                            ["A good deal, if I do say so myself."];
+                        }
+                        if (v16 = 2) {
+                            ["Thou art a worthy customer, <v2>."];
+                        }
+                        if (v16 = 3) {
+                            ["'Tis a pleasure doing business with thee, <v2>."];
+                        }
+                    } else {
+                        if (v16 = 1) {
+                            ["Thou hast made me a happy woman, <v2>!"];
+                        }
+                        if (v16 = 2) {
+                            ["I appreciate thy business, <v2>.];
+                        }
+                        if (v16 = 3) {
+                            ["I hate charging such prices, but times are hard..."];
+                        }
+                    }
+                }
+            }
+            ["Wilt thou agree to a price of <v4> monetari, <v2>?"];
+            if ~AskYesNo() {
+                if (v11 > 1) {
+                    SetNPCID_i((v11 - 2), _Harnna);
+                }
+                return v4;
+            } else {
+                if (v16 = 1) {
+                    ["But what of our agreement?"];
+                }
+                if (v16 = 2) {
+                    ["Why hast thou changed thy mind?"];
+                }
+                if (v16 = 3) {
+                    ["I thought thou wert in need of my produce!"];
+                }
+                if (31 < (v11 + 10)) {
+                    SetNPCID_i(31, _Harnna);
+                } else {
+                    SetNPCID_i((v11 + 10), _Harnna);
+                }
+                return 0;
+            }
+        }
+        if (v7 = 1) {
+            if (v13 = 5) {
+                ["Wert thou not listening, <v2>, I said that <v4> was my final offer. Dost thou accept?"];
+                if (v11 < 28) {
+                    SetNPCID_i((v11 + 4), _Harnna);
+                }
+                if ~AskYesNo() {
+                    return v4;
+                }
+                v8 = 0;
+            } else {
+                ["Very well. <v4> monetari is my final offer."];
+                if (v11 < 30) {
+                    SetNPCID_i((v11 + 2), _Harnna);
+                }
+            }
+        } else {
+            if (v13 = 2) {
+                if (v16 = 1) {
+                    ["Thou art a challenge to deal with... How does <v4> monetari sound?"];
+                }
+                if (v16 = 2) {
+                    ["So, have we agreed on <v4> monetari?"];
+                }
+                if (v16 = 3) {
+                    ["I offer thee <v4> monetari. Dost thou accept?"];
+                }
+            }
+            if (v13 = 3) {
+                if (v16 = 1) {
+                    ["I must make a living... Wouldst thou pay <v4> monetari?"];
+                }
+                if (v16 = 2) {
+                    ["Let me consider... <v4> monetari?"];
+                }
+                if (v16 = 3) {
+                    ["<v4> monetari, then? I must show some profit or become a beggar."];
+                }
+            }
+            if (v13 = 4) {
+                if (v16 = 1) {
+                    ["I cannot accept less than <v4> monetari!"];
+                    ["Wilt thou agree?"];
+                }
+                if (v16 = 2) {
+                    ["Surely thou canst see that I can go no lower than <v4> monetari. It is difficult to garden because of the Goblin raids..."];
+                }
+                if (v16 = 3) {
+                    ["My produce is worth no less than <v4> monetari."];
+                }
+            }
+            if (v13 = 5) {
+                v4 = v15;
+                if (v16 = 1) {
+                    ["My previous price stands, at <v4> monetari. I am at risk from the Goblins while gardening!"];
+                }
+                if (v16 = 2) {
+                    ["<v4> monetari, and no less! Thou shalt find no one with a better price, I will warrant."];
+                }
+                if (v16 = 3) {
+                    ["<v4> monetari is where I stand. I must pay someone to stand watch while I garden."];
+                }
+                if (v11 < 31) {
+                    SetNPCID_i((v11 + 1), _Harnna);
+                }
+            }
+        }
+    }
+}

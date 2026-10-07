@@ -1,0 +1,64 @@
+Routine Rabbit accepts a0 #locals(14) #uses(~GimmePathEgg) {
+    if (event = _Polymorph) {
+        Polymorph_i(_Wench, item);
+    }
+    if (event = _Action) {
+        SetWorkType(_Patrol, item);
+    }
+    if ((event = _Bark) and (~GetWorkType(item) = _Patrol)) {
+        Item_move(<< 398, 2483, 1 >>, _Avatar);
+        v0 = ~Item_create(_Spellbook);
+        if v0 {
+            SetFrame(5, v0);
+            ClearSpells_i(v0);
+            v1 = << 0, 1, 2, 3, 4, 5, 6, 8, 9, 12, 13, 14, 15, 17, 18, 20, 21, 22, 24, 25, 26, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 40, 42, 43, 44, 46, 48, 49, 50, 51, 52, 53, 55, 57, 58, 62, 63, 64, 65, 66, 68, 69, 70 >>;
+            Foreach v4 in v1 {
+                v5 = ~AddSpell_i(v0, 0, v4);
+            }
+            v5 = ~PopToNPC(_Avatar);
+        }
+        v5 = ~GiveToCont_i(0, 0, _All, _Daemon_Sword, 1, _Avatar);
+        v5 = ~GiveToCont_i(0, 0, _All, _Glass_Sword, 1, _Avatar);
+        v5 = ~GiveToCont_i(0, 0, _All, _Rudyoms_Wand, 1, _Avatar);
+        Sfx(116);
+        Polymorph_i(_Avatar_Type, _Avatar);
+        SetWorkType(_Wander, _Shamino);
+        SetWorkType(_Wander, _Dupre);
+        SetWorkType(_Wander, _Iolo);
+        v5 = ~PostInFuture(0, << _aNO_HALT_i, _aUSABLE_i, #Iolo_Type >>, _Iolo);
+        v6 = ~GimmePathEgg(1, 7);
+        if v6 {
+            v5 = ~PostInFuture(40, << _aMUSIC_i, 13 >>, v6);
+        }
+        ClearItemFlag_i(_Read, _Avatar);
+        ClearItemFlag_i(_Tatoo, _Avatar);
+        v7 = 65535;
+        While (v7 > 65179) {
+            if (v7 <> 65180) {
+                SetNPCID_i(0, v7);
+                ClearItemFlag_i(_Met, v7);
+                ClearItemFlag_i(_Zombie, v7);
+                ClearItemFlag_i(_NoCast, v7);
+            }
+            ClearItemFlag_i(_Tournament, v7);
+            ClearItemFlag_i(_Polymorph_i, v7);
+            SetTemperature_i(0, v7);
+            v7 = (v7 - 1);
+        }
+        SetItemFlag_i(_Met, _Dupre);
+        SetItemFlag_i(_Met, _Shamino);
+        SetItemFlag_i(_Met, _Iolo);
+        SetItemFlag_i(_Met, _Buster);
+        SetItemFlag_i(_Met, _Smudge);
+        SetItemFlag_i(_Zombie, _Neyobi);
+        SetItemFlag_i(_Zombie, _Gwenno);
+        v8 = << 65180, 65492, 65479, 65499, 65329, 65325, 65327, 65324, 65323, 65322, 65328, 65326, 65483, 65331, 65333, 65332, 65264, 65243, 65321, 65355, 65354, 65472, 65386, 65462, 65473, 65457, 65465, 65271, 65417, 65416, 65415, 65414, 65413, 65368 >>;
+        Foreach v11 in v8 {
+            SetItemFlag_i(_Tournament, v11);
+        }
+        v8 = << 65261, 65256, 65412, 65335, 65318, 65272, 65273, 65274, 65471, 65456, 65469, 65468, 65466, 65490, 65489, 65488, 65487, 65486, 65485, 65484, 65483, 65482, 65481, 65480, 65478, 65477, 65476, 65475, 65502, 65380, 65467, 65459, 65518, 65503, 65510, 65516, 65519, 65532, 65517, 65522, 65512, 65514, 65509, 65377 >>;
+        Foreach v11 in v8 {
+            SetItemFlag_i(_Tournament, v11);
+        }
+    }
+}

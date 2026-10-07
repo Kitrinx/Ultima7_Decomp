@@ -1,0 +1,271 @@
+Routine Mosh accepts a0 #locals(15) #uses(~LordOrLady, ~AvatarName, PartyFaces_i, BarkIfNear_i, ~IsInInv, Bark_i, ~PartyUtters, ~AskYesNo, ~AskList, ~GiveItemsOrDrop_i, MessengerBringsScroll_i) {
+    v0 = ~LordOrLady();
+    v1 = ~AvatarSex();
+    v2 = ~AvatarName();
+    if ((event = _NearDeath) and ~GetItemFlag_i(_Tournament, item)) {
+        v3 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #Black_Mage >>, item);
+    }
+    if (event = _Converse) {
+        Item_bark("@Could we speak?@", _Avatar);
+        PartyFaces_i(65509);
+        SetWorkType(_Talk, _Mosh);
+    }
+    if (event = _Bark) {
+        v4 = ~ListSize_i(~FindNearby_i(0, 35, _Rat, _Avatar));
+        if (v4 < 10) {
+            v5 = 0;
+            v6 = ~Random(2);
+            While (v5 < v6) {
+                v5 = (v5 + 1);
+                v7 = ~GetCoord(_Mosh);
+                v8 = ~CreateCreature_i(<< (v7::1 - 1), (v7::2 - 1), v7::3 >>, _Rat);
+                if v8 {
+                    SetItemFlag_i(_IsTemporary_i, v8);
+                    SetWorkType(_Hound, v8);
+                }
+            }
+        }
+        v9 = ~Random(6);
+        if (v4 > 0) {
+            if (v9 = 1) {
+                Item_bark("@Nice rats.@", _Mosh);
+            }
+            if (v9 = 2) {
+                Item_bark("@Come to mother!@", _Mosh);
+            }
+            if (v9 = 3) {
+                Item_bark("@Cheese!@", _Mosh);
+            }
+            if (v9 = 4) {
+                Item_bark("@Here, rats!@", _Mosh);
+            }
+            if (v9 = 5) {
+                Item_bark("@Now, do not bite me!@", _Mosh);
+            }
+            if (v9 = 6) {
+                v10 = << "@I am very hungry...@", "@Hmmm...@", "@Do I smell baked fish?@", "@Petra is a marvelous chef...@" >>;
+                BarkIfNear_i(v10, _Mosh);
+            }
+        } else {
+            if (v9 = 1) {
+                Item_bark("@Where are they?@", _Mosh);
+            }
+            if (v9 = 2) {
+                Item_bark("@I've lost my rats.@", _Mosh);
+            }
+            if (v9 = 3) {
+                Item_bark("@Do not bother me.@", _Mosh);
+            }
+            if (v9 = 4) {
+                Item_bark("@Stay away!@", _Mosh);
+            }
+            if (v9 = 5) {
+                Item_bark("@Death to cats!@", _Mosh);
+            }
+            if (v9 = 6) {
+                Item_bark("@Where am I?@", _Mosh);
+            }
+        }
+    }
+    if (event = _Talking) {
+        Npc_schedule(_Mosh);
+        ClearBark_i(_Mosh);
+        SetSpeaker0_i(0, _Mosh);
+        v11 = ~GetItemFlag_i(_Met, _Mosh);
+        if (v11 = false) {
+            SetItemFlag_i(_Met, _Mosh);
+            ["So what'rt thou looking at, eh?"];
+        } else {
+            if $moshfriend {
+                if ~IsInInv(13, 65177, _Food, 1, _Party) {
+                    ["I smell something... thou hast some fish! Thou hast brought it for me! Oh, I do so love a good fish."];
+                    TurnOn("give fish");
+                } else {
+                    ["Oh, it is my friend! Hast thou brought me something? No, I suppose not..."];
+                }
+            } else {
+                ["Why dost thou not leave me alone?"];
+            }
+        }
+        TurnOn("name");
+        if ($columnasaidlies and not $moshfriend) {
+            TurnOn("Columna");
+        }
+        if (flag(277) and not $knowslippers) {
+            TurnOn("slippers");
+        }
+        if (flag(234) and not ~GetItemFlag_i(_Dead, _Rotoluncia)) {
+            TurnOn("kidnap");
+        }
+        TurnOn(<< "bye" >>);
+        converse {
+            key ("kidnap") {
+                TurnOff("kidnap");
+                ["Well, do not stare at me like that. I be innocent. They've never convicted me of any crimes..."];
+                Bark_i(0, "@Leave me alone!@", _Mosh);
+                terminate;
+            }
+            key ("name") {
+                TurnOff("name");
+                ["What's it to ye? Some call me the Rat Woman, but I'll have ye know that my rightful name is Mosh."];
+                TurnOn(<< "Rat Woman", "Mosh" >>);
+            }
+            key ("Mosh") {
+                TurnOff("Mosh");
+                ["Aye, Mosh..."];
+                if $moshfriend {
+                    ["..and I am linked by fate to Columna, the Green Enchantress! She is my very own sister."];
+                    TurnOn("sister");
+                } else {
+                    ["Would that thou wert to believe me, I could tell thee a story! 'Tis done... though not forgotten. I will not talk of it now."];
+                }
+            }
+            key ("sister") {
+                TurnOff("sister");
+                ["I tell thee that I have a twin. She is Columna! Yet wert thou to see us together, any similarity would be gone."];
+                ["It is she who possesses the youth and beauty I held dear not long ago. But ask whether love passes between us and I will tell thee nay."];
+            }
+            key ("Rat Woman") {
+                TurnOff("Rat Woman");
+                ["Snigger not at me! I have company enough -- more guests in mine house than thou couldst have in thine."];
+                ["I was a powerful enchantress, in my prime. Before I was cheated of my powers."];
+                TurnOn(<< "company", "house", "enchantress", "magic", "cheated" >>);
+            }
+            key ("house") {
+                TurnOff("house");
+                ["'Tis not a bad place to live."];
+                v12 = ~PartyUtters(false, 0, "@The sewers not bad? Art thou daft?@", 1);
+                if (v12 <> 65180) {
+                    SetSpeakerSlot_i(0);
+                    ["Scowl not at Mosh. Thou knowest nothing of what thou sayest. Each one of us makes of life what we can, whether by fate or the treachery of others. Dost thou see me judging ye?"];
+                } else {
+                    ["Each one of us makes of life what we can, whether by fate or the treachery of others. Dost thou see me judging ye?"];
+                }
+            }
+            key ("company") {
+                TurnOff("company");
+                ["The rats are my friends. Dost thou not like my companions?"];
+                if ~AskYesNo() {
+                    ["Good! Then with time, perhaps, we could learn to like thee."];
+                } else {
+                    ["Then I do not like thee!"];
+                    Bark_i(0, "@Away from me!@", _Mosh);
+                    SetWorkType(_Shy, _Mosh);
+                    terminate;
+                }
+            }
+            key ("enchantress") {
+                TurnOff("enchantress");
+                ["I was once a beautiful young woman, and not so many years ago as thou mightest believe! There was a young mage who wanted mine hand -- "];
+                ["Trulacci, whose ill-fated son now languishes in the depths of the Mountains of Freedom."];
+                if $moshfriend {
+                    ["It was Columna who stole him from my love, by using her magics on him. Yet she never loved him... he was simply a toy to her."];
+                } else {
+                    ["But another stole Trulacci's heart from me, and I shall never forgive her for that!"];
+                    TurnOn(<< "another" >>);
+                }
+                TurnOn(<< "Trulacci" >>);
+            }
+            key ("Trulacci") {
+                TurnOff("Trulacci");
+                ["Where hath he gone? Bah, I know not. Nor, for that matter, do I care!"];
+                v12 = ~PartyUtters(false, 0, "@Ah, but I can see that thou dost still care, madam.@", 65533);
+                if (v12 <> 65180) {
+                    SetSpeakerSlot_i(0);
+                    ["Rubbish! 'Tis long gone, and I am an old woman now."];
+                }
+            }
+            key ("magic") {
+                TurnOff("magic");
+                if $moshfriend {
+                    ["Let me be honest with thee. My powers have dwindled to nothingness. I can teach thee no spell worth knowing!"];
+                } else {
+                    ["My spells are not for sale, not to the likes of such as thyself. But assume not that all my powers have left me, for some still remain."];
+                    ["I have no need for others, when I can create mine own friends."];
+                    Bark_i(0, "@See for thyself!@", _Mosh);
+                    v13 = ~GetCoord(_Mosh);
+                    v13::1 = (v13::1 + 2);
+                    v13::2 = (v13::2 - 2);
+                    v8 = ~CreateCreature_i(v13, _Rat);
+                    if v8 {
+                        CreateSpriteOn_i(65535, 0, 0, 0, 0, 0, 21, v8);
+                        SetWorkType(_Hound, v8);
+                        Bark_i(5, "@Eek!@", v8);
+                    } else {
+                        createSprite(65535, 0, 0, 0, v13::2, v13::1, 21);
+                    }
+                    terminate;
+                }
+            }
+            key ("cheated") {
+                TurnOff("cheated");
+                if $moshfriend {
+                    ["Cheated, and by mine own sister, wouldst thou believe it!"];
+                    ["Yet it is as nothing compared to the greater swindles which she practices. She doth conspire against Nature itself, didst thou know?"];
+                    ["She doth possess a Magic Comb, stolen from the City of Beauty. 'Tis an enchanted object which she used to make herself appear young and beautiful."];
+                    ["Without it, she would be exactly like me! I know not where she keeps it. But I am certain it is in a well hidden spot."];
+                } else {
+                    ["I will not speak of that now, but suffice it to say that she who looks like me deep inside hath taken from me all that should be mine!"];
+                }
+            }
+            key ("another") {
+                TurnOff("another");
+                ["Thou shouldst speak to she who hath done me wrong: The Sorceress Columna, whom they sometimes call the Green Sorceress."];
+                ["Listen to what she says!"];
+                TurnOn("the Green Sorceress");
+                $moshsaidcolumna = true;
+            }
+            key ("the Green Sorceress") {
+                TurnOff("the Green Sorceress");
+                ["The rumors say that her name stems from her attire, but I know the truth. 'Tis the very envy she doth have for me that hath spawned her title."];
+            }
+            key ("Columna") {
+                TurnOff("Columna");
+                ["So thou hast spoken to that hag! Tell me now -- dost thou believe me, or she?"];
+                v14 = ~AskList(<< "believe Columna", "believe Mosh" >>);
+                if (v14 = "believe Columna") {
+                    ["Thou art worthless."];
+                    Bark_i(0, "@Come, rats!@", _Mosh);
+                    SetWorkType(_Shy, _Mosh);
+                    terminate;
+                }
+                ["Thou dost truly believe me now... ah, I see that thou dost. Thou art truly one I can say is my friend."];
+                $moshfriend = true;
+                if ~IsInInv(13, 65177, _Food, 1, _Party) {
+                    ["I smell something... thou hast some fish! Oh, I do so love a good fish."];
+                    TurnOn("give fish");
+                } else {
+                    ["If thou art ever in need, come to me. I shall give thee anything I possess. Thou dost see, I have a good heart."];
+                    ["And if thou dost ever have something that I could use, please bring it. Nothing large. Perhaps a morsel of food."];
+                }
+            }
+            key ("give fish") {
+                TurnOff("give fish");
+                v3 = ~TakeFromParty_i(18, 13, _All, _Food, 1);
+                if $gaveharp {
+                    ["I thank ye for thy fish, as I do love it!"];
+                } else {
+                    ["I thank ye, <v0>. Thou art indeed a kind one. I knew the moment I saw ye I could call ye friend."];
+                    ["And know that my little ones call ye friend as well, as do their larger cousins."];
+                    TurnOn("larger cousins");
+                }
+            }
+            key ("larger cousins") {
+                TurnOff("larger cousins");
+                ["Aye, my friend. Beneath the very ground upon which thou dost walk rest many twisting tunnels. They are known as the catacombs, and the lovelies who call them home are the ratmen."];
+                ["But how will they recognize ye as my friend? I know! I will give ye mine harp. Shouldst thou ever find thyself in the complex below, strum it for them."];
+                ["The sweet tunes from mine instrument will pacify them, for in younger days I did play it for them as they laid themselves down to sleep. Here, please take this for thy kindness."];
+                v3 = ~GiveItemsOrDrop_i(true, 0, 65177, 65177, 506, 1, _Avatar);
+                $gaveharp = true;
+            }
+            key ("bye") {
+                CloseSpeaker0_i();
+                Bark_i(0, "@Thanks for thine help.@", _Avatar);
+                Bark_i(5, (("@Fare thee well, " + v0) + ".@"), _Mosh);
+                MessengerBringsScroll_i();
+                break;
+            }
+        }
+        clear_answers;
+    }
+}

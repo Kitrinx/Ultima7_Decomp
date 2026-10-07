@@ -1,0 +1,257 @@
+Routine Draxta accepts a0 #locals(17) #uses(~LordOrLady, ~AvatarName, Bark_i, PartyFaces_i, ~IsBodyNear_i, ~IsDraxtaAtVisionPlace_i, ResurrectBodies_i, ~PartyUtters, ~AskYesNo, MonkMakesPeace_i) {
+    v0 = ~LordOrLady();
+    v1 = ~AvatarSex();
+    v2 = ~AvatarName();
+    v3 = "my son";
+    v4 = "his";
+    if v1 {
+        v3 = "my daughter";
+        v4 = "her";
+    }
+    if (event = _Bark) {
+        v5 = ~FindNearby_i(8, 20, 65535, _Draxta);
+        v6 = << >>;
+        Foreach v9 in v5 {
+            if (~GetWorkType(v9) = _Dance) {
+                v6 = (v6 & v9);
+            }
+        }
+        if (v6 = << >>) {
+            terminate;
+        }
+        ClearBark_i(_Draxta);
+        v10 = v6::~Random(~ListSize_i(v6));
+        ClearBark_i(v10);
+        v11 = ~Random(6);
+        if (v11 = 1) {
+            Item_bark("@Do not falter!@", _Draxta);
+            Bark_i(3, "@Pardon, Draxta.@", v10);
+        }
+        if (v11 = 2) {
+            Item_bark("@Rhythm is pure!@", _Draxta);
+            Bark_i(3, "@Walk in Rhythm.@", v10);
+        }
+        if (v11 = 3) {
+            Item_bark("@May we stop?@", v10);
+            Bark_i(3, "@It is not time...@", _Draxta);
+        }
+        if (v11 = 4) {
+            Item_bark("@With vigor!@", _Draxta);
+            Bark_i(3, "@Vigor is good.@", v10);
+        }
+        if (v11 = 5) {
+            Item_bark("@Do not fail Xenka!@", _Draxta);
+            Bark_i(3, "@I am weak...@", v10);
+        }
+        if (v11 = 6) {
+            Item_bark("@Xenka is pleased!@", _Draxta);
+            Bark_i(5, "@Hail the Prophetess!@", v10);
+            Bark_i(10, "@Peace to all.@", _Draxta);
+        }
+    }
+    if (event = _Converse) {
+        if (~GetNPCID_i(_Karnax) <> 0) {
+            Item_bark("@Hush...@", _Draxta);
+            terminate;
+        }
+        Item_bark("@Might we speak?@", _Avatar);
+        PartyFaces_i(65323);
+        Bark_i(2, (("@Yes, " + v3) + "?@"), _Draxta);
+        SetWorkType(_Talk, _Draxta);
+    }
+    if (event = _Talking) {
+        Npc_schedule(_Draxta);
+        ClearBark_i(_Draxta);
+        SetSpeaker0_i(0, _Draxta);
+        v12 = ~GetItemFlag_i(_Met, _Draxta);
+        if (v12 = false) {
+            SetItemFlag_i(_Met, _Draxta);
+            ["I tremble before the Hero from Another World! Thou art even as Xenka said!"];
+            TurnOn(<< "name", "Hero From Another World", "Xenka" >>);
+        } else {
+            ["Welcome again, Hero from Another World! Thy destiny hath again brought thee to the place of Xenka's wisdom!"];
+            TurnOn(<< "Hero From Another World", "Xenka", "destiny" >>);
+        }
+        if ($SERPENT_GWENNO_BANE_SPEECH and ~GetItemFlag_i(_Zombie, _Gwenno)) {
+            TurnOn("Gwenno");
+        }
+        if ~IsBodyNear_i() {
+            ["Oh! One of thy friends hath met an untimely end. This should not be... If thou art ready to see thy friend again, simply ask and I will return them to thee."];
+            TurnOn("resurrection");
+        }
+        if ~IsDraxtaAtVisionPlace_i() {
+            TurnOn("vision");
+        }
+        TurnOn(<< "bye" >>);
+        converse {
+            key ("resurrection") {
+                TurnOff("resurrection");
+                ResurrectBodies_i();
+            }
+            key ("name") {
+                TurnOff("name");
+                ["My name is insignificant, oh great one. I am but a shadow in thy destiny and the glory of Xenka."];
+                v10 = ~PartyUtters(false, 0, "@Another mystic...@", 1);
+                SetSpeakerSlot_i(0);
+                ["But, if thou wilt suffer to call me by name, I am Draxta."];
+                TurnOn("destiny");
+            }
+            key ("destiny") {
+                TurnOff("destiny");
+                ["Xenka saw the destinies of every man, woman and child! They are written in her blessed book. I cannot tell thee thy destiny, for I am sworn not to interfere, but thou mayest look within Xenka's wisdom of thine own accord, as any may."];
+                TurnOn(<< "blessed book", "not interfere" >>);
+            }
+            key ("blessed book") {
+                TurnOff("blessed book");
+                ["A work of divine wisdom, certainly! It is where Xenka inscribed all of her visions."];
+                v10 = ~PartyUtters(false, 0, "@Such wisdom might aid thee in thy quest, Avatar.@", 1);
+                SetSpeakerSlot_i(0);
+                if ~FindNearby_i(0, 15, _Statues2, item) {
+                    ["Thou mayest find the book here in the Chapel, upon the altar."];
+                } else {
+                    ["Thou mayest find the book upon the altar within the Chapel."];
+                    TurnOn(<< "altar", "Chapel" >>);
+                }
+            }
+            key ("altar") {
+                TurnOff("altar");
+                ["Look for the ankh, the ancient symbol of life. It is only fitting that Xenka's words rest before the symbol of all that her divinely-inspired words shall save!"];
+            }
+            key ("Chapel") {
+                TurnOff("Chapel");
+                ["The Chapel is where we meditate. It is the central chamber of the abbey. This is where we gather to ponder the mystery of Xenka's prophecies."];
+            }
+            key ("not interfere") {
+                TurnOff("not interfere");
+                ["It is written that 'The friends of the Hero from Another World shall become <v4> enemies.'"];
+                ["I shall not seek to befriend thee, as I have no wish to bring about the end of the world!"];
+                TurnOn("end of the world");
+            }
+            key ("end of the world") {
+                TurnOff("end of the world");
+                ["Xenka's visions were of the world's end, oh great one."];
+                ["It is written that 'If the Hero from Another World doth fail, the world shall shudder unto death.'"];
+            }
+            key ("Hero From Another World") {
+                TurnOff("Hero From Another World");
+                ["Xenka saw that the one hope for our world was that A Hero from Another World would sail a ship upon dry land."];
+                ["Thoxa hath told us that thy ship was found beyond the shore. And thou wert accompanied by three fine companions, as foretold."];
+                TurnOn(<< "Thoxa", "three fine companions" >>);
+            }
+            key ("Thoxa") {
+                TurnOff("Thoxa");
+                ["Thoxa is another follower of the wondrous Xenka, although she would not be content to sit and wait for thine arrival. She would seek to be thy friend and take thee the Hourglass of Fate. I hope that it is not she that turns against thee."];
+                TurnOn("Hourglass of Fate");
+            }
+            key ("Hourglass of Fate") {
+                TurnOff("Hourglass of Fate");
+                ["The sands within the glass are the life's blood of our land. Each grain falls closer and closer to its doom if thou shouldst fail in thy quest."];
+            }
+            key ("three fine companions") {
+                TurnOff("three fine companions");
+                ["It is written that -- 'The Hero from Another World must have the Three to fulfill <v4> quest.'"];
+            }
+            key ("Xenka") {
+                TurnOff("Xenka");
+                ["Xenka was a very wise woman, oh great one. Divine visions came to her to warn us of the end of our world."];
+                ["It was she who foresaw thy coming in the Place of Visions. Though she never told us that she foresaw leaving us..."];
+                TurnOn(<< "Place of Visions", "leaving" >>);
+            }
+            key ("Place of Visions") {
+                TurnOff("Place of Visions");
+                if ~IsDraxtaAtVisionPlace_i() {
+                    ["This is the Place of Visions, Hero. Thou dost stand on hallowed ground."];
+                } else {
+                    ["The Place of Visions is upon the very north-western edge of the fields, oh great one. Thou wilt know it by the benches placed before the great wall."];
+                    ["I recall the last night we ever saw Xenka... I was there for her last three visions. Wouldst thou like me to show thee a vision?"];
+                    if (~AskYesNo() = true) {
+                        ["Journey to the Place of Visions, and I shall meet thee there."];
+                        flag(627) = true;
+                    } else {
+                        ["As thou wishest. But bear in mind that the visions may be of aid to thee."];
+                    }
+                    TurnOn("visions");
+                }
+            }
+            key ("visions") {
+                TurnOff("visions");
+                ["From the first vision Xenka said, 'The Hero from Another World must triumph -- even in <v4> dreams.' I can tell that thou shalt succeed. The very voice of the universe sings as thou dost move through it."];
+                ["After the second vision Xenka said, 'The Hero from Another World must cast aside <v4> prejudice and follow those of The Fellowship into the Truth of Beauty.'];
+                ["Following the third vision Xenka said, 'The Hero from Another World shall need a thief and a braggart as <v4> ally.' I must admit, I find that hard to believe."];
+            }
+            key ("leaving") {
+                TurnOff("leaving");
+                ["It was a dreadful blow, oh great one, when we could not find her in any place we searched."];
+                ["But I believe that some great event, some great crisis will bring forth the prophetess and her psychic wisdom to save this floundering world."];
+                $knowxenka = true;
+                TurnOn("floundering");
+            }
+            key ("floundering") {
+                TurnOff("floundering");
+                ["Thou hast already survived the strange storms that lash our land. Wouldst thou not agree that we are floundering beneath their fierce beatings?"];
+            }
+            key ("Gwenno") {
+                TurnOff("Gwenno");
+                ["Thy friend Gwenno doth not seem right, oh great one."];
+                v10 = ~PartyUtters(false, 0, "@She is a fine one to talk...@", 1);
+                SetSpeakerSlot_i(0);
+                ["Karnax could divine what ails her, to be certain."];
+                TurnOn("Karnax");
+            }
+            key ("Karnax") {
+                TurnOff("Karnax");
+                ["Karnax is a proud fellow, oh great one. But not so proud that he would interfere with thy quest. He knows much of the history of the land. He will be a great help to thee, if thou dost ask. But only if thou dost ask."];
+                TurnOn(<< "proud", "history" >>);
+            }
+            key ("proud") {
+                TurnOff("proud");
+                ["Karnax's ability to divine is second only to Xenka herself. He can be a bit acerbic if he doth not feel that he is being given the proper respect."];
+            }
+            key ("history") {
+                TurnOff("history");
+                ["Karnax hath made an exhaustive study of the history of the Serpent people. He can tell thee most anything about them."];
+                TurnOn("Serpent people");
+            }
+            key ("Serpent people") {
+                TurnOff("Serpent people");
+                ["The Serpent people dwelt in this land long before our forefathers settled here. I do not know what happened to them, but Karnax might."];
+            }
+            key ("vision") {
+                TurnOff("vision");
+                ["Silence, please! We shall now listen to the song of the Void, which whispers of events both past and present..."];
+                v13 = ~FindNearest_i(20, _Podium_EW, _Draxta);
+                if v13 {
+                    v14 = ~GetCoord(v13);
+                    v15 = ((8 * (v14::1 - 2336)) + 100);
+                    v16 = ((8 * (v14::2 - 1056)) + 40);
+                    CreateSpriteOn_i(65535, 0, 0, 0, v16, v15, 53, v13);
+                    Bark_i(7, "@Behold, the vision!@", _Draxta);
+                    flag(627) = false;
+                } else {
+                    ["Let us move closer to the great wall..."];
+                    Bark_i(0, "@To the wall...@", _Draxta);
+                }
+                terminate;
+            }
+            key ("bye") {
+                CloseSpeaker0_i();
+                Bark_i(0, "@Fare well!@", _Avatar);
+                Bark_i(2, "@Xenka's blessings!@", item);
+                break;
+            }
+        }
+        clear_answers;
+    }
+    if (event = _NearDeath) {
+        MonkMakesPeace_i(65323);
+    }
+}
+
+Function ~IsDraxtaAtVisionPlace_i #locals(1) {
+    v0 = ~GetCoord(_Draxta);
+    if ((v0::1 > 2316) and ((v0::1 < 2336) and ((v0::2 > 1042) and (v0::2 < 1062)))) {
+        return true;
+    } else {
+        return false;
+    }
+}

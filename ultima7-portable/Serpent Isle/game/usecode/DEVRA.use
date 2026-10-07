@@ -1,0 +1,1156 @@
+Routine Devra accepts a0 #locals(18) #uses(~LordOrLady, ~AvatarName, ~IsNPCNear, PartyFaces_i, Bark_i, ~AskYesNo, ~PartyUtters, ~IsInInv, ~GiveItemsOrDrop_i, DevraSellsFood_i, DevraSellsDrink_i, DevraChangesMoney_i) {
+    v0 = ~LordOrLady();
+    v1 = ~AvatarSex();
+    v2 = ~AvatarName();
+    v3 = ~IsNPCNear(_Argus);
+    v4 = false;
+    v5 = false;
+    v6 = ~GetTime();
+    if ((v6 > 1) or (v6 < 6)) {
+        v6 = "day";
+    } else {
+        v6 = "evening";
+    }
+    if (event = _Converse) {
+        Item_bark("@Pardon me...@", _Avatar);
+        PartyFaces_i(65495);
+        Bark_i(2, (((("Good " + v6) + ", ") + v0) + "."), _Devra);
+        SetWorkType(_Talk, _Devra);
+    }
+    if (event = _Bark) {
+        v7 = ~Random(6);
+        if (v7 = 1) {
+            Item_bark("@Wouldst thou like another?@", _Devra);
+        }
+        if (v7 = 2) {
+            Item_bark("@Refill?@", _Devra);
+        }
+        if (v7 = 3) {
+            Item_bark("@Lodgings available!@", _Devra);
+        }
+        if (v7 = 4) {
+            Item_bark("@Good, clean rooms!@", _Devra);
+        }
+        if (v7 = 5) {
+            if ~IsNPCNear(_Argus) {
+                Item_bark("@We need more clean mugs, son!@", _Devra);
+                Bark_i(2, "@Aye, mother!@", _Argus);
+            } else {
+                Item_bark("@Mine aching back!@", _Devra);
+            }
+        }
+        if (v7 = 6) {
+            Item_bark("@Sigh...@", _Devra);
+        }
+    }
+    if (event = _Talking) {
+        Npc_schedule(_Devra);
+        ClearBark_i(_Devra);
+        SetSpeaker0_i(0, _Devra);
+        v8 = ~GetItemFlag_i(_Met, _Devra);
+        if (v8 = false) {
+            ["Welcome to the Sleeping Bull, <v0>! Enter before we suffer another storm." *"I am Devra... My son, Argus, and I are running the inn since Angus disappeared."];
+            SetItemFlag_i(_Met, _Devra);
+            TurnOn(<< "storm", "Argus", "disappeared" >>);
+        } else {
+            ["Welcome back, <v2>. 'Tis so good to see thee again, after all these storms. Argus will be glad to see thee."];
+            TurnOn(<< "storm", "Argus", "disappeared" >>);
+        }
+        TurnOn(<< "food", "drink", "room", "exchange money", "bye" >>);
+        converse {
+            key ("storm") {
+                ["I have lived here since before I was married, and I've never seen anything like these mage-born storms. Why, one caught old man Jothum in his field and changed his plow horse into a goat, in front of his eyes." *"But Jothum was lucky, 'twas only his horse. We never did find what happened to Theron."];
+                TurnOff("storm");
+                TurnOn(<< "mage-born", "Theron" >>);
+            }
+            key ("mage-born") {
+                ["If thou shouldst be hit with lightning -- normal lightning, mind thee -- thou art dead. Plain and simple. They bury thy charred body the next day." *"But storms that change things, or make them disappear, or exchange them for something else, well now, it seems to me that 'tis magic, right enough. I don't have to be from Moonshade to conjure that answer!"];
+                TurnOff("mage-born");
+                TurnOn("Moonshade");
+            }
+            key ("Moonshade") {
+                ["Fine city, though 'tis plagued by wizards and mages. The place reeks of sorcery." *"Hast thou heard anything more of what might be causing these storms? I wonder if anyone has done anything to stop them."];
+                if (~AskYesNo() = true) {
+                    ["Is it the work of magic? Do they know who is responsible?"];
+                    if (~AskYesNo() = true) {
+                        ["Wonderful! I hope that this means that the storms will end soon..."];
+                    } else {
+                        ["I had hoped that the storms would end soon, before they cause us to close..."];
+                    }
+                } else {
+                    ["Well, I still think 'tis the work of them mages! No good comes of controlling that type of power, I'll tell thee..."];
+                    if (v3 = true) {
+                        SetSpeaker1_i(0, _Argus);
+                        ["Aye, mother. And thou wilt tell all who will listen! Do not harass what few customers we do have..."];
+                        CloseSpeaker1_i();
+                        SetSpeakerSlot_i(0);
+                        ["Hast thou ever heard a boy so rude as to talk to his mother that way?"];
+                        SetSpeaker1_i(0, _Argus);
+                        ["I am no boy, mother. For now, I'm the innkeeper here and I'll thank thee to remember that we have a mage staying here now."];
+                        CloseSpeaker1_i();
+                        SetSpeakerSlot_i(0);
+                    }
+                }
+                TurnOff("Moonshade");
+            }
+            key ("Theron") {
+                ["Theron was a simple man, not quite right in the head, if thou knowest what I mean. He worked for Angus and me for nigh on three years as a wood chopper... Until one of those storms."];
+                ["Angus pulled Theron inside when the storm hit, but Theron ran back out to bring in his favorite axe... Next thing there was a blinding flash, and Theron was gone!"];
+                TurnOff("Theron");
+            }
+            key ("Argus") {
+                ["Argus is mine oldest boy. He's a captain in the Pikemen... Or he was until he came home to take over his father's place." *"Mine husband always thought that Wilfred, our youngest, would be the one to take the inn. But he hath become too high and mighty to be an honest innkeeper!"];
+                TurnOff("Argus");
+                TurnOn("Wilfred");
+            }
+            key ("Wilfred") {
+                ["Wilfred is a Monitorian knight, <v0>. He always was headstrong... And I think his father harried him overmuch." *"He ran away to be like his brother... Only better, he said."];
+                TurnOff("Wilfred");
+            }
+            key ("disappeared") {
+                ["Thou dost seem like an honest, hard-working person. Perhaps thou canst help me discover what happened to Angus." *"'Tis a right mystery. He disappeared and then my slippers disappeared..."];
+                if not flag(489) {
+                    ["Now I've got no husband and a pair of old, smelly boots."];
+                } else {
+                    ["Now I've got no husband, but I do have my slippers..."];
+                }
+                TurnOff("disappeared");
+                TurnOn(<< "mystery", "slippers" >>);
+            }
+            key ("slippers") {
+                if not flag(489) {
+                    ["They were hanging on the line to dry when one of those storms hit. When I went out to gather the wash later, there were these huge boots hanging where my slippers had been." *"I'd gladly give these things away, if only I had my slippers back!"];
+                    v9 = ~PartyUtters(false, "@Those look like my swamp boots!@", "@Avatar, those look like thy swamp boots!@", 1);
+                    SetSpeakerSlot_i(0);
+                    ["If thou hast my slippers, <v0>, I would gladly trade thee these boots for them. I have no great fondness for them other than to keep my feet dry."];
+                    v10 = ~IsInInv(5, 65177, _Leath_Boots, 1, _Party);
+                    if (v10 = true) {
+                        ["Here are thy boots then... And I thank thee for my slippers."];
+                        v11 = ~GiveItemsOrDrop_i(true, false, 6, 65177, 587, 1, _Avatar);
+                        v12 = ~TakeFromParty_i(false, 5, _All, _Leath_Boots, 1);
+                        flag(489) = true;
+                    } else {
+                        ["Then I hope that thou dost not mind if I keep these... I have no way to buy new slippers, what with the storms and all." *"If thou shouldst find my slippers again, I will give these back."];
+                    }
+                    $knowslippers = true;
+                } else {
+                    ["Thank thee again, <v2>, for returning my favorite slippers."];
+                }
+                TurnOff("slippers");
+            }
+            key ("mystery") {
+                ["On the night Angus disappeared, I'd gone to bed and Angus had remained to sweep. If thou dost ask me though, he stayed up to keep an eye on that strange mage that was staying here." *"I was stirred from a sound sleep by the sound of voices downstairs in the cellar. After I heard a crash, I went down to look, but I did not see anyone. I thought the mage's companion might have tried to slip down to have another drink for free, and thought no more of it until the morning."];
+                flag(484) = true;
+                TurnOff("mystery");
+                TurnOn(<< "strange mage", "cellar", "mage's companion" >>);
+            }
+            key ("strange mage") {
+                ["He was a rather portly man, if I remember rightly. He had been here once before..."];
+                ["I cannot seem to recall what his name was. He was not the talkative sort, least not to me."];
+                ["Thou couldst ask Ensorcio, they talked quite a bit. Or... I know... Thou canst look in the registry! 'Tis on the bar."];
+                TurnOff("strange mage");
+                TurnOn("Ensorcio");
+            }
+            key ("Ensorcio") {
+                ["Thou hast not met the great Ensorcio yet? Count thy blessings!"];
+                ["Ensorcio is the smoldering black cloud that sits here day after day, drinking himself into a fit. All he does is glower about how those fools in Moonshade threw him out, and how he'll avenge himself."];
+                TurnOff("Ensorcio");
+                TurnOn("fools in Moonshade");
+            }
+            key ("fools in Moonshade") {
+                ["Ensorcio is an exiled mage. Who doth know what he did? I am too afraid to ask..."];
+                ["If he was thrown out by that lot, thou canst wager that it could not have been good. Although Angus did not trust mages, he allowed Ensorcio to stay... Angus said that a mage had to have a clear head to cast spells, and we should worry if Ensorcio ever sobered."];
+                TurnOff("fools in Moonshade");
+            }
+            key ("cellar") {
+                ["Aye, the cellar. We've had a lout or two think that they could slip down and take a bottle or two on the sly." *"But Angus always seemed to know when they tried it... Threw them out with a few bruises for their trouble."];
+                ["'Tis why I didn't worry 'til morn... When I found everything in disarray and Angus gone."];
+                TurnOff("cellar");
+                TurnOn("disarray");
+            }
+            key ("disarray") {
+                ["The casks and barrels were scattered all over the floor down there. It looked like there may have been a fight, but I did not see any blood." *"It took the rest of the day to put all back in order down there. And make sure that nothing was missing."];
+                ["I waited a week or so before I sent word to Wilfred and Argus about their father not returning."];
+                TurnOff("disarray");
+            }
+            key ("mage's companion") {
+                ["I do not know his name either... He never spoke to anyone other than the mage that I know of." *"He always walked about with his hood raised, as if he were cold or something. He always gave me the shivers."];
+                TurnOff("mage's companion");
+                TurnOn("shivers");
+            }
+            key ("shivers") {
+                ["Hast thou ever been in a sickroom, <v0>? A sickroom where someone is about to die?" *"There is a tension in the air, a stillness... And that always seemed to hover about the mage's large companion." *"He was probably the one that stole whatever it was from Ensorcio that night, too."];
+                TurnOff("shivers");
+                TurnOn("stole");
+            }
+            key ("stole") {
+                ["I remember that Ensorcio came storming in that morning, much earlier than usual, ranting about something being missing. I'll admit that I was a bit short with him, <v0>." *"After all, I had to put all those barrels back myself, what with Angus gone and all. And that high and mighty mage never offered to lift a finger for anything more than another mug of ale!"];
+                v13 = true;
+                TurnOff("stole");
+            }
+            key ("food") {
+                if ((~GetWorkType(_Devra) = _TendShop) or (~GetWorkType(_Devra) = _Waiter)) {
+                    ["Thou wilt not find our cooking fancy as in Moonshade. But 'tis hardy fare and thou wilt find the portions ample."];
+                    if not v4 {
+                        ["I've done all the cooking here since Donal hired me, before I married Angus. I've had my share of compliments, if I do say so myself."];
+                        v4 = true;
+                        TurnOn(<< "Donal", "Angus" >>);
+                    }
+                    DevraSellsFood_i();
+                } else {
+                    ["I will sell thee some food when we are open!"];
+                    TurnOff("food");
+                }
+            }
+            key ("Donal") {
+                ["Donal was Angus' father, the son of Silverpate the pirate. Donal hired me as cook when I was merely a strip of a lass... 'Tis when I caught Angus' eye." *"Donal never showed any tendency to leave of a sudden, like his no-account father. That's why I told Angus I'd wed him... I thought that maybe that adventuring blood died with the old pirate."];
+                TurnOff("Donal");
+                TurnOn("Silverpate");
+            }
+            key ("Silverpate") {
+                ["Thou hast not yet heard of Silverpate? I was beginnin' to think the walls shouted it, as fast as the guests hear about it around here!" *"According to stories... and 'twere only stories, mind thee... Silverpate was a pirate who took his treasure and started this here inn. He was supposed to have hid his treasure somewhere around here before he disappeared."];
+                TurnOff("Silverpate");
+                TurnOn("treasure");
+            }
+            key ("treasure") {
+                ["What a lot of nonsense! Why we've had two whole generations of kin and neighbors lookin' everywhere imaginable for it." *"I even looked a bit... at first. But if it hasn't been found after all this time, <v0>, with all those looking for it... I'd tell thee not to waste thy time looking!"];
+                TurnOff("treasure");
+            }
+            key ("Angus") {
+                ["Angus is mine husband. He was the innkeeper here after Donal died." *"We raised two fine sons and he hoped to pass the inn to one of them when he were too old to run things. Only he disappeared... same as old Silverpate."];
+                TurnOff("Angus");
+            }
+            key ("drink") {
+                if ((~GetWorkType(_Devra) = _TendShop) or (~GetWorkType(_Devra) = _Waiter)) {
+                    ["Thou wilt like our selection, I'm certain."];
+                    DevraSellsDrink_i();
+                } else {
+                    ["Please return when we are open!"];
+                    TurnOff("drink");
+                }
+            }
+            key ("room") {
+                ["The cost is 8 gold coins per person. Wouldst thou like a room for the night?"];
+                if ~AskYesNo() {
+                    v14 = (~ListSize_i(~GetParty()) * 8);
+                    v15 = ~CountItem(_All, _All, _Gold_Coins, _Party);
+                    if (v15 >= v14) {
+                        ["Room number 3 is available. I am sure thou wilt like it. Here is the key."];
+                        v16 = ~GiveItemsOrDrop_i(true, 0, 9, 3, 641, 1, _Avatar);
+                        v17 = ~TakeFromParty_i(0, _All, _All, _Gold_Coins, v14);
+                        ["The rooms are upstairs. If thou dost need anything, thou shouldst call."];
+                    } else {
+                        v9 = ~PartyUtters(false, 0, "@But we do not have enough money...@", 1);
+                        if (v9 <> 65180) {
+                            SetSpeaker0_i(0, _Devra);
+                            ["I have no heart to turn any of thee out in these storms. With all of our help run away, I'm in sore need of help." *"But I cannot allow thee to stay for free. Thou wilt have to take thy chances outside."];
+                        } else {
+                            ["I'm afraid that thou cannot afford my rooms." *"With the help all run away, I'd allow thee to stay for free, but I'd soon be out of business."];
+                            ["Thou wilt have to take thy chances outside."];
+                        }
+                    }
+                } else {
+                    ["Some other time, then."];
+                }
+            }
+            key ("exchange money") {
+                DevraChangesMoney_i();
+            }
+            key ("bye") {
+                CloseSpeaker0_i();
+                Bark_i(0, "@Be seeing thee!@", _Avatar);
+                Bark_i(2, "@Come again soon!@", _Devra);
+                break;
+            }
+        }
+        clear_answers;
+    }
+}
+
+Usable DevraChangesMoney_i #locals(16) #uses(~AskYesNo, ~AskList, ~IsInInv, ~GiveItemsOrDrop_i) {
+    v0 = true;
+    ["To barter coins, I ask for a small fee of the money exchanged. Dost thou accept?"];
+    if ~AskYesNo() {
+        While v0 {
+            ["What coinage dost thou desire?"];
+            v1 = ~AskList(<< "Monetari", "Guilders", "Filari", "Gold Coins" >>);
+            if (v1 = "Monetari") {
+                ["What dost thou care to exchange for monetari?"];
+                v2 = 951;
+                v3 = << "Nothing" >>;
+                if ~IsInInv(65177, 65177, _Moon_Money, 1, _Party) {
+                    v3 = (v3 & "Guilders");
+                }
+                if ~IsInInv(65177, 65177, _Fawn_Money, 1, _Party) {
+                    v3 = (v3 & "Filari");
+                }
+                if ~IsInInv(65177, 65177, _Gold_Coins, 1, _Party) {
+                    v3 = (v3 & "Gold Coins");
+                }
+                if ~IsInInv(65177, 65177, _Gold_Nugget, 1, _Party) {
+                    v3 = (v3 & "Gold Nuggets");
+                }
+                if ~IsInInv(65177, 65177, _Gems, 1, _Party) {
+                    v3 = (v3 & "Gems");
+                }
+                if ~IsInInv(65177, 65177, _Garg_Jewelery, 1, _Party) {
+                    v3 = (v3 & "Jewelry");
+                }
+                v4 = ~AskList(v3);
+                if (v4 = "Nothing") {
+                    ["Very well... perhaps another time."];
+                    v0 = false;
+                    goto label_258;
+                }
+                if (v4 = "Guilders") {
+                    ["I can give thee 1 monetari for every 3 guilders thou hast."];
+                    v5 = 952;
+                }
+                if (v4 = "Filari") {
+                    ["I can give thee 1 monetari for every 4 filari thou hast."];
+                    v5 = 948;
+                }
+                if (v4 = "Gold Coins") {
+                    ["I can give thee 1 monetari for every 2 gold coins thou hast."];
+                    v5 = 644;
+                }
+                if (v4 = "Gold Nuggets") {
+                    ["I can give thee 10 monetari for every 1 gold nugget thou hast."];
+                    v5 = 645;
+                }
+                if (v4 = "Gems") {
+                    ["I can give thee 25 monetari for every gem thou dost have."];
+                    v5 = 760;
+                }
+                if (v4 = "Jewelry") {
+                    ["I can give thee 100 monetari for any piece of jewelry thou hast."];
+                    v5 = 937;
+                    v4 = "pieces of jewelry";
+                }
+                ["Dost thou find the rate acceptable?"];
+                if (~AskYesNo() = true) {
+                    v6 = ~CountItem(_All, _All, v5, _Party);
+                    if (v6 > 500) {
+                        v6 = 500;
+                    }
+                    if (v6 <> 0) {
+                        ["How many <v4> wouldst thou like to exchange?"];
+                        v7 = ~AskBarInput(0, 1, v6, 0);
+                        if (v7 = 0) {
+                            ["Perhaps another time then..."];
+                            goto label_255;
+                        }
+                        if (v4 = "Guilders") {
+                            v8 = (v7 / 3);
+                            v9 = 6;
+                        }
+                        if (v4 = "Filari") {
+                            v8 = (v7 / 4);
+                            v9 = 8;
+                        }
+                        if (v4 = "Gold Coins") {
+                            v8 = (v7 / 2);
+                            v9 = 4;
+                        }
+                        if (v4 = "Gold Nuggets") {
+                            v8 = (v7 * 10);
+                            if (v7 = 1) {
+                                v4 = "Gold Nugget";
+                            }
+                        }
+                        if (v4 = "Gems") {
+                            v8 = (v7 * 25);
+                            if (v7 = 1) {
+                                v4 = "Gem";
+                            }
+                        }
+                        if (v4 = "pieces of jewelry") {
+                            v8 = (v7 * 100);
+                            v4 = "pieces of jewelry";
+                            if (v7 = 1) {
+                                v4 = "piece of jewelry";
+                            }
+                        }
+                        v10 = (v8 / 50);
+                        v11 = (v8 - v10);
+                        if (v8 = 0) {
+                            ["Thou must offer at least <v9> <v4> to exchange for <v1>!"];
+                            goto label_255;
+                        }
+                        if (v8 = 1) {
+                            ["My fee will leave thee with nothing!"];
+                            goto label_255;
+                        }
+                        if (v8 <= 50) {
+                            v10 = 1;
+                            v11 = (v8 - v10);
+                        }
+                        if (v7 >= 1) {
+                            v12 = ~TakeFromParty_i(false, _All, _All, v5, v7);
+                            ["Very well..." ~"I will take thy <v7> <v4> and give thee <v8> Monetari, subtracting my charge of <v10> Monetari, for a final sum of <v11> Monetari given to thee."];
+                            v13 = ~GiveItemsOrDrop_i(true, false, 65177, 65177, v2, v11, _Avatar);
+                            ["'Tis done!"];
+                        } else {
+                            ["Perhaps another time then..."];
+                        }
+                    } else {
+                        ["Thou dost not have any <v4> to exchange for <v1>!"];
+                    }
+                } else {
+                    ["Perhaps another time then..."];
+                }
+            }
+            if (v1 = "Guilders") {
+                ["What dost thou care to exchange for guilders?"];
+                v2 = 952;
+                v3 = << "Nothing" >>;
+                if ~IsInInv(65177, 65177, _Monitor_Money, 1, _Party) {
+                    v3 = (v3 & "Monetari");
+                }
+                if ~IsInInv(65177, 65177, _Fawn_Money, 1, _Party) {
+                    v3 = (v3 & "Filari");
+                }
+                if ~IsInInv(65177, 65177, _Gold_Coins, 1, _Party) {
+                    v3 = (v3 & "Gold Coins");
+                }
+                if ~IsInInv(65177, 65177, _Gold_Nugget, 1, _Party) {
+                    v3 = (v3 & "Gold Nuggets");
+                }
+                if ~IsInInv(65177, 65177, _Gems, 1, _Party) {
+                    v3 = (v3 & "Gems");
+                }
+                if ~IsInInv(65177, 65177, _Garg_Jewelery, 1, _Party) {
+                    v3 = (v3 & "Jewelry");
+                }
+                v4 = ~AskList(v3);
+                if (v4 = "Nothing") {
+                    ["Very well... perhaps another time."];
+                    v0 = false;
+                    goto label_258;
+                }
+                if (v4 = "Monetari") {
+                    ["I can give thee 3 guilders for every 1 monetari thou hast."];
+                    v5 = 951;
+                }
+                if (v4 = "Filari") {
+                    ["I can give thee 3 guilders for every 4 filari thou hast."];
+                    v5 = 948;
+                }
+                if (v4 = "Gold Coins") {
+                    ["I can give thee 3 guilders for every 2 gold coins thou hast."];
+                    v5 = 644;
+                }
+                if (v4 = "Gold Nuggets") {
+                    ["I can give thee 30 guilders for every 1 gold nugget thou hast."];
+                    v5 = 645;
+                }
+                if (v4 = "Gems") {
+                    ["I can give thee 75 guilders for every gem thou dost have."];
+                    v5 = 760;
+                }
+                if (v4 = "Jewelry") {
+                    ["I can give thee 300 guilders for any piece of jewelry thou hast."];
+                    v5 = 937;
+                    v4 = "pieces of jewelry";
+                }
+                ["Dost thou find the rate acceptable?"];
+                if (~AskYesNo() = true) {
+                    v6 = ~CountItem(_All, _All, v5, _Party);
+                    if (v6 > 500) {
+                        v6 = 500;
+                    }
+                    if (v6 <> 0) {
+                        ["How many <v4> wouldst thou like to exchange?"];
+                        v7 = ~AskBarInput(0, 1, v6, 0);
+                        if (v7 = 0) {
+                            ["Perhaps another time then..."];
+                            goto label_255;
+                        }
+                        if (v4 = "Monetari") {
+                            v8 = (v7 * 3);
+                        }
+                        if (v4 = "Filari") {
+                            v8 = ((v7 * 3) / 4);
+                            v9 = 3;
+                        }
+                        if (v4 = "Gold Coins") {
+                            v8 = ((v7 * 3) / 2);
+                            v9 = 2;
+                        }
+                        if (v4 = "Gold Nuggets") {
+                            v8 = (v7 * 30);
+                            if (v7 = 1) {
+                                v4 = "Gold Nugget";
+                            }
+                        }
+                        if (v4 = "Gems") {
+                            v8 = (v7 * 75);
+                            if (v7 = 1) {
+                                v4 = "Gem";
+                            }
+                        }
+                        if (v4 = "pieces of jewelry") {
+                            v8 = (v7 * 300);
+                            v4 = "pieces of jewelry";
+                            if (v7 = 1) {
+                                v4 = "piece of jewelry";
+                            }
+                        }
+                        v10 = (v8 / 50);
+                        v11 = (v8 - v10);
+                        v14 = "Guilders";
+                        v15 = "Guilders";
+                        if (v8 = 0) {
+                            ["Thou must offer at least <v9> <v4> to exchange for <v1>!"];
+                            goto label_255;
+                        }
+                        if (v8 = 1) {
+                            ["My fee will leave thee with nothing!"];
+                            goto label_255;
+                        }
+                        if (v8 <= 25) {
+                            v10 = 1;
+                            v11 = (v8 - v10);
+                        }
+                        if (v11 = 1) {
+                            v14 = "Guilder";
+                        }
+                        if (v10 = 1) {
+                            v15 = "Guilder";
+                        }
+                        if (v7 >= 1) {
+                            v12 = ~TakeFromParty_i(false, _All, _All, v5, v7);
+                            ["Very well..." ~"I will take thy <v7> <v4> and give thee <v8> Guilders, subtracting my charge of <v10> <v15>, for a final sum of <v11> <v14> given to thee."];
+                            v13 = ~GiveItemsOrDrop_i(true, false, 65177, 65177, v2, v11, _Avatar);
+                            ["'Tis done!"];
+                        } else {
+                            ["Perhaps another time then..."];
+                        }
+                    } else {
+                        ["Thou dost not have any <v4> to exchange for <v1>!"];
+                    }
+                } else {
+                    ["Perhaps another time then..."];
+                }
+            }
+            if (v1 = "Filari") {
+                ["What dost thou care to exchange for filari?"];
+                v2 = 948;
+                v3 = << "Nothing" >>;
+                if ~IsInInv(65177, 65177, _Monitor_Money, 1, _Party) {
+                    v3 = (v3 & "Monetari");
+                }
+                if ~IsInInv(65177, 65177, _Moon_Money, 1, _Party) {
+                    v3 = (v3 & "Guilders");
+                }
+                if ~IsInInv(65177, 65177, _Gold_Coins, 1, _Party) {
+                    v3 = (v3 & "Gold Coins");
+                }
+                if ~IsInInv(65177, 65177, _Gold_Nugget, 1, _Party) {
+                    v3 = (v3 & "Gold Nuggets");
+                }
+                if ~IsInInv(65177, 65177, _Gems, 1, _Party) {
+                    v3 = (v3 & "Gems");
+                }
+                if ~IsInInv(65177, 65177, _Garg_Jewelery, 1, _Party) {
+                    v3 = (v3 & "Jewelry");
+                }
+                v4 = ~AskList(v3);
+                if (v4 = "Nothing") {
+                    ["Very well... perhaps another time."];
+                    v0 = false;
+                    goto label_258;
+                }
+                if (v4 = "Monetari") {
+                    ["I can give thee 4 filari for every 1 monetari thou hast."];
+                    v5 = 951;
+                }
+                if (v4 = "Guilders") {
+                    ["I can give thee 4 filari for every 3 guilders thou hast."];
+                    v5 = 952;
+                }
+                if (v4 = "Gold Coins") {
+                    ["I can give thee 2 filari for every 1 gold coin thou hast."];
+                    v5 = 644;
+                }
+                if (v4 = "Gold Nuggets") {
+                    ["I can give thee 40 filari for every 1 gold nugget thou hast."];
+                    v5 = 645;
+                }
+                if (v4 = "Gems") {
+                    ["I can give thee 100 filari for every gem thou dost have."];
+                    v5 = 760;
+                }
+                if (v4 = "Jewelry") {
+                    ["I can give thee 400 filari for any piece of jewelry thou hast."];
+                    v5 = 937;
+                    v4 = "pieces of jewelry";
+                }
+                ["Dost thou find the rate acceptable?"];
+                if (~AskYesNo() = true) {
+                    v6 = ~CountItem(_All, _All, v5, _Party);
+                    if (v6 > 500) {
+                        v6 = 500;
+                    }
+                    if (v6 <> 0) {
+                        ["How many <v4> wouldst thou like to exchange?"];
+                        v7 = ~AskBarInput(0, 1, v6, 0);
+                        if (v7 = 0) {
+                            ["Perhaps another time then..."];
+                            goto label_255;
+                        }
+                        if (v4 = "Monetari") {
+                            v8 = (v7 * 4);
+                        }
+                        if (v4 = "Guilders") {
+                            v8 = ((v7 * 4) / 3);
+                            v9 = 2;
+                        }
+                        if (v4 = "Gold Coins") {
+                            v8 = (v7 * 2);
+                            if (v7 = 1) {
+                                v4 = "Gold Coin";
+                            }
+                        }
+                        if (v4 = "Gold Nuggets") {
+                            v8 = (v7 * 40);
+                            if (v7 = 1) {
+                                v4 = "Gold Nugget";
+                            }
+                        }
+                        if (v4 = "Gems") {
+                            v8 = (v7 * 100);
+                            if (v7 = 1) {
+                                v4 = "Gem";
+                            }
+                        }
+                        if (v4 = "pieces of jewelry") {
+                            v8 = (v7 * 400);
+                            v4 = "pieces of jewelry";
+                            if (v7 = 1) {
+                                v4 = "piece of jewelry";
+                            }
+                        }
+                        v10 = (v8 / 50);
+                        v11 = (v8 - v10);
+                        if (v8 = 0) {
+                            ["Thou must offer at least <v9> <v4> to exchange for <v1>!"];
+                            goto label_255;
+                        }
+                        if (v8 = 1) {
+                            ["My fee will leave thee with nothing!"];
+                            goto label_255;
+                        }
+                        if (v8 <= 50) {
+                            v10 = 1;
+                            v11 = (v8 - v10);
+                        }
+                        if (v7 >= 1) {
+                            v12 = ~TakeFromParty_i(false, _All, _All, v5, v7);
+                            ["Very well..." ~"I will take thy <v7> <v4> and give thee <v8> Filari, subtracting my charge of <v10> Filari, for a final sum of <v11> Filari given to thee."];
+                            v13 = ~GiveItemsOrDrop_i(true, false, 65177, 65177, v2, v11, _Avatar);
+                            ["'Tis done!"];
+                        } else {
+                            ["Perhaps another time then..."];
+                        }
+                    } else {
+                        ["Thou dost not have any <v4> to exchange for <v1>!"];
+                    }
+                } else {
+                    ["Perhaps another time then..."];
+                }
+            }
+            if (v1 = "Gold Coins") {
+                ["What dost thou care to exchange for gold?"];
+                v2 = 644;
+                v3 = << "Nothing" >>;
+                if ~IsInInv(65177, 65177, _Monitor_Money, 1, _Party) {
+                    v3 = (v3 & "Monetari");
+                }
+                if ~IsInInv(65177, 65177, _Fawn_Money, 1, _Party) {
+                    v3 = (v3 & "Filari");
+                }
+                if ~IsInInv(65177, 65177, _Moon_Money, 1, _Party) {
+                    v3 = (v3 & "Guilders");
+                }
+                if ~IsInInv(65177, 65177, _Gold_Nugget, 1, _Party) {
+                    v3 = (v3 & "Gold Nuggets");
+                }
+                if ~IsInInv(65177, 65177, _Gems, 1, _Party) {
+                    v3 = (v3 & "Gems");
+                }
+                if ~IsInInv(65177, 65177, _Garg_Jewelery, 1, _Party) {
+                    v3 = (v3 & "Jewelry");
+                }
+                v4 = ~AskList(v3);
+                if (v4 = "Nothing") {
+                    ["Very well... perhaps another time."];
+                    v0 = false;
+                    goto label_258;
+                }
+                if (v4 = "Monetari") {
+                    ["I can give thee 2 gold coins for every 1 monetari thou hast."];
+                    v5 = 951;
+                }
+                if (v4 = "Guilders") {
+                    ["I can give thee 2 gold coins for every 3 guilders thou hast."];
+                    v5 = 952;
+                }
+                if (v4 = "Filari") {
+                    ["I can give thee 1 gold coin for every 2 filari thou hast."];
+                    v5 = 948;
+                }
+                if (v4 = "Gold Nuggets") {
+                    ["I can give thee 20 gold coins for every 1 gold nugget thou hast."];
+                    v5 = 645;
+                }
+                if (v4 = "Gems") {
+                    ["I can give thee 50 gold coins for every gem thou dost have."];
+                    v5 = 760;
+                }
+                if (v4 = "Jewelry") {
+                    ["I can give thee 200 gold coins for any piece of jewelry thou hast."];
+                    v5 = 937;
+                    v4 = "pieces of jewelry";
+                }
+                ["Dost thou find the rate acceptable?"];
+                if (~AskYesNo() = true) {
+                    v6 = ~CountItem(_All, _All, v5, _Party);
+                    if (v6 > 500) {
+                        v6 = 500;
+                    }
+                    if (v6 <> 0) {
+                        ["How many <v4> wouldst thou like to exchange?"];
+                        v7 = ~AskBarInput(0, 1, v6, 0);
+                        if (v7 = 0) {
+                            ["Perhaps another time then..."];
+                            goto label_255;
+                        }
+                        if (v4 = "Monetari") {
+                            v8 = (v7 * 2);
+                        }
+                        if (v4 = "Guilders") {
+                            v8 = ((v7 * 2) / 3);
+                            v9 = 3;
+                        }
+                        if (v4 = "Filari") {
+                            v8 = (v7 / 2);
+                            v9 = 4;
+                        }
+                        if (v4 = "Gold Nuggets") {
+                            v8 = (v7 * 20);
+                            if (v7 = 1) {
+                                v4 = "Gold Nugget";
+                            }
+                        }
+                        if (v4 = "Gems") {
+                            v8 = (v7 * 50);
+                            if (v7 = 1) {
+                                v4 = "Gem";
+                            }
+                        }
+                        if (v4 = "pieces of jewelry") {
+                            v8 = (v7 * 200);
+                            v4 = "pieces of jewelry";
+                            if (v7 = 1) {
+                                v4 = "piece of jewelry";
+                            }
+                        }
+                        v10 = (v8 / 50);
+                        v11 = (v8 - v10);
+                        v14 = "Gold Coins";
+                        v15 = "Gold Coins";
+                        if (v8 = 0) {
+                            ["Thou must offer at least <v9> <v4> to exchange for <v1>!"];
+                            goto label_255;
+                        }
+                        if (v8 = 1) {
+                            ["My fee will leave thee with nothing!"];
+                            goto label_255;
+                        }
+                        if (v8 <= 50) {
+                            v10 = 1;
+                            v11 = (v8 - v10);
+                        }
+                        if (v11 = 1) {
+                            v14 = "Gold Coin";
+                        }
+                        if (v10 = 1) {
+                            v15 = "Gold Coin";
+                        }
+                        if (v7 >= 1) {
+                            v12 = ~TakeFromParty_i(false, _All, _All, v5, v7);
+                            ["Very well..." ~"I will take thy <v7> <v4> and give thee <v8> Gold Coins, subtracting my charge of <v10> <v15>, for a final sum of <v11> <v14> given to thee."];
+                            v13 = ~GiveItemsOrDrop_i(true, false, 65177, 65177, v2, v11, _Avatar);
+                            ["'Tis done!"];
+                        } else {
+                            ["Perhaps another time then..."];
+                        }
+                    } else {
+                        ["Thou dost not have any <v4> to exchange for <v1>!"];
+                    }
+                } else {
+                    ["Perhaps another time then..."];
+                }
+            }
+            label_255:
+            ["Dost thou care to exchange more coins?"];
+            v0 = ~AskYesNo();
+        }
+    } else {
+        ["If that is what thou dost desire..."];
+    }
+    label_258:
+}
+
+Usable DevraSellsFood_i #locals(16) #uses(~LordOrLady, ~AskOrdList, ~AskYesNo, ~DevraHaggles_i, ~SellItem_i, ~PartyUtters) {
+    v0 = ~LordOrLady();
+    PushKeys();
+    v1 = true;
+    v2 = << "nothing", "ham", "mutton", "trout", "cheese", "pastry" >>;
+    v3 = << 0, 377, 377, 377, 377, 377 >>;
+    v4 = << 65177, 11, 8, 12, 27, 6 >>;
+    v5 = << 0, 20, 22, 10, 12, 8 >>;
+    v6 = << 0, 12, 14, 6, 7, 4 >>;
+    v7 = 644;
+    v8 = << 0, 1, 1, 1, 1, 1 >>;
+    v9 = << 0, 1, 1, 1, 1, 1 >>;
+    ["What sounds good to thee, <v0>?"];
+    While v1 {
+        v10 = ~AskOrdList(v2);
+        if (v10 = 1) {
+            ["Perhaps another time, then."];
+            v1 = false;
+        } else {
+            v11 = v5::v10;
+            v12 = 0;
+            if (v10 = 2) {
+                ["I'm afraid that the price is <v11> gold coins... Our supplies are getting low. Dost thou accept?"];
+                v13 = "haunches of ham";
+            }
+            if (v10 = 3) {
+                ["The dinner costs <v11> gold coins. Others would charge thee twice as much for as much as I serve. Dost thou find this acceptable?"];
+                v13 = "joints of mutton";
+            }
+            if (v10 = 4) {
+                ["Our fish is very tasty. <v11> gold coins is the price. Dost thou agree?"];
+                v13 = "trout";
+            }
+            if (v10 = 5) {
+                ["<v11> gold coins for a wedge of fine cheese. Dost thou accept?"];
+                v13 = "wedges of cheese";
+            }
+            if (v10 = 6) {
+                ["Well, if thou dost like fine desserts that will melt in thy mouth and make thee smile in appreciation, then thou shouldst try my pastry, <v0>. They sell for <v11> gold coins each. Dost thou agree?"];
+                v13 = "pastries";
+            }
+            if (v11 = v6::v10) {
+                if (~AskYesNo() = true) {
+                    v14 = v11;
+                } else {
+                    v14 = 0;
+                }
+            } else {
+                v14 = ~DevraHaggles_i(v6::v10, v5::v10);
+            }
+            if (v14 > 0) {
+                if (v9::v10 = 1) {
+                    ["How many <v13> wouldst thou like?"];
+                    v12 = ~SellItem_i(false, 1, 20, v14, v7, v8::v10, v4::v10, v3::v10);
+                } else {
+                    v12 = ~SellItem_i(false, 1, 0, v14, v7, v8::v10, v4::v10, v3::v10);
+                }
+            }
+            if (v12 = 1) {
+                ["Enjoy thy meal, <v0>."];
+            } else {
+                if (v12 = 2) {
+                    ["Thou canst not carry so much, <v0>."];
+                } else {
+                    if (v12 = 3) {
+                        v15 = ~PartyUtters(false, 0, (("@But " + v0) + ", we haven't the coins to pay for this.@"), 1);
+                        if (v15 <> 65180) {
+                            SetSpeaker0_i(0, _Devra);
+                            ["I'd hate to see any of thee go hungry, <v0>." *"I would feed thee for free, if I did not have a business to worry about."];
+                            ["I fear thou shalt go hungry, <v0>."];
+                            break;
+                        } else {
+                            ["Thou dost not have enough for that, <v0>." *"I would feed thee for free, if I did not have a business to worry about."];
+                            ["I'm afraid thou shalt go hungry, <v0>."];
+                            break;
+                        }
+                        if (31 < (~GetNPCID_i(_Devra) + 6)) {
+                            SetNPCID_i(31, _Devra);
+                        } else {
+                            SetNPCID_i((~GetNPCID_i(_Devra) + 6), _Devra);
+                        }
+                    } else {
+                    }
+                }
+            }
+            ["Wouldst thou care for more?"];
+            v1 = ~AskYesNo();
+        }
+    }
+    PopKeys();
+}
+
+Usable DevraSellsDrink_i #locals(17) #uses(~LordOrLady, ~AvatarName, ~AskOrdList, ~AskYesNo, ~DevraHaggles_i, ~SellItem_i, ~PartyUtters) {
+    v0 = ~LordOrLady();
+    v1 = ~AvatarName();
+    PushKeys();
+    v2 = true;
+    v3 = << "nothing", "wine", "mead", "ale" >>;
+    v4 = << 0, 616, 616, 616 >>;
+    v5 = << 65177, 5, 1, 3 >>;
+    v6 = << 0, 8, 15, 5 >>;
+    v7 = << 0, 5, 9, 2 >>;
+    v8 = 644;
+    v9 = << 0, 1, 1, 1 >>;
+    v10 = << 0, 1, 1, 1 >>;
+    ["What wouldst thou like to ease thy thirst, <v0>?"];
+    While v2 {
+        v11 = ~AskOrdList(v3);
+        if (v11 = 1) {
+            ["We have plenty, if thou dost change thy mind!"];
+            v2 = false;
+        } else {
+            v12 = v6::v11;
+            v13 = 0;
+            if (v11 = 2) {
+                ["For that, I must ask <v12> gold coins... The last batch was below standard so I sent it back." *"We have very little left. Is this a price that thou canst pay?"];
+                v14 = "wine bottles";
+            }
+            if (v11 = 3) {
+                ["Thou wilt find the light spice in this brew quite refreshing. At <v12> gold coins, wilt thou try some?"];
+                v14 = "bottles of mead";
+            }
+            if (v11 = 4) {
+                ["This batch went a bit flat on us, <v0>. So I'll not ask more than <v12> gold coins for it. Dost thou find that acceptable?"];
+                v14 = "mugs of ale";
+            }
+            if (v12 = v7::v11) {
+                if ~AskYesNo() {
+                    v15 = v12;
+                } else {
+                    v15 = 0;
+                }
+            } else {
+                v15 = ~DevraHaggles_i(v7::v11, v6::v11);
+            }
+            if (v15 > 0) {
+                if (v10::v11 = 1) {
+                    ["How many <v14> wouldst thou like?"];
+                    v13 = ~SellItem_i(false, 1, 20, v15, v8, v9::v11, v5::v11, v4::v11);
+                } else {
+                    v13 = ~SellItem_i(false, 1, 0, v15, v8, v9::v11, v5::v11, v4::v11);
+                }
+            }
+            if (v13 = 1) {
+                ["Here's to thine health, <v0>!"];
+            } else {
+                if (v13 = 2) {
+                    ["I'm afraid thou canst not carry so many bottles, <v0>!"];
+                } else {
+                    if (v13 = 3) {
+                        v16 = ~PartyUtters(false, 0, (("@But " + v1) + ", we lack adequate funds!@"), 1);
+                        if (v16 <> 65180) {
+                            SetSpeaker0_i(0, _Devra);
+                            ["I like a cup or two myself, from time to time." *"I would let thee drink for free, but I have little enough for the paying customers these days."];
+                            ["I fear thou shalt have to do with water, <v0>. That I have in plenty."];
+                            break;
+                        } else {
+                            ["I'm sorry, <v0>, thou dost not have enough for that." *"I would let thee drink for free, but I have little enough for the paying customers these days."];
+                            ["I fear thou shalt have to do with water, <v0>. That I have in plenty."];
+                            break;
+                        }
+                        if (31 < (~GetNPCID_i(_Devra) + 6)) {
+                            SetNPCID_i(31, _Devra);
+                        } else {
+                            SetNPCID_i((~GetNPCID_i(_Devra) + 6), _Devra);
+                        }
+                    } else {
+                    }
+                }
+            }
+            ["Wouldst thou care for more?"];
+            v2 = ~AskYesNo();
+        }
+    }
+    PopKeys();
+}
+
+Function ~DevraHaggles_i accepts a0, a1 #locals(15) #uses(~LordOrLady, ~AskList, ~Haggle_i, ~IsNPCNear, ~AskYesNo) {
+    v2 = ~LordOrLady();
+    v3 = ~AvatarSex();
+    v4 = v1;
+    v5 = ((v0 / 3) * 2);
+    v6 = (15 - (~GetNPCID_i(_Devra) / 2));
+    v7 = 0;
+    v8 = 1;
+    v9 = 0;
+    v10 = 2;
+    v11 = ~GetNPCID_i(_Devra);
+    While v8 {
+        v12 = ~AskList(<< "yes", "no", "haggle" >>);
+        if (v12 = "no") {
+            return 0;
+        } else {
+            if (v12 = "yes") {
+                v13 = 0;
+                goto label_8;
+            }
+        }
+        v14 = ~Haggle_i(v7, v6, v9, v5, v10, v0, v4);
+        v9 = (v9 + 1);
+        v7 = v14::4;
+        v13 = v14::3;
+        v15 = v4;
+        v4 = v14::2;
+        v5 = v14::1;
+        label_8:
+        v16 = ~Random(3);
+        if (v13 < 2) {
+            if (v4 < (v0 + ((v1 - v0) / 4))) {
+                if (v16 = 1) {
+                    ["Do not tell Argus... He'll think his mother hath gone soft in the head for giving thee a price like this."];
+                }
+                if (v16 = 2) {
+                    ["Thou dost drive a hard bargain, <v2>. I should sit by the fire and knit!"];
+                }
+                if (v16 = 3) {
+                    ["It hath been quite a while since I was so defeated!"];
+                    if ~IsNPCNear(_Argus) {
+                        SetSpeaker1_i(0, _Argus);
+                        ["To hear thee tell it, thou hast never been defeated, mother!"];
+                        CloseSpeaker1_i();
+                        SetSpeakerSlot_i(0);
+                    }
+                }
+            } else {
+                if (v4 < (v0 + ((v1 - v0) / 3))) {
+                    if (v16 = 1) {
+                        ["We offer honest prices here at the Sleeping Bull!"];
+                    }
+                    if (v16 = 2) {
+                        ["I would quickly have to beg if I offered such prices every day!"];
+                    }
+                    if (v16 = 3) {
+                        ["Thou hast a shrewd head on thy shoulders, <v2>. Thou dost bargain like a innkeeper!"];
+                    }
+                } else {
+                    if (v4 < (v0 + ((v1 - v0) / 2))) {
+                        if (v16 = 1) {
+                            ["Fair enough, if I do say so myself."];
+                        }
+                        if (v16 = 2) {
+                            ["I shall never make a profit with customers like thee..."];
+                        }
+                        if (v16 = 3) {
+                            ["We try only to please! Tell thy friends about the Sleeping Bull!"];
+                        }
+                    } else {
+                        if (v16 = 1) {
+                            ["I am content, <v2>."];
+                        }
+                        if (v16 = 2) {
+                            ["Blessing thee and thy companions, <v2>!"];
+                        }
+                        if (v16 = 3) {
+                            ["If the suppliers ever come, I won't have to charge such high prices."];
+                        }
+                    }
+                }
+            }
+            ["Dost thou agree on a price of <v4>, <v2>?"];
+            if ~AskYesNo() {
+                if (v11 > 1) {
+                    SetNPCID_i((v11 - 2), _Devra);
+                }
+                return v4;
+            } else {
+                if (v16 = 1) {
+                    ["I must have misunderstood. I thought we had an agreement."];
+                }
+                if (v16 = 2) {
+                    ["I have no time for this!"];
+                }
+                if (v16 = 3) {
+                    ["Then take thy business elsewhere, <v2>! I do not have all day to stand and argue!"];
+                }
+                if (31 < (v11 + 10)) {
+                    SetNPCID_i(31, _Devra);
+                } else {
+                    SetNPCID_i((v11 + 10), _Devra);
+                }
+                return 0;
+            }
+        }
+        if (v7 = 1) {
+            if (v13 = 5) {
+                ["<v4> is my final offer. Dost thou accept?"];
+                if (v11 < 28) {
+                    SetNPCID_i((v11 + 4), _Devra);
+                }
+                if ~AskYesNo() {
+                    return v4;
+                }
+                v8 = 0;
+            } else {
+                ["Very well. <v4> is my final offer."];
+                if (v11 < 30) {
+                    SetNPCID_i((v11 + 2), _Devra);
+                }
+            }
+        } else {
+            if (v13 = 2) {
+                if (v16 = 1) {
+                    ["Thou dost bargain well. How doth <v4> sound?"];
+                }
+                if (v16 = 2) {
+                    ["Thou wouldst make a fine innkeeper... Have we agreed on <v4> gold coins?"];
+                }
+                if (v16 = 3) {
+                    ["My price is <v4>... Just for thee. Dost thou accept?"];
+                }
+            }
+            if (v13 = 3) {
+                if (v16 = 1) {
+                    ["These are hard times, and goods are scarce... Wouldst thou give <v4>?"];
+                }
+                if (v16 = 2) {
+                    ["I don't know... <v4>?"];
+                }
+                if (v16 = 3) {
+                    ["I need to hire more help... Perhaps <v4>?"];
+                }
+            }
+            if (v13 = 4) {
+                if (v16 = 1) {
+                    ["Surely thou dost jest! <v4> is as low as I can go. What sayest thou?"];
+                }
+                if (v16 = 2) {
+                    ["With these storms driving our customers away, surely thou canst see that I can accept no less than <v4>."];
+                }
+                if (v16 = 3) {
+                    ["I have bargained with better folk than thee and gotten a better deal than that! Not less than <v4>!"];
+                }
+            }
+            if (v13 = 5) {
+                v4 = v15;
+                if (v16 = 1) {
+                    ["I would rather sell myself to a mage than to accept such a pitiful offer! I insist on <v4>!"];
+                }
+                if (v16 = 2) {
+                    ["I am not in my dotage to accept such an offer! <v4>, and no less!"];
+                }
+                if (v16 = 3) {
+                    ["May I go to my grave now! <v4> is where I stand!"];
+                }
+                if (v11 < 31) {
+                    SetNPCID_i((v11 + 1), _Devra);
+                }
+            }
+        }
+    }
+}

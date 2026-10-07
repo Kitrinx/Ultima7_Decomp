@@ -1,0 +1,206 @@
+Usable SetDoorsByRod_i #locals(9) #uses(~DoorState_i, SetDoorState_i) {
+    v0 = ~FindNearby_i(176, 2, _Plasmic_Rod, _Avatar);
+    v1 = ~FindNearby_i(176, 10, _Door_EW, _Avatar);
+    v1 = (v1 & ~FindNearby_i(176, 10, _Door_NS, _Avatar));
+    if v0 {
+        Foreach v4 in v1 {
+            v5 = ~GetQuality(v4);
+            if (v5 = 218) {
+                if (~DoorState_i(v4) = 0) {
+                    SetDoorState_i(2, v4);
+                }
+                v6 = ~SetQuality(220, v4);
+            }
+        }
+    } else {
+        Foreach v4 in v1 {
+            v5 = ~GetQuality(v4);
+            if (v5 = 220) {
+                if (~DoorState_i(v4) = 2) {
+                    SetDoorState_i(0, v4);
+                }
+                v6 = ~SetQuality(218, v4);
+            }
+        }
+    }
+}
+
+Function ~ShooterDir_i accepts a0 #locals(7) {
+    v1 = << 2, 3, 4, 5, 8, 9, 10, 11 >>;
+    v2 = << 1, 4, 5, 7, 2, 4, 6, 8 >>;
+    v3 = ~GetFrame(v0);
+    if (v3 in v1) {
+        v4 = 1;
+        Foreach v7 in v1 {
+            if (v3 = v7) {
+                return v2::v4;
+                terminate;
+            }
+        }
+    } else {
+        return false;
+    }
+}
+
+Function ~DirOffset_i accepts a0 #locals(2) {
+    v1 = << 0, 0, 0, 65535, 1, 65535, 1, 0, 1, 1, 0, 1, 65535, 1, 65535, 0, 65535, 65535 >>;
+    v2 = v1::((2 * v0) & v1::(((2 * v0) + 1) & 0));
+    return v1;
+}
+
+Usable AlyssandSeeksAvatar_i #locals(0) {
+    if not $HAS_CLUE_RING {
+        $HAS_CLUE_RING = true;
+        NewSchedule_i(<< 936, 1832, 936, 1736, 1096, 1732, 1032, 1928, 936, 1832, 983, 1883 >>, << 3, 3, 3, 3, 3, 14 >>, << 2, 3, 4, 5, 6, 7 >>, _Alyssand);
+    }
+}
+
+Usable JorvinBringsInvitation_i #locals(1) #uses(~GimmePathEgg) {
+    if flag(438) {
+        terminate;
+    }
+    if ($zulithcaughtfollowing and ($knowsassassin and (flag(400) and ((((((((((((~GetItemFlag_i(_Met, _Alyssand) + ~GetItemFlag_i(_Met, _Delin)) + ~GetItemFlag_i(_Met, _Delphynia)) + ~GetItemFlag_i(_Met, _Voldin)) + ~GetItemFlag_i(_Met, _Jendon)) + ~GetItemFlag_i(_Met, _Jorvin)) + ~GetItemFlag_i(_Met, _Kylista)) + ~GetItemFlag_i(_Met, _Olon)) + ~GetItemFlag_i(_Met, _Garth)) + ~GetItemFlag_i(_Met, _Joth)) + ~GetItemFlag_i(_Met, _Zulith)) > 4) and ~IsNPCNear_i(_Iolo))))) {
+        v0 = ~PostInFuture(200, << _aNO_HALT_i, _aUSABLE_i, #Jorvin >>, ~GimmePathEgg(1, 5));
+        flag(438) = true;
+    }
+}
+
+Usable SendAssassin_i #locals(1) #uses(~WhereAmI_i, AttackAvatar_i, ~GimmePathEgg) {
+    if ((~WhereAmI_i() = 3) and (not ~GetItemFlag_i(_Dead, _Kalen) and (flag(400) and ~GetItemFlag_i(_Met, _Jendon)))) {
+        v0 = ~ApproachAvatar_i(40, 120, _Kalen);
+        if v0 {
+            AttackAvatar_i(_Kalen);
+            $knowsassassin = true;
+            v0 = ~PostInFuture(50, << _aNO_HALT_i, _aUSABLE_i, #Kalen >>, ~GimmePathEgg(1, 5));
+            terminate;
+        }
+    }
+    if ($zulithcaughtfollowing and ($knowsassassin and (flag(400) and ((((((((((((~GetItemFlag_i(_Met, _Alyssand) + ~GetItemFlag_i(_Met, _Delin)) + ~GetItemFlag_i(_Met, _Delphynia)) + ~GetItemFlag_i(_Met, _Garth)) + ~GetItemFlag_i(_Met, _Joth)) + ~GetItemFlag_i(_Met, _Voldin)) + ~GetItemFlag_i(_Met, _Jendon)) + ~GetItemFlag_i(_Met, _Jorvin)) + ~GetItemFlag_i(_Met, _Kalen)) + ~GetItemFlag_i(_Met, _Kylista)) + ~GetItemFlag_i(_Met, _Olon)) + ~GetItemFlag_i(_Met, _Zulith)) > 4)))) {
+        ChangeSchedule_i(<< 1038, 1727 >>, _Stand, 4, _Jorvin);
+        ChangeSchedule_i(<< 1038, 1727 >>, _Stand, 5, _Jorvin);
+    }
+}
+
+Function ~JailedNPC_i accepts a0 #locals(0) {
+    if ($DUPRE_ACCUSED = true) {
+        if v0 {
+            return 65535;
+        } else {
+            return "Dupre";
+        }
+    }
+    if ($IOLO_ACCUSED = true) {
+        if v0 {
+            return 65533;
+        } else {
+            return "Iolo";
+        }
+    }
+    if ($SHAMINO_ACCUSED = true) {
+        if v0 {
+            return 65534;
+        } else {
+            return "Shamino";
+        }
+    }
+    return false;
+}
+
+Routine EatFood_i accepts a0, a1, a2, a3 #locals(10) #uses(SetBusy_i, BarkIfNear_i, ConsumeOne_i, StealItem_i, ~IsAbleToTalk_i) {
+    v4 = ~GetParty();
+    v5 = ~Item_getType(v3);
+    v6 = ~GetFrame(v3);
+    v7 = ~Item_getType(v0);
+    if ((v0 in v4) and ((v7 = 747) or (v7 = 658))) {
+        Item_bark("@I do not require food.@", v0);
+        terminate;
+    }
+    if ((v0 in v4) and (not ~GetItemFlag_i(_Asleep, v0) and (not ~GetItemFlag_i(_Paralyzed, v0) and not ~GetItemFlag_i(_Dead, v0)))) {
+        if ((v5 = 616) and (v6 = 9)) {
+            Kernel_resetRef(v0);
+            SetBusy_i(v0);
+            v8 = ~PostAction(<< _aNO_HALT_i, _aWAIT_i, 5, _aBEND_FRAME_i, _aWAIT_i, 4, _aKNEEL_FRAME_i, _aWAIT_i, 4, _aSTAND_FRAME_i >>, v0);
+            BarkIfNear_i(<< "@Ohh!@", "@Eeehhh!@", "@Bleh!@", "@Gak!@" >>, v0);
+            v8 = ~PostInFuture(13, << _aNO_HALT_i, _aUSABLE_i, #Puke >>, v0);
+            ConsumeOne_i(v3);
+            return;
+        }
+        if ((v5 = 404) and (v6 = 3)) {
+            v9 = ("@I should eat that?@" & ("@Raw?@" & "@Not likely!@"));
+            BarkIfNear_i(v9, v0);
+            terminate;
+        }
+        v10 = ~GetNPCStat_i(_FoodLevel, v0);
+        v11 = (v10 + v2);
+        if (v10 > 24) {
+            v12 = "@No, thank thee.@";
+        } else {
+            StealItem_i(v3);
+            if ((~Item_getType(v3) = _Bottles) and (~GetFrame(v3) = 20)) {
+                playSFX(v3, v1);
+            } else {
+                playSFX(v3, v1);
+                ConsumeOne_i(v3);
+            }
+            v13 = ~Random(10);
+            if (v10 <= 4) {
+                if (v11 <= 4) {
+                    v12 = "@More!@";
+                    if (v13 < 6) {
+                        v12 = (v12 & "@I must have more!@");
+                    }
+                    goto label_39;
+                }
+                if (v11 < 10) {
+                    v12 = "@I am still hungry.@";
+                    if (v13 < 6) && not (v0 = ~NPCToItem_i(_Avatar)) {
+                        v12 = (v12 & "@May I have some more?@");
+                    }
+                    goto label_39;
+                }
+                if (v11 < 20) {
+                    if (v5 = 842) {
+                        v12 = "@Yum, garlic!@";
+                    } else {
+                        v12 = "@Ah yes, much better.@";
+                    }
+                    goto label_39;
+                }
+                v12 = "@That did satisfy me!@";
+                if (v13 < 6) {
+                    v12 = (v12 & "@Burp@");
+                }
+            } else {
+                if (v10 < 20) {
+                    if (v5 = 842) {
+                        v12 = "@Yum, garlic!@";
+                    } else {
+                        v12 = "@Ahh, very tasty.@";
+                    }
+                    if ((v11 > 24) and (v13 < 3)) {
+                        v12 = (v12 & "@Belch@");
+                    }
+                } else {
+                    if (v13 < 5) {
+                        v12 = "@I shall soon be plump.@";
+                    } else {
+                    }
+                }
+            }
+        }
+        label_39:
+        if ((v5 = 377) and ((v6 = 31) and (v10 < 25))) {
+            v12 = (v12 & ("@It is very crunchy...@" & ("@Strange taste...@" & ("" & "@How very filling!@"))));
+        }
+        if not (v12 = "") && ~IsAbleToTalk_i(v0) && ((event <> _Polymorph) or (v10 < 25)) {
+            ClearBark_i(v0);
+            BarkIfNear_i(v12, v0);
+        }
+        if (v10 < 25) {
+            v8 = ~ChangeNPCStat_i(v2, _FoodLevel, v0);
+        }
+        if (v10 > 24) {
+            terminate;
+        }
+    }
+}

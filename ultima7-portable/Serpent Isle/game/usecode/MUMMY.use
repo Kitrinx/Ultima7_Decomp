@@ -1,0 +1,119 @@
+Routine Mummy accepts a0 #locals(4) #uses(~AvatarName, PlaySpeechOrText_i, ~GimmePathEgg, ~IsInInv, ~AskYesNo) {
+    v0 = ~AvatarName();
+    if (event = _Action) {
+        v1 = ~GetCoord(item);
+        if (~GetNPCID_i(item) = 0) {
+            PlaySpeechOrText_i(1);
+            SetNPCID_i(1, item);
+            v2 = ~PostInFuture(8, << _aNO_HALT_i, _aBARK_i, "@Farewell...@", _aUP_FRAME_i, _aOUT_FRAME_i, _aWAIT_i, 2, _aUSABLE_i, #Mummy, _aUSABLE_i, #FaceAvatar_i, _aBEND_FRAME_i, _aKNEEL_FRAME_i, _aLIE_FRAME_i >>, item);
+        } else {
+            if (~GetNPCID_i(item) = 12) {
+                v3 = ~Item_create(_Field_Fire);
+                if v3 {
+                    v2 = ~PopToMap(v1);
+                }
+                v3 = ~Item_create(_Blue_Flame);
+                if v3 {
+                    v2 = ~PopToMap(v1);
+                }
+                Item_destroy(item);
+                ClearItemFlag_i(_DontMove_i, _Avatar);
+                ClearSpeakers_i();
+                terminate;
+            }
+            createSprite(65535, ~GetNPCID_i(item), 0, 0, (v1::2 - ~GetNPCID_i(item)), (v1::1 + ~GetNPCID_i(item)), 12);
+            SetNPCID_i((~GetNPCID_i(item) + 1), item);
+            v2 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #Mummy >>, item);
+            terminate;
+        }
+    }
+    if (event = _Talking) {
+        SetMusic(~GimmePathEgg(1, 5), 50);
+        SetSpeaker0_i(0, _Yearl);
+        $methierophant = true;
+        ["At last, I am awakened from the slumber of death. I know thee, for the Great Earth Serpent hath whispered to me of thee. Welcome, noble Avatar! Thou hast arrived on the very brink of disaster. It is up to thee to restore the land to its needful Balance."];
+        if (~IsInInv(0, 65177, _Staff_Serp, 1, _Party) and (~IsInInv(0, 65177, _Armour_Serp, 1, _Party) and ~IsInInv(2, 65177, _Leath_Helm, 1, _Party))) {
+            ["I see that thou art equipped with the Serpent Staff, the Serpent Armour and the Serpent Crown." *"Now I must tell thee what must be done..."];
+        } else {
+            ["But first, thou must arm thyself with the symbols of my authority --"];
+            ["the Staff, Armour, and Crown of the Great Earth Serpent."];
+            TurnOn(<< "Staff", "Armour", "Crown" >>);
+        }
+        TurnOn(<< "Great Earth Serpent", "quest", "bye" >>);
+        converse {
+            key ("Great Earth Serpent") {
+                TurnOff("Great Earth Serpent");
+                ["Dost thou not recognize Him? 'Twas he whom thou didst free from the tyranny of Exodus, in thine adventurings of long, long ago. It is he who speaks to thee now, in his whisperings from the deeps."];
+                ["It was the Great Serpent who maintained Balance in the land, but when Exodus stole him, the Serpents of Chaos and Order were left unto themselves."];
+                ["Thus came the War of Imbalance, and when the Great Earth Serpent did return, it was too late! Order had won, and Chaos was divided into the crippled Banes!"];
+            }
+            key ("Staff") {
+                TurnOff("Staff");
+                if ~IsInInv(0, 65177, _Staff_Serp, 1, _Party) {
+                    ["Good. Thou hast my Serpent Staff... It was both a support and a weapon to smite those who would unseat the delicate balance."];
+                    ["Alas, it did me little good in the end..."];
+                } else {
+                    ["Thou dost not have my Serpent Staff... Thou must travel to the fiery depths to find where it now lies."];
+                    $sithsaidstaff = true;
+                }
+            }
+            key ("Armour") {
+                TurnOff("Armour");
+                if ~IsInInv(0, 65177, _Armour_Serp, 1, _Party) {
+                    ["Thou dost possess the Serpent Armour... fine, fine. It is more than a symbol of the Great Earth Serpent's power."];
+                    ["The Serpent Armour wilt help thee to surmount the final challenges at the Grand Shrine of balance. Unfortunately, it proved to be little protection against treachery..."];
+                } else {
+                    ["Before thou canst complete thy quest, thou must have the Serpent Armour. Thou must ease the troubled heart of Love before thou canst hope to obtain it. She was once Beauty herself, but Chaos hath painted her with ugliness..."];
+                }
+            }
+            key ("Crown") {
+                TurnOff("Crown");
+                if ~IsInInv(2, 65177, _Leath_Helm, 1, _Party) {
+                    ["I see that thou dost possess my Serpent Crown. Well done! This is the crown my people set upon mine head, recognizing the power of the Great Earth Serpent through me." *"Though I had no wish for crowns, it will aid thee in restoring the land's balance."];
+                } else {
+                    ["Seek out the resting place of the Serpent Crown... Without the symbol of the Great Earth Serpent's power in the land, thou canst not hope to complete thy quest."];
+                    ["Thou didst know he who held this treasure, but he hath been killed by the Banes of Chaos. Yet he left clues which shall show thee the way..."];
+                }
+            }
+            key ("quest") {
+                TurnOff("quest");
+                ["Be warned, <v0>. None but thou can prevail against the Imbalance. And time grows short..."];
+                ["Alas, I must give thee bitter news! Before thou canst restore Balance, thou must reunite the Chaos Serpent."];
+                ["I grieve that I cannot tell thee how this is done... Such knowledge was for the Chaos Hierophant only."];
+                TurnOn(<< "Chaos Hierophant", "Chaos Serpent", "Balance" >>);
+            }
+            key ("Chaos Hierophant") {
+                TurnOff("Chaos Hierophant");
+                ["As with me, thou must wrest him from his last slumber to reveal his truths to thee... but alas, he was killed in the War, and I know not where his remains lie."];
+                ["Yet I must hope that thou shalt find his burial site... or all is lost."];
+            }
+            key ("Chaos Serpent") {
+                TurnOff("Chaos Serpent");
+                ["Hear wisdom! The Banes of Chaos are not thine enemy, nor are they evil in themselves. It is their disunity which hath driven them into cruel insanity."];
+                ["Before the land can again live in Balance, the Banes must once more become the Chaos Serpent, united and intelligent."];
+                ["The way to do this is the secret held by the Chaos Hierophant. Now thou must seek him out!"];
+            }
+            key ("Balance") {
+                TurnOff("Balance");
+                ["If by some miracle thou art able to make the Chaos Serpent whole, then hasten to the Grand Shrine of Balance. Only there canst thou complete thy work, and end the plagues which afflict this land."];
+                ["Remember to bear each of the symbols of power upon thy person, or thou shalt not enter the most sacred precincts therein."];
+            }
+            key ("bye") {
+                ["Do not be hasty, Avatar! I can only speak to thee this once! Art thou sure that thou dost understand all that I have said?"];
+                if ~AskYesNo() {
+                    SetMusic(~GimmePathEgg(1, 5), 50);
+                    ["I must go now -- into the Void! My blessings are given to thee, Hero from Another World!"];
+                    SetItemFlag_i(_DontMove_i, _Avatar);
+                    EndConverse_i();
+                    SetWorkType(_Wait, item);
+                    v2 = ~PostInFuture(8, << _aNO_HALT_i, _aUP_FRAME_i, _aOUT_FRAME_i, _aBARK_i, "@Hail to Balance!@", _aWAIT_i, 7, _aUSABLE_i, #Mummy >>, item);
+                    terminate;
+                } else {
+                    ["Then ask of me once more."];
+                    TurnOn(<< "Crown", "Armour", "Staff", "quest", "Chaos Hierophant", "Chaos Serpent", "Balance", "bye" >>);
+                }
+            }
+        }
+        clear_answers;
+    }
+}

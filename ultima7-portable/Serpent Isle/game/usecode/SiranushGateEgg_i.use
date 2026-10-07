@@ -1,0 +1,15 @@
+Routine SiranushGateEgg_i accepts a0 #locals(5) #uses(Bark_i) {
+    if (event = _Trigger) {
+        v0 = ~GetItemFlag_i(_Met, _Siranush);
+        if v0 {
+            v1 = ~FindNearby_i(0, 6, _NS_Portcullis, item);
+            Foreach v4 in v1 {
+                Item_destroy(v4);
+                Item_destroy(item);
+                Sfx(89);
+            }
+        } else {
+            Bark_i(10, "@What a strange place...@", _Avatar);
+        }
+    }
+}

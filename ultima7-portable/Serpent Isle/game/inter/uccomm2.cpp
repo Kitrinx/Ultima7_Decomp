@@ -1,0 +1,264 @@
+/* Serpent Isle SI.EXE, overlay segment 317 (file offsets 0x08bba0 to 0x08c5c5, 2597 bytes).
+ * Borland C++ 2.0 -mm -O -P rebuilds it byte for byte as C++.
+ */
+
+#include "u7port.h"
+#include "objref.h"
+#include "lowlevel.h"
+#include "activity.h"
+#include "iteminfo.h"
+#include "voolook.h"
+#include "daze.h"
+#include "debug.h"
+#include "coord.h"
+#include "u7npc.h"
+#include "sprite.h"
+#include "ucvalue.h"
+#include "uclist.h"
+#include "actqueue.h"
+#include "death.h"
+#include "makemojo.h"
+#include "script.h"
+#include "item.h"
+#include "npcref.h"
+#include "party.h"
+
+/* a script built for the action queue: its length byte, then the actions */
+struct Script {
+	uint8_t length;
+	char data[127];
+	Script() { length = 1; }
+};
+
+/* runs a usable: the number follows as a word */
+#define SCRIPT_USABLE   85
+
+int16_t SpeechTrack;
+
+#define IS_NULL(v) ((uint8_t) ((v) == 0))
+
+/* the int in element i of the usecode value at v */
+#define ARG(v, i)   GetListNode(v, i)->toInt()
+
+/* the one NPC shape Armageddon leaves standing */
+#define SPARED_TYPE         318
+
+extern uint8_t ArmageddonDone;
+
+/* party members who died, to rejoin when raised */
+extern objref DeadPartyMembers[];
+extern int16_t DeadPartyCount;
+
+/* Usecode engine calls: args - 1 is the first argument, ret takes the result. */
+
+/* 0x68: play a sprite effect at a position */
+void UC_SpriteEffect(Value *args)
+{
+	int16_t type = ARG(args - 1, 1);
+	Coord x = ARG(args - 2, 1);
+	Coord y = ARG(args - 3, 1);
+	int16_t dx = ARG(args - 4, 1);
+	int16_t dy = ARG(args - 5, 1);
+	int8_t z = ARG(args - 6, 1);
+	int16_t count = ARG(args - 7, 1);
+
+	SpriteManager_playSprite(&gSpriteManager, x, y, dx, dy, type + 1024, z, count, 5);
+}
+
+/* 0x91: play a sprite effect on an item */
+void UC_ObjSpriteEffect(Value *args)
+{
+	int16_t obj = GetItemRef(GetListNode(args - 1, 1));
+	int16_t type = ARG(args - 2, 1);
+	int16_t x = ARG(args - 3, 1);
+	int16_t y = ARG(args - 4, 1);
+	int16_t dx = ARG(args - 5, 1);
+	int16_t dy = ARG(args - 6, 1);
+	int8_t z = ARG(args - 7, 1);
+	int16_t count = ARG(args - 8, 1);
+
+	SpriteManager_playSpriteForItem(&gSpriteManager, obj, x, y, dx, dy, type + 1024, z, count, 5);
+}
+
+/* 0x4f: set an NPC to attack an item, or the position in the first argument when the item is 0 */
+void UC_SetToAttack(Value *args, Value *ret)
+{
+	int16_t obj = GetItemRef(GetListNode(args - 1, 1));
+	objref r = obj;
+	int16_t target = GetItemRef(GetListNode(args - 2, 1));
+	int16_t weapon;
+	uint16_t type = ARG(args - 3, 1);
+
+	CheckMojoBounds(INT32_C(1024), (uint32_t) type);
+	weapon = PeekWord(WeaponLookup.addr + type * 2);
+	if (!IS_NULL(weapon) && r.valid()) {
+		ActionQueue.remove(obj, 1, 0);
+		if (target != 0)
+			Npc_setItemTarget(&r, target);
+		else {
+			Coord x = ARG(args - 1, 2);
+			Coord y = ARG(args - 1, 3);
+			int16_t z = ARG(args - 1, 4);
+
+			Npc_setCoordTarget(&r, x, y, z);
+		}
+		Npc_setTargetWeapon(&r, weapon);
+		ret->appendInt(1);
+	} else {
+		CheatPrintfWait("Weapon is useless.");
+		ret->appendInt(0);
+	}
+}
+
+/* 0x4c: set an NPC waiting, take it out of the party and send it to lunch */
+void UC_RemoveNpc(Value *args)
+{
+	int16_t obj = GetItemRef(GetListNode(args - 1, 1));
+	objref r = obj;
+
+	if (r.valid()) {
+		Npc_setSchedule(&r, WORK_WAIT);
+		if ((uint8_t)((GetNpcBufferForIbo(&r)->status & NPC_IN_PARTY) != 0))
+			RemoveFromParty(r, 1);
+		SendNPCToLunch(*(NPCRef *)&r);
+	}
+}
+
+/* 0x57 */
+void UC_KillNpc(Value *args)
+{
+	int16_t obj = GetItemRef(GetListNode(args - 1, 1));
+	objref r = obj;
+
+	KillNpc(r, 0);
+}
+
+/* 0x5f: copy an NPC; the copy is conjured, out of the party, and takes up the original's schedule */
+void UC_Clone(Value *args)
+{
+	int16_t obj = GetItemRef(GetListNode(args - 1, 1));
+	objref r = obj;
+
+	if (r.valid()) {
+		obj = SplitCreature(r);
+		objref copy = obj;
+
+		if (copy.valid()) {
+			Item_setTemporary(&copy);
+			ChangeStatus(&copy, NPC_IN_PARTY, 0);
+			GetNpcBufferForIbo(&copy)->typeFlagsHigh = GetNpcBufferForIbo(&copy)->typeFlagsHigh | 0x40;
+			Npc_setSchedule(&copy, GetNpcBufferForIbo(&r)->workType);
+			GetNpcBufferForIbo(&copy)->schedules[GetNpcBufferForIbo(&copy)->currentSchedule].state = 1;
+		}
+	}
+}
+
+/* 0x65: the NPC a body belongs to, as usecode numbers NPCs */
+void UC_BodyToNPC(Value *args, Value *ret)
+{
+	int16_t obj = GetItemRef(GetListNode(args - 1, 1));
+	objref r = obj;
+
+	if (r.valid())
+		ret->appendInt(-GetBodyNpc(r));
+	else
+		ret->appendInt(0);
+}
+
+/* 0x63: queue a script that brings a body's NPC back to life; gives the NPC, or 0 */
+void UC_Resurrect(Value *args, Value *ret)
+{
+	int16_t obj = GetItemRef(GetListNode(args - 1, 1));
+	objref r = obj;
+
+	if (r.valid() && GetBodyNpc(r)) {
+		Script s;
+
+		ActionQueue.remove(r.off, 1, 0);
+		AppendScriptByte(&s.length, SCRIPT_FINISH);
+		AppendScriptByte(&s.length, SCRIPT_NO_HALT);
+		AppendScriptByte(&s.length, SCRIPT_USABLE);
+		AppendScriptWord(&s.length, 30000);
+		ActionQueue.add(r.off, (char *)&s);
+		ret->appendInt(GetBodyNpc(r));
+	} else
+		ret->appendInt(0);
+}
+
+/* 0x64: cure an NPC of every ailment, heal it, and bring it back if it fell from the party */
+void UC_ResurrectNPC(Value *args)
+{
+	int16_t obj = GetItemRef(GetListNode(args - 1, 1));
+	objref r = obj;
+
+	if (r.valid()) {
+		GetNpcBufferForIbo(&r)->changeFlags(NPC_DEAD, 0);
+		GetNpcBufferForIbo(&r)->changeFlags(NPC_ASLEEP, 0);
+		GetNpcBufferForIbo(&r)->changeFlags(NPC_CHARMED, 0);
+		GetNpcBufferForIbo(&r)->changeFlags(NPC_CURSED, 0);
+		GetNpcBufferForIbo(&r)->changeFlags(NPC_PARALYZED, 0);
+		GetNpcBufferForIbo(&r)->changeFlags(NPC_POISONED, 0);
+		GetNpcBufferForIbo(&r)->changeFlags(NPC_PROTECTED, 0);
+		Item_setQualityFlags(&r, Item_getQualityFlags(&r) & 0xfe);
+		Item_setHitPoints(&r, GetNpcBufferForIbo(&r)->strength & 0x1f);
+		for (uint8_t i = 0; i < 12; i++) {
+			if (DeadPartyMembers[i] == r) {
+				for (; (int16_t)i < 11; i++)
+					DeadPartyMembers[i] = DeadPartyMembers[i + 1];
+				DeadPartyMembers[11] = 0;
+				DeadPartyCount--;
+				AddToParty(r, 0);
+				return;
+			}
+		}
+	}
+}
+
+/* 0x50: an item's z */
+void UC_GetLift(Value *args, Value *ret)
+{
+	int16_t obj = GetItemRef(GetListNode(args - 1, 1));
+	objref r = obj;
+
+	ret->appendInt(Item_getZ(&r));
+}
+
+/* 0x51: move an item to a new z */
+void UC_SetLift(Value *args)
+{
+	int16_t obj = GetItemRef(GetListNode(args - 1, 1));
+	objref r = obj;
+	uint8_t z = ARG(args - 2, 1);
+	Coord x = Item_getX(r);
+	Coord y = Item_getY(r);
+
+	Item_move(&r, x, y, z);
+}
+
+void UC_RetiredEmptyCall(void) {}
+
+/* 0x7e */
+void UC_GetSpeechTrack(Value *args, Value *ret) { ret->appendInt(SpeechTrack); }
+
+/* 0x70: every NPC but one falls dead */
+void UC_Armageddon(void)
+{
+	objref r;
+	int16_t i, type;
+
+	for (i = 1; i <= NPC_COUNT; i++) {
+		GetNpcIbo(&r, i);
+		type = ITEM(r.off)->typeFrame & 0x3ff;
+		if (type != SPARED_TYPE) {
+			Item_setFrame(&r, 13);
+			Item_setHitPoints(&r, (uint8_t) -10);
+			GetNpcBufferForIbo(&r)->changeFlags(0, NPC_DEAD);
+		}
+	}
+	ArmageddonDone = 1;
+}
+
+extern "C" void ResetUccomm2Globals(void)
+{
+	SpeechTrack = 0;
+}

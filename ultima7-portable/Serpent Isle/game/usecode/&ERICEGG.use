@@ -1,0 +1,285 @@
+Routine CyclePortcullisEgg_i accepts a0 #locals(6) {
+    v0 = (~GetAllInRegion(_NS_Portcullis) & ~GetAllInRegion(_EW_Portcullis));
+    Foreach v3 in v0 {
+        v4 = ~GetCoord(v3);
+        createSprite(65535, 0, 0, 0, v4::2, v4::1, 21);
+        if (v4::3 < 1) {
+            v5 = ~PostAction(<< 1543, byte(11), 65535, 6, byte(39), 20, 1545, byte(11), 65535, 6 >>, v3);
+        }
+        if (v4::3 > 5) {
+            v5 = ~PostAction(<< 1545, byte(11), 65535, 6 >>, v3);
+        }
+    }
+}
+
+Routine BurnBarriersEgg_i accepts a0 #locals(7) {
+    if $SHAMINOS_KEEP_BARRIERS_GONE {
+        v0 = ~FindNearby_i(0, 15, _Barrier, item);
+        Foreach v3 in v0 {
+            v4 = ~GetCoord(v3);
+            v4::2 = (v4::2 + 2);
+            Item_destroy(v3);
+            v5 = ~Item_create(_Fire_Pillar);
+            if v5 {
+                ClearItemFlag_i(_IsTemporary_i, v5);
+                v6 = ~PopToMap(v4);
+            }
+            v5 = ~Item_create(_Flat_Burn_Mark);
+            if v5 {
+                ClearItemFlag_i(_IsTemporary_i, v5);
+                v6 = ~PopToMap(v4);
+            }
+        }
+        v5 = ~Item_create(_Deadbodies);
+        if v5 {
+            SetFrame(4, v5);
+            ClearItemFlag_i(_IsTemporary_i, v5);
+            v6 = ~PopToMap(<< 1872, 1046, 0 >>);
+        }
+        Item_destroy(item);
+    }
+}
+
+Routine MortegroLeavesEgg_i accepts a0 #locals(2) {
+    v0 = ~GetParty();
+    if (65510 in v0) {
+        v1 = ~GetCoord(_Mortegro);
+        v1::1 = (v1::1 - (v1::3 / 2));
+        v1::2 = (v1::2 - (v1::3 / 2));
+        RemoveNPC_i(_Mortegro);
+        createSprite(65535, 0, 0, 0, v1::2, v1::1, 17);
+    }
+}
+
+Routine UnlockDoorsEgg_i accepts a0 #locals(4) #uses(~DoorState_i, SetDoorState_i, DDSerpNS, DDSerpEW, Door_NS, Door_EW, DDoor_NS, DDoor_EW) {
+    v0 = ~FindNearby_i(176, 10, _Door_EW, _Avatar);
+    v0 = (v0 & ~FindNearby_i(176, 10, _Door_NS, _Avatar));
+    v0 = (v0 & ~FindNearby_i(176, 10, _DDoor_NS, _Avatar));
+    v0 = (v0 & ~FindNearby_i(176, 10, _DDoor_EW, _Avatar));
+    v0 = (v0 & ~FindNearby_i(176, 10, _DDSerpNS, _Avatar));
+    v0 = (v0 & ~FindNearby_i(176, 10, _DDSerpEW, _Avatar));
+    Foreach v3 in v0 {
+        if (~GetQuality(v3) = 217) && (~DoorState_i(v3) = 2) {
+            SetDoorState_i(0, v3);
+            if (~Item_getType(v3) = _DDSerpNS) {
+                DDSerpNS(v3);
+            }
+            if (~Item_getType(v3) = _DDSerpEW) {
+                DDSerpEW(v3);
+            }
+            if (~Item_getType(v3) = _Door_NS) {
+                Door_NS(v3);
+            }
+            if (~Item_getType(v3) = _Door_EW) {
+                Door_EW(v3);
+            }
+            if (~Item_getType(v3) = _DDoor_NS) {
+                DDoor_NS(v3);
+            }
+            if (~Item_getType(v3) = _DDoor_EW) {
+                DDoor_EW(v3);
+            }
+        }
+    }
+}
+
+Routine IoloTalksEgg_i accepts a0 #locals(2) #uses(Iolo_Type) {
+    v0 = ~GetQuality(item);
+    if (v0 <> 222) && ~FindNearby_i(176, 65535, _Iolo_Type, _Avatar) {
+        Iolo_Type(~NPCToItem_i(_Iolo));
+    }
+    if (v0 = 222) && not $BANES_RELEASED {
+        v1 = ~CreateCreature_i(~GetCoord(item), _Pikeman);
+        SetNPCID_i(30, v1);
+        SetWorkType(_HorPace, v1);
+    }
+}
+
+Routine LightningRodsEgg_i accepts a0 #locals(8) #uses(CallLightning_i) {
+    v0 = ~GetQuality(item);
+    if (v0 <> 224) {
+        v1 = ~FindNearby_i(176, 65535, _Plasmic_Rod, _Avatar);
+        Foreach v4 in v1 {
+            CallLightning_i(v4);
+        }
+    }
+    if (v0 = 224) {
+        v5 = ~FindNearby_i(0, 65535, _Troll, item);
+        if v5 {
+            v6 = ~Item_create(_Unique_Key);
+            if v6 {
+                v7 = ~SetQuality(77, v6);
+                v7 = ~PopToNPC(v5::1);
+            }
+        }
+    }
+}
+
+Routine RodDoorLockEgg_i accepts a0 #locals(0) #uses(SetDoorsByRod_i) {
+    SetDoorsByRod_i();
+}
+
+Routine ToggleMagicStormEgg_i accepts a0 #locals(0) {
+    if (~GetWeather_i() = _Sparkle) {
+        SetWeather_i(_Clear);
+    } else {
+        SetWeather_i(_Sparkle);
+    }
+}
+
+Routine SethysDiesEgg_i accepts a0 #locals(9) #uses(~PartyUtters) {
+    if (event = _Action) {
+        SetSpeaker0_i(0, _Sethys);
+        ["I am undone -- I am outside the Temple, and now the years burden me..."];
+        ["Take the Chaos Stone from my dead body... it shall be the token that thou needest to summon the shade..."];
+        ["The body lies in the garden of the Temple of Enthusiasm, in the northeast by the Gate of the Serpent..."];
+        ["Now I go into the Void!"];
+        v0 = ~GetCoord(_Sethys);
+        v0::1 = (v0::1 - (v0::3 / 2));
+        v0::2 = (v0::2 - (v0::3 / 2));
+        createSprite(65535, 0, 0, 0, v0::2, v0::1, 9);
+        v0 = ~GetCoord(_Sethys);
+        RemoveNPC_i(_Sethys);
+        v1 = ~Item_create(_NPC2_Bodies);
+        if v1 {
+            SetFrame(24, v1);
+            v2 = ~PopToMap(v0);
+            if not v2 {
+                v2 = ~PopToMap(<< (v0::1 - 2), v0::2, v0::3 >>);
+            }
+            if not v2 {
+                v2 = ~PopToMap(<< v0::1, (v0::2 - 2), v0::3 >>);
+            }
+            if not v2 {
+                v2 = ~PopToMap(<< (v0::1 + 2), v0::2, v0::3 >>);
+            }
+            if not v2 {
+                v2 = ~PopToMap(<< v0::1, (v0::2 + 2), v0::3 >>);
+            }
+            if v2 {
+                v3 = ~GetContents(_All, _All, _All, _Sethys);
+                Foreach v6 in v3 {
+                    v7 = ~Item_push(v6);
+                    if v7 {
+                        SetItemFlag_i(_OkayToTake_i, v6);
+                        v7 = ~Item_popToEnd(v1);
+                    }
+                }
+                if ~GetContents(_All, _All, _All, v1) {
+                    ClearBark_i(_Avatar);
+                    v7 = ~PartyUtters(true, "@Something in the ashes?@", "@Something in the ashes?@", 65533);
+                }
+            } else {
+                Item_destroy(v1);
+            }
+        }
+        ClearItemFlag_i(_DontMove_i, _Avatar);
+    }
+    if (event = _Trigger) {
+        v8 = ~GetParty_i();
+        if (~NPCToItem_i(_Sethys) in v8) {
+            LeaveParty(_Sethys);
+            SetWorkType(_Wait, _Sethys);
+            SetItemFlag_i(_DontMove_i, _Avatar);
+            v2 = ~PostAction(<< _aNO_HALT_i, _aBARK_i, "@The weight of the years!@", _aBEND_FRAME_i, _aWAIT_i, 2, _aKNEEL_FRAME_i, _aWAIT_i, 2, _aLIE_FRAME_i, _aWAIT_i, 2, _aUSABLE_i, #SethysDiesEgg_i >>, _Sethys);
+            Item_destroy(item);
+        }
+    }
+}
+
+Routine PartyAlarmEgg_i accepts a0 #locals(6) #uses(Bark_i) {
+    v0 = ~GetParty();
+    v1 = 0;
+    v2 = << "Goblins!!!", "Arrgh, snakes!", "God in heaven! 'Tis Hook...", "Kill the wolves!", "Dragons!", "Pray by the virtues! 'Tis the Guardian!", "Mother Of Invention!", "Reapers by the score!", "...", "...", "...", "..." >>;
+    Foreach v5 in v0 {
+        v1 = (v1 + 1);
+        if (v1 < 12) {
+            v1 = 1;
+        }
+        Bark_i(v1, v2::v1, v5);
+    }
+}
+
+Routine DelayedExplosionEgg_i accepts a0 #locals(1) {
+    v0 = ~PostInFuture(~GetQuality(item), << _aUSABLE_i, #Powder_Keg >>, item);
+}
+
+Routine KnightsTestEgg_i accepts a0 #locals(12) #uses(~DoorState_i, Door_NS, Door_EW, DDoor_NS, DDoor_EW, SetDoorState_i, Bark_i, SetWorkTypeAt_i, ~CreateAttacker_i, AttackAvatar_i, MoveNear_i) {
+    v0 = ~GetQuality(item);
+    if (v0 = 0) {
+        PrintError_i("egg quality not set");
+    }
+    if ((v0 = 1) or (v0 = 72)) {
+        v1 = ~FindNearby_i(176, 10, _Door_EW, _Avatar);
+        v1 = (v1 & ~FindNearby_i(176, 10, _Door_NS, _Avatar));
+        v1 = (v1 & ~FindNearby_i(176, 10, _DDoor_NS, _Avatar));
+        v1 = (v1 & ~FindNearby_i(176, 10, _DDoor_EW, _Avatar));
+        Foreach v4 in v1 {
+            if (~GetQuality(v4) = 72) && (~DoorState_i(v4) = 1) {
+                v5 = ~PostInFuture(2, << _aUSABLE_i, #KnightsTestEgg_i >>, v4);
+                if (~Item_getType(v4) = _Door_NS) {
+                    Door_NS(v4);
+                }
+                if (~Item_getType(v4) = _Door_EW) {
+                    Door_EW(v4);
+                }
+                if (~Item_getType(v4) = _DDoor_NS) {
+                    DDoor_NS(v4);
+                }
+                if (~Item_getType(v4) = _DDoor_EW) {
+                    DDoor_EW(v4);
+                }
+            }
+        }
+        if (event = _Action) {
+            SetDoorState_i(2, item);
+        }
+    }
+    if (v0 = 2) {
+        $doneknightstest = true;
+        v1 = ~FindNearby_i(0, 20, _Door_NS, item);
+        Foreach v4 in v1 {
+            if (~GetQuality(v4) = 61) {
+                SetFrame(12, v4);
+                Sfx(4);
+            }
+        }
+        v1 = ~FindNearby_i(0, 20, _Door_EW, item);
+        Foreach v4 in v1 {
+            if (~GetQuality(v4) = 72) {
+                SetFrame(12, v4);
+                Sfx(4);
+            }
+        }
+        Bark_i(2, "@I made it!@", _Avatar);
+        Bark_i(10, "@Thou didst survive?@", _Shmed);
+        SetWorkType(_Talk, _Shmed);
+        SetWorkTypeAt_i(_Talk, 2248, 823, _Shmed);
+    }
+    if (v0 = 3) {
+        v10 = ~CreateAttacker_i(_Snake);
+        if v10 {
+            v11 = ~GetCoord(item);
+            AttackAvatar_i(v10);
+            v5 = ~Item_push(v10);
+            if v5 {
+                v5 = ~PopToMap(v11);
+                if not v5 {
+                    MoveNear_i(item, v10);
+                }
+            }
+        }
+    }
+    if (v0 = 4) {
+        Sfx(119);
+        v11 = ~GetCoord(item);
+        createSprite(65535, 0, 0, 0, v11::2, v11::1, 7);
+        Item_move(v11, _Pibb);
+        SetItemFlag_i(_Tournament, _Pibb);
+        SetItemFlag_i(_Invisible, _Pibb);
+        SetNPCID_i(14, _Pibb);
+        AttackAvatar_i(_Pibb);
+        Bark_i(2, "@Accept thy death, Avatar!@", _Pibb);
+        v5 = ~PostInFuture(6, << _aNO_HALT_i, _aUSABLE_i, #Pikeman, 0 >>, _Pibb);
+    }
+}

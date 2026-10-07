@@ -1,0 +1,284 @@
+Routine Flicken accepts a0 #locals(9) #uses(~AvatarName, PartyFaces_i, FlickenWorksGate_i, Bark_i, ~AskList, SetWorkTypeAt_i) {
+    v0 = false;
+    v1 = ~GetItemFlag_i(_Met, _Flicken);
+    v2 = ~AvatarName();
+    if (event = _NearDeath) {
+        v3 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #Paladin >>, item);
+    }
+    if ((event = _Pathfind1) or (event = _Action)) {
+        PartyFaces_i(65456);
+        FlickenWorksGate_i(event);
+    }
+    if (event = _Converse) {
+        Bark_i(0, "@Hail!@", _Avatar);
+        PartyFaces_i(65456);
+        ClearBark_i(_Flicken);
+        SetSpeaker0_i(0, _Flicken);
+        if not v1 {
+            ["Halt! Who art thou and what is thy business?"];
+            v4 = ~AskList(<< "I am the Avatar", ("I am " + v2), "Who doth wish to know?" >>);
+            if (v4 = "I am the Avatar") {
+                ["Who? Never heard of thee."];
+            }
+            if (v4 = ("I am " + v2)) {
+                ["I see."];
+            }
+            if (v4 = "Who wants to know?") {
+                ["I ask the questions here."];
+            }
+            ["Another stranger! Most suspicious. There have not been many travellers recently."];
+            SetWorkTypeAt_i(_Patrol, 2662, 784, _Marsten);
+            SetWorkTypeAt_i(_Patrol, 2660, 783, _Caladin);
+            SetWorkTypeAt_i(_Patrol, 2666, 784, _Brendann);
+            SetWorkTypeAt_i(_Patrol, 2664, 783, _Spektor);
+            TurnOn(<< "open the gate", "strangers" >>);
+        } else {
+            ["What is it now?"];
+            TurnOn(<< "name", "duties" >>);
+            v5 = ~GetCoord(_Flicken);
+            v6 = v5::1;
+            v7 = v5::2;
+            if ((v6 > 784) and ((v6 < 816) and ((v7 > 2720) and (v7 < 2768)))) {
+                TurnOn(<< "gate" >>);
+            }
+        }
+        if ($AVATAR_IS_KNIGHT and not ~GetItemFlag_i(_Dead, _Simon)) {
+            TurnOn("traitor");
+        }
+        if $POMDIRGUN_IS_DEAD {
+            TurnOn("Pomdirgun");
+        }
+        if $simonshedsskin {
+            TurnOn("Simon");
+        }
+        if v1 {
+            TurnOn("bye");
+        }
+        converse {
+            key ("Pomdirgun") {
+                TurnOff("Pomdirgun");
+                ["Thou hast killed the worst enemy Monitor hath ever faced! Surely the day of his death will be cause for celebration for many years to come. Thou dost have my thanks, and the thanks of all of Monitor."];
+            }
+            key ("Simon") {
+                TurnOff("Simon");
+                ["Perhaps now that Simon was exposed as a Goblin spy the city will be safe again. Then again, I have the feeling that as long as there is a Goblin alive somewhere in the world we will never be truly safe."];
+            }
+            key ("traitor") {
+                TurnOff("traitor");
+                ["Thou hast mistaken me for someone who wastes time with idle chatter, <v2>."];
+                ["If there is a traitor, no doubt Lord Marsten shall unmask him. Meanwhile, I shall do my duty."];
+            }
+            key ("open the gate") {
+                ["Art thou friend or foe?"];
+                if (~AskList(<< "friend", "foe" >>) = "friend") {
+                    ["I do not know thou art a friend... I shall let thee in, but thou must have an escort until thou hast spoken to Lord Marsten."];
+                    ["Thou canst find him at the Crematorium, mourning for the dead. Follow the road north."];
+                    ["Remember, we shall be keeping an eye upon thee!"];
+                    Bark_i(1, "@Pikemen!@", _Flicken);
+                    v8 = ~CreateCreature_i(<< 814, 2735, 0 >>, _Pikeman);
+                    if v8 {
+                        SetNPCID_i(3, v8);
+                        SetWorkType(_Hound, v8);
+                        Npc_setAlignment(_Neutral, v8);
+                        v3 = ~ChangeNPCStat_i(10, _Dex, v8);
+                    }
+                    v8 = ~CreateCreature_i(<< 812, 2750, 0 >>, _Pikeman);
+                    if v8 {
+                        SetNPCID_i(3, v8);
+                        SetWorkType(_Hound, v8);
+                        Npc_setAlignment(_Neutral, v8);
+                        v3 = ~ChangeNPCStat_i(10, _Dex, v8);
+                    }
+                    SetItemFlag_i(_DontMove_i, _Avatar);
+                    FlickenWorksGate_i(event);
+                    SetItemFlag_i(_Met, _Flicken);
+                    terminate;
+                } else {
+                    ["Then I shall certainly not let thee in."];
+                    Bark_i(0, "@Be thou gone!@", _Flicken);
+                    terminate;
+                }
+            }
+            key ("strangers") {
+                TurnOff("strangers");
+                ["The Colored Storms and the Goblins have kept most people off the roads, and so 'tis unusual to see strangers in Monitor."];
+                if not v0 {
+                    TurnOn("Goblins");
+                }
+                TurnOn("storms");
+                if not $IOLO_MADE_EQUIPMENT_LIST {
+                    ["Suspicious, in fact..."];
+                    ["Perhaps thou art in league with the enchanter who materialized in the center of town! We promptly jailed him."];
+                    $KNOWS_IOLO_IMPRISONED = true;
+                    if not $funeraldone {
+                        ["But the uproar interrupted the funeral ceremonies."];
+                        TurnOn("funeral");
+                    }
+                    TurnOn(<< "enchanter" >>);
+                }
+            }
+            key ("storms") {
+                TurnOff("storms");
+                ["Didst thou not see the storm which passed by here so recently? Even a Knight must hide from the fury of Nature!"];
+                ["Hast thou noticed the lightning? It comes in many colors, and it hath sinister magical properties!"];
+            }
+            key ("gate") {
+                TurnOff("gate");
+                ["Aye, 'tis a gate indeed. And a strong one at that. To repel any foe who dares attempt to breach these walls." *"I suppose thou dost want me to operate it. As if I had naught to do..."];
+                SetItemFlag_i(_DontMove_i, _Avatar);
+                FlickenWorksGate_i(event);
+                terminate;
+            }
+            key ("enchanter") {
+                TurnOff("enchanter");
+                ["Thou dost show an unusual interest in this man. Speak to Lord Marsten. I shall say no more to thee about the matter."];
+            }
+            key ("funeral") {
+                TurnOff("funeral");
+                ["'Tis a sad affair. One of our patrols was ambushed, and the Goblins slew nearly all of them! Only Templar survived to return."];
+                ["Worse yet, the patrol was led by the Champion Knight, and she remains lost. We must assume that she is slain, and the Helm of Monitor taken!"];
+                TurnOn(<< "Champion Knight", "Helm of Monitor" >>);
+            }
+            key ("Champion Knight") {
+                TurnOff("Champion Knight");
+                ["We are lost without Astrid, for she was a Warrior of Warriors!"];
+                ["Only the bravest Knight can be the Champion of Monitor. We compete constantly for the title, and this keeps us fit to battle the Goblin hordes."];
+                ["Astrid was unique among us, for she had held the title for nearly three years. In the north, they say that women are weak, but not in Monitor!"];
+            }
+            key ("Helm of Monitor") {
+                TurnOff("Helm of Monitor");
+                ["The Helm is more than symbolic. Yes, the Champion Knight wears it. But it stands for something!"];
+                ["It was once the property of the Goblin chieftain who nearly conquered Monitor!"];
+                if not $gothelmofmonitor {
+                    ["Now that they have it again, we are in dire trouble."];
+                } else {
+                    ["Since thou hast brought it back, Monitor shall surely never fall."];
+                }
+            }
+            key ("name") {
+                TurnOff("name");
+                ["I am Flicken, and I am a Knight of Monitor. I belong to the Command of the Bear."];
+                ["We are all Knights here. If thou art not a Knight of Monitor, then thou dost not belong in Monitor!"];
+                if not $knowcommands {
+                    TurnOn("Command");
+                } else {
+                    TurnOn(<< "Wolves", "Leopards" >>);
+                }
+                TurnOn("Bears");
+            }
+            key ("Command") {
+                TurnOff("Command");
+                ["The Knights of Monitor are organized into three clans, which are called Commands."];
+                ["The Bears are the elite, but there are also the Wolves and the Leopards. Thou canst tell us apart by our tattoos."];
+                $knowcommands = true;
+                TurnOn(<< "Bears", "Wolves", "Leopards" >>);
+            }
+            key ("Bears") {
+                TurnOff("Bears");
+                if not $doneknightstest {
+                    ["If thou dost ever become a Knight of Monitor, then pray that the Ashes of Gurnordir proclaim thee a Knight of the Bears!"];
+                    TurnOn("Ashes of Gurnordir");
+                }
+                ["We are the strongest of the Commands. The Goblins shall never break this city, so long as we are here to man the walls!"];
+            }
+            key ("Ashes of Gurnordir") {
+                TurnOff("Ashes of Gurnordir");
+                ["I probably should not speak of sacred matters to outsiders, but it is true that the Ashes of the Dead are holy."];
+                ["If thou wantest to know more, speak to Caladin or Marsten -- they deal with outsiders."];
+            }
+            key ("Wolves") {
+                TurnOff("Wolves");
+                ["Bah! If they had their way, the Wolves would waste all our men defending the highways, and leave Monitor defenseless!"];
+                ["Their leader, Brendann, is a profligate. Spending too much time with loose women is bad for a warrior -- mark my words!"];
+            }
+            key ("Leopards") {
+                TurnOff("Leopards");
+                if not $marstenarrested {
+                    ["No one knows what the Leopards stand for anymore! Marsten used to be strong and virile, but now he rules the city from his desk."];
+                    ["As for Spektor, he would rather pick up a quill than a sword. With such leaders, how can the Leopards amount to much!"];
+                    TurnOn("ruler");
+                } else {
+                    ["With Marsten in prison, the Leopards must needs be restored to what they once were! But Shazzana is a she-tiger... she will set things aright."];
+                }
+            }
+            key ("ruler") {
+                TurnOff("ruler");
+                ["Monitor hath no King or Queen -- we do not believe in such things, and left our ancient homeland to escape a tyrant who thought otherwise."];
+                ["The Lords of the Commands take turns ruling Monitor. Currently, Marsten doth have that duty. Next year it shall be Caladin, then after that we must suffer a year under Brendann's yoke."];
+            }
+            key ("duties") {
+                TurnOff("duties");
+                ["I am the Chief Pikeman, and my station is the Southwest Gate. The task of the Pikemen of Monitor is to man the city walls, and watch for Goblins."];
+                if not v0 {
+                    TurnOn(<< "Goblins" >>);
+                }
+            }
+            key ("Goblins") {
+                TurnOff("Goblins");
+                ["Foul creatures! They are the bane of our existence. We are at war with the Goblins, and have been for many generations. If it were not for the Pikemen patrolling the roads, one could never travel anywhere!"];
+                v0 = true;
+                TurnOn(<< "roads", "travel" >>);
+            }
+            key ("roads") {
+                TurnOff("roads");
+                ["Dost thou know nothing?! Why, we Monitorians have rebuilt the ancient highways, and added new trails and byways."];
+                ["Each of our Commands supplies the men to guard the Towers which protect the trade routes."];
+                ["But it is all foolishness! Fawn Tower hath been conquered, and the Goblins will not stop there!"];
+            }
+            key ("travel") {
+                TurnOff("travel");
+                ["Why would anyone bother with going anywhere beyond Monitor? This is where Courage thrives -- out there, frivolity reigns..."];
+                ["Moonshade is nothing more than a city of mages. Who needs magic? It pales before a sharply honed sword."];
+                ["As for Fawn, the place is obsessed with strange customs. And they worship Beauty -- now, how can that compare to Courage?"];
+            }
+            key ("bye") {
+                if not $doneknightstest {
+                    ["Do not be surprised if most people do not talk to thee! Since thou art not a Knight of Monitor, thou dost not belong here."];
+                    ["Only the bravest of the brave can be a member of our community!"];
+                }
+                CloseSpeaker0_i();
+                Bark_i(0, "@Thank thee.@", _Avatar);
+                Bark_i(2, "@Courage!@", _Flicken);
+                break;
+            }
+        }
+        clear_answers;
+    }
+}
+
+Routine FlickenWorksGate_i accepts a0 #locals(10) #uses(~TogglePortcullises_i) {
+    v1 = ~FindNearby_i(0, 20, _Winch_EW, _Flicken);
+    if (v0 = 1) && v1 {
+        v2 = ~GetCoord(v1);
+        PathfindNPC_i(true, #Flicken, ~NPCToItem_i(_Flicken), _Pathfind1, v2, _Flicken);
+    }
+    if (v0 = 10) {
+        SetWorkType(_Wait, _Flicken);
+        v3 = (~GetAllInRegion(_NS_Portcullis) & ~GetAllInRegion(_EW_Portcullis));
+        v4 = false;
+        Foreach v7 in v3 {
+            v8 = ~TogglePortcullises_i();
+            v8 = ~PostAction(<< _aFRAME, 1, _aNEXT_FRAME, _aLOOP_i, 65535, 6 >>, v1);
+            v4 = true;
+        }
+        v8 = ~PostAction(<< _aFACE_i, _West, _aCONTINUE_i, _aBEND_FRAME_i, _aSTAND_FRAME_i, _aLOOP_i, 65534, 4 >>, _Flicken);
+        v8 = ~PostInFuture(20, << _aNO_HALT_i, _aUSABLE_i, #Flicken >>, v3);
+    }
+    if (v0 = 2) {
+        Npc_schedule(_Flicken);
+        ClearItemFlag_i(_DontMove_i, _Avatar);
+        v9 = ~FindNearby_i(0, 20, _NS_Portcullis, _Flicken);
+        if v9 {
+            if ~IsNPCNear_i(v9) {
+                v8 = ~PostInFuture(20, << _aNO_HALT_i, _aUSABLE_i, #Flicken >>, v9);
+            } else {
+                v10 = ~GetCoord(v9);
+                v8 = ~Item_push(v9);
+                if v8 {
+                    v10::3 = 0;
+                    v8 = ~PopToMap(v10);
+                }
+            }
+        }
+    }
+}

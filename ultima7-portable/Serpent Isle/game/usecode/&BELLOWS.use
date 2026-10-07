@@ -1,0 +1,20 @@
+Routine Bellows accepts a0 #locals(9) #uses(PathToItem_i, ~DirFrom_i) {
+    if (event = _Converse) {
+        Kernel_resetRef(item);
+        v0 = << 1, 1 >>;
+        v1 = << 0, 0 >>;
+        v2 = 65535;
+        PathToItem_i(10, item, #Bellows, v2, v1, v0, item);
+    }
+    if (event = _Pathfind1) {
+        Kernel_resetRef(item);
+        v3 = ~PostAction(<< _aSFX_i, 7, _aCONTINUE_i, _aFRAME, 0, _aNEXT_FRAME_MAX_i, _aWAIT_i, 1, _aNEXT_FRAME_MAX_i, _aWAIT_i, 1, _aPREV_FRAME_MIN_i, _aWAIT_i, 1, _aPREV_FRAME_MIN_i, _aWAIT_i, 1, _aNEXT_FRAME_MAX_i, _aWAIT_i, 1, _aNEXT_FRAME_MAX_i, _aWAIT_i, 1, _aPREV_FRAME_MIN_i, _aWAIT_i, 1, _aPREV_FRAME_MIN_i >>, item);
+        v4 = ~DirFrom_i(item, _Avatar);
+        Kernel_resetRef(_Avatar);
+        v3 = ~PostAction(<< _aFACE_i, v4, _aSTAND_FRAME_i, _aBEND_FRAME_i, _aWAIT_i, 3, _aSTAND_FRAME_i, _aSTAND_FRAME_i, _aBEND_FRAME_i, _aWAIT_i, 3, _aSTAND_FRAME_i >>, _Avatar);
+        v5 = ~FindNearby_i(176, 4, _Firepit, item);
+        Foreach v8 in v5 {
+            v3 = ~PostAction(<< _aNO_HALT_i, _aSFX_i, 7, _aNEXT_FRAME_MAX_i, _aNEXT_FRAME_MAX_i, _aNEXT_FRAME_MAX_i, _aWAIT_i, 14, _aPREV_FRAME_MIN_i, _aWAIT_i, 3, _aPREV_FRAME_MIN_i, _aWAIT_i, 3, _aPREV_FRAME_MIN_i >>, v8);
+        }
+    }
+}

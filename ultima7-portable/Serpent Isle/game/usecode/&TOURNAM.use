@@ -1,0 +1,874 @@
+Routine TournamentGuardEgg_i accepts a0 #locals(11) {
+    if $BANES_RELEASED {
+        Item_destroy(item);
+        terminate;
+    }
+    v0 = ~FindNearby_i(0, 30, _Pikeman, item);
+    Foreach v3 in v0 {
+        if (~GetNPCID_i(v3) = 9) {
+            terminate;
+        }
+    }
+    v4 = ~GetCoord(item);
+    v5 = ~CreateCreature_i(v4, _Pikeman);
+    v6 = ~GetContents(_All, _All, _Halberd, v5);
+    Foreach v9 in v6 {
+        if (~Item_getType(v9) = _Halberd) {
+            Item_destroy(v9);
+        }
+    }
+    v10 = ~GiveToCont_i(true, 0, 0, _Axe_2H, 1, v5);
+    v10 = ~ChangeNPCStat_i(10, _Int, v5);
+    SetNPCID_i(9, v5);
+    SetWorkType(_Combat_0, v5);
+    SetWorkType(_MajorSit, v5);
+}
+
+Routine BrendanUsable accepts a0 #locals(23) #uses(~TournamentDoor_i, AbortTournament_i, ~SwingDoor_i, SwingPartner_i, SayDoorBlocked_i, SetDoorState_i, CleanUpTournament, ~InListField_i, PathStudentToItem_i, UnfreezeAvatar_i) {
+    if (event = _Polymorph) {
+        $tournamentflag = false;
+        $temp1flag = false;
+        v0 = ~TournamentDoor_i(15, _Door_NS, item);
+        if not v0 {
+            AbortTournament_i(4, item);
+        }
+        v1 = ~Item_create(_Path);
+        if v1 {
+            SetFrame(6, v1);
+            v2 = ~GetCoord(v0);
+            if not ~PopToMap(<< (v2::1 + 3), (v2::2 - 1), v2::3 >>) {
+                AbortTournament_i(5, item);
+            }
+            if ~SwingDoor_i(7, 0, 0, 1, _Door_EW, v0) {
+                SwingPartner_i(7, 65533, 0, 1, _DDoor_EW, 1, 0, _DDoor_NS, v0);
+                playSFX(v0, 32);
+            } else {
+                SayDoorBlocked_i();
+            }
+            $temp1flag = true;
+        }
+        v3 = ~PostInFuture(1, << _aUSABLE_i, #BrendanUsable >>, item);
+        return;
+    }
+    if (event = _Talking) {
+        v1 = ~FindNearest_i(15, _Path, item);
+        if v1 {
+            Item_destroy(v1);
+        }
+        v0 = ~TournamentDoor_i(15, _Door_EW, item);
+        if not v0 {
+            AbortTournament_i(6, item);
+        }
+        if ~SwingDoor_i(7, 0, 0, 0, _Door_NS, v0) {
+            SwingPartner_i(5, 3, 0, 0, _DDoor_NS, 1, 1, _DDoor_EW, v0);
+            playSFX(v0, 31);
+            SetDoorState_i(2, v0);
+        } else {
+            SayDoorBlocked_i();
+        }
+        CleanUpTournament(item);
+        terminate;
+    }
+    if (event = _Path_Failure) {
+        AbortTournament_i(7, item);
+    }
+    if (event = _Pathfind1) {
+        v4 = ~FindNearby_i(0, 35, _Pikeman, _Avatar);
+        Foreach v7 in v4 {
+            if (~GetNPCID_i(v7) = 9) {
+                goto label_29;
+            }
+        }
+        AbortTournament_i(8, item);
+        label_29:
+        ClearBark_i(v7);
+        $temp1flag = true;
+        v3 = ~PostInFuture(1, << _aUSABLE_i, #Brendan2Usable >>, item);
+    }
+    if (event = _Pathfind2) {
+        v0 = ~TournamentDoor_i(35, _Door_NS, item);
+        if not v0 {
+            AbortTournament_i(9, item);
+        }
+        if ~SwingDoor_i(7, 0, 0, 1, _Door_EW, v0) {
+            SwingPartner_i(7, 65533, 0, 1, _DDoor_EW, 1, 0, _DDoor_NS, v0);
+            playSFX(v0, 32);
+        } else {
+            SayDoorBlocked_i();
+        }
+        v1 = ~Item_create(_Path);
+        if v1 {
+            SetFrame(6, v1);
+            v2 = ~GetCoord(item);
+            v3 = ~PopToMap(<< (v2::1 - 9), (v2::2 - 2), v2::3 >>);
+            if not v3 {
+                AbortTournament_i(10, item);
+            }
+        }
+        v3 = ~PostInFuture(1, << _aUSABLE_i, #BrendanUsable >>, item);
+    }
+    if (event = _Action) {
+        if $temp1flag {
+            $temp1flag = false;
+            v1 = ~FindNearest_i(15, _Path, item);
+            v8 = << 0, 1, 1, 0 >>;
+            v9 = << 0, 1, 0, 1 >>;
+            v10 = << 65473, 65457, 65462, 65465, 65386 >>;
+            Foreach v13 in v10 {
+                if ~InListField_i(v13) {
+                    Npc_setAlignment(_Neutral, v13);
+                    v3 = ~GetNPCStat_i(_Hits, v13);
+                    v3 = ~ChangeNPCStat_i((~GetNPCStat_i(_Str, v13) - v3), _Hits, v13);
+                    Npc_schedule(v13);
+                }
+            }
+            PathStudentToItem_i(_Talking, item, #BrendanUsable, 0, v9, v8, v1, item);
+            return;
+        }
+        v14 = ~FindNearby_i(0, 30, _Pikeman, item);
+        Foreach v17 in v14 {
+            if (~GetNPCID_i(v17) = 9) {
+                goto label_54;
+            }
+        }
+        AbortTournament_i(11, item);
+        label_54:
+        v18 = ~rndRange(4, 1);
+        if (v18 = 1) {
+            Item_bark("@Have at 'em, men!@", v17);
+        }
+        if (v18 = 2) {
+            Item_bark("@Best of luck!@", v17);
+        }
+        if (v18 = 3) {
+            Item_bark("@In ya go!@", v17);
+        }
+        if (v18 = 4) {
+            Item_bark("@Pray for mercy!@", v17);
+        }
+        v8 = << 0, 65535, 65535, 65535, 65535, 65535, 1, 1, 1, 1, 1 >>;
+        v9 = << 0, 1, 0, 65535, 65534, 2, 2, 1, 0, 65535, 65534 >>;
+        v19 = 65535;
+        v1 = ~FindNearest_i(15, _Path, item);
+        PathStudentToItem_i(_Path_Success, item, #BrendanUsable, v19, v9, v8, v1, item);
+    }
+    if (event = _Path_Success) {
+        v10 = << 65473, 65457, 65462, 65465, 65386 >>;
+        Foreach v13 in v10 {
+            if ~InListField_i(v13) {
+                v22 = ~GetNPCStat_i(_Hits, v13);
+                v3 = ~ChangeNPCStat_i((~GetNPCStat_i(_Str, v13) - v22), _Hits, v13);
+                if $TRAINING_FLAG_SET {
+                    if ~GetNPCID_i(v13) {
+                        Npc_setAlignment(_Evil, v13);
+                        SetWorkType(_Combat_0, v13);
+                        SetAttackMode_i(_Nearest, v13);
+                        Npc_setTarget(item, v13);
+                        if (item = ~NPCToItem_i(_Avatar)) {
+                            SetAttackMode_i(_Nearest, item);
+                            Npc_setTarget(v13, item);
+                            SetAttacker_i(v13, item);
+                            SetWorkType(_FollowAvt, item);
+                        } else {
+                            SetWorkType(_Combat_0, item);
+                            Npc_setTarget(v13, item);
+                        }
+                    } else {
+                        Npc_setAlignment(_Chaotic, v13);
+                        if (item = ~NPCToItem_i(_Avatar)) {
+                            Npc_setTarget(item, v13);
+                            SetAttacker_i(item, v13);
+                        }
+                        SetAttackMode_i(_Nearest, v13);
+                        SetWorkType(_TendShop, v13);
+                    }
+                } else {
+                    Npc_setAlignment(_Chaotic, v13);
+                    SetWorkType(_Combat_0, v13);
+                    SetAttackMode_i(_Nearest, v13);
+                }
+            }
+        }
+        v0 = ~TournamentDoor_i(15, _Door_EW, item);
+        if not v0 {
+            AbortTournament_i(12, item);
+        }
+        if ~SwingDoor_i(7, 0, 0, 0, _Door_NS, v0) {
+            SwingPartner_i(5, 3, 0, 0, _DDoor_NS, 1, 1, _DDoor_EW, v0);
+            playSFX(v0, 31);
+            SetDoorState_i(2, v0);
+        } else {
+            SayDoorBlocked_i();
+        }
+        v1 = ~FindNearest_i(10, _Path, item);
+        if v1 {
+            Item_destroy(v1);
+        }
+        if (item = ~NPCToItem_i(_Avatar)) {
+            UnfreezeAvatar_i();
+        } else {
+            if not $TRAINING_FLAG_SET {
+                SetWorkType(_Combat_0, item);
+            }
+            SetItemFlag_i(_Tournament, item);
+        }
+    }
+}
+
+Routine Brendan2Usable accepts a0 #locals(13) #uses(AbortTournament_i, PathStudentToItem_i, ~TournamentDoor_i, NowSettleDownBoys) {
+    if (event = _Polymorph) {
+        $temp1flag = true;
+        v0 = ~PostInFuture(1, << _aUSABLE_i, #Brendan2Usable >>, item);
+    }
+    if (event = _Pathfind1) {
+        $temp2flag = true;
+        v0 = ~PostInFuture(1, << _aUSABLE_i, #Brendan2Usable >>, item);
+    }
+    if (event = _Pathfind2) {
+        $temp4flag = true;
+        v0 = ~PostInFuture(1, << _aUSABLE_i, #Brendan2Usable >>, item);
+    }
+    if (event = _Action) {
+        if ($temp1flag and not $temp3flag) {
+            $temp1flag = false;
+            Camera_setCenterOn(item);
+            v1 = ~FindNearby_i(0, 30, _I_Wall_Corner, item);
+            Foreach v4 in v1 {
+                v5 = ~GetCoord(v4);
+                if ((v5::1 = 1012) and ((v5::2 = 2687) and (v5::3 = 6))) {
+                    goto label_14;
+                }
+            }
+            AbortTournament_i(2, item);
+            label_14:
+            v6 = << 65534, 65533, 65535 >>;
+            v7 = << 0, 0, 0 >>;
+            PathStudentToItem_i(_Pathfind1, item, #Brendan2Usable, 0, v7, v6, v4, item);
+        }
+        if $temp2flag {
+            $temp2flag = false;
+            v8 = ~TournamentDoor_i(35, _Door_NS, item);
+            if not v8 {
+                AbortTournament_i(3, item);
+            }
+            v6 = << 3, 3, 3 >>;
+            v7 = << 65535, 65534, 0 >>;
+            PathStudentToItem_i(_Pathfind2, item, #BrendanUsable, 0, v7, v6, v8, item);
+        }
+        if $temp3flag {
+            $temp4flag = true;
+            NowSettleDownBoys(item);
+            return;
+        }
+        if $temp4flag {
+            $temp4flag = false;
+            v8 = ~TournamentDoor_i(30, _Door_NS, item);
+            if not v8 {
+                AbortTournament_i(19, item);
+            }
+            v9 = ~FindNearby_i(0, 35, _Pikeman, _Avatar);
+            Foreach v12 in v9 {
+                if (~GetNPCID_i(v12) = 9) {
+                    goto label_30;
+                }
+            }
+            AbortTournament_i(22, item);
+            label_30:
+            v5 = ~GetCoord(v8);
+            PathfindNPC_i(true, #BrendanUsable, item, _Pathfind1, << (v5::1 + 2), (v5::2 - 4), v5::3 >>, v12);
+        }
+    }
+    if (event = _Path_Failure) {
+        AbortTournament_i(21, item);
+    }
+}
+
+Function ~TournamentDoor_i accepts a0, a1, a2 #locals(4) {
+    v3 = ~FindNearby_i(0, v0, v1, v2);
+    Foreach v6 in v3 {
+        if (~GetQuality(v6) = 108) {
+            return v6;
+        }
+    }
+    return false;
+}
+
+Routine CleanUpTournament accepts a0 #locals(26) #uses(UnfreezeAvatar_i, ~GetStat, DexTrain, CombatTrain_i, StrTrain, ~InListField_i, ~IsContainer_i, AbortTournament_i, ~GimmePathEgg) {
+    UnfreezeAvatar_i();
+    v1 = ~ChangeNPCStat_i(~rndRange(50, 1), _Experience, v0);
+    $temp1flag = false;
+    $temp2flag = false;
+    $temp3flag = false;
+    $temp4flag = false;
+    $LEAVING_LIST_FIELD = false;
+    if (~GetNPCID_i(_Brendann) and $TRAINING_FLAG_SET) {
+        if (~GetStat(_Dex, v0) < 30) {
+            DexTrain(1, v0);
+        }
+        if (~GetStat(_Cbt, v0) < 30) {
+            CombatTrain_i(1, v0);
+        }
+        if (~GetStat(_Cbt, v0) < 30) {
+            CombatTrain_i(1, v0);
+        }
+    }
+    if (~GetNPCID_i(_Caladin) and $TRAINING_FLAG_SET) {
+        if (~GetStat(_Str, v0) < 30) {
+            StrTrain(1, v0);
+        }
+        if (~GetStat(_Str, v0) < 30) {
+            StrTrain(1, v0);
+        }
+        if (~GetStat(_Cbt, v0) < 30) {
+            CombatTrain_i(1, v0);
+        }
+    }
+    if (~GetNPCID_i(_Shazzana) and $TRAINING_FLAG_SET) {
+        if (~GetStat(_Dex, v0) < 30) {
+            DexTrain(1, v0);
+        }
+        if (~GetStat(_Dex, v0) < 30) {
+            DexTrain(1, v0);
+        }
+        if (~GetStat(_Cbt, v0) < 30) {
+            CombatTrain_i(1, v0);
+        }
+    }
+    if (~GetNPCID_i(_Luther) and $TRAINING_FLAG_SET) {
+        if (~GetStat(_Str, v0) < 30) {
+            StrTrain(1, v0);
+        }
+        if (~GetStat(_Str, v0) < 30) {
+            StrTrain(1, v0);
+        }
+        if (~GetStat(_Str, v0) < 30) {
+            StrTrain(1, v0);
+        }
+    }
+    v2 = << 65473, 65457, 65462, 65465, 65386 >>;
+    Foreach v5 in v2 {
+        if ~InListField_i(v5) {
+            ClearItemFlag_i(_Dead, v5);
+            Npc_schedule(v5);
+            SetNPCID_i(0, v5);
+        }
+    }
+    $TRAINING_FLAG_SET = false;
+    if not (~NPCToItem_i(_Avatar) = v0) {
+        ClearItemFlag_i(_Tournament, v0);
+    }
+    SetSpeaker0_i(0, _Hazard);
+    ["Very good, very good," he says as he returns your equipment.];
+    Npc_setAlignment(_Good, v0);
+    v6 = ~FindNearby_i(0, 45, _Locked_Chest, v0);
+    Foreach v9 in v6 {
+        if (~GetQuality(v9) = 235) {
+            v10 = v9;
+            goto label_41;
+        }
+    }
+    ["Well, I seem to have misplaced thy belongings. Mine apologies. As a favor to thee, I shall let thee keep what thou dost have right now."];
+    goto label_57;
+    label_41:
+    v11 = ~GetContents(_All, _All, _All, v0);
+    Foreach v14 in v11 {
+        if not ((~Item_getType(v14) = _Serp_Bracers) or (~Item_getType(v14) = _Path)) {
+            Item_destroy(v14);
+        }
+    }
+    v15 = 0;
+    v11 = ~GetContents(_All, _All, _All, v10);
+    While (v15 < 2) {
+        Foreach v14 in v11 {
+            if (~IsContainer_i(v14) or (v15 = 1)) {
+                if not ~Item_push(v14) {
+                    AbortTournament_i(13, v0);
+                }
+                if not ~Item_popToEnd(v0) {
+                    AbortTournament_i(14, v0);
+                }
+            }
+        }
+        v15 = (v15 + 1);
+        v11 = ~GetContents(_All, _All, _All, v10);
+    }
+    label_57:
+    v18 = ~GimmePathEgg(2, 1);
+    v19 = ~GetQuality(v18);
+    if v19 {
+        v20 = (~GetQuality(v18) - ~GetNPCStat_i(_Hits, _Avatar));
+        v1 = ~ChangeNPCStat_i(v20, _Hits, _Avatar);
+        v1 = ~SetQuality(0, v18);
+        v2 = ~FindNearby_i(4, 45, 65535, _Avatar);
+        Foreach v5 in v2 {
+            if (~GetNPCID_i(v5) = 13) {
+                JoinParty(v5);
+                SetNPCID_i(0, v5);
+            }
+        }
+    } else {
+        v20 = (~GetNPCID_i(v0) - ~GetNPCStat_i(_Hits, v0));
+        v1 = ~ChangeNPCStat_i(v20, _Hits, v0);
+        SetNPCID_i(0, v0);
+        JoinParty(v0);
+    }
+    if not (v0 = ~NPCToItem_i(_Avatar)) {
+        Camera_setCenterOn(~NPCToItem_i(_Avatar));
+        SetWorkType(_FollowAvt, v0);
+    }
+    v23 = ~FindNearby_i(0, 35, _Pikeman, v0);
+    Foreach v26 in v23 {
+        if (~GetNPCID_i(v26) = 9) {
+            goto label_73;
+        }
+    }
+    AbortTournament_i(15, v0);
+    label_73:
+    PathfindNPC_i(true, #Pikeman, v26, _Path_Success, << 1019, 2679, 6 >>, v26);
+}
+
+Function ~InListField_i accepts a0 #locals(1) {
+    v1 = ~GetCoord(v0);
+    if (((v1::1 > 963) and ((v1::1 < 1004) and ((v1::2 > 2675) and (v1::2 < 2716)))) or ((v1::1 = 1004) and ((v1::2 > 2691) and ((v1::2 < 2700) and (v1::3 = 0))))) {
+        return true;
+    }
+    return false;
+}
+
+Routine TrainAtListField_i accepts a0, a1 #locals(0) #uses(~CanTrain, StartTournament) {
+    SetSpeaker0_i(0, v1);
+    SetNPCID_i(0, _Shazzana);
+    SetNPCID_i(0, _Luther);
+    SetNPCID_i(0, _Caladin);
+    SetNPCID_i(0, _Templar);
+    SetNPCID_i(0, _Brendann);
+    SetNPCID_i(9, v1);
+    if (v1 = 65386) {
+        v1 = ~CanTrain(3, v0, 50, _Monitor_Money, << 1, 4, 4 >>);
+        if (v1 = 0) {
+            ["Thou dost not have enough experience. Come back when thou art more knowledgeable of the world!"];
+            goto label_33;
+        }
+        if (v1 = 1) {
+            ["Thou dost not have enough money."];
+            goto label_33;
+        }
+        if (v1 = 2) {
+            ["Thou art already as proficient as I. Thou mightest consider consulting one of the other trainers that specialize in other areas."];
+            goto label_33;
+        }
+        ["I will train thee now."];
+    }
+    if (v1 = 65462) {
+        v1 = ~CanTrain(3, v0, 50, _Monitor_Money, << 1, 1, 4 >>);
+        if (v1 = 0) {
+            ["Thou dost not have enough experience. Come back when thou art more knowledgeable of the world!"];
+            goto label_33;
+        }
+        if (v1 = 1) {
+            ["Thou dost not have enough money."];
+            goto label_33;
+        }
+        if (v1 = 2) {
+            ["Thou art already as proficient as I. Thou mightest consider consulting one of the other trainers that specialize in other areas."];
+            goto label_33;
+        }
+        ["I will train thee now."];
+    }
+    if (v1 = 65465) {
+        v1 = ~CanTrain(3, v0, 50, _Monitor_Money, << 0, 0, 0 >>);
+        if (v1 = 0) {
+            ["Thou dost not have enough experience. Come back when thou art more knowledgeable of the world!"];
+            goto label_33;
+        }
+        if (v1 = 1) {
+            ["Thou dost not have enough money."];
+            goto label_33;
+        }
+        if (v1 = 2) {
+            ["Thou art already as proficient as I. Thou mightest consider consulting one of the other trainers that specialize in other areas."];
+            goto label_33;
+        }
+        ["I will train thee now."];
+    }
+    if (v1 = 65473) {
+        v1 = ~CanTrain(3, v0, 50, _Monitor_Money, << 0, 0, 4 >>);
+        if (v1 = 0) {
+            ["Thou dost not have enough experience. Come back when thou art more knowledgeable of the world!"];
+            goto label_33;
+        }
+        if (v1 = 1) {
+            ["Thou dost not have enough money."];
+            goto label_33;
+        }
+        if (v1 = 2) {
+            ["Thou art already as proficient as I. Thou mightest consider consulting one of the other trainers that specialize in other areas."];
+            goto label_33;
+        }
+        ["I will train thee now."];
+    }
+    v1 = ~TakeFromParty_i(false, _All, _All, _Monitor_Money, 50);
+    $TRAINING_FLAG_SET = true;
+    StartTournament(v0);
+    terminate;
+    label_33:
+}
+
+Routine StartTournament accepts a0 #locals(12) #uses(~GimmePathEgg, AbortTournament_i, ~IsContainer_i, ContStartOfTournament) {
+    v1 = ~GetNPCStat_i(_Hits, v0);
+    if (v0 = ~NPCToItem_i(_Avatar)) {
+        v2 = ~GimmePathEgg(2, 1);
+        v3 = ~SetQuality(v1, v2);
+    } else {
+        SetNPCID_i(v1, v0);
+        v2 = ~GimmePathEgg(2, 1);
+        v3 = ~SetQuality(0, v2);
+    }
+    v3 = ~ChangeNPCStat_i((~GetNPCStat_i(_Str, v0) - v1), _Hits, v0);
+    $tournamentflag = true;
+    if (v0 = ~NPCToItem_i(_Avatar)) {
+        v3 = ~GetParty_i();
+        Foreach v2 in v3 {
+            if not (v2 = v0) {
+                SetNPCID_i(13, v2);
+                LeaveParty(v2);
+                SetWorkType(_Wait, v2);
+            }
+        }
+    } else {
+        LeaveParty(v0);
+        SetWorkType(_Wait, v0);
+        Npc_setAlignment(_Good, v0);
+    }
+    SetItemFlag_i(_Tournament, v0);
+    v3 = ~FindNearby_i(0, 15, _Locked_Chest, v0);
+    Foreach v2 in v3 {
+        if (~GetQuality(v2) = 235) {
+            v8 = v2;
+            Item_setType(_Chest, v8);
+            goto label_17;
+        }
+    }
+    AbortTournament_i(16, v0);
+    label_17:
+    v9 = 0;
+    v10 = ~GetContents(_All, _All, _All, v0);
+    While (v9 < 2) {
+        Foreach v2 in v10 {
+            if (~IsContainer_i(v2) or (v9 = 1)) {
+                v3 = ~Item_getType(v2);
+                if not ((v3 = 486) or (v3 = 607)) {
+                    if not ~Item_push(v2) {
+                        AbortTournament_i(17, v0);
+                    }
+                    if not ~Item_popToEnd(v8) {
+                        AbortTournament_i(18, v0);
+                    }
+                }
+            }
+        }
+        v9 = (v9 + 1);
+        v10 = ~GetContents(_All, _All, _All, v0);
+    }
+    Item_setType(_Locked_Chest, v8);
+    ContStartOfTournament(v0);
+}
+
+Routine ContStartOfTournament accepts a0 #locals(14) #uses(~AskOrdList, AbortTournament_i, Bark_i) {
+    SetSpeaker0_i(0, _Hazard);
+    ["What weapon dost thou favor?"];
+    v1 = << "nothing", "sword", "spear", "hammer", "morning star", "mace", "halberd", "battle axe" >>;
+    v2 = ~AskOrdList(v1);
+    if (v2 = 1) {
+        ["Indeed. If that's what thou wantest.... Best of luck to ya."];
+    }
+    if (v2 = 2) {
+        if ~AvatarSex() {
+            ["Take care with that blade. 'Tis sharp."];
+        } else {
+            ["Be thou careful with that blade."];
+        }
+        v3 = ~Item_create(_Sword);
+        v1 = ~PopToNPC(v0);
+    }
+    if (v2 = 3) {
+        ["Only a coward fights from a distance, not that I be referring to thee or nothing."];
+        v3 = ~Item_create(_Spear);
+        v1 = ~PopToNPC(v0);
+    }
+    if (v2 = 4) {
+        ["Aaahh, a fine weapon a war hammer is. There's nothing quite like the feeling of whacking someone with a mallet."];
+        v3 = ~Item_create(_Hammer_2H);
+        v1 = ~PopToNPC(v0);
+    }
+    if (v2 = 5) {
+        ["A respectable weapon that is. Leaves quite a mess, though."];
+        v3 = ~Item_create(_Morning_Star);
+        v1 = ~PopToNPC(v0);
+    }
+    if (v2 = 6) {
+        ["Squeamish at the sight of blood, are ya? The morning star is the true warrior's mace."];
+        v3 = ~Item_create(_Mace);
+        v1 = ~PopToNPC(v0);
+    }
+    if (v2 = 7) {
+        ["A fine enough weapon for a coward. I never did care for that fightin' at a distance and all. I thinks that the only way to victory is to close and hack, and I should know, seeing that I've seen many a battle in my time."];
+        v3 = ~Item_create(_Halberd);
+        v1 = ~PopToNPC(v0);
+    }
+    if (v2 = 8) {
+        ["Thou knowest thy weapons well."];
+        ["Sweet is the sight of a battle axe swinging in the pitch of battle."];
+        ["Lovely is the sound of bone crunching under its mighty arc."];
+        v3 = ~Item_create(_Axe_2H);
+        if v3 {
+            v1 = ~PopToNPC(v0);
+        }
+    }
+    v3 = ~Item_create(_Leath_Armour);
+    if v3 {
+        v1 = ~PopToNPC(v0);
+    }
+    v3 = ~Item_create(_Leath_Boots);
+    if v3 {
+        v1 = ~PopToNPC(v0);
+    }
+    v3 = ~Item_create(_Leath_Helm);
+    if v3 {
+        v1 = ~PopToNPC(v0);
+    }
+    v3 = ~Item_create(_Leath_Gloves);
+    if v3 {
+        v1 = ~PopToNPC(v0);
+    }
+    ["All right. If thou'lt follow me, then."];
+    CloseSpeaker0_i();
+    SetMusic(0, 34);
+    SetItemFlag_i(_DontMove_i, _Avatar);
+    EndConverse_i();
+    v4 = ~FindNearby_i(0, 35, _Pikeman, _Avatar);
+    Foreach v7 in v4 {
+        if (~GetNPCID_i(v7) = 9) {
+            goto label_34;
+        }
+    }
+    AbortTournament_i(20, v0);
+    label_34:
+    ClearBark_i(v7);
+    Bark_i(15, "@Follow me...@", v7);
+    v8 = ~FindNearby_i(0, 30, _I_Wall_Corner, v0);
+    Foreach v11 in v8 {
+        v12 = ~GetCoord(v11);
+        if ((v12::1 = 1012) and ((v12::2 = 2687) and (v12::3 = 6))) {
+            goto label_40;
+        }
+    }
+    AbortTournament_i(2, v0);
+    label_40:
+    v13 = << 65534, 65533, 65535 >>;
+    v14 = << 0, 0, 0 >>;
+    PathfindNPC_i(true, #Brendan2Usable, v0, _Pathfind2, << (v12::1 - 2), (v12::2 - 0), v12::3 >>, v7);
+}
+
+Routine DeclareWinner_i accepts a0, a1 #locals(10) #uses(~OrderList_i, ~InListField_i, NowSettleDownBoys, ~AvatarName, Bark_i, ~RemoveFromList_i) {
+    v2 = ~OrderList_i();
+    v2 = (v2 & 65180);
+    v3 = << >>;
+    Foreach v6 in v2 {
+        v3 = (v3 & ~NPCToItem_i(v6));
+    }
+    if not ((v1 in v3) or (v0 in v3)) {
+        return;
+    }
+    ClearSpeakers_i();
+    if (v1 in v3) {
+        SetAttackMode_i(_Fleeing, v0);
+        if not $TRAINING_FLAG_SET {
+            if ($LUTHER_CHALLENGED and ((v0 = ~NPCToItem_i(_Luther)) and (not $luthernowfriend and (v1 = ~NPCToItem_i(_Avatar))))) {
+                goto label_67;
+            } else {
+                ClearBark_i(v0);
+                Item_bark("@Thou hast beaten me!@", v0);
+            }
+            if ((not ~InListField_i(_Brendann) or (~InListField_i(_Brendann) and (~GetAttackMode_i(_Brendann) = _Fleeing))) and ((not ~InListField_i(_Luther) or (~InListField_i(_Luther) and (~GetAttackMode_i(_Luther) = _Fleeing))) and ((not ~InListField_i(_Shazzana) or (~InListField_i(_Shazzana) and (~GetAttackMode_i(_Shazzana) = _Fleeing))) and ((not ~InListField_i(_Caladin) or (~InListField_i(_Caladin) and (~GetAttackMode_i(_Caladin) = _Fleeing))) and (not ~InListField_i(_Templar) or (~InListField_i(_Templar) and (~GetAttackMode_i(_Templar) = _Fleeing))))))) {
+                SetSpeaker0_i(0, _Hazard);
+                v2 = ~GetNPCName_i(v1);
+                ["Nice show, <v2>, thou hast beaten us all! Where didst thou learn to fight like that?"];
+                v2 = (("@Hail, " + v2) + "!@");
+                v7 = ~FindNearby_i(8, 30, 65535, v1);
+                Foreach v0 in v7 {
+                    ClearBark_i(v0);
+                    Item_bark(v2, v0);
+                }
+                NowSettleDownBoys(v1);
+            } else {
+                $temp1flag = false;
+            }
+            goto label_45;
+        }
+        if (v0 = ~NPCToItem_i(_Luther)) {
+            if (($LUTHER_CHALLENGED and not $luthernowfriend) and (v1 = ~NPCToItem_i(_Avatar))) {
+                goto label_67;
+            }
+            if (~GetNPCID_i(_Luther) = 9) {
+                SetSpeaker0_i(0, _Luther);
+                ["Thou hast beaten me. I am impressed."];
+                CloseSpeaker0_i();
+                NowSettleDownBoys(v1);
+                return;
+            } else {
+                ClearBark_i(v0);
+                Item_bark("@Thou hast beaten me!@", v0);
+                $temp1flag = false;
+            }
+            return;
+        }
+        if (v0 = ~NPCToItem_i(_Shazzana)) {
+            if (~GetNPCID_i(_Shazzana) = 9) {
+                SetSpeaker0_i(0, _Shazzana);
+                ["Quite amazing. I have been beaten by thee! Perhaps it is time for the teacher to learn from the student."];
+                CloseSpeaker0_i();
+                NowSettleDownBoys(v1);
+                return;
+            } else {
+                Item_bark("@Thou hast bested me!@", v0);
+            }
+            return;
+        }
+        if (v0 = ~NPCToItem_i(_Brendann)) {
+            if (~GetNPCID_i(_Brendann) = 9) {
+                SetSpeaker0_i(0, _Brendann);
+                ["A good showing! Thou hast gotten lucky and bested me! Perhaps it is time for the master to learn from his student!!!"];
+                CloseSpeaker0_i();
+                NowSettleDownBoys(v1);
+                return;
+            } else {
+                ClearBark_i(_Brendann);
+                Item_bark("@Thou hast bested me again!@", v0);
+                $temp1flag = false;
+            }
+            return;
+        }
+        if (v0 = ~NPCToItem_i(_Caladin)) {
+            if (~GetNPCID_i(_Caladin) = 9) {
+                SetSpeaker0_i(0, _Caladin);
+                ["Thou hast gotten lucky and bested me! Do not consider this the image of the wilds. The goblins are fierce."];
+                CloseSpeaker0_i();
+                NowSettleDownBoys(v1);
+                return;
+            } else {
+                ClearBark_i(v0);
+                Item_bark("@I surrender to thee!@", v0);
+                $temp1flag = false;
+            }
+            return;
+        }
+        ClearBark_i(v0);
+        Item_bark("@I can take it no longer!@", v0);
+        $temp1flag = false;
+        return;
+        label_45:
+    } else {
+        if $TRAINING_FLAG_SET {
+            if (~GetNPCID_i(_Shazzana) = 9) {
+                SetSpeaker0_i(0, _Shazzana);
+                ["Thou hast been beaten by my blade. Remember this day, and learn."];
+                CloseSpeaker0_i();
+                NowSettleDownBoys(v0);
+                return;
+            }
+            if (~GetNPCID_i(_Luther) = 9) {
+                SetSpeaker0_i(0, _Luther);
+                ["Thou hast been beaten, as was expected. Though thou art insignificant, try to remember the lessons I have taught thee this day."];
+                CloseSpeaker0_i();
+                NowSettleDownBoys(v0);
+                return;
+            }
+            if (~GetNPCID_i(_Brendann) = 9) {
+                SetSpeaker0_i(0, _Brendann);
+                ["Thou made a good showing, but fell to my superior skill in the end. With more experience, thou wilt make a fine warrior."];
+                CloseSpeaker0_i();
+                NowSettleDownBoys(v0);
+                return;
+            }
+            if (~GetNPCID_i(_Caladin) = 9) {
+                SetSpeaker0_i(0, _Caladin);
+                ["I have overwhelmed thee with sheer strength. Learn from this lesson, my friend."];
+                CloseSpeaker0_i();
+                NowSettleDownBoys(v0);
+                return;
+            }
+        } else {
+            if (v1 = ~NPCToItem_i(_Shazzana)) {
+                SetSpeaker0_i(0, _Shazzana);
+                ["Thou hast lost this match."];
+                CloseSpeaker0_i();
+                NowSettleDownBoys(v0);
+                return;
+            }
+            if (v1 = ~NPCToItem_i(_Luther)) {
+                SetSpeaker0_i(0, _Luther);
+                ["Hah, I have bested thee. Away with thee!"];
+                CloseSpeaker0_i();
+                NowSettleDownBoys(v0);
+                return;
+            }
+            if (v1 = ~NPCToItem_i(_Brendann)) {
+                SetSpeaker0_i(0, _Brendann);
+                ["Thou hast been beaten in a fair spar. Perhaps now thou wilt be more humble."];
+                CloseSpeaker0_i();
+                NowSettleDownBoys(v0);
+                return;
+            }
+            if (v1 = ~NPCToItem_i(_Caladin)) {
+                SetSpeaker0_i(0, _Caladin);
+                ["Thou hast lost to my prowess."];
+                CloseSpeaker0_i();
+                NowSettleDownBoys(v0);
+                return;
+            }
+            if (v1 = ~NPCToItem_i(_Templar)) {
+                SetSpeaker0_i(0, _Templar);
+                ["I have beaten thee!"];
+                CloseSpeaker0_i();
+                NowSettleDownBoys(v0);
+                return;
+            }
+        }
+    }
+    return;
+    label_67:
+    SetSpeaker0_i(0, _Luther);
+    ["I wouldn't have believed it... thou didst beat me... in a fair fight..."];
+    v2 = ~AvatarName();
+    if ~AvatarSex() {
+        ["Thou art one hell of a warrior, <v2>!"];
+    } else {
+        ["Thou art a better man than I am, <v2>."];
+    }
+    RevertSchedule_i(_Luther);
+    $luthernowfriend = true;
+    v2 = ~ChangeNPCStat_i(18, _Str, _Luther);
+    v2 = ~ChangeNPCStat_i(9, _Cbt, _Luther);
+    v2 = ~ChangeNPCStat_i(8, _Dex, _Luther);
+    ClearBark_i(_Luther);
+    Bark_i(0, "@Hail the Avatar!@", _Luther);
+    v0 = ~FindNearby_i(8, 50, 65535, _Avatar);
+    v0 = ~RemoveFromList_i(v0, ~NPCToItem_i(_Luther));
+    Foreach v2 in v0 {
+        ClearBark_i(v2);
+        Bark_i(~rndRange(1, 0), "@Hail the Avatar!@", v2);
+    }
+    NowSettleDownBoys(v1);
+}
+
+Routine PathStudentToItem_i accepts a0, a1, a2, a3, a4, a5, a6, a7 #locals(1) #uses(PathToItem_i) {
+    if (v7 = ~NPCToItem_i(_Avatar)) {
+        PathToItem_i(v0, v1, v2, v3, v4, v5, v6);
+        SetPathFailure_i(_Path_Failure, v1, v2);
+    } else {
+        v8 = ~GetCoord(v6);
+        v8 = << (v8::1 + v5::1), (v8::2 + v4::1), v8::3 >>;
+        PathfindNPC_i(true, v2, v1, v0, v8, v7);
+    }
+}

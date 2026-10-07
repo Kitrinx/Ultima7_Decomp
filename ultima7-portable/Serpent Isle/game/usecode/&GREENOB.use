@@ -1,0 +1,43 @@
+Routine Green_Noble accepts a0 #locals(9) #uses(Bark_i) {
+    if $BANES_RELEASED {
+        ClearItemFlag_i(_Tournament, item);
+        v0 = ~PostAction(<< _aNO_HALT_i, _aHIT_i, 100, 0 >>, item);
+        terminate;
+    }
+    v1 = ~GetAttacker_i(item);
+    if (v1 = 0) {
+        v1 = ~NPCToItem_i(_Avatar);
+    } else {
+        v1 = ~NPCToItem_i((0 - v1));
+    }
+    v2 = ~GetParty();
+    if (v1 in v2) {
+        v0 = ~ChangeNPCStat_i(5, _Hits, item);
+        v3 = ~FindNearby_i(0, 30, _Fawn_Guard, _Avatar);
+        Foreach v6 in v3 {
+            SetWorkType(_Talk, v6);
+            SetNPCID_i(7, v6);
+        }
+        v7 = << "@Hold there!@", "@Cease!@", "@Murderer!@", "@Stop him!@", "@Arrest that dog!@", "@Ruffian!@" >>;
+        if v3 {
+            ClearBark_i(v3);
+            Bark_i(0, << v7::~Random(~ListSize_i(v7)) >>, v3);
+        }
+        if (~ListSize_i(v3) < 6) {
+            v8 = ~CreateCreature_i(<< 0, 0, 0 >>, _Fawn_Guard);
+            if v8 {
+                v0 = ~ApproachAvatar_i(40, 90, v8);
+                if v0 {
+                    SetNPCID_i(7, v8);
+                    SetWorkType(_Talk, v8);
+                }
+            }
+        }
+    } else {
+        v0 = ~ChangeNPCStat_i(20, _Hits, item);
+        ClearBark_i(item);
+        v7 = << "@Oh, my!@", "@I am bleeding...@", "@Oh, help me!@", "@Ouch!@", "@Fiend, stop that!@", "@I die!@" >>;
+        Bark_i(0, << v7::~Random(~ListSize_i(v7)) >>, item);
+        SetAttackMode_i(_Fleeing, item);
+    }
+}

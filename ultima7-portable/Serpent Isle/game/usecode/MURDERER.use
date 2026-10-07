@@ -1,0 +1,472 @@
+Routine Murder1 accepts a0 #locals(6) #uses(AutomatonUsable_i, ~LordOrLady, ~AvatarName, PartyFaces_i, Bark_i, ~AskYesNo, SayIfNear_i) {
+    if ~GetItemFlag_i(_Zombie, item) {
+        AutomatonUsable_i();
+        terminate;
+    }
+    v0 = ~LordOrLady();
+    v1 = ~AvatarName();
+    if (event = _Converse) {
+        Item_bark("@May we speak?@", _Avatar);
+        PartyFaces_i(65442);
+        Bark_i(2, (("@Yes, " + v0) + "?@"), _Murder1);
+        SetWorkType(_Talk, _Murder1);
+    }
+    if (event = _Talking) {
+        Npc_schedule(_Murder1);
+        ClearBark_i(_Murder1);
+        SetSpeaker0_i(0, _Murder1);
+        if flag(563) {
+            ["That hath made good use of thy Logic, <v0>. I would not have believed that one of our fellowship could have done such a thing. I thank thee for finding the traitor in our midst."];
+            ["Use the key to obtain the waters of Logic. Thou hast well earned that honor."];
+            terminate;
+        } else {
+            ["I am Number 1, <v0>. And I am sorry. Thou must postpone thy meditations, for the key to the fountain room cannot be found."];
+            ["I fear that someone hath destroyed Number 7, the keeper of the key!"];
+            TurnOn(<< "meditations", "destroyed", "accuse", "bye" >>);
+            converse {
+                key ("meditations") {
+                    TurnOff("meditations");
+                    ["Thy search for Logic can go no further until thou canst drink of the waters of Logic. And until the key to the fountain room is found, no one may taste the pure waters of Logic."];
+                }
+                key ("destroyed") {
+                    TurnOff("destroyed");
+                    ["I cannot make any accusations, but we are incapable of leaving our post. Something dire must have happened to Number 7."];
+                    ["I am restricted from taking action against any of my fellows, so it is up to thee to determine what hath befallen the keeper of the key."];
+                    ["For my part, I can say that I was with Number 2 and Number 6 when last we saw Number 7."];
+                }
+                key ("accuse") {
+                    ["I must warn thee, <v0>, we are each sworn to protect the other. If thou dost accuse me falsely, we shall attack thee."];
+                    ["If thou hast spoken to each of us and hast determined that one of us is guilty, accuse accordingly. But be not hasty in thy judgment."];
+                    ["Dost thou accuse me?"];
+                    if ~AskYesNo() {
+                        ["Thou hast no proof! Both Number 2 and Number 6 can attest that I was with them when Number 7 disappeared!"];
+                        SayIfNear_i("@Number 1 was with me!@", 65441);
+                        SayIfNear_i("@It cannot be! I was with Number 1!@", 65437);
+                        SetSpeakerSlot_i(0);
+                        ["Thou hast wronged me!"];
+                        v2 = << 65442, 65441, 65440, 65439, 65438, 65437 >>;
+                        Foreach v5 in v2 {
+                            Npc_setAlignment(_Chaotic, v5);
+                            SetWorkType(_Combat_0, v5);
+                            SetAttacker_i(v5, _Avatar);
+                        }
+                        terminate;
+                    } else {
+                        ["I hope that thou dost find what hath happened to Number 7, <v0>. We cannot fulfill our duty without the key."];
+                    }
+                }
+                key ("bye") {
+                    CloseSpeaker0_i();
+                    Bark_i(0, "@Many thanks!@", _Avatar);
+                    Bark_i(2, "@Use thy Logic!@", _Murder1);
+                    SetWorkType(_Loiter, _Murder1);
+                    break;
+                }
+            }
+            clear_answers;
+        }
+    }
+}
+
+Routine Murder2 accepts a0 #locals(6) #uses(AutomatonUsable_i, ~LordOrLady, ~AvatarName, PartyFaces_i, Bark_i, ~AskYesNo, SayIfNear_i) {
+    if ~GetItemFlag_i(_Zombie, item) {
+        AutomatonUsable_i();
+        terminate;
+    }
+    v0 = ~LordOrLady();
+    v1 = ~AvatarName();
+    if (event = _Converse) {
+        Item_bark("@May we speak?@", _Avatar);
+        PartyFaces_i(65441);
+        Bark_i(2, (("@Yes, " + v0) + "?@"), _Murder2);
+        SetWorkType(_Talk, _Murder2);
+    }
+    if (event = _Talking) {
+        Npc_schedule(_Murder2);
+        ClearBark_i(_Murder2);
+        SetSpeaker0_i(0, _Murder2);
+        if flag(563) {
+            ["That hath made good use of thy Logic, <v0>. I would not have believed that one of our fellowship could have done such a thing. I thank thee for finding the traitor in our midst."];
+            ["Use the key to obtain the waters of Logic. Thou hast well earned that honor."];
+            terminate;
+        } else {
+            ["Thou mayest call me Number 2, <v0>."];
+            ["I regret that thou canst not meditate, <v0>. The strange mage hath damaged the Temple and the key to the fountain room is nowhere to be found!"];
+            TurnOn(<< "strange mage", "damaged", "key", "accuse", "bye" >>);
+            converse {
+                key ("strange mage") {
+                    TurnOff("strange mage");
+                    ["He was a nasty-looking little man, <v0>. He and his vile companions came in here without regard for the sanctity of the Temple. It was shocking!"];
+                    TurnOn("companions");
+                }
+                key ("companions") {
+                    TurnOff("companions");
+                    ["I could not see them well, for the mage kept my fellows and I locked within an energy field while he went about his evil work."];
+                    ["All I can tell thee is that there were three of them. And one was very large and went heavily-cloaked."];
+                }
+                key ("damaged") {
+                    TurnOff("damaged");
+                    ["The mage destroyed the prison container that it was our duty to protect... Why in the name of Order he would ever do such a horrible thing, I do not know."];
+                    TurnOn("prison container");
+                }
+                key ("prison container") {
+                    TurnOff("prison container");
+                    ["I do not know what great evil was contained there, <v0>. But I know that it exhausted all of the Order Hierophant's magic to imprison it here."];
+                    ["Who knows what ill is now loose upon the world!"];
+                }
+                key ("key") {
+                    TurnOff("key");
+                    ["It was the duty of Number 7 to keep the key to the fountain room. It hath been quite a while since we last saw Number 7."];
+                    ["All I remember is that I was with Number 1 when last we saw Number 7. I wonder where he hath gone?"];
+                }
+                key ("accuse") {
+                    ["I must warn thee, <v0>, we are each sworn to protect the other. If thou dost accuse me falsely, we shall attack thee."];
+                    ["If thou hast spoken to each of us and hast determined that one of us is guilty, accuse accordingly. But be not hasty in thy judgment."];
+                    ["Dost thou accuse me?"];
+                    if ~AskYesNo() {
+                        ["Thou art wrong! Number 1 can tell thee where I was when Number 7 disappeared!"];
+                        SayIfNear_i("@Number 2 was with me, as was Number 6!@", 65442);
+                        SetSpeakerSlot_i(0);
+                        ["Thou shalt pay!"];
+                        v2 = << 65442, 65441, 65440, 65439, 65438, 65437 >>;
+                        Foreach v5 in v2 {
+                            Npc_setAlignment(_Chaotic, v5);
+                            SetWorkType(_Combat_0, v5);
+                            SetAttacker_i(v5, _Avatar);
+                        }
+                        terminate;
+                    } else {
+                        ["I hope that thou dost find what hath happened to Number 7, <v0>. We cannot fulfill our duty without the key."];
+                    }
+                }
+                key ("bye") {
+                    CloseSpeaker0_i();
+                    Bark_i(0, "@Goodbye!@", _Avatar);
+                    Bark_i(2, "@Use thy Logic!@", _Murder2);
+                    SetWorkType(_Loiter, _Murder2);
+                    break;
+                }
+            }
+            clear_answers;
+        }
+    }
+}
+
+Routine Murder3 accepts a0 #locals(6) #uses(AutomatonUsable_i, ~LordOrLady, ~AvatarName, PartyFaces_i, Bark_i, ~AskYesNo, SayIfNear_i) {
+    if ~GetItemFlag_i(_Zombie, item) {
+        AutomatonUsable_i();
+        terminate;
+    }
+    v0 = ~LordOrLady();
+    v1 = ~AvatarName();
+    if (event = _Converse) {
+        Item_bark("@May we speak?@", _Avatar);
+        PartyFaces_i(65440);
+        Bark_i(2, (("@Yes, " + v0) + "?@"), _Murder3);
+        SetWorkType(_Talk, _Murder3);
+    }
+    if (event = _Talking) {
+        Npc_schedule(_Murder3);
+        ClearBark_i(_Murder3);
+        SetSpeaker0_i(0, _Murder3);
+        if flag(563) {
+            ["That hath made good use of thy Logic, <v0>. I would not have believed that one of our fellowship could have done such a thing. I thank thee for finding the traitor in our midst."];
+            ["Use the key to obtain the waters of Logic. Thou hast well earned that honor."];
+            terminate;
+        } else {
+            ["We have failed to protect the Temple! We have failed to provide thee with the solitude to meditate! And no one hath seen Number 7 in ages!"];
+            ["I am not worthy of my Number 3! Where is Number 7, the keeper of the key?!"];
+            TurnOn(<< "protect", "solitude", "Number 7", "accuse", "bye" >>);
+            converse {
+                key ("protect") {
+                    TurnOff("protect");
+                    ["That is the duty of my fellows and I, to protect the Temple and assist those who come here to meditate on the pure waters of Logic. And we have failed!"];
+                }
+                key ("solitude") {
+                    TurnOff("solitude");
+                    ["No one would interfere with thy communion with the waters of Logic."];
+                }
+                key ("Number 7") {
+                    TurnOff("Number 7");
+                    ["Something must have happened to Number 7. Let me think, I was with Number 5 the last time any of us saw Number 7... and that was quite some time ago."];
+                    ["I fear we may never find the key to the fountain room now."];
+                }
+                key ("accuse") {
+                    ["I must warn thee, <v0>, we are each sworn to protect the other. If thou dost accuse me falsely, we shall attack thee."];
+                    ["If thou hast spoken to each of us and hast determined that one of us is guilty, accuse accordingly. But be not hasty in thy judgment."];
+                    ["Dost thou accuse me?"];
+                    if ~AskYesNo() {
+                        ["Thou art mad! I was with Number 5 when Number 7 disappeared!"];
+                        SayIfNear_i("@Number 3 was with me!@", 65438);
+                        SetSpeakerSlot_i(0);
+                        ["I shall make thee bleed!"];
+                        v2 = << 65442, 65441, 65440, 65439, 65438, 65437 >>;
+                        Foreach v5 in v2 {
+                            Npc_setAlignment(_Chaotic, v5);
+                            SetWorkType(_Combat_0, v5);
+                            SetAttacker_i(v5, _Avatar);
+                        }
+                        terminate;
+                    } else {
+                        ["I hope that thou dost find what hath happened to Number 7, <v0>. We cannot fulfill our duty without the key."];
+                    }
+                }
+                key ("bye") {
+                    CloseSpeaker0_i();
+                    Bark_i(0, "@Fare well!@", _Avatar);
+                    Bark_i(2, "@Use thy Logic!@", _Murder3);
+                    SetWorkType(_Loiter, _Murder3);
+                    break;
+                }
+            }
+            clear_answers;
+        }
+    }
+}
+
+Routine Murder4 accepts a0 #locals(3) #uses(AutomatonUsable_i, ~LordOrLady, ~AvatarName, PartyFaces_i, Bark_i, ~AskYesNo, SayIfNear_i, ~GiveItemsOrDrop_i) {
+    if ~GetItemFlag_i(_Zombie, item) {
+        AutomatonUsable_i();
+        terminate;
+    }
+    v0 = ~LordOrLady();
+    v1 = ~AvatarName();
+    if (event = _Converse) {
+        Item_bark("@May we speak?@", _Avatar);
+        PartyFaces_i(65439);
+        Bark_i(2, (("@Yes, " + v0) + "?@"), _Murder4);
+        SetWorkType(_Talk, _Murder4);
+    }
+    if (event = _Talking) {
+        Npc_schedule(_Murder4);
+        ClearBark_i(_Murder4);
+        SetSpeaker0_i(0, _Murder4);
+        if flag(563) {
+            ["Thou hast ruined it all! Die!"];
+            Npc_setAlignment(_Chaotic, _Murder4);
+            SetWorkType(_Combat_0, _Murder4);
+            SetAttacker_i(_Murder4, _Avatar);
+            terminate;
+        } else {
+            ["Number 7 hath abandoned his post! The key is gone!"];
+            ["None shall seek the fountain to meditate again!"];
+            TurnOn(<< "abandoned", "fountain", "accuse", "name", "bye" >>);
+            converse {
+                key ("abandoned") {
+                    TurnOff("abandoned");
+                    ["Why else would Number 7 not be here, unless someone hath destroyed him? If Number 7 were fulfilling his duties, we would have the key to allow thee to meditate... as is our sworn duty."];
+                    ["The last time any of us saw Number 7, I was with Number 2... And that was some time ago."];
+                }
+                key ("fountain") {
+                    TurnOff("fountain");
+                    ["The fountain contains the precious waters of Logic, pure and sweet and crystal clear. It is our duty to protect it from all who would muddy its waters."];
+                }
+                key ("name") {
+                    TurnOff("name");
+                    ["Thou mayest call me Number 4, <v0>."];
+                }
+                key ("accuse") {
+                    ["I must warn thee, <v0>, we are each sworn to protect the other. If thou dost accuse me falsely, we shall attack thee."];
+                    ["If thou hast spoken to each of us and hast determined that one of us is guilty, accuse accordingly. But be not hasty in thy judgment."];
+                    ["Dost thou accuse me?"];
+                    if ~AskYesNo() {
+                        ["What art thou saying?! I was with Number 2 when Number 7 disappeared!"];
+                        SayIfNear_i("@That is a lie! I was with Number 1 and Number 6, not Number 4!@", 65441);
+                        SetSpeakerSlot_i(0);
+                        ["Thou hast caught me! Very well... the key is thine."];
+                        v2 = ~GiveItemsOrDrop_i(true, false, 5, 70, 641, 1, _Avatar);
+                        ["I confess. It was I that destroyed Number 7... as I shall destroy thee! I should have been the keeper of the key all along! Number 7 was wrong not to give it to me!"];
+                        Npc_setAlignment(_Chaotic, _Murder4);
+                        SetWorkType(_Combat_0, _Murder4);
+                        SetAttacker_i(_Murder4, _Avatar);
+                        flag(563) = true;
+                        terminate;
+                    } else {
+                        ["I hope that thou dost find what hath happened to Number 7, <v0>. We cannot fulfill our duty without the key."];
+                    }
+                }
+                key ("bye") {
+                    CloseSpeaker0_i();
+                    Bark_i(0, "@Until later...@", _Avatar);
+                    Bark_i(2, "@Use thy Logic!@", _Murder4);
+                    SetWorkType(_Loiter, _Murder4);
+                    break;
+                }
+            }
+            clear_answers;
+        }
+    }
+}
+
+Routine Murder5 accepts a0 #locals(6) #uses(AutomatonUsable_i, ~LordOrLady, ~AvatarName, PartyFaces_i, Bark_i, ~AskYesNo, SayIfNear_i) {
+    if ~GetItemFlag_i(_Zombie, item) {
+        AutomatonUsable_i();
+        terminate;
+    }
+    v0 = ~LordOrLady();
+    v1 = ~AvatarName();
+    if (event = _Converse) {
+        Item_bark("@May we speak?@", _Avatar);
+        PartyFaces_i(65438);
+        Bark_i(2, (("@Yes, " + v0) + "?@"), _Murder5);
+        SetWorkType(_Talk, _Murder5);
+    }
+    if (event = _Talking) {
+        Npc_schedule(_Murder5);
+        ClearBark_i(_Murder5);
+        SetSpeaker0_i(0, _Murder5);
+        if flag(563) {
+            ["That hath made good use of thy Logic, <v0>. I would not have believed that one of our fellowship could have done such a thing. I thank thee for finding the traitor in our midst."];
+            ["Use the key to obtain the waters of Logic. Thou hast well earned that honor."];
+            terminate;
+        } else {
+            ["Where is the justice in the world when a strange mage comes to destroy our Temple and disrupt our peace?! Where is the keeper of the key?"];
+            TurnOn(<< "justice", "strange mage", "disrupt", "keeper of the key", "accuse", "bye" >>);
+            converse {
+                key ("justice") {
+                    TurnOff("justice");
+                    ["Thou mayest call me Number 5, for I no longer bear a mortal name. I surrendered that when I swore myself to eternal service at the fountain of Logic."];
+                    ["I am bound for all time and eternity in a body that will never age, and now I cannot fulfill my vows! Where is the justice in living forever with broken vows?"];
+                }
+                key ("strange mage") {
+                    TurnOff("strange mage");
+                    ["He was a rude, fat man, <v0>. I assumed he came seeking Logic, but I should have realized that one such as he would not be interested in the clarity of Logic."];
+                }
+                key ("disrupt") {
+                    TurnOff("disrupt");
+                    ["Long ago, the Order Hierophant bound a force of great evil into a prison and placed it here for us to guard."];
+                    ["What peace is left for us here, guardians of an empty shell now that the mage hath loosed what once was captive?"];
+                    TurnOn("force of great evil");
+                }
+                key ("force of great evil") {
+                    TurnOff("force of great evil");
+                    ["I do not know what it was, <v0>. I am sorry. It was not my place to ask if the Hierophant did not choose to tell me."];
+                    ["I can only hope that the failure of my fellows and I hath not endangered the world too greatly."];
+                }
+                key ("keeper of the key") {
+                    TurnOff("keeper of the key");
+                    ["Perhaps the mage waylaid Number 7 to steal the key..."];
+                    ["But no, that cannot be. For Number 7 disappeared the day I was with Number 3, long before the strange mage came."];
+                }
+                key ("accuse") {
+                    ["I must warn thee, <v0>, we are each sworn to protect the other. If thou dost accuse me falsely, we shall attack thee."];
+                    ["If thou hast spoken to each of us and hast determined that one of us is guilty, accuse accordingly. But be not hasty in thy judgment."];
+                    ["Dost thou accuse me?"];
+                    if ~AskYesNo() {
+                        ["Lies! Number 3 will remember that we were together when Number 7 disappeared!"];
+                        SayIfNear_i("@It is true, Number 5 was with me!@", 65440);
+                        SetSpeakerSlot_i(0);
+                        ["I shall have thine head for this outrage!"];
+                        v2 = << 65442, 65441, 65440, 65439, 65438, 65437 >>;
+                        Foreach v5 in v2 {
+                            Npc_setAlignment(_Chaotic, v5);
+                            SetWorkType(_Combat_0, v5);
+                            SetAttacker_i(v5, _Avatar);
+                        }
+                        terminate;
+                    } else {
+                        ["I hope that thou dost find what hath happened to Number 7, <v0>. We cannot fulfill our duty without the key."];
+                    }
+                }
+                key ("bye") {
+                    CloseSpeaker0_i();
+                    Bark_i(0, "@Many thanks!@", _Avatar);
+                    Bark_i(2, "@Use thy Logic!@", _Murder5);
+                    SetWorkType(_Loiter, _Murder5);
+                    break;
+                }
+            }
+            clear_answers;
+        }
+    }
+}
+
+Routine Murder6 accepts a0 #locals(6) #uses(AutomatonUsable_i, ~LordOrLady, ~AvatarName, PartyFaces_i, Bark_i, ~AskYesNo, SayIfNear_i) {
+    if ~GetItemFlag_i(_Zombie, item) {
+        AutomatonUsable_i();
+        terminate;
+    }
+    v0 = ~LordOrLady();
+    v1 = ~AvatarName();
+    if (event = _Converse) {
+        Item_bark("@May we speak?@", _Avatar);
+        PartyFaces_i(65437);
+        Bark_i(2, (("@Yes, " + v0) + "?@"), _Murder6);
+        SetWorkType(_Talk, _Murder6);
+    }
+    if (event = _Talking) {
+        Npc_schedule(_Murder6);
+        ClearBark_i(_Murder6);
+        SetSpeaker0_i(0, _Murder6);
+        if flag(563) {
+            ["That hath made good use of thy Logic, <v0>. I would not have believed that one of our fellowship could have done such a thing. I thank thee for finding the traitor in our midst."];
+            ["Use the key to obtain the waters of Logic. Thou hast well earned that honor."];
+            terminate;
+        } else {
+            ["Thou mayest call me Number 6, <v0>. Long have we searched for the one who held the key to the fountain room, <v0>. But Number 7 hath disappeared and we are failures."];
+            TurnOn(<< "Number 7", "failures", "accuse", "bye" >>);
+            converse {
+                key ("Number 7") {
+                    TurnOff("Number 7");
+                    ["Number 7 was the keeper of the key to the fountain room, <v0>. His was the greatest duty -- to insure that no one defiled the waters of Logic."];
+                    ["None of us have seen Number 7 since the day that I was with Number 1."];
+                }
+                key ("failures") {
+                    TurnOff("failures");
+                    ["Although the waters of Logic are safe, without the key to the fountain room, we can no longer aid those who come seeking Logic. Therefore, we have failed."];
+                }
+                key ("accuse") {
+                    ["I must warn thee, <v0>, we are each sworn to protect the other. If thou dost accuse me falsely, we shall attack thee."];
+                    ["If thou hast spoken to each of us and hast determined that one of us is guilty, accuse accordingly. But be not hasty in thy judgment."];
+                    ["Dost thou accuse me?"];
+                    if ~AskYesNo() {
+                        ["Where is thy Logic?! Both Number 2 and Number 1 can attest that I was with them when Number 7 disappeared!"];
+                        SayIfNear_i("@Number 1 was with me!@", 65442);
+                        SayIfNear_i("@It cannot be! I was with Number 1!@", 65441);
+                        SetSpeakerSlot_i(0);
+                        ["Thou shalt regret thy words!"];
+                        v2 = << 65442, 65441, 65440, 65439, 65438, 65437 >>;
+                        Foreach v5 in v2 {
+                            Npc_setAlignment(_Chaotic, v5);
+                            SetWorkType(_Combat_0, v5);
+                            SetAttacker_i(v5, _Avatar);
+                        }
+                        terminate;
+                    } else {
+                        ["I hope that thou dost find what hath happened to Number 7, <v0>. We cannot fulfill our duty without the key."];
+                    }
+                }
+                key ("bye") {
+                    CloseSpeaker0_i();
+                    Bark_i(0, "@Until later...@", _Avatar);
+                    Bark_i(2, "@Use thy Logic!@", _Murder6);
+                    SetWorkType(_Loiter, _Murder6);
+                    break;
+                }
+            }
+            clear_answers;
+        }
+    }
+}
+
+Routine Murder7 accepts a0 #locals(3) #uses(~LordOrLady, ~AvatarName, PartyFaces_i, Bark_i) {
+    v0 = ~GetNPCID_i(_Murder7);
+    v1 = ~LordOrLady();
+    v2 = ~AvatarName();
+    if (event = _Converse) {
+        Item_bark("@May we speak?@", _Avatar);
+        PartyFaces_i(65352);
+        Bark_i(2, (("@Yes, " + v1) + "?@"), _Murder7);
+        SetWorkType(_Talk, _Murder7);
+    }
+    if (event = _Talking) {
+        Npc_schedule(_Murder7);
+        SetSpeaker0_i(0, _Murder7);
+        ["What... hath... happened? Where... am I? Who am I?"];
+        ["I remember! I am Number 7!"];
+        ["Oh, foul betrayal! Number 4 murdered me and took the key!"];
+        ["He must not be allowed to hold the hallowed key!!"];
+        Bark_i(0, "@Stop him!@", item);
+        CloseSpeaker0_i();
+    }
+}

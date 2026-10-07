@@ -1,0 +1,720 @@
+Routine Spektor accepts a0 #locals(13) #uses(~LordOrLady, ~AvatarName, Bark_i, ~RemoveFromList_i, PartyFaces_i, FaceAvatar_i, ~PartyUtters, ~AskYesNo, ~IsInInv, ~TransferItems_i, ~GiveItemsOrDrop_i, SpektorChangesMoney_i) {
+    v0 = ~LordOrLady();
+    v1 = ~AvatarName();
+    if ((event = _Path_Success) or (event = _Path_Failure)) {
+        SetWorkType(_Wander, _Spektor);
+    }
+    if (event = _Bark) {
+        if $spektorarrested {
+            v2 = ~rndRange(3, 1);
+            if (v2 = 1) {
+                Item_bark("@My money...@", _Spektor);
+            }
+            if (v2 = 2) {
+                Item_bark("@It was his plan!@", _Spektor);
+                if ~IsNPCNear_i(_Marsten) {
+                    Bark_i(3, "@Quiet!@", _Marsten);
+                }
+            }
+            if (v2 = 3) {
+                Item_bark("@I hate thee!@", _Spektor);
+            }
+        } else {
+            v3 = << 65473, 65386 >>;
+            if not $marstenarrested {
+                v3 = (v3 & 65467);
+            } else {
+                v3 = (v3 & 65462);
+            }
+            Foreach v6 in v3 {
+                if not ~IsNPCNear_i(v6) {
+                    v3 = ~RemoveFromList_i(v3, v6);
+                }
+            }
+            if (v3 = << >>) {
+                terminate;
+            }
+            ClearBark_i(_Spektor);
+            v7 = v3::~Random(~ListSize_i(v3));
+            ClearBark_i(v7);
+            v8 = ~Random(6);
+            if (v8 = 1) {
+                Item_bark("@Stop the rumors!@", _Spektor);
+                Bark_i(3, "@Impossible.@", v7);
+            }
+            if (v8 = 2) {
+                Item_bark("@Must write this down.@", _Spektor);
+            }
+            if (v8 = 3) {
+                if ~GetItemFlag_i(_Dead, _GoblinKing) {
+                    Item_bark("@The Goblins are weak.@", v7);
+                    Bark_i(3, "@Be cautious...@", _Spektor);
+                } else {
+                    Item_bark("@Where are the Goblins?@", v7);
+                    Bark_i(3, "@Send a patrol.@", _Spektor);
+                }
+            }
+            if (v8 = 4) {
+                if not $spektorconfessed {
+                    Item_bark("@A storm approaches.@", _Spektor);
+                    Bark_i(3, "@Another one?@", v7);
+                    SetWeather_i(_Rain);
+                } else {
+                    Item_bark("@I am not a thief.@", _Spektor);
+                    Bark_i(3, "@Of course not.@", v7);
+                }
+            }
+            if (v8 = 5) {
+                if $simonshedsskin {
+                    Item_bark("@Poor Simon...@", _Spektor);
+                    Bark_i(2, "@But he was a traitor!@", v7);
+                } else {
+                    if $marstenarrested {
+                        Item_bark("@Kill Marsten now!@", _Spektor);
+                        Bark_i(2, "@Why so hastily?@", v7);
+                    } else {
+                        Item_bark("@There is no traitor.@", _Spektor);
+                        Bark_i(2, "@I disagree.@", v7);
+                    }
+                }
+            }
+            if (v8 = 6) {
+                Item_bark("@Money is short.@", _Spektor);
+            }
+        }
+    }
+    if ((event = _NearDeath) and ~GetItemFlag_i(_Tournament, _Spektor)) {
+        if $knowspektorguilty {
+            SetSpeaker0_i(0, _Spektor);
+            ["Very well, I have been found out. Listen to my secrets, brute, for I must confess all with my dying breath..."];
+            ["Yes, Marsten and I did plot with the Goblins -- but we did think to cheat them in the end! Then the Leopards would have ruled Monitor."];
+            ["And it was I who stole from the town treasury, for we needed the money to acquire a cache of powerful weapons -- explosive weapons..."];
+            ["The blood of Cantra's father weighs upon my soul. He did stumble into our secret, so he had to be killed. If our secret had not been protected, Marsten would have killed me."];
+            ClearItemFlag_i(_Tournament, _Spektor);
+            ReduceHits_i(0, 50, _Spektor);
+            $spektorconfessed = true;
+            terminate;
+        } else {
+            v9 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #Paladin >>, item);
+        }
+    }
+    if ((event = _Converse) and (~GetWorkType(_Spektor) <> _Wait)) {
+        Item_bark("@Greetings, milord.@", _Avatar);
+        PartyFaces_i(65459);
+        if $spektorarrested {
+            SetWorkType(_Wait, _Spektor);
+            Bark_i(2, "@Not thee!@", _Spektor);
+            FaceAvatar_i(65459);
+            v9 = ~PostInFuture(7, << _aNO_HALT_i, _aUSABLE_i, #Spektor >>, _Spektor);
+            terminate;
+        }
+        Bark_i(2, "Yes?", _Spektor);
+        SetWorkType(_Talk, _Spektor);
+    }
+    if (event = _Action) {
+        goto label_54;
+    }
+    if (event = _Talking) {
+        label_54:
+        Npc_schedule(_Spektor);
+        ClearBark_i(_Spektor);
+        SetSpeaker0_i(0, _Spektor);
+        if $spektorarrested {
+            if $spektorconfessed {
+                ["Mine actions stand beyond the shallow morality of any tribunal. No court can condemn me. The only crime of which I am truly guilty is that I allowed myself to be caught."];
+            } else {
+                ["Very well, I have been found out. There is no point in denying my guilt any longer. It was I who stole the money from the treasury."];
+                ["I was in league with Lord Marsten, who schemed to become King of Monitor. The Bears and Wolves would have been powerless!"];
+                ["Cantra's father stumbled into our secret cave, so he had to be killed. If the secret of the explosive weapons had been revealed, Marsten would have killed me..."];
+                $spektorconfessed = true;
+            }
+        } else {
+            v10 = ~GetItemFlag_i(_Met, _Spektor);
+            if v10 {
+                ["Yes, how may I help?"];
+            } else {
+                ["I am Spektor, treasurer of Monitor."];
+                SetItemFlag_i(_Met, _Spektor);
+            }
+            TurnOn(<< "duties", "exchange coins" >>);
+            if ($KNOW_MARSTEN_IS_TRAITOR and not ($marstenarrested or $gavespektorevidence)) {
+                TurnOn("know traitor");
+            }
+            if ($askspektorcoins and not $KNOWS_FILARI_OWNER) {
+                TurnOn("strange coins");
+            }
+            if $spektorknowsgwenno {
+                TurnOn("Gwenno");
+            }
+            if not ($IOLO_MADE_EQUIPMENT_LIST and $KNOWS_IOLO_IMPRISONED) {
+                TurnOn("enchanter");
+            }
+            if ($gavespektorevidence and not $marstenarrested) {
+                TurnOn("evidence");
+            }
+            if ($heardaboutthief and not $spektorconfessed) {
+                TurnOn("thief");
+            }
+        }
+        TurnOn("bye");
+        converse {
+            key ("duties") {
+                TurnOff("duties");
+                ["Frankly, I do so many things. I am Monitor's treasurer. Lord Marsten may order things done, but I must find a way to pay for it all!"];
+                ["I handle the books and the paperwork, and I'm the local money exchanger. I also collect and administer the taxes."];
+                ["Frankly, I'm not much of a fighter, even though I am a Knight."];
+                TurnOn(<< "taxes", "Knight", "exchange coins" >>);
+            }
+            key ("taxes") {
+                TurnOff("taxes");
+                ["Our Pikemen patrol the major roads connecting Monitor with Fawn and Sleeping Bull, and man the guard towers."];
+                ["In better times, caravans travelled these routes, and we collected a fat reward from merchants eager for our protection."];
+                if ~GetItemFlag_i(_Dead, _GoblinKing) {
+                    ["With the Goblin King slain, perhaps the roads will again be filled. But the storms also discourage travel..."];
+                } else {
+                    ["But now, the rumors of a gathering Goblin invasion have scared the travellers off the roads! Frankly, this is nonsense."];
+                    TurnOn("invasion");
+                }
+            }
+            key ("invasion") {
+                TurnOff("invasion");
+                ["The Knights of Monitor have repelled such Goblin aggressions successfully in the past and they shall do so again."];
+            }
+            key ("Knight") {
+                TurnOff("Knight");
+                ["Well, I dutifully passed the Test of Knighthood when I was fifteen. But frankly, not everyone was born to be a Knight. I admit it."];
+                ["What I am is an intellectual. Other Knights may scoff, but I don't care. I might be an easy target on the List Field, but in a debate I'm a killer!"];
+                if not $doneknightstest {
+                    ["Perhaps thou shouldst consider taking the Test of Knighthood. It is not so difficult, with proper training."];
+                    ["We citizens are so much nicer to thee when thou art a Knight, rather than a stranger. We distrust outsiders."];
+                    TurnOn("Test of Knighthood");
+                }
+            }
+            key ("thief") {
+                TurnOff("thief");
+                ["Yes, frankly, 'tis true. But I do not like to talk about it."];
+                ["Someone in Monitor is a thief. Money is being taken from the treasury. 'Tis a mystery."];
+                ["The Bears think the Wolves are responsible. And, of course, the Wolves think the Bears are responsible. We Leopards are doing our best to keep them from killing each other."];
+                ["Please keep this to thyself. Only a few select individuals are aware of this crime. Frankly, we do not want a panic."];
+                TurnOn(<< "Bears", "Wolves", "Leopards", "frankly" >>);
+            }
+            key ("Leopards", "Wolves", "Bears") {
+                TurnOff(<< "Bears", "Wolves", "Leopards" >>);
+                ["I tire of this entire system. Wolves! Bears! Leopards! Why can we not be united, rather than divided into Commands?"];
+                ["I am a Leopard, and frankly, we're the only level- headed ones. When a Leopard like Lord Marsten is in residence as Lord of Monitor, things are much more in... balance."];
+                ["As for the Wolves and the Bears, they are like children. "];
+            }
+            key ("frankly") {
+                TurnOff("frankly");
+                ["Yes, I do say that a lot, do I not? I apologize. 'Tis a bad habit. Frankly... er, to tell the truth, I should stop."];
+            }
+            key ("Gwenno") {
+                TurnOff("Gwenno");
+                ["There was a woman here a while ago who spent much time in the Hall of Monitor, examining our museum display. Very friendly."];
+                v7 = ~PartyUtters(false, 0, "@Where did she go from here? Dost thou know?@", 65533);
+                if (v7 <> 65180) {
+                    SetSpeakerSlot_i(0);
+                }
+                ["She left here for the east. To study at the library on Monk Isle, as I recall."];
+                TurnOn("Monk Isle");
+                v7 = ~PartyUtters(false, 0, "@Avatar! We must journey onward and find her!@", 65533);
+                if (v7 <> 65180) {
+                    SetSpeakerSlot_i(0);
+                }
+            }
+            key ("Monk Isle") {
+                TurnOff("Monk Isle");
+                ["Frankly, 'tis a mysterious place. I do not know much about it, except the legend that wise monks dwell there."];
+                ["The only way to go there is by ship, but there are no sailors here -- the storms have discouraged them."];
+                ["Perhaps thou couldst hire a captain in Fawn -- which is the city of fishermen -- or at the hamlet of Sleeping Bull."];
+                TurnOn(<< "Fawn", "Sleeping Bull" >>);
+            }
+            key ("Fawn") {
+                TurnOff("Fawn");
+                ["Fawn is a coastal town filled with the worshippers of beauty. Frankly, I find those people to be a little too superficial for my liking."];
+            }
+            key ("Sleeping Bull") {
+                TurnOff("Sleeping Bull");
+                ["The inn there is a very old establishment, built in the days before the founding of the Three Cities. The village is built around the inn."];
+                ["Since it is such a crossroads, thou canst often meet all sorts of interesting folk there. And it is the direct link to the City of Mages."];
+                TurnOn("City of Mages");
+            }
+            key ("City of Mages") {
+                TurnOff("City of Mages");
+                ["A place where I shall never be seen! I distrust magic in all its forms."];
+                ["Moonshade is on the Isle of Beyond, which is across the channel from Sleeping Bull. Thou wouldst need a boat to journey there."];
+                if not $gotspellbook {
+                    v7 = ~PartyUtters(false, 0, "@Perhaps thou couldst obtain a new spellbook there...@", 65533);
+                    if (v7 <> 65180) {
+                        SetSpeakerSlot_i(0);
+                    }
+                }
+            }
+            key ("Test of Knighthood") {
+                TurnOff("Test of Knighthood");
+                ["'Tis actually quite easy. Do not believe what the Knights will tell thee. Frankly, if I can pass it, anyone can!"];
+                ["If thou desirest to know more, I would suggest speaking with Caladin. He is the instructor for young Knight candidates."];
+                ["Also, thou couldst speak with little Cantra. She is preparing to take the Test next month, and is full of information."];
+            }
+            key ("know traitor") {
+                TurnOff("know traitor");
+                if $knowspektorguilty {
+                    ["What!? What dost thou mean? Art thou calling me a traitor? I may not be much of a fighter, but I can defend myself!"];
+                    SetWorkType(_Shy, _Spektor);
+                    Bark_i(0, "@Beware!@", _Spektor);
+                    terminate;
+                } else {
+                    ["Marsten is the traitor? This is too incredible to believe. Hast thou proof?"];
+                    if ~AskYesNo() {
+                        ["I must see this. Might I see the evidence?"];
+                        if not (~IsInInv(65177, 120, _Scroll, 1, _Party) or (~IsInInv(65177, 121, _Scroll, 1, _Party) or ~IsInInv(65177, 122, _Scroll, 1, _Party))) {
+                            v7 = ~PartyUtters(false, "@I did not bring it.@", "@We did not bring it with us...@", 65533);
+                            SetSpeakerSlot_i(0);
+                            ["Then I can do nothing for thee. Unseen evidence is useless evidence."];
+                        } else {
+                            if ~AskYesNo() {
+                                v9 = ~TransferItems_i(0, 65177, 120, _Scroll, 1, _Spektor, _Party);
+                                v9 = ~TransferItems_i(0, 65177, 121, _Scroll, 1, _Spektor, _Party);
+                                v9 = ~TransferItems_i(0, 65177, 122, _Scroll, 1, _Spektor, _Party);
+                                ["I shall study this evidence, and if thou art right, I will bring it before the other Lords."];
+                                $gavespektorevidence = true;
+                                ["Now leave me, so that I may peruse this matter."];
+                                Bark_i(0, "@Let me be.@", _Spektor);
+                                terminate;
+                            } else {
+                                ["Then I can do nothing for thee. Unseen evidence is useless evidence."];
+                            }
+                        }
+                    } else {
+                        ["Then be on thy way! Marsten is the traitor -- what a lark!"];
+                        Bark_i(0, "@Don't waste my time...@", _Spektor);
+                        terminate;
+                    }
+                }
+            }
+            key ("evidence") {
+                TurnOff("evidence");
+                ["Give me time, <v0>! Such matters are not quickly resolved."];
+                Bark_i(0, "@More time!@", _Spektor);
+                terminate;
+            }
+            key ("enchanter") {
+                TurnOff("enchanter");
+                if $gotcellkey {
+                    ["I am still not certain if we can trust Iolo, that enchanter friend of thine. Tell him he had better be on his best behavior. That is a friendly warning."];
+                } else {
+                    if $MARSTEN_WONT_RELEASE_IOLO {
+                        ["Perhaps thou shouldst pay me, say -- a fine -- yes, a fine! That's it. To pay for this rogue Iolo's misdeeds. After all, I am the city treasurer, thou dost know. So t'would be most proper."];
+                        TurnOn("fine");
+                    } else {
+                        ["Oh, thou must be speaking of that wild rogue mage that was recently arrested trying to disrupt Groat's funeral! I believe he said his name was Iolo. Thou shouldst speak with Lord Marsten. He dealt with him."];
+                    }
+                }
+            }
+            key ("fine") {
+                TurnOff("fine");
+                ["Wouldst thou be willing to pay a fine of 30 Monetari?"];
+                v11 = ~AskYesNo();
+                if v11 {
+                    v12 = ~TakeFromParty_i(false, _All, _All, _Monitor_Money, 30);
+                    if v12 {
+                        ["Very well. Here is the key to the offender's cell. Tell him to consider himself lucky. Seldom is the town of Monitor so forgiving of the trespasses of others."];
+                        v9 = ~GiveItemsOrDrop_i(true, 0, 0, 104, 641, 1, _Avatar);
+                        $gotcellkey = true;
+                    } else {
+                        ["Thou dost not have 30 Monetari! Art thou trying to swindle me! Bah!"];
+                        terminate;
+                    }
+                } else {
+                    ["So! Thy friend is not worth the price of justice, eh? Then let him rot!"];
+                }
+            }
+            key ("exchange coins") {
+                SpektorChangesMoney_i();
+            }
+            key ("strange coins") {
+                TurnOff("strange coins");
+                ["The coins thou hast described are the currency of the city of Fawn. But where thou mayest have gotten them, without travelling to Fawn, I haven't a clue!"];
+            }
+            key ("bye") {
+                CloseSpeaker0_i();
+                CloseSpeaker1_i();
+                Bark_i(0, "Goodbye!", _Avatar);
+                Bark_i(2, "Go in Courage!", _Spektor);
+                break;
+            }
+        }
+        clear_answers;
+    }
+}
+
+Usable SpektorChangesMoney_i #locals(16) #uses(~AskYesNo, ~AskList, ~IsInInv, ~GiveItemsOrDrop_i) {
+    v0 = true;
+    ["To barter coins, I charge a small fee of the money exchanged. Dost thou agree?"];
+    if ~AskYesNo() {
+        While v0 {
+            ["What coinage dost thou desire?"];
+            v1 = ~AskList(<< "Monetari", "Guilders", "Filari", "Gold Coins" >>);
+            if (v1 = "Monetari") {
+                ["What dost thou care to exchange for monetari?"];
+                v2 = 951;
+                v3 = << "Nothing" >>;
+                if ~IsInInv(65177, 65177, _Moon_Money, 1, _Party) {
+                    v3 = (v3 & "Guilders");
+                }
+                if ~IsInInv(65177, 65177, _Fawn_Money, 1, _Party) {
+                    v3 = (v3 & "Filari");
+                }
+                if ~IsInInv(65177, 65177, _Gold_Coins, 1, _Party) {
+                    v3 = (v3 & "Gold Coins");
+                }
+                v4 = ~AskList(v3);
+                if (v4 = "Nothing") {
+                    ["Thou shouldst not waste my time so! I am a busy man!"];
+                    terminate;
+                }
+                if (v4 = "Guilders") {
+                    ["I can give thee 1 monetari for every 3 guilders thou hast."];
+                    v5 = 952;
+                }
+                if (v4 = "Filari") {
+                    ["I can give thee 1 monetari for every 4 filari thou hast."];
+                    v5 = 948;
+                }
+                if (v4 = "Gold Coins") {
+                    ["I can give thee 1 monetari for every 2 gold coins thou hast."];
+                    v5 = 644;
+                }
+                ["Dost thou agree to my rate?"];
+                if (~AskYesNo() = true) {
+                    v6 = ~CountItem(_All, _All, v5, _Party);
+                    if (v6 > 500) {
+                        v6 = 500;
+                    }
+                    if (v6 <> 0) {
+                        ["How many <v4> wouldst thou like to exchange?"];
+                        v7 = ~AskBarInput(0, 1, v6, 0);
+                        if (v7 = 0) {
+                            ["Please make up thy mind!"];
+                            goto label_173;
+                        }
+                        if (v4 = "Guilders") {
+                            v8 = (v7 / 3);
+                            v9 = 6;
+                        }
+                        if (v4 = "Filari") {
+                            v8 = (v7 / 4);
+                            v9 = 8;
+                        }
+                        if (v4 = "Gold Coins") {
+                            v8 = (v7 / 2);
+                            v9 = 4;
+                        }
+                        v10 = (v8 / 25);
+                        v11 = (v8 - v10);
+                        if (v8 = 0) {
+                            ["Thou must offer at least <v9> <v4> to exchange for <v1>!"];
+                            goto label_173;
+                        }
+                        if (v8 = 1) {
+                            ["My fee will leave thee with nothing!"];
+                            goto label_173;
+                        }
+                        if (v8 <= 25) {
+                            v10 = 1;
+                            v11 = (v8 - v10);
+                        }
+                        if (v7 >= 1) {
+                            v12 = ~TakeFromParty_i(false, _All, _All, v5, v7);
+                            ["I will take thy <v7> <v4> and give thee <v8> Monetari, subtracting my charge of <v10> Monetari, for a final sum of <v11> Monetari given to thee."];
+                            v13 = ~GiveItemsOrDrop_i(true, false, 65177, 65177, v2, v11, _Avatar);
+                            ["The coins are thine!"];
+                        } else {
+                            ["Please make up thy mind!"];
+                        }
+                    } else {
+                        ["Thou dost not have any <v4> to exchange for <v1>!"];
+                    }
+                } else {
+                    ["Thou wilt find no better rates..."];
+                }
+            }
+            if (v1 = "Guilders") {
+                ["Which coin dost thou care to exchange for guilders?"];
+                v2 = 952;
+                v3 = << "Nothing" >>;
+                if ~IsInInv(65177, 65177, _Monitor_Money, 1, _Party) {
+                    v3 = (v3 & "Monetari");
+                }
+                if ~IsInInv(65177, 65177, _Fawn_Money, 1, _Party) {
+                    v3 = (v3 & "Filari");
+                }
+                if ~IsInInv(65177, 65177, _Gold_Coins, 1, _Party) {
+                    v3 = (v3 & "Gold Coins");
+                }
+                v4 = ~AskList(v3);
+                if (v4 = "Nothing") {
+                    ["Thou shouldst not waste my time so! I am a busy man!"];
+                    terminate;
+                }
+                if (v4 = "Monetari") {
+                    ["I can give thee 3 guilders for every 1 monetari thou hast."];
+                    v5 = 951;
+                }
+                if (v4 = "Filari") {
+                    ["I can give thee 3 guilders for every 4 filari thou hast."];
+                    v5 = 948;
+                }
+                if (v4 = "Gold Coins") {
+                    ["I can give thee 3 guilders for every 2 gold coins thou hast."];
+                    v5 = 644;
+                }
+                ["Dost thou agree to my rate?"];
+                if (~AskYesNo() = true) {
+                    v6 = ~CountItem(_All, _All, v5, _Party);
+                    if (v6 > 500) {
+                        v6 = 500;
+                    }
+                    if (v6 <> 0) {
+                        ["How many <v4> wouldst thou like to exchange?"];
+                        v7 = ~AskBarInput(0, 1, v6, 0);
+                        if (v7 = 0) {
+                            ["Please make up thy mind!"];
+                            goto label_173;
+                        }
+                        if (v4 = "Monetari") {
+                            v8 = (v7 * 3);
+                        }
+                        if (v4 = "Filari") {
+                            v8 = ((v7 * 3) / 4);
+                            v9 = 3;
+                        }
+                        if (v4 = "Gold Coins") {
+                            v8 = ((v7 * 3) / 2);
+                            v9 = 2;
+                        }
+                        v10 = (v8 / 25);
+                        v11 = (v8 - v10);
+                        v14 = "Guilders";
+                        v15 = "Guilders";
+                        if (v8 = 0) {
+                            ["Thou must offer at least <v9> <v4> to exchange for <v1>!"];
+                            goto label_173;
+                        }
+                        if (v8 = 1) {
+                            ["My fee will leave thee with nothing!"];
+                            goto label_173;
+                        }
+                        if (v8 <= 25) {
+                            v10 = 1;
+                            v11 = (v8 - v10);
+                        }
+                        if (v11 = 1) {
+                            v14 = "Guilder";
+                        }
+                        if (v10 = 1) {
+                            v15 = "Guilder";
+                        }
+                        if (v7 >= 1) {
+                            v12 = ~TakeFromParty_i(false, _All, _All, v5, v7);
+                            ["I will take thy <v7> <v4> and give thee <v8> Guilders, subtracting my charge of <v10> <v15>, for a final sum of <v11> <v14> given to thee."];
+                            v13 = ~GiveItemsOrDrop_i(true, false, 65177, 65177, v2, v11, _Avatar);
+                            ["The coins are thine!"];
+                        } else {
+                            ["Please make up thy mind!"];
+                        }
+                    } else {
+                        ["Thou dost not have any <v4> to exchange for <v1>!"];
+                    }
+                } else {
+                    ["Thou wilt find no better rates..."];
+                }
+            }
+            if (v1 = "Filari") {
+                ["Which coin dost thou care to exchange for filari?"];
+                v2 = 948;
+                v3 = << "Nothing" >>;
+                if ~IsInInv(65177, 65177, _Monitor_Money, 1, _Party) {
+                    v3 = (v3 & "Monetari");
+                }
+                if ~IsInInv(65177, 65177, _Moon_Money, 1, _Party) {
+                    v3 = (v3 & "Guilders");
+                }
+                if ~IsInInv(65177, 65177, _Gold_Coins, 1, _Party) {
+                    v3 = (v3 & "Gold Coins");
+                }
+                v4 = ~AskList(v3);
+                if (v4 = "Nothing") {
+                    ["Thou shouldst not waste my time so! I am a busy man!"];
+                    terminate;
+                }
+                if (v4 = "Monetari") {
+                    ["I can give thee 4 filari for every 1 monetari thou hast."];
+                    v5 = 951;
+                }
+                if (v4 = "Guilders") {
+                    ["I can give thee 4 filari for every 3 guilders thou hast."];
+                    v5 = 952;
+                }
+                if (v4 = "Gold Coins") {
+                    ["I can give thee 2 filari for every 1 gold coin thou hast."];
+                    v5 = 644;
+                }
+                ["Dost thou agree to my rate?"];
+                if (~AskYesNo() = true) {
+                    v6 = ~CountItem(_All, _All, v5, _Party);
+                    if (v6 > 500) {
+                        v6 = 500;
+                    }
+                    if (v6 <> 0) {
+                        ["How many <v4> wouldst thou like to exchange?"];
+                        v7 = ~AskBarInput(0, 1, v6, 0);
+                        if (v7 = 0) {
+                            ["Please make up thy mind!"];
+                            goto label_173;
+                        }
+                        if (v4 = "Monetari") {
+                            v8 = (v7 * 4);
+                        }
+                        if (v4 = "Guilders") {
+                            v8 = ((v7 * 4) / 3);
+                            v9 = 2;
+                        }
+                        if (v4 = "Gold Coins") {
+                            v8 = (v7 * 2);
+                            if (v7 = 1) {
+                                v4 = "Gold Coin";
+                            }
+                        }
+                        v10 = (v8 / 25);
+                        v11 = (v8 - v10);
+                        if (v8 = 0) {
+                            ["Thou must offer at least <v9> <v4> to exchange for <v1>!"];
+                            goto label_173;
+                        }
+                        if (v8 = 1) {
+                            ["My fee will leave thee with nothing!"];
+                            goto label_173;
+                        }
+                        if (v8 <= 25) {
+                            v10 = 1;
+                            v11 = (v8 - v10);
+                        }
+                        if (v7 >= 1) {
+                            v12 = ~TakeFromParty_i(false, _All, _All, v5, v7);
+                            ["I will take thy <v7> <v4> and give thee <v8> Filari, subtracting my charge of <v10> Filari, for a final sum of <v11> Filari given to thee."];
+                            v13 = ~GiveItemsOrDrop_i(true, false, 65177, 65177, v2, v11, _Avatar);
+                            ["The coins are thine!"];
+                        } else {
+                            ["Please make up thy mind!"];
+                        }
+                    } else {
+                        ["Thou dost not have any <v4> to exchange for <v1>!"];
+                    }
+                } else {
+                    ["Thou wilt find no better rates..."];
+                }
+            }
+            if (v1 = "Gold Coins") {
+                ["Which coin dost thou care to exchange for gold?"];
+                v2 = 644;
+                v3 = << "Nothing" >>;
+                if ~IsInInv(65177, 65177, _Monitor_Money, 1, _Party) {
+                    v3 = (v3 & "Monetari");
+                }
+                if ~IsInInv(65177, 65177, _Fawn_Money, 1, _Party) {
+                    v3 = (v3 & "Filari");
+                }
+                if ~IsInInv(65177, 65177, _Moon_Money, 1, _Party) {
+                    v3 = (v3 & "Guilders");
+                }
+                v4 = ~AskList(v3);
+                if (v4 = "Nothing") {
+                    ["Thou shouldst not waste my time so! I am a busy man!"];
+                    terminate;
+                }
+                if (v4 = "Monetari") {
+                    ["I can give thee 2 gold coins for every 1 monetari thou hast."];
+                    v5 = 951;
+                }
+                if (v4 = "Guilders") {
+                    ["I can give thee 2 gold coins for every 3 guilders thou hast."];
+                    v5 = 952;
+                }
+                if (v4 = "Filari") {
+                    ["I can give thee 1 gold coin for every 2 filari thou hast."];
+                    v5 = 948;
+                }
+                if (v4 = "Gold Nuggets") {
+                    ["I can give thee 20 gold coins for every 1 gold nugget thou hast."];
+                    v5 = 645;
+                }
+                ["Dost thou agree to my rate?"];
+                if (~AskYesNo() = true) {
+                    v6 = ~CountItem(_All, _All, v5, _Party);
+                    if (v6 > 500) {
+                        v6 = 500;
+                    }
+                    if (v6 <> 0) {
+                        ["How many <v4> wouldst thou like to exchange?"];
+                        v7 = ~AskBarInput(0, 1, v6, 0);
+                        if (v7 = 0) {
+                            ["Please make up thy mind!"];
+                            goto label_173;
+                        }
+                        if (v4 = "Monetari") {
+                            v8 = (v7 * 2);
+                        }
+                        if (v4 = "Guilders") {
+                            v8 = ((v7 * 2) / 3);
+                            v9 = 3;
+                        }
+                        if (v4 = "Filari") {
+                            v8 = (v7 / 2);
+                            v9 = 4;
+                        }
+                        v10 = (v8 / 25);
+                        v11 = (v8 - v10);
+                        v14 = "Gold Coins";
+                        v15 = "Gold Coins";
+                        if (v8 = 0) {
+                            ["Thou must offer at least <v9> <v4> to exchange for <v1>!"];
+                            goto label_173;
+                        }
+                        if (v8 = 1) {
+                            ["My fee will leave thee with nothing!"];
+                            goto label_173;
+                        }
+                        if (v8 <= 25) {
+                            v10 = 1;
+                            v11 = (v8 - v10);
+                        }
+                        if (v11 = 1) {
+                            v14 = "Gold Coin";
+                        }
+                        if (v10 = 1) {
+                            v15 = "Gold Coin";
+                        }
+                        if (v7 >= 1) {
+                            v12 = ~TakeFromParty_i(false, _All, _All, v5, v7);
+                            ["I will take thy <v7> <v4> and give thee <v8> Gold Coins, subtracting my charge of <v10> <v15>, for a final sum of <v11> <v14> given to thee."];
+                            v13 = ~GiveItemsOrDrop_i(true, false, 65177, 65177, v2, v11, _Avatar);
+                            ["The coins are thine!"];
+                        } else {
+                            ["Please make up thy mind!"];
+                        }
+                    } else {
+                        ["Thou dost not have any <v4> to exchange for <v1>!"];
+                    }
+                } else {
+                    ["Thou wilt find no better rates..."];
+                }
+            }
+            label_173:
+            ["Dost thou wish to exchange more coins?"];
+            v0 = ~AskYesNo();
+        }
+    } else {
+        ["Thou wilt find no other moneychangers with such a low fee as mine!"];
+    }
+}

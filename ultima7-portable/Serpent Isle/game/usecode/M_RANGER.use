@@ -1,0 +1,319 @@
+Routine Ranger_M accepts a0 #locals(7) #uses(~WhereAmI_i, ~LordOrLady, ~AvatarName, PartyFaces_i, Bark_i, ~IsInInv) {
+    v0 = ~WhereAmI_i();
+    v1 = ~GetNPCID_i(item);
+    v2 = ~LordOrLady();
+    v3 = ~AvatarSex();
+    v4 = ~AvatarName();
+    v5 = false;
+    if ((event = _NearDeath) and (v1 = 1)) {
+        ClearItemFlag_i(_Tournament, item);
+        ReduceHits_i(0, 50, item);
+        flag(288) = true;
+    }
+    if (event = _Converse) {
+        Item_bark("@Ranger!@", _Avatar);
+        PartyFaces_i(item);
+        Bark_i(2, "@Yes?@", item);
+        SetWorkType(_Talk, item);
+    }
+    if (event = _Bark) && (v1 <> 1) {
+        v6 = ~Random(6);
+        if (v6 = 1) {
+            Item_bark("@Try our wine!@", item);
+        }
+        if (v6 = 2) {
+            Item_bark("@Yes, ma'am! Back to work!@", item);
+        }
+        if (v6 = 3) {
+            Item_bark("@Work, work, work...@", item);
+        }
+        if (v6 = 4) {
+            Item_bark("@What art thou doing?@", item);
+        }
+        if (v6 = 5) {
+            Item_bark("@Come and see the wine press!@", item);
+        }
+        if (v6 = 6) {
+            Item_bark("@Magic wine!@", item);
+        }
+    }
+    if (event = _Talking) {
+        if (v1 = 0) {
+            SetWorkType(_TendShop, item);
+            ClearBark_i(item);
+            SetSpeaker0_i(0, _Chuck);
+            ["How may I help thee? As a Ranger, I must help thee in any way that I can."];
+            if ($gotmagicwine and not $knowmagicwine) {
+                TurnOn("strange wine");
+            }
+            if ($foundsimonbottle and (~GetWorkType(_Simon) <> _Wait)) {
+                TurnOn("brown bottle");
+            }
+            if ($ernestoknowsarms and not $knowmonitorshield) {
+                TurnOn("mystery shield");
+            }
+            if (flag(234) and not ~GetItemFlag_i(_Dead, _Rotoluncia)) {
+                TurnOn("kidnap");
+            }
+            TurnOn(<< "Ranger", "bye" >>);
+            converse {
+                key ("kidnap") {
+                    TurnOff("kidnap");
+                    ["Thou shouldst report such a crime as this to Julia. She can aid thee."];
+                    if ~IsNPCNear_i(_Julia) {
+                        SetWorkType(_Talk, _Julia);
+                        Bark_i(0, "@Yes?@", _Julia);
+                    }
+                }
+                key ("Ranger") {
+                    TurnOff("Ranger");
+                    ["A Ranger is much like any other city guard, <v2>. It is our job to catch thieves, and stop fights. Nothing very exciting..."];
+                    ["...Until one of the Mages manages to destroy a section of town with his experiments. Then things become lively."];
+                    TurnOn(<< "Mage", "lively" >>);
+                }
+                key ("Mage") {
+                    TurnOff("Mage");
+                    ["Moonshade is the city of Mages, <v2>."];
+                    ["Mages are very powerful, and many of them can do things that make my skin crawl! And oftimes their experiments escape and then the Rangers must step in and take control."];
+                    ["But, 'tis my job... cleaning after the Mages."];
+                    TurnOn(<< "things", "escape" >>);
+                }
+                key ("things") {
+                    TurnOff("things");
+                    ["I pretend I do not see half of what the Mages can do, <v2>. I find 'tis easier to keep my sanity that way."];
+                    ["Some can summon fire or ice. Others can summon storms or daemons. And none of it I want to know about, to tell thee truth."];
+                }
+                key ("escape") {
+                    TurnOff("escape");
+                    ["Either the mage tries a spell that is too advanced for him, or he simply loses concentration. I do not know."];
+                    ["All I know is that suddenly we have people running through the streets trying to escape whatever the Mage was attempting to conjure..."];
+                    ["And 'tis no mean feat for us poor Rangers to overcome something that overpowered a Mage, I can tell thee!"];
+                }
+                key ("lively") {
+                    TurnOff("lively");
+                    ["Oh, yes! It might be as simple as putting out a fire and rebuilding a section or two of wall after."];
+                    ["But sometimes 'tis far more dangerous... Like a dragon, or one of Rotoluncia's daemons, or somesuch. Never know from one day to the next what thou wilt have to face."];
+                    TurnOff(<< "dragon", "daemon" >>);
+                }
+                key ("dragon") {
+                    TurnOff("dragon");
+                    ["To be honest, I have never had to face one myself. But my commander remembers when she was a new Ranger, when the Strictures were newly in place. A Mage summoned a dragon that burned half of the city."];
+                    TurnOn("Strictures");
+                }
+                key ("Strictures") {
+                    TurnOff("Strictures");
+                    ["I cannot tell thee much about them... Not being a Mage and all. Perhaps thou couldst ask a Mage."];
+                }
+                key ("Rotoluncia") {
+                    TurnOff("Rotoluncia");
+                    ["Rotoluncia's forte is fire spells. So I suppose it follows that she would seek to summon daemons to her service."];
+                    ["To be truthful, she hath not yet succeeded in binding a daemon. But it disturbs me to think that she might... and that I might have to face one some day."];
+                }
+                key ("daemons") {
+                    TurnOff("daemons");
+                    ["Everyone says that daemons come from the hot depths of the world. That they are foul creatures of flame and melted flesh."];
+                    ["I hope never to find if it is true..."];
+                }
+                key ("strange wine") {
+                    TurnOff("strange wine");
+                    if ~IsInInv(16, 65177, _Bottles, 1, _Party) {
+                        ["It looks to be wine from our press, <v2>. But thou shouldst ask my commander, to be sure."];
+                    } else {
+                        ["'Tis true that we deal in wine, <v2>. But without seeing the bottle, I would not be able to help thee."];
+                    }
+                    TurnOn("commander");
+                }
+                key ("commander") {
+                    TurnOff("commander");
+                    ["Julia is our commander, <v2>. She's a stern woman, but worthy of thy respect."];
+                    ["There are those that consider her a handsome woman, when her mouth is closed... If thou knowest what I mean."];
+                    v5 = true;
+                }
+                key ("brown bottle") {
+                    TurnOff("brown bottle");
+                    ["What an odd bottle! Who would bottle their wares in such an ugly container? I hope that whatever was inside is not as coarse as the bottle suggests."];
+                    ["Our commander oversees the bottling of our wine, <v2>. Thou mightest ask if she knows who doth use such a bottle, but I would not stake much on it, if I were thee."];
+                    if (v5 = false) {
+                        TurnOn("commander");
+                    }
+                }
+                key ("mystery shield") {
+                    TurnOff("mystery shield");
+                    ["It certainly is a fine looking piece of equipment, <v2>. I wish we had arms as nice."];
+                    ["Thou shouldst ask Ernesto if he recognizes it. He is the arms expert among the Rangers."];
+                    ["On a guess, I'd say it came from Monitor. Everyone knows that they practically sleep with weapons such as this."];
+                    TurnOn(<< "Ernesto", "Monitor" >>);
+                }
+                key ("Ernesto") {
+                    TurnOff("Ernesto");
+                    ["Ernesto is our second in command, <v2>. Thou wilt find him somewhere around the wine press, I'll warrant."];
+                    TurnOn("wine press");
+                }
+                key ("wine press") {
+                    TurnOff("wine press");
+                    ["One other thing that the Rangers do, <v2>, is produce the wine sold throughout Moonshade."];
+                    ["Our wine press is very special. I'm certain that either Ernesto or the commander would be happy to show it to thee. We are all very proud of it."];
+                }
+                key ("Monitor") {
+                    TurnOff("Monitor");
+                    ["Monitor is on the mainland. 'Tis the city of warriors. That is why I thought the shield might be from there."];
+                }
+                key ("bye") {
+                    CloseSpeaker0_i();
+                    Bark_i(0, "@So long!@", _Avatar);
+                    Bark_i(2, "@Fare well!@", item);
+                    break;
+                }
+            }
+            clear_answers;
+        }
+        if (v1 = 1) {
+            SetWorkType(_TendShop, item);
+            ClearBark_i(item);
+            SetSpeaker0_i(0, _Crusty);
+            ["My name is Ernesto the Ranger. How may I be of service, <v2>?"];
+            if (flag(277) and not $knowslippers) {
+                TurnOn("slippers");
+            }
+            if ($gotmagicwine and not $knowmagicwine) {
+                TurnOn("strange wine");
+            }
+            if ($foundsimonbottle and (~GetWorkType(_Simon) <> _Wait)) {
+                TurnOn("brown bottle");
+            }
+            if ($ernestoknowsarms and not $knowmonitorshield) {
+                TurnOn("mystery shield");
+            }
+            if (flag(234) and not ~GetItemFlag_i(_Dead, _Rotoluncia)) {
+                TurnOn("kidnap");
+            }
+            TurnOn(<< "Ranger", "bye" >>);
+            converse {
+                key ("kidnap") {
+                    TurnOff("kidnap");
+                    ["This is such a terrible crime. And it involves magic!];
+                    if ~IsNPCNear_i(_Julia) {
+                        ["Thou shouldst report such a crime as this to Julia. She can aid thee."];
+                        SetWorkType(_Talk, _Julia);
+                        Bark_i(0, "@Yes?@", _Julia);
+                    } else {
+                        ["Do not tell that I told thee this, but do not take such a matter to Julia -- "];
+                        ["She shall only extort a bribe, then send thee elsewhere."];
+                        ["Instead, speak to one of the Adepts. Perhaps Gustacio, if he'll give thee his ear, or Fedabiblio. They can help thee."];
+                    }
+                }
+                key ("Ranger") {
+                    TurnOff("Ranger");
+                    ["A Ranger is in service to the MageLord and the Council. 'Tis our duty to guard the city and keep order..."];
+                    ["We also make fine wine that is sold throughout all of Moonshade."];
+                    TurnOn(<< "MageLord", "Council" >>);
+                }
+                key ("MageLord") {
+                    TurnOff("MageLord");
+                    if ($BANES_RELEASED and (~GetWorkType(906) <> _Wait)) {
+                        ["Shamino the Anarch is the current MageLord. He hath brought great change to our city..."];
+                        ["No longer must a Mage or Mundane be bound by petty rules. It is quite exciting!"];
+                    } else {
+                        ["The current MageLord is Filbercio, <v2>. He is a wise ruler, who ensures the safety of the people by keeping the Mages within the confines of the Strictures."];
+                        TurnOn("Strictures");
+                    }
+                }
+                key ("Strictures") {
+                    TurnOff("Strictures");
+                    ["I can only tell thee what is common knowledge, <v2>. That the Strictures are meant to curtail the use of dangerous spells within the city."];
+                    ["That way, should anything go wrong during the casting, the Rangers do not have to worry about saving half the populace as well as containing the disaster."];
+                }
+                key ("Council") {
+                    TurnOff("Council");
+                    ["The Council is composed of Adepts that balance the MageLord's power. They represent the voice of the Mages within the city."];
+                    ["Of course, the Mundanes have little or no voice in the Council. I suppose that the Rangers are the closest thing to representatives for the Mundanes that Moonshade doth have."];
+                    TurnOn(<< "Mages", "Mundanes" >>);
+                }
+                key ("Mages") {
+                    TurnOff("Mages");
+                    ["Mages are those that make any use of magic, <v2>... Adept or no. And since Moonshade is the city of Mages, it is the Mages that control the city."];
+                }
+                key ("Mundanes") {
+                    TurnOff("Mundanes");
+                    ["Mundanes are those that cannot call upon magic without the use of magic items that contain a specific spell. They have no magical ability in and of themselves."];
+                    ["And here in Moonshade, I'm afraid, Mundanes are little better than chattel."];
+                }
+                key ("slippers") {
+                    TurnOff("slippers");
+                    ["Too small for me, I'm afraid. I don't think that these belong to any of the Rangers. Thou couldst ask Bucia."];
+                    TurnOn("Bucia");
+                }
+                key ("Bucia") {
+                    TurnOff("Bucia");
+                    ["She is Moonshade's provisioner, and she would know who bought such a pair, I'm sure... Bucia loves all sorts of information, if thou takest my meaning."];
+                    ["Thou canst usually find her at the Capessi Canton."];
+                    TurnOn("Capessi Canton");
+                }
+                key ("Capessi Canton") {
+                    TurnOff("Capessi Canton");
+                    ["The Capessi Canton is Bucia's shop. Well, at least I know that she runs it, whether or not she owns it."];
+                    ["Thou canst find almost anything there. But remember, Bucia loves to talk. Don't say that I didn't warn thee."];
+                }
+                key ("strange wine") {
+                    TurnOff("strange wine");
+                    if ~IsInInv(16, 65177, _Bottles, 1, _Party) {
+                        ["'Tis our wine, sure enough! Can't fool my nose after all these years working with the Mad Mage's wine press!"];
+                        ["I wonder if this was the bottle that disappeared... Thou shouldst ask my commander about the wine."];
+                        $knowmagicwine = true;
+                        TurnOn("Mad Mage");
+                    } else {
+                        ["As fond as I am of good wine, <v2>, I cannot help thee unless I see the bottle. No offense, but thy description could fit several wines that I know of."];
+                    }
+                }
+                key ("Mad Mage") {
+                    TurnOff("Mad Mage");
+                    ["Erstam is the Mad Mage, <v2>."];
+                    ["Long ago, he was the teacher of the Adepts here in Moonshade. But then, like any man I suppose, he became obsessed with the thought of his own mortality."];
+                    ["His attempts to wrest life from death have been rather pathetic. And he hath gone completely mad."];
+                }
+                key ("brown bottle") {
+                    TurnOff("brown bottle");
+                    ["Hmmm. I can't recall having seen a bottle like this one. But then I don't generally try any vintages but our own."];
+                    ["Thou shouldst ask Julia, though. If anyone would know, it would be Julia."];
+                    TurnOn("Julia");
+                }
+                key ("Julia") {
+                    TurnOff("Julia");
+                    ["Perhaps I should have referred to her as Commander, for that is what she is... Commander of the Rangers."];
+                    ["She's a bit sour, I'm afraid, <v2>. Leading the Rangers is a thankless job, and she hath become quite disillusioned over the last few years."];
+                }
+                key ("mystery shield") {
+                    TurnOff("mystery shield");
+                    ["I thought that thou didst have a challenge for me! This one is easy... It is a Pikemen's shield from Monitor."];
+                    ["I wish that the Council would give us the funds for arms like this!"];
+                    TurnOn(<< "Pikemen", "Monitor" >>);
+                }
+                key ("Pikemen") {
+                    TurnOff("Pikemen");
+                    ["The Pikemen are to Monitor as the Rangers are to Moonshade, <v2>. But more so..."];
+                    ["For the Pikemen maintain guard towers all along the roads on the mainland. So they are much more widely respected than the Rangers."];
+                }
+                key ("Monitor") {
+                    TurnOff("Monitor");
+                    ["Monitor is on the southern edge of the mainland. Its citizens are noted for their bravery."];
+                    ["I went there once, as a young lad. That's what inspired me to become a Ranger."];
+                }
+                key ("bye") {
+                    CloseSpeaker0_i();
+                    Bark_i(0, "@Farewell!@", _Avatar);
+                    Bark_i(2, "@Peace be with thee.@", item);
+                    break;
+                }
+            }
+            clear_answers;
+        }
+    }
+    if (v1 = 2) {
+        ClearBark_i(item);
+        SetSpeaker0_i(0, _Chuck);
+        ["Please, I cannot speak with thee at this time. My grief doth take the words from my mouth and leave me only with tears." ~"Please away, I do not wish to be seen in this state."];
+        Bark_i(2, "@If only I had flowers...@", item);
+        SetWorkType(_Wait, item);
+        CloseSpeaker0_i();
+    }
+}

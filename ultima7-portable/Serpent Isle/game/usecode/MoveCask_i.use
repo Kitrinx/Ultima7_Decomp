@@ -1,0 +1,22 @@
+Routine MoveCask_i accepts a0 #locals(9) {
+    v0 = ~FindNearby_i(0, 80, _Cask, item);
+    Foreach v3 in v0 {
+        v4 = ~FindNearby_i(16, 10, _Egg_Type, v3);
+        if v4 && (~GetQuality(v4) = 210) {
+            v5 = ~GetCoord(v3);
+            Item_destroy(v3);
+            if not $CASK_WAS_MOVED {
+                v6 = << (v5::1 + 8), v5::2, v5::3 >>;
+                $CASK_WAS_MOVED = true;
+            } else {
+                v6 = << (v5::1 - 8), v5::2, v5::3 >>;
+                $CASK_WAS_MOVED = false;
+            }
+            v7 = ~Item_create(_Cask);
+            if v7 {
+                Sfx(105);
+                v8 = ~PopToMap(v6);
+            }
+        }
+    }
+}

@@ -1,0 +1,841 @@
+Routine Delin accepts a0 #locals(6) #uses(~LordOrLady, PartyFaces_i, Bark_i, ~IsInInv, DelinSells_i, ~IsNPCNear, ~PartyUtters, AlyssandSeeksAvatar_i, ~AskYesNo, SendAssassin_i, JorvinBringsInvitation_i) {
+    v0 = ~LordOrLady();
+    v1 = false;
+    v2 = false;
+    if (event = _NearDeath) {
+        v3 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #Green_Noble >>, item);
+    }
+    if (event = _Converse) {
+        Item_bark("@Excuse me, sir.@", _Avatar);
+        PartyFaces_i(65489);
+        Bark_i(5, "@Do I know thee?@", _Delin);
+        SetWorkType(_Talk, _Delin);
+    }
+    if (event = _Talking) {
+        Npc_schedule(_Delin);
+        ClearBark_i(_Delin);
+        SetSpeaker0_i(0, _Delin);
+        v4 = ~GetItemFlag_i(_Met, _Delin);
+        if ($avatarsaidspy = true) {
+            ["Unless thou bearest word from my son, I will not bother with thee! Go back to Fedabiblio and tell him I have no business with the affairs of Mages!"];
+            if (flag(231) = true) {
+                TurnOn("letter");
+            } else {
+                terminate;
+            }
+        } else {
+            if ($gottattoo = true) {
+                if ~AvatarSex() {
+                    ["I cannot understand why Monitorians prefer their women scarred."];
+                    ["Forgive me... I am forgetting myself. I am... ah..."];
+                    ["I am Delin, Fawn's provisioner. How may I serve thee, lady Pikeman?"];
+                } else {
+                    ["I do not recall seeing thy face among the Fawn Tower garrison. Have I met thee? I regret I cannot remember..."];
+                    ["I am Delin, Fawn's provisioner. Forgive me if thou dost already know me..."];
+                    ["How may I serve thee, noble Pikeman?"];
+                }
+            } else {
+                if ~AvatarSex() {
+                    ["Ah... art thou one of my daughter's friends? I cannot seem to recall thee..."];
+                    ["I am Delin, Fawn's provisioner. Is there something I can do for thee?"];
+                } else {
+                    ["Hast thou need of my services, <v0>? Or art thou here to court my daughter? I fear I cannot recall..."];
+                    ["I am Delin, provisioner of Fawn. In case we have not been introduced."];
+                }
+            }
+            SetItemFlag_i(_Met, _Delin);
+            if ($delinknowscap and not $knowfurcap) {
+                TurnOn("fur cap");
+            }
+            if ($delinknowsslippers and not $knowslippers) {
+                TurnOn("slippers");
+            }
+            if (~GetWorkType(_Delin) = _TendShop) {
+                TurnOn("provisions");
+            }
+            if ($jendonsaidmoonshade = true) {
+                TurnOn("Moonshade");
+            }
+            if $ASKED_JENDON_DAEMON_ARTIFACTS {
+                TurnOn("Batlin");
+            }
+            if (flag(231) = true) {
+                TurnOn("letter");
+            }
+            TurnOn(<< "storms", "Goblins" >>);
+            TurnOn("bye");
+        }
+        converse {
+            key ("fur cap") {
+                TurnOff("fur cap");
+                if ~IsInInv(4, 65177, _Leath_Helm, 1, _Party) {
+                    ["'Tis a nice fur cap, <v0>. If thou dost wish more, I fear thou wilt have to venture to Monitor thyself. Though I have forgotten the maker's name at this time..."];
+                    ["I have not had a supply wagon bring arms or furs in a score of days. 'Tis the storms!"];
+                } else {
+                    ["I fear I have no more fur caps in stock, <v0>. I fear thou wilt have to venture to Monitor thyself, if thou dost wish one.\x09Though I have forgotten the maker's name at this time..."];
+                    ["I have not had a supply wagon bring arms or furs in a score of days. 'Tis the storms!"];
+                }
+            }
+            key ("slippers") {
+                TurnOff("slippers");
+                if ~IsInInv(5, 65177, _Leath_Boots, 1, _Party) {
+                    ["Fine slippers, though well-worn. Not something that thou wouldst find here, <v0>."];
+                    ["Such frail things would be quickly ruined by the cold and wet here in Fawn... Just like my poor Elissia..."];
+                } else {
+                    ["I have never carried slippers, <v0>, though my poor Elissia yearned for them so."];
+                    ["Such frail things would be quickly ruined by the cold and wet here in Fawn... Just like my poor Elissia..."];
+                }
+                if not v1 {
+                    TurnOn("Elissia");
+                }
+            }
+            key ("provisions") {
+                ["I provide Fawn with adventuring supplies... Though I regret that my stock is not great at the moment. These storms have made the supply wagons from the other cities rare indeed." *"What dost thou wish to purchase?"];
+                DelinSells_i();
+                TurnOff("provisions");
+            }
+            key ("storms") {
+                ["The storms... oh, yes. They're very interesting to watch. Though my daughter will not allow me to go outside where I can see better." *"So many pretty colors, and such unusual results..."];
+                if ~IsNPCNear(_Alyssand) {
+                    SetSpeaker1_i(0, _Alyssand);
+                    ["Father, thou WILT stay indoors when those storms come through town!"];
+                    CloseSpeaker1_i();
+                    SetSpeakerSlot_i(0);
+                    ["Ah... I suppose I must if thou sayest so, my dear."];
+                }
+                TurnOff("storms");
+                PushKeys();
+                TurnOn(<< "daughter", "colors", "results", "change subject" >>);
+            }
+            key ("change subject") {
+                PopKeys();
+                ["Of course. Um, what was it we were discussing...?"];
+            }
+            key ("daughter") {
+                ["Thou hast met my daughter? I had forgotten, I'm sorry. Alyssand is very pretty, but she worries too much about me." *"She doth not believe that I'd be all right without her."];
+                if ~IsNPCNear(_Alyssand) {
+                    SetSpeaker1_i(0, _Alyssand);
+                    ["Thou dost need me, father. Thy business is much too complex for thee to run by thyself!"];
+                    CloseSpeaker1_i();
+                    SetSpeakerSlot_i(0);
+                    ["Ah, er... I can do fine without thee, my dear."];
+                    ["Hmmm... what were we discussing, <v0>?"];
+                }
+                TurnOff("daughter");
+                TurnOn("Alyssand");
+            }
+            key ("Alyssand") {
+                ["Alyssand is around somewhere... Or at least she was. She never leaves me alone for long." *"She hovers over me quite a bit since Keth disappeared... Alyssand's my daughter. Didst thou know?"];
+                if ~IsNPCNear(_Alyssand) {
+                    SetSpeaker1_i(0, _Alyssand);
+                    ["Father, that is my business!"];
+                    CloseSpeaker1_i();
+                    SetSpeakerSlot_i(0);
+                    ["Er... I am sorry, daughter."];
+                } else {
+                    TurnOn("Keth");
+                }
+                TurnOff("Alyssand");
+            }
+            key ("Keth") {
+                ["Hast thou seen Keth? If so, thou shouldst tell him that Alyssand still doth have the engagement ring... Or did have it... I think she said something about losing it." *"'Tis not right to say that thou wilt marry someone and then not return..."];
+                TurnOff("Keth");
+                PushKeys();
+                TurnOn(<< "engagement ring", "not return", "change subject" >>);
+            }
+            key ("engagement ring") {
+                ["Keth was passing proud of that ring. He ordered it specially from someone in Moonshade..." "Mine Elissia was from Moonshade. Oh, my poor Elissia... She's gone. Gone."];
+                v3 = ~PartyUtters(false, 0, "@Art thou daft, old man!@", 65534);
+                if (v3 <> 65180) {
+                    SetSpeakerSlot_i(0);
+                    if (~ListSize_i(~GetParty()) > 2) {
+                        v5 = v3;
+                        While (v5 = v3) {
+                            v5 = ~PartyUtters(false, 0, 0, 1);
+                        }
+                        if (v5 <> 65180) {
+                            ["Elissia... Dear, sweet Elissia..."];
+                            v5 = ~PartyUtters(false, 0, "@Be gentle with him. I fear he's a bit confused.@", v5);
+                        }
+                    }
+                }
+                SetSpeakerSlot_i(0);
+                ["I'm sorry... very sorry, <v0>. I still mourn the loss of my wife."];
+                ["Now, thou didst ask about Alyssand's ring... I would call her and ask her to show it to thee, but Alyssand lost her ring not long ago."];
+                TurnOff("engagement ring");
+                if ~IsInInv(0, 65177, _Ring, 1, _Party) {
+                    TurnOn("ring");
+                } else {
+                    ["I cannot know if the ring thou didst find is my daughter's unless I see it. Perhaps if thou dost bring it to me I can ascertain whether thou shouldst speak with Alyssand."];
+                }
+                if not v1 {
+                    TurnOn("Elissia");
+                }
+                if not v2 {
+                    TurnOn("Moonshade");
+                }
+            }
+            key ("ring") {
+                ["Why, it certainly doth look like it... Alyssand will be so happy!"];
+                ["I would reward thee for returning it to her, <v0>, but a storm stripped my cash box of all my funds the other day."];
+                ["I went to open my shop the next morning and there was a bundle of food in place of the Filari Alyssand had put there the night before."];
+                v3 = ~PartyUtters(false, 0, "@That is what happened to our food!@", 1);
+                if (v3 <> 65180) {
+                    SetSpeakerSlot_i(0);
+                }
+                AlyssandSeeksAvatar_i();
+                TurnOff("ring");
+                TurnOn("Filari");
+            }
+            key ("Filari") {
+                if ($gottattoo = true) {
+                    ["I had forgotten that thou wert from Monitor, <v0>."];
+                } else {
+                    ["Thou must be a stranger..."];
+                }
+                ["Filari are Fawn's currency... A small silver disk with a colored gem in the center."];
+                if ~IsInInv(65177, 65177, _Fawn_Money, 1, _Party) {
+                    ["Yes... yes. Those are Filari."];
+                    ["That is as much as the storm took from me..."];
+                    v3 = ~PartyUtters(false, 0, "@These must be his coins then, Avatar!@", 1);
+                    SetSpeakerSlot_i(0);
+                    if (~GetWorkType(_Delin) = _TendShop) {
+                        ["I would accept thy money if thou dost wish to purchase something."];
+                        DelinSells_i();
+                    } else {
+                        ["If thou wouldst come to my shop when I am open I wouldst gladly sell thee something, <v0>..."];
+                    }
+                }
+                $KNOWS_FILARI_OWNER = true;
+                TurnOff("Filari");
+            }
+            key ("not return") {
+                ["Of course Keth hath not returned! He would have come to see Alyssand the moment he set foot on shore." *"No one hath seen him or his crewmates since one of those storms."];
+                TurnOff("not return");
+            }
+            key ("colors") {
+                ["Oh, yes! Thou shouldst watch one of these storms some time. The lightning is all different colors..." *"Of course, if thou strayest too far out to watch, thou mayest not enjoy it too much."];
+                TurnOff("colors");
+            }
+            key ("results") {
+                ["Results? Results of what? What were we talking about..." *"Now I remember! The storms! There are two reasons these storms are fun to watch."];
+                TurnOff("results");
+                TurnOn("two reasons");
+            }
+            key ("two reasons") {
+                ["Sometimes 'tis FLASH!, and something thou wert standing across from is gone."];
+                ["But sometimes 'tis FLASH!, and something thou wert watching is a big, orange pumpkin."];
+                ["I like the last one best... 'Tis fun to guess what will be there after the flash."];
+                v3 = ~PartyUtters(false, 0, 0, 65535);
+                if ((v3 <> 65533) and ~IsNPCNear_i(_Iolo)) {
+                    v3 = ~PartyUtters(false, 0, "@Sounds like he doth have a sense of humor like thine, Iolo!@", v3);
+                    SetSpeakerSlot_i(0);
+                } else {
+                    if (v3 <> 65180) {
+                        v3 = ~PartyUtters(false, 0, "@This man is quite jovial!@", v3);
+                        SetSpeakerSlot_i(0);
+                    }
+                }
+                if (v3 <> 65180) {
+                    if (~ListSize_i(~GetParty()) > 2) {
+                        v5 = v3;
+                        While (v5 = v3) {
+                            v5 = ~PartyUtters(false, 0, 0, 1);
+                        }
+                        if (v5 <> 65180) {
+                            SetSpeakerSlot_i(0);
+                            ["'Tis such an incredible sight. Ho ho hee!"];
+                            v5 = ~PartyUtters(false, 0, "@'Tis not very funny if what was hit was a person!@", v5);
+                        }
+                    }
+                    SetSpeakerSlot_i(0);
+                }
+                TurnOff("two reasons");
+            }
+            key ("Goblins") {
+                ["Why wouldst thou want to talk about them? The storms are much more fun..."];
+                v3 = ~PartyUtters(false, 0, "@We do not have time for this!@", 65534);
+                if (v3 <> 65180) {
+                    SetSpeakerSlot_i(0);
+                    ["Oh, all right! Don't be testy!"];
+                }
+                ["Thou dost not need to scowl so. Everyone is so serious these days! 'Tis not healthy, thou knowest." *"The Goblins are large, mean and hateful. They prefer to eat humans and they make it unsafe to travel. But I never travel since they took away my son, Freli..."];
+                TurnOff("Goblins");
+                PushKeys();
+                TurnOn(<< "unsafe", "Freli", "change subject" >>);
+            }
+            key ("unsafe") {
+                ["Nothing is safe... Not even life. I lost my dear Elissia after childbirth..."];
+                v3 = "friends are";
+                if (~ListSize_i(~GetParty()) < 3) {
+                    v3 = "friend is";
+                }
+                v3 = ~PartyUtters(false, 0, ("@If thou couldst return to the subject at hand, " + ("Delin, we would be most grateful.@" & "@I fear that my <Check> becoming a bit impatient.@")), 65533);
+                if (v3 <> 65180) {
+                    SetSpeakerSlot_i(0);
+                }
+                ["I wandered off again, didn't I? What was I saying...?" *"The Goblins have killed our healer, and now we have to make do with a horticulturist. Imagine that! And, of course, the Goblins have attacked the Fawn Tower."];
+                TurnOff("unsafe");
+                TurnOn("Fawn Tower");
+                PushKeys();
+                TurnOn(<< "healer", "horticulturist", "change subject" >>);
+                if not v1 {
+                    TurnOn("Elissia");
+                }
+            }
+            key ("Elissia") {
+                v1 = true;
+                ["Oh, she was a true beauty, I tell thee! Soft golden hair and the brightest eyes that thou hast seen." *"Though she came from Moonshade, no one had cause to fear her. She had not a drop of magic..."];
+                ["Other than her smile."];
+                if (~IsNPCNear_i(_Iolo) and (~ListSize_i(~GetParty()) > 2)) {
+                    v3 = 65533;
+                    While (v3 = 65533) {
+                        v3 = ~PartyUtters(false, 0, 0, 1);
+                    }
+                    SetSpeaker1_i(0, v3);
+                    ["Our friend Iolo shares thy grief, milord. His wife is lost somewhere in these lands."];
+                    CloseSpeaker1_i();
+                    SetSpeakerSlot_i(0);
+                    ["For thy sake, I hope that she doth live, stranger Iolo."];
+                    SetSpeaker1_i(0, _Iolo);
+                    ["If Gwenno were lost from me forever, perhaps I too would be a little confused."];
+                    ["Condolences to thee, Delin, and apologies if we have been unfeeling."];
+                    CloseSpeaker1_i();
+                    SetSpeakerSlot_i(0);
+                    ["They say that I shall feel better soon..."];
+                    ["But I don't believe it."];
+                }
+                if not v2 {
+                    TurnOn("Moonshade");
+                }
+                TurnOff("Elissia");
+            }
+            key ("healer") {
+                ["His name was, ah... Seth, I believe. Good healer, but he had a nasty temper." *"I am certain that the Goblins found him a bitter meal. Ha!"];
+                TurnOff("healer");
+                TurnOn("Seth");
+            }
+            key ("Seth") {
+                ["Seth? Oh, the healer! Didst thou know him, too?" *"Always insisted on going herb gathering alone... 'Tis what finally killed him. Wouldn't take any guards along with him, even after the Goblin attacks increased."];
+                TurnOff("Seth");
+            }
+            key ("horticulturist") {
+                ["Did I say something about a horticulturist? I thought we were talking about healers..." *"When Seth was killed, Delphynia took his place. We could not obtain a replacement from anywhere because of the storms."];
+                TurnOff("horticulturist");
+                TurnOn("Delphynia");
+            }
+            key ("Delphynia") {
+                ["Delphynia is a fine horticulturist, to be sure. But she hath had little or no training as a healer."];
+                ["And it doth not seem right having a woman as a healer. Women should concern themselves with the delights of life, not the sorrows."];
+                TurnOff("Delphynia");
+            }
+            key ("Fawn Tower") {
+                if ($gottattoo = true) {
+                    ["But then thou knowest all about Goblin treachery, being a Pikeman and all."];
+                    if ($fawntowerretaken = true) {
+                        ["Everyone is so relieved that thy fine Pikemen companions have retaken the Tower from Pomdirgun. But they do not understand that it is only a matter of time before we die... Admittedly though, I will grant that most any death would be better than becoming a Goblin's supper."];
+                    } else {
+                        ["Everyone is so worried, now that Pomdirgun hath taken the Tower from thy Pikemen companions. But they do not understand that it is only a matter of time before we die... But I intend to try my luck with the storms, rather than becoming a Goblin's supper."];
+                    }
+                } else {
+                    if ($fawntowerretaken = true) {
+                        ["Everyone is so relieved that the Tower hath been retaken from Pomdirgun. But they do not understand that it is only a matter of time before we die... Admittedly though, I will grant that most any death would be better than becoming a Goblin's supper."];
+                    } else {
+                        ["Everyone is so worried, now that Pomdirgun holds the Tower." ~"But they do not understand that it is only a matter of time before we die... But I intend to try my luck with the storms, rather than becoming a Goblin's supper."];
+                    }
+                }
+                TurnOff("Fawn Tower");
+                TurnOn("Pomdirgun");
+            }
+            key ("Pomdirgun") {
+                ["I am certain that Pomdirgun would be very disappointed to learn that thou dost not know of him. He hath gone to great lengths to be sure that we in Fawn know the name of the Goblin leader that will bring us to our knees..."];
+                ["...Or his stewpot."];
+                TurnOff("Pomdirgun");
+            }
+            key ("Freli") {
+                ["Freli... Didst thou say Freli? Hast thou seen him? I have not seen him since the Magister took him away." *"I would give anything to be able to see him again, or to have some word from him. Elissia died bringing him into this world... He is all that I have to remember her by, except for Alyssand of course. But Freli favors his mother more."];
+                $delinsaidfreli = true;
+                TurnOff("Freli");
+                TurnOn("Magister");
+                if not v1 {
+                    TurnOn("Elissia");
+                }
+            }
+            key ("Magister") {
+                TurnOff("Magister");
+                ["The Magister comes like a thief in the night, to test the children of the land for magic talent. If a Mage Child is discovered, the Magister steals the child."];
+                ["Just as he stole my little Freli..."];
+                ["Thou dost not work for the Magister, dost thou?"];
+                if (~AskYesNo() = true) {
+                    ["Thou hast no cause to spy on me! I have not seen or heard from my son since he left here! I am not responsible for anything he may have done!" *"Tell thine employer that he took Freli, let him be responsible!"];
+                    $avatarsaidspy = true;
+                    Bark_i(0, "@Spy not on me!@", _Delin);
+                    terminate;
+                } else {
+                    ["Good! Because the Magister hath no call to spy on me."];
+                    ["I have had no contact with Freli since he was taken away. No mortal can win in a struggle against wizards..."];
+                }
+            }
+            key ("Moonshade") {
+                v2 = true;
+                ["Moonshade is where my wife was from... She was the most patient of women." *"Moonshade is ruled by Mages. To them, if thou art not a Mage, thou art nothing. The Mages shed no tears when mine Elissia left the town. She was nothing in their eyes... But everything in mine."];
+                TurnOff("Moonshade");
+                if not v1 {
+                    TurnOn("Elissia");
+                }
+            }
+            key ("Batlin") {
+                ["Bats? What bats?"];
+                v3 = ~PartyUtters(false, "@Not bats! B-A-T-L-I-N!@", "@Not bats! B-A-T-L-I-N!@", 1);
+                SetSpeakerSlot_i(0);
+                ["No need to shout. I'm not deaf."];
+                ["Batlin... ah, I remember he came here asking about some sort of rock sculpture or something. Black rock..."];
+                ["I told him I am a simple merchant. I do not carry such luxuries. I directed him to Monitor. There is a sculptor there."];
+                TurnOff("Batlin");
+                PushKeys();
+                TurnOn(<< "Monitor", "change subject" >>);
+            }
+            key ("Monitor") {
+                if ($gottattoo = true) {
+                    ["And people accuse me of being forgetful! Thou art a Knight, and doth ask me about Monitor?"];
+                }
+                ["Monitor is south of us, <v0>, on the coast. Their soldiers, the Pikemen, act as guards for the roads, and as highwaymen for Monitor's coffers..."];
+                TurnOff("Monitor");
+                TurnOn("highwaymen");
+            }
+            key ("highwaymen") {
+                ["Yes, highwaymen! They charge each traveller and merchant who would make use of the road they guard!" *"An exorbitant amount doth go to Monitor every year, I'm certain. And then we must feed them in their Tower, and offer them our goods at a discount!"];
+                TurnOff("highwaymen");
+            }
+            key ("letter") {
+                TurnOff("letter");
+                ["A letter from Freli! Oh, what joy!"];
+                if ~TakeFromParty_i(0, 0, 70, _Scroll, 1) {
+                    ["Let me have it! Alyssand must hear of this."];
+                    if ~IsNPCNear(_Alyssand) {
+                        SetSpeaker1_i(0, _Alyssand);
+                        ["I am here, father! Tell me how Freli fares. Hath he become a Mage?"];
+                        CloseSpeaker1_i();
+                        SetSpeakerSlot_i(0);
+                        ["A moment, a moment... It will take me a moment. His writing is terrible!"];
+                    }
+                    ["Oh, for this piece of good work, <v0>, thou must be rewarded!"];
+                    ["Let me see... ah, yes! How wouldst thou like a discount on anything within the store? Yes, yes... half my normal price -- but just this once!"];
+                    flag(231) = false;
+                    flag(417) = true;
+                    $avatarsaidspy = false;
+                } else {
+                    ["Thou art having fun with me, stranger! I see no letter."];
+                    Bark_i(0, "@Out with ye!@", _Delin);
+                    SetWorkType(_Shy, _Delin);
+                    terminate;
+                }
+            }
+            key ("bye") {
+                SendAssassin_i();
+                CloseSpeaker0_i();
+                Bark_i(0, "@Thanks for thine help!@", _Avatar);
+                Bark_i(5, "@Come back any time!@", _Delin);
+                JorvinBringsInvitation_i();
+                break;
+            }
+        }
+        clear_answers;
+    }
+}
+
+Usable DelinSells_i #locals(19) #uses(~LordOrLady, ~AskOrdList, ~IsNPCNear, ~AskYesNo, ~DelinHaggles_i, ~SellItem_i, ~PartyUtters) {
+    v0 = ~LordOrLady();
+    PushKeys();
+    v1 = true;
+    v2 = << "nothing", "bag", "bucket", "fishing pole", "candle", "torch", "bedroll", "fur boots", "backpack", "stockings", "great helm", "crossbow", "bolts", "sextant", "mirror" >>;
+    v3 = << 0, 802, 810, 662, 336, 595, 583, 587, 801, 677, 541, 598, 723, 650, 675 >>;
+    v4 = << 65177, 0, 0, 0, 0, 0, 0, 3, 0, 1, 0, 0, 7, 0, 16 >>;
+    v5 = 948;
+    v6 = << 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 20, 1, 1 >>;
+    v7 = << 0, 1, 0, 0, 1, 1, 0, 1, 1, 1, 0, 0, 1, 0, 0 >>;
+    if ((flag(417) = true) and (flag(418) = false)) {
+        v8 = << 0, 15, 18, 12, 2, 4, 75, 50, 100, 25, 150, 275, 38, 50, 60 >>;
+        v9 = << 0, 15, 18, 12, 2, 4, 75, 50, 100, 25, 150, 275, 38, 50, 60 >>;
+        flag(418) = true;
+    } else {
+        v8 = << 0, 30, 35, 25, 4, 8, 150, 100, 200, 25, 300, 550, 75, 100, 120 >>;
+        v9 = << 0, 17, 19, 13, 2, 4, 90, 60, 115, 15, 190, 350, 45, 50, 70 >>;
+    }
+    While v1 {
+        if ((flag(417) = true) and (flag(418) = false)) {
+            ["Remember, <v0>, I have lowered all of my prices by half just this one time!"];
+        }
+        v10 = ~AskOrdList(v2);
+        if (v10 = 1) {
+            v11 = ~rndRange(3, 1);
+            if (v11 = 1) {
+                v12 = "Hmmm... ah,";
+            }
+            if (v11 = 2) {
+                v12 = "Ah... er,";
+            }
+            if (v11 = 3) {
+                v12 = "Hmmm... I see,";
+            }
+            v11 = ~rndRange(3, 1);
+            if (v11 = 1) {
+                v13 = "perhaps later,";
+            }
+            if (v11 = 2) {
+                v13 = "another time then,";
+            }
+            if (v11 = 3) {
+                v13 = "come again,";
+            }
+            ["<v12> <v13> <v0>."];
+            v1 = false;
+        } else {
+            v14 = v8::v10;
+            v15 = 0;
+            v11 = ~rndRange(6, 1);
+            if (v11 = 1) {
+                v16 = "Dost thou accept?";
+            }
+            if (v11 = 2) {
+                v16 = "Dost thou find this price acceptable?";
+            }
+            if (v11 = 3) {
+                v16 = "Let me see... ah, yes! Dost thou find the price agreeable?";
+            }
+            if (v11 = 4) {
+                v16 = "Dost thou agree?";
+            }
+            if (v11 = 5) {
+                v16 = "Is the price acceptable?";
+            }
+            if (v11 = 6) {
+                v16 = "Ah, hmmm... Is the price acceptable?";
+            }
+            if (v10 = 2) {
+                ["Let me think... ah, that will be 300 filari."];
+                if ~IsNPCNear(_Alyssand) {
+                    SetSpeaker1_i(0, _Alyssand);
+                    ["Father! Leather bags sell for <v14> filari!"];
+                    CloseSpeaker1_i();
+                    SetSpeakerSlot_i(0);
+                    ["Ah, er... thou art right, my dear!"];
+                } else {
+                    ["Er, that's not right... oh, I am sorry, <v0>, I sell my bags for <v14> filari!"];
+                }
+                ["<v16>"];
+                v17 = "bags";
+            }
+            if (v10 = 3) {
+                ["I stock the finest buckets in Fawn! Hmmm... I sell them for <v14> filari each."];
+                ["<v16>"];
+            }
+            if (v10 = 4) {
+                ["Thou wilt surely require one if thou dost remain in Fawn, <v0>. Ah... hmmm, I will sell one to thee for the fair price of <v14> filari."];
+                ["<v16>"];
+            }
+            if (v10 = 5) {
+                ["That will be <v14> filari each for a fine wax candle. <v16>"];
+                v17 = "candles";
+            }
+            if (v10 = 6) {
+                ["A torch?  Ah, yes... My torches are of the finest quality! I can sell one to thee for <v14> filari."];
+                ["<v16>"];
+                v17 = "torches";
+            }
+            if (v10 = 7) {
+                ["Ah, I can sell this to thee for <v14> filari."];
+                ["<v16>"];
+            }
+            if (v10 = 8) {
+                ["I have a few fur boots left, <v0>. I can sell a pair to thee for <v14> filari."];
+                ["<v16>"];
+                v17 = "pairs of fur boots";
+            }
+            if (v10 = 9) {
+                ["These are the finest packs made, <v0>! For one of these backpacks I ask 15 filari."];
+                if ~IsNPCNear(_Alyssand) {
+                    SetSpeaker1_i(0, _Alyssand);
+                    ["Father! We sell those packs for <v14> filari!"];
+                    CloseSpeaker1_i();
+                    SetSpeakerSlot_i(0);
+                    ["Ah, thou art correct, daughter..."];
+                } else {
+                    ["Uh, hmmm... I do believe I made a mistake, <v0>. I sell my backpacks for <v14> filari."];
+                }
+                ["<v16>"];
+                v17 = "backpacks";
+            }
+            if (v10 = 10) {
+                ["Ah, Alyssand makes these stockings, <v0>."];
+                if ~AvatarSex() {
+                    ["Ahem... I am sure that thou wouldst enjoy wearing a pair, <v0>.  I am assured that they are most comfortable."];
+                } else {
+                    ["If thou dost wish a pair for a loved one or a mistress, I am certain they would appreciate the fine quality, <v0>!"];
+                    if ~IsNPCNear(_Alyssand) {
+                        SetSpeaker1_i(0, _Alyssand);
+                        ["Father! Watch thy tongue!"];
+                        CloseSpeaker1_i();
+                        SetSpeakerSlot_i(0);
+                        ["But, dear... he is a customer..."];
+                        SetSpeaker1_i(0, _Alyssand);
+                        ["'Tis rude of thee, father, to discuss such matters in public!"];
+                        CloseSpeaker1_i();
+                        SetSpeakerSlot_i(0);
+                        ["Ah, hmmm... she is very shrewish today, <v0>. I... er, apologize to thee for her behavior."];
+                        SetSpeaker1_i(0, _Alyssand);
+                        ["FATHER!!!"];
+                        CloseSpeaker1_i();
+                        SetSpeakerSlot_i(0);
+                    }
+                }
+                ["Ah, where was I? Oh, yes... For a pair of these fine stockings I ask <v14> filari."];
+                ["<v16>"];
+                v17 = "stockings";
+            }
+            if (v10 = 11) {
+                ["I can sell a great helm to thee for <v14> filari."];
+                ["<v16>"];
+                v17 = "great helms";
+            }
+            if (v10 = 12) {
+                ["If thou wishest to fend off the Goblins, <v0>, thou couldst not do better than to own one of my crossbows! For <v14> filari it is thine."];
+                ["<v16>"];
+                v17 = "crossbows";
+            }
+            if (v10 = 13) {
+                ["Ah, thou wilt need bolts for thy crossbow. Let me think... oh, that will be <v14> filari for twenty bolts."];
+                ["<v16>"];
+                v17 = "crossbow bolts, in bundles of twenty,";
+            }
+            if (v10 = 14) {
+                ["Hmmm... er, even though there are no sailing ships available, <v0>, I can give thee a good deal on a reliable sextant! For <v14> filari one can be thine."];
+                ["<v16>"];
+                v17 = "sextants";
+            }
+            if (v10 = 15) {
+                if ~AvatarSex() {
+                    ["Oh, <v0>, thou shouldst purchase a hand mirror if thou dost not already own one. A lady of thy beauty doubtless needs one. For a mere <v14> filari I can sell thee one."];
+                } else {
+                    ["Perhaps a gift for a sweetheart? Ah, no, that would not be prudent of me to ask... For <v14> filari I can sell thee a finely crafted hand mirror."];
+                }
+                ["<v16>"];
+                v17 = "hand mirror";
+            }
+            if (v14 = v9::v10) {
+                if ~AskYesNo() {
+                    v18 = v14;
+                } else {
+                    v18 = 0;
+                }
+            } else {
+                v18 = ~DelinHaggles_i(v9::v10, v8::v10);
+            }
+            if (v18 > 0) {
+                if (v7::v10 = 1) {
+                    ["How many <v17> wouldst thou like?"];
+                    v15 = ~SellItem_i(false, 1, 5, v18, v5, v6::v10, v4::v10, v3::v10);
+                } else {
+                    v15 = ~SellItem_i(false, 1, 0, v18, v5, 1, v4::v10, v3::v10);
+                }
+            }
+            if (v15 = 1) {
+                ["I am certain that thou wilt enjoy thy purchase, <v0>."];
+            } else {
+                if (v15 = 2) {
+                    ["Ah, er..." ~"I believe that thine hands are full, <v0>!"];
+                } else {
+                    if (v15 = 3) {
+                        v11 = ~PartyUtters(false, 0, (("@But " + v0) + ", we haven't the coins to purchase this.@"), 1);
+                        if (v11 <> 65180) {
+                            SetSpeaker0_i(0, _Delin);
+                            ["Ah... it doth appear that thy purse is empty, <v0>."];
+                        } else {
+                            ["'Twould appear thou dost not have enough money for that..."];
+                        }
+                        if (31 < (~GetNPCID_i(_Delin) + 6)) {
+                            SetNPCID_i(31, _Delin);
+                        } else {
+                            SetNPCID_i((~GetNPCID_i(_Delin) + 6), _Delin);
+                        }
+                    } else {
+                    }
+                }
+            }
+            ["Dost thou desire another purchase?"];
+            v1 = ~AskYesNo();
+        }
+    }
+    PopKeys();
+}
+
+Function ~DelinHaggles_i accepts a0, a1 #locals(14) #uses(~LordOrLady, ~AskList, ~Haggle_i, ~PartyUtters, ~AskYesNo) {
+    v2 = ~LordOrLady();
+    v3 = v1;
+    v4 = ((v0 / 3) * 2);
+    v5 = (15 - (~GetNPCID_i(_Delin) / 2));
+    v6 = 0;
+    v7 = 1;
+    v8 = 0;
+    v9 = 2;
+    v10 = ~GetNPCID_i(_Delin);
+    While v7 {
+        v11 = ~AskList(<< "yes", "no", "haggle" >>);
+        if (v11 = "no") {
+            return 0;
+        } else {
+            if (v11 = "yes") {
+                v12 = 0;
+                goto label_8;
+            }
+        }
+        v13 = ~Haggle_i(v6, v5, v8, v4, v9, v0, v3);
+        v8 = (v8 + 1);
+        v6 = v13::4;
+        v12 = v13::3;
+        v14 = v3;
+        v3 = v13::2;
+        v4 = v13::1;
+        label_8:
+        v15 = ~Random(3);
+        if (v12 < 2) {
+            if (v3 < (v0 + ((v1 - v0) / 4))) {
+                if (v15 = 1) {
+                    ["Thou art a shrewd bargainer, <v2>. Please do not tell anyone in town of this!"];
+                }
+                if (v15 = 2) {
+                    ["Thy skill at trading is unsurpassed, <v2>..."];
+                }
+                if (v15 = 3) {
+                    ["Troublesome are the times that force me to agree to such bargains!"];
+                }
+            } else {
+                if (v3 < (v0 + ((v1 - v0) / 3))) {
+                    if (v15 = 1) {
+                        ["Ah... My prices are fair here. Fair indeed."];
+                    }
+                    if (v15 = 2) {
+                        ["Thou art a rogue! I would not believe mine ears if I were told I had sold goods at this price!"];
+                    }
+                    if (v15 = 3) {
+                        ["Let me see... Ah, I do believe thou wouldst make a good shopkeeper, <v2>! 'Tis not often I make such unwise bargains!"];
+                        v11 = ~PartyUtters(false, 0, "@A shopkeeper? Surely thou art jesting?\x0D\n\x09\x09\x09\x09\x09\x09 The Avatar is embarked on a Quest!@", 1);
+                    }
+                } else {
+                    if (v3 < (v0 + ((v1 - v0) / 2))) {
+                        if (v15 = 1) {
+                            ["Most fair, if I do say so myself."];
+                        }
+                        if (v15 = 2) {
+                            ["'Tis a pleasure to bargain with thee, <v2>."];
+                        }
+                        if (v15 = 3) {
+                            ["What were we discussing? Ah, yes... 'Tis a fairer price than most would give, <v2>."];
+                        }
+                    } else {
+                        if (v15 = 1) {
+                            ["Thou hast made me a happy man, <v2>! Walk with Beauty!"];
+                        }
+                        if (v15 = 2) {
+                            ["Ah... A blessing upon thee, <v2>."];
+                        }
+                        if (v15 = 3) {
+                            ["Hmmm... In these trying times, I must charge steep prices or become a pauper."];
+                        }
+                    }
+                }
+            }
+            ["We have agreed on a price of <v3> filari, <v2>?"];
+            if ~AskYesNo() {
+                if (v10 > 1) {
+                    SetNPCID_i((v10 - 2), _Delin);
+                }
+                return v3;
+            } else {
+                if (v15 = 1) {
+                    ["What? I thought we had an agreement."];
+                }
+                if (v15 = 2) {
+                    ["Thou hast sorely disappointed me. What of our bargain?"];
+                }
+                if (v15 = 3) {
+                    ["Is this honorable? What of our agreement?"];
+                }
+                if (31 < (v10 + 10)) {
+                    SetNPCID_i(31, _Delin);
+                } else {
+                    SetNPCID_i((v10 + 10), _Delin);
+                }
+                return 0;
+            }
+        }
+        if (v6 = 1) {
+            if (v12 = 5) {
+                ["<v2>, I said that <v3> was my final offer. Dost thou accept?"];
+                if (v10 < 28) {
+                    SetNPCID_i((v10 + 4), _Delin);
+                }
+                if ~AskYesNo() {
+                    return v3;
+                }
+                v7 = 0;
+            } else {
+                ["Very well. <v3> filari is my final offer."];
+                if (v10 < 30) {
+                    SetNPCID_i((v10 + 2), _Delin);
+                }
+            }
+        } else {
+            if (v12 = 2) {
+                if (v15 = 1) {
+                    ["Ah, hmmm... It pleases me to bargain with such a worthy soul. How doth <v3> filari sound?"];
+                }
+                if (v15 = 2) {
+                    ["May the Truth of Beauty guide thee, <v2>. So, have we agreed on <v3> filari?"];
+                }
+                if (v15 = 3) {
+                    ["My price is <v3> filari. Dost thou accept?"];
+                }
+            }
+            if (v12 = 3) {
+                if (v15 = 1) {
+                    ["These are trying times, and goods are scarce... Wouldst thou consider <v3> filari?"];
+                }
+                if (v15 = 2) {
+                    ["Hmmm... I am not certain... Dost thou like the sound of <v3> filari?"];
+                }
+                if (v15 = 3) {
+                    ["But I must earn enough to pay my debts! <v3> filari?"];
+                }
+            }
+            if (v12 = 4) {
+                if (v15 = 1) {
+                    ["I cannot possibly accept less than <v3> filari!"];
+                    ["What dost thou say to this?"];
+                }
+                if (v15 = 2) {
+                    ["My costs are soaring! Surely thou canst see that I can go no lower than <v3> filari."];
+                }
+                if (v15 = 3) {
+                    ["Ah, hmmm... <v2>, thou art not talking to a fool. I deserve no less than <v3> filari."];
+                }
+            }
+            if (v12 = 5) {
+                v3 = v14;
+                if (v15 = 1) {
+                    ["I would rather be thrown into the canals than accept such a pitiful offer! My previous price stands, at <v3> filari."];
+                }
+                if (v15 = 2) {
+                    ["Thou must think that I am an imbecile to accept such a bargain. <v3> filari, and no less!"];
+                }
+                if (v15 = 3) {
+                    ["Why, if I accepted such a price, I would have to close my shop and move away!"];
+                    ["<v3> filari is where I stand."];
+                }
+                if (v10 < 31) {
+                    SetNPCID_i((v10 + 1), _Delin);
+                }
+            }
+        }
+    }
+}

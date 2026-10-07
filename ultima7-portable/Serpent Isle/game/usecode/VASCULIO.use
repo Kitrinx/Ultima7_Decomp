@@ -1,0 +1,213 @@
+Routine Vamp accepts a0 #locals(1) #uses(Bark_i) {
+    if (~ItemToNPC_i(item) = 65242) {
+        SetItemFlag_i(_DontMove_i, _Avatar);
+        Bark_i(0, "@Ahhh, a victim...@", _Vasculio);
+        v0 = ~PostAction(<< _aNO_HALT_i, _aWAIT_i, 10, _aUSABLE_i, #Vasculio >>, item);
+        terminate;
+    }
+}
+
+Routine Vasculio accepts a0 #locals(15) #uses(UnfreezeAvatar_i, ~IsInInv, AttackAvatar_i, Bark_i, ~AskYesNo, ~GiveItemsOrDrop_i) {
+    if (event = _Converse) {
+        label_1:
+        UnfreezeAvatar_i();
+        SetSpeaker0_i(0, _AntiSham);
+        ["Why hast thou disturbed my slumber?"];
+        SetSpeaker1_i(0, _Avatar);
+        ["Back, creature of the undead! Thou art a thing of evil!"];
+        v0 = ~GetItemFlag_i(_InParty_i, _Iolo);
+        v1 = ~GetItemFlag_i(_InParty_i, _Shamino);
+        v2 = ~GetItemFlag_i(_InParty_i, _Dupre);
+        v3 = ~IsInInv(65177, 65177, _Magebane, 1, _Party);
+        CloseSpeaker1_i();
+        SetSpeakerSlot_i(0);
+        ["And thou art the cattle upon which I prey!" *"Who sent thee to destroy Vasculio? Was it those rotting worms of Moonshade?" *"I know it was! Soon I shall have my vengeance for what they have done to me!" *"Who sent thee? Filbercio?! Mortegro?! Gustacio?! Torrissio?!"];
+        TurnOn(<< "Filbercio", "Mortegro", "Gustacio", "Torrissio", "vengeance" >>);
+        converse {
+            key ("bye") {
+                SetSpeaker0_i(0, _AntiSham);
+                ["Foolish mortal! The time hath come to relieve thee of the burden of thy life for it is also my time to feed!"];
+                AttackAvatar_i(_Vasculio);
+                CloseSpeaker0_i();
+                CloseSpeaker1_i();
+                Bark_i(0, "@Enjoy thy death!@", _Vasculio);
+                terminate;
+            }
+            key ("Filbercio") {
+                TurnOff("Mortegro");
+                TurnOff("Gustacio");
+                TurnOff("Torrissio");
+                TurnOff("Filbercio");
+                ["Do not mention the wretched name of Filbercio in my presence! He is the one who sentenced me to die!" *"If that swine ever comes near me, I assure thee he will pay, and pay dearly."];
+                v4 = true;
+            }
+            key ("Mortegro") {
+                TurnOff("Filbercio");
+                TurnOff("Gustacio");
+                TurnOff("Torrissio");
+                TurnOff("Mortegro");
+                ["That despicable interloper Mortegro interfered with mine experiments, and betrayed me to the Council of Mages!"];
+                v5 = true;
+            }
+            key ("Gustacio") {
+                TurnOff("Filbercio");
+                TurnOff("Torrissio");
+                TurnOff("Gustacio");
+                TurnOff("Mortegro");
+                ["I always hated that insufferable Gustacio! Always flaunting his influence, willing to betray any ideal to preserve his false sense of dignity!"];
+                v6 = true;
+            }
+            key ("Torrissio") {
+                TurnOff("Filbercio");
+                TurnOff("Gustacio");
+                TurnOff("Mortegro");
+                TurnOff("Torrissio");
+                ["Ha! He is the most despised one of all! He broke our alliance and betrayed me to the Council of Mages!"];
+                v7 = true;
+            }
+            if (v7 or (v6 or (v5 or v4))) {
+                ["Bah! They concern me not!"];
+                v7 = false;
+                v6 = false;
+                v5 = false;
+                v4 = false;
+            }
+            key ("vengeance") {
+                TurnOff("vengeance");
+                TurnOn("bye");
+                if v3 {
+                    SetSpeaker0_i(0, _AntiSham);
+                    ["Ah! But thou dost have the Magebane! I will make thee a deal then, Avatar. In exchange for thy blue sword I shall teach thee my greatest spell, one that can dispatch any foe. Dost thou agree?"];
+                    if v0 {
+                        SetSpeaker1_i(0, _Iolo);
+                        ["Avatar, do not trust him!"];
+                        CloseSpeaker1_i();
+                    }
+                    if v1 {
+                        SetSpeaker1_i(0, _Shamino);
+                        ["Do not bargain with this devil, Avatar!"];
+                        CloseSpeaker1_i();
+                    }
+                    if v2 {
+                        SetSpeaker1_i(0, _Dupre);
+                        ["Avatar, thou must refuse!"];
+                        CloseSpeaker1_i();
+                    }
+                    SetSpeaker0_i(0, _AntiSham);
+                    ["Avatar, ignore the whimperings of thy companions! I will trade thee thy sword for a scroll that can let thee strike men dead! What sayest thou to the bargain?"];
+                    v8 = ~AskYesNo();
+                    if v8 {
+                        SetSpeaker0_i(0, _AntiSham);
+                        ["I knew thou couldst not resist a chance at such power!" *"Take this scroll. It will vanquish any foe who threatens thee."];
+                        v9 = ~GiveItemsOrDrop_i(true, 0, 65177, 65, 715, 1, _Avatar);
+                        SetSpeaker0_i(0, _AntiSham);
+                        ["Fool! Now I have the weapon that thou couldst have slain me with! Thou hast sealed thy fate for no mere mortal can defeat me! Prepare to die, foolish mortal!"];
+                        v9 = ~TakeFromParty_i(0, _All, _All, _Magebane, 1);
+                        AttackAvatar_i(_Vasculio);
+                        Bark_i(0, "@Enjoy thy death!@", _Vasculio);
+                        terminate;
+                    } else {
+                        SetSpeaker0_i(0, _AntiSham);
+                        ["Then thou dost leave me no choice!"];
+                        AttackAvatar_i(_Vasculio);
+                        Bark_i(0, "@Enjoy thy death!@", _Vasculio);
+                        terminate;
+                    }
+                } else {
+                    SetSpeaker0_i(0, _AntiSham);
+                    ["Thou hast sealed thy fate for no mere mortal can defeat me! Prepare for thy death!"];
+                    if (v0 or (v1 or v2)) {
+                        SetSpeaker0_i(0, _AntiSham);
+                        ["But I can be merciful. I will spare thee, Avatar, if thou wilt give me one of thy companions. I hunger for fresh blood. Dost thou accept mine offer?"];
+                        if v0 {
+                            SetSpeaker1_i(0, _Iolo);
+                            ["The Avatar will not accept thine offer, foul fiend!"];
+                            CloseSpeaker1_i();
+                        }
+                        if v1 {
+                            SetSpeaker1_i(0, _Shamino);
+                            ["Thou art wasting thy fetid breath making the Avatar such an offer!"];
+                            CloseSpeaker1_i();
+                        }
+                        if v2 {
+                            SetSpeaker1_i(0, _Dupre);
+                            ["Thou wilt not accept this ghoul's offer, wilt thou, Avatar?"];
+                            CloseSpeaker1_i();
+                        }
+                        SetSpeaker0_i(0, _AntiSham);
+                        ["So, Avatar, wilt thou listen to the whimperings of thy companions, or trade their life for thine own?"];
+                        ["True, they do not compare to thee, but I am not too selective in my tastes. One flesh is as good as another when one hungers."];
+                        v10 = ~AskYesNo();
+                        if v10 {
+                            if v0 {
+                                SetSpeaker1_i(0, _Iolo);
+                                ["Well, I certainly do not intend to go along with this at all!"];
+                                CloseSpeaker1_i();
+                            }
+                            if v1 {
+                                SetSpeaker1_i(0, _Shamino);
+                                ["Avatar, how couldst thou?! Thou canst forget all about this idea!"];
+                                CloseSpeaker1_i();
+                            }
+                            if v2 {
+                                SetSpeaker1_i(0, _Dupre);
+                                ["This is not funny in the least, Avatar."];
+                            }
+                            SetSpeaker0_i(0, _AntiSham);
+                            ["A pity! Then what I do not receive willingly, I will have to take by force!"];
+                            AttackAvatar_i(_Vasculio);
+                            Bark_i(0, "@Enjoy thy death!@", _Vasculio);
+                            terminate;
+                        } else {
+                            SetSpeaker0_i(0, _AntiSham);
+                            ["A pity! Then what I do not receive willingly, I will have to take by force!"];
+                            AttackAvatar_i(_Vasculio);
+                            Bark_i(0, "@Enjoy thy death!@", _Vasculio);
+                            terminate;
+                        }
+                    }
+                }
+                AttackAvatar_i(_Vasculio);
+                Bark_i(0, "@Enjoy thy death!@", _Vasculio);
+                terminate;
+            }
+        }
+        clear_answers;
+    }
+    if (event = _Action) {
+        if (~Item_getType(item) = _Vamp) {
+            Bark_i(1, "@Back to the pit!@", _Vasculio);
+            goto label_62;
+        }
+        if (~Item_getType(item) = _Coffin) {
+            v11 = ~GetCoord(_Avatar);
+            if not flag(584) {
+                flag(584) = true;
+                v12 = ~PostAction(<< _aNO_HALT_i, _aWAIT_i, 5, _aUSABLE_i, #Vasculio >>, _Avatar);
+            }
+            goto label_62;
+        }
+        v13 = ~GetCoord(_Avatar);
+        v14 = ~FindNearby_i(0, 40, _Coffin, _Avatar);
+        if v14 {
+            v11 = ~GetCoord(v14);
+            if (~GetFrame(v14) = 0) {
+                Sfx(119);
+                CreateSpriteOn_i(65535, 0, 0, 0, 0, 0, 61, v14);
+                v12 = ~PostAction(<< _aFRAME, 3, _aWAIT_i, 2, _aFRAME, 1 >>, v14);
+                v12 = ~PostInFuture(18, << _aNO_HALT_i, _aUSABLE_i, #Vasculio >>, _Avatar);
+                terminate;
+            }
+            if (~GetFrame(v14) = 1) {
+                Sfx(42);
+                v11::2 = (v11::2 + 2);
+                Item_move(v11, _Vasculio);
+                v12 = ~PostAction(<< _aFACE_i, _South >>, _Vasculio);
+                goto label_1;
+            }
+        } else {
+            Bark_i(1, "@Spooky place.@", _Avatar);
+        }
+    }
+    label_62:
+}

@@ -1,0 +1,131 @@
+Routine BreakItem_i accepts a0 #locals(21) #uses(Bark_i, ~RemoveFromList_i, ~SortByCriteria_i, ~AbsValue_i, ~GimmePathEgg, CollapseColumn_i, Powder_Keg) {
+    if ((event = _Action) and $temp4flag) {
+        SetItemFlag_i(_DontMove_i, _Avatar);
+        $temp4flag = false;
+        $temp3flag = true;
+        Sfx(39);
+        v0 = ~GetCoord(_Avatar);
+        createSprite(65535, 0, 0, 0, (v0::2 - 1), (v0::1 - 1), 40);
+        createSprite(65535, 0, 0, 0, (v0::2 - 1), (v0::1 - 1), 5);
+        v1 = ~PostInFuture(15, << _aNO_HALT_i, _aUSABLE_i, #BreakItem_i >>, _Avatar);
+        Bark_i(4, "@Ooouch!@", _Avatar);
+        terminate;
+    }
+    if ((event = _Action) and $temp3flag) {
+        $temp3flag = false;
+        $temp2flag = true;
+        Sfx(41);
+        v0 = ~GetCoord(_Avatar);
+        createSprite(65535, 0, 0, 0, (v0::2 - 1), (v0::1 - 1), 41);
+        createSprite(65535, 0, 0, 0, (v0::2 - 1), (v0::1 - 1), 30);
+        v1 = ~PostInFuture(10, << _aNO_HALT_i, _aUSABLE_i, #BreakItem_i >>, _Avatar);
+        terminate;
+    }
+    if ((event = _Action) and $temp2flag) {
+        $temp2flag = false;
+        $temp1flag = true;
+        Sfx(42);
+        v0 = ~GetCoord(_Avatar);
+        createSprite(65535, 0, 0, 0, (v0::2 - 1), (v0::1 - 1), 43);
+        createSprite(65535, 0, 0, 0, (v0::2 - 1), (v0::1 - 1), 27);
+        v1 = ~PostInFuture(18, << _aNO_HALT_i, _aUSABLE_i, #BreakItem_i >>, _Avatar);
+        Bark_i(4, "@Aaargh!@", _Avatar);
+        terminate;
+    }
+    if ((event = _Action) and $temp1flag) {
+        $temp1flag = false;
+        Polymorph_i(_Blank_Type, _Avatar);
+        Sfx(116);
+        v0 = ~GetCoord(_Avatar);
+        createSprite(65535, 0, 0, 0, (v0::2 - 1), (v0::1 - 1), 43);
+        createSprite(65535, 0, 0, 0, (v0::2 - 1), (v0::1 - 1), 30);
+        createSprite(65535, 0, 0, 0, (v0::2 - 1), (v0::1 - 1), 27);
+        createSprite(65535, 0, 0, 0, (v0::2 - 1), (v0::1 - 1), 28);
+        createSprite(65535, 0, 0, 0, (v0::2 - 1), (v0::1 - 1), 4);
+        v1 = ~PostInFuture(30, << _aNO_HALT_i, _aUSABLE_i, #BreakItem_i >>, _Avatar);
+        terminate;
+    }
+    if (event = _Action) {
+        ClearItemFlag_i(_DontMove_i, _Avatar);
+        FadePalette_i(0, 1, 12);
+        playEndgame(true);
+        terminate;
+    }
+    v2 = ~Item_getType(item);
+    if (v2 = 518) {
+        CallGuards_i();
+        v3 = ~RemoveFromList_i(~FindNearby_i(0, 6, _Glass_Counter_Tops, item), item);
+        v4 = << >>;
+        Foreach v7 in v3 {
+            v4 = (v4 & ~GetDist(item, v7));
+        }
+        v3 = ~SortByCriteria_i(v4, v3);
+        v8 = ~GetCoord(item);
+        v9 = 1;
+        Foreach v7 in v3 {
+            v12 = ~GetCoord(v7);
+            v13 = 1;
+            While (v13 <= v9) {
+                v14 = (((v13 - 1) * 3) + 1);
+                if ((~AbsValue_i((v12::1 - v8::v14)) <= 2) and (~AbsValue_i((v12::2 - v8::(v14 + 1))) <= 2)) {
+                    Item_destroy(v7);
+                    v8 = (v8 & v12);
+                    v9 = (v9 + 1);
+                    break;
+                }
+                v13 = (v13 + 1);
+            }
+        }
+        playSFX(item, 95);
+        Item_destroy(item);
+        return;
+    }
+    if ((v2 = 848) or (v2 = 268)) {
+        if not (~GetFrame(item) = 2) {
+            v1 = ~PostAction(<< _aNO_HALT_i, _aSFX_i, 95, _aCONTINUE_i, _aFRAME, 2 >>, item);
+        }
+        return;
+    }
+    if (v2 = 743) {
+        v15 = ~GetWeapon_i(_Avatar);
+        if (v15 <> 710) {
+            terminate;
+        }
+        v16 = ~GetCoord(item);
+        v1 = ~Item_push(item);
+        if v1 {
+            v17 = ~Item_create(_Shattered_Serpent_Statue);
+            if v17 {
+                Sfx(42);
+                v1 = ~PopToMap(v16);
+                if v1 {
+                    v1 = ~PostInFuture(3, << _aNO_HALT_i, _aFRAME, 1, _aWAIT_i, 2, _aFRAME, 2, _aWAIT_i, 2, _aFRAME, 3, _aWAIT_i, 2, _aFRAME, 4, _aWAIT_i, 2, _aFRAME, 5, _aWAIT_i, 2, _aFRAME, 6, _aWAIT_i, 2, _aFRAME, 7 >>, v17);
+                    v18 = ~GimmePathEgg(3, 0);
+                    v1 = ~PostInFuture(25, << _aNO_HALT_i, _aUSABLE_i, #BreakItem_i >>, v18);
+                    $temp4flag = true;
+                }
+            }
+        }
+    }
+    if (v2 = 544) {
+        CollapseColumn_i();
+    }
+    if (~Item_getType(item) = _Brk_Items) {
+        v19 = ~GetFrame(item);
+        if (v19 = 3) {
+            SetFrame(4, item);
+            v1 = ~Item_create(_Teeth);
+            if v1 {
+                SetFrame(1, v1);
+                v20 = ~SetQuality(1, v1);
+                v20 = ~PopToMap(~GetCoord(item));
+            }
+        }
+        terminate;
+    }
+    if ((v2 = 522) and (~GetQuality(item) = 255)) {
+        Powder_Keg(item);
+        terminate;
+    }
+    Item_destroy(item);
+}

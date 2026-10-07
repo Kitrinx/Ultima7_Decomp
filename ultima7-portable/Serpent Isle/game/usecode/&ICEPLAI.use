@@ -1,0 +1,406 @@
+Routine ToggleForceWallsEgg_i accepts a0 #locals(30) #uses(~GimmePathEgg) {
+    v0 = ~GetCoord(item);
+    v1 = v0::1;
+    v2 = v0::2;
+    v3 = ~FindNearby_i(176, 12, _Sickly_Wall, item);
+    v3 = (v3 & ~FindNearby_i(176, 12, _Force, item));
+    v4 = << 0, 0, 0, 0 >>;
+    v5 = << 0, 0, 0, 0 >>;
+    Foreach v8 in v3 {
+        v9 = ~GetCoord(v8);
+        v10 = v9::1;
+        v11 = v9::2;
+        v12 = (v10 - v1);
+        v13 = (v11 - v2);
+        if (v13 < 65531) {
+            v4::1 = 1;
+            v5::1 = v8;
+        }
+        if (v12 > 5) {
+            v4::2 = 1;
+            v5::2 = v8;
+        }
+        if (v13 > 5) {
+            v4::3 = 1;
+            v5::3 = v8;
+        }
+        if (v12 < 65531) {
+            v4::4 = 1;
+            v5::4 = v8;
+        }
+    }
+    v14 = ~FindNearby_i(176, 12, _Wall, item);
+    v15 = << 0, 0, 0, 0 >>;
+    v16 = << 0, 0, 0, 0 >>;
+    Foreach v19 in v14 {
+        v20 = ~GetCoord(v19);
+        v10 = v20::1;
+        v11 = v20::2;
+        v12 = (v10 - v1);
+        v13 = (v11 - v2);
+        if (v13 < 65531) {
+            v15::1 = 1;
+            v16::1 = v19;
+        }
+        if (v12 > 5) {
+            v15::2 = 1;
+            v16::2 = v19;
+        }
+        if (v13 > 5) {
+            v15::3 = 1;
+            v16::3 = v19;
+        }
+        if (v12 < 65531) {
+            v15::4 = 1;
+            v16::4 = v19;
+        }
+    }
+    v21 = ~GetQuality(item);
+    v22 = 0;
+    v23 = 0;
+    if ((v21 = 1) or ((v21 = 3) or ((v21 = 5) or ((v21 = 7) or ((v21 = 9) or ((v21 = 11) or ((v21 = 13) or (v21 = 15)))))))) {
+        if (v4::1 = 0) {
+            Item_destroy(v16::1);
+            Sfx(37);
+            v24 = ~Item_create(_Force);
+            SetFrame(4, v24);
+            ClearItemFlag_i(_IsTemporary_i, v24);
+            v22 = 2;
+            v23 = 65528;
+            v25 = ~PopToMap(<< (v1 + v22), (v2 + v23), 0 >>);
+        } else {
+            Item_destroy(v5::1);
+            v26 = ~Item_create(_Wall);
+            SetFrame(0, v26);
+            ClearItemFlag_i(_IsTemporary_i, v26);
+            v25 = ~PopToMap(<< (v1 + 2), (v2 - 8), 0 >>);
+        }
+    }
+    if ((v21 = 2) or ((v21 = 3) or ((v21 = 6) or ((v21 = 7) or ((v21 = 10) or ((v21 = 11) or ((v21 = 14) or (v21 = 15)))))))) {
+        if (v4::2 = 0) {
+            Item_destroy(v16::2);
+            Sfx(37);
+            v24 = ~Item_create(_Sickly_Wall);
+            SetFrame(10, v24);
+            ClearItemFlag_i(_IsTemporary_i, v24);
+            v22 = 8;
+            v23 = 2;
+            v25 = ~PopToMap(<< (v1 + v22), (v2 + v23), 0 >>);
+        } else {
+            Item_destroy(v5::2);
+            v26 = ~Item_create(_Wall);
+            SetFrame(0, v26);
+            ClearItemFlag_i(_IsTemporary_i, v26);
+            v25 = ~PopToMap(<< (v1 + 8), (v2 + 2), 0 >>);
+        }
+    }
+    if ((v21 = 4) or ((v21 = 5) or ((v21 = 6) or ((v21 = 7) or ((v21 = 12) or ((v21 = 13) or ((v21 = 14) or (v21 = 15)))))))) {
+        if (v4::3 = 0) {
+            Item_destroy(v16::3);
+            Sfx(37);
+            v24 = ~Item_create(_Force);
+            SetFrame(4, v24);
+            ClearItemFlag_i(_IsTemporary_i, v24);
+            v22 = 2;
+            v23 = 8;
+            v25 = ~PopToMap(<< (v1 + v22), (v2 + v23), 0 >>);
+        } else {
+            Item_destroy(v5::3);
+            v26 = ~Item_create(_Wall);
+            SetFrame(0, v26);
+            ClearItemFlag_i(_IsTemporary_i, v26);
+            v27 = ~PopToMap(<< (v1 + 2), (v2 + 8), 0 >>);
+        }
+    }
+    if ((v21 = 8) or ((v21 = 9) or ((v21 = 10) or ((v21 = 11) or ((v21 = 12) or ((v21 = 13) or ((v21 = 14) or (v21 = 15)))))))) {
+        if (v4::4 = 0) {
+            Item_destroy(v16::4);
+            Sfx(37);
+            v24 = ~Item_create(_Sickly_Wall);
+            SetFrame(10, v24);
+            ClearItemFlag_i(_IsTemporary_i, v24);
+            v22 = 65528;
+            v23 = 2;
+            v25 = ~PopToMap(<< (v1 + v22), (v2 + v23), 0 >>);
+        } else {
+            Item_destroy(v5::4);
+            v26 = ~Item_create(_Wall);
+            SetFrame(0, v26);
+            ClearItemFlag_i(_IsTemporary_i, v26);
+            v27 = ~PopToMap(<< (v1 - 8), (v2 + 2), 0 >>);
+        }
+    }
+    v3 = ~FindNearby_i(176, 12, _Sickly_Wall, item);
+    v3 = (v3 & ~FindNearby_i(176, 12, _Force, item));
+    v4 = << 0, 0, 0, 0 >>;
+    Foreach v8 in v3 {
+        v9 = ~GetCoord(v8);
+        v10 = v9::1;
+        v11 = v9::2;
+        v12 = (v10 - v1);
+        v13 = (v11 - v2);
+        if (v13 < 65531) {
+            v4::1 = 1;
+        }
+        if (v12 > 5) {
+            v4::2 = 1;
+        }
+        if (v13 > 5) {
+            v4::3 = 1;
+        }
+        if (v12 < 65531) {
+            v4::4 = 1;
+        }
+    }
+    if ((v4::1 = 1) and ((v4::2 = 1) and ((v4::3 = 1) and (v4::4 = 1)))) {
+        SetMusic(~GimmePathEgg(1, 5), 4);
+    }
+}
+
+Routine IceWormEgg_i accepts a0 #locals(5) #uses(AttackAvatar_i) {
+    if (event = _Trigger) {
+        v0 = ~GetCoord(item);
+        v1 = ~CreateCreature_i(v0, _Ice_Worm);
+        if v1 {
+            AttackAvatar_i(v1);
+            v2 = ~Item_create(_Reagents);
+            if v2 {
+                SetFrame(10, v2);
+                SetItemFlag_i(_OkayToTake_i, v2);
+                v3 = ~PopToNPC(v1);
+            }
+        }
+        v4 = ~GetQuality(item);
+        v4 = (v4 - 1);
+        if (v4 > 1) {
+            v3 = ~SetQuality(v4, item);
+        } else {
+            Item_destroy(item);
+        }
+    }
+}
+
+Routine ComeAliveEgg_i accepts a0 #locals(24) #uses(RemoveAll_i, AttackAvatar_i, Bark_i, ConsumeOne_i, FaceAvatar_i) {
+    if (event = _Trigger) {
+        v0 = ~GetQuality(item);
+        if (v0 = 0) {
+            v1 = ~FindNearby_i(0, 20, _Corpses, item);
+            Foreach v4 in v1 {
+                v5 = ~GetCoord(v4);
+                v5::1 = (v5::1 - (v5::3 / 2));
+                v5::2 = (v5::2 - (v5::3 / 2));
+                createSprite(65535, 0, 0, 0, v5::2, v5::1, 4);
+                Sfx(42);
+            }
+            Foreach v4 in v1 {
+                v5 = ~GetCoord(v4);
+                RemoveAll_i(v4);
+                v8 = ~CreateCreature_i(v5, _Skeleton);
+                AttackAvatar_i(v8);
+            }
+            Bark_i(5, "@Uh-oh...@", _Avatar);
+        }
+        if (v0 = 1) {
+            v9 = ~FindNearby_i(0, 20, _Skinrug, item);
+            Foreach v12 in v9 {
+                v5 = ~GetCoord(v12);
+                v5::1 = (v5::1 - (v5::3 / 2));
+                v5::2 = (v5::2 - (v5::3 / 2));
+                createSprite(65535, 0, 0, 0, v5::2, v5::1, 26);
+                Sfx(119);
+            }
+            Foreach v12 in v9 {
+                v5 = ~GetCoord(v12);
+                ConsumeOne_i(v12);
+                v15 = ~CreateCreature_i(v5, _Leopard);
+                AttackAvatar_i(v15);
+            }
+            Bark_i(5, "@By the Virtues!@", _Avatar);
+        }
+        if (v0 = 2) {
+            v1 = ~FindNearby_i(0, 30, _Statues, item);
+            Foreach v4 in v1 {
+                v5 = ~GetCoord(v4);
+                v5::1 = (v5::1 - (v5::3 / 2));
+                v5::2 = (v5::2 - (v5::3 / 2));
+                createSprite(65535, 0, 0, 0, v5::2, v5::1, 21);
+                Sfx(95);
+            }
+            Foreach v4 in v1 {
+                v5 = ~GetCoord(v4);
+                RemoveAll_i(v4);
+                v8 = ~CreateCreature_i(v5, _AnimArmr);
+                AttackAvatar_i(v8);
+                FaceAvatar_i(v8);
+            }
+            Bark_i(5, "@By the Virtues!@", _Avatar);
+        }
+        if (v0 = 3) {
+            v1 = ~FindNearby_i(0, 8, _Statues, item);
+            Foreach v4 in v1 {
+                v5 = ~GetCoord(v4);
+                v5::1 = (v5::1 - (v5::3 / 2));
+                v5::2 = (v5::2 - (v5::3 / 2));
+                createSprite(65535, 0, 0, 0, v5::2, v5::1, 21);
+                Sfx(95);
+            }
+            Foreach v4 in v1 {
+                v5 = ~GetCoord(v4);
+                RemoveAll_i(v4);
+                v8 = ~CreateCreature_i(v5, _AnimArmr);
+                AttackAvatar_i(v8);
+                FaceAvatar_i(v8);
+            }
+        }
+    }
+}
+
+Routine FitchEgg_i accepts a0 #locals(1) #uses(Bark_i) {
+    if (event = _Trigger) {
+        Item_bark("@Help me...@", _Fitch);
+        v0 = ~PostInFuture(10, << _aNO_HALT_i, _aUSABLE_i, #FitchEgg_i >>, _Avatar);
+    }
+    if (event = _Action) {
+        SetSpeaker0_i(0, _Ratman2);
+        ["Oh, the pain... The end is near..."];
+        TurnOn(<< "Who art thou?", "What happened?" >>);
+        converse {
+            key ("Who art thou?") {
+                ["Me name's Fitch. Me and me mates were trappers for Hazard."];
+                TurnOff("Who art thou?");
+            }
+            key ("What happened?") {
+                ["Several days ago we were camped in a nearby cave when we were attacked by a terrible sorceress."];
+                [Evil she was, striking men dead before we knew what was upon us. We slew her, though she took many men with her even as she fell. Only I survived, though I fear not for long."];
+                TurnOff("What happened?");
+                TurnOn("Rest easy.");
+            }
+            key ("Rest easy.") {
+                ["I am glad thou didst find me. I'd have hated to have died out here alone..."];
+                Bark_i(0, "@The pain!@", _Fitch);
+                CloseSpeaker0_i();
+                CloseSpeaker1_i();
+                v0 = ~PostInFuture(5, << _aNO_HALT_i, _aHIT_i, 50, 0 >>, _Fitch);
+                break;
+            }
+        }
+        clear_answers;
+    }
+}
+
+Routine IcePlainsRemarksEgg_i accepts a0 #locals(5) #uses(~PartyUtters, Bark_i, AttackAvatar_i) {
+    if (event = _Trigger) {
+        v0 = ~GetQuality(item);
+        if (v0 = 1) {
+            v1 = ~PartyUtters(true, 0, "@A Software Pirate!@", 65180);
+            if ~IsNPCNear_i(_Iolo) {
+                Bark_i(16, "@Kill him quickly!@", _Iolo);
+            }
+            if ~IsNPCNear_i(_Shamino) {
+                Bark_i(32, "@Format his hard drive!@", _Shamino);
+            }
+            if ~IsNPCNear_i(_Dupre) {
+                Bark_i(48, "@Die, Wares-thief!@", _Dupre);
+            }
+            AttackAvatar_i(_PerryStokes);
+        }
+        if (v0 = 2) {
+            Bark_i(0, "@Look at the bones!@", _Avatar);
+        }
+        if (v0 = 3) {
+            Bark_i(0, "@Where are we?@", _Avatar);
+            v2 = ~PartyUtters(true, 0, 0, 1);
+            if (v2 <> 65180) {
+                Bark_i(32, "@We are lost, Avatar.@", v2);
+            }
+        }
+        if (v0 = 4) {
+            Bark_i(0, "@I don't like this place...@", _Avatar);
+        }
+        if (v0 = 5) {
+            v3 = "Batlin must be opening the Wall of Lights!";
+            v4 = "Make haste! Batlin must be opening the Wall of Lights!";
+            v2 = ~PartyUtters(false, v3, v4, 1);
+        }
+    }
+}
+
+Routine DelayedTeleportEgg_i accepts a0 #locals(4) #uses(Bark_i) {
+    if (event = _Trigger) {
+        v0 = ~GetQuality(item);
+        if (v0 > 100) {
+            v1 = ~GetCoord(_Avatar);
+            v2 = ~PostInFuture(16, << _aNO_HALT_i, _aUSABLE_i, #DelayedTeleportEgg_i >>, item);
+            v2 = ~SetQuality((v0 - 100), item);
+            if (v0 = 101) {
+                Item_bark("@I have a bad feeling...@", _Avatar);
+            }
+            Sfx(130);
+            CreateSpriteOn_i(65535, 1, 0, 0, 0, 0, 7, _Avatar);
+        } else {
+            if (v0 = 1) {
+                v3 = << 39, 993, 0 >>;
+            }
+            if (v0 = 2) {
+                v3 = << 55, 945, 0 >>;
+            }
+            if (v0 = 3) {
+                v3 = << 55, 798, 0 >>;
+            }
+            if (v0 = 4) {
+                v3 = << 103, 734, 0 >>;
+            }
+            if (v0 = 5) {
+                v3 = << 168, 733, 0 >>;
+                Bark_i(5, "By the Virtues!", _Avatar);
+            }
+            if (v0 = 6) {
+                v3 = << 935, 198, 0 >>;
+            }
+            if (v0 = 7) {
+                v3 = << 966, 278, 0 >>;
+                Bark_i(5, "I have a bad feeling...", _Avatar);
+            }
+            if (v0 = 8) {
+                v3 = << 935, 198, 0 >>;
+            }
+            if (v0 = 9) {
+                v3 = << 838, 246, 0 >>;
+            }
+            if (v0 = 10) {
+                v3 = << 863, 294, 0 >>;
+            }
+            v2 = ~SetQuality((v0 + 100), item);
+            Item_move(v3, _Party);
+            Sfx(119);
+            CreateSpriteOn_i(65535, 0, 0, 0, 0, 0, 47, _Avatar);
+        }
+    }
+}
+
+Routine IcePlainsFreezingEgg_i accepts a0 #locals(1) {
+    v0 = ~GetQuality(item);
+    if (v0 < 1) {
+        SetItemFlag_i(_Freeze, _Avatar);
+    } else {
+        ClearItemFlag_i(_Freeze, _Avatar);
+    }
+}
+
+Routine TrapperQuestDoorsEgg_i accepts a0 #locals(7) {
+    if (event = _Trigger) {
+        v0 = ~GetCoord(item);
+        v1 = ~GetQuality(item);
+        if flag(609) {
+            v2 = ~FindNearby_i(0, 15, _Door_EW, item);
+            Foreach v5 in v2 {
+                SetFrame(8, v5);
+                v6 = ~SetQuality(0, v5);
+                if (v6 = false) {
+                    Item_destroy(v5);
+                }
+            }
+            Item_destroy(item);
+        }
+    }
+}

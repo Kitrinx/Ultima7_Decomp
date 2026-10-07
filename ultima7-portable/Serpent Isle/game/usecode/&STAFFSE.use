@@ -1,0 +1,43 @@
+Routine Staff_Serp accepts a0 #locals(11) #uses(~InAvatarInv_i, ~GimmePathEgg) {
+    if (event = _Converse) {
+        closeAllGumps();
+        v0 = ~GetParty();
+        v1 = 1;
+        v2 = ~FindNearby_i(8, 65535, _All, item);
+        Foreach v5 in v2 {
+            if (~ItemToNPC_i(v5) in v0) {
+                v6 = ~rndRange(15, 1);
+            } else {
+                v6 = ~rndRange(6, 1);
+            }
+            v7 = ~Npc_getAlignment(v5);
+            if ((v7 = 2) or (v7 = 3)) {
+                v6 = (v6 - 1);
+            }
+            v8 = ~GetHour();
+            if (((v8 > 65535) and (v8 < 6)) or (v8 > 21)) {
+                v6 = (v6 - 1);
+            }
+            if (v6 < 2) {
+                Sfx(8);
+                SetItemFlag_i(_Poisoned, v5);
+                if (~InAvatarInv_i(item) and (v1 <> 0)) {
+                    if (v1 < 5) {
+                        v9 = ~GimmePathEgg(v1, 4);
+                    }
+                    if (v1 < 9) {
+                        v9 = ~GimmePathEgg(v1, 0);
+                    }
+                    if (v1 = 9) {
+                        terminate;
+                    }
+                } else {
+                    v9 = item;
+                }
+                v10 = ~SetAttack_i(_M_Poison, v5, v9);
+                v10 = ~PostAction(<< _aATTACK_i >>, v9);
+                v1 = (v1 + 1);
+            }
+        }
+    }
+}

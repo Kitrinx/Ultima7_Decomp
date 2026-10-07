@@ -1,0 +1,60 @@
+Routine ReviveAtSerpentsFang_i accepts a0 #locals(17) #uses(SaveDeathCoord_i, ~WhereAmI_i, ~GetStat, SetStat, ~GimmePathEgg) {
+    v0 = false;
+    SaveDeathCoord_i();
+    v1 = ~WhereAmI_i();
+    FadePalette_i(0, 1, 12);
+    ClearItemFlag_i(_Freeze, _Avatar);
+    v2 = ~GetParty_i();
+    v2 = << 65180, v2 >>;
+    v3 = << 2727, 2803, 0 >>;
+    v4 = << 0, 65535, 1, 0, 65535, 1, 0, 65535, 1 >>;
+    v5 = << 65535, 65535, 65535, 0, 1, 1, 1, 0, 0 >>;
+    v6 = 1;
+    Foreach v9 in v2 {
+        Kernel_resetRef(v9);
+        ClearBark_i(v9);
+        if not ~GetItemFlag_i(_Zombie, v9) {
+            SetWorkType(_FollowAvt, v9);
+        }
+        SetTemperature_i(0, v9);
+        ClearItemFlag_i(_Asleep, v9);
+        ClearItemFlag_i(_Charmed, v9);
+        ClearItemFlag_i(_Cursed, v9);
+        ClearItemFlag_i(_Dead, v9);
+        ClearItemFlag_i(5, v9);
+        ClearItemFlag_i(_Paralyzed, v9);
+        ClearItemFlag_i(_Poisoned, v9);
+        ClearItemFlag_i(_DontMove_i, v9);
+        if (~GetStat(_Str, v9) > ~GetStat(_Hits, v9)) {
+            v10 = (~GetStat(_Str, v9) - ~GetStat(_Hits, v9));
+            SetStat(v10, _Hits, v9);
+        }
+        v10 = ~GetStat(_FoodLevel, v9);
+        v10 = (31 - v10);
+        SetStat(v10, _FoodLevel, v9);
+        v10 = << (v3::1 + v4::v6), (v3::2 + v5::v6), v3::3 >>;
+        Item_move(v10, v9);
+        v10 = ~PostAction(<< _aSTAND_FRAME_i, _aFACE_i, _East >>, v9);
+        v6 = (v6 + 1);
+    }
+    v11 = ~GimmePathEgg(1, 0);
+    v12 = ~FindNearby_i(0, 60, _Healer, v11);
+    if v12 {
+        Foreach v15 in v12 {
+            v16 = << 2727, 2799, 0 >>;
+            Item_move(v16, v15);
+            ClearItemFlag_i(_Asleep, v15);
+            ClearItemFlag_i(_Charmed, v15);
+            ClearItemFlag_i(_Cursed, v15);
+            ClearItemFlag_i(_Dead, v15);
+            ClearItemFlag_i(5, v15);
+            ClearItemFlag_i(_Paralyzed, v15);
+            ClearItemFlag_i(_Poisoned, v15);
+            ClearItemFlag_i(_DontMove_i, v15);
+            SetWorkType(_Talk, v15);
+            v10 = ~PostAction(<< _aFACE_i, _South, _aSTAND_FRAME_i, _aUP_FRAME_i, _aOUT_FRAME_i >>, v15);
+        }
+    }
+    v11 = ~GimmePathEgg(3, 0);
+    v10 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #FadeIn_i >>, v11);
+}

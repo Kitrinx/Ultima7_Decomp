@@ -1,0 +1,83 @@
+Usable AskLiarsRiddle_i #locals(1) #uses(GivePartyExp_i) {
+    ["Rhys Fletcher, a master bowman on an urgent mission for his king, desperately needed to find a hidden mountain pass."];
+    ["While searching for the pass he came upon three mystics who were standing alongside the trail."];
+    ["One mystic wore a black sash while the other two had brown sashes."];
+    ["Rhys knew that some mystics were truth-tellers and some were not."];
+    ["Rhys thought that if he could figure out if one of the mystics was a truth-teller, he could learn the whereabouts of the hidden pass."];
+    ["So he rode up to the mystics and asked, 'Art thou truth-tellers?'"];
+    ["The mystic wearing the black sash answered the bowyer by nodding his head up and down. The second mystic, who had only one arm, told Rhys that the mystic with the black sash indicated that he was a truth-teller. However, the other mystic, who was fat, said that the mystic with the black sash was lying."];
+    ["How many of these mystics were liars?"];
+    v0 = ~AskBarInput(0, 1, 3, 0);
+    if (v0 = 1) {
+        if not $WAS_ASKED_LIARS_RIDDLE {
+            ["That is correct!"];
+            $SOLVED_LIARS_RIDDLE = true;
+            GivePartyExp_i(100);
+            $WAS_ASKED_LIARS_RIDDLE = true;
+        } else {
+            ["That is correct!"];
+            $SOLVED_LIARS_RIDDLE = true;
+        }
+    } else {
+        ["I'm sorry, but that is not the correct answer."];
+    }
+}
+
+Usable AskEarringsRiddle_i #locals(1) #uses(GivePartyExp_i) {
+    ["A young noblewoman is getting ready for the Royal Ball. She has several types of earrings in her jewelry box (two made of gold, three of silver, and four made of copper)."];
+    ["The earrings, however, are all scattered about in the jewelry box."];
+    ["Without looking into the jewelry box, how many earrings would the noblewoman have to take\x09out of the jewelry box to insure a matched pair?"];
+    v0 = ~AskBarInput(0, 1, 10, 0);
+    if (v0 = 4) {
+        if not $WAS_ASKED_EARRINGS_RIDDLE {
+            ["Thou art corrcet!"];
+            $SOLVED_EARRINGS_RIDDLE = true;
+            GivePartyExp_i(150);
+            $WAS_ASKED_EARRINGS_RIDDLE = true;
+        } else {
+            ["Thou art correct!"];
+            $SOLVED_EARRINGS_RIDDLE = true;
+        }
+    } else {
+        ["I'm sorry, but that is not the correct answer."];
+    }
+}
+
+Usable AskLongtoothRiddle_i #locals(1) #uses(GivePartyExp_i) {
+    ["My cousin Longtooth has claimed to have stumped over 100 creatures with his riddles. My aunt says that he's blowing smoke, and that the number is probably less than 100. I say that he has probably stumped at least one creature with his riddles."];
+    ["If only one of us is correct, how many creatures has Longtooth stumped with his riddles?"];
+    v0 = ~AskBarInput(0, 1, 200, 0);
+    if (v0 = 0) {
+        if not $WAS_ASKED_LONGTOOTH_RIDDLE {
+            ["Thou art correct! Longtooth is a great dragon, but he's lousy at riddling!"];
+            $SOLVED_LONGTOOTH_RIDDLE = true;
+            GivePartyExp_i(200);
+            $WAS_ASKED_LONGTOOTH_RIDDLE = true;
+        } else {
+            ["Thou art correct! Longtooth is a great dragon, but he's lousy at riddling!"];
+            $SOLVED_LONGTOOTH_RIDDLE = true;
+        }
+    } else {
+        ["I am sorry, but that is not the correct answer."];
+    }
+}
+
+Usable AskClothRiddle_i #locals(2) #uses(GivePartyExp_i) {
+    ["A clothier named Sedrick has received an order to make five dresses, all with the same pattern. Sedrick has three designs of embroidered cloth laying on a table in his workroom."];
+    ["Sedrick tells his apprentice to fetch five pieces of cloth with the same embroidered pattern. The lazy apprentice doesn't bother looking through the piles of cloth, he just\x09takes an armful."];
+    ["Discounting pure luck, how many pieces of cloth would the apprentice have to grab to insure that Sedrick could make five dresses with the same embroidery pattern?"];
+    v0 = ~AskBarInput(0, 1, 30, 0);
+    if (v0 = 14) {
+        if not $WAS_ASKED_CLOTH_RIDDLE {
+            ["Verily, thou hath a good head upon thy shoulders!"];
+            $SOLVED_CLOTH_RIDDLE = true;
+            v1 = true;
+            GivePartyExp_i(300);
+        } else {
+            ["Verily, thou hath a good head upon thy shoulders!"];
+            $SOLVED_CLOTH_RIDDLE = true;
+        }
+    } else {
+        ["I'm sorry, but that is not the correct answer."];
+    }
+}

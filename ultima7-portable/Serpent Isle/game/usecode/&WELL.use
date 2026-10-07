@@ -1,0 +1,66 @@
+Routine Well accepts a0 #locals(4) #uses(~WhereAmI_i, MemberSays_i) {
+    if (event = _Pathfind2) {
+        if (~GetFrame(item) = 0) {
+            v0 = ~FindNearby_i(0, 5, _Well, item);
+        } else {
+            v0 = item;
+        }
+        if v0 {
+            Kernel_resetRef(item);
+            Kernel_resetRef(v0);
+            v1 = ~PostAction(<< _aFRAME, 1, _aNEXT_FRAME_MAX_i, _aLOOP_i, 65535, 6, byte(70), 1 >>, v0);
+            v1 = ~PostInFuture(11, << _aNO_HALT_i, _aUSABLE_i, #Well >>, item);
+            v1 = ~PostAction(<< _aFACE_i, _South, _aCONTINUE_i, _aRAISE1_FRAME_i, _aTHRUST1_FRAME_i, _aLOOP_i, 65534, 2 >>, _Avatar);
+            v1 = ~Item_push(item);
+            return;
+        }
+    }
+    if (event = _Action) {
+        v2 = ~GetCoord(_Avatar);
+        v2::1 = (v2::1 + 1);
+        v2::2 = (v2::2 + 1);
+        SetFrame(1, item);
+        if (~WhereAmI_i() = 18) {
+            v1 = ~SetQuality(10, item);
+            ClearItemFlag_i(_IsTemporary_i, item);
+            $gotemotionwater = true;
+        }
+        if (~WhereAmI_i() = 19) {
+            v1 = ~SetQuality(11, item);
+            ClearItemFlag_i(_IsTemporary_i, item);
+            $gotenthusiasmwater = true;
+        }
+        v1 = ~PopToMap(v2);
+        return;
+    } else {
+        v3 = ("@I believe that using a bucket in a well " + "is often more effective than simply spinning the crank.@");
+        MemberSays_i(v3);
+    }
+}
+
+Routine Well_of_Enthusiasm accepts a0 #locals(3) #uses(~DirFrom_i) {
+    if (event = _Pathfind2) {
+        v0 = ~DirFrom_i(item, _Avatar);
+        v1 = ~PostAction(<< _aFACE_i, v0, _aCONTINUE_i, _aBEND_FRAME_i >>, _Avatar);
+        v1 = ~PostInFuture(2, << _aNO_HALT_i, _aUSABLE_i, #Well_of_Enthusiasm >>, item);
+    }
+    if (event = _Action) {
+        v2 = ~GetCoord(_Avatar);
+        v2::1 = (v2::1 - 4);
+        v2::2 = (v2::2 - 0);
+        v1 = ~Item_push(item);
+        if v1 {
+            if (~GetFrame(item) = 0) {
+                SetFrame(1, item);
+                ClearItemFlag_i(_IsTemporary_i, item);
+                v1 = ~SetQuality(11, item);
+                $gotenthusiasmwater = true;
+            } else {
+                if (~GetFrame(item) < 6) {
+                    SetFrame(0, item);
+                }
+            }
+        }
+        v1 = ~PopToMap(v2);
+    }
+}

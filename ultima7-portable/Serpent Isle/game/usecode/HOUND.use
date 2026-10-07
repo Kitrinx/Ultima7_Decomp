@@ -1,0 +1,201 @@
+Routine Hound accepts a0 #locals(9) #uses(PartyFaces_i, ~GimmePathEgg, HoundTracks_i, ~WhereAmI_i, ~PartyUtters, Bark_i) {
+    if (event = _NearDeath) {
+        v0 = ~rndRange(2, 1);
+        ClearBark_i(item);
+        if (v0 = 1) {
+            Item_bark("@Yipe, yipe, yipe!@", item);
+        }
+        if (v0 = 2) {
+            Item_bark("@Aoaaoouuu!@", item);
+        }
+        SetAttackMode_i(_Fleeing, item);
+    }
+    if (event = _Converse) {
+        Item_bark("@Come here, boy!@", _Avatar);
+        PartyFaces_i(65267);
+        v1 = ~PostInFuture(2, << _aNO_HALT_i, _aBARK_i, "@Woof!@" >>, item);
+        SetWorkType(_Talk, _HoundOfDoskar);
+    }
+    if (event = _Action) {
+        if (item = ~GimmePathEgg(1, 5)) {
+            v2 = ~FindNearby_i(0, 40, _Hound_874, _Avatar);
+            if v2 {
+                SetWorkType(_Hound, v2);
+            }
+            terminate;
+        }
+        v3 = ~GetTarget();
+        v4 = ~Item_getType(v3);
+        v5 = ~GetFrame(v3);
+        v6 = ~GetQuality(v3);
+        SetMusic(~GimmePathEgg(1, 5), 18);
+        if ((v4 = 955) and ((v5 = 5) and ($KNOW_YELINDAS_DIAMOND_NECKLACE and not $RETURNED_COMB_OF_BEAUTY))) {
+            HoundTracks_i(<< 1561, 1465, 0 >>);
+        }
+        if ((v4 = 520) and ($takencantraquest and not $BATLIN_FLED_SHAMINOS_KEEP)) {
+            $SHAMINOS_KEEP_BARRIERS_GONE = true;
+            if (~WhereAmI_i() = 16) {
+                HoundTracks_i(<< 65535, 0, 0 >>);
+            } else {
+                HoundTracks_i(<< 1890, 999, 0 >>);
+            }
+        }
+        if ((v4 = 955) and ((v5 = 4) and ($BATLIN_FLED_SHAMINOS_KEEP and not $BANES_RELEASED))) {
+            $HOUND_TRACKED_BATLIN = true;
+            if (~WhereAmI_i() = 24) {
+                HoundTracks_i(<< 65535, 0, 0 >>);
+            } else {
+                HoundTracks_i(<< 1896, 739, 0 >>);
+            }
+        }
+        if ((v4 = 955) and ((v5 = 8) and ($BANES_RELEASED and not $antiiolodead))) {
+            if (~WhereAmI_i() = 0) {
+                HoundTracks_i(<< 65535, 0, 0 >>);
+            } else {
+                HoundTracks_i(<< 1801, 1458, 0 >>);
+            }
+        }
+        if ((v4 = 692) and ((v5 = 2) and ($BANES_RELEASED and not $antiiolodead))) {
+            if (~WhereAmI_i() = 0) {
+                HoundTracks_i(<< 65535, 0, 0 >>);
+            } else {
+                HoundTracks_i(<< 1801, 1458, 0 >>);
+            }
+        }
+        if ((v4 = 490) and ($BANES_RELEASED and not $antidupredead)) {
+            if (~WhereAmI_i() = 0) {
+                HoundTracks_i(<< 65535, 0, 0 >>);
+            } else {
+                HoundTracks_i(<< 1801, 1458, 0 >>);
+            }
+        }
+        if ((v4 = 642) and ((v6 = 62) and ($BANES_RELEASED and not $antishaminodead))) {
+            if (~WhereAmI_i() = 0) {
+                HoundTracks_i(<< 65535, 0, 0 >>);
+            } else {
+                HoundTracks_i(<< 1801, 1458, 0 >>);
+            }
+        }
+        v1 = ~PostAction(<< _aNO_HALT_i, _aBARK_i, "@Woof woof?@" >>, item);
+        v7 = ~PartyUtters(false, 0, 0, 1);
+        ClearBark_i(v7);
+        Bark_i(4, "@The hound looks confused.@", v7);
+        terminate;
+    }
+    if (event = _Talking) {
+        SetWorkType(_Hound, _HoundOfDoskar);
+        SetSpeaker0_i(0, _Emmit);
+        ["Woof!"];
+        TurnOn(<< "trick", "track", "attack", "bye" >>);
+        converse {
+            key ("track") {
+                v1 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #Hound >>, item);
+                terminate;
+            }
+            key ("trick") {
+                SetWorkType(_Dance, item);
+                v1 = ~PostAction(<< _aNO_HALT_i, _aBARK_i, "@Ruff ruff ruff!@" >>, item);
+                terminate;
+            }
+            key ("attack") {
+                v3 = ~GetTarget();
+                if (not v3 or ((~Npc_getAlignment(v3) = _Good) or not ~Item_isNpc(v3))) {
+                    ["Woof?"];
+                } else {
+                    if (~Npc_getAlignment(v3) = _Neutral) {
+                        ["Woof."];
+                        SetWorkType(_Combat_0, item);
+                        Npc_setTarget(v3, item);
+                        SetAttacker_i(v3, item);
+                        terminate;
+                    }
+                    if (~Npc_getAlignment(v3) = _Chaotic) {
+                        ["Woof!"];
+                        SetWorkType(_Combat_0, item);
+                        Npc_setTarget(v3, item);
+                        SetAttacker_i(v3, item);
+                        terminate;
+                    }
+                    if (~Npc_getAlignment(v3) = _Evil) {
+                        ["Woof!!"];
+                        SetWorkType(_Combat_0, item);
+                        Npc_setTarget(v3, item);
+                        SetAttacker_i(v3, item);
+                        terminate;
+                    }
+                }
+            }
+            key ("bye") {
+                v1 = ~PostAction(<< _aNO_HALT_i, _aBARK_i, "@Woof! Woof!@" >>, item);
+                CloseSpeaker0_i();
+                terminate;
+            }
+        }
+        clear_answers;
+    }
+    if (event = _Path_Success) {
+        SetWorkType(_Hound, item);
+        v1 = ~PostAction(<< _aNO_HALT_i, _aBARK_i, "@Ruff!@" >>, item);
+    }
+    if (event = _Path_Failure) {
+        SetWorkType(_Hound, item);
+    }
+    if (event = _Bark) {
+        v8 = ~rndRange(2, 1);
+        if (v8 = 1) {
+            Item_bark("@Woof!@", _HoundOfDoskar);
+        }
+        if (v8 = 2) {
+            Item_bark("@Bark!@", _HoundOfDoskar);
+        }
+    }
+}
+
+Routine HoundTracks_i accepts a0 #locals(9) #uses(~PartyUtters, Bark_i, ~GimmePathEgg) {
+    if (v0::1 = 65535) {
+        v1 = ~PostAction(<< _aNO_HALT_i, _aBARK_i, "@Woof woof! Rrruff!@" >>, item);
+        SetWorkType(_Dance, item);
+        v2 = ~PartyUtters(false, 0, 0, 1);
+        ClearBark_i(v2);
+        Bark_i(4, "@We must be close!@", v2);
+        v1 = ~PostInFuture(20, << _aNO_HALT_i, _aUSABLE_i, #Hound >>, ~GimmePathEgg(1, 5));
+        terminate;
+    }
+    v1 = ~PostAction(<< _aNO_HALT_i, _aBARK_i, "@Woof woof! Woof!@" >>, item);
+    v3 = ~GetCoord(item);
+    v4 = (v0::2 - v3::2);
+    v5 = (v0::1 - v3::1);
+    v6 = v4;
+    if (v4 < 0) {
+        v6 = (v6 * 65535);
+    }
+    v7 = v5;
+    if (v5 < 0) {
+        v7 = (v7 * 65535);
+    }
+    if (v7 > v6) {
+        if (v5 > 0) {
+            v8 = 2;
+            v9 = "east";
+            v3::1 = (v3::1 + 20);
+        } else {
+            v8 = 6;
+            v9 = "west";
+            v3::1 = (v3::1 - 20);
+        }
+    } else {
+        if (v4 > 0) {
+            v8 = 4;
+            v9 = "south";
+            v3::2 = (v3::2 + 20);
+        } else {
+            v8 = 0;
+            v9 = "north";
+            v3::2 = (v3::2 - 20);
+        }
+    }
+    v1 = ~PostAction(<< _aNO_HALT_i, _aFACE_i, v8 >>, item);
+    v1 = ~PartyUtters(true, (("@" + v9) + "!@"), (("@The dog points " + v9) + "!@"), 1);
+    PathfindNPC_i(true, #Hound, item, _Path_Success, v3, item);
+    terminate;
+}

@@ -1,0 +1,93 @@
+Routine Garg_Wingless accepts a0 #locals(7) #uses(RaiseAlarm_i, ~LordOrLady, ~AvatarName) {
+    v0 = ~ItemToNPC_i(item);
+    v1 = ~GetNPCID_i(item);
+    if (v0 = 65243) {
+        RaiseAlarm_i(65243);
+        terminate;
+    }
+    if (event = _Polymorph) {
+        Polymorph_i(_Cyclops, item);
+    }
+    if ((event = _Path_Success) or (event = _Path_Failure)) {
+        SetWorkType(_Wait, item);
+        v2 = ~PostAction(<< _aNO_HALT_i, _aBEND_FRAME_i, _aKNEEL_FRAME_i, _aBARK_i, "@Master!@" >>, item);
+    }
+    if (v1 = 0) {
+        v3 = ~LordOrLady();
+        v4 = ~AvatarSex();
+        v5 = ~AvatarName();
+        if (event = _Converse) {
+            SetWorkType(_Talk, 883);
+        }
+        if (event = _Bark) {
+            v6 = ~rndRange(5, 1);
+            if (v6 = 1) {
+                Item_bark("@To fight, these snakes!@", item);
+            }
+            if (v6 = 2) {
+                Item_bark("@To win, if Balanced!@", item);
+            }
+            if (v6 = 3) {
+                Item_bark("@To lose, if not in Balance!@", item);
+            }
+            if (v6 = 4) {
+                Item_bark("@To run out of time, this fight!@", item);
+            }
+            if (v6 = 5) {
+                Item_bark("@To lose hope, this fight!@", item);
+            }
+        }
+    }
+    if (v1 = 1) {
+        v3 = ~LordOrLady();
+        v4 = ~AvatarSex();
+        v5 = ~AvatarName();
+        if (event = _Converse) {
+            SetWorkType(_Talk, 883);
+        }
+        if (event = _Bark) {
+            v6 = ~rndRange(5, 1);
+            if (v6 = 1) {
+                Item_bark("@To seek help, for this fight!@", item);
+            }
+            if (v6 = 2) {
+                Item_bark("@To risk all, a hero!@", item);
+            }
+            if (v6 = 3) {
+                Item_bark("@To end world, this fight!@", item);
+            }
+            if (v6 = 4) {
+                Item_bark("@To return home, these snakes!@", item);
+            }
+            if (v6 = 5) {
+                Item_bark("@To fight, these snakes!@", item);
+            }
+        }
+    }
+    if (v1 = 2) {
+        v3 = ~LordOrLady();
+        v4 = ~AvatarSex();
+        v5 = ~AvatarName();
+        if (event = _Converse) {
+            SetWorkType(_Talk, 883);
+        }
+        if (event = _Bark) {
+            v6 = ~rndRange(5, 1);
+            if (v6 = 1) {
+                Item_bark("@To need unity, these snakes!@", item);
+            }
+            if (v6 = 2) {
+                Item_bark("@To be separate, these snakes!@", item);
+            }
+            if (v6 = 3) {
+                Item_bark("@To fight, these snakes!@", item);
+            }
+            if (v6 = 4) {
+                Item_bark("@To end all, this fight!@", item);
+            }
+            if (v6 = 5) {
+                Item_bark("@To hope, this fight!@", item);
+            }
+        }
+    }
+}

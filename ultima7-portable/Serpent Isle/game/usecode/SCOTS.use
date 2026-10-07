@@ -1,0 +1,166 @@
+Routine Scots accepts a0 #locals(6) #uses(~LordOrLady, ~AvatarName, PartyFaces_i, Bark_i, ~GiveItemsOrDrop_i) {
+    v0 = ~LordOrLady();
+    v1 = ~AvatarSex();
+    v2 = ~AvatarName();
+    if (event = _NearDeath) {
+        v3 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #Green_Noble >>, item);
+    }
+    if (event = _Converse) {
+        Item_bark("@Greetings, sir.@", _Avatar);
+        PartyFaces_i(65476);
+        Bark_i(5, (("@Hello, " + v0) + ".@"), _Scots);
+        SetWorkType(_Talk, _Scots);
+    }
+    if (event = _Talking) {
+        Npc_schedule(_Scots);
+        ClearBark_i(_Scots);
+        SetSpeaker0_i(0, _Scots);
+        v4 = ~GetItemFlag_i(_Met, _Scots);
+        if (v4 = false) {
+            ["Good, a new face! I am Scots, a geographer. Perhaps thou wouldst share tales of other places with me, so I might add detail to my maps."];
+            SetItemFlag_i(_Met, _Scots);
+        } else {
+            ["Welcome back, <v2>! What tales hast thou for me today?"];
+        }
+        TurnOn(<< "goblins", "storms", "tales", "maps", "bye" >>);
+        if ($BANES_RELEASED = true) {
+            TurnOn("Iolo the Mad");
+        }
+        converse {
+            key ("goblins") {
+                TurnOff("goblins");
+                if ($AUDIENCE_WITH_YELINDA and ($FAWN_TRIAL_DONE and not $oraclesaysinnocent)) {
+                    ["I think that we shall be safe from their raiding parties, now that the Lady hath admitted us within the city walls."];
+                } else {
+                    ["The Pikemen track them into the woods around their Knight's Test, west of here. Then they simply seem to disappear."];
+                    if ($fawntowerretaken = false) {
+                        ["We have held against their raiding parties with the help of the Pikemen. But now that the tower hath been taken and we cannot seek refuge in the city, I fear that we are lost."];
+                    } else {
+                        ["We withstand their attacks only with the help of the Pikemen. We had given up hope when the goblins took the tower. But we may hold a while longer now that it hath been returned to Monitorian keeping."];
+                    }
+                    TurnOn("Pikemen");
+                    TurnOn("Knight's Test");
+                }
+            }
+            key ("Pikemen") {
+                if ($gottattoo = true) {
+                    ["Thou seekest to jest with me. By the mark on thy face, 'tis plain to see that thou art a Pikeman. Surely Monitor's bravest have better things to do than pull pranks on a poor, landbound sailor."];
+                } else {
+                    ["They are warriors that come from Monitor, a city south of here. Very brave. I can usually count on many tales from them."];
+                    TurnOn("Monitor");
+                }
+                TurnOff("Pikemen");
+            }
+            key ("Monitor") {
+                if ($gottattoo = true) {
+                    ["Perhaps thou hast been in one fight too many, if thou dost not recall thine own town." *"Travel southward from here. One of thy Pikeman comrades will take thee to the healer in Monitor, I'm certain."];
+                } else {
+                    ["'Tis on the very south edge of the continent. There are mountains to either side of the city. Very defensible." *"The city is run by a representative from one of the three Pikemen units -- the wolves, the leopards, and the bears. Each unit takes a turn at having one of their number govern the city."];
+                }
+                TurnOff("Monitor");
+            }
+            key ("Knight's Test") {
+                if ($gottattoo = true) {
+                    ["All I know, good knight, is that all Monitorians travel to a peninsula southwest of here for some rite of passage. 'Tis all I can tell thee. Unless thou wishest to further enlighten me..."];
+                } else {
+                    ["The Pikemen I spoke to were rather closed-mouthed about it. All I could gather is that it's some sort of rite of passage\x09for all Monitorians." *"'Tis located on a peninsula to the southwest of here."];
+                }
+                TurnOff("Knight's Test");
+            }
+            key ("storms") {
+                ["I've travelled far and wide all my life, and never have I seen the likes before. These storms appear without warning and leave chaos in their wake. Move things around, change things around... Simply not natural. Makes me think Leon might be right."];
+                TurnOff("storms");
+                TurnOn("Leon");
+            }
+            key ("Leon") {
+                ["Thou hast not met Leon yet? Thou hast only to look for the crowd of people. Thou'lt find him in the center of it all, no doubt." *"Leon is a very charismatic Fellowship follower. He speaks their beliefs fairly, to be sure. Hath drawn many of the folk from the town. I'll wager that's why that Priestess had us banned from entering the city."];
+                TurnOff("Leon");
+                $scotssaidleon = true;
+                TurnOn("Priestess");
+                if ($scotssaidfellowship = false) {
+                    TurnOn("Fellowship");
+                }
+            }
+            key ("Fellowship") {
+                ["I can tell thee that it digresses from the Virtues that Lord British set forth. But it makes sense." *"Talk to Leon. He's far more eloquent than I on the subject."];
+                TurnOff("Fellowship");
+                $scotssaidfellowship = true;
+                if ($scotssaidleon = false) {
+                    TurnOn("Leon");
+                }
+            }
+            key ("Priestess") {
+                TurnOff("Priestess");
+                if ($AUDIENCE_WITH_YELINDA and ($FAWN_TRIAL_DONE and not $oraclesaysinnocent)) {
+                    ["'Tis a shame to see any creature so beautiful placed behind bars, but I think we shall all be safer because of it."];
+                } else {
+                    ["Kylista is as beautiful as the day is long, but with the soul of a viper. I wouldn't trust her if I were thee." *"She's plotting something with the Chancellor, I'll wager."];
+                    TurnOn("Chancellor");
+                }
+            }
+            key ("Chancellor") {
+                ["Little worm named Zulith. Lady Yelinda's shadow... leads her around by the hand all the time. If thou seekest an audience with the Lady, thou must first speak to Zulith." *"I saw Kylista speaking to Zulith the day before we sailors were banned from the city. She was afraid that Leon was stealing her followers. And Zulith,\x09the power-hungry toad that he is, saw to it that her wishes became law." *"'Tis the Great Captains and the Chancellor that run things in Fawn, I'm afraid."];
+                TurnOff("Chancellor");
+                TurnOn("Great Captains");
+            }
+            key ("Great Captains") {
+                ["There are three of them: Joth, Garth, and Voldin. Make a great show of honoring Beauty, but they honor money and power more. Yelinda consults them and Zulith about everything... even the dinner menu, I'll warrant." *"And with Kylista whispering in Zulith's ear, thou hadst best count her as one of the powers of Fawn as well."];
+                TurnOff("Great Captains");
+            }
+            key ("tales") {
+                ["What good is a geographer if he cannot explore and map the lands he finds? The storms keep me and my shipmates from taking to the sea." *"I ask all those who come to me for tales of distant places. There may be some truth in the telling, and I add what I can to my maps, as Gwenno suggested."];
+                TurnOff("tales");
+                TurnOn("Gwenno");
+            }
+            key ("Gwenno") {
+                ["She contacted me back in Britannia with an opportunity to explore a new land. Naturally, I accepted. She was to transport some sort of obelisk here for The Fellowship and then she was free to explore and collect all the tales she wished."];
+                TurnOff("Gwenno");
+                TurnOn("obelisk");
+                if ($scotssaidfellowship = false) {
+                    TurnOn("Fellowship");
+                }
+            }
+            key ("obelisk") {
+                ["It was abominably heavy! Quite a chore to move it on land. Then one day after we had it safely on the shore and Gwenno had already headed inland, there was a huge explosion. When I could see again, there stood Batlin -- and the obelisk was shattered all over the ground."];
+                TurnOff("obelisk");
+                TurnOn("Batlin");
+            }
+            key ("Batlin") {
+                ["He seemed most upset at the time he arrived. Though I suspect that it was merely a result of the disorientation from the teleportation storm that brought him here." *"He took several members of the crew with him and headed inland. He was looking for some blackrock artifact... Mayhap it doth have some connection to the obelisk. I don't know."];
+                TurnOff("Batlin");
+                TurnOn("blackrock artifact");
+            }
+            key ("blackrock artifact") {
+                ["I remember that he mentioned that it was fashioned in the likeness of a snake, but that's all. Thou mightest ask Delphynia, the herbalist. I know he talked to her."];
+                TurnOff("blackrock artifact");
+                TurnOn("Delphynia");
+            }
+            key ("Delphynia") {
+                ["She's an herbalist in the city that hath been doing the healer's work ever since the goblins killed the last healer." *"Thou shouldst ask Ruggs if thou wishest to know more. They spent quite a bit of time together before we were cast out of the city."];
+                TurnOff("Delphynia");
+                TurnOn("Ruggs");
+            }
+            key ("Ruggs") {
+                ["Thou wouldst know him if thou hadst seen him. What he lacks in handsomeness, he makes up for in the goodness of his heart. He cares deeply for Delphynia. But Delphynia is a superstitious woman and fears Ruggs' deformities are the result of some curse. 'Tis a sadness. They would make a fine couple."];
+                TurnOff("Ruggs");
+            }
+            key ("maps") {
+                ["Lord British once said that I was the finest map maker in all Britannia. I take great care in my work. Since I have explored very little of this continent, I fear that my map is less than accurate." *"I would be honored if thou wouldst accept a copy of my map. Perhaps it would aid thee in thy quest."];
+                v5 = ~GiveItemsOrDrop_i(true, false, 0, 65177, 178, 1, _Avatar);
+                $hasmap = true;
+                TurnOff("maps");
+            }
+            key ("Iolo the Mad") {
+                ["What great calamity must have befallen thy trusted companion, <v2>. I fear that his reason hath fled. He terrorizes the city with his fiendish jokes." *"Only yesterday, Iolo announced to the citizens of Fawn that he would prove once and for all whether or not Beauty was skin deep. He then cast a spell on poor Lady Yelinda and removed all of her skin. She ran out of the city toward Gorlab Swamp. Without the true ruler, I fear that Fawn will never be restored... even with thine aid."];
+                TurnOff("Iolo the Mad");
+            }
+            key ("bye") {
+                CloseSpeaker0_i();
+                Bark_i(0, "@Thanks for thine assistance.@", _Avatar);
+                Bark_i(5, "@A pleasure...@", _Scots);
+                break;
+            }
+        }
+        clear_answers;
+    }
+}

@@ -1,0 +1,232 @@
+Routine Andral accepts a0 #locals(9) #uses(~AvatarName, Bark_i, PartyFaces_i, ~AskYesNo, ~PartyUtters) {
+    v0 = ~AvatarName();
+    v1 = ~GetItemFlag_i(_Met, _Andral);
+    if (event = _Converse) {
+        Bark_i(0, "Hello, sir.", _Avatar);
+        PartyFaces_i(65474);
+        Bark_i(2, "Greetings.", _Andral);
+        SetWorkType(_Talk, _Andral);
+    }
+    if (event = _Talking) {
+        Npc_schedule(_Andral);
+        ClearBark_i(_Andral);
+        SetSpeaker0_i(0, _Andral);
+        if not v1 {
+            ["Hello, stranger. I am Andral of Monitor. Dost thou need the services of a master artist?"];
+            SetItemFlag_i(_Met, _Andral);
+        } else {
+            ["Welcome, <v0>. How may I be of service to thee?"];
+        }
+        TurnOn(<< "artist", "bye" >>);
+        if not $andralsaidrob {
+            ["Perhaps I should not speak with thee... I hope thou art not come to rob me!"];
+            TurnOn("rob");
+        }
+        converse {
+            key ("artist") {
+                TurnOff("artist");
+                ["I am a sculptor by trade. There is a brisk business to be done in this city, fashioning busts and statues for the Knights."];
+                if not $AVATAR_IS_KNIGHT {
+                    ["But I can make time for thee, if thou dost wish to commission my talents."];
+                    TurnOn("commission");
+                } else {
+                    TurnOn(<< "sculptor", "Knights", "commission" >>);
+                }
+            }
+            key ("commission") {
+                TurnOff("commission");
+                ["For a fee I create works of art to honor Knights when they complete great quests -- or when they simply wish to pay me money for a monument to their vanity."];
+                ["Dost thou wish to commission a work from me?"];
+                v2 = ~AskYesNo();
+                if v2 {
+                    ["I am sorry but I am currently working on a statue of Luther. It may take me some time to complete. I could not begin work on something for thee until then."];
+                } else {
+                    ["I am proud of thee! Thy life and thy deeds are all the testament anyone truly needs, provided one hath truly made something of their life."];
+                }
+            }
+            key ("sculptor") {
+                TurnOff("sculptor");
+                ["Thou mayest have noticed the various sculptures around the town. I crafted many of them."];
+                if $AVATAR_IS_KNIGHT {
+                    ["'Tis our custom to carve sculptures to commemorate the bravery of our finest warriors. Now that thou art a Knight, thou canst live for the day when I shall sculpt a monument for thee."];
+                }
+            }
+            key ("Knights") {
+                TurnOff("Knights");
+                ["As thou knowest by now, this is a city of warriors. I myself passed the Knight's Test when I was fifteen, but my true love hath always been art."];
+                ["The other Knights sometimes mock me, for I am seldom seen at the List Field. Canst thou imagine what a blade could do to my gifted fingers!"];
+                ["But, alas, an artist is always misunderstood."];
+                TurnOn(<< "List Field", "misunderstood" >>);
+            }
+            key ("List Field") {
+                TurnOff("List Field");
+                ["There is so little time in this life, and 'twould be an utter waste for someone of mine artistic abilities to engage in duels."];
+                ["Should I spend that hour in profitless combat, solely to please my fellow Knights? I think not."];
+                ["Instead, I could be crafting another masterpiece, so that my name will be known to future generations. This is true glory."];
+            }
+            key ("misunderstood") {
+                TurnOff("misunderstood");
+                ["I have no friends. The Knights tolerate me and value my services, but they do not share mine interests."];
+                ["There once was a woman who cared for me, but we quarrelled. She, too, hath art in her soul, but she hides her secret well."];
+                ["Lucilla would not pay the price that I have, to be so alone. Do not weep for me, my friend -- I am proud of who I am."];
+                $lucillalovedandral = true;
+            }
+            key ("rob") {
+                TurnOff("rob");
+                ["I am not sure that I care to speak about the incident. 'Twas most unpleasant."];
+                ["There was a stranger in Monitor, one who claimed to be from another land. He was very large, a scholar rather than a warrior."];
+                ["He travelled with many companions, including a tall, cloaked stranger."];
+                ["On the night that Batlin the Sage left town, someone stole an ancient relic from mine home. I suspect that he was the thief!"];
+                v3 = ~PartyUtters(false, 0, "@Batlin! Why, he is our enemy, too!@", 65535);
+                SetSpeakerSlot_i(0);
+                $andralsaidrob = true;
+                PushKeys();
+                TurnOn(<< "Batlin", "companions", "artifact", "nothing more" >>);
+            }
+            key ("Batlin") {
+                TurnOff("Batlin");
+                ["He came inquiring about ancient ruins, and was especially interested in the Serpent Stone -- but Renfry can tell thee more of this."];
+                ["Simon the Innkeeper heard the sage say that he had come here from Fawn."];
+                $knowsbatlinatinn = true;
+                if not $knowfawn {
+                    TurnOn("Fawn");
+                }
+            }
+            key ("Fawn") {
+                TurnOff("Fawn");
+                ["The City of Beauty lies due north of here, on the shores of a great bay. Fawn is a city of fishermen."];
+                if ~AvatarSex() {
+                    ["Thou mightest like Fawn, for 'tis a place where members of thy sex are highly regarded. The city is ruled by a Queen, and the Priestess of Beauty is also female."];
+                } else {
+                    ["The women of Fawn are the most beautiful in the land, but they are overly pampered."];
+                    ["Monitorian females, on the other hand, are as strong as oxen!"];
+                }
+            }
+            key ("companions") {
+                TurnOff("companions");
+                ["There is not much to say! The one in the cloak spent most of his time in the inn, and seldom spoke."];
+                if not $simonshedsskin {
+                    ["Perhaps Simon could tell thee more."];
+                }
+                ["There was also a warrior named Brunt who travelled with Batlin. He was small in stature, but with incredibly broad shoulders --"];
+                ["Oh! If only he would have posed in my studio! I could have created such art..."];
+                ["Standarr fought him in the List Field, and said that he was an opponent unlike any other!"];
+                $standarrknowsbrunt = true;
+            }
+            key ("artifact") {
+                TurnOff("artifact");
+                ["Mine ancestors found the relic when they first founded this city, and it hath been kept in the family all this time."];
+                ["To be honest, we were afraid to discard it. It had a demonic appearance, being shaped like a serpent, and composed of a dark rock never before seen."];
+                v3 = ~PartyUtters(false, 0, "@Perhaps blackrock, Avatar...@", 1);
+                if (v3 <> 65180) {
+                    SetSpeakerSlot_i(0);
+                }
+                ["We hated the object, yet we were afraid to be parted from it. I cannot explain this. But it was so."];
+                TurnOn(<< "demonic appearance", "serpent-shaped" >>);
+            }
+            key ("demonic appearance") {
+                TurnOff("demonic appearance");
+                ["Monitorians are not a superstitious people, yet we fear the ancient ruins."];
+                ["They were once the homes of Daemons who ruled this land in a distant age. They were horned beings with red skins, and they had the power to command molten rock to flow!"];
+                ["The Serpent was their sign."];
+            }
+            key ("serpent-shaped") {
+                TurnOff("serpent-shaped");
+                ["Indeed, 'twas as if a living serpent had been changed into stone -- a perfect replica!"];
+                ["'Tis not uncommon to see the symbol of the serpent among the ruins, yet I have never seen before or since any such Rock Serpent."];
+                v3 = ~PartyUtters(false, 0, "@Couldst thou describe the curvings of the serpent?@", 65534);
+                if (v3 <> 65180) {
+                    SetSpeakerSlot_i(0);
+                    ["Umm... why, the head curved to the right, and the body was most sinuous. Why dost thou ask?"];
+                    v3 = ~PartyUtters(false, 0, "@Avatar, this man's stolen relic was a\x09perfect match for the one thou lost in the Storm, except that it faced the opposite way!", v3);
+                    SetSpeakerSlot_i(0);
+                }
+            }
+            key ("nothing more") {
+                ["But let me say this -- Batlin shall not rest in peace, for a powerful warrior is on his trail!"];
+                ["Dost thou know of Wilfred the Slayer?"];
+                if ~AskYesNo() {
+                    ["Then I need say no more. Surely, Wilfred shall slay the evil sage and reap my revenge."];
+                } else {
+                    ["Wilfred is a Knight of Monitor, but his home is at the inn of the Sleeping Bull."];
+                    ["Batlin hath been there as well, and Wilfred's father hath mysteriously disappeared. Wilfred suspects the sage of being involved."];
+                    ["Surely, brave Wilfred shall track down the sage and kill him, and I shall enjoy sweet revenge!"];
+                }
+                $andralsaidwilfred = true;
+                PopKeys();
+                if not $knowbull {
+                    TurnOn("Sleeping Bull");
+                }
+            }
+            key ("Sleeping Bull") {
+                TurnOff("Sleeping Bull");
+                ["Thou canst find the inn of the Sleeping Bull by taking the Serpent Highway north from here."];
+                ["There is not much there, save for an ancient inn for which the village is named. Wilfred's brother Argus doth operate it."];
+                $knowbull = true;
+            }
+            key ("bye") {
+                Bark_i(0, "@Bye!@", _Avatar);
+                Bark_i(2, "@'Til next we meet...@", _Andral);
+                break;
+            }
+        }
+        clear_answers;
+    }
+    if (event = _Bark) {
+        ClearBark_i(_Andral);
+        if (~IsNPCNear_i(_Luther) and (~GetWorkType(_Luther) = _MajorSit)) {
+            ClearBark_i(_Luther);
+            v4 = ~GetDirToward_i(_Luther, _Andral);
+            v4 = ~PostAction(<< _aNO_HALT_i, _aFACE_i, v4 >>, _Andral);
+            v5 = ~Random(6);
+            if (v5 = 1) {
+                Bark_i(0, "@Turn this way...@", _Andral);
+                Bark_i(3, "@Hurry!@", _Luther);
+            }
+            if (v5 = 2) {
+                Bark_i(0, "@Don't move!@", _Andral);
+                Bark_i(3, "@Sorry, Andral.@", _Luther);
+            }
+            if (v5 = 3) {
+                Bark_i(0, "@Is it done yet?@", _Luther);
+                Bark_i(3, "@Art doth take time.@", _Andral);
+            }
+            if (v5 > 3) {
+                Bark_i(0, "@Aha!@", _Andral);
+                v6 = ~FindNearby_i(0, 10, _Monolith, _Andral);
+                if v6 {
+                    PathfindNPC_i(false, #Andral, item, _Path_Success, ~GetCoord(v6), _Andral);
+                    SetPathFailure_i(_Path_Failure, item, << 1086 >>);
+                }
+            }
+        } else {
+            v7 = << "@Piece by piece...@", "@Art is life!@", "@I have a vision...@", "@Take a chance!@", "@Patience!@", "@Art is not easy...@" >>;
+            Bark_i(0, v7::~Random(~ListSize_i(v7)), _Andral);
+        }
+    }
+    if (event = _Path_Failure) {
+        v6 = ~FindNearby_i(0, 4, _Monolith, _Andral);
+        if v6 {
+            event = 13;
+        } else {
+            Npc_schedule(_Andral);
+            terminate;
+        }
+    }
+    if (event = _Path_Success) {
+        v6 = ~FindNearby_i(0, 4, _Monolith, _Andral);
+        if v6 {
+            v8 = ~GetDirToward_i(v6, _Andral);
+            SetWorkType(_Wait, _Andral);
+            v4 = ~PostAction(<< _aNO_HALT_i, _aFACE_i, v8, _aEXTEND1_FRAME_i, _aTHRUST1_FRAME_i, _aCONTINUE_i, _aSFX_i, 11, _aREADY_FRAME_i, _aWAIT_i, 2, _aLOOP_i, 65528, 3, byte(85), 1086 >>, item);
+        } else {
+            Npc_schedule(_Andral);
+        }
+        terminate;
+    }
+    if (event = _Action) {
+        v7 = << "@Much better!@", "@'Tis taking shape!@", "@Hmmm...@", "@Uh-oh...@", "@Ouch!@", "@A masterpiece!@" >>;
+        Bark_i(0, v7::~Random(~ListSize_i(v7)), _Andral);
+        Npc_schedule(_Andral);
+    }
+}

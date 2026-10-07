@@ -1,0 +1,24 @@
+Routine Sextant accepts a0 #locals(5) #uses(~AbsValue_i, ~IsAbleToTalk_i) {
+    if (event = _Converse) {
+        v0 = ~GetCoord(_Avatar);
+        v1 = ((v0::1 - 933) / 10);
+        v2 = ((v0::2 - 1134) / 10);
+        if (v1 < 0) {
+            v3 = ((" " + ~AbsValue_i(v1)) + " West");
+        } else {
+            v3 = ((" " + ~AbsValue_i(v1)) + " East");
+        }
+        if (v2 < 0) {
+            v4 = ((" " + ~AbsValue_i(v2)) + " North");
+        } else {
+            v4 = ((" " + ~AbsValue_i(v2)) + " South");
+        }
+        if not ~IsAvatarInside_i() {
+            Item_bark((v4 + v3), item);
+        } else {
+            if ~IsAbleToTalk_i(_Iolo) {
+                Item_bark("@'Twill not function under a roof!@", _Iolo);
+            }
+        }
+    }
+}

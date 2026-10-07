@@ -1,0 +1,142 @@
+Routine Catman accepts a0 #locals(6) #uses(Bark_i, PartyFaces_i, ~AskYesNo, ~IsInInv) {
+    v0 = ~GetNPCID_i(item);
+    if (event = _Bark) && (~GetWorkType(item) = _Patrol) {
+        v1 = << "@Leave Yurel alone!@", "@Stay away from Yurel!@", "@Yurel wants to go home!@", "@Oh, woe!@", "@Yurel hungry!@", "@Help me!@" >>;
+        Bark_i(0, v1::~Random(~ListSize_i(v1)), item);
+    }
+    if (event = _Converse) {
+        if not v0 {
+            Item_bark("@Stop, monster!@", _Avatar);
+        } else {
+            Item_bark("@Ho, Yurel!@", _Avatar);
+        }
+        PartyFaces_i(65269);
+        if not v0 {
+            Bark_i(2, "@I am no monster!@", item);
+        } else {
+            Bark_i(2, "@Good to see thee.@", item);
+        }
+        SetWorkType(_Talk, item);
+    }
+    if (event = _Talking) {
+        SetWorkType(_Stand, item);
+        ClearBark_i(item);
+        SetSpeaker0_i(0, 65225);
+        v0 = ~GetNPCID_i(item);
+        if not v0 {
+            ["I am Yurel. Yurel is no monster. Yurel means no one harm.];
+            ["Yurel wishes only to be left in peace... and to go home."];
+            SetNPCID_i(1, item);
+        } else {
+            ["Have they stopped looking for monsters yet? Can Yurel go home in peace now?"];
+        }
+        if ($KNOW_YUREL_LOVES_CHEESE = true) {
+            TurnOn("food");
+        }
+        TurnOn(<< "monster", "peace", "home", "bye" >>);
+        converse {
+            key ("monster") {
+                TurnOff("monster");
+                ["Yurel knows not how he came to be this way... so unlike others. Yurel has been told that he was an... experiment long ago gone wrong.];
+                ["Yurel does not care. Yurel breaths. Yurel fears. Yurel loves. That makes Yurel the same as others, though Yurel wears fur or not."];
+                TurnOn("experiment");
+            }
+            key ("experiment") {
+                TurnOff("experiment");
+                ["Yurel knows not who did such a thing, or why. The Master of Tolerance said that Chaos did not do such a thing. He said that it was those of Order.];
+                ["Yurel does not care. Yurel here now, and must find a way home. Yurel only wants to live... Do not others feel the same way?"];
+                TurnOn(<< "Chaos", "Order" >>);
+            }
+            key ("Chaos") {
+                TurnOff("Chaos");
+                ["The Master of Tolerance told Yurel that his home was a place dedicated to Chaos. Yurel was not sure what this meant. Yurel was only happy that Yurel could stay there and be useful.];
+                ["Yurel does not understand why the others hate one another. Are they not the same? They have no fur, as Yurel does. Yurel is confused... and hungry."];
+            }
+            key ("Order") {
+                TurnOff("Order");
+                ["Yurel often saw warriors of Order as Yurel went about hunting. Yurel learned quickly to avoid them, for they would beat Yurel up if they could catch Yurel.];
+                ["Now they have killed Yurel's friends. Killed the Master of Tolerance who took Yurel in. Yurel wishes they would go away. It was better before they took over."];
+            }
+            key ("peace") {
+                TurnOff("peace");
+                ["Yurel remembers peace. Yurel wishes to the end of his days without pain and fear. Yurel wishes what others wish, to see this fighting end.];
+                ["And food... Food would be good. Yurel is very hungry."];
+                TurnOn(<< "fighting", "food" >>);
+            }
+            key ("fighting") {
+                TurnOff("fighting");
+                ["There has been fighting for a long, long time now. Something happened when Yurel was away hunting. Yurel knows not what.];
+                ["Those of Order who captured Yurel called Yurel a murderer. But Yurel has never harmed others. Yurel has hunted to bring others food. Yurel knows not why they say such things."];
+                TurnOn("captured");
+            }
+            key ("captured") {
+                TurnOff("captured");
+                ["Warriors of Order found Yurel out hunting. They beat Yurel and dragged Yurel to the cruel place beyond these walls. They wanted to cut Yurel up... So Yurel ran away. Yurel not dumb.];
+                ["Yearl hoped that if Yurel took their ball they would be too busy looking for it to hunt for Yurel. Yurel must have been right... They have not come for Yurel yet, and Yurel still has the ball."];
+                TurnOn("ball");
+            }
+            key ("ball") {
+                TurnOff("ball");
+                ["Yurel knows not what is so special about it. It is pretty. It sat upon a pedestal. So it must have been important."];
+            }
+            key ("food") {
+                TurnOff("food");
+                if $HAVE_PURPLE_ORB {
+                    ["Yurel thanks thee for the cheese.];
+                    [" Yurel loves cheese."];
+                } else {
+                    ["Yurel is so hungry. Yurel has not had food in many days. Yurel would be willing to trade thee Yurel's ball for cheese.];
+                    ["Yurel loves cheese..."];
+                    ["Dost thou have cheese thou wouldst give Yurel?"];
+                    if ~AskYesNo() {
+                        v2 = ~IsInInv(26, 65177, _Food, 1, _Avatar);
+                        v3 = ~IsInInv(27, 65177, _Food, 1, _Avatar);
+                        v4 = ~IsInInv(28, 65177, _Food, 1, _Avatar);
+                        if (v2 or (v3 or v4)) {
+                            if v2 {
+                                v5 = ~TakeFromParty_i(18, 26, _All, _Food, 1);
+                                ["Oh, Yurel is so happy! Thou art kind, kind, kind! The ball is yours... But be careful of the warriors, they are looking for it."];
+                                v5 = ~GiveToCont_i(0, 9, _All, _Magic_Orbs, 1, _Avatar);
+                            } else {
+                                if v3 {
+                                    v5 = ~TakeFromParty_i(18, 27, _All, _Food, 1);
+                                } else {
+                                    v5 = ~TakeFromParty_i(18, 28, _All, _Food, 1);
+                                }
+                                ["Oh, Yurel is so happy! Thou art kind, kind, kind! The ball is yours... But be careful of the warriors, they are looking for it."];
+                                v5 = ~GiveToCont_i(0, 9, _All, _Magic_Orbs, 1, _Avatar);
+                                $HAVE_PURPLE_ORB = true;
+                            }
+                        } else {
+                            ["Thou dost tease Yurel! Thou dost not have cheese!];
+                            ["But if thou dost find some, Yurel will still trade."];
+                            $KNOW_YUREL_LOVES_CHEESE = true;
+                        }
+                    } else {
+                        ["If thou dost change thy mind, Yurel will still trade."];
+                        $KNOW_YUREL_LOVES_CHEESE = true;
+                    }
+                }
+            }
+            key ("home") {
+                TurnOff("home");
+                ["Yurel's home was the Temple of Tolerance. They accepted Yurel there. Did not throw stones at Yurel. Let Yurel help, catch food for the others. Teach Yurel how to eat so as not to frighten others.];
+                ["Yurel had friends. Yurel had a safe place to sleep. Yurel worked hard and had fun. Yurel wants to go home..."];
+                TurnOn("Temple of Tolerance");
+            }
+            key ("Temple of Tolerance") {
+                TurnOff("Temple of Tolerance");
+                ["The Temple of Tolerance was the home of those the others did not want. Yurel was friends with many there.];
+                ["Yurel does not care if they were not smart, or if they looked different... Yurel looks different from all others. Yurel does not understand why others turn out their own children for looking different. They look enough alike to Yurel.];
+                ["Perhaps Yurel will never know. Perhaps Yurel will never live to see home again. Yurel is lonely... and hungry."];
+            }
+            key ("bye") {
+                CloseSpeaker0_i();
+                Bark_i(0, "@Goodbye.@", _Avatar);
+                Bark_i(2, "@Take care.@", item);
+                break;
+            }
+        }
+        clear_answers;
+    }
+}

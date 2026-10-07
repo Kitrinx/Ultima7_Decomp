@@ -1,0 +1,34 @@
+Routine JoinKeyEgg_i accepts a0 #locals(9) {
+    v0 = 0;
+    v1 = 0;
+    v2 = ~FindNearby_i(0, 2, _Unique_Key, item);
+    Foreach v5 in v2 {
+        if (~GetFrame(v5) = 21) {
+            v0 = v5;
+        }
+        if (~GetFrame(v5) = 22) {
+            v1 = v5;
+        }
+    }
+    if (v0 and v1) {
+        v6 = ~GetCoord(v0);
+        Sfx(116);
+        v6::1 = (v6::1 - (v6::3 / 2));
+        v6::2 = (v6::2 - (v6::3 / 2));
+        createSprite(65535, 0, 0, 0, (v6::2 - 2), (v6::1 - 2), 17);
+        createSprite(65535, 0, 0, 0, (v6::2 - 3), (v6::1 - 3), 27);
+        v6 = ~GetCoord(v0);
+        if v0 {
+            Item_destroy(v0);
+        }
+        if v1 {
+            Item_destroy(v1);
+        }
+        v7 = ~Item_create(_Unique_Key);
+        if v7 {
+            SetFrame(23, v7);
+            v8 = ~SetQuality(139, v7);
+            v8 = ~PopToMap(v6);
+        }
+    }
+}

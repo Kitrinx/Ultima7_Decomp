@@ -1,0 +1,175 @@
+Routine Freli accepts a0 #locals(5) #uses(~LordOrLady, Bark_i, PartyFaces_i, ~IsNPCNear, ~GiveItemsOrDrop_i, MessengerBringsScroll_i) {
+    v0 = ~LordOrLady();
+    v1 = false;
+    if ((event = _NearDeath) and ~GetItemFlag_i(_Tournament, item)) {
+        v2 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #Black_Mage >>, item);
+    }
+    if ((event = _Bark) and (~GetWorkType(_Freli) = _Hound)) {
+        if (~Random(10) < 6) {
+            terminate;
+        }
+        v3 = << "@Zounds!@", "@A true warrior!@", "@Tell me a story!@", "@Look! A stranger!@", "@May I be thy friend?@", "@Beware the mages...@" >>;
+        Bark_i(0, v3::~Random(6), _Freli);
+    }
+    if (event = _Converse) {
+        Item_bark("@Little boy!@", _Avatar);
+        PartyFaces_i(65517);
+        Bark_i(2, "@Hi!@", _Freli);
+        SetWorkType(_Talk, _Freli);
+    }
+    if (event = _Talking) {
+        Npc_schedule(_Freli);
+        ClearBark_i(_Freli);
+        SetSpeaker0_i(0, _Freli);
+        v4 = ~GetItemFlag_i(_Met, _Freli);
+        if $BANES_RELEASED {
+            if $andriofreed {
+                ["I am so glad to see thee, <v0>! There hath been so much trouble here of late..."];
+            } else {
+                ["I need thine help! I need thine help! I am in so much trouble..."];
+            }
+            TurnOn("trouble");
+        } else {
+            if (v4 = false) {
+                SetItemFlag_i(_Met, _Freli);
+                ["Art thou the great hero from a distant land?! Oh, my name is Freli. I am glad to meet thee!"];
+                TurnOn(<< "hero", "distant land" >>);
+            } else {
+                ["'Tis the Avatar! 'Tis the Avatar, from far away!"];
+                TurnOn(<< "Avatar", "far away" >>);
+            }
+        }
+        if ($needserpscroll and not $gaveserpscroll) {
+            TurnOn("looking for scroll");
+        }
+        if ($delinsaidfreli and not flag(231)) {
+            TurnOn("Delin");
+        }
+        if (flag(234) and not ~GetItemFlag_i(_Dead, _Rotoluncia)) {
+            TurnOn("kidnap");
+        }
+        TurnOn(<< "bye" >>);
+        converse {
+            key ("kidnap") {
+                TurnOff("kidnap");
+                ["Thou shouldst ask Andrio -- I am certain that he could help thee! He is very bright."];
+                if ~IsNPCNear_i(_Andrio) {
+                    SetWorkType(_Talk, _Andrio);
+                    Bark_i(2, "@I can help!@", _Andrio);
+                }
+            }
+            key ("Avatar", "hero") {
+                TurnOff(<< "hero", "Avatar" >>);
+                ["I know thou hast participated in many daring exploits. I so want to hear about everything! Life is so dreary here. I have nothing but my study of magic to interest me."];
+                TurnOn(<< "dreary", "study", "magic" >>);
+            }
+            key ("dreary") {
+                TurnOff("dreary");
+                ["Why, nothing ever happens here in Moonshade. At least, nothing to match thy fascinating activities. I would wager not even Filbercio hath seen as much as thee."];
+                TurnOn(<< "Moonshade", "Filbercio" >>);
+            }
+            key ("Moonshade") {
+                TurnOff("Moonshade");
+                ["'Twas founded several centuries ago, <v0>. Legend holds that the Mad Mage himself journeyed from a far away place, arriving here and laying claim to the land."];
+                TurnOn("Mad Mage");
+            }
+            key ("Mad Mage") {
+                TurnOff("Mad Mage");
+                ["His true name is Erstam. He is called the Mad Mage because he fled the city many years ago to leave behind our civilization. No one truly knows why he left, but some who were there claim he made references to the townspeoples' 'petty bickering'."];
+            }
+            key ("Filbercio") {
+                TurnOff("Filbercio");
+                ["The MageLord? He is the greatest of all wizards, or so I have heard. He rules with a kind but stern hand. Of course, I would not count on his friendship were I to be seen with his lover."];
+                TurnOn("lover");
+            }
+            key ("lover") {
+                TurnOff("lover");
+                ["This is but rumor, <v0>. However, it hath been said that he is seen late at night in the presence of the Mistress of Cold, Frigidazzi."];
+            }
+            key ("study") {
+                TurnOff("study");
+                ["Well, I certainly love magic and all, but it's taking too long! I have been learning for years, thou wouldst think me a master at this point. I do not believe it fair -- that traveller needed no tutelage, he simply paid Torrissio and was off."];
+                TurnOn(<< "traveller", "Torrissio" >>);
+            }
+            key ("traveller") {
+                TurnOff("traveller");
+                ["I had not the chance to meet him, but those who did called him Batlin. He was not here long, and left in a rush, but I overheard that he purchased spells from Torrissio."];
+            }
+            key ("Torrissio") {
+                TurnOff("Torrissio");
+                ["Torrissio can be quite mean, I have heard. Andrio is afraid of him, I know that."];
+                if ~IsNPCNear(_Andrio) {
+                    SetSpeaker1_i(0, _Andrio);
+                    ["I am not!"];
+                    SetSpeakerSlot_i(0);
+                    ["Yes, thou art!"];
+                    SetSpeakerSlot_i(1);
+                    ["'Tis a lie! Besides, thou art afraid of him as well!"];
+                    SetSpeakerSlot_i(0);
+                    ["That is, uh, not at all true!"];
+                    CloseSpeaker1_i();
+                    SetSpeakerSlot_i(0);
+                }
+                ["Why, Andrio will not even pass his house before 9 in the morning."];
+                TurnOn("nine");
+            }
+            key ("nine") {
+                TurnOff("nine");
+                ["That is when he leaves his laboratory to go out into the city."];
+            }
+            key ("magic") {
+                TurnOff("magic");
+                ["I mean no disrespect, <v0>. I find it a most fascinating topic. I could\x09spend days creating brilliant flashes of light, moving stones with my mind, and summoning animals from nothing. 'Tis the arcane art that keeps mine interest in daily life. I simply want to be further along in my studies."];
+            }
+            key ("far away", "distant land") {
+                TurnOff(<< "distant land", "far away" >>);
+                ["I have heard that thou hast travelled a great many miles to come here. When thou hast the time, I would love to listen to stories of thine homeland."];
+            }
+            key ("trouble") {
+                TurnOff("trouble");
+                ["It was so terrible! Everyone is dead, and the city is destroyed..."];
+                ["I was in the Seminarium when the Glowing Man came. Fedabiblio tried to\x09stop him, but could not..."];
+                if not v1 {
+                    TurnOn("Fedabiblio");
+                }
+            }
+            key ("Fedabiblio") {
+                v1 = true;
+                TurnOff("Fedabiblio");
+                if $andriofreed {
+                    ["Thou art a Mage beyond compare, <v0>!"];
+                    ["I thought that Fedabiblio was dead after the Glowing Man turned him into a statue. I had no idea how to change him back... I hope Fedabiblio rewarded thee richly for saving him!"];
+                } else {
+                    ["He is dead, he is dead... The Glowing Man turned him into cold, cold stone. He is standing in the Seminarium..."];
+                    ["And I do not know how to change him back!"];
+                }
+            }
+            key ("Delin") {
+                TurnOff("Delin");
+                ["He is my long-lost father. Here is a scroll thou canst give him from me."];
+                v2 = ~GiveItemsOrDrop_i(true, 0, 0, 70, 797, 1, _Avatar);
+                flag(231) = true;
+            }
+            key ("looking for scroll") {
+                TurnOff("looking for scroll");
+                ["I know that one! It is written entirely in Serpent Runic, and kept in the library of the Seminarium."];
+                if $andriofreed {
+                    ["Thou shouldst ask Fedabiblio for the key. I am sure he will give it to thee since thou didst save him."];
+                } else {
+                    ["Only Fedabiblio had the key. But now he hath been turned to stone!"];
+                }
+                if not v1 {
+                    TurnOn("Fedabiblio");
+                }
+            }
+            key ("bye") {
+                CloseSpeaker0_i();
+                Bark_i(0, "@So long!@", _Avatar);
+                Bark_i(2, "@Please come again!@", _Freli);
+                MessengerBringsScroll_i();
+                break;
+            }
+        }
+        clear_answers;
+    }
+}

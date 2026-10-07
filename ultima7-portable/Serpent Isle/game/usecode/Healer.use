@@ -1,0 +1,213 @@
+Routine Healer accepts a0 #locals(11) #uses(~AvatarName, ~LordOrLady, ~IsInInv, PartyFaces_i, Bark_i, ~NearbyBodies_i, ~AskYesNo, SurokHeals_i, ResurrectBodies_i, ~UsePatience_i) {
+    v0 = ~AvatarName();
+    v1 = ~GetTime();
+    v2 = ~LordOrLady();
+    v3 = ~IsInInv(65177, 65177, _Belt_Of_Strength, 1, _Party);
+    v4 = ~IsInInv(65177, 65177, _Gauntlets_Of_Quickness, 1, _Party);
+    v5 = ~IsInInv(65177, 65177, _Erinons_Axe, 1, _Party);
+    v6 = ~IsInInv(3, 65177, _Magic_Rings, 1, _Party);
+    v7 = ~IsInInv(65177, 65177, _Helm_Of_Light, 1, _Party);
+    if ((v1 > 1) or (v1 < 6)) {
+        v1 = "day";
+    } else {
+        v1 = "evening";
+    }
+    if (event = _Converse) {
+        Item_bark("@Greetings, sir.@", _Avatar);
+        PartyFaces_i(item);
+        Bark_i(2, "@Greetings to thee.@", item);
+        SetWorkType(_Talk, item);
+    }
+    if (event = _Talking) {
+        SetWorkType(_Stand, item);
+        ClearBark_i(item);
+        SetSpeaker0_i(0, 65228);
+        v8 = ~GetNPCID_i(item);
+        if ($HAVE_SILVER_SEED or $PLANTED_SILVER_SEED) {
+            ["Who would have thought that lowly Surok would be speaking with the Champion of Balance? I am honored.];
+            ["How may I aid thee, <v0>?"];
+        } else {
+            if not v8 {
+                if not flag(623) {
+                    ["Ah, a new face! And who art thou, stranger, that thou doth risk death by coming here to Serpent's Fang? A servant of Chaos? Hmmm... I think not."];
+                    ["I am Surok, the Healer of Serpent's Fang and I perceive that thou art lost. Perhaps I can aid thee, if thou dost wish."];
+                } else {
+                    ["'Tis lucky for thee that a patrol didst find thee, stranger! Thou wert unconscious and bleeding from many wounds... Ah, but I forget my manners!"];
+                    ["I am Surok, the Healer of Serpent's Fang and I didst heal thee of thy wounds."];
+                    flag(623) = false;
+                }
+                SetNPCID_i(1, item);
+            } else {
+                if not flag(623) {
+                    ["Thou dost return? Perhaps to regale me with stories of thine exploits?"];
+                } else {
+                    ["Ah, <v0>, thou hast awakened. Good. Thou hast been revived by mine art. Thou art able to resume thine adventures now."];
+                    flag(623) = false;
+                }
+            }
+        }
+        TurnOn(<< "healing", "information", "bye" >>);
+        if (~ListSize_i(~NearbyBodies_i()) > 0) {
+            ["Ah, one of thy companions hath been slain. 'Tis within my power to heal thy friend if thou dost wish..."];
+            TurnOn("resurrection");
+        }
+        v9 = 0;
+        v10 = 6;
+        converse {
+            key ("healing") {
+                ["Dost thou need healing?"];
+                if ~AskYesNo() {
+                    SurokHeals_i();
+                } else {
+                    ["As thou dost wish."];
+                }
+            }
+            key ("resurrection") {
+                TurnOff("resurrection");
+                ResurrectBodies_i();
+            }
+            key ("information") {
+                if (not $ASKED_SUROK_TOO_MUCH or (~GetClock(2) > 4)) {
+                    ["I have been here at Serpent's Fang longer than most. Perhaps I can aid thee with information. What dost thou wish to know of?"];
+                    PushKeys();
+                    v9 = 1;
+                    TurnOn(<< "people", "places", "strange items", "nothing more" >>);
+                } else {
+                    ["I must be about my duties. Perhaps we can discuss this another time, my friend."];
+                }
+            }
+            key ("people") {
+                TurnOff("people");
+                ["There are very few of us here, <v2>. I can tell thee what I know, but it is not much. Whom here at Serpent's Fang dost thou wish to know of?"];
+                PushKeys();
+                v9 = 2;
+                TurnOn(<< "Isstanar", "Elissa", "Tsandar", "Guards", "Strangers", "nothing more" >>);
+            }
+            key ("places") {
+                TurnOff("places");
+                ["I know of many places, <v2>. Which dost thou wish to know of?"];
+                PushKeys();
+                v9 = 2;
+                TurnOn(<< "Abandoned Outpost", "The Maze", "Aram-Dol's Lair", "nothing more" >>);
+            }
+            key ("strange items") {
+                TurnOff("strange items");
+                ["Show me thine items, I will tell thee what I know, if anything."];
+                PushKeys();
+                v9 = 2;
+                if v3 {
+                    TurnOn("Loriel's Gift");
+                }
+                if v4 {
+                    TurnOn("Gauntlets");
+                }
+                if v5 {
+                    TurnOn("Axe");
+                }
+                if v6 {
+                    TurnOn("Ring");
+                }
+                if v7 {
+                    TurnOn("Helm");
+                }
+                TurnOn("nothing more");
+            }
+            key ("Gauntlets") {
+                TurnOff("Gauntlets");
+                ["Hmmm... These are obviously enchanted to aid thee in the speedy deliverance of thy blows, yet I have never seen their like. They do have the look of an Order armourer, 'tis true, yet the stench of evil doth linger upon them. Thou wouldst be wise not to trust in these gloves, <v2>!"];
+                v10 = ~UsePatience_i(v10);
+            }
+            key ("Axe") {
+                TurnOff("Axe");
+                ["'Tis truly a wonderful weapon, <v2>! Where didst thou come by such? I do not know exactly what it does, but I am sure that thou dost use it well..."];
+                v10 = ~UsePatience_i(v10);
+            }
+            key ("Ring") {
+                TurnOff("Ring");
+                ["Thou didst take great risk in acquiring this ring, <v2>. 'Tis Shal's ring itself. I would wager that thou fought many foul creatures in the Fiend's Lair... but dost thou know the true power of this ring? 'Twill allow thee to cast spells without reagents! Thou hast perhaps one of the most potent artifacts ever made!"];
+                v10 = ~UsePatience_i(v10);
+            }
+            key ("Loriel's Gift") {
+                TurnOff("Loriel's Gift");
+                ["Why, thou dost wear the Belt of Strength! 'Twas made by Commander Ardiniss's wife, Loriel, many years ago. If I remember correctly, she made the belt from the hair of Giants and then enchanted it.  Loriel was a gifted mage, but alas, was yet another victim of this damnable war with Chaos! As thou dost wear her handiwork, thou shouldst remember her, <v2>..."];
+                v10 = ~UsePatience_i(v10);
+            }
+            key ("Helm") {
+                TurnOff("Helm");
+                ["Thou dost possess the Helm of Light! 'Twas worn by Issik the Architect when he did create the Maze. Didst thou discover the secret of the Maze, <v2>?"];
+                if ~AskYesNo() {
+                    ["Thou art truly the Champion of Balance! None other except Issik could navigate that Maze of Death. From my talks with Issik, the Helm will never cease giving light and the only manner of dousing it's brilliance is to cover it over or put it in a bag."];
+                } else {
+                    ["Then how didst thou come by the Helm? Issik disappeared into his creation and never returned. *Ah, 'tis of no matter. Do not listen to the ramblings of an old man, <v2>."];
+                }
+                v10 = ~UsePatience_i(v10);
+            }
+            key ("Isstanar") {
+                TurnOff("Isstanar");
+                ["He is the Commander of our outpost, though he was not such a year ago. Do not cross him, <v0>, for he is terrible in his anger! He believes that those who have not given their lives for the cause of Order are not truly worthy. He has become the \@Ultimate Warrior of Order\@ and has cast his human body away to become metal. I believe that his soul has become as hardened as his exterior."];
+                v10 = ~UsePatience_i(v10);
+            }
+            key ("Elissa") {
+                TurnOff("Elissa");
+                ["She is our Mage. If thou hast gold enough, I am certain she would be willing to teach thee spells. Though she is young, she would like nothing better than to stay youthful -- forever."];
+                v10 = ~UsePatience_i(v10);
+            }
+            key ("Tsandar") {
+                TurnOff("Tsandar");
+                ["Tsandar is a friend, and I will not speak ill of him. Though I wish that he would confide in me what it is that bothers him these days. He is troubled and perhaps with good cause. I will speak no more on this subject, <v2>."];
+                v10 = ~UsePatience_i(v10);
+            }
+            key ("Guards") {
+                TurnOff("Guards");
+                ["The Automatons that thou dost see about our Outpost are our servitors. They act as guards as thou no doubt know already, but they also serve in other ways. Cooks, tailors, blacksmiths... all of these menial tasks can be performed by our metal men."];
+                v10 = ~UsePatience_i(v10);
+            }
+            key ("Strangers") {
+                TurnOff("Strangers");
+                ["Other than thyself, <v2>, there have been few that were brave enough to enter our Keep. There are three women that profess to be on the side of Order, but I doubt their word. Indeed, I believe them to be agents of Chaos, but they have not attacked us here at Serpent's Fang, and have fought the Chaos creatures that venture forth from the surrounding tunnels. They wait, but for what I am not certain."];
+                v10 = ~UsePatience_i(v10);
+            }
+            key ("Abandoned Outpost") {
+                TurnOff("Abandoned Outpost");
+                ["Nine months ago, our Commander was Ardiniss. He led an expedition into our southwest outpost to clear it of infiltrating Chaos agents, and to set mystic traps to kill those that would surely come again. We knew that he was successful in creating the pitfalls, but he never returned. We assumed he was slain by those he sought to slay. He was a good man. If thou dost find his body in thy wanderings, 'twould be kind of thee to return him here to Serpent's Fang."];
+                v10 = ~UsePatience_i(v10);
+            }
+            key ("The Maze") {
+                TurnOff("The Maze");
+                ["Hah! 'Twas built by an exceedingly crafty architect indeed! An item of importance was hidden there, and that is all I shall say on the matter."];
+                v10 = ~UsePatience_i(v10);
+            }
+            key ("Aram-Dol's Lair") {
+                TurnOff("Aram-Dol's Lair");
+                ["Aram Dol is a foul thing that should be destroyed! It exists only to destroy and I fear that if our forces do not return soon, that creature of loathsome chaos will continue to test our defenses and send its unholy servants to our gate! Aram Dol is a powerful sorcerer, and controls items of great power. If thou wert to destroy this demon, I am certain that Isstanar would reward thee!"];
+                v10 = ~UsePatience_i(v10);
+            }
+            key ("Loriel's Gift") {
+                TurnOff("Loriel's Gift");
+                ["Thou dost wear the Belt of Strength?! How didst thou come by it? It was thought lost these many months. No... no, I do not want to know, <v2>, though I would not show the others the Belt. They would not be as understanding as I and perhaps would demand that thou returnest it."];
+                v10 = ~UsePatience_i(v10);
+            }
+            key ("nothing more") {
+                if (v9 = 1) {
+                    PopKeys();
+                    ["As thou dost wish..."];
+                } else {
+                    While (v9 > 1) {
+                        PopKeys();
+                        v9 = (v9 - 1);
+                    }
+                    ["Is there anything else I can help thee with?"];
+                }
+            }
+            key ("bye") {
+                CloseSpeaker0_i();
+                CloseSpeaker1_i();
+                Bark_i(0, (("@Good " + v1) + "!@"), _Avatar);
+                Bark_i(2, "@Be careful!@", item);
+                SetWorkType(_Loiter, item);
+                terminate;
+            }
+        }
+        clear_answers;
+    }
+}

@@ -1,0 +1,63 @@
+Routine GatesCloseEgg_i accepts a0 #locals(23) #uses(~PartyUtters) {
+    if (event = _Trigger) {
+        v0 = (~FindNearby_i(0, 100, _NS_Portcullis, _Avatar) & ~FindNearby_i(0, 100, _EW_Portcullis, _Avatar));
+        v1 = false;
+        Foreach v4 in v0 {
+            v5 = ~GetCoord(v4);
+            if (v5::3 <> 0) {
+                v1 = true;
+            }
+        }
+        if v1 {
+            v6 = (~FindNearby_i(0, 60, _NS_Crossbeam, _Avatar) & ~FindNearby_i(0, 60, _EW_Crossbeam, _Avatar));
+            v7 = (~FindNearby_i(0, 60, _NS_Portcullis, _Avatar) & ~FindNearby_i(0, 60, _EW_Portcullis, _Avatar));
+            Foreach v10 in v7 {
+                v11 = ~Item_getZ(v10);
+                if (v11 = 1) {
+                    v12 = ~PostAction(<< _aNO_HALT_i, _aSFX_i, 89, _aUSABLE_i, #LowerLevel_i >>, v10);
+                    Foreach v15 in v6 {
+                        v12 = ~PostAction(<< _aNO_HALT_i, _aFRAME, 2, _aFRAME, 3 >>, v15);
+                    }
+                }
+                if (v11 = 2) {
+                    v12 = ~PostAction(<< _aNO_HALT_i, _aSFX_i, 89, _aUSABLE_i, #LowerLevel_i, _aLOOP_i, 65531, 2 >>, v10);
+                    Foreach v15 in v6 {
+                        v12 = ~PostAction(<< _aNO_HALT_i, _aFRAME, 2, _aFRAME, 3 >>, v15);
+                    }
+                }
+                if (v11 = 3) {
+                    v12 = ~PostAction(<< _aNO_HALT_i, _aSFX_i, 89, _aUSABLE_i, #LowerLevel_i, _aLOOP_i, 65531, 3 >>, v10);
+                    Foreach v15 in v6 {
+                        v12 = ~PostAction(<< _aNO_HALT_i, _aFRAME, 3 >>, v15);
+                    }
+                }
+                if (v11 = 4) {
+                    v12 = ~PostAction(<< _aNO_HALT_i, _aSFX_i, 89, _aUSABLE_i, #LowerLevel_i, _aLOOP_i, 65531, 3 >>, v10);
+                }
+                Foreach v15 in v6 {
+                    v12 = ~PostAction(<< _aNO_HALT_i, _aFRAME, 2, _aFRAME, 1, _aFRAME, 0 >>, v15);
+                }
+            }
+            v0 = ~PostInFuture(10, << _aNO_HALT_i, _aUSABLE_i, #GatesCloseEgg_i >>, item);
+            v22 = ~PartyUtters(true, "@The gates are closing!@", "@Look -- the gates!@", 1);
+            Npc_setAlignment(_Evil, _Auto1);
+            SetItemFlag_i(_Tournament, _Auto1);
+            Item_move(<< 1827, 2661 >>, _Auto1);
+            SetWorkType(_Wait, _Auto1);
+            Npc_setAlignment(_Evil, _Auto2);
+            SetItemFlag_i(_Tournament, _Auto2);
+            Item_move(<< 1868, 2663 >>, _Auto2);
+            SetWorkType(_Wait, _Auto2);
+            Npc_setAlignment(_Evil, _Auto3);
+            SetItemFlag_i(_Tournament, _Auto3);
+            Item_move(<< 1819, 2662 >>, _Auto3);
+            SetWorkType(_Wait, _Auto3);
+            Npc_setAlignment(_Evil, _Auto4);
+            SetItemFlag_i(_Tournament, _Auto4);
+            Item_move(<< 1876, 2660 >>, _Auto4);
+            SetWorkType(_Wait, _Auto4);
+        }
+        flag(520) = true;
+        Item_destroy(item);
+    }
+}

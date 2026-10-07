@@ -1,0 +1,31 @@
+Routine Ice_Barge accepts a0 #locals(8) #uses(PathToItem_i) {
+    if (event <> _Converse) {
+        return;
+    }
+    if ~InGumpMode_i() {
+        closeAllGumps();
+    }
+    v0 = ~GetBarge_i(item);
+    if v0 {
+        if not ~GetItemFlag_i(_OnMovingBarge_i, _Avatar) {
+            v1 = ~FindNearby_i(0, 25, _Ice_Barge, item);
+            v2 = v1::1;
+            Foreach v5 in v1 {
+                v6 = ~GetCoord(v5);
+                v7 = ~GetCoord(v2);
+                if ((v6::1 < v7::1) and (v6::2 < v7::2)) {
+                    v2 = v5;
+                }
+            }
+            PathToItem_i(10, v2, #Ice_Barge, 1, 0, 0, v2);
+            SetItemFlag_i(20, item);
+            ClearItemFlag_i(20, _Avatar);
+            SetItemFlag_i(_OnMovingBarge_i, item);
+            SetItemFlag_i(_ActiveBarge_i, v0);
+        } else {
+            ClearItemFlag_i(20, item);
+            ClearItemFlag_i(_OnMovingBarge_i, item);
+            ClearItemFlag_i(_ActiveBarge_i, item);
+        }
+    }
+}

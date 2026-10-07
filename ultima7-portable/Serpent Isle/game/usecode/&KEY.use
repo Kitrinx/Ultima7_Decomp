@@ -1,0 +1,151 @@
+Routine Lockpick accepts a0 #locals(10) #uses(ConsumeOne_i, ~DoorState_i, SetDoorState_i, MemberBarks_i, MemberSays_i) {
+    if (event = _Converse) {
+        v0 = ~GetTarget();
+        playSFX(item, 68);
+        v1 = ~Item_getType(v0);
+        v2 = ~GetQuality(v0);
+        if (~rndRange(30, 1) < ~GetNPCStat_i(_Dex, _Avatar)) {
+            v3 = true;
+        } else {
+            v3 = false;
+        }
+        if (v1 = 522) {
+            if ((v2 = 0) and v3) {
+                Item_setType(_Chest, v0);
+                Item_bark("Unlocked", v0);
+                return;
+            }
+            if ((v2 = 255) and v3) {
+                v4 = ~Item_create(_Powder_Keg);
+                if v4 {
+                    closeAllGumps();
+                    v5 = ~PopToMap(~GetCoord(v0));
+                    v5 = ~Attack_i(_Powder_Keg, v4, v4);
+                    if v3 {
+                        Item_bark("Unlocked", v0);
+                        Item_setType(_Chest, v0);
+                    }
+                }
+                return;
+            } else {
+                Item_bark("Pick broke", v0);
+                ConsumeOne_i(item);
+            }
+            return;
+        }
+        v6 = << 376, 270, 432, 433 >>;
+        Foreach v9 in v6 {
+            if (v1 = v9) {
+                if (v2 = 0) {
+                    if (~DoorState_i(v0) = 2) {
+                        if v3 {
+                            SetDoorState_i(0, v0);
+                            Item_bark("Unlocked", v0);
+                        } else {
+                            Item_bark("Pick broke", v0);
+                            ConsumeOne_i(item);
+                        }
+                        return;
+                    }
+                } else {
+                    MemberBarks_i("@'Tis strange that did not work.@");
+                    return;
+                }
+            }
+        }
+        MemberSays_i("@Mayhaps thou shouldst try those on a locked chest or door.@");
+    }
+}
+
+Routine Unique_Key accepts a0 #locals(11) #uses(ConsumeOne_i, Bark_i, ToggleDoorLock_i, Locked_Chest) {
+    if (event = _Action) {
+        v0 = item;
+        goto label_4;
+    }
+    if (event = _Converse) {
+        v0 = ~GetTarget();
+        label_4:
+        playSFX(item, 68);
+        v1 = ~Item_getType(v0);
+        v2 = ~GetQuality(item);
+        v3 = ~GetQuality(v0);
+        if ((v1 = 485) and (~Item_getType(item) = _Unique_Key)) {
+            if (((~GetFrame(item) = 21) or (~GetFrame(item) = 22)) and (~GetQuality(item) = 0)) {
+                v4 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #SayKeyRefused_i >>, item);
+                terminate;
+            }
+            AddToKeyring_i(v2);
+            ConsumeOne_i(item);
+            terminate;
+        }
+        if (~GetQuality(item) = 186) && (not ~GetItemFlag_i(_Dead, _Rotoluncia) and ((~GetQuality(v0) = 186) and ((v1 = 376) and not flag(328)))) {
+            SetWorkType(_Talk, _Rotoluncia);
+            SetItemFlag_i(_Tournament, _Rotoluncia);
+            Bark_i(0, "@Aha!@", _Rotoluncia);
+            v5 = ~FindNearby_i(0, 30, _MgGremlin, item);
+            Foreach v8 in v5 {
+                SetWorkType(_Hound, v8);
+            }
+        }
+        if (~GetQuality(item) = 117) {
+            if (~GetQuality(v0) = 117) {
+                $selinafinalbattle = true;
+            }
+            if (not flag(486) and ((~GetQuality(v0) = 117) and not ~GetItemFlag_i(_InParty_i, _Selina))) {
+                JoinParty(_Selina);
+                Bark_i(2, "@Wait for me!@", _Selina);
+            }
+        }
+        if (~Item_getType(v0::1) in << 376, 270, 432, 433 >>) && (v2 = v3) {
+            ToggleDoorLock_i(v0);
+        }
+        if (v1 = 522) && (v2 = v3) {
+            Item_bark("Unlocked", v0);
+            Item_setType(_Chest, v0);
+            if (v3 = 255) {
+                Locked_Chest(v0);
+            }
+        }
+        if (v1 = 800) && (v2 = v3) {
+            v9 = ~GetContents(_All, v2, _Unique_Key, v0);
+            v10 = false;
+            While v9 {
+                if (v9 = v0) {
+                    v10 = true;
+                    break;
+                }
+                v9 = ~Item_getContainer(v9);
+            }
+            if v10 {
+                Item_bark("Key inside", _Avatar);
+            } else {
+                Item_closeGump(v0);
+                Item_setType(_Locked_Chest, v0);
+                Item_bark("Locked", v0);
+            }
+        }
+    }
+}
+
+Routine ToggleDoorLock_i accepts a0 #locals(4) #uses(~DoorState_i, MemberSays_i, SetDoorState_i) {
+    v1 = ~DoorState_i(v0);
+    v2 = ~GetQuality(item);
+    v3 = 65535;
+    if (v1 = 0) {
+        v3 = 2;
+    }
+    if (v1 = 1) {
+        v4 = ("@Pardon, but the door is already open. " + "Is it not rather futile to lock it now?@");
+        MemberSays_i(v4);
+    }
+    if (v1 = 2) {
+        v3 = 0;
+    }
+    if (v1 = 3) && (~rndRange(10, 1) = 1) {
+        v4 = ("@Pardon, but the door appears magically locked. " + "Is it not rather difficult to unlock it with a key?@");
+        MemberSays_i(v4);
+    }
+    if (v3 <> 65535) {
+        SetDoorState_i(v3, v0);
+    }
+}

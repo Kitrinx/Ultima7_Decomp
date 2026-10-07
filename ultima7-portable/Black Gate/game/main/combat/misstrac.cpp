@@ -51,8 +51,8 @@ struct MissileTracker : Path {
 	uint8_t stop();
 	uint8_t fire(ItemId, Coord, Coord, int16_t, int16_t, uint8_t);
 	void updateChecksum() {
-		storedChecksum = missile + mode + weapon + ammo + attacker.off + damage
-			+ target.off + kind + range + targetX.value + targetY.value + counted;
+		storedChecksum = (uint16_t)(missile + mode + weapon + ammo + attacker.off + damage
+			+ target.off + kind + range + targetX.value + targetY.value + counted);
 	}
 };
 extern "C" int16_t GetPartyIndex(objref);

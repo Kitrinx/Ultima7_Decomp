@@ -1,0 +1,65 @@
+Routine CheckSwitches_i accepts a0 #locals(25) {
+    v0 = false;
+    v1 = false;
+    v2 = false;
+    v3 = false;
+    v4 = false;
+    v5 = false;
+    v6 = false;
+    v7 = false;
+    v8 = false;
+    v9 = false;
+    v10 = ~GetFrame(item);
+    v11 = ~GetQuality(item);
+    v12 = ~FindNearby_i(176, 100, _Switch, item);
+    if (v11 = 237) {
+        Foreach v15 in v12 {
+            v16 = ~GetQuality(v15);
+            v17 = ~GetFrame(v15);
+            if (v16 = 221) && ((v17 modulo 2) = 0) {
+                v0 = true;
+            }
+            if (v16 = 222) && ((v17 modulo 2) = 0) {
+                v1 = true;
+            }
+            if (v16 = 223) && ((v17 modulo 2) = 0) {
+                v2 = true;
+            }
+            if (v16 = 224) && ((v17 modulo 2) = 0) {
+                v3 = true;
+            }
+            if (v16 = 225) && ((v17 modulo 2) = 0) {
+                v4 = true;
+            }
+            if (v16 = 226) && ((v17 modulo 2) = 0) {
+                v5 = true;
+            }
+            if (v16 = 227) && ((v17 modulo 2) = 0) {
+                v6 = true;
+            }
+            if (v16 = 228) && ((v17 modulo 2) = 0) {
+                v7 = true;
+            }
+            if (v16 = 229) && ((v17 modulo 2) = 0) {
+                v8 = true;
+            }
+            if (v16 = 230) && ((v17 modulo 2) = 0) {
+                v9 = true;
+            }
+        }
+        if (v0 and (v1 and (v2 and (v3 and (v4 and (v5 and (v6 and (v7 and (v8 and v9))))))))) {
+            v18 = ~FindNearby_i(176, 100, _Door_EW, item);
+            Foreach v21 in v18 {
+                if (~GetQuality(v21) = 241) {
+                    v22 = ~GetCoord(v21);
+                    Item_destroy(v21);
+                    v23 = ~Item_create(_Door_NS);
+                    if v23 {
+                        v24 = ~PopToMap(v22);
+                        SetFrame(12, v23);
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,20 @@
+Routine BrassWell accepts a0 #locals(3) #uses(~IsInInv, ~PartyUtters, ClimbWell_i) {
+    v0 = ~IsInInv(13, 65177, _Artifacts, 1, _Party);
+    if (event = _Converse) {
+        if (v0 or $ROPE_ON_WELL) {
+            PathfindNPC_i(true, #BrassWell, item, _Path_Success, ~GetCoord(item), _Avatar);
+            SetPathFailure_i(_Path_Failure, item, << 1024 >>);
+        } else {
+            if (not v0 or not $ROPE_ON_WELL) {
+                v1 = ~PartyUtters(true, "@Maybe I can climb down?!@", "@Maybe we can climb down?!@", 1);
+                v2 = ~PartyUtters(true, 0, "@But with what?@", 1);
+            } else {
+                v1 = ~PartyUtters(true, "@I need the rope!@", "@We need the rope!@", 1);
+            }
+            terminate;
+        }
+    }
+    if ((event = _Path_Success) or ((event = _Path_Failure) or (event = _Action))) {
+        ClimbWell_i(item);
+    }
+}

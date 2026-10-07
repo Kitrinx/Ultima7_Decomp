@@ -1,0 +1,43 @@
+Routine DCantra accepts a0 #locals(3) #uses(Bark_i) {
+    v0 = ~GetItemFlag_i(_Met, _DCantra);
+    if (event = _NearDeath) {
+        SetSpeaker0_i(0, _Cantra);
+        ["Why dost thou attack me? Do thine eyes deceive thee so?" *"Slay the foul bane that wishes to devour me instead! If it is not stopped, it will destroy us all!" *"I can stand this nightmare no more..."];
+        CloseSpeaker0_i();
+        v1 = ~GetCoord(item);
+        Sfx(116);
+        createSprite(65535, 0, 0, 0, v1::2, v1::1, 27);
+        RemoveNPC_i(_DCantra);
+    }
+    if (event = _Bark) {
+        v2 = ~rndRange(4, 1);
+        if (v2 = 1) {
+            Bark_i(0, "@Make it stop!@", _DCantra);
+        }
+        if (v2 = 2) {
+            Bark_i(0, "@It will kill me!@", _DCantra);
+        }
+        if (v2 = 3) {
+            Bark_i(0, "@Canst thou not see it!@", _DCantra);
+        }
+        if (v2 = 4) {
+            Bark_i(0, "@It is pure evil!@", _DCantra);
+        }
+    }
+    if (event = _Converse) {
+        if (v0 <> true) {
+            SetSpeaker0_i(0, _Cantra);
+            ["Iieeeee.... Help me!" ~"I cannot escape..." ~"It will catch and devour me!" *"Canst thou not see it? Please, help me!"];
+            SetItemFlag_i(_Met, _DCantra);
+            CloseSpeaker0_i();
+            SetWorkType(_Patrol, _DCantra);
+            terminate;
+        } else {
+            SetSpeaker0_i(0, _Cantra);
+            ["Art thou blind! Canst thou not see the foul beast?" *"Have mercy! I beg thee to slay such an horror! Please, thou must kill it before it takes me!"];
+            CloseSpeaker0_i();
+            SetWorkType(_Patrol, _DCantra);
+            terminate;
+        }
+    }
+}

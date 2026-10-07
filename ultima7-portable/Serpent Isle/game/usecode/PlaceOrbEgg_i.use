@@ -1,0 +1,84 @@
+Routine PlaceOrbEgg_i accepts a0 #locals(8) #uses(GivePartyExp_i, OpenOrbDoor_i) {
+    v0 = ~GetQuality(item);
+    v1 = ~FindNearby_i(0, 1, _Magic_Orbs, item);
+    Foreach v4 in v1 {
+        v5 = ~GetFrame(v4);
+        v6 = ~GetCoord(v4);
+        if (v0 = 1) {
+            if (v5 = 8) {
+                Sfx(116);
+                createSprite(65535, 0, 0, 2, v6::2, v6::1, 21);
+                Item_destroy(v4);
+                v7 = ~Item_create(_Magic_Orbs);
+                if v7 {
+                    v4 = ~PopToMap(<< v6 >>);
+                    SetFrame(12, v7);
+                }
+                $RED_ORB_PLACED = true;
+                GivePartyExp_i(250);
+                OpenOrbDoor_i();
+                Item_destroy(item);
+            } else {
+                createSprite(65535, 0, 0, 2, v6::2, v6::1, 9);
+                Sfx(33);
+            }
+        }
+        if (v0 = 2) {
+            if (v5 = 9) {
+                Sfx(116);
+                createSprite(65535, 0, 0, 2, v6::2, v6::1, 21);
+                Item_destroy(v4);
+                v7 = ~Item_create(_Magic_Orbs);
+                if v7 {
+                    v4 = ~PopToMap(<< v6 >>);
+                    SetFrame(12, v7);
+                }
+                $PURPLE_ORB_PLACED = true;
+                GivePartyExp_i(250);
+                OpenOrbDoor_i();
+                Item_destroy(item);
+            } else {
+                createSprite(65535, 0, 0, 2, v6::2, v6::1, 9);
+                Sfx(33);
+            }
+        }
+        if (v0 = 3) {
+            if (v5 = 10) {
+                Sfx(116);
+                createSprite(65535, 0, 0, 2, v6::2, v6::1, 21);
+                Item_destroy(v4);
+                v7 = ~Item_create(_Magic_Orbs);
+                if v7 {
+                    v4 = ~PopToMap(<< v6 >>);
+                    SetFrame(12, v7);
+                }
+                $BLUE_ORB_PLACED = true;
+                GivePartyExp_i(250);
+                OpenOrbDoor_i();
+                Item_destroy(item);
+            } else {
+                createSprite(65535, 0, 0, 2, v6::2, v6::1, 9);
+                Sfx(33);
+            }
+        }
+        if (v0 = 4) {
+            if (v5 = 11) {
+                Sfx(116);
+                createSprite(65535, 0, 0, 2, v6::2, v6::1, 21);
+                Item_destroy(v4);
+                v7 = ~Item_create(_Magic_Orbs);
+                if v7 {
+                    v4 = ~PopToMap(<< v6 >>);
+                    SetFrame(12, v7);
+                }
+                $YELLOW_ORB_PLACED = true;
+                GivePartyExp_i(250);
+                OpenOrbDoor_i();
+                Item_destroy(item);
+            } else {
+                createSprite(65535, 0, 0, 2, v6::2, v6::1, 9);
+                Sfx(33);
+            }
+        }
+    }
+}

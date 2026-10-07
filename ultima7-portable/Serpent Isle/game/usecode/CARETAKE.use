@@ -1,0 +1,358 @@
+Routine Jail01 accepts a0 #locals(23) #uses(AutomatonUsable_i, ~LordOrLady, ~AvatarName, Bark_i, ~AskList) {
+    if ~GetItemFlag_i(_Zombie, item) {
+        AutomatonUsable_i();
+        terminate;
+    }
+    v0 = ~LordOrLady();
+    v1 = ~AvatarSex();
+    v2 = ~AvatarName();
+    if (event = _Bark) {
+        v3 = ~FindNearby_i(16, 0, _Path, item);
+        Foreach v6 in v3 {
+            v7 = ~GetFrame(v6);
+            if ((v7 <= 1) or (v7 >= 7)) {
+                v8 = ~FindNearby_i(16, 20, _Egg_Type, item);
+                Foreach v11 in v8 {
+                    if ((~GetFrame(v11) = 6) and (~GetQuality(v11) = 1)) && (~GetDist(_Avatar, v11) < 9) {
+                        Item_bark("@Thou shan't steal the gold!@", item);
+                        SetWorkType(_Combat_0, item);
+                        Npc_setAlignment(_Evil, item);
+                    }
+                }
+                v12 = ~FindNearest_i(3, _Door_EW, item);
+                if v12 {
+                    v13 = ~GetCoord(v12);
+                    v14 = ~GetQuality(v12);
+                    Item_destroy(v12);
+                    v15 = ~Item_create(_Door_NS);
+                    if v15 {
+                        v16 = ~SetQuality(v14, v15);
+                        SetFrame(5, v15);
+                        v16 = ~PopToMap(v13);
+                        playSFX(v15, 32);
+                    }
+                } else {
+                    if not (~GetWorkType(item) = _Combat_0) {
+                        v12 = ~FindNearest_i(5, _Door_NS, item);
+                        if v12 {
+                            v13 = ~GetCoord(v12);
+                            v14 = ~GetQuality(v12);
+                            Item_destroy(v12);
+                            v15 = ~Item_create(_Door_EW);
+                            if v15 {
+                                v16 = ~SetQuality(v14, v15);
+                                SetFrame(6, v15);
+                                v16 = ~PopToMap(v13);
+                                playSFX(v15, 31);
+                            }
+                        }
+                    }
+                }
+            }
+            if (v7 = 2) {
+                if (~rndRange(2, 1) = 1) {
+                    Item_bark("@No new arrivals...@", item);
+                }
+                v16 = ~PostAction(<< _aWAIT_i, 7 >>, item);
+            }
+            if (v7 = 4) {
+                if (~rndRange(2, 1) = 1) {
+                    Item_bark("@'Tis as a rubbish heap!@", item);
+                    Bark_i(16, "Bloody criminals...@", item);
+                }
+                v16 = ~PostAction(<< _aWAIT_i, 10 >>, item);
+            }
+        }
+    }
+    if (event = _Action) {
+        SetSpeaker0_i(0, _Forskis);
+        if flag(571) {
+            ["Yes, felon?"];
+            ["'Tis gratifying to see that I shant have to collect thy skull yet. Such stamina shall be useful to thee here, certainly."];
+            ["But thou shouldst journey further into the mountain soon, felon. The only source of food and water lies deeper in the heart of Freedom... if thou canst pay for it."];
+            ["Forgive me if I do not linger. I have many things to attend to before I can begin my rounds. Remember, if thou canst find thy way out, thou wilt be free!"];
+            if (~rndRange(10, 1) > 9) {
+                SetWorkType(_Patrol, item);
+            }
+            CloseSpeaker0_i();
+            Item_bark("@So long, felon!@", item);
+            terminate;
+        } else {
+            ["Greetings, felon!"];
+            ["Thou art in the Mountains of Freedom... A magical prison from which none have escaped."];
+            ["I am the caretaker here. It is my duty to record thy name and crime."];
+            v17 = (("I am " + v2) + ".");
+            v18 = << v17, "I am the Avatar.", "None of thy business." >>;
+            v19 = ~AskList(v18);
+            if (v19 = v17) {
+                ["My condolences on thy sentence here, <v2>."];
+            }
+            if (v19 = "I am the Avatar.") {
+                ["I see... Perhaps thou couldst have pleaded insanity and avoided being sent here, felon."];
+            }
+            if (v19 = "None of thy business.") {
+                ["With thine attitude, I understand why thou art here."];
+            }
+            ["With what crime art thou charged?"];
+            v20 = << "I am innocent!", "Angering Filbercio.", "I don't know." >>;
+            v21 = ~AskList(v20);
+            if (v21 = "I am innocent!") {
+                ["Ahh, thou wouldst be surprised how many innocents come through here, felon. Only yesterday we had another such innocent... Let us see. Stefano was his name."];
+            }
+            if (v21 = "Angering Filbercio.") {
+                ["Ahh, thou art in fine company then, felon. Only yesterday we had another such felon arrive... Let us see. Stefano was his name."];
+            }
+            if (v21 = "I don't know.") {
+                ["I am certain that thou wilt discern it while thou art here. Perhaps yesterday's felon is still alive to aid thee in thy search for enlightenment... Let us see. Stefano was his name."];
+            }
+            ["I will tell thee as I told him. Sleep passes thy time here, and may provide thee with new ideas for winning thy freedom."];
+            ["Thou shouldst be wary of two rogue mages who roam through these passages. They came here in search of the forbidden reagent, Stoneheart, and never escaped."];
+            ["Be mindful of the other felons... Most are quite desperate by now and will kill thee for what thou dost possess. In fact, they may prove to be thy greatest danger."];
+            ["There is another caretaker within the prison with a small supply of food and healing potions for sale, if thou dost need any... And if thou dost make it that far, of course."];
+            ["I make rounds periodically, to note who hath died for the records. Thou mayest notice later that I take great care to memorialize all who perish here. So thy passing shall not go unremarked..."];
+            ["Remember, if thou canst find thy way out, thou wilt be free!"];
+            flag(571) = true;
+        }
+        CloseSpeaker0_i();
+        Item_bark("@Goodbye, felon!@", item);
+    }
+    if (event = _Converse) {
+        v16 = ~PostAction(<< _aWAIT_i, 2, _aUSABLE_i, #Jail01 >>, item);
+    }
+    if (event = _NearDeath) {
+        v13 = ~GetCoord(item);
+        While (v13::3 > 0) {
+            v13::1 = (v13::1 - 1);
+            v13::2 = (v13::2 - 1);
+            v13::3 = (v13::3 - 2);
+        }
+        loop {
+            v22 = ~GetContents(_All, _All, _All, _Jail01);
+        } while v22 {
+            v16 = ~Item_push(v22);
+            if v16 {
+                v16 = ~PopToMap(v13);
+            }
+        }
+        createSprite(65535, 0, 0, 0, (v13::2 - 1), (v13::1 - 1), 27);
+        Sfx(42);
+        RemoveNPC_i(_Jail01);
+    }
+}
+
+Routine Jail02 accepts a0 #locals(6) #uses(AutomatonUsable_i, ~LordOrLady, ~AvatarName, PartyFaces_i, ~AskYesNo, ~AskList, JailerSellsFood_i, JailerSellsHealing_i) {
+    if ~GetItemFlag_i(_Zombie, item) {
+        AutomatonUsable_i();
+        terminate;
+    }
+    v0 = ~LordOrLady();
+    v1 = ~AvatarSex();
+    v2 = ~AvatarName();
+    if (event = _Bark) {
+        v3 = ~rndRange(3, 1);
+        if (v3 = 1) {
+            Item_bark("@Healing potions!@", _Jail02);
+        }
+        if (v3 = 2) {
+            Item_bark("@Food!@", _Jail02);
+        }
+        if (v3 = 3) {
+            Item_bark("@Bandages!@", _Jail02);
+        }
+    }
+    if (event = _Converse) {
+        PartyFaces_i(65375);
+        SetSpeaker0_i(0, _Forskis);
+        ["Greetings, felon!"];
+        ["Art thou in need of food or healing?"];
+        if (~AskYesNo() = true) {
+            ["Such items are very valuable here, felon. Thou mayest find the prices steep..."];
+            ["What dost thou wish, food or healing?"];
+            v4 = ~AskList(<< "food", "healing" >>);
+            if (v4 = "food") {
+                JailerSellsFood_i();
+            } else {
+                JailerSellsHealing_i();
+            }
+            ["Thou art always welcome here, felon... As long as thou dost have money, that is."];
+            CloseSpeaker0_i();
+            Item_bark("@Goodbye, felon!@", item);
+            goto label_16;
+        }
+        ["Then thou wilt have to move on..."];
+        goto label_21;
+    }
+    label_16:
+    if (event = _NearDeath) {
+        v5 = ~GetCoord(item);
+        While (v5::3 > 0) {
+            v5::1 = (v5::1 - 1);
+            v5::2 = (v5::2 - 1);
+            v5::3 = (v5::3 - 2);
+        }
+        createSprite(65535, 0, 0, 0, (v5::2 - 1), (v5::1 - 1), 27);
+        Sfx(42);
+        Item_destroy(item);
+    }
+    label_21:
+}
+
+Routine Jail03 accepts a0 #locals(6) #uses(AutomatonUsable_i, ~LordOrLady, ~AvatarName, PartyFaces_i, ~AskYesNo, ~AskList, JailerSellsFood_i, JailerSellsHealing_i, Bark_i, AttackAvatar_i, ~GiveItemsOrDrop_i) {
+    if ~GetItemFlag_i(_Zombie, item) {
+        AutomatonUsable_i();
+        terminate;
+    }
+    v0 = ~LordOrLady();
+    v1 = ~AvatarSex();
+    v2 = ~AvatarName();
+    if (event = _Converse) {
+        Item_bark("@Well done!@", item);
+        PartyFaces_i(65374);
+        v3 = ~PostAction(<< _aWAIT_i, 2, _aUSABLE_i, #Jail03 >>, item);
+    }
+    if (event = _Action) {
+        SetSpeaker0_i(0, _Forskis);
+        ["Thou hast made it this far... Dost thou wish to purchase food or healing potions?"];
+        if (~AskYesNo() = true) {
+            ["Such items are very valuable here, felon. Thou mayest find the prices steep..."];
+            ["What dost thou wish, food or healing potions?"];
+            v4 = ~AskList(<< "food", "healing" >>);
+            if (v4 = "food") {
+                JailerSellsFood_i();
+            } else {
+                JailerSellsHealing_i();
+            }
+        } else {
+            ["But it is my task to bar thine exit still. If thou canst defeat me, thou mayest take the key and be free!"* "But if thou canst not, thou wilt remain here. Forever!"];
+            Bark_i(2, "@To arms, felon!@", _Jail03);
+            AttackAvatar_i(_Jail03);
+            terminate;
+        }
+    }
+    if (event = _NearDeath) {
+        SetSpeaker0_i(0, _Forskis);
+        ["Congratulations, <v0>! Thou hast proven thine innocence..."];
+        ["Take the key and enjoy thy freedom!"];
+        v5 = ~GiveItemsOrDrop_i(true, 0, 24, 65177, 641, 1, _Avatar);
+        CloseSpeaker1_i();
+        terminate;
+    }
+}
+
+Usable JailerSellsFood_i #locals(12) #uses(~AskOrdList, ~AskYesNo, ~SellItem_i) {
+    v0 = true;
+    v1 = << "nothing", "bread", "water" >>;
+    v2 = << 0, 377, 616 >>;
+    v3 = << 65177, 0, 6 >>;
+    v4 = << 0, 20, 10 >>;
+    v5 = 952;
+    v6 = << 0, 1, 1 >>;
+    v7 = << 0, 1, 1 >>;
+    ["What dost thou wish, felon?"];
+    While v0 {
+        v8 = ~AskOrdList(v1);
+        if (v8 = 1) {
+            ["Perhaps another time, then."];
+            v0 = false;
+        } else {
+            v9 = v4::v8;
+            v10 = 0;
+            if (v8 = 2) {
+                ["The price is <v9> guilders... I have a very limited supply. Dost thou accept?"];
+            }
+            if (v8 = 3) {
+                ["For a jug of water, my price is <v9> guilders. Dost thou find this acceptable?"];
+            }
+            if (v9 = v4::v8) {
+                if (~AskYesNo() = true) {
+                    v11 = v9;
+                } else {
+                    v11 = 0;
+                }
+            } else {
+                ["This is not Moonshade, felon. My prices are fixed... Take them or leave."];
+            }
+            if (v11 > 0) {
+                if (v7::v8 = 1) {
+                    ["How many wouldst thou like?"];
+                    v10 = ~SellItem_i(false, 1, 20, v11, v5, v6::v8, v3::v8, v2::v8);
+                } else {
+                    v10 = ~SellItem_i(false, 1, 0, v11, v5, v6::v8, v3::v8, v2::v8);
+                }
+            }
+            if (v10 = 1) {
+                ["May it nourish thee, felon."];
+            } else {
+                if (v10 = 2) {
+                    ["Thou canst not handle so much, felon."];
+                } else {
+                    if (v10 = 3) {
+                        ["As thou dost not have the guilders to pay me, I am afraid thou shalt go hungry, felon."];
+                    } else {
+                    }
+                }
+            }
+            ["Wouldst thou care for more?"];
+            v0 = ~AskYesNo();
+        }
+    }
+}
+
+Usable JailerSellsHealing_i #locals(12) #uses(~AskOrdList, ~AskYesNo, ~SellItem_i) {
+    v0 = true;
+    v1 = << "nothing", "potion", "bandages" >>;
+    v2 = << 0, 340, 827 >>;
+    v3 = << 65177, 1, 1 >>;
+    v4 = << 0, 80, 30 >>;
+    v5 = 952;
+    v6 = << 0, 1, 1 >>;
+    v7 = << 0, 1, 1 >>;
+    ["What dost thou care to buy, felon?"];
+    While v0 {
+        v8 = ~AskOrdList(v1);
+        if (v8 = 1) {
+            ["Perhaps another time, then."];
+            v0 = false;
+        } else {
+            v9 = v4::v8;
+            v10 = 0;
+            if (v8 = 2) {
+                ["The price is <v9> guilders... There is not much to spare for felons. Dost thou accept?"];
+            }
+            if (v8 = 3) {
+                ["For <v9> guilders I can sell thee a bandage. What dost thou say?"];
+            }
+            if (v9 = v4::v8) {
+                if (~AskYesNo() = true) {
+                    v11 = v9;
+                } else {
+                    v11 = 0;
+                }
+            } else {
+                ["Pay or leave."];
+            }
+            if (v11 > 0) {
+                if (v7::v8 = 1) {
+                    ["How many wouldst thou like?"];
+                    v10 = ~SellItem_i(false, 1, 20, v11, v5, v6::v8, v3::v8, v2::v8);
+                } else {
+                    v10 = ~SellItem_i(false, 1, 0, v11, v5, v6::v8, v3::v8, v2::v8);
+                }
+            }
+            if (v10 = 1) {
+                ["Enjoy thy purchase, felon."];
+            } else {
+                if (v10 = 2) {
+                    ["Thou canst not handle so much, felon."];
+                } else {
+                    if (v10 = 3) {
+                        ["Since thou dost not have the guilders to pay me, I am afraid thou wilt have to suffer, felon."];
+                    } else {
+                    }
+                }
+            }
+            ["Dost thou wish another purchase?"];
+            v0 = ~AskYesNo();
+        }
+    }
+}

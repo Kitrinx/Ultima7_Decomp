@@ -1,0 +1,304 @@
+Routine FawnTrialEgg_i accepts a0 #locals(14) #uses(JailTraitorEgg_i, PostCourtGuardEgg_i, SetWorkTypeAt_i, ~GimmePathEgg, ~PartyUtters, Bark_i, SetDoorState_i, SeatCourtEgg_i, BarkIfNear_i, OpenTrial_i, HearWitnesses_i, CloseTrial_i) {
+    v0 = ~GetQuality(item);
+    if (event = _Trigger) {
+        if (v0 = 1) {
+            terminate;
+        }
+        if (v0 = 4) {
+            JailTraitorEgg_i();
+        }
+        if (v0 = 5) {
+            PostCourtGuardEgg_i();
+        }
+    }
+    if ((event = _Path_Success) and (~ItemToNPC_i(item) = 65180)) {
+        if not $FAWN_TRIAL_RECESS {
+            SetWorkType(_Wait, _Avatar);
+            v1 = ~PostAction(<< _aBEND_FRAME_i, _aWAIT_i, 2, _aSTAND_FRAME_i, _aWAIT_i, 3, _aBARK_i, "@Bring in the defendant.@" >>, _Zulith);
+            v1 = ~PostInFuture(15, << _aUSABLE_i, #FawnTrialEgg_i >>, item);
+        } else {
+            v1 = ~PostInFuture(20, << _aNO_HALT_i, _aUSABLE_i, #FawnTrialEgg_i >>, _Avatar);
+            v1 = << 65481, 65482, 65485, 65475, 65486, 65487, 65479, 65480, 65484, 65488, 65489, 65483, 65476, 65477, 65490, 65478 >>;
+            Foreach v4 in v1 {
+                RemoveNPC_i(v4);
+                Npc_schedule(v4);
+            }
+            SetWorkTypeAt_i(_Wait, 1635, 1012, _Voldin);
+            RemoveNPC_i(_Kylista);
+            SetClock(0);
+        }
+        terminate;
+    }
+    if ((event = _Action) and (item = ~GimmePathEgg(2, 1))) {
+        v1 = ~GetParty_i();
+        v4 = false;
+        Foreach v7 in v1 {
+            if (~GetWorkType(v7) = _Wait) {
+                v4 = v7;
+            }
+        }
+        if v4 {
+            if $FAWN_TRIAL_RECESS {
+                v1 = 1673;
+            } else {
+                v1 = 1642;
+            }
+            v7 = (1028 + ~GetQuality(~GimmePathEgg(2, 1)));
+            PathfindNPC_i(true, #FawnTrialEgg_i, ~GimmePathEgg(2, 1), _Path_Success, << v7, v1, 0 >>, v4);
+            v1 = (~GetQuality(~GimmePathEgg(2, 1)) + 2);
+            v1 = ~SetQuality(v1, ~GimmePathEgg(2, 1));
+            v1 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #FawnTrialEgg_i >>, ~GimmePathEgg(2, 1));
+        }
+        terminate;
+    }
+    if ((event = _Action) and (v0 = 179)) {
+        v1 = ~GetTime();
+        if ((v1 < 3) or (v1 > 6)) {
+            v1 = ~PartyUtters(true, 0, 0, 1);
+            if (v1 = 65180) {
+                Bark_i(0, "@I should come back later...@", _Avatar);
+            } else {
+                Bark_i(0, "@Let's come back later...@", v1);
+            }
+            terminate;
+        }
+        if ($FAWN_TRIAL_DONE and (~GetClock(0) < 12)) {
+            v1 = ~PartyUtters(true, 0, 0, 1);
+            if (v1 = 65180) {
+                Bark_i(0, "@It isn't time yet...@", _Avatar);
+            } else {
+                Bark_i(0, "@We've come too early...@", v1);
+            }
+            terminate;
+        }
+        SetMusic(~GimmePathEgg(1, 5), 19);
+        $FAWN_TRIAL_RECESS = false;
+        SetItemFlag_i(_DontMove_i, _Avatar);
+        EndConverse_i();
+        closeAllGumps();
+        v1 = ~SetQuality(248, ~GimmePathEgg(1, 1));
+        v1 = (~FindNearby_i(0, 10, _DDoor_EW, item) & ~FindNearby_i(0, 10, _Door_EW, item));
+        Foreach v7 in v1 {
+            if (~GetQuality(v7) = 179) {
+                SetDoorState_i(0, v7);
+            }
+        }
+        v1 = ~GetParty_i();
+        Foreach v7 in v1 {
+            SetWorkType(_Wait, v7);
+        }
+        v1 = ~SetQuality(0, ~GimmePathEgg(2, 1));
+        v1 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #FawnTrialEgg_i >>, ~GimmePathEgg(2, 1));
+        PathfindNPC_i(false, #FawnTrialEgg_i, ~NPCToItem_i(_Avatar), _Path_Success, << 1031, 1640, 0 >>, _Avatar);
+        SeatCourtEgg_i();
+        if $AUDIENCE_WITH_YELINDA {
+            v12 = ~PartyUtters(true, "@The trial awaits our presence.@", "@The trial awaits!@", 1);
+            Bark_i(22, "@It's the stranger...@", _Delin);
+            Bark_i(28, "@Now the trial begins!@", _Leon);
+            Bark_i(35, "@Hush!@", _Alyssand);
+        } else {
+            v1 = "@Let justice be swift!@";
+            v12 = ~PartyUtters(true, 0, 0, 1);
+            BarkIfNear_i(v1, v12);
+        }
+        terminate;
+    }
+    if ((event = _Path_Success) and (item = ~GimmePathEgg(2, 1))) {
+        terminate;
+    }
+    if ((event = _Action) or (event = _Path_Success)) {
+        v13 = ~GetQuality(~GimmePathEgg(1, 1));
+        if (v13 = 253) {
+            v1 = ~SetQuality(20, ~GimmePathEgg(1, 1));
+        } else {
+            v1 = ~SetQuality((v13 + 1), ~GimmePathEgg(1, 1));
+        }
+        if (v13 > 247) {
+            OpenTrial_i(v13);
+            terminate;
+        }
+        if ((v13 > 19) and (v13 < 30)) {
+            HearWitnesses_i(v13);
+            terminate;
+        }
+        CloseTrial_i(v13);
+    }
+}
+
+Usable SeatCourtEgg_i #locals(10) {
+    v0 = (~GetCoord(_Avatar) & (65177 & 6));
+    v1 = ~FindNearby_i(16, 80, _Egg_Type, v0);
+    Foreach v4 in v1 {
+        v5 = ~GetCoord(v4);
+        v6 = ~GetQuality(v4);
+        v7 = false;
+        if (v6 = 2) {
+            v7 = 65481;
+            v8 = 2;
+        }
+        if (v6 = 4) {
+            v7 = 65486;
+            v8 = 6;
+        }
+        if (v6 = 5) {
+            v7 = 65487;
+            v8 = 6;
+        }
+        if (v6 = 6) {
+            if $AUDIENCE_WITH_YELINDA {
+                v7 = 65485;
+                v8 = 6;
+            } else {
+                RemoveNPC_i(_Voldin);
+            }
+        }
+        if (v6 = 7) {
+            if ($AUDIENCE_WITH_YELINDA = true) {
+                v7 = 65483;
+                v8 = 2;
+            } else {
+                RemoveNPC_i(_Jorvin);
+            }
+        }
+        if (v6 = 8) {
+            if $AUDIENCE_WITH_YELINDA {
+                v7 = 65476;
+                v8 = 2;
+            } else {
+                RemoveNPC_i(_Scots);
+            }
+        }
+        if (v6 = 10) {
+            v7 = 65475;
+            v8 = 2;
+        }
+        if (v6 = 11) && $AUDIENCE_WITH_YELINDA {
+            v7 = 65480;
+            v8 = 2;
+        }
+        if (v6 = 12) && ($AUDIENCE_WITH_YELINDA = true) {
+            v7 = 65477;
+            v8 = 2;
+        }
+        if (v6 = 13) {
+            if ($AUDIENCE_WITH_YELINDA = true) {
+                v7 = 65482;
+                v8 = 6;
+            } else {
+                RemoveNPC_i(_Kylista);
+            }
+        }
+        if (v6 = 14) {
+            v7 = 65489;
+            v8 = 6;
+        }
+        if (v6 = 15) {
+            if $AUDIENCE_WITH_YELINDA {
+                v7 = 65490;
+                v8 = 6;
+            } else {
+                RemoveNPC_i(_Alyssand);
+            }
+        }
+        if (v6 = 16) {
+            v7 = 65484;
+            v8 = 6;
+        }
+        if (v6 = 17) {
+            v7 = 65478;
+            v8 = 6;
+        }
+        if (v6 = 18) {
+            v7 = 65488;
+            v8 = 6;
+        }
+        if v7 {
+            Item_move(v5, ~NPCToItem_i(v7));
+            SetWorkType(_Wait, v7);
+            v9 = ~PostAction(<< _aFACE_i, v8, _aCONTINUE_i, _aSIT_FRAME_i >>, v7);
+        }
+    }
+}
+
+Usable PostCourtGuardEgg_i #locals(3) {
+    if (($AUDIENCE_WITH_YELINDA or ($FAWN_TRIAL_DONE and not $FAWN_TRIAL_RECESS)) and not ($AUDIENCE_WITH_YELINDA and $FAWN_TRIAL_DONE)) {
+        v0 = ~FindNearby_i(8, 1, _Fawn_Guard, item);
+        if not v0 {
+            v1 = ~GetCoord(item);
+            v0 = ~CreateCreature_i(v1, _Fawn_Guard);
+            SetWorkType(_Wait, v0);
+            v2 = ~PostAction(<< _aFACE_i, _South, _aCONTINUE_i, _aSTAND_FRAME_i >>, v0);
+            SetItemFlag_i(_IsTemporary_i, v0);
+        }
+    }
+}
+
+Usable JailTraitorEgg_i #locals(7) #uses(~JailedNPC_i, SetWorkTypeAt_i) {
+    v0 = ~JailedNPC_i(true);
+    if v0 {
+        v1 = ~PostAction(<< _aFACE_i, _South, _aCONTINUE_i, _aSIT_FRAME_i >>, v0);
+        v2 = ~GetCoord(item);
+        Item_move(v2, v0);
+        SetWorkTypeAt_i(_TendShop, v2::2, v2::1, v0);
+        v3 = ~GetTime();
+        if ((v3 = 0) or (v3 = 1)) {
+            v4 = (~GetCoord(item) & (50 & 4));
+            v5 = ~FindNearby_i(0, 20, _EW_C_Slider, v4);
+            if v5 {
+                v2 = ~GetCoord(v5);
+                Item_destroy(v5);
+                v6 = ~Item_create(_EW_Slider);
+                if v6 {
+                    v1 = ~SetQuality(179, v6);
+                    SetFrame(0, v6);
+                    v1 = ~PopToMap(v2);
+                }
+            }
+        }
+    }
+}
+
+Usable PartyLooksSE_i #locals(8) {
+    v0 = ~GetParty();
+    Foreach v3 in v0 {
+        v4 = ~rndRange(5, 1);
+        v5 = 0;
+        v6 = ~rndRange(1, 0);
+        if v6 {
+            v5 = 2;
+        } else {
+            v5 = 4;
+        }
+        v7 = ~PostAction(<< _aWAIT_i, v4, _aFACE_i, v5 >>, v3);
+    }
+}
+
+Usable PartyLooksNE_i #locals(8) {
+    v0 = ~GetParty();
+    Foreach v3 in v0 {
+        v4 = ~rndRange(5, 1);
+        v5 = 0;
+        v6 = ~rndRange(1, 0);
+        if v6 {
+            v5 = 0;
+        } else {
+            v5 = 2;
+        }
+        v7 = ~PostAction(<< _aWAIT_i, v4, _aFACE_i, v5 >>, v3);
+    }
+}
+
+Usable PartyLooksNW_i #locals(8) {
+    v0 = ~GetParty();
+    Foreach v3 in v0 {
+        v4 = ~rndRange(5, 1);
+        v5 = 0;
+        v6 = ~rndRange(1, 0);
+        if v6 {
+            v5 = 0;
+        } else {
+            v5 = 6;
+        }
+        v7 = ~PostAction(<< _aWAIT_i, v4, _aFACE_i, v5 >>, v3);
+    }
+}

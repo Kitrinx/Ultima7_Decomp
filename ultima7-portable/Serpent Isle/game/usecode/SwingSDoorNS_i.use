@@ -1,0 +1,41 @@
+Function ~SwingSDoorNS_i accepts a0 #locals(1) #uses(~DoorState_i, ~SwingDoor_i, SayDoorBlocked_i) {
+    v1 = ~DoorState_i(v0);
+    if (v1 = 1) {
+        if ~SwingDoor_i(7, 0, 0, 0, _SDoor_EW, v0) {
+            playSFX(item, 105);
+        } else {
+            SayDoorBlocked_i();
+            return false;
+        }
+    }
+    if (v1 = 0) {
+        if ~SwingDoor_i(7, 0, 0, 1, _SDoor_EW, v0) {
+            playSFX(item, 106);
+        } else {
+            SayDoorBlocked_i();
+            return false;
+        }
+    }
+    return true;
+}
+
+Function ~SwingSDoorEW_i accepts a0 #locals(1) #uses(~DoorState_i, ~SwingDoor_i, SayDoorBlocked_i) {
+    v1 = ~DoorState_i(v0);
+    if (v1 = 1) {
+        if ~SwingDoor_i(7, 0, 0, 0, _SDoor_NS, v0) {
+            playSFX(item, 105);
+        } else {
+            SayDoorBlocked_i();
+            return false;
+        }
+    }
+    if (v1 = 0) {
+        if ~SwingDoor_i(7, 0, 0, 1, _SDoor_NS, v0) {
+            playSFX(item, 106);
+        } else {
+            SayDoorBlocked_i();
+            return false;
+        }
+    }
+    return true;
+}

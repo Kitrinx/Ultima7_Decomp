@@ -1,0 +1,217 @@
+Routine Bed_Roll accepts a0 #locals(5) #uses(PathToItem_i, MemberSays_i) {
+    if ((event = _Converse) and not ~Item_getContainer(item)) {
+        v0 = ~GetCoord(item);
+        if (~GetFrame(item) = 0) {
+            v1 = ~Item_push(item);
+            if v1 {
+                v2 = ~canExistAt(21, _Bed_NS, v0);
+                v1 = ~PopToMap(v0);
+                if (v2 and v1) {
+                    closeAllGumps();
+                    v3 = << 65535, 65535, 65535, 0, 0, 0, 1, 1, 1 >>;
+                    v4 = << 1, 0, 65535, 1, 0, 65535, 1, 0, 65535 >>;
+                    Kernel_resetRef(_Avatar);
+                    PathToItem_i(10, item, #Bed_Roll, 65535, v4, v3, item);
+                } else {
+                    v0::2 = (v0::2 - 5);
+                    MemberSays_i("@There is no room for thy bedroll there.@");
+                }
+            }
+        }
+    }
+    if (event = _Pathfind1) {
+        v1 = ~PostAction(<< _aFACE_i, byte(48), _aBEND_FRAME_i, _aSTAND_FRAME_i >>, _Avatar);
+        v1 = ~PostAction(<< _aWAIT_i, 2, _aUSABLE_i, #Bed_Roll >>, item);
+    }
+    if (event = _Action) {
+        Item_setType(_Bed_NS, item);
+        SetFrame(21, item);
+    }
+}
+
+Routine Bed_EW accepts a0 #locals(0) #uses(PutTheAvatarToBed_i) {
+    if (event = _Converse) {
+        PutTheAvatarToBed_i(item);
+    }
+}
+
+Routine Bed_NS accepts a0 #locals(0) #uses(PutTheAvatarToBed_i) {
+    if (event = _Converse) {
+        PutTheAvatarToBed_i(item);
+    }
+}
+
+Routine RestInBed_i accepts a0 #locals(24) #uses(~OrderList_i, ~IsBedroll_i, RollUpBedroll_i, RestParty_i, UnlockInnDoors_i, ~RemoveFromList_i) {
+    if (event = _Converse) {
+        v0 = ~GetParty();
+        v1 = ~ListSize_i(~GetParty());
+        if (v1 = 1) {
+            label_2:
+            v2 = (6 + ~rndRange(9, 0));
+            goto label_20;
+        }
+        v3 = ~GetNPCName_i(_Avatar);
+        if (v1 > 2) {
+            v4 = "we";
+        } else {
+            v4 = "I";
+        }
+        v5 = ~OrderList_i();
+        Foreach v8 in v5 {
+            if (~IsNPCNear_i(v8) and ~GetItemFlag_i(_InParty_i, v8)) {
+                goto label_12;
+            }
+        }
+        goto label_2;
+        label_12:
+        SetSpeaker0_i(0, v8);
+        ["In how many hours shall <v4> awaken thee, <v3>?"];
+        v2 = ~AskBarInput(8, 1, 12, 0);
+        if (v2 = 0) {
+            ["Cease thy jesting, Avatar! We have serious work to do!!"];
+            CloseSpeaker0_i();
+            if ~IsBedroll_i(item) {
+                RollUpBedroll_i(item);
+            }
+            Foreach v11 in v0 {
+                SetWorkType(_FollowAvt, v11);
+            }
+            ClearItemFlag_i(_Asleep, _Avatar);
+            return;
+        }
+        ["Pleasant dreams."];
+        CloseSpeaker0_i();
+        label_20:
+        FadeForSleep_i(0, 1, 12);
+        v12 = (v2 * 1500);
+        RestParty_i(item, v2);
+        v13 = << 74, 184, 1, 2, 3, 4, 5, 6, 7, 11 >>;
+        Foreach v16 in v13 {
+            Foreach v19 in v0 {
+                v20 = ~FindItem(_All, v16, _Unique_Key, v19);
+                if v20 {
+                    Item_destroy(v20);
+                }
+            }
+        }
+        UnlockInnDoors_i();
+        v0 = ~RemoveFromList_i(v0, ~NPCToItem_i(_Avatar));
+        Foreach v11 in v0 {
+            SetWorkType(_Loiter, v11);
+        }
+        v23 = ~PostAction(<< _aWAIT_i, 34, _aLIE_FRAME_i, _aWAIT_i, 3 >>, _Avatar);
+        v23 = ~PostInFuture(33, << _aNO_HALT_i, _aUSABLE_i, #RestInBed_i, _aUSABLE_i, #WakeUp_i >>, item);
+        AdvanceTime_i(v12);
+    }
+    if (event = _Action) {
+        FadeForSleep_i(1, 1, 12);
+    }
+}
+
+Routine WakeUp_i accepts a0 #locals(5) #uses(MemberSays_i, RollUpBedroll_i) {
+    if (event = _Action) {
+        v0 = ~GetParty();
+        if (~ListSize_i(v0) > 1) {
+            v1 = ~GetNPCName_i(_Avatar);
+            MemberSays_i((("Arise, " + v1) + ". 'Tis time to continue the quest."));
+        }
+        Foreach v4 in v0 {
+            SetWorkType(_FollowAvt, v4);
+        }
+        SetItemFlag_i(_Asleep, _Avatar);
+        ClearItemFlag_i(_Asleep, _Avatar);
+        if ((~Item_getType(item) = _Bed_NS) and (~GetFrame(item) = 21)) {
+            event = 1;
+            RollUpBedroll_i(item);
+        }
+    }
+}
+
+Routine RollUpBedroll_i accepts a0 #locals(3) #uses(PathToItem_i) {
+    if (event = _Converse) {
+        closeAllGumps();
+        v0 = << 65535, 65535, 65535, 0, 0, 0, 1, 1, 1 >>;
+        v1 = << 1, 0, 65535, 1, 0, 65535, 1, 0, 65535 >>;
+        Kernel_resetRef(_Avatar);
+        PathToItem_i(10, item, #RollUpBedroll_i, 65535, v1, v0, item);
+        SetPathFailure_i(_Action, item, #RollUpBedroll_i);
+    }
+    if (event = _Action) {
+        Item_setType(_Bed_Roll, item);
+        SetFrame(0, item);
+    }
+    if (event = _Pathfind1) {
+        closeAllGumps();
+        v2 = ~PostAction(<< _aFACE_i, byte(48), _aBEND_FRAME_i, _aWAIT_i, 1, _aSTAND_FRAME_i >>, _Avatar);
+        if v2 {
+            v2 = ~PostAction(<< _aWAIT_i, 2, _aUSABLE_i, #RollUpBedroll_i >>, item);
+        }
+    }
+}
+
+Routine PutTheAvatarToBed_i accepts a0 #locals(11) #uses(~WhereAmI_i, MemberSays_i, ~IsBedroll_i, RollUpBedroll_i, ~RemoveFromList_i) {
+    closeAllGumps();
+    flag(721) = false;
+    v1 = ~WhereAmI_i();
+    if (v1 = 31) {
+        MemberSays_i("I am weary, but I cannot fall asleep. It must be because I am already in the realm of dreams.");
+        if ~IsBedroll_i(v0) {
+            RollUpBedroll_i(v0);
+        }
+        terminate;
+    }
+    if ~IsAvatarInCombat() {
+        MemberSays_i("This is no time to sleep! Rouse thy bones!");
+        if ~IsBedroll_i(v0) {
+            RollUpBedroll_i(v0);
+        }
+    } else {
+        v2 = ~GetFrame(v0);
+        v3 = ~Item_getType(v0);
+        if ((v2 > 3) and not ~IsBedroll_i(v0)) {
+            v4 = ~GetCoord(v0);
+            v5 = ~FindNearby_i(0, 2, v3, v0);
+            Foreach v8 in v5 {
+                if (~GetFrame(v8) <= 2) {
+                    v9 = ~GetCoord(v8);
+                    if ((v9::1 = v4::1) and ((v9::2 = v4::2) and ((v9::3 + 1) = v4::3))) {
+                        v0 = v8;
+                    }
+                }
+            }
+        }
+        if ~IsBedroll_i(item) {
+            v10 = ~PostAction(<< _aNO_HALT_i, _aMUSIC_i, 21, 0 >>, _Avatar);
+        }
+        v11 = ~RemoveFromList_i(~GetParty(), ~NPCToItem_i(_Avatar));
+        SetWorkType(_Sleep, _Avatar);
+        SleepInBed_i(v0);
+    }
+}
+
+Function ~IsBedroll_i accepts a0 #locals(2) {
+    v1 = ~GetFrame(v0);
+    v2 = ~Item_getType(v0);
+    if ((v1 = 21) and (v2 = 1011)) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+Usable UnlockInnDoors_i #locals(6) {
+    v0 = ~FindNearby_i(176, 12, _Door_EW, _Avatar);
+    v0 = (v0 & ~FindNearby_i(176, 12, _Door_NS, _Avatar));
+    Foreach v3 in v0 {
+        v4 = ~GetQuality(v3);
+        if ((v4 = 1) or ((v4 = 2) or ((v4 = 3) or ((v4 = 4) or ((v4 = 5) or ((v4 = 6) or ((v4 = 7) or ((v4 = 11) or ((v4 = 74) or (v4 = 184)))))))))) {
+            v5 = 2;
+            While (v5 < 31) {
+                if (~GetFrame(v3) = v5) {
+                    SetFrame((v5 - 2), v3);
+                }
+                v5 = (v5 + 4);
+            }
+        }
+    }
+}

@@ -1,0 +1,40 @@
+Routine Sleeping_Powder accepts a0 #locals(2) #uses(MemberBarks_i, ConsumeOne_i) {
+    if (event = _Converse) {
+        v0 = ~GetFrame(item);
+        if ((v0 = 0) or (v0 = 1)) {
+            v1 = ~GetTarget();
+            if ~Item_isNpc(v1) {
+                SetItemFlag_i(_Asleep, v1);
+            } else {
+                MemberBarks_i("@Do not waste that!@");
+            }
+            ConsumeOne_i(item);
+        }
+        if (v0 = 2) {
+            v1 = ~GetTarget();
+            if ~Item_isNpc(v1) {
+                SetItemFlag_i(_Invisible, v1);
+            } else {
+                if ~GetItemFlag_i(_IsTemporary_i, v1) {
+                    SetItemFlag_i(_Invisible, v1);
+                }
+                MemberBarks_i("@Waste that not!@");
+            }
+            playSFX(item, 130);
+            ConsumeOne_i(item);
+        }
+        if (v0 = 3) {
+            v1 = ~GetTarget();
+            if ~Item_isNpc(v1) {
+                SetItemFlag_i(_Cursed, v1);
+            } else {
+                if ~GetItemFlag_i(_IsTemporary_i, v1) {
+                    SetItemFlag_i(_Cursed, v1);
+                }
+                MemberBarks_i("@Is that a good idea!@");
+            }
+            playSFX(item, 130);
+            ConsumeOne_i(item);
+        }
+    }
+}

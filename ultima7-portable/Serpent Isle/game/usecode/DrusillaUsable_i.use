@@ -1,0 +1,105 @@
+Routine DrusillaUsable_i accepts a0 #locals(2) #uses(~IsInInv, ~AskYesNo, Bark_i) {
+    v0 = false;
+    v1 = ~GetNPCID_i(item);
+    if (v1 = 11) {
+        v0 = true;
+    }
+    if (event = _Action) {
+        SetWorkType(_Stand, item);
+        ClearBark_i(item);
+        SetSpeaker0_i(0, 65222);
+        if not $MET_DRUSILLA {
+            ["Well, now, sweet cakes. It's about time ye showed up. I was beginnin' to get tired a waitin'. Me name's Drusilla.];
+            ["Ye aren't what I expected. But who am I to know what a pawn of prophecy looks like?"];
+            $MET_DRUSILLA = true;
+            SetNPCID_i(11, item);
+        } else {
+            ["Hey ho! It's good to see ye again! Found yer way out of that there maze, huh? Somethin' tricky, weren't it?"];
+            if ~IsInInv(0, 65177, _Helm_Of_Light, 1, _Party) {
+                ["An' ye got that there fancy helm, too! Good for ye!];
+                ["Never saw any use fer it meself. I kin make me own light... Wit'out mussin' up me hair! Ha!"];
+            } else {
+                ["Not that I want ye to think that I'm an ol' busybody, or anythin' like that... But I think ye might want ta go back an' search that there maze, deary.];
+                ["I think ye missed somethin' ye might find real helpful-like."];
+                TurnOn("something helpful");
+            }
+            if ~IsInInv(9, 65177, _Magic_Orbs, 1, _Party) {
+                ["Looks like ye talked wit' that there kitty person, too. He didn't want ta talk wit' me, hmmph!];
+                ["Never did get on too well wit' cats..."];
+            } else {
+                ["Ah, deary, I hate ta sound like I'm meddlin'... But ye left somethin' real important back there in that there maze.];
+                ["I think ye might want ta talk wit' that there cat critter. He needs a friend, unless I miss my guess."];
+                TurnOn(<< "something important", "cat critter" >>);
+            }
+        }
+        TurnOn(<< "waiting", "pawn of prophecy", "bye" >>);
+        converse {
+            key ("waiting") {
+                TurnOff("waiting");
+                ["Why else would I be a standin' here, deary? This isn't exactly the hotbed of excitement, iffin ye know what I mean.];
+                ["Ye might say that I'm a part o' yer prophecy... One o' yer guides like."];
+                TurnOn("guides");
+            }
+            key ("guides") {
+                TurnOff("guides");
+                ["Well now, deary, ye seem ta need some help, iffin ye don't mind my sayin' so. Ye look a little lost, if ye ask me.];
+                ["So here I am! I kin give ye three hints ta help ye on yer way. So listen well."];
+                TurnOn("hints");
+            }
+            key ("hints") {
+                TurnOff("hints");
+                ["Got yer attention now, do I? Ha! Thought so...];
+                ["What lies beyond this 'ere gate is a magical-type o' maze, sweet cakes. Now ye listen good to ol' Drusilla, fer only one person kin enter this 'ere maze at a time else all become confused an' die!];
+                ["I'll tell ye straight on that it'd be easier iffin ye turned an went back to that there keep right now. So do ye want yer hints or not?"];
+                if ~AskYesNo() {
+                    ["Stubborn cuss, aren't ye? All right, heed me well then...];
+                    ["Iffin ye find yerself trapped, do not despair lest madness overtake ye. Know that death is the only way any of us will ever win free o' this 'ere world.];
+                    ["Keep careful track of yer turnin's, fer ye may pass through a room more than once. An' sometimes ye'll have ta turn back on yer heels afore ye can find yer way.];
+                    ["Yer third, an' final, hint is that once ye have found yer path, that section of the maze shall remain clear ta ye forever more. Do not be distracted from yer path.];
+                    ["An' now, before I let ye go, deary, I'll warn ye again... Do not take anyone inta that there maze wit' ye. No two see this place the same."];
+                } else {
+                    ["Well now, perhaps ye be more wise than ol' Drusilla gave ye credit for. Go back ta the keep. This is no place fer ye."];
+                }
+            }
+            key ("pawn of prophecy") {
+                TurnOff("pawn of prophecy");
+                ["Why look so surprised, sweet cakes? Ye can't tell me that this is the first time someone has told ye that ye are marked...];
+                ["Why even those benighted idiots, the Ophidians, knew ta expect ye. So it can't be such a shock ta ye."];
+                TurnOn("benighted idiots");
+            }
+            key ("benighted idiots") {
+                TurnOff("benighted idiots");
+                ["Well now, perhaps I shouldn't have been so harsh, not in front of ye.];
+                ["Suffice it to say that not all people in this 'ere world are so addled as ta believe that wisdom is found in the hissing o' serpents... especially serpents no one kin see.];
+                ["I follow the Guide, meself, an' it's enough that I be 'ere ta meet ye ta tell ol' Drusilla whose pot is cracked an' whose isn't."];
+                TurnOn("Guide");
+            }
+            key ("Guide") {
+                TurnOff("Guide");
+                ["Full o' questions, aren't ye? Well now, deary, ol' Drusilla has more ta do than ta stand an' talk philosophy wit' ye. An' ye should be about yer business as well.];
+                ["Those what follow the Guide don't seek no converts. We've enough ta do. Iffin ye finish yer own tasks an' still want ta talk, well now, perhaps there will be time fer that later."];
+            }
+            key ("something helpful") {
+                TurnOff("something helpful");
+                ["Well now, deary, iffin I told ye what it were I'd jus' take the fun outta it fer ye. So ye go back an' have a look see fer yerself."];
+            }
+            key ("something important") {
+                TurnOff("something important");
+                ["I can't go a tellin' ye ever'thing, deary. Iffin yer ta be this 'ere pawn of prophecy ye'll jus' have ta figger it out yerself."];
+            }
+            key ("cat critter") {
+                TurnOff("cat critter");
+                ["I can't see how ye could have missed 'im. Poor thing is scared half ta death... an' hungry too, I'll wager. Ye kin afford to be friendly like to such a pitiful critter."];
+            }
+            key ("bye") {
+                ["Mercy! This has taken far longer than I thought! Ye should be on yer way now..."];
+                CloseSpeaker0_i();
+                Item_bark("@Goodbye!@", _Avatar);
+                Bark_i(2, "@Be off wit' ye!@", item);
+                SetWorkType(_Loiter, item);
+                break;
+            }
+        }
+        clear_answers;
+    }
+}

@@ -1,0 +1,55 @@
+Routine Artist_Supplies accepts a0 #locals(7) #uses(~PartyUtters, MemberBarks_i) {
+    if (event = _Converse) {
+        v0 = ~GetFrame(item);
+        if (v0 < 2) {
+            v1 = ~PartyUtters(false, 0, "@Thou art painting with thy fingers again?@", 65533);
+        } else {
+            v2 = ~GetTarget();
+            v3 = ~Item_getType(v2);
+            if (v3 = 823) {
+                if (~GetFrame(v2) < 2) {
+                    v2 = ~GetTarget();
+                    if (~Item_getType(v2) = _Easel) {
+                        v4 = (~GetFrame(v2) modulo 8);
+                        v5 = ~rndRange(10, 1);
+                        if (v5 = 1) {
+                            v6 = "@That is quite good!@";
+                        }
+                        if (v5 = 2) {
+                            v6 = "@Do not change thine occupation for a painter.@";
+                        }
+                        if (v5 = 3) {
+                            v6 = ("@I can almost not" & "see the numbers.@");
+                        }
+                        if (v5 = 4) {
+                            v6 = "@Thou shouldst stay within the lines.@";
+                        }
+                        if (v5 = 5) {
+                            v6 = "@What is it?@";
+                        }
+                        v1 = ~PartyUtters(false, 0, v6, 65533);
+                        if (v4 < 7) {
+                            SetFrame((~GetFrame(v2) + 1), v2);
+                        }
+                    } else {
+                        if ~Item_isNpc(v2) {
+                            v1 = ~PartyUtters(true, 0, "@Tattooing?@", 65533);
+                        } else {
+                            v1 = ~PartyUtters(false, 0, "@The stain will never come out.@", 65533);
+                        }
+                    }
+                }
+            } else {
+                MemberBarks_i("@Thou must use pigments!@");
+                return;
+            }
+        }
+    }
+}
+
+Routine Easel accepts a0 #locals(2) #uses(~AvatarName, ~PartyUtters) {
+    if (event = _Converse) {
+        v0 = (("@Thou shouldst use the brush and pigments, " + ~AvatarName()) + ".@");
+        v1 = ~PartyUtters(true, 0, v0, 65533);
+    }
+}

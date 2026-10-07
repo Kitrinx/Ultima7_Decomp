@@ -1,0 +1,89 @@
+Routine WizardKeySpeechEgg_i accepts a0 #locals(0) #uses(PlaySpeechOrText_i) {
+    if ~GetItemFlag_i(_Dead, _Vasculio) {
+        Item_destroy(item);
+    } else {
+        PlaySpeechOrText_i(13);
+        flag(735) = true;
+    }
+}
+
+Routine GhostGroupEgg_i accepts a0 #locals(4) {
+    v0 = ~FindNearby_i(0, 25, _Ghost_337, item);
+    if v0 {
+        terminate;
+    }
+    v1 = ~GetCoord(item);
+    v2 = 4;
+    While (v2 > 0) {
+        v1::1 = ((v1::1 - 8) + (v2 * 2));
+        v3 = ~CreateCreature_i(v1, _Ghost_337);
+        if v3 {
+            SetWorkType(_Loiter, v3);
+            Npc_setAlignment(_Neutral, v3);
+            SetItemFlag_i(_Tournament, v3);
+            SetNPCID_i(v2, v3);
+        }
+        v2 = (v2 - 1);
+    }
+    if v3 {
+        SetWorkType(_Patrol, v3);
+    }
+}
+
+Routine GhostEgg_i accepts a0 #locals(4) {
+    v0 = ~FindNearby_i(0, 25, _Ghost_337, item);
+    v1 = ~GetQuality(item);
+    if v0 {
+        terminate;
+    }
+    v2 = ~GetCoord(item);
+    v3 = ~CreateCreature_i(v2, _Ghost_337);
+    if v3 {
+        SetWorkType(_Loiter, v3);
+        Npc_setAlignment(_Neutral, v3);
+        SetNPCID_i(v1, v3);
+    }
+}
+
+Routine PrismAltarEgg_i accepts a0 #locals(6) #uses(PlaySpeechOrText_i, ~GiveItemsOrDrop_i) {
+    v0 = ~GetQuality(item);
+    if (v0 = 1) {
+        v1 = ~FindNearby_i(0, 2, _Brserp, item);
+        if v1 {
+            v2 = ~GetFrame(v1);
+            if (v2 = 3) {
+                flag(574) = true;
+            }
+        } else {
+            flag(574) = false;
+        }
+    } else {
+        v3 = ~FindNearby_i(0, 2, _Urn, item);
+        if v3 {
+            v0 = ~GetQuality(v3);
+            if (v0 = 1) {
+                flag(578) = true;
+            }
+        }
+        v4 = ~FindNearby_i(0, 2, _Soul_Prism, item);
+        if v4 {
+            v2 = ~GetFrame(v4);
+            if (v2 = 5) {
+                flag(577) = true;
+            }
+            if (v2 = 6) {
+                flag(576) = true;
+            }
+            if (v2 = 7) {
+                flag(575) = true;
+            }
+        }
+    }
+    if (flag(574) and (flag(578) and (flag(576) and (flag(577) and flag(575))))) {
+        PlaySpeechOrText_i(25);
+        SetSpeaker0_i(0, _XenkaMonk_215);
+        ["I am Xenka. Thou must take this Serpent Sword and go to Sunrise Isle."];
+        v5 = ~GiveItemsOrDrop_i(true, false, 0, 0, 710, 1, _Avatar);
+        CloseSpeaker0_i();
+    }
+}

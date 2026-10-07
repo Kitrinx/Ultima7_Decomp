@@ -1,0 +1,18 @@
+Routine IceElementalsEgg_i accepts a0 #locals(3) #uses(PlaySpeechOrText_i, AttackAvatar_i) {
+    if (event = _Trigger) {
+        v0 = 0;
+        PlaySpeechOrText_i(26);
+        While (v0 < 10) {
+            Sfx(119);
+            createSprite(65535, 0, 0, 0, 62, (1664 + (v0 * 2)), 7);
+            v1 = ~CreateCreature_i(<< (1664 + (v0 * 2)), 58, 0 >>, _Ice_Elemental);
+            createSprite(65535, 0, 0, 0, 82, (1665 + (v0 * 2)), 7);
+            v2 = ~CreateCreature_i(<< (1665 + (v0 * 2)), 90, 0 >>, _Ice_Elemental);
+            if v1 {
+                AttackAvatar_i(v1);
+                AttackAvatar_i(v2);
+            }
+            v0 = (v0 + 3);
+        }
+    }
+}

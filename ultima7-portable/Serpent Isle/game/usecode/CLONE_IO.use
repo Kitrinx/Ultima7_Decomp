@@ -1,0 +1,219 @@
+Routine CloneIolo accepts a0 #locals(11) #uses(~LordOrLady, ~AvatarName, ~AskYesNo, CloneIoloLeaves_i, ~GimmePathEgg, UnfreezeAvatar_i) {
+    v0 = ~LordOrLady();
+    v1 = ~AvatarSex();
+    v2 = ~AvatarName();
+    v3 = false;
+    if (event = _Talking) {
+        ClearItemFlag_i(_DontMove_i, _Avatar);
+        v4 = ~FindNearby_i(0, 25, _Door_NS, _Avatar);
+        if v4 {
+            v5 = ~GetCoord(v4);
+            v6 = ~Item_create(_Door_EW);
+            if v6 {
+                Item_destroy(v4);
+                SetFrame(22, v6);
+                v7 = ~PopToMap(v5);
+            }
+        }
+        Npc_schedule(_CloneIolo);
+        SetWorkType(_Wait, _CloneIolo);
+        SetSpeaker0_i(0, _CloneIolo);
+        ["Thank the heavens I have found thee! Thou didst disappear..."];
+        ["When the Guardian appeared, we feared thou wert taken. Thou must hurry, I have found a way for thee to return home!"];
+        TurnOn(<< "disappear", "Guardian", "return home" >>);
+        converse {
+            key ("disappear") {
+                ["One moment thou wert standing between the pillars... The next, thou wert gone!" *"That fiend Zhelkas laughed and said that the land was well rid of thee. Dupre tried to slay him, but he was no match for the gargoyle's strength. And then the Guardian came..."];
+                TurnOff("disappear");
+                TurnOn("no match");
+            }
+            key ("no match") {
+                ["Dupre fought valiantly, Avatar. But Zhelkas threw him aside and ran into the caverns." *"I heard one of the sliding doors open just before the drums started."];
+                TurnOff("no match");
+                TurnOn(<< "sliding doors", "drums" >>);
+            }
+            key ("sliding doors") {
+                ["The drawbridge, Avatar! They were the only thing standing between us and the trolls! Zhelkas must have let them down..." *"We must flee, while there is still time!"];
+                TurnOff("sliding doors");
+            }
+            key ("drums") {
+                ["Zhelkas said that the drums were a sign that the trolls were on the move." *"We must escape, Avatar, the drums are growing louder!"];
+                ["Wilt thou flee with thine old friend Iolo?"];
+                if (~AskYesNo() = false) {
+                    if (v3 = false) {
+                        ["Thou wilt reconsider when thou dost hear what the Guardian said..."];
+                    } else {
+                        ["Zhelkas said that the land would be better off without thee. The Guardian said that the end is inevitable. Why stay when we shall all die?"];
+                    }
+                    $avatardeniedlife = true;
+                    if ($avatardeniedlife and ($avatardeniedfamily and $avatardeniedhome)) {
+                        CloneIoloLeaves_i();
+                        $passedioloclonetest = true;
+                        terminate;
+                    }
+                } else {
+                    ["Follow me through the gate, Avatar! Thou wilt soon be home..."];
+                    CloseSpeaker0_i();
+                    SetItemFlag_i(_DontMove_i, _Avatar);
+                    v8 = ~FindNearby_i(0, 25, _RedMoongate, _Avatar);
+                    if v8 {
+                        v5 = ~GetCoord(v8);
+                        v5::1 = (v5::1 - 1);
+                        v5::2 = (v5::2 + 1);
+                        PathfindNPC_i(true, #CloneIolo, v8, _Pathfind1, v5, _Avatar);
+                        v9 = ~GimmePathEgg(1, 0);
+                        v5::1 = (v5::1 - 2);
+                        PathfindNPC_i(false, #CloneIolo, v9, _Pathfind2, v5, _CloneIolo);
+                    } else {
+                        ClearItemFlag_i(_DontMove_i, _Avatar);
+                    }
+                    terminate;
+                }
+                TurnOff("drums");
+            }
+            key ("Guardian") {
+                ["The Guardian spoke to us after thou didst disappear."];
+                ["The Guardian said that he hath grown tired of the game here on Serpent Isle. The end is inevitable now..."];
+                ["The Guardian said to tell thee that he was changing the venue..."];
+                v3 = true;
+                TurnOff("Guardian");
+                TurnOn(<< "inevitable", "venue" >>);
+            }
+            key ("inevitable") {
+                ["The Guardian said that Balance could never be restored now. He said that the land will soon destroy itself... And us with it."];
+                TurnOff("inevitable");
+                TurnOn("destroy itself");
+            }
+            key ("destroy itself") {
+                ["Without Balance, the earthquakes and storms will continue until there is not one rock upon another. Soon the seas will swallow all that remains of the land."];
+                ["There is nothing that thou canst do here, Avatar! We will be crushed and dragged beneath the waves if we stay!"];
+                TurnOff("destroy itself");
+            }
+            key ("venue") {
+                ["The Guardian said that he would await thee on Earth, Avatar! Thine home..." *"He said he was going to unleash horrible maladies upon thy people."];
+                TurnOff("venue");
+                TurnOn("maladies");
+            }
+            key ("maladies") {
+                ["The Guardian said he would send vile, lingering plagues to all the leaders of thy land. Then he would set minions in their places to destroy all that thou dost hold dear." *"The Guardian even threatened thy family..."];
+                TurnOff("maladies");
+                TurnOn("family");
+            }
+            key ("family") {
+                TurnOff("family");
+                ["The Guardian told us to tell thee that it would be of no great matter to find out who all thy friends and family were, Avatar. He said that we were to tell thee that he had special plans for them."];
+                ["Wilt thou follow me? I can help thee escape to save those that thou lovest."];
+                if (~AskYesNo() = false) {
+                    ["Wilt thou allow the Guardian to slay thy friends as his minions slew poor Spark's father? How canst thou consider staying in a doomed land when thy family is in danger?"];
+                    $avatardeniedfamily = true;
+                    if ($avatardeniedlife and ($avatardeniedfamily and $avatardeniedhome)) {
+                        $passedioloclonetest = true;
+                        CloneIoloLeaves_i();
+                        terminate;
+                    }
+                } else {
+                    ["Follow me through the gate, Avatar! Thou wilt soon be home..."];
+                    CloseSpeaker0_i();
+                    SetItemFlag_i(_DontMove_i, _Avatar);
+                    v8 = ~FindNearby_i(0, 25, _RedMoongate, _Avatar);
+                    if v8 {
+                        v5 = ~GetCoord(v8);
+                        v5::1 = (v5::1 - 1);
+                        v5::2 = (v5::2 + 1);
+                        PathfindNPC_i(true, #CloneIolo, v8, _Pathfind1, v5, _Avatar);
+                        v9 = ~GimmePathEgg(1, 0);
+                        v5::1 = (v5::1 - 2);
+                        PathfindNPC_i(false, #CloneIolo, v9, _Pathfind2, v5, _CloneIolo);
+                    } else {
+                        ClearItemFlag_i(_DontMove_i, _Avatar);
+                    }
+                    terminate;
+                }
+            }
+            key ("return home") {
+                ["When the Guardian disappeared, we began searching for thee. The Guardian's interference into this place hath opened a gate... To thine home, I think."];
+                TurnOff("return home");
+                TurnOn("gate");
+            }
+            key ("gate") {
+                ["It is much like the Moongate that brought thee to Britannia the last time. Shamino thought perhaps the Guardian's passage had not fully closed." *"I do not think it is a trap, Avatar! I do not think the Guardian knows that the gate here still exists..."];
+                TurnOff("gate");
+                TurnOn("trap");
+            }
+            key ("trap") {
+                TurnOff("trap");
+                ["Why would the Guardian go to such lengths, Avatar? He already has thee trapped here... In a land he says will soon rend its heart out."];
+                ["Wilt thou come with me now? I am sure that thou canst return home at last."];
+                if (~AskYesNo() = false) {
+                    ["Reconsider, Avatar! Thou couldst spend the rest of thy life waiting for another chance to return to thine home and family..."];
+                    $avatardeniedhome = true;
+                    if ($avatardeniedlife and ($avatardeniedfamily and $avatardeniedhome)) {
+                        CloneIoloLeaves_i();
+                        $passedioloclonetest = true;
+                        terminate;
+                    }
+                } else {
+                    ["Follow me through the gate, Avatar! Thou wilt soon be home..."];
+                    CloseSpeaker0_i();
+                    SetItemFlag_i(_DontMove_i, _Avatar);
+                    v8 = ~FindNearby_i(0, 25, _RedMoongate, _Avatar);
+                    if v8 {
+                        v5 = ~GetCoord(v8);
+                        v5::1 = (v5::1 - 1);
+                        v5::2 = (v5::2 + 1);
+                        PathfindNPC_i(true, #CloneIolo, v8, _Pathfind1, v5, _Avatar);
+                        v9 = ~GimmePathEgg(1, 0);
+                        v5::1 = (v5::1 - 2);
+                        PathfindNPC_i(false, #CloneIolo, v9, _Pathfind2, v5, _CloneIolo);
+                    } else {
+                        ClearItemFlag_i(_DontMove_i, _Avatar);
+                    }
+                    terminate;
+                }
+            }
+        }
+        clear_answers;
+    }
+    if (event = _Path_Failure) {
+        v10 = ~Item_getType(item);
+        if (v10 = 864) {
+            event = 10;
+        } else {
+            if (v10 = 465) {
+                event = 13;
+            } else {
+                terminate;
+            }
+        }
+    }
+    if (event = _Pathfind1) {
+        v8 = ~FindNearby_i(0, 10, _RedMoongate, _Avatar);
+        UnfreezeAvatar_i();
+        v5 = ~GetCoord(_CloneIolo);
+        createSprite(65535, 0, 0, 0, v5::2, v5::1, 26);
+        RemoveNPC_i(_CloneIolo);
+        v5 = ~GetCoord(_Avatar);
+        createSprite(65535, 0, 0, 0, v5::2, v5::1, 26);
+        Polymorph_i(_Blank_Type, _Avatar);
+        v7 = ~PostInFuture(20, << _aUSABLE_i, #LeaveCloneTest_i, _aCONTINUE_i, _aBARK_i, "@What the...?@" >>, v8);
+        terminate;
+    }
+    if (event = _Path_Success) {
+        v5 = ~GetCoord(_CloneIolo);
+        createSprite(65535, 0, 0, 0, v5::2, v5::1, 26);
+        RemoveNPC_i(_CloneIolo);
+        v7 = ~PostInFuture(20, << _aNO_HALT_i, _aUSABLE_i, #LeaveCloneTest_i >>, _Avatar);
+        terminate;
+    }
+}
+
+Usable CloneIoloLeaves_i #locals(3) {
+    Item_bark("@Thy loss, Avatar.@", _CloneIolo);
+    v0 = ~FindNearby_i(0, 25, _RedMoongate, _CloneIolo);
+    if v0 {
+        v1 = ~GetDist(v0, _CloneIolo);
+        v2 = ~GetCoord(v0);
+        v2::1 = (v2::1 - 2);
+        PathfindNPC_i(true, #CloneIolo, ~NPCToItem_i(_CloneIolo), _Path_Success, v2, _CloneIolo);
+    }
+}

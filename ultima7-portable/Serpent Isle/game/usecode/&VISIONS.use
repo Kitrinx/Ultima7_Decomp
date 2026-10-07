@@ -1,0 +1,147 @@
+Routine Magic_Lens accepts a0 #locals(2) #uses(~GimmePathEgg, ChooseVision_i) {
+    if (event = _Converse) {
+        v0 = ~GetFrame(item);
+        if (v0 = 0) {
+            PathfindNPC_i(true, #Magic_Lens, item, _Path_Success, ~GetCoord(item), _Avatar);
+        }
+        if (v0 = 2) {
+            CreateSpriteOn_i(65535, 0, 0, 0, 0, 0, 21, item);
+            SetItemFlag_i(_Read, _Avatar);
+            v1 = ~PostInFuture(100, << _aNO_HALT_i, _aUSABLE_i, #Magic_Lens >>, ~GimmePathEgg(1, 5));
+            Sfx(57);
+        }
+    }
+    if (event = _Action) {
+        ClearItemFlag_i(_Read, _Avatar);
+        Sfx(48);
+    }
+    if ((event = _Path_Success) or (event = _Path_Failure)) {
+        ChooseVision_i();
+    }
+}
+
+Routine Moon_s_Eye accepts a0 #locals(7) #uses(~WhereAmI_i, ChooseVision_i, ShowVision_i) {
+    if (event = _Converse) {
+        if (~WhereAmI_i() = 31) {
+            terminate;
+        }
+        PathfindNPC_i(true, #Moon_s_Eye, item, _Path_Success, ~GetCoord(item), _Avatar);
+    }
+    if ((event = _Path_Success) or ((event = _Path_Failure) or (event = _Action))) {
+        v0 = ~GetFrame(item);
+        if ((v0 = 0) or (~Item_getType(item) = _Web_Of_Fate)) {
+            ChooseVision_i();
+        } else {
+            v1 = 495;
+            v2 = << 2967, 32, 0 >>;
+            if ((~WhereAmI_i() = 13) and ($harnnasaidcrystalball and not $BATLIN_FLED_SHAMINOS_KEEP)) {
+                $cantravision = true;
+                $cantravisiondone = true;
+                v1 = 65472;
+                v2 = << 203, 151, 6 >>;
+                if not $USING_FAR_SIGHT_MAGIC {
+                    v3 = << 200, 151, 6 >>;
+                    v4 = ~CreateCreature_i(v3, _Batlin_Type);
+                    if v4 {
+                        v5 = ~PostAction(<< _aNO_HALT_i, _aFACE_i, _South, _aUP_FRAME_i >>, v4);
+                        SetItemFlag_i(_IsTemporary_i, v4);
+                        SetWorkType(_Wait, v4);
+                        v5 = ~GiveToCont_i(18, 0, _All, _Backpack, 1, v4);
+                    }
+                }
+            }
+            if ((~WhereAmI_i() = 14) and ($CRYSTAL_BALL_WILL_SHOW_EDRIN and not $RESTORED_EDRIN)) {
+                $SAW_EDRIN_TRANSFORM = true;
+                v1 = 65520;
+                v2 = << 876, 2379, 0 >>;
+                Polymorph_i(_Blank_Type, _Ale);
+                v6 = << 893, 2394, 0 >>;
+                Item_move(v6, _Ale);
+                NewSchedule_i(<< v6::1, v6::2 >>, _Wait, 0, _Ale);
+                Npc_schedule(_Ale);
+            }
+            ShowVision_i(v2, v1);
+        }
+    }
+}
+
+Routine Web_of_Fate accepts a0 #locals(0) #uses(ChooseVision_i) {
+    if ((event = _Path_Success) or (event = _Path_Failure)) {
+        ChooseVision_i();
+    }
+    if (event = _Converse) {
+        PathfindNPC_i(true, #Web_of_Fate, item, _Path_Success, ~GetCoord(item), _Avatar);
+    }
+}
+
+Usable ChooseVision_i #locals(8) #uses(ShowVision_i) {
+    v0 = 495;
+    v1 = << 2967, 32, 0 >>;
+    if (not $BANES_RELEASED and not $spinevisiondone) {
+        if not $beginspinevision {
+            v2 = << 2353, 400, 0 >>;
+            NewSchedule_i(v2, _Wait, 0, _Deadeye);
+            SetWorkType(_Wait, _Deadeye);
+            Item_move(v2, _Deadeye);
+            v3 = << 2347, 382, 0 >>;
+            NewSchedule_i(v3, _Wait, 0, _Brunt);
+            SetWorkType(_Wait, _Brunt);
+            Item_move(v3, _Brunt);
+            v4 = << 2337, 374, 0 >>;
+            v5 = ~CreateCreature_i(v4, _Garg_Wingless);
+            SetNPCID_i(2, v5);
+            SetWorkType(_Wait, v5);
+        }
+        $beginspinevision = true;
+        v0 = 318;
+        v1 = << 2343, 429, 0 >>;
+    }
+    if ($BANES_RELEASED and (not flag(557) and not ($antishaminodead or ($antiiolodead or $antidupredead)))) {
+        flag(556) = true;
+        v0 = 65272;
+        v1 = << 2521, 78, 0 >>;
+        v6 = << 2476, 110, 0 >>;
+        SetWorkType(_Wait, _AntiIolo);
+        Item_move(v6, _AntiIolo);
+        v7 = << 2463, 115, 0 >>;
+        SetWorkType(_Wait, _AntiDupre);
+        Item_move(v7, _AntiDupre);
+    }
+    ShowVision_i(v1, v0);
+}
+
+Routine ShowVision_i accepts a0, a1 #locals(1) #uses(PartyFaces_i) {
+    if ((event = _Converse) or ((event = _Path_Success) or (event = _Path_Failure))) {
+        if $USING_FAR_SIGHT_MAGIC {
+            terminate;
+        }
+        $USING_FAR_SIGHT_MAGIC = true;
+        PartyFaces_i(item);
+        CreateSpriteOn_i(65535, 0, 0, 0, 0, 0, 21, item);
+        v2 = ~PostInFuture(10, << _aNO_HALT_i, _aUSABLE_i, #Moon_s_Eye >>, item);
+    }
+    if (event = _Action) {
+        if (v1 = 495) {
+            v1 = ~CreateCreature_i(v0, v1);
+            SetItemFlag_i(_IsTemporary_i, v1);
+            Polymorph_i(_Blank_Type, v1);
+            flag(13) = true;
+        } else {
+            if (v1 = 318) {
+                v1 = ~CreateCreature_i(v0, _Batlin_Type);
+                SetItemFlag_i(_IsTemporary_i, v1);
+            } else {
+                Item_move(v0, v1);
+                if (v1 <> 65272) {
+                    NewSchedule_i(<< v0::1, v0::2 >>, _Patrol, 0, v1);
+                }
+            }
+        }
+        SetWorkType(_Patrol, v1);
+        Camera_setCenterOn(v1);
+        EndConverse_i();
+        SetItemFlag_i(_DontMove_i, _Avatar);
+        FadePalette_i(0, 1, 12);
+        SetAmbientLight_i(0);
+    }
+}

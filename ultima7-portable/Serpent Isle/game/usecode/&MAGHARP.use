@@ -1,0 +1,14 @@
+Routine Magic_Harp accepts a0 #locals(5) #uses(~OuterContainer_i) {
+    closeAllGumps();
+    v0 = ~OuterContainer_i(item);
+    if v0 {
+        SetMusic(v0, 47);
+    } else {
+        SetMusic(item, 47);
+    }
+    v1 = ~FindNearby_i(0, 20, _Rat_Man, item);
+    Foreach v4 in v1 {
+        Npc_setAlignment(_Neutral, v4);
+        SetItemFlag_i(_Asleep, v4);
+    }
+}

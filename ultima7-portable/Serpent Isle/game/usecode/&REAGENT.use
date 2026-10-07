@@ -1,0 +1,29 @@
+Routine Reagents accepts a0 #locals(6) #uses(EatFood_i, ConsumeOne_i) {
+    if (~GetFrame(item) = 4) {
+        v0 = ~GetTarget();
+        EatFood_i(v0, 38, 2, item);
+    }
+    if (~GetFrame(item) = 15) {
+        v0 = ~GetTarget();
+        if ((~Item_getType(v0) = _Bucket) and (~GetFrame(v0) = 2)) {
+            SetFrame(0, v0);
+            SetFrame(8, item);
+            Sfx(33);
+            CreateSpriteOn_i(65535, 0, 0, 0, 0, 0, 21, item);
+        }
+    }
+    if (~GetFrame(item) = 14) {
+        v1 = ~GetTarget();
+        if (v1::1 = ~NPCToItem_i(_Avatar)) {
+            return;
+        }
+        if ((~Item_getType(v1::1) = _Lamp_Post) and ((~GetFrame(v1::1) = 0) or ((~GetFrame(v1::1) = 1) or ((~GetFrame(v1::1) = 4) or (~GetFrame(v1::1) = 5))))) {
+            ConsumeOne_i(item);
+            Item_setType(_Lit_Lamp_Post, v1::1);
+            v2 = ~FindNearby_i(0, 40, _Slime, v1::1);
+            Foreach v5 in v2 {
+                KillNPC_i(v5);
+            }
+        }
+    }
+}

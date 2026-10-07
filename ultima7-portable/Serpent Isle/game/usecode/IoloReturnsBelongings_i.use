@@ -1,0 +1,24 @@
+Usable IoloReturnsBelongings_i #locals(1) #uses(~AskYesNo, ~ReturnBelongings_i) {
+    if ~GetContents(_All, _All, _All, _Iolo) {
+        ["I am carrying many items, some of which may be of use to thee. Wouldst thou care to have these before I depart?"];
+        if ~AskYesNo() {
+            ["Here they are."];
+            $IOLO_HAS_BELONGINGS = false;
+            v0 = ~ReturnBelongings_i(65533);
+            if (v0::1 <> 0) {
+                ["Thy friends will have to help carry these things."];
+            }
+            if (v0::2 > 0) {
+                v0 = v0::2;
+                if (v0 > 1) {
+                    ["Since thou canst not carry these remaining <v0> items, I will place them at thy feet."];
+                } else {
+                    ["Since thou dost not have enough room for this last item, I will place it at thy feet."];
+                }
+            }
+        } else {
+            $IOLO_HAS_BELONGINGS = true;
+            ["If thou changest thy mind, thou hast but to return and ask again."];
+        }
+    }
+}

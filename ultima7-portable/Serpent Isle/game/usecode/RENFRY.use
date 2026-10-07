@@ -1,0 +1,183 @@
+Routine Renfry accepts a0 #locals(8) #uses(PartyFaces_i, Bark_i, ~AskYesNo, ~IsNPCNear, ~PartyUtters, SayIfNear_i, ~GiveItemsOrDrop_i) {
+    v0 = "He";
+    if ~AvatarSex() {
+        v0 = "She";
+    }
+    if (event = _Converse) {
+        Item_bark("@Greetings, sir.@", _Avatar);
+        PartyFaces_i(65463);
+        Bark_i(2, "@What?@", _Renfry);
+        SetWorkType(_Talk, _Renfry);
+    }
+    if (event = _Talking) {
+        Npc_schedule(_Renfry);
+        ClearBark_i(_Renfry);
+        SetSpeaker0_i(0, _Renfry);
+        v1 = ~GetItemFlag_i(_Met, _Renfry);
+        if not $funeraldone {
+            ["Say here! I'm Renfry the Cremator and there is a funeral in progress. Lords Marsten, Spektor, Brendann and Caladin are all in the crypts paying their last respects."];
+            terminate;
+        }
+        if not $AVATAR_IS_KNIGHT {
+            ["I say, I say who is that? Art thou a stranger?"];
+            if ~AskYesNo() {
+                ["No, no, I do not speak with strangers... I only care to speak with my fellow Knights."];
+                Bark_i(0, "@Be gone...@", _Renfry);
+            } else {
+                ["Pardon me for not recognizing thee, Sir Knight. I be an old man, and mine eyesight is not what it once was."];
+            }
+        } else {
+            ["What? What? Oh, 'tis thee again."];
+        }
+        TurnOn(<< "name", "duties" >>);
+        if $smokedoneforrenfry {
+            TurnOn("Payment");
+        }
+        if ($askrenfrybloodyhand and not $knowbloodyhand) {
+            TurnOn("severed hand");
+        }
+        TurnOn("bye");
+        v2 = ~IsNPCNear(_Iolo);
+        v3 = ~IsNPCNear(_Shamino);
+        v4 = ~IsNPCNear(_Dupre);
+        converse {
+            key ("name") {
+                TurnOff("name");
+                ["Flame? Oh, yes, we keep the fires going constantly."];
+                v5 = ~PartyUtters(false, 0, (("@@" + v0) + " said NAME, old man. Not FLAME.@"), 1);
+                if (v5 <> 65180) {
+                    SetSpeakerSlot_i(0);
+                    ["Oh. As thou canst tell, mine hearing is not what it once was. 'Tis the roar of the fires which hath done it..."];
+                    ["I am Renfry, Knight and Cremator."];
+                    SetItemFlag_i(_Met, _Renfry);
+                }
+            }
+            key ("duties") {
+                TurnOff("duties");
+                ["What? Why, I am the undertaker of Monitor. Didst thou not know that? I thought everyone knew that. Do not forget, Knight, that one day I shall cremate thee!"];
+                TurnOn(<< "undertaker", "Body" >>);
+            }
+            key ("undertaker") {
+                TurnOff("undertaker");
+                ["I take care of the dead. I am in charge of the Crematorium. I prepare bodies for cremation and oversee the chamber that houses the Ashes of the Dead."];
+                TurnOn(<< "The Cremator", "Ashes of the Dead" >>);
+            }
+            key ("Ashes of the Dead") {
+                TurnOff("Ashes of the Dead");
+                if not $AVATAR_IS_KNIGHT {
+                    ["'Tis mighty curious for thee to know so little of our customs -- art thou certain thou art a Knight?"];
+                    if ~AskYesNo() {
+                        ["Then thou hast spent too much time on the list fields, and not enough time pondering the traditions of our people. Pay attention!"];
+                    } else {
+                        ["I don't speak with strangers!"];
+                        Bark_i(0, "@To blazes!@", _Renfry);
+                        terminate;
+                    }
+                }
+                ["'Tis the Monitorian custom to cremate our dead. The ashes of a dead Knight are sacred. They represent the essence of that person's life, distilled by the mystical processes of the Cremator."];
+                ["In the Crypts of the Dead are urns filled with the ashes of generations of Knights. The Ashes of the Dead are our heritage."];
+                TurnOn("mysticism");
+            }
+            key ("The Cremator") {
+                TurnOff("The Cremator");
+                ["Be reverent when thou art in the presence of the Machine of Cremation, as it represents Death itself."];
+                ["After I throw the switch, the pumps begin to churn. When the heat builds, the trapdoor on top opens. The body then falls into the fires below."];
+                ["The mechanism retrieves the Ashes of the Dead, and places them in an urn. A travelling belt carries the urn out of the fiery belly of the machine, so that I may collect it and take it to the Crypts of the Dead."];
+                ["Careful with what thou wouldst put near the thing! It hath the capacity to destroy practically any object in the world!"];
+                TurnOn(<< "the Dead", "urn" >>);
+            }
+            key ("the Dead") {
+                TurnOff("the Dead");
+                ["I am glad thou didst mention that. Remember that, if thou shouldst ever stumble across the remains of a brave departed pikeman, thou must bring his body home for cremation."];
+                ["If thou dost not do this, the ghost of the dead will torment thee until thy dying day!"];
+                ["I have been given authority by Lord Marsten to pay 100 monetari for every pikeman's body brought home again. That way they can be properly entombed within the crypts."];
+                $renfrysaidpayforbodies = true;
+                TurnOn("crypts");
+            }
+            key ("crypts") {
+                TurnOff("crypts");
+                ["They are just beyond the curtain in the crematorium."];
+            }
+            key ("urn") {
+                TurnOff("urn");
+                ["Andral, our town sculptor, makes them."];
+                TurnOn("Andral");
+            }
+            key ("Andral") {
+                TurnOff("Andral");
+                ["Talented but very solitary person, he is. Never leaves his house, except to go to his workplace. He was especially upset by the recent theft at his shop."];
+                TurnOn("theft");
+            }
+            key ("theft") {
+                TurnOff("theft");
+                ["Had something to do with that sage who was in town recently. Andral will know more about it. Talk to him."];
+                $renfrymentionedtheft = true;
+                v5 = ~PartyUtters(false, 0, "@Dost thou know the name of this sage?@", 1);
+                if (v5 <> 65180) {
+                    SetSpeakerSlot_i(0);
+                    ["I have a perfect memory for names. 'Twas Badwin, I think. A very large man, with a hooded companion."];
+                    SayIfNear_i("@Must be Batlin!@", v5);
+                    SetSpeakerSlot_i(0);
+                }
+            }
+            key ("mysticism") {
+                TurnOff("mysticism");
+                ["We are a community of Knights. For us, the world is a harsh place in which only the valiant survive."];
+                ["We do not trust magic -- thou couldst not sell a magical weapon in this town at any price! Yet there are powers greater than mere magic..."];
+                ["One of these mysteries concerns the Ashes of the Dead. As we all know, the Ashes of Gurnordir lie at the end of Knight's Test. What is the power which causes the totem animal to appear? Not even I can say!"];
+                ["And no one can explain the Serpent Gate, yet we have built our city above it."];
+                TurnOn(<< "Gurnordir", "Serpent Gate" >>);
+            }
+            key ("Gurnordir") {
+                TurnOff("Gurnordir");
+                ["I can hardly do justice to the tale -- thou shouldst speak to Lord Marsten."];
+                ["Suffice it to say that when our blood is mixed with the ashes of the dead Goblin king Gurnordir, the totem animal of a Monitor knight appears."];
+                ["Gurnordir was our greatest foe! Do his ashes stand for hatred, and thus the animals are produced to try to slay us?"];
+                ["Or do his ashes symbolize Courage? If so, this suggests that the Goblins have more in common with Monitorians than many would like to believe..."];
+            }
+            key ("Serpent Gate") {
+                TurnOff("Serpent Gate");
+                ["A stone platform hidden in the Crypts..."];
+                ["The inscribed serpent marks the stonework as being the product of the Daemons. Such daemons once dwelt throughout this land, but for as long as the Knights have been here, the Daemons have confined themselves to the dungeon called Furnace."];
+                ["By legend, the platform is called the Gate of the Serpent. But a gate to where? To what?"];
+            }
+            key ("Payment") {
+                TurnOff("Payment");
+                ["For thy service to Monitor and to the community of Knights I shall pay thee for thy trouble."];
+                ["I thank thee for cremating that once proud warrior."];
+                $smokedoneforrenfry = false;
+                v6 = ~GiveItemsOrDrop_i(true, true, 65177, 65177, 951, 100, _Avatar);
+            }
+            key ("Body") {
+                ["Dost thou carry a pikeman's body for cremation?"];
+                v7 = 0;
+                if ~AskYesNo() {
+                    v7 = ~CountItem(11, _All, _Deadbodies, _Party);
+                    v7 = (v7 + ~CountItem(5, _All, _NPC1_Bodies, _Party));
+                    v7 = (v7 + ~CountItem(6, _All, _NPC1_Bodies, _Party));
+                    if (v7 > 0) {
+                        if (v7 = 1) {
+                            ["Ah, place it there on the trapdoor on top of the Cremator. I will pay thee after thou hast performed the last rites for the fallen one."];
+                        } else {
+                            ["Ah, place them one at a time on the trapdoor on top of the Cremator." *"I will pay thee after each one receives the final rites."];
+                        }
+                    } else {
+                        ["Thou dost not carry a pikeman! I can only pay thee for bringing me the bodies of fallen knights. Only they deserve such respect..."];
+                    }
+                    TurnOff("Body");
+                }
+            }
+            key ("severed hand") {
+                TurnOff("severed hand");
+                ["I deduce that the severed hand found in thy possession is not dead. What manner of magic could do this? I have never seen its like."];
+            }
+            key ("bye") {
+                CloseSpeaker0_i();
+                Bark_i(0, "@Bye!@", _Avatar);
+                Bark_i(2, "@What? Oh, goodbye.@", _Renfry);
+                break;
+            }
+        }
+        clear_answers;
+    }
+}

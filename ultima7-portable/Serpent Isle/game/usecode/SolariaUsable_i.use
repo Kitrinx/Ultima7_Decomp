@@ -1,0 +1,115 @@
+Routine SolariaUsable_i accepts a0 #locals(4) #uses(Bark_i) {
+    v0 = ~AvatarSex();
+    v1 = "handsome";
+    if v0 {
+        v1 = "beautiful";
+    }
+    v2 = false;
+    v3 = ~GetNPCID_i(item);
+    if (v3 = 13) {
+        v2 = true;
+    }
+    if (event = _Action) {
+        SetWorkType(_Stand, item);
+        ClearBark_i(item);
+        SetSpeaker0_i(0, 65223);
+        if not $MET_SOLARIA {
+            ["Well hello, <v1>. I'm glad I did not give up on thee. Thou art worth the wait, assuredly."];
+            $MET_SOLARIA = true;
+            SetNPCID_i(13, item);
+        } else {
+            ["Nice to see thee again, <v1>."];
+        }
+        TurnOn(<< "Give up on me?", "wait", "bye" >>);
+        converse {
+            key ("Give up on me?") {
+                TurnOff("Give up on me?");
+                ["Well, I would not have done that, really. After all, it's not often a girl gets the chance to play a part in prophecy.];
+                ["If I had given up, how would I have been able to help thee?"];
+                TurnOn(<< "prophecy", "help" >>);
+            }
+            key ("prophecy") {
+                TurnOff("prophecy");
+                ["Thy coming was foretold long ago, <v1>... though thou wert expected much earlier. I fear that the task before thee shall be much more difficult now."];
+                TurnOn(<< "foretold", "task" >>);
+            }
+            key ("foretold") {
+                TurnOff("foretold");
+                ["I suppose that the Ophidians learned of it through their Hierophants. We were told by our Guide...];
+                ["I was told to await thee here. And so I have waited... Thou hast been quite tardy, thou knowest, <v1>."];
+                TurnOn(<< "Ophidians", "Hierophants", "Guide" >>);
+            }
+            key ("Ophidians") {
+                TurnOff("Ophidians");
+                ["Thou dost not know who the Ophidians are? How strange.];
+                ["They are the people that hold the keep. Quite warlike, really. I don't have much to do with them..."];
+            }
+            key ("Hierophants") {
+                TurnOff("Hierophants");
+                ["At least I think that is what they are called.];
+                ["The Hierophants are the holy men -- and women -- of the Ophidians. I understand that they are also the political leaders...];
+                ["Personally, I think that anyone possessing that much power is a bad idea."];
+            }
+            key ("Guide") {
+                TurnOff("Guide");
+                ["The Guide is who I follow, <v1>. I would love to stand and tell thee all about it, but thou shouldst really be on thy way... Thou art quite late, thou knowest."];
+                TurnOn("late");
+            }
+            key ("late") {
+                TurnOff("late");
+                ["The Ophidian's war has gone on for many years now, <v1>. I don't think that Chaos will be able to hold off Order much longer.];
+                ["If thou art going to restore Balance thou wilt have to act quickly."];
+            }
+            key ("task") {
+                TurnOff("task");
+                ["The task of the pawn of prophecy -- or, as the Ophidians call thee, the Champion of Balance -- is to restore Balance to the world.];
+                ["I fear that the tide of battle may have turned so far that even thou canst not pull it back. If Order destroys Chaos, there will be nothing to bring Balance to, <v1>."];
+                TurnOn("destroys Chaos");
+            }
+            key ("destroys Chaos") {
+                TurnOff("destroys Chaos");
+                ["The Ophidians who follow Order believe that those who follow Chaos are responsible for the murder of one of their holy men. They have sworn to rid the world of Chaos...];
+                ["And now that they have created the automatons, they may succeed."];
+                TurnOn("automatons");
+            }
+            key ("automatons") {
+                TurnOff("automatons");
+                ["Thou canst not miss seeing them anywhere near the keep, <v1>. They are the men of metal that does swell the ranks of Order.];
+                ["With the added strength of the automatons, Order shall swiftly overcome Chaos... Thy time to complete thy task grows short, <v1>."];
+            }
+            key ("help") {
+                TurnOff("help");
+                ["I have been charged with the task of aiding thee, <v1>. Beyond this gate lies a threat to thee. It is I who must give thee the key to escaping its snare."];
+                TurnOn("key");
+            }
+            key ("key") {
+                TurnOff("key");
+                ["Not a physical key, <v1>, but a hint... if thou wilt.];
+                ["Thou shalt come to a room in which thy passage is blocked. To win thy freedom, thou shalt have to know which of the many levers must be moved.];
+                ["Pull every other lever down to break free of the trap."];
+            }
+            key ("wait") {
+                TurnOff("wait");
+                ["It has been quite a while... But it does not matter, now that thou art here, <v1>.];
+                ["Perhaps, after thou hast completed thy task, I couldst think of a way for thee to make it up to me."];
+                TurnOn(<< "think of a way", "make it up to thee" >>);
+            }
+            key ("think of a way") {
+                TurnOff("think of a way");
+                ["Let us just say that thou dost inspire me... I can promise thee that I shall be... creative."];
+            }
+            key ("make it up to thee") {
+                TurnOff("make it up to thee");
+                ["Oh, do not tempt me, <v1>! We have duties yet to fulfill, thou and I. Perhaps we can find time later, in a more... romantic spot, shall we say?"];
+            }
+            key ("bye") {
+                CloseSpeaker0_i();
+                Bark_i(0, "@Farewell!@", _Avatar);
+                Bark_i(2, "@Take care!@", item);
+                SetWorkType(_Loiter, item);
+                break;
+            }
+        }
+        clear_answers;
+    }
+}

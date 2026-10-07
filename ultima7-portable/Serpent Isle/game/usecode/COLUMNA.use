@@ -1,0 +1,478 @@
+Routine Columna accepts a0 #locals(13) #uses(~AvatarName, PartyFaces_i, Bark_i, ~IsInInv, ColumnaSellsSpells_i, ~AskYesNo, MessengerBringsScroll_i) {
+    v0 = "Mundane";
+    if $gotspellbook {
+        v0 = "Mage";
+    }
+    v1 = ~AvatarSex();
+    v2 = ~AvatarName();
+    v3 = ~GetTime();
+    if ((v3 > 1) or (v3 < 6)) {
+        v3 = "day";
+    } else {
+        v3 = "evening";
+    }
+    if (event = _Converse) {
+        Item_bark("Hello, there.", _Avatar);
+        PartyFaces_i(65522);
+        Bark_i(2, (("@Greetings, " + v0) + "."), _Columna);
+        SetWorkType(_Talk, _Columna);
+    }
+    if ((event = _NearDeath) and ~GetItemFlag_i(_Tournament, item)) {
+        v4 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #Black_Mage >>, item);
+    }
+    if (event = _Bark) {
+        SetWorkType(_Lab, item);
+    }
+    if (event = _Talking) {
+        Npc_schedule(_Columna);
+        ClearBark_i(_Columna);
+        Kernel_resetRef(_Columna);
+        Kernel_resetRef(_Avatar);
+        v5 = ~GetItemFlag_i(_Dead, _Stefano);
+        if flag(226) && not v5 {
+            TurnOn("Stefano");
+        }
+        v6 = ~IsInInv(0, 65177, _Stockings, 1, _Party);
+        if v6 {
+            TurnOn("stockings");
+        }
+        if flag(253) {
+            SetSpeaker0_i(1, _Columna);
+        } else {
+            SetSpeaker0_i(0, _Columna);
+        }
+        if not $gotspellbook {
+            ["I am sorry, but thou hast mistaken me for someone else. Thou couldst not possibly be speaking to me, as I am a Mage... and thou art merely Mundane."];
+            Bark_i(0, "@Honestly!@", _Columna);
+            terminate;
+        }
+        v7 = ~GetItemFlag_i(_Met, _Columna);
+        if (v7 = false) {
+            SetItemFlag_i(_Met, _Columna);
+            ["I do not believe that we've met. It is so nice to make the acquaintance of a new, young Mage."];
+            ["I am Columna, the Green Enchantress."];
+        } else {
+            ["Welcome, Mage. I am pleased to see thee again."];
+        }
+        if ($moshsaidcolumna and not $moshfriend) {
+            TurnOn(<< "Mosh" >>);
+        }
+        if ($magesknowapparati and not $knowlabitem) {
+            TurnOn("apparatus");
+        }
+        TurnOn(<< "Green Enchantress", "bye" >>);
+        converse {
+            key ("Green Enchantress") {
+                TurnOff("Green Enchantress");
+                ["My name is Columna. Sorceress, wife of Melino, and I am also the most desired beauty in Moonshade."];
+                if flag(253) {
+                    ["Is that not a funny joke?! Me, a decrepit hag?! The most desired beauty in all of Moonshade?! Once, in my time... In my time..."];
+                }
+                TurnOn(<< "sorceress", "Melino", "beauty" >>);
+            }
+            key ("sorceress") {
+                TurnOff("sorceress");
+                ["Perhaps I could interest thee in a spell. Many strange travellers have come from across the Serpent Isle to learn spells from me. But that, of course, was before the Teleport Storms."];
+                TurnOn(<< "buy spells", "strange travellers", "teleport storms" >>);
+            }
+            key ("apparatus") {
+                TurnOff("apparatus");
+                v8 = ~IsInInv(1, 65177, _Al_App_1, 1, _Party);
+                if v8 {
+                    ["This laboratory equipment must surely belong to Erstam, the Mad Mage! It bears the unmistakably foul stench of one of his experiments."];
+                    $knowlabitem = true;
+                } else {
+                    ["Without being able to actually look at the item thou hast mentioned, I can tell thee nothing."];
+                }
+            }
+            key ("teleport storms") {
+                TurnOff("teleport storms");
+                ["Since these vile telport storms began all sea travel has virtually stopped. Even long range travel over land is considered to be extremely dangerous!"];
+            }
+            key ("buy spells") {
+                ColumnaSellsSpells_i();
+            }
+            key ("strange travellers") {
+                TurnOff("strange travellers");
+                ["Many weeks ago a woman named Gwenno passed through Moonshade, and more recently a sage named Batlin."];
+                TurnOn(<< "Gwenno", "Batlin" >>);
+            }
+            key ("Gwenno") {
+                TurnOff("Gwenno");
+                ["The one and only time I saw her she was singing a love song about her husband, Iolo. But she made quite an impression on some people while she was here. If thou dost wish to know more of her, then ask around."];
+            }
+            key ("Batlin") {
+                TurnOff("Batlin");
+                ["He came through town with a strange daemon creature as his companion and servant, and he had some sort of artifact in his possession."];
+                TurnOn(<< "daemon", "artifact" >>);
+            }
+            key ("daemon") {
+                TurnOff("daemon");
+                ["'Twas male, and had bright red skin. But there were no horns on its head -- I swear. I believe its name was Palos."];
+            }
+            key ("artifact") {
+                TurnOff("artifact");
+                ["I personally did not see it, but I know that Gustacio did."];
+            }
+            key ("Melino") {
+                TurnOff("Melino");
+                ["I shall have thee know that mine husband is most influential with the Council of Mages. And is perfectly capable of satisfying my needs in nearly all other ways."];
+                TurnOn(<< "influential", "satisfying needs" >>);
+            }
+            key ("influential") {
+                TurnOff("influential");
+                ["He is a close and trusted advisor to Filbercio, the MageLord of Moonshade and senior member of the Council."];
+            }
+            key ("satisfying needs") {
+                TurnOff("satisfying needs");
+                ["Oh, worry thyself not. I am not one to allow my needs to go unsatisfied."];
+            }
+            key ("beauty") {
+                TurnOff("beauty");
+                if flag(253) {
+                    ["Without my precious comb, all of my beauty hath long faded."];
+                } else {
+                    ["Yes, in truth it hath always been so, and shall always be. My natural good looks must be the result of my good breeding."];
+                }
+            }
+            key ("Stefano") {
+                TurnOff("Stefano");
+                ["'Twas Stefano who stole my stockings from Torrissio's house in an attempt to blackmail us over our affair."];
+                if flag(569) {
+                    ["Now that he is returned to Moonshade, we have already seen to it that he shall die for what he tried to do to us."];
+                } else {
+                    ["My sincerest wish is that he rot slowly in Filbercio's mountain prison."];
+                }
+            }
+            key ("stockings") {
+                TurnOff("stockings");
+                if v1 {
+                    ["Those stockings thou dost have in thy possession are rightfully my property. They can be used by people to humiliate me and destroy my marriage. As one woman to another, I appeal to thee for understanding. If thou dost return them to me I will give to thee a spell from my personal spellbook. Wilt thou please return them to me?"];
+                    v9 = ~AskYesNo();
+                    if v9 {
+                        v10 = ~TakeFromParty_i(true, 0, _All, _Stockings, 1);
+                        ["Ha! There was thy spell, foolish woman! Now the stockings are destroyed and they shall trouble me no more!"];
+                        Bark_i(0, "@Fool!@", _Columna);
+                        SetWorkType(_Wander, _Columna);
+                        terminate;
+                    } else {
+                        ["Please, I beg of thee to reconsider."];
+                    }
+                } else {
+                    ["Thou hast my stockings in thy possession. They are my intimate apparel and they do not belong in thy backpack. They belong on my creamy thighs. I am a woman and thou art a man and thou dost have me at an advantage. If thou wouldst but return them, I shall be happy to wear them for thee, in a night of passion that thou shalt remember all of thy days. May I have them now?"];
+                    v11 = ~AskYesNo();
+                    if v11 {
+                        v12 = ~TakeFromParty_i(true, 0, _All, _Stockings, 1);
+                        if $gotspellbook {
+                            ["Ha! Dost thou think that because thou art now a Mage, that thou art equal to me? I reject thine advances, mage."];
+                        } else {
+                            ["Ha! Thou dost think I would squander my lust on the likes of thee?! A Mundane!!! I laugh at thee."];
+                        }
+                        ["The stockings have now been destroyed by my magics. Thou dost have no hold over me, nor shall anyone else!"];
+                    } else {
+                        ["Please, I beg of thee to reconsider."];
+                    }
+                }
+            }
+            key ("Mosh") {
+                TurnOff("Mosh");
+                ["So thou hast been spending thy time with beggars and thieves? This does not speak well of thy character, <v2>."];
+                ["No doubt she hath defamed me. What tales she tells! Of course, she is merely jealous of my position in society, and of my powers."];
+                ["Let me say this plainly. Mosh lies. She hath ruined herself with cruel indulgences, and now she is half mad."];
+                ["Why, she sleeps with her rats! I ask thee, is this the action of a respectable mage?"];
+                $columnasaidlies = true;
+            }
+            key ("bye") {
+                CloseSpeaker0_i();
+                Bark_i(0, "@I must be going...@", _Avatar);
+                Bark_i(2, "@Farewell!@", _Columna);
+                MessengerBringsScroll_i();
+                break;
+            }
+        }
+        clear_answers;
+    }
+}
+
+Usable ColumnaSellsSpells_i #locals(16) #uses(~AskList, ~AskOrdList, ~AskYesNo, ~SellSpell_i, ~ColumnaHaggles_i) {
+    PushKeys();
+    v0 = true;
+    ["What coin wilt thou pay with?"];
+    v1 = ~AskList(<< "Guilders", "Gold Coins" >>);
+    if (v1 = "Guilders") {
+        v2 = 952;
+    }
+    if (v1 = "Gold Coins") {
+        v2 = 644;
+        v3 = 1;
+    }
+    While v0 {
+        ["In which circle of magic art thou interested?"];
+        v4 = ~AskOrdList(<< "nothing", "First", "Second", "Third", "Fourth", "Fifth", "Sixth", "Seventh" >>);
+        v4 = (v4 - 1);
+        if (v4 = 0) {
+            break;
+        }
+        switch v4 {
+            case 1 {
+                v5 = << "nothing", "Great Ignite", "Locate" >>;
+                v6 = << 0, 4, 6 >>;
+                v7 = << 0, 30, 35 >>;
+                v8 = << 0, 18, 20 >>;
+            }
+            case 2 {
+                v5 = << "nothing", "Destroy Trap", "Great Light", "Protection" >>;
+                v6 = << 0, 9, 12, 15 >>;
+                v7 = << 0, 50, 60, 80 >>;
+                v8 = << 0, 30, 30, 50 >>;
+            }
+            case 3 {
+                v5 = << "nothing", "Curse", "Columna's Intuition", "Mass Protect" >>;
+                v6 = << 0, 17, 19, 20 >>;
+                v7 = << 0, 75, 120, 100 >>;
+                v8 = << 0, 40, 80, 60 >>;
+            }
+            case 4 {
+                v5 = << "nothing", "Mass Curse", "Unlock Magic" >>;
+                v6 = << 0, 28, 31 >>;
+                v7 = << 0, 110, 120 >>;
+                v8 = << 0, 60, 70 >>;
+            }
+            case 5 {
+                v5 = << "nothing", "Invisibility" >>;
+                v6 = << 0, 36 >>;
+                v7 = << 0, 155 >>;
+                v8 = << 0, 90 >>;
+            }
+            case 6 {
+                v5 = << "nothing", "Dispel Illusion", "Create Ammunition" >>;
+                v6 = << 0, 41, 46 >>;
+                v7 = << 0, 165, 175 >>;
+                v8 = << 0, 110, 120 >>;
+            }
+            case 7 {
+                v5 = << "nothing", "Energy Mist", "Poison Mist" >>;
+                v6 = << 0, 49, 52 >>;
+                v7 = << 0, 250, 280 >>;
+                v8 = << 0, 180, 190 >>;
+            }
+            default {
+            }
+        }
+        ["What spell art thou interested in buying?"];
+        v9 = ~AskOrdList(v5);
+        if (v9 = 1) {
+            ["If that is what thou dost wish..."];
+        } else {
+            v10 = v6::v9;
+            v11 = (v7::v9 * v3);
+            v12 = (v8::v9 * v3);
+            v13 = v5::v9;
+            if (v1 = "Guilders") {
+                v11 = ((v7::v9 * 3) / 2);
+                v12 = ((v8::v9 * 3) / 2);
+            }
+            if (v11 = v12) {
+                ["<v13> will cost <v11> <v1>. Wilt thou pay my price?"];
+                v14 = 0;
+                if (~AskYesNo() = true) {
+                    v14 = ~SellSpell_i(v11, v2, v10);
+                }
+            } else {
+                ["<v13> will cost thee <v11> <v1>. Dost thou find this acceptable?"];
+                v15 = ~ColumnaHaggles_i(v12, v11);
+                v14 = 0;
+                if (v15 > 0) {
+                    v14 = ~SellSpell_i(v15, v2, v10);
+                }
+            }
+            if (v14 = 1) {
+                ["The spell is thine."];
+            } else {
+                if (v14 = 2) {
+                    ["Thou dost not have a spellbook."];
+                    v0 = false;
+                    break;
+                }
+                if (v14 = 3) {
+                    ["Thou dost not have enough <v1> for that!"];
+                } else {
+                    if (v14 = 4) {
+                        ["I believe thou dost already have that spell."];
+                    } else {
+                    }
+                }
+            }
+        }
+        ["Another spell perhaps?"];
+        v0 = ~AskYesNo();
+    }
+    PopKeys();
+}
+
+Function ~ColumnaHaggles_i accepts a0, a1 #locals(13) #uses(~AskList, ~Haggle_i, ~AskYesNo) {
+    v2 = v1;
+    v3 = ((v0 / 3) * 2);
+    v4 = (15 - (~GetNPCID_i(_Columna) / 2));
+    v5 = 0;
+    v6 = 1;
+    v7 = 0;
+    v8 = 2;
+    v9 = ~GetNPCID_i(_Columna);
+    While v6 {
+        v10 = ~AskList(<< "yes", "no", "haggle" >>);
+        if (v10 = "no") {
+            return 0;
+        } else {
+            if (v10 = "yes") {
+                v11 = 0;
+                goto label_8;
+            }
+        }
+        v12 = ~Haggle_i(v5, v4, v7, v3, v8, v0, v2);
+        v7 = (v7 + 1);
+        v5 = v12::4;
+        v11 = v12::3;
+        v13 = v2;
+        v2 = v12::2;
+        v3 = v12::1;
+        label_8:
+        v14 = ~Random(3);
+        if (v11 < 2) {
+            if (v2 < (v0 + ((v1 - v0) / 4))) {
+                if (v14 = 1) {
+                    ["Thou art a shrewd and crafty bargainer, to convince me to accept this price..."];
+                }
+                if (v14 = 2) {
+                    ["Art thou certain thou hast not cast a dweomer upon me? I usually do not lower my prices so."];
+                }
+                if (v14 = 3) {
+                    ["'Tis truly amazing... thou hast a facile tongue to convince me to lower my price by so much."];
+                }
+            } else {
+                if (v2 < (v0 + ((v1 - v0) / 3))) {
+                    if (v14 = 1) {
+                        ["'Tis lower than I expected... but I shall agree to this price."];
+                    }
+                    if (v14 = 2) {
+                        ["Thou art very good at bargaining. I will accept this price."];
+                    }
+                    if (v14 = 3) {
+                        ["I see." *"Very well, I will agree to this price even though 'tis lower than I did expect."];
+                    }
+                } else {
+                    if (v2 < (v0 + ((v1 - v0) / 2))) {
+                        if (v14 = 1) {
+                            ["Hmm..." ~"I suppose one must accept such a price -- though it could have been higher."];
+                        }
+                        if (v14 = 2) {
+                            ["'Tis not such an indecent offer." ~"I accept."];
+                        }
+                        if (v14 = 3) {
+                            ["I will accept\x09this price." ~"I can always use the extra funds for research."];
+                        }
+                    } else {
+                        if (v14 = 1) {
+                            ["Very well." *"I accept thine offer!"];
+                        }
+                        if (v14 = 2) {
+                            ["It hath been a pleasure!" *"I will accept thine offer."];
+                        }
+                        if (v14 = 3) {
+                            ["Yes..."*"'Tis a very good price."];
+                        }
+                    }
+                }
+            }
+            ["So, have we agreed on the price of <v2>?"];
+            if (~AskYesNo() = true) {
+                if (v9 > 1) {
+                    SetNPCID_i((v9 - 2), _Columna);
+                }
+                return v2;
+            } else {
+                if (v14 = 1) {
+                    ["Pray, resolve thy mind!"];
+                }
+                if (v14 = 2) {
+                    ["Dost thou waste the time of other mages as well?"];
+                }
+                if (v14 = 3) {
+                    ["Thou art most rude to renege on an offer!"];
+                }
+                if (31 < (v9 + 10)) {
+                    SetNPCID_i(31, _Columna);
+                } else {
+                    SetNPCID_i((v9 + 10), _Columna);
+                }
+                return 0;
+            }
+        }
+        if (v5 = 1) {
+            if (v11 = 5) {
+                ["<v2> is my final offer. Dost thou want it at this price?"];
+                if (v9 < 28) {
+                    SetNPCID_i((v9 + 4), _Columna);
+                }
+                if (~AskYesNo() = true) {
+                    return v2;
+                }
+                v6 = 0;
+            } else {
+                ["<v2> is my final offer.  I will go no lower."];
+                if (v9 < 30) {
+                    SetNPCID_i((v9 + 2), _Columna);
+                }
+            }
+        } else {
+            if (v11 = 2) {
+                if (v14 = 1) {
+                    ["'Tis pleasant to find thee amenable. Wouldst thou consider <v2>?"];
+                }
+                if (v14 = 2) {
+                    ["Thou seemest to appreciate the finer spells and what they are truly worth. How does <v2> sound?"];
+                }
+                if (v14 = 3) {
+                    ["What a pleasure it is to deal with thee. I offer thee <v2>."];
+                }
+            }
+            if (v11 = 3) {
+                if (v14 = 1) {
+                    ["I am not totally certain.... How about <v2>?"];
+                }
+                if (v14 = 2) {
+                    ["Thou wilt not obtain the spell so cheaply. I will give thee <v2>?"];
+                }
+                if (v14 = 3) {
+                    ["I suppose I must needs take thy money,..." *"but not at that price. <v2>?"];
+                }
+            }
+            if (v11 = 4) {
+                if (v14 = 1) {
+                    ["This is not a price that inspires me to appreciate thy finer qualities. For <v2> I will like thee better."];
+                }
+                if (v14 = 2) {
+                    ["For such a pitiful sum I could not even gain a tenth of what this spell cost me to learn! I can go no lower than <v2>."];
+                }
+                if (v14 = 3) {
+                    ["I am not certain who is the more foolish..."*"Thou for offering such a wretched amount, or myself for continuing to bargain with thee. I will offer thee <v2>."];
+                }
+            }
+            if (v11 = 5) {
+                v2 = v13;
+                if (v14 = 1) {
+                    ["Art thou jesting? My previous offer stands, at <v2>."];
+                }
+                if (v14 = 2) {
+                    ["Art thou deaf, or merely an imbecile? I offer <v2>, and no less!"];
+                }
+                if (v14 = 3) {
+                    ["Thine offer is an insult to any mage! My offer doth stand at <v2>."];
+                }
+                if (v9 < 31) {
+                    SetNPCID_i((v9 + 1), _Columna);
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,47 @@
+#ifndef PRELOAD_H
+#define PRELOAD_H
+
+struct AudioOptions;
+struct SoundConfig;
+struct Speech;
+
+/* Audio settings: each is 0 unset, AUDIO_OFF or AUDIO_ON. */
+#define AUDIO_OFF   1
+#define AUDIO_ON    2
+
+extern Speech SpeechPlayer;
+
+uint8_t GetAudioOptions(uint8_t *music, uint8_t *speech, uint8_t *effects);
+uint8_t SetAudioState(uint8_t music, uint8_t speech, uint8_t effects);
+
+extern int16_t CursorX, CursorY;
+extern uint8_t CursorDrawn, CursorTracking;
+extern char *const U7MapFileName;
+extern char *const U7IregFileFormat;
+extern char *const U7ChunksFileName;
+extern char *const ShpDimsFileName;
+extern char OptionDelimiters[];
+extern char MusicKeyword[];
+extern char SpeechKeyword[];
+extern char SfxKeyword[];
+extern const char InterruptKeyword[];
+extern const char PortKeyword[];
+extern const char AdlibKeyword[];
+extern const char RolandKeyword[];
+extern char OnKeyword[];
+extern char OffKeyword[];
+extern const char CheatPassword[];
+extern "C" uint8_t CheatStart;
+extern SoundConfig SoundSetup;
+#ifdef __cplusplus
+extern "C" {
+#endif
+void InitGameSystems();
+void ParseCommandLine(int16_t argc, char **argv);
+void ConfigureSound(char *configuration, char *preferences);
+#ifdef __cplusplus
+}
+#endif
+uint8_t ReadAudioOptions(char *filename, AudioOptions *settings);
+
+#endif

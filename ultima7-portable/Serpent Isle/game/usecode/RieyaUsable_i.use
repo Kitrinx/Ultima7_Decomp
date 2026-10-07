@@ -1,0 +1,119 @@
+Routine RieyaUsable_i accepts a0 #locals(2) #uses(~AskYesNo, Bark_i) {
+    v0 = false;
+    v1 = ~GetNPCID_i(item);
+    if (v1 = 12) {
+        v0 = true;
+    }
+    if (event = _Action) {
+        SetWorkType(_Stand, item);
+        ClearBark_i(item);
+        SetSpeaker0_i(0, 65224);
+        if not $MET_RIEYA {
+            ["Didst thy mother never tell thee not to speak with strange women then? Hmmmph!];
+            ["A fine one thou art to be wasting Rieya's time. Thou shouldst watch thy step, my bonny pawn of prophecy, lest I forget the aid that I was meant to give thee."];
+            $MET_RIEYA = true;
+            SetNPCID_i(12, item);
+        } else {
+            ["Don't tell me that thou hast come back to Rieya looking for more aid! I've helped thee all I may, pawn of prophecy. Thou needs must look elsewhere..."];
+        }
+        TurnOn(<< "Rieya", "pawn of prophecy", "aid", "bye" >>);
+        converse {
+            key ("Rieya") {
+                TurnOff("Rieya");
+                ["Rieya is my name... And I'll thank thee not to smirk so! Thy name is just as strange to me, I assure thee!];
+                ["Thou shouldst mind thy manners, else -- Guide or no -- I'll not aid thee!"];
+                TurnOn("Guide");
+            }
+            key ("Guide") {
+                TurnOff("Guide");
+                ["I shouldn't wonder that thou hadst never heard of the Guide before. Thou art scarcely fit to be the pawn of prophecy. Why clutter up thy mind with other possibilities...];
+                [Oh, never mind! Thou wouldst not understand!"];
+                TurnOn(<< "scarcely fit", "other possibilities" >>);
+            }
+            key ("scarcely fit") {
+                TurnOff("scarcely fit");
+                ["Look at thee! Thou hast no idea what is going on! Thou art as willing to listen to me as to those fools in the keep!];
+                ["How canst thou be so trusting? How hast thou lived so long?"];
+                TurnOn(<< "What is going on?", "fools in the keep" >>);
+            }
+            key ("What is going on?") {
+                TurnOff("What is going on?");
+                ["What is going on?! Listen to thee! Dunce, there is a war going on!];
+                ["People are killing each other over a difference in philosophies! And thou art parading about as if no one wouldst make thee a target!"];
+            }
+            key ("fools in the keep") {
+                TurnOff("fools in the keep");
+                ["Aye, they're fools. They follow the \@wisdom\@ of beings they have never seen, and believe that extermination of all opposing philosophies will restore Balance!];
+                ["I tell thee that they are fools! Fools! This world is doomed. They should let it die and move on...];
+                ["Ah well, I can't expect thee to understand. Never mind."];
+            }
+            key ("other possibilities") {
+                TurnOff("other possibilities");
+                ["Not all follow the Teachings of the Serpents, friend. Some believe that it is pointless to hope for Balance on this flawed world.];
+                ["But those in the keep refuse to acknowledge that there are others that follow other paths. Fools!"];
+            }
+            key ("pawn of prophecy") {
+                TurnOff("pawn of prophecy");
+                ["The pawn of prophecy is thou, needle head! Thou dost wear the Amulet of Balance, which -- according to those fools in the keep -- makes thee the Champion of Balance."];
+                TurnOn(<< "Amulet of Balance", "Champion of Balance" >>);
+            }
+            key ("Amulet of Balance") {
+                TurnOff("Amulet of Balance");
+                ["Dost thou not know what that bauble is yet? Are all those Ophidians asleep?! How could they not have told thee?];
+                ["I'll tell thee, this is service above and beyond the call! Oh well, I shall have to do their job for them.];
+                ["The Amulet of Balance once belonged to the Great Hierophant who used it to enforce Balance upon the Ophidians. It is a magical pendant that none but the Champion of Balance may wear, or so it is said."];
+                TurnOn(<< "Ophidians", "Great Hierophant" >>);
+            }
+            key ("Ophidians") {
+                TurnOff("Ophidians");
+                ["Oooh, thine cup is a bit shy of full, isn't it?];
+                ["Ophidians are those who follow the Teachings of the Serpents."];
+                TurnOn("Teachings of the Serpents");
+            }
+            key ("Teachings of the Serpents") {
+                TurnOff("Teachings of the Serpents");
+                ["I can't believe I am telling thee this! I should send thee back to the keep, I should!];
+                ["The Ophidians worship the Great Earth Serpent, and the Order and Chaos serpents, which supposedly dwell within the Void.];
+                ["And before thou dost ask, I cannot explain the Void to thee. Thou shouldst ask those idiots at the keep.];
+                ["The values of the Ophidians are called the Teachings. Got it?"];
+            }
+            key ("Great Hierophant") {
+                TurnOff("Great Hierophant");
+                ["Who would have thought a pawn of prophecy could be so stupid?!];
+                ["The Ophidians considered the Great Hierophant to be the Voice of the Great Earth Serpent. Whatever he was, he kept them from killilng each other...];
+                ["Until they murdered him that is. THEN they started killing each other. Have to do things right, I guess..."];
+                TurnOn("murdered");
+            }
+            key ("murdered") {
+                TurnOff("murdered");
+                ["Chaos said Order was responsible. Order said Chaos did it.];
+                ["Who knows? Who cares? They've been trying to destroy each other ever since."];
+            }
+            key ("Champion of Balance") {
+                TurnOff("Champion of Balance");
+                ["The Champion of Balance was the muscle behind the Great Hierophant. Guess the Great Hierophant couldn't get his hands dirty... Who knows?];
+                ["It was the Champion's job to pound any dissenters of the Teachings into submission. Brute force will do it every time. Guess that explains the lack of brains..."];
+            }
+            key ("aid") {
+                TurnOff("aid");
+                ["I never said that thou needs must like me. I said that I had to aid thee. Dost thou wish to hear it or not?"];
+                if ~AskYesNo() {
+                    ["Take all the help thou canst get, right? Hmmph!];
+                    ["Beyond this gate lies a room that will block thy progress and try to kill thee. In this room thou shalt find three buttons.];
+                    ["Press first the middle button, and then the top button. Press the south button last and thou shalt be free."];
+                } else {
+                    ["Then why dost thou waste my time?! Go back to those fool Ophidians, where thou dost belong!"];
+                    terminate;
+                }
+            }
+            key ("bye") {
+                CloseSpeaker0_i();
+                SetWorkType(_Loiter, item);
+                Bark_i(0, "@Good riddance!@", _Avatar);
+                Bark_i(2, "@Pea brain!@", item);
+                break;
+            }
+        }
+        clear_answers;
+    }
+}

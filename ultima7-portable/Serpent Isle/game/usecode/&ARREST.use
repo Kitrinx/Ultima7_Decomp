@@ -1,0 +1,226 @@
+Routine ArrestAvatar_i accepts a0 #locals(33) #uses(~WhereAmI_i, ~AskYesNo, ~OfferBribe_i, ~DoorState_i, ~SwingSDoorNS_i, ConfiscateBelongings_i) {
+    if (event = _Converse) {
+        v0 = ~Item_getType(item);
+        if ~GetNPCStat_i(_Sex, item) {
+            v1 = "her";
+            v2 = "she";
+        } else {
+            v1 = "his";
+            v2 = "he";
+        }
+        if (v0 = 228) {
+            SetSpeaker(0, _Hazard);
+        } else {
+            if ((v0 = 298) or (v0 = 528)) {
+                TurnTownHostile_i();
+                return;
+            }
+            if ((v0 = 461) or (v0 = 259)) {
+                SetSpeaker(0, _Chuck);
+            } else {
+                if (v0 = 747) {
+                    SetSpeaker(0, _Forskis);
+                } else {
+                    if ((v0 = 381) or (v0 = 720)) {
+                        SetSpeaker(0, _HoundOfDoskar);
+                    } else {
+                        v3 = ~ItemToNPC_i(item);
+                        SetSpeaker(0, v3);
+                    }
+                }
+            }
+        }
+        if (v3 = 65500) {
+            ["Please, I beg thee to stop this or thou wilt anger my master...."];
+            return;
+        }
+        v4 = 644;
+        if (~WhereAmI_i() = 13) {
+            v4 = 951;
+        }
+        if (~WhereAmI_i() = 14) {
+            v4 = 952;
+        }
+        if (~WhereAmI_i() = 3) {
+            v4 = 948;
+        }
+        v5 = ~CountItem(_All, _All, v4, _Party);
+        if ((~rndRange(2, 1) = 1) and v5) {
+            ["Cease and desist immediately!"~~"Dost thou wish to avoid the unpleasantries of a lengthy trial?"];
+            v6 = ~AskYesNo();
+            if v6 {
+                ["What is thy liberty worth?"];
+                if ~OfferBribe_i(v4, v5) {
+                    goto label_29;
+                } else {
+                    [The guard looks unimpressed by your paltry offer. "Our jail is populated by some unsavory knaves. Thy freedom should be worth more than that..."];
+                    if ~OfferBribe_i(v4, v5) {
+                        label_29:
+                        if ~AvatarSex() {
+                            v7 = "woman";
+                        } else {
+                            v7 = "man";
+                        }
+                        if (~WhereAmI_i() = 13) {
+                            v8 = << 720, 228 >>;
+                        }
+                        if (~WhereAmI_i() = 3) {
+                            v8 = << 720, 381 >>;
+                        }
+                        if (~WhereAmI_i() = 14) {
+                            v8 = << 720, 259, 461 >>;
+                        }
+                        v9 = << >>;
+                        Foreach v12 in v8 {
+                            v9 = (v9 & ~FindNearby_i(0, 30, v12, item));
+                        }
+                        Foreach v15 in v9 {
+                            SetWorkType(_Wander, v15);
+                        }
+                        v16 = ~FindNearby_i(8, 65, _All, item);
+                        Foreach v19 in v16 {
+                            if (~GetWorkType(v19) = _Combat_0) {
+                                SetWorkType(_Wander, v19);
+                            }
+                        }
+                        ["I am pleased to see that thou art a thinking <v7>. I will take care of this disturbance."];
+                        SetMusic(item, 255);
+                        terminate;
+                    } else {
+                        goto label_68;
+                    }
+                }
+            } else {
+                goto label_68;
+            }
+        }
+        ["Cease and desist immediately, ruffian!"];
+        ["Wilt thou come quietly?"];
+        TurnOn(<< "Yes", "No" >>);
+        v20 = ~GetParty();
+        Foreach v23 in v20 {
+            v24 = ~FindItem(_All, 187, _Scroll, v23);
+            if v24 {
+                TurnOn("certificate");
+                break;
+            }
+        }
+        converse {
+            key ("Yes") {
+                ["Very well. Thou shalt remain in prison until we see fit to release thee."];
+                v16 = ~FindNearby_i(8, 65, _All, item);
+                Foreach v19 in v16 {
+                    if (~GetWorkType(v19) = _Combat_0) {
+                        SetWorkType(_Wander, v19);
+                    }
+                }
+                StopArrest_i();
+                v27 = ~PostInFuture(2, << _aNO_HALT_i, _aUSABLE_i, #ArrestAvatar_i, _aLIE_FRAME_i >>, _Avatar);
+                terminate;
+            }
+            key ("No") {
+                label_68:
+                ["An unfortunate decision, my friend."];
+                TurnTownHostile_i();
+                return;
+            }
+            key ("certificate") {
+                ["Oh, I see. Carry on, carry on."];
+                StopArrest_i();
+                return;
+            }
+        }
+        clear_answers;
+    }
+    if (event = _Action) {
+        v20 = ~GetParty();
+        Foreach v30 in v20 {
+            SetWorkType(_FollowAvt, v30);
+            SetFrame(0, v30);
+        }
+        if (~WhereAmI_i() = 13) {
+            v31 = << 1063, 2520, 0 >>;
+        }
+        if (~WhereAmI_i() = 3) {
+            v31 = << 992, 1568, 0 >>;
+        }
+        if (~WhereAmI_i() = 14) {
+            v31 = << 2353, 1850, 0 >>;
+        }
+        FadePalette_i(0, 1, 12);
+        SetMusic(item, 255);
+        Item_move(v31, _Party);
+        v32 = ~FindNearby_i(0, 10, _SDoor_NS, _Avatar);
+        if (v32 and (~DoorState_i(v32) = 1)) {
+            v27 = ~SwingSDoorNS_i(v32);
+        }
+        ConfiscateBelongings_i();
+        v27 = ~PostAction(<< _aNO_HALT_i, _aWAIT_i, 1, _aUSABLE_i, #CloseJailDoor_i >>, _Avatar);
+    }
+}
+
+Routine CloseJailDoor_i accepts a0 #locals(2) {
+    FadePalette_i(1, 1, 12);
+    v0 = ~FindNearby_i(0, 6, _Door_NS, _Avatar);
+    if v0 {
+        v1 = ~PostInFuture(1, << _aNO_HALT_i, _aUSABLE_i, #Door_EW, _aFRAME, 6 >>, v0);
+    }
+}
+
+Usable ConfiscateBelongings_i #locals(15) #uses(~WhereAmI_i) {
+	if (~WhereAmI_i() = 13) {
+		v0 = << 1075, 2499, 2 >>;
+	} else {
+		if (~WhereAmI_i() = 14) {
+			v0 = << 2314, 1830, 0 >>;
+		} else {
+			v0 = << 1017, 1559, 2 >>;
+			goto label_5;
+		}
+	}
+	/* All coordinate choices join the chest search here. */
+	label_5:
+	v1 = ~FindNearby_i(0, 65, _Chest, _Avatar);
+	Foreach v4 in v1 {
+		if (~GetQuality(v4) = 236) {
+			v5 = true;
+			goto label_12;
+		}
+	}
+	v4 = ~Item_create(_Chest);
+	if v4 {
+		v6 = ~SetQuality(236, v4);
+		v5 = ~PopToMap(v0);
+	}
+	label_12:
+	v7 = ~GetParty();
+	Foreach v10 in v7 {
+		v11 = ~GetContents(_All, _All, _All, v10);
+		Foreach v14 in v11 {
+			if not ((~Item_getType(v14) = _Serp_Bracers) or (~Item_getType(v14) = _Path)) {
+				v6 = ~Item_push(v14);
+				if v6 {
+					if v5 {
+						if not ~Item_popToEnd(v4) {
+							v6 = ~PopToNPC(v10);
+						}
+					} else {
+						if not ~PopToMap(v0) {
+							v6 = ~PopToNPC(v10);
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+Function ~OfferBribe_i accepts a0, a1 #locals(2) {
+    v2 = ~AskBarInput((v1 / 2), 1, v1, 0);
+    if ((v2 >= 50) and (v2 >= (v1 / 2))) {
+        v3 = ~TakeFromParty_i(true, _All, _All, v0, v2);
+        return true;
+    } else {
+        return false;
+    }
+}

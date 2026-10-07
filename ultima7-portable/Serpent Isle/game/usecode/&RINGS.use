@@ -1,0 +1,171 @@
+Routine Magic_rings accepts a0 #locals(8) #uses(~OuterContainer_i, ~IsNPCNear, ~TransferItems_i, GivePartyExp_i) {
+    v0 = ~GetFrame(item);
+    if (v0 = 0) {
+        if ((event = _Equip) or (event = _Unequip)) {
+            v1 = ~Item_getContainer(item);
+            While ((v1 <> 0) and not ~Item_isNpc(v1)) {
+                v1 = ~Item_getContainer(v1);
+            }
+            if (v1 = 0) {
+                FlashMouse_i(0);
+                return;
+            }
+        }
+        if (event = _Equip) {
+            SetItemFlag_i(_Invisible, v1);
+        }
+        if (event = _Unequip) {
+            ClearItemFlag_i(_Invisible, v1);
+        }
+    }
+    if (v0 = 1) {
+        if (event = _Equip) {
+            v1 = ~Item_getContainer(item);
+            if (v1 and ~Item_isNpc(v1)) {
+                Kernel_resetRef(item);
+                v2 = ~PostInFuture(100, << _aNO_HALT_i, _aUSABLE_i, #Magic_rings >>, item);
+            } else {
+                FlashMouse_i(0);
+            }
+        }
+        if (event = _Unequip) {
+            Kernel_resetRef(item);
+        }
+        if (event = _Action) {
+            Kernel_resetRef(item);
+            v1 = ~Item_getContainer(item);
+            if (v1 and ~Item_isNpc(v1)) {
+                v3 = ~GetNPCStat_i(_Str, v1);
+                v4 = ~GetNPCStat_i(_Hits, v1);
+                if (v4 < v3) {
+                    v2 = ~ChangeNPCStat_i(1, _Hits, v1);
+                    if (~rndRange(100, 1) = 1) {
+                        Item_destroy(item);
+                        return;
+                    }
+                }
+                v2 = ~PostInFuture(100, << _aNO_HALT_i, _aUSABLE_i, #Magic_rings >>, item);
+            }
+        }
+    }
+    if (v0 = 2) {
+        if ((event = _Equip) or ((event = _Unequip) or (event = _Action))) {
+            v1 = ~OuterContainer_i(item);
+        }
+        if (event = _Unequip) {
+            v5 = ~IsNPCNear(_Selina);
+            if v5 {
+                v2 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #Magic_rings >>, item);
+            }
+        }
+        if (event = _Action) {
+            v5 = ~IsNPCNear(_Selina);
+            if v5 {
+                Item_bark("Do not touch my ring!", _Selina);
+                v6 = ~NPCToItem_i(_Selina);
+                v7 = ~GetDir(item, _Selina);
+                v2 = ~PostAction(<< _aNO_HALT_i, _aFACE_i, v7, _aTHRUST2_FRAME_i >>, v6);
+                if v1 {
+                    v2 = ~TransferItems_i(false, 2, 65177, _Magic_Rings, 1, _Selina, v1);
+                } else {
+                    v2 = ~Item_push(item);
+                    v2 = ~PopToNPC(_Selina);
+                }
+            }
+        }
+    }
+    if (v0 = 3) && (event = _Equip) && not $EXPERIENCE_FROM_RING_OF_REAGENTS {
+        GivePartyExp_i(1000);
+        $EXPERIENCE_FROM_RING_OF_REAGENTS = true;
+    }
+}
+
+Routine Ring accepts a0 #locals(0) #uses(~GimmePathEgg, PlayQuestSpeech_i) {
+    if (item = ~GimmePathEgg(4, 5)) && (event = _Action) {
+        PlayQuestSpeech_i();
+    }
+}
+
+Usable PlayQuestSpeech_i #locals(0) #uses(PlaySpeechOrText_i, ~WhereAmI_i) {
+    if (~GetItemFlag_i(_Zombie, _Gwenno) and $FREED_GWENNOS_BODY) {
+        PlaySpeechOrText_i(15);
+        terminate;
+    }
+    if ((~WhereAmI_i() = 23) and not ~GetItemFlag_i(_Dead, _Vasculio)) {
+        PlaySpeechOrText_i(13);
+        terminate;
+    }
+    if ((~WhereAmI_i() = 31) and not $BATLIN_FLED_SHAMINOS_KEEP) {
+        PlaySpeechOrText_i(2);
+        terminate;
+    }
+    if ((~WhereAmI_i() = 24) and $SERPENT_GWANI_HORN_SPEECH) {
+        PlaySpeechOrText_i(20);
+        terminate;
+    }
+    if not flag(729) {
+        PlaySpeechOrText_i(16);
+        terminate;
+    }
+    if (flag(729) and not flag(730)) {
+        PlaySpeechOrText_i(17);
+        terminate;
+    }
+    if (flag(730) and not $DREAM_REALM_COMPLETE) {
+        PlaySpeechOrText_i(18);
+        terminate;
+    }
+    if ($DREAM_REALM_COMPLETE and (not $BATLIN_FLED_SHAMINOS_KEEP and not $BANES_RELEASED)) {
+        if (~Random(3) = 1) {
+            PlaySpeechOrText_i(19);
+            terminate;
+        } else {
+            if (~Random(2) = 1) {
+                PlaySpeechOrText_i(0);
+                terminate;
+            } else {
+                PlaySpeechOrText_i(12);
+                terminate;
+            }
+        }
+    }
+    if ($BATLIN_FLED_SHAMINOS_KEEP and not $spinevisiondone) {
+        PlaySpeechOrText_i(10);
+        terminate;
+    }
+    if ($BANES_RELEASED and not flag(737)) {
+        PlaySpeechOrText_i(20);
+        terminate;
+    }
+    if (flag(737) and not $FREED_GWENNOS_BODY) {
+        PlaySpeechOrText_i(11);
+        terminate;
+    }
+    if (flag(734) and not flag(586)) {
+        PlaySpeechOrText_i(14);
+        terminate;
+    }
+    if (flag(742) and not flag(741)) {
+        PlaySpeechOrText_i(6);
+        terminate;
+    }
+    if (flag(743) and not flag(741)) {
+        PlaySpeechOrText_i(5);
+        terminate;
+    }
+    if (flag(740) and not flag(739)) {
+        PlaySpeechOrText_i(8);
+        terminate;
+    }
+    if flag(739) {
+        PlaySpeechOrText_i(9);
+        terminate;
+    }
+    if (~Random(2) = 1) {
+        PlaySpeechOrText_i(0);
+        terminate;
+    } else {
+        PlaySpeechOrText_i(12);
+        terminate;
+    }
+}

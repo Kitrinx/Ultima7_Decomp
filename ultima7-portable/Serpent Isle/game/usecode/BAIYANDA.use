@@ -1,0 +1,185 @@
+Routine Baiyanda accepts a0 #locals(20) #uses(Bark_i, ~IsInInv, ~PartyNoAutomatons_i, ~AskOrdList, ~AskYesNo, ~GiveItemsOrDrop_i) {
+    if (event = _Converse) {
+        Item_bark("@Greetings@", _Avatar);
+        Bark_i(3, "@We knew thou would come.@", _Baiyanda);
+        SetWorkType(_Talk, _Baiyanda);
+    }
+    if (event = _Talking) {
+        Npc_schedule(_Baiyanda);
+        ClearBark_i(_Baiyanda);
+        SetSpeaker0_i(0, _Baiyanda);
+        v0 = ~IsInInv(2, 9, _Bucket, 1, _Party);
+        v1 = ~GetItemFlag_i(_Met, _Baiyanda);
+        if v1 {
+            ["We meet again."];
+        } else {
+            ["Thou art Avatar!"];
+        }
+        TurnOn(<< "name", "bye" >>);
+        if v0 {
+            TurnOn("got blood");
+        }
+        converse {
+            key ("got blood") {
+                TurnOff("got blood");
+                ["Hurry! Take Ice Dragon blood to Yenani! No time to delay!"];
+                terminate;
+            }
+            key ("name") {
+                TurnOff("name");
+                ["I am Baiyanda, mate of Mwaerno and healer for Gwani people."];
+                SetItemFlag_i(_Met, _Baiyanda);
+                TurnOn(<< "Mwaerno", "healer" >>);
+            }
+            key ("Mwaerno") {
+                TurnOff("Mwaerno");
+                ["He great hunter. Mwaerno and Baiyanda joined by Yenani many years ago."];
+                TurnOn(<< "hunter", "Yenani" >>);
+            }
+            key ("hunter") {
+                TurnOff("hunter");
+                ["Myauri Master Hunter of Gwani. He know where game are and how to find. But Mwaerno best at catching game. I very proud of him."];
+            }
+            key ("Yenani") {
+                TurnOff("Yenani");
+                ["She our chieftain. Gwani people always led by females. Yenani good friend of Gwenno."];
+                TurnOn("Gwenno");
+            }
+            key ("Gwenno") {
+                TurnOff("Gwenno");
+                v2 = ~GetWorkType(_Gwenno);
+                if (v2 = 15) {
+                    ["Gwenno dead. She good woman. Very generous. She once make gift of bucket to Baiyanda. Baiyanda place body at sacred Gwani Death Temple."];
+                    $knowgwennodead = true;
+                    TurnOn("Where is the temple?");
+                } else {
+                    ["Baiyanda happy that Gwenno alive again!"];
+                }
+            }
+            key ("Where is the temple?") {
+                TurnOff("Where is the temple?");
+                ["It not thing for thou to know. Gwenno must rest now, her soul rest. Leave her. I know it painful, but thou must do this. Even if thou found her thou could not unseal her body without sacred horn of Gwani. Long ago it taken by fiend who steals our dead from us."];
+            }
+            key ("healer") {
+                TurnOff("healer");
+                ["I treat all wounds and illness of Gwani people. Baiyanda not use ways of human healers. Gwani live simple in balance with nature, not force on nature. Gwani healers learn secrets of herbs and animals. If thou need healer, I will help thou."];
+                TurnOn(<< "I need a healer", "herbs and animals" >>);
+            }
+            key ("I need a healer") {
+                TurnOff("I need a healer");
+                ["Rest easy. I will help thou."];
+                ["Who thou want to heal?"];
+                v3 = ~PartyNoAutomatons_i();
+                v3 = (0 & v3);
+                v4 = << "nobody" >>;
+                Foreach v7 in v3 {
+                    if not (v7 = 0) {
+                        v4 = (v4 & ~GetNPCName_i(v7));
+                    }
+                }
+                v8 = ~AskOrdList(v4);
+                v8 = v3::v8;
+                if (v8 = 0) {
+                    ["Maybe thou return later."];
+                } else {
+                    v9 = ~ItemToNPC_i(v8);
+                    v10 = ~GetItemFlag_i(_Poisoned, v8);
+                    v11 = ~GetNPCStat_i(_Str, v8);
+                    v12 = ~GetNPCStat_i(_Hits, v8);
+                    v13 = ~GetNPCName_i(v8);
+                    if (v11 > v12) {
+                        v14 = (v11 - v12);
+                        v15 = ~ChangeNPCStat_i(v14, _Hits, v9);
+                        ["All right, <v13> healed now!"];
+                    } else {
+                        if (v10 = false) {
+                            if (v9 = 65180) {
+                                ["Thou not hurt!"];
+                            } else {
+                                ["<v13> not hurt! Thou play trick?"];
+                            }
+                        } else {
+                            if (v9 = 65180) {
+                                ["Thou poisoned bad! I fix."];
+                            } else {
+                                ["<v13> poisoned bad! I fix."];
+                            }
+                        }
+                    }
+                    if (v10 = true) {
+                        ClearItemFlag_i(_Poisoned, v8);
+                        ["Good! Poison gone now."];
+                    }
+                }
+            }
+            key ("herbs and animals") {
+                TurnOff("herbs and animals");
+                ["Magic corrupts balance of nature. Gwani healers learn things like prepare dried fish and use Ice Dragon blood."];
+                TurnOn(<< "balance of nature", "dried fish", "Ice Dragon blood" >>);
+            }
+            key ("balance of nature") {
+                TurnOff("balance of nature");
+                ["To Gwani, best way to live -- only way -- to live in harmony with nature. And so we not do anything that force nature."];
+            }
+            key ("dried fish") {
+                TurnOff("dried fish");
+                ["Dried fish very good food. It keeps thou from hunger longer than other food."];
+                ["Would thou like some?"];
+                v16 = ~AskYesNo();
+                if v16 {
+                    ["Here, have some. It good."];
+                    v17 = ~GiveItemsOrDrop_i(true, false, 65177, 65177, 509, 1, _Avatar);
+                } else {
+                    ["Too bad. Thou should try some."];
+                }
+            }
+            key ("Ice Dragon blood") {
+                TurnOff("Ice Dragon blood");
+                ["Special things about blood of Ice Dragon that can cure almost any sickness."];
+                ["But Ice Dragons very rare creatures. Gwani honor all life -- try everything before we hunt them."];
+                ["One did live north of our village. We drove different one east many years ago."];
+                v18 = ~GetItemFlag_i(_Zombie, _Neyobi);
+                if v18 {
+                    ["Ice Dragon blood maybe only thing powerful enough to cure Neyobi. But it so rare that it very hard to find. Five of our hunters looking for it."];
+                    ["Gwenno said thou help people in need. Thou must find some Ice Dragon blood for Neyobi! It is the last hope!"];
+                    if not $BAIYANDA_GAVE_BUCKET {
+                        ["Here, take bucket of mine. If thou find and slay Ice Dragon, please bring bucket of blood. Take to Yenani, she know what to do with it."];
+                        v19 = ~GiveItemsOrDrop_i(true, false, 0, 0, 810, 1, _Avatar);
+                        ["Good luck. Neyobi's life depend on it."];
+                        $BAIYANDA_GAVE_BUCKET = true;
+                    } else {
+                        ["Give Yenani bucket of Ice Dragon blood. She know what to do with it."];
+                    }
+                } else {
+                    ["Ice Dragon blood saved Neyobi's life. Great many thanks, Avatar."];
+                }
+                TurnOn(<< "north dragon", "east dragon", "Neyobi" >>);
+            }
+            key ("north dragon") {
+                TurnOff("north dragon");
+                ["I do not know exactly where. We heard nothing for many years."];
+            }
+            key ("east dragon") {
+                TurnOff("east dragon");
+                ["Years ago, Gwani attacked by dragon. Myauri and Mwaerno led hunters to fight it. Gwani drove it east beyond mountains. It very old dragon and still unmated. Very rare."];
+            }
+            key ("Neyobi") {
+                TurnOff("Neyobi");
+                v18 = ~GetItemFlag_i(_Zombie, _Neyobi);
+                if v18 {
+                    ["Neyobi ill from strange sickness. Baiyanda never seen before. Nothing Baiyanda tried help her. Ice Dragon blood only thing that could save her."];
+                } else {
+                    ["No magic in whole world would have saved Neyobi's life. But when Gwani way of healing with balance of nature done, she better."];
+                }
+            }
+            key ("bye") {
+                CloseSpeaker0_i();
+                CloseSpeaker1_i();
+                Bark_i(0, "@I thank thee.@", _Avatar);
+                Bark_i(3, "@Very good.@", _Baiyanda);
+                break;
+            }
+        }
+        clear_answers;
+    }
+}

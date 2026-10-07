@@ -1,0 +1,496 @@
+Routine ProsecuteTraitor_i accepts a0 #locals(9) #uses(~GimmePathEgg, ~LordOrLady, ~AvatarName, ~JailedNPC_i, Bark_i, PartyLooksNE_i, PartyLooksSE_i, ~AskList, ~PartyUtters, BarkIfNear_i) {
+    v0 = ~GetQuality(~GimmePathEgg(1, 1));
+    v1 = ~LordOrLady();
+    v2 = ~AvatarName();
+    v3 = ~JailedNPC_i(false);
+    if (v0 = 30) {
+        flag(374) = true;
+        ClearSpeakers_i();
+        flag(431) = true;
+        SetSpeaker0_i(0, _Voldin);
+        ["Alyssand, we are told that thou hast often been seen in the company of the accused traitor. What things hath he asked of thee?"];
+        SetSpeaker1_i(0, _Alyssand);
+        ["I remember that we spoke of the strange storms, and other such things..."];
+        CloseSpeaker1_i();
+        SetSpeakerSlot_i(0);
+        ["Thou art holding back something..."];
+        SetSpeaker1_i(0, _Kylista);
+        ["Alyssand, beware! The Oracle is the instrument of divine Truth, and it shall not be mocked!"];
+        CloseSpeaker1_i();
+        SetSpeakerSlot_i(0);
+        ["What did the strangers ask of thee, Alyssand? There was a particular item..."];
+        SetSpeaker1_i(0, _Alyssand);
+        ["Well, yes... mine engagement ring, which was lost..."];
+        SetSpeakerSlot_i(0);
+        CloseSpeaker1_i();
+        ["In fact, the traitor had thy missing jewelry! So the Beast hath taught him to steal... using Daemonic powers, I suspect..."];
+        ["I have no further questions. I thank thee."];
+        Bark_i(0, "@Don't twist my words...@", _Alyssand);
+        EndConverse_i();
+        v4 = ~SetQuality(29, ~GimmePathEgg(1, 1));
+        v5 = (~GetCoord(_Alyssand) & (15 & 6));
+        v6 = ~FindNearby_i(16, 40, _Egg_Type, v5);
+        if v6 {
+            v7 = ~GetCoord(v6);
+            PathfindNPC_i(false, #FawnTrialEgg_i, item, _Path_Success, v7, item);
+        }
+        terminate;
+    }
+    if (v0 = 31) {
+        flag(375) = true;
+        v4 = ~SetQuality((v0 + 1), ~GimmePathEgg(1, 1));
+        ClearSpeakers_i();
+        SetSpeaker0_i(0, _Voldin);
+        ["Good day, Delin... Ah, the Oracle is the other way."];
+        SetSpeaker1_i(0, _Delin);
+        ["What... Oh! Forgive me, milords and ladies."];
+        EndConverse_i();
+        v4 = ~PostAction(<< _aWAIT_i, 2, _aBEND_FRAME_i, _aWAIT_i, 2, _aSTAND_FRAME_i, _aWAIT_i, 2, _aFACE_i, _West, _aCONTINUE_i, _aSTEP_LEFT_FRAME_i, _aWAIT_i, 2, _aFACE_i, _North, _aCONTINUE_i, _aSTAND_FRAME_i, _aWAIT_i, 2, _aBEND_FRAME_i, _aWAIT_i, 2, _aKNEEL_FRAME_i, _aWAIT_i, 2, _aUSABLE_i, #ProsecuteTraitor_i >>, _Delin);
+        PartyLooksNE_i();
+        terminate;
+    }
+    if (v0 = 32) {
+        v4 = ~SetQuality((v0 + 1), ~GimmePathEgg(1, 1));
+        ClearSpeakers_i();
+        SetSpeaker0_i(0, _Voldin);
+        ["Tell me, Delin, hast thou ever met the accused?"];
+        SetSpeaker1_i(0, _Delin);
+        ["Good day, uh... Voldin. Met who?"];
+        CloseSpeaker1_i();
+        SetSpeakerSlot_i(0);
+        ["The man standing in that box, right in front of thee. Hast thou ever met him?"];
+        SetSpeaker1_i(0, _Delin);
+        ["Handsome lad... I do not recall him. Dost thou think he would be a worthy suitor for mine Alyssand?"];
+        CloseSpeaker1_i();
+        SetSpeakerSlot_i(0);
+        ["Uh... I do not think so, Delin."];
+        ["I renounce any further questions! I thank thee, Delin. Thou mayest go."];
+        EndConverse_i();
+        v4 = ~PostAction(<< _aWAIT_i, 2, _aBEND_FRAME_i, _aWAIT_i, 2, _aSTAND_FRAME_i >>, _Delin);
+        v4 = ~PostAction(<< _aWAIT_i, 3, _aFACE_i, _West >>, _Voldin);
+        v4 = ~PostInFuture(12, << _aNO_HALT_i, _aUSABLE_i, #ProsecuteTraitor_i >>, item);
+        terminate;
+    }
+    if (v0 = 33) {
+        ClearSpeakers_i();
+        SetSpeaker0_i(0, _Voldin);
+        ["And now I would like to call..."];
+        ["Delin, go to thy seat please."];
+        SetSpeaker1_i(0, _Delin);
+        ["Yes, of course... Captain."];
+        EndConverse_i();
+        v4 = ~PostAction(<< _aWAIT_i, 2, _aFACE_i, _South >>, _Voldin);
+        v4 = ~SetQuality(29, ~GimmePathEgg(1, 1));
+        v5 = (~GetCoord(_Delin) & (14 & 6));
+        v6 = ~FindNearby_i(16, 20, _Egg_Type, v5);
+        if v6 {
+            v7 = ~GetCoord(v6);
+            PartyLooksSE_i();
+            Bark_i(4, "@What is going on?@", _Delin);
+            PathfindNPC_i(false, #FawnTrialEgg_i, item, _Path_Success, v7, item);
+        }
+        terminate;
+    }
+    if (v0 = 34) {
+        flag(379) = true;
+        SetSpeaker0_i(0, _Yelinda);
+        ["Given that the weight of evidence seems overwhelming, perhaps we should spare the defendant from further embarrassment."];
+        SetSpeaker1_i(0, _Voldin);
+        ["If the Lady doth wish it, I would forebear calling for further testimony. The traitor will surely be convicted based on the facts already presented."];
+        CloseSpeaker1_i();
+        CloseSpeaker0_i();
+        SetSpeaker0_i(0, ~JailedNPC_i(true));
+        ["Avatar, what dost thou recommend?"];
+        v4 = ~AskList(<< "continue the testimony", "no more witnesses" >>);
+        if (v4 = "continue the testimony") {
+            SetSpeakerSlot_i(0);
+            ["I would hear the full weight of the testimony against me, Lady Yelinda."];
+            SetSpeaker1_i(0, _Yelinda);
+            ["Very well. Thou mayest resume, Captain Voldin."];
+        } else {
+            SetSpeakerSlot_i(0);
+            ["I believe no purpose would be served by continuing this charade, Lady Yelinda."];
+            SetSpeaker1_i(0, _Yelinda);
+            ["Do not mock the Oracle, stranger."];
+            ["Captain Voldin, let us bring this session of the trial to an end."];
+            flag(374) = true;
+            flag(375) = true;
+            flag(376) = true;
+            flag(377) = true;
+            flag(378) = true;
+            flag(380) = true;
+            $done7 = true;
+            flag(382) = true;
+            flag(383) = true;
+            flag(384) = true;
+            flag(385) = true;
+            flag(386) = true;
+        }
+        v4 = ~SetQuality(25, ~GimmePathEgg(1, 1));
+        v4 = ~PostAction(<< _aNO_HALT_i, _aBEND_FRAME_i, _aWAIT_i, 1, _aSIT_FRAME_i >>, _Yelinda);
+        v4 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #FawnTrialEgg_i >>, _Voldin);
+        terminate;
+    }
+    if (v0 = 38) {
+        flag(376) = true;
+        ClearSpeakers_i();
+        SetSpeaker0_i(0, _Voldin);
+        ["Delphynia, did the accused meet with thee?"];
+        SetSpeaker1_i(0, _Delphynia);
+        ["Yes, Captain. He came with his accomplice, who was seeking a certain magical leaf..."];
+        CloseSpeaker1_i();
+        SetSpeakerSlot_i(0);
+        ["Aha! And what didst thou conclude from this?"];
+        SetSpeaker1_i(0, _Delphynia);
+        ["The leaf is known to counteract certain poisons and curses, milord. So I must conclude that the defendant suffers from some sort of malady."];
+        CloseSpeaker1_i();
+        SetSpeakerSlot_i(0);
+        ["Perhaps from his association with the Beast! How sinister..."];
+        ["I have no more questions. Many thanks for thy service, Delphynia. Return to thy seat, if thou wilt."];
+        EndConverse_i();
+        v4 = ~SetQuality(29, ~GimmePathEgg(1, 1));
+        v5 = (~GetCoord(item) & (18 & 6));
+        v6 = ~FindNearby_i(16, 20, _Egg_Type, v5);
+        if v6 {
+            v7 = ~GetCoord(v6);
+            PathfindNPC_i(false, #FawnTrialEgg_i, item, _Path_Success, v7, item);
+        }
+        terminate;
+    }
+    if (v0 = 39) {
+        flag(377) = true;
+        ClearSpeakers_i();
+        SetSpeaker0_i(0, _Voldin);
+        ["Dost thou recall having met <v3> before?"];
+        SetSpeaker1_i(0, _Jendon);
+        ["Yes, indeed. He came into the Broken Oar -- most people do, thou knowest. Asked me a great number of questions."];
+        CloseSpeaker1_i();
+        SetSpeakerSlot_i(0);
+        ["About the usual sorts of things -- the weather, the goblin threat, and so forth?"];
+        SetSpeaker1_i(0, _Jendon);
+        ["Not at all, Captain! He had so many questions."];
+        if flag(426) {
+            ["He did ask me about strange objects, such as I had never heard of. They weren't normal items, sir!"];
+            flag(429) = true;
+        }
+        if flag(425) {
+            ["He asked me about the bloodthirsty savages that live in the far north -- had a grisly interest in the tale, I might add."];
+            flag(427) = true;
+        }
+        if $ASK_DELIN_ABOUT_BATLIN {
+            ["<v3> had a powerful curiosity about the ancient ruins of this land! I could not tell him enough. He was quite angry with me..."];
+            CloseSpeaker1_i();
+            SetSpeakerSlot_i(0);
+            ["The ruins left by the Daemons who once dwelt in this land?"];
+            SetSpeaker1_i(0, _Jendon);
+            ["Yes, captain. The Serpent Ruins."];
+            flag(428) = true;
+        }
+        CloseSpeaker1_i();
+        SetSpeakerSlot_i(0);
+        ["And so we can plainly see that the accused doth have a most perverted sense of curiosity. Perhaps a weakness gained from associating with the Beast!"];
+        ["Thou mayest go, Jendon..."];
+        EndConverse_i();
+        v4 = ~SetQuality(29, ~GimmePathEgg(1, 1));
+        v5 = (~GetCoord(_Jendon) & (16 & 6));
+        v6 = ~FindNearby_i(16, 20, _Egg_Type, v5);
+        if v6 {
+            v7 = ~GetCoord(v6);
+            PartyLooksSE_i();
+            PathfindNPC_i(false, #FawnTrialEgg_i, item, _Path_Success, v7, item);
+        }
+        terminate;
+    }
+    if (v0 = 40) {
+        flag(378) = true;
+        ClearSpeakers_i();
+        SetSpeaker0_i(0, _Jorvin);
+        ["How can I help thee, Great Captain?"];
+        SetSpeaker1_i(0, _Voldin);
+        ["I will not detain thee from thy duty overlong, commander."];
+        ["Thou didst meet <v3> and <v2> before thou didst apprehend the accused, didst thou not?"];
+        CloseSpeaker1_i();
+        SetSpeakerSlot_i(0);
+        ["I did see them, Captain, even if they did not see me. It is my business to watch strangers."];
+        ["The traitor was a most curious man, and did often enter into buildings where he did not belong. He did open many drawers and barrels without permission."];
+        SetSpeaker1_i(0, _Voldin);
+        ["How wouldst thou characterize such behavior?"];
+        CloseSpeaker1_i();
+        SetSpeakerSlot_i(0);
+        ["Peculiar, lord. Almost as if the man were hunting for something."];
+        SetSpeaker1_i(0, _Voldin);
+        ["According to legend, there have been men who have sold their souls to Beast British. Such men then scour the world, hoping to find their lost spirits once again."];
+        ["No more questions..."];
+        EndConverse_i();
+        Bark_i(2, "@Makes me shudder...@", _Yelinda);
+        Bark_i(3, "@How awful!@", _Delphynia);
+        v4 = ~SetQuality(29, ~GimmePathEgg(1, 1));
+        v5 = (~GetCoord(_Jorvin) & (7 & 6));
+        v6 = ~FindNearby_i(16, 20, _Egg_Type, v5);
+        if v6 {
+            v7 = ~GetCoord(v6);
+            PartyLooksSE_i();
+            PathfindNPC_i(false, #FawnTrialEgg_i, item, _Path_Success, v7, item);
+        }
+        terminate;
+    }
+    if (v0 = 41) {
+        flag(380) = true;
+        ClearSpeakers_i();
+        SetSpeaker0_i(0, _Voldin);
+        ["Forgive my presumption, Kylista. As the Priestess of Beauty, thy powers are absolute within this Temple."];
+        ["However, thy certain knowledge concerning this traitor is vital if the Oracle is to hear a complete accounting."];
+        SetSpeaker1_i(0, _Kylista);
+        ["I understand. Let me state that I have met <v3>, as well as <v2>, his companion. I found their lack of understanding of Beauty appalling!"];
+        CloseSpeaker1_i();
+        SetSpeakerSlot_i(0);
+        ["So they did not seem to have a true appreciation of Beauty?"];
+        v8 = ~PartyUtters(false, 0, "@Beauty lies in the eye of the beholder...@", 65533);
+        if (v8 = 65180) {
+            SetSpeaker1_i(0, _Alyssand);
+            ["Beauty lies in the eye of the beholder..."];
+        }
+        EndConverse_i();
+        v4 = ~SetQuality((v0 + 1), ~GimmePathEgg(1, 1));
+        v4 = ~PostAction(<< _aNO_HALT_i, _aBEND_FRAME_i, _aSTAND_FRAME_i, _aBARK_i, "@Silence!@" >>, _Jorvin);
+        v4 = ~PostInFuture(7, << _aNO_HALT_i, _aUSABLE_i, #ProsecuteTraitor_i >>, item);
+        terminate;
+    }
+    if (v0 = 42) {
+        ClearSpeakers_i();
+        SetSpeaker0_i(0, _Jorvin);
+        ["Quiet in the Temple! Thou wilt not speak unless questioned."];
+        ["Forgive the interruption, Captain Voldin."];
+        SetSpeaker1_i(0, _Voldin);
+        ["No forgiveness necessary. I thank thee for performing thy duty."];
+        EndConverse_i();
+        v4 = ~SetQuality((v0 + 1), ~GimmePathEgg(1, 1));
+        v4 = ~PostAction(<< _aNO_HALT_i, _aBEND_FRAME_i, _aSIT_FRAME_i >>, _Jorvin);
+        v4 = ~PostInFuture(7, << _aNO_HALT_i, _aUSABLE_i, #ProsecuteTraitor_i >>, item);
+        terminate;
+    }
+    if (v0 = 43) {
+        ClearSpeakers_i();
+        SetSpeaker0_i(0, _Voldin);
+        ["And now, Priestess, please continue thy witness."];
+        SetSpeaker1_i(0, _Kylista);
+        ["As the Priestess of Beauty, I must warn all of thee to remain wary of these strangers! They preach doctrines which deny the primacy of Beauty. The Fellowship is an insidious philosophy which threatens to undermine our common society."];
+        ["I believe that The Fellowship is an invention of Beast British, by which he means to destroy us!"];
+        CloseSpeaker1_i();
+        SetSpeakerSlot_i(0);
+        ["Thy vigilance will be our salvation, Priestess. Many thanks for responding to mine unusual summons."];
+        EndConverse_i();
+        v4 = ~SetQuality(29, ~GimmePathEgg(1, 1));
+        v5 = (~GetCoord(_Kylista) & (13 & 6));
+        v6 = ~FindNearby_i(16, 30, _Egg_Type, v5);
+        if v6 {
+            v7 = ~GetCoord(v6);
+            PathfindNPC_i(false, #FawnTrialEgg_i, item, _Path_Success, v7, item);
+        }
+        terminate;
+    }
+    if (v0 = 44) {
+        $done7 = true;
+        ClearSpeakers_i();
+        SetSpeaker0_i(0, _Voldin);
+        ["Thou knowest that thy presence here is for testifying only. Thou shalt be returned to thy camp immediately after thou hast answered our questions."];
+        SetSpeaker1_i(0, _Leon);
+        ["I have no wish to cause disunity in thy city, Captain. I only wish that thou wouldst come to trust me."];
+        CloseSpeaker1_i();
+        SetSpeakerSlot_i(0);
+        ["Confine thyself to my questions only, please."];
+        ["What contact hath <v3> had with thee?"];
+        SetSpeaker1_i(0, _Leon);
+        ["He came to the Fellowship camp. We spoke privately."];
+        CloseSpeaker1_i();
+        SetSpeakerSlot_i(0);
+        ["And no doubt the two of you did compare notes concerning The Fellowship blasphemy. Indeed, is not the traitor secretly a confederate of thyself?"];
+        SetSpeaker1_i(0, _Leon);
+        ["I deny the charge of blasphemy. The Fellowship is not an evil doctrine, but is a system of beliefs which bring enlightenment to those who obey..."];
+        CloseSpeaker1_i();
+        SetSpeakerSlot_i(0);
+        ["Enough! Leave our fair city now."];
+        EndConverse_i();
+        v4 = ~SetQuality((v0 + 1), ~GimmePathEgg(1, 1));
+        Bark_i(0, "@Exile the blasphemer!@", _Voldin);
+        Bark_i(1, "@Stone him!@", _Kylista);
+        Bark_i(3, "@Beware of Leon!@", _Zulith);
+        Bark_i(7, "@Shame on us...@", _Alyssand);
+        Bark_i(3, "@I forgive thee...@", _Leon);
+        PathfindNPC_i(false, #ProsecuteTraitor_i, item, _Path_Success, << 1031, 1657, 0 >>, item);
+        terminate;
+    }
+    if (v0 = 45) {
+        RemoveNPC_i(item);
+        SetWorkType(_Dance, item);
+        PartyLooksNE_i();
+        v4 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #FawnTrialEgg_i >>, _Voldin);
+        v4 = ~SetQuality(25, ~GimmePathEgg(1, 1));
+        terminate;
+    }
+    if (v0 = 46) {
+        flag(382) = true;
+        v4 = ~PostAction(<< _aNO_HALT_i, _aSTAND_FRAME_i >>, _Voldin);
+        Bark_i(0, "@How rude!@", _Kylista);
+        Bark_i(2, "@Get back here!@", _Zulith);
+        Bark_i(5, "@Let him go...@", _Voldin);
+        PartyLooksSE_i();
+        PathfindNPC_i(false, #ProsecuteTraitor_i, item, _Path_Success, << 1031, 1657, 0 >>, item);
+        v4 = ~SetQuality(45, ~GimmePathEgg(1, 1));
+        terminate;
+    }
+    if (v0 = 47) {
+        flag(383) = true;
+        ClearSpeakers_i();
+        SetSpeaker0_i(0, _Voldin);
+        ["Take no hope that thou wilt remain any longer than necessary for thee to speak before the Oracle."];
+        SetSpeaker1_i(0, _Ruggs);
+        ["I have hope for only one thing, Captain. And that dwells deep within mine heart, as Delphynia knows..."];
+        CloseSpeaker1_i();
+        SetSpeakerSlot_i(0);
+        ["Do not digress! Now, I am told that thou hast been seen speaking with the accused traitor..."];
+        SetSpeaker1_i(0, _Ruggs);
+        ["Yes, Captain. I asked a favor of him, to deliver a document for me."];
+        CloseSpeaker1_i();
+        SetSpeakerSlot_i(0);
+        ["No doubt a document containing instructions from Leon, to his secret ally, <v3>! No further questions..."];
+        SetSpeaker1_i(0, _Ruggs);
+        ["No! 'Twas a letter to my beloved Delphynia..."];
+        CloseSpeaker1_i();
+        SetSpeakerSlot_i(0);
+        ["Return to thy camp."];
+        EndConverse_i();
+        Bark_i(0, "@I love thee, Delphynia!@", _Ruggs);
+        Bark_i(2, "@I cannot...@", _Delphynia);
+        Bark_i(3, "@Ruggs, be silent!@", _Zulith);
+        PathfindNPC_i(false, #ProsecuteTraitor_i, item, _Path_Success, << 1031, 1657, 0 >>, item);
+        v4 = ~SetQuality(45, ~GimmePathEgg(1, 1));
+        terminate;
+    }
+    if (v0 = 48) {
+        flag(384) = true;
+        ClearSpeakers_i();
+        SetSpeaker0_i(0, _Voldin);
+        ["Art thou a follower of this Fellowship, Scots?"];
+        SetSpeaker1_i(0, _Scots);
+        ["I'm a geographer, sir. And a sailor. Though I was brought here by The Fellowship to study this land, I do not practice their beliefs."];
+        ["However, I see nothing wrong with The Fellowship. If anything, it seems that Leon speaks more of the truth than thine own Priestess."];
+        CloseSpeaker1_i();
+        SetSpeakerSlot_i(0);
+        ["Heresy! Leave this Temple and never return to our fair city, upon pain of death!"];
+        SetSpeaker1_i(0, _Scots);
+        ["And Lord British is no Daemon! He's a good man, and hath often commissioned me to create new maps for him..."];
+        CloseSpeaker1_i();
+        SetSpeakerSlot_i(0);
+        ["Jorvin, if that man speaks another word, blast him with thy wand!"];
+        EndConverse_i();
+        Bark_i(0, "@Not the wand!@", _Scots);
+        Bark_i(3, "@Jorvin...@", _Voldin);
+        PathfindNPC_i(false, #ProsecuteTraitor_i, item, _Path_Success, << 1031, 1657, 0 >>, item);
+        v4 = ~PostInFuture(4, << _aNO_HALT_i, _aBEND_FRAME_i, _aSTAND_FRAME_i >>, _Jorvin);
+        v4 = ~SetQuality((v0 + 1), ~GimmePathEgg(1, 1));
+        terminate;
+    }
+    if (v0 = 49) {
+        v4 = ~SetQuality((v0 + 1), ~GimmePathEgg(1, 1));
+        v4 = ~SetAttack_i(_M_Ignite, 65476, _Jorvin);
+        v4 = ~PostAction(<< _aTHRUST1_FRAME_i, _aATTACK_i, _aCONTINUE_i, _aSFX_i, 53, _aSTAND_FRAME_i >>, _Jorvin);
+        v4 = ~PostInFuture(5, << _aNO_HALT_i, _aUSABLE_i, #ProsecuteTraitor_i >>, item);
+        terminate;
+    }
+    if (v0 = 50) {
+        Sfx(57);
+        Bark_i(0, "@Damn, I missed...@", _Jorvin);
+        v4 = ~PostAction(<< _aNO_HALT_i, _aBEND_FRAME_i, _aSIT_FRAME_i >>, _Jorvin);
+        Item_move(<< 1520, 1935, 0 >>, _Scots);
+        Npc_schedule(_Scots);
+        PartyLooksNE_i();
+        v4 = ~PostInFuture(3, << _aNO_HALT_i, _aUSABLE_i, #FawnTrialEgg_i >>, _Voldin);
+        v4 = ~SetQuality(25, ~GimmePathEgg(1, 1));
+        terminate;
+    }
+    if (v0 = 51) {
+        flag(432) = true;
+        flag(386) = true;
+        ClearSpeakers_i();
+        SetSpeaker0_i(0, _Zulith);
+        ["I had not expected to be called to witness, Captain Voldin. After all, I serve Lady Yelinda. Much of what I know is confidential."];
+        SetSpeaker1_i(0, _Voldin);
+        ["Yet the course of this trial could affect state security, chancellor. This man is accused of aiding a Daemon to overthrow our city!"];
+        CloseSpeaker1_i();
+        SetSpeakerSlot_i(0);
+        ["I must defer to the Lady..."];
+        SetSpeaker1_i(0, _Yelinda);
+        ["I don't see why thou couldst not speak freely, Zulith."];
+        ["I know! If thou art about to reveal some important secret, I shall signal thee by clapping sharply. Then thou shouldst be silent."];
+        CloseSpeaker1_i();
+        SetSpeakerSlot_i(0);
+        ["Very well, Lady Yelinda."];
+        ["Let it be known, therefore, that I have spent much of my recent time following <v3> and his companions about town."];
+        SetSpeaker1_i(0, _Voldin);
+        ["And what didst thou learn?"];
+        CloseSpeaker1_i();
+        SetSpeakerSlot_i(0);
+        ["Nothing -- <v3> was too sharp for me, and spotted me before I could learn much. However, I did see him conferring with Delin's daughter, and she is a known sympathizer with The Fellowship!"];
+        SetSpeaker1_i(0, _Delin);
+        ["Watch thy words, Zulith! Or thou shalt have to reckon with me. I may be old, but I'm mean..."];
+        CloseSpeaker1_i();
+        SetSpeakerSlot_i(0);
+        ["I meant no disrespect. Only everyone knows that The Fellowship is a Daemonic heresy, and that Alyssand hath become infatuated with Leon the Preacher."];
+        SetSpeaker1_i(0, _Voldin);
+        ["And so Beast British, who is the force behind The Fellowship heresy, uses Alyssand to communicate with agents such as <v3>! No further questions."];
+        EndConverse_i();
+        Bark_i(0, "@Take that back!@", _Delin);
+        Bark_i(4, "@Daemons? Bah!@", _Alyssand);
+        v4 = ("@Alyssand?@" & "@I never knew...@");
+        BarkIfNear_i(v4, _Leon);
+        v4 = ~SetQuality(29, ~GimmePathEgg(1, 1));
+        v5 = (~GetCoord(_Zulith) & (10 & 6));
+        v6 = ~FindNearby_i(16, 40, _Egg_Type, v5);
+        if v6 {
+            v7 = ~GetCoord(v6);
+            PathfindNPC_i(false, #FawnTrialEgg_i, item, _Path_Success, v7, item);
+        }
+        terminate;
+    }
+    if (v0 = 52) {
+        flag(385) = true;
+        ClearSpeakers_i();
+        SetSpeaker0_i(0, _Zulith);
+        ["Voldin, thou dost extend thyself too far!"];
+        SetSpeaker1_i(0, _Voldin);
+        ["Please bear with me, Zulith. This is for the good of Fawn."];
+        CloseSpeaker1_i();
+        SetSpeakerSlot_i(0);
+        ["Very well, but there is no reason for the Lady to take the stand. She may speak from where she is."];
+        EndConverse_i();
+        v4 = ~SetQuality(53, ~GimmePathEgg(1, 1));
+        v4 = ~PostAction(<< _aBARK_i, "@Milady, speak if thou wilt.@", _aWAIT_i, 4, _aBEND_FRAME_i, _aWAIT_i, 2, _aSIT_FRAME_i >>, _Zulith);
+        Bark_i(2, "@I will speak.@", _Yelinda);
+        v4 = ~PostInFuture(4, << _aBEND_FRAME_i, _aWAIT_i, 2, _aSTAND_FRAME_i, _aWAIT_i, 9, _aUSABLE_i, #ProsecuteTraitor_i >>, _Yelinda);
+        terminate;
+    }
+    if (v0 = 53) {
+        ClearSpeakers_i();
+        SetSpeaker0_i(0, _Voldin);
+        ["Thou art most gracious, Lady. I shall make this brief..."];
+        ["For the benefit of the Oracle, couldst thou recount the scene at which <v3> didst invoke the name of the Daemon British?"];
+        SetSpeaker1_i(0, _Yelinda);
+        ["I seem to recall that we were having a civil conversation. And then, without forewarning, <v3> suddenly burst out with a vile and blasphemous oath!"];
+        CloseSpeaker1_i();
+        SetSpeakerSlot_i(0);
+        ["Dost thou remember his precise words?"];
+        SetSpeaker1_i(0, _Yelinda);
+        ["To be truthful, the discussion was so distasteful that I quickly put it from my mind."];
+        ["I believe he said -- Curse you all, and Beast British shall drink thy blood..."];
+        CloseSpeaker1_i();
+        SetSpeakerSlot_i(0);
+        ["I thank thee for thy time, Lady Yelinda. Thou hast spoken fairly, as always."];
+        EndConverse_i();
+        Bark_i(0, "@I didn't say that!", ~JailedNPC_i(true));
+        v4 = ~PostAction(<< _aNO_HALT_i, _aWAIT_i, 2, _aBEND_FRAME_i, _aWAIT_i, 2, _aSIT_FRAME_i >>, _Yelinda);
+        v4 = ~PostInFuture(10, << _aNO_HALT_i, _aUSABLE_i, #FawnTrialEgg_i >>, _Voldin);
+        v4 = ~SetQuality(25, ~GimmePathEgg(1, 1));
+        terminate;
+    }
+}

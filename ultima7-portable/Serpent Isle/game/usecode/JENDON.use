@@ -1,0 +1,1237 @@
+Routine Jendon accepts a0 #locals(18) #uses(~LordOrLady, PartyFaces_i, Bark_i, ~AskYesNo, ~IsNPCNear, ~GiveItemsOrDrop_i, ~UsePatience_i, JendonSellsFood_i, JendonSellsDrink_i, ~PartyUtters, ~RemoveFromList_i, ~IsInInv, AlyssandSeeksAvatar_i, SendAssassin_i, JorvinBringsInvitation_i) {
+    v0 = ~GetHour();
+    v1 = ~LordOrLady();
+    if (v0 < 12) {
+        v2 = "morning";
+    } else {
+        if (v0 > 17) {
+            v2 = "evening";
+        } else {
+            v2 = "afternoon";
+        }
+    }
+    if (event = _NearDeath) {
+        v0 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #Green_Noble >>, item);
+    }
+    if (event = _Converse) {
+        Item_bark((("@Good " + v2) + ", barkeep.@"), _Avatar);
+        PartyFaces_i(65484);
+        Bark_i(2, (((("@Good " + v2) + ", ") + v1) + ".@"), _Jendon);
+        SetWorkType(_Talk, _Jendon);
+    }
+    if (event = _Talking) {
+        Npc_schedule(_Jendon);
+        ClearBark_i(_Jendon);
+        SetSpeaker0_i(0, _Jendon);
+        v3 = 5;
+        if ($FAWN_TRIAL_RECESS or ($AUDIENCE_WITH_YELINDA and not $FAWN_TRIAL_DONE)) {
+            ["I should have known that thou wert trouble! Askin' all those questions..."];
+            ["I shall not speak to thee until the Oracle hath ruled!"];
+            CloseSpeaker0_i();
+            Bark_i(0, "@Be gone!@", _Jendon);
+            terminate;
+        }
+        if not ~GetItemFlag_i(_Met, _Jendon) {
+            if ~AvatarSex() {
+                ["I am Jendon, <v1>, proprietor of the Broken Oar. Hast thou need of something here?"];
+                if (~AskYesNo() = true) {
+                    ["How may I help thee this <v2>?"];
+                } else {
+                    ["Then thou shouldst be on thy way. 'Tis not a fit place for such a beautiful lady as thyself."];
+                }
+            } else {
+                ["The name's Jendon, <v1>, proprietor of the Broken Oar. What can I do for thee this <v2>?"];
+            }
+            SetItemFlag_i(_Met, _Jendon);
+            TurnOn("proprietor");
+        } else {
+            ["Returned so soon? How may I help thee now?"];
+            TurnOn("duties");
+        }
+        if ~IsNPCNear(_Olon) {
+            v3 = 3;
+        }
+        if (~GetWorkType(_Jendon) = _MajorSit) {
+            v3 = 1;
+        }
+        TurnOn(<< "information" >>);
+        if (~GetWorkType(_Jendon) = _Waiter) {
+            TurnOn("buy");
+        }
+        TurnOn("bye");
+        v4 = 0;
+        converse {
+            key ("buy") {
+                ["Dost thou desire a stiff drink, a warm meal, or a room where thou canst rest?"];
+                PushKeys();
+                TurnOn(<< "food", "drink", "room", "nothing" >>);
+            }
+            key ("duties", "proprietor") {
+                TurnOff(<< "proprietor", "duties" >>);
+                ["I used ta serve the sailors that spent their days drinkin' sea spray and their nights drinkin' ale. Not a pretty bunch, but they spent enough ta keep a roof over mine head."];
+                ["But since those cursed storms destroyed the fleet, there hath been precious little business."];
+                ["Used ta have a lad that served the drinks for me. His mother cooked and did the washin' up. But Danysia became ill and died -- the healers could do nothing -- and young Rindor went ta sea... never returned."];
+                TurnOn(<< "storms" >>);
+            }
+            key ("storms") {
+                TurnOff("storms");
+                ["Products of evil, I tell ya! We be folks as live off the bounty of the sea. But these storms do not like nothin' on the water!"];
+                ["All the fishin' ships have either been destroyed or transformed inta somethin' that was never meant ta touch water. That was what happened ta Rindor -- his ship suddenly became a grain wagon. Wagons don't float too good..."];
+            }
+            key ("room") {
+                ["Used ta rent my sleepin' rooms regularly ta strangers that came through. But we've had only a few visitors since the storms began."];
+                ["The cost for a room is 12 filari per person. Dost thou want one?"];
+                if ~AskYesNo() {
+                    v5 = ~GetParty();
+                    v6 = 0;
+                    Foreach v9 in v5 {
+                        v6 = (v6 + 1);
+                    }
+                    v10 = (v6 * 12);
+                    v11 = ~CountItem(_All, _All, _Fawn_Money, _Party);
+                    if (v11 >= v10) {
+                        ["Here is thy key."];
+                        v0 = ~GiveItemsOrDrop_i(true, 0, 4, 11, 641, 1, _Avatar);
+                        v12 = ~TakeFromParty_i(0, _All, _All, _Gold_Coins, v10);
+                        ["Thy room be upstairs."];
+                    } else {
+                        ["Thou dost not have enough filari! If thou canst not pay, then I do not rent ye a room!"];
+                    }
+                } else {
+                    ["Some other time, then."];
+                }
+            }
+            key ("information") {
+                if (not $startjendongossip or (~GetClock(2) > 4)) {
+                    ["What be thou interested in?"];
+                    PushKeys();
+                    v4 = 1;
+                    TurnOn(<< "people", "places", "strange objects", "nothing more" >>);
+                } else {
+                    ["Return later, <v1>. This be a bad time now."];
+                }
+            }
+            key ("people") {
+                ["Who dost thou wish ta know about -- townsfolk or strangers?"];
+                PushKeys();
+                v4 = 2;
+                TurnOn(<< "townsfolk", "strangers", "nothing more" >>);
+            }
+            key ("townsfolk") {
+                TurnOff("townsfolk");
+                ["Whom dost thou wish ta know about?"];
+                PushKeys();
+                v4 = 3;
+                TurnOn(<< "the sailors", "the shopkeepers", "the healers", "the Priestess", "town leaders", "nothing more" >>);
+            }
+            key ("the sailors") {
+                TurnOff("the sailors");
+                ["These cursed wizard-storms have destroyed all of our ships. Olon is the only sailor left alive in the city."];
+                ["Used to be a mate on one of the fishin' ships..."];
+                ["'til it sank."];
+                ["Could say he's lucky... though he doth not think so. He doth spend most of his time here drinking... I fear that he is a lost soul. He even refuses ta go ta the Temple!"];
+                v3 = ~UsePatience_i(v3);
+            }
+            key ("the shopkeepers") {
+                TurnOff("the shopkeepers");
+                ["Aside from me, there be only old Delin the Provisioner, and he be half-crazy."];
+                ["Delin hath not been quite right since his wife died, and the Magister came to take away his infant child."];
+                ["His daughter, Alyssand, looks after him these days. She doth make certain that he doth not wander away."];
+                TurnOn("Magister");
+                v3 = ~UsePatience_i(v3);
+            }
+            key ("Magister") {
+                TurnOff("Magister");
+                ["Thou dost not know of the Magister? The Mage who comes in the night and steals our children away?"];
+                ["The Mages of Moonshade claim that it would be dangerous for magically-gifted children to grow up without proper training."];
+                ["I do not like it, but there is not much mortals can do against a City of Mages..."];
+                v3 = ~UsePatience_i(v3);
+            }
+            key ("the healers") {
+                TurnOff("the healers");
+                ["Last one we had was killed by the Goblins a few months ago. Closest thing we have now is the herbalist, Delphynia."];
+                ["Little slip of a woman. She's usually at her greenhouse or at the healer's hall."];
+                if ~AvatarSex() {
+                    ["Some of the townsfolk are a bit shy of having a female healer -- it doth go against tradition, if thou dost see? But it doth not bother me!"];
+                } else {
+                    ["But I say that 'tis no duty for a woman. I know thou wouldst agree with me, mate."];
+                }
+            }
+            key ("the Priestess") {
+                TurnOff("the Priestess");
+                if ($AUDIENCE_WITH_YELINDA and ($FAWN_TRIAL_DONE and not $oraclesaysinnocent)) {
+                    ["Kylista hath been imprisoned since the trial, <v1>. I think the experience hath been a boon to her."];
+                    ["She is a changed woman, I think. Hast thou visited her in her cell?"];
+                } else {
+                    ["Kylista is the Priestess of Beauty. Ta her falls the duty of keeping Fawn on the path of Beauty through these dark days."];
+                    ["An' that be a large job for such slender shoulders, make no mistake!"];
+                }
+                v3 = ~UsePatience_i(v3);
+            }
+            key ("town leaders") {
+                TurnOff("town leaders");
+                ["Well now, there be plenty of those here. Who dost thou wish ta know about?"];
+                PushKeys();
+                v4 = 4;
+                TurnOn(<< "Lady Yelinda", "Chancellor Zulith", "Commander Jorvin", "the Great Captains", "nothing more" >>);
+            }
+            key ("Lady Yelinda") {
+                TurnOff("Lady Yelinda");
+                ["Lady Yelinda be the ruler here in Fawn. She be Fawn's living symbol of Beauty."];
+                ["She be a wise lady. Always concerned with what the people think -- Always listens ta any advice offered."];
+                v3 = ~UsePatience_i(v3);
+            }
+            key ("Chancellor Zulith") {
+                TurnOff("Chancellor Zulith");
+                ["I hate to speak ill of anyone, but for Zulith I shall make an exception."];
+                ["He is called the Chancellor, but Zulith is little more than a messenger with an over-full ego. Thou wouldst be wise ta steer clear of him, for he takes offense at petty things."];
+                v3 = ~UsePatience_i(v3);
+            }
+            key ("Commander Jorvin") {
+                TurnOff("Commander Jorvin");
+                ["Jorvin be the Commander of the Fawn Guards. He is a fine, strong lad. And I think that he is sweet on the Lady."];
+                if ~IsNPCNear(_Olon) {
+                    SetSpeaker1_i(0, _Olon);
+                    ["Aye! An' the Lady be sweet on him, too!"];
+                    CloseSpeaker1_i();
+                    SetSpeakerSlot_i(0);
+                    ["Thou shouldst not speak of the Lady so!"];
+                }
+                v3 = ~UsePatience_i(v3);
+            }
+            key ("the Great Captains") {
+                TurnOff("the Great Captains");
+                if ($AUDIENCE_WITH_YELINDA and ($FAWN_TRIAL_DONE and not $oraclesaysinnocent)) {
+                    ["Why, they have been in disrepute ever since the trial. Joth hath taken to drinking, and as for Garth -- well, no woman will give him the time of day!];
+                    if ~GetItemFlag_i(_Dead, _Voldin) {
+                        ["As for old Voldin, I think he is not greatly missed."];
+                    } else {
+                        ["Voldin doth scheme endlessly in his cell, but what can come of it?"];
+                    }
+                } else {
+                    ["To ease the burdens which Lady Yelinda must carry, the Great Captains assist her in ruling the city."];
+                    ["Voldin be the eldest of the three Great Captains. They say he's a wise man, but I do not much care for him."];
+                    ["Then there's Joth, an old sea-farin' man and a good customer of mine. But since he was hurt in the storms, he hath been a bit gruff."];
+                    ["Captain Garth is the youngest of Lady Yelinda's advisors. He is always trailing some lady's skirts, that puppy!"];
+                }
+                v3 = ~UsePatience_i(v3);
+            }
+            key ("strangers") {
+                TurnOff("strangers");
+                ["The only visitors we have had of late are connected with the strange voyagers from a distant land. First came the sailors and scholars, and lastly, their leader."];
+                ["Who wouldst thou care to hear about?"];
+                PushKeys();
+                v4 = 3;
+                TurnOn(<< "sailors", "scholars", "leader", "nothing more" >>);
+            }
+            key ("sailors") {
+                TurnOff("sailors");
+                ["They were the crew of that ship that sailed from the other side of the world -- said something about Serpent Pillars in the ocean."];
+                ["Brunt, Ruggs, Deadeye, Kalen... I found them congenial enough. Excepting Kalen... he enjoyed arguing with my customers."];
+                if ($AUDIENCE_WITH_YELINDA and ($FAWN_TRIAL_DONE and not $oraclesaysinnocent)) {
+                    ["The Lady hath admitted them back into the city, thou dost know... They have not made trouble yet, but I'm keeping an eye on them."];
+                } else {
+                    ["But when the sailors began spouting that Fellowship nonsense, Kylista did right, orderin' their contagion outside the city walls."];
+                }
+                v3 = ~UsePatience_i(v3);
+                TurnOn("Fellowship");
+            }
+            key ("Fellowship") {
+                TurnOff("Fellowship");
+                ["Mere foolishness. Everyone knows that Beauty is what is important."];
+                ["After all these centuries, we have no intention of changing our sacred beliefs now..."];
+            }
+            key ("leader") {
+                TurnOff("leader");
+                ["He arrived in the most unnatural way! The sailors had erected a great pillar made outa some blackish rock..."];
+                ["Then in the night -- BLAM! Lightning, explosions! The pillar is disintegrated. And this mage is standing there."];
+                ["Said his name was Batlin. Came to town askin' about the Daemon artifacts hereabouts. Bothering poor Delin..."];
+                ["Told him ta go talk ta others of his ilk, not badger the honest folk."];
+                v3 = ~UsePatience_i(v3);
+                TurnOn("Daemon artifacts");
+            }
+            key ("Daemon artifacts") {
+                TurnOff("Daemon artifacts");
+                ["Stay away from 'em myself. But thou canst not miss 'em..."];
+                ["Have snakes carved all over 'em. Left behind by the ancient inhabitants of this land. Horrible Daemonic folk."];
+                ["Legend claims that the Lady keeps a Daemon shrine locked away in a secret room of her palace. Hard to believe, eh?"];
+                $ASK_DELIN_ABOUT_BATLIN = true;
+            }
+            key ("scholars") {
+                TurnOff("scholars");
+                ["Came on the ship. Said The Fellowship had sent them here to study our way of life -- make maps, collect histories, and so forth."];
+                ["Scots is the geographer. Spends all his time working on his new map of the continent."];
+                ["Then there was the culturist -- her name was, uh..."];
+                ["Gwenno..."];
+                ["Askin' about folk tales. Bought the boys a round or two ta loosen their tongues. Her favorites were the tales of the Gwani."];
+                flag(341) = true;
+                v3 = ~UsePatience_i(v3);
+                TurnOn("Gwani");
+            }
+            key ("Gwani") {
+                TurnOff("Gwani");
+                ["Never seen 'em. Never wanted to."];
+                ["Covered in fur, like an animal. Hear they're worse than Goblins... even eat their own kind!"];
+                ["Olon might be able to tell ya more."];
+                flag(425) = true;
+            }
+            key ("places") {
+                ["I know little about the wilderness areas hereabouts. I be a town man, meself."];
+                ["But I can tell thee about the other towns, if thou wouldst like."];
+                PushKeys();
+                v4 = 2;
+                TurnOn(<< "wilderness areas", "other towns", "nothing more" >>);
+            }
+            key ("wilderness areas") {
+                TurnOff("wilderness areas");
+                ["Oh, I wandered about a bit as a lad, but I never went too far. Never wanted ta lose myself..."];
+                ["Went as far west of here as that forest the Monitorian warriors use for their training. Did not enter. I got stopped by some of those fancy knights who told me ta turn back."];
+                if not $gothelmofmonitor {
+                    ["Hear the woods are overrun by Goblins, these days."];
+                }
+                v3 = ~UsePatience_i(v3);
+            }
+            key ("other towns") {
+                TurnOff("other towns");
+                ["Well now, like I said before, I have never visited the other towns. But I have heard tell of them."];
+                PushKeys();
+                v4 = 3;
+                TurnOn(<< "Moonshade", "Monitor", "Sleeping Bull", "nothing more" >>);
+            }
+            key ("Moonshade") {
+                TurnOff("Moonshade");
+                ["'Tis the town of wizards on an island east of here..."];
+                ["Which is just as well by my line of thinking. Who would want ta live where ya can't trust anything? Mark my words, don't thou trust no wizards. They'll lead ye wrong."];
+                $jendonsaidmoonshade = true;
+                v3 = ~UsePatience_i(v3);
+            }
+            key ("Sleeping Bull") {
+                TurnOff("Sleeping Bull");
+                ["Sleeping Bull is not exactly a town, but it doth lie on the road ta Monitor and is where thou mayest hire passage to Moonshade."];
+                ["The inn is run by a man called Angus, and his wife, Devra. Honest folk... though I have heard tell that the inn was originally a pirate fort, a very long time ago."];
+                v3 = ~UsePatience_i(v3);
+            }
+            key ("Monitor") {
+                TurnOff("Monitor");
+                if ($gottattoo = true) {
+                    ["Why ask me, <v1>? 'Tis plain thou hast already been there."];
+                    if ~AvatarSex() {
+                        ["It looks most comely on thee. Thou must be the adventurous sort..."];
+                    } else {
+                        ["Thou dost look a bit like a bold pirate with that jaunty mark."];
+                    }
+                } else {
+                    ["Arrogant people down there. Always wantin' ta beat thee. They have a big walled city south of here. Monitor is where the Pikemen are from."];
+                    ["Larcenous bunch of armoured scum! They'll protect the roads for thee... if thou dost give them all thy money!"];
+                    ["The lot hereabouts weren't much good. The Goblins killed 'em."];
+                    TurnOn("Goblins");
+                }
+                flag(415) = true;
+                v3 = ~UsePatience_i(v3);
+            }
+            key ("Goblins") {
+                TurnOff("Goblins");
+                ["Vile creatures, <v1>! They steal our children if we don't keep close watch. Like human flesh, they do."];
+                ["They've become bolder here of late. That's why Fawn closes her gates at night now."];
+            }
+            key ("food") {
+                ["Aye, we have something here that'll fill thy belly."];
+                JendonSellsFood_i();
+            }
+            key ("drink") {
+                ["If thou dost want ta wet thy whistle, I can sell thee a fine drink -- Fawnish Ale. 'Tis a strong refreshment, though..."];
+                JendonSellsDrink_i();
+            }
+            key ("strange objects") {
+                flag(426) = true;
+                TurnOff("strange objects");
+                v4 = (v4 + 1);
+                v13 = << >>;
+                if ($gotpinecone and not $knowpinecone) {
+                    v13 = (v13 & "pinecone");
+                }
+                if ($gotmoonsilkstockings and not $knowmoonsilkstockings) {
+                    v13 = (v13 & "moonsilk stockings");
+                }
+                if ($goturn and not $knowurn) {
+                    v13 = (v13 & "urn");
+                }
+                if ($gotlabitem and not $knowlabitem) {
+                    v13 = (v13 & "apparatus");
+                }
+                if ($gotpumice and not $knowpumice) {
+                    v13 = (v13 & "pumice");
+                }
+                if ($gotengagementring and not $knowengagementring) {
+                    v13 = (v13 & "lost ring");
+                }
+                if ($gotfurcap and not $knowfurcap) {
+                    v13 = (v13 & "fur cap");
+                }
+                if ($gotslippers and not $knowslippers) {
+                    v13 = (v13 & "slippers");
+                }
+                if ($gotbreastplate and not $knowbreastplate) {
+                    v13 = (v13 & "breastplate");
+                }
+                if ($gotpenguinegg and not $knowpenguinegg) {
+                    v13 = (v13 & "blue egg");
+                }
+                if ($gotgoblinhairbrush and not $knowgoblinhairbrush) {
+                    v13 = (v13 & "strange hairbrush");
+                }
+                if ($gotmagicwine and not $knowmagicwine) {
+                    v13 = (v13 & "bottle of wine");
+                }
+                if ($STORM_FILARI and not $KNOWS_FILARI_OWNER) {
+                    v13 = (v13 & "strange coins");
+                }
+                if ($gotbearskull and not $KNOWS_BEAR_SKULL_ORIGIN) {
+                    v13 = (v13 & "skull");
+                }
+                if ($gotbloodyhand and not $knowbloodyhand) {
+                    v13 = (v13 & "bloody hand");
+                }
+                if ($gotmonitorshield and not $knowmonitorshield) {
+                    v13 = (v13 & "plain shield");
+                }
+                if ($gotstoneheart and not $knowstoneheart) {
+                    v13 = (v13 & "glowing rock");
+                }
+                if ($gotfishnetstockings and not $knowfishnetstockings) {
+                    v13 = (v13 & "fish-net stockings");
+                }
+                if ($foundsimonbottle and (~GetWorkType(_Simon) <> _Wait)) {
+                    v13 = (v13 & "brown bottle");
+                }
+                if (v13 = << >>) {
+                    v14 = ~PartyUtters(false, 0, (("@But we have no strange objects to ask about, " + v1) + ".@"), 1);
+                    SetSpeakerSlot_i(0);
+                    ["If thou dost think of anything, let me know!"];
+                } else {
+                    ["What sort of items art thou inquiring about?"];
+                    PushKeys();
+                    v15 = 5;
+                    While (v15 > 0) {
+                        v16 = v13::~Random(~ListSize_i(v13));
+                        v13 = ~RemoveFromList_i(v13, v16);
+                        if (v13 = << >>) {
+                            v15 = 0;
+                            v17 = true;
+                        }
+                        TurnOn(v16);
+                        v15 = (v15 - 1);
+                    }
+                    TurnOn("nothing more");
+                }
+            }
+            key ("pinecone") {
+                TurnOff("pinecone");
+                if ~IsInInv(65177, 65177, _Pinecone, 1, _Party) {
+                    ["That looks like a pinecone to me!"];
+                } else {
+                    ["Sounds like a pinecone to me!"];
+                }
+                ["They come from big trees, but not like those hereabouts. Thou couldst ask Olon about it, he hath travelled quite a bit."];
+                $olonknowspinecone = true;
+                if not v17 {
+                    v16 = v13::~Random(~ListSize_i(v13));
+                    v13 = ~RemoveFromList_i(v13, v16);
+                    if (v13 = << >>) {
+                        v17 = true;
+                    }
+                    TurnOn(v16);
+                }
+            }
+            key ("moonsilk stockings") {
+                TurnOff("moonsilk stockings");
+                if ~IsInInv(0, 65177, _Stockings, 1, _Party) {
+                    if ~AvatarSex() {
+                        ["Hast thou no modesty, <v1>? Showing thy stockings about like that..."];
+                        v14 = ~PartyUtters(false, "@They are not mine!@", "@They are not hers!@", 1);
+                        SetSpeakerSlot_i(0);
+                        ["Oh... They are fine things, not what thou wouldst find among the women of fisher-folk."];
+                    } else {
+                        ["These are fine things, not what thou wouldst find among the women of fisher-folk."];
+                    }
+                    ["Perhaps Alyssand could help thee. She is a good hand at weaving the stockings that are found hereabouts."];
+                } else {
+                    if ~AvatarSex() {
+                        ["I know nothing of women's stockings, <v1>!"];
+                        if ~IsNPCNear(_Olon) {
+                            SetSpeaker1_i(0, _Olon);
+                            ["Aye! That be the truth! No woman would have him!"];
+                            CloseSpeaker1_i();
+                            SetSpeakerSlot_i(0);
+                        }
+                        ["Seek thou Alyssand. She makes stockings. She might be able to help thee."];
+                    } else {
+                        ["A mighty fancy pair of stockings, <v1>! Thou wilt make some woman happy..."];
+                        ["We have none so fancy here -- Only the ones that Alyssand makes."];
+                    }
+                }
+                $alknowsmoonsilk = true;
+                if not v17 {
+                    v16 = v13::~Random(~ListSize_i(v13));
+                    v13 = ~RemoveFromList_i(v13, v16);
+                    if (v13 = << >>) {
+                        v17 = true;
+                    }
+                    TurnOn(v16);
+                }
+            }
+            key ("urn") {
+                TurnOff("urn");
+                if ~IsInInv(0, 65177, _Urn, 1, _Party) {
+                    ["Why art thou carrying a dead person with thee? Was it someone kin to thee?"];
+                    v14 = ~PartyUtters(false, "@What?!@", "@What?!@", 1);
+                    SetSpeakerSlot_i(0);
+                    ["Thou didst not know? That urn holds the ashes of one of Monitor's dead warriors."];
+                    ["I am sure they would appreciate its return, <v1>."];
+                } else {
+                    ["I cannot be sure without seeing it, <v1>. But it sounds like one of the urns that hold the ashes of one of Monitor's dead warriors."];
+                    ["I am sure they would appreciate its return..."];
+                }
+                if not v17 {
+                    v16 = v13::~Random(~ListSize_i(v13));
+                    v13 = ~RemoveFromList_i(v13, v16);
+                    if (v13 = << >>) {
+                        v17 = true;
+                    }
+                    TurnOn(v16);
+                }
+            }
+            key ("apparatus") {
+                TurnOff("apparatus");
+                if ~IsInInv(1, 65177, _Al_App_1, 1, _Party) {
+                    ["Doth not look like anything I ever heard of."];
+                } else {
+                    ["Doth not sound like anything I ever heard of."];
+                }
+                ["But perhaps Delphynia could help thee. She uses all manner of fancy equipment to prepare her herbs for healing and such."];
+                $delphknowsapparatus = true;
+                if not v17 {
+                    v16 = v13::~Random(~ListSize_i(v13));
+                    v13 = ~RemoveFromList_i(v13, v16);
+                    if (v13 = << >>) {
+                        v17 = true;
+                    }
+                    TurnOn(v16);
+                }
+            }
+            key ("pumice") {
+                TurnOff("pumice");
+                if ~IsInInv(65177, 65177, _Pumice, 1, _Party) {
+                    ["What a strange rock... Not from around here. Wouldn't be much good for building or for ballast."];
+                    ["Go thou and ask Delphynia, though. She collects odd things that she calls reagents. Perhaps she might know what that is."];
+                    $delphknowspumice = true;
+                } else {
+                    ["I have never heard of such a rock. Who doth care about rocks?"];
+                }
+                if not v17 {
+                    v16 = v13::~Random(~ListSize_i(v13));
+                    v13 = ~RemoveFromList_i(v13, v16);
+                    if (v13 = << >>) {
+                        v17 = true;
+                    }
+                    TurnOn(v16);
+                }
+            }
+            key ("lost ring") {
+                TurnOff("lost ring");
+                if ~IsInInv(0, 65177, _Ring, 1, _Party) {
+                    ["Why, that looks exactly like the engagement ring that Keth gave Alyssand!"];
+                    if ~IsNPCNear(_Olon) {
+                        ["What dost thou think, Olon?"];
+                        SetSpeaker1_i(0, _Olon);
+                        ["Aye, sure as ships sail. That be Alyssand's ring all right. Keth showed it to me enough times, I should know."];
+                        CloseSpeaker1_i();
+                        SetSpeakerSlot_i(0);
+                    }
+                    ["Thou shouldst find Alyssand and give to her the ring, <v1>. She hath been a bit crazy since she lost it"];
+                    AlyssandSeeksAvatar_i();
+                } else {
+                    ["Can't say without seeing it, but it might be the ring that one of our young ladies did lose."];
+                    ["Bring it here, and I can tell thee for certain."];
+                }
+                if not v17 {
+                    v16 = v13::~Random(~ListSize_i(v13));
+                    v13 = ~RemoveFromList_i(v13, v16);
+                    if (v13 = << >>) {
+                        v17 = true;
+                    }
+                    TurnOn(v16);
+                }
+            }
+            key ("fur cap") {
+                TurnOff("fur cap");
+                if ~IsInInv(4, 65177, _Leath_Helm, 1, _Party) {
+                    ["Nice cap. A bit small, though. Not something a fisherman would wear... It would blow off the ship."];
+                    ["Ask thou Delin if he hath seen a cap like this. He is the provisioner. He should know."];
+                } else {
+                    ["Doth not sound like something a fisherman would wear..."];
+                    ["Ask thou Delin if he hath heard of such a cap. He is the provisioner. He should know."];
+                }
+                $delinknowscap = true;
+                if not v17 {
+                    v16 = v13::~Random(~ListSize_i(v13));
+                    v13 = ~RemoveFromList_i(v13, v16);
+                    if (v13 = << >>) {
+                        v17 = true;
+                    }
+                    TurnOn(v16);
+                }
+            }
+            key ("slippers") {
+                TurnOff("slippers");
+                if ~IsInInv(5, 65177, _Leath_Boots, 1, _Party) {
+                    ["I cannot recall having seen any of the women in town with slippers like these."];
+                    ["Thou mightest check with Delin to see if he remembers who purchased these."];
+                    $delinknowsslippers = true;
+                } else {
+                    ["I cannot recall any of the women wearing slippers like thou hast described."];
+                }
+                if not v17 {
+                    v16 = v13::~Random(~ListSize_i(v13));
+                    v13 = ~RemoveFromList_i(v13, v16);
+                    if (v13 = << >>) {
+                        v17 = true;
+                    }
+                    TurnOn(v16);
+                }
+            }
+            key ("breastplate") {
+                TurnOff("breastplate");
+                $knowbreastplate = true;
+                if ~IsInInv(0, 65177, _White_Brest, 1, _Party) {
+                    ["Perhaps Fawn's luck shall change after all!"];
+                    ["That is the Priestess Kylista's ceremonial breastplate!];
+                    if ($AUDIENCE_WITH_YELINDA and ($FAWN_TRIAL_DONE and not $oraclesaysinnocent)) {
+                        ["Thou shouldst leave it in the Temple, for it belongs within the Place of Beauty."];
+                    } else {
+                        ["Thou shouldst take it to her quickly!"];
+                    }
+                } else {
+                    ["Too bad thou dost not have it with thee. But that is Fawn's luck nowadays!"];
+                    ["It sounds like Priestess Kylista's ceremonial breastplate."];
+                    if ($AUDIENCE_WITH_YELINDA and ($FAWN_TRIAL_DONE and not $oraclesaysinnocent)) {
+                        ["If it is, then it belongs in the Temple. Perhaps thou shouldst leave it before the Oracle."];
+                    } else {
+                        ["Thou shouldst as least tell her that thou hast seen it -- it will cheer her."];
+                    }
+                }
+                if not v17 {
+                    v16 = v13::~Random(~ListSize_i(v13));
+                    v13 = ~RemoveFromList_i(v13, v16);
+                    if (v13 = << >>) {
+                        v17 = true;
+                    }
+                    TurnOn(v16);
+                }
+            }
+            key ("blue egg") {
+                TurnOff("blue egg");
+                if ~IsInInv(3, 65177, _Gwani_Artifacts, 1, _Party) {
+                    ["A rotten egg! How it smells! Leave here with that!"];
+                    Bark_i(0, "@Whew!@", _Jendon);
+                    SetWorkType(_Shy, _Jendon);
+                    terminate;
+                } else {
+                    ["I have never heard of a blue egg."];
+                    ["Ask Delphynia. She doth know all manner of strange things."];
+                    $delphknowsegg = true;
+                }
+                if not v17 {
+                    v16 = v13::~Random(~ListSize_i(v13));
+                    v13 = ~RemoveFromList_i(v13, v16);
+                    if (v13 = << >>) {
+                        v17 = true;
+                    }
+                    TurnOn(v16);
+                }
+            }
+            key ("strange hairbrush") {
+                TurnOff("strange hairbrush");
+                if ~IsInInv(6, 65177, _Brush, 1, _Party) {
+                    ["Strange lookin' brush..."];
+                    ["Come ta think of it, it looks like something that Jorvin was talking about, when our healer was killed. Thou shouldst show it to him."];
+                    $jorvinknowsbrushes = true;
+                } else {
+                    ["Hmmm... sounds malformed. No one in the City of Beauty would use such a brush."];
+                }
+                if not v17 {
+                    v16 = v13::~Random(~ListSize_i(v13));
+                    v13 = ~RemoveFromList_i(v13, v16);
+                    if (v13 = << >>) {
+                        v17 = true;
+                    }
+                    TurnOn(v16);
+                }
+            }
+            key ("bottle of wine") {
+                TurnOff("bottle of wine");
+                if ~IsInInv(16, 65177, _Bottles, 1, _Party) {
+                    ["I know that bottle! That there is Moonshade wine."];
+                    ["I do not have much demand for it around here, though. The sailors don't care much for such a weak vintage -- Fawn folk prefer Fawn ale!"];
+                } else {
+                    ["Doth not sound like Fawn ale... Maybe that weak vintage from Moonshade. I do not sell it here -- Fawn folk prefer Fawn ale!"];
+                }
+                if not v17 {
+                    v16 = v13::~Random(~ListSize_i(v13));
+                    v13 = ~RemoveFromList_i(v13, v16);
+                    if (v13 = << >>) {
+                        v17 = true;
+                    }
+                    TurnOn(v16);
+                }
+            }
+            key ("strange coins") {
+                TurnOff("strange coins");
+                if ~IsInInv(65177, 65177, _Fawn_Money, 1, _Party) {
+                    ["Why, those are Filari! Those are the coins of Fawn..."];
+                    ["They simply appeared, thou sayest? Strange storms, these. I seem to recall Delin complaining that he had lost some coins -- but I thought that was his forgetfulness!"];
+                } else {
+                    ["Without seeing the coins, <v1>, I cannot tell thee what coins thou didst have."];
+                    ["Perhaps thou shouldst ask Delin. He is the Provisioner here in town."];
+                }
+                $delinknowscoins = true;
+                if not v17 {
+                    v16 = v13::~Random(~ListSize_i(v13));
+                    v13 = ~RemoveFromList_i(v13, v16);
+                    if (v13 = << >>) {
+                        v17 = true;
+                    }
+                    TurnOn(v16);
+                }
+            }
+            key ("skull") {
+                TurnOff("skull");
+                if ~IsInInv(65177, 65177, _Bearskull, 1, _Party) {
+                    ["'Tis the skull of some beast, obviously. Perhaps it is a Goblin skull -- I would be glad of that."];
+                    ["Ask Jorvin if it is a Goblin skull. If it is, I might buy it from thee to hang above the door!"];
+                    $jorvinknowsskull = true;
+                } else {
+                    ["I am no expert on the bones of creatures, <v1>. Especially bones that I cannot see."];
+                }
+                if not v17 {
+                    v16 = v13::~Random(~ListSize_i(v13));
+                    v13 = ~RemoveFromList_i(v13, v16);
+                    if (v13 = << >>) {
+                        v17 = true;
+                    }
+                    TurnOn(v16);
+                }
+            }
+            key ("bloody hand") {
+                TurnOff("bloody hand");
+                if ~IsInInv(0, 65177, _Creeping_Limb, 1, _Party) {
+                    ["What manner of beast art thou, to carry such things with thee?!"];
+                    ["Thou art as bad as those horrible wizards from Moonshade! No respect for life!"];
+                    Bark_i(0, "@Take it away!@", _Jendon);
+                    terminate;
+                } else {
+                    ["Sounds like the work of those horrible wizards from Moonshade! No respect for life!"];
+                }
+                if not v17 {
+                    v16 = v13::~Random(~ListSize_i(v13));
+                    v13 = ~RemoveFromList_i(v13, v16);
+                    if (v13 = << >>) {
+                        v17 = true;
+                    }
+                    TurnOn(v16);
+                }
+            }
+            key ("plain shield") {
+                TurnOff("plain shield");
+                if ~IsInInv(65177, 65177, _Shield_Heirarchy, 1, _Party) {
+                    ["Do I look like a warrior, <v1>? What would a poor innkeeper know about arms and such like?"];
+                    ["Talk with Jorvin. He of any here in Fawn would know where such armour hails from."];
+                } else {
+                    ["I have no knowledge of arms, <v1>. I am a poor innkeeper, not a guard."];
+                    ["Seek Jorvin's aid. He is well trained with the devices of battle. I shall content myself with a mug and broom..."];
+                }
+                $jorvinknowsarms = true;
+                if not v17 {
+                    v16 = v13::~Random(~ListSize_i(v13));
+                    v13 = ~RemoveFromList_i(v13, v16);
+                    if (v13 = << >>) {
+                        v17 = true;
+                    }
+                    TurnOn(v16);
+                }
+            }
+            key ("glowing rock") {
+                TurnOff("glowing rock");
+                if ~IsInInv(15, 65177, _Reagents, 1, _Party) {
+                    ["Now that is strange, indeed! It fairly reeks of wizardry, <v1>."];
+                    ["I shall thank thee to take it out of here. I want nothing to do with such evil things... Take it to Delphynia, if thou must parade it about."];
+                } else {
+                    ["I suppose that Delphynia would be the best to answer thy question. This stone sounds magical -- since she deals with spell reagents, perhaps she'll know of it."];
+                }
+                $delphknowsstone = true;
+                if not v17 {
+                    v16 = v13::~Random(~ListSize_i(v13));
+                    v13 = ~RemoveFromList_i(v13, v16);
+                    if (v13 = << >>) {
+                        v17 = true;
+                    }
+                    TurnOn(v16);
+                }
+            }
+            key ("fish-net stockings") {
+                TurnOff("fish-net stockings");
+                if ~IsInInv(1, 65177, _Stockings, 1, _Party) {
+                    if ~AvatarSex() {
+                        ["'Tis not proper, <v1>, flaunting personal garments about like that!"];
+                        v14 = ~PartyUtters(false, "@They are not mine!@", "@They are not hers!@", 1);
+                        SetSpeakerSlot_i(0);
+                        ["Well... uh... these are made right here, by young Alyssand."];
+                    } else {
+                        ["These are stockings thou mayest find our fisher women wearing. They are made right here, by young Alyssand."];
+                    }
+                } else {
+                    if ~AvatarSex() {
+                        ["What dost thou take me for!"];
+                        if ~IsNPCNear(_Olon) {
+                            SetSpeaker1_i(0, _Olon);
+                            ["Trust me, <v1>, Jendon knows nothing of the fairer sex!"];
+                            CloseSpeaker1_i();
+                            SetSpeakerSlot_i(0);
+                        }
+                        ["Seek another woman to help thee... Alyssand, perhaps. She makes stockings."];
+                    } else {
+                        ["If it is stockings thou seekest..."];
+                        ["Alyssand weaves them right here in Fawn."];
+                    }
+                }
+                $alknowsfishnet = true;
+                if not v17 {
+                    v16 = v13::~Random(~ListSize_i(v13));
+                    v13 = ~RemoveFromList_i(v13, v16);
+                    if (v13 = << >>) {
+                        v17 = true;
+                    }
+                    TurnOn(v16);
+                }
+            }
+            key ("brown bottle") {
+                TurnOff("brown bottle");
+                ["Why, thou hast better taste than I didst give thee credit for, <v1>. I would not have chosen thee for a Fawn ale drinker!"];
+                ["No one outside of our town cares for it at all."];
+                if ~IsNPCNear_i(_Olon) {
+                    SetSpeaker1_i(0, _Olon);
+                    ["Thou dost speak in error, friend. Remember, thou hast a customer in Monitor..."];
+                    CloseSpeaker1_i();
+                    SetSpeakerSlot_i(0);
+                    ["Aye. The innkeeper in Monitor doth order Fawnish ale from time to time, but I know not for whom."];
+                }
+                ["Wouldst thou like more Fawnish ale?"];
+                if (~AskYesNo() = true) {
+                    JendonSellsDrink_i();
+                } else {
+                    ["Another time, then..."];
+                }
+                if not v17 {
+                    v16 = v13::~Random(~ListSize_i(v13));
+                    v13 = ~RemoveFromList_i(v13, v16);
+                    if (v13 = << >>) {
+                        v17 = true;
+                    }
+                    TurnOn(v16);
+                }
+            }
+            key ("nothing more") {
+                if (v4 = 1) {
+                    PopKeys();
+                    ["I wish I could have been of more help to thee..."];
+                } else {
+                    While (v4 > 1) {
+                        PopKeys();
+                        v4 = (v4 - 1);
+                    }
+                    ["Glad ta be of service ta thee, <v1>. Return if thou hast more questions."];
+                }
+            }
+            key ("change subject") {
+                PopKeys();
+                ["Why, we've drifted completely off the subject! What were we talking about...?"];
+            }
+            key ("nothing") {
+                ["I understand -- everyone is short of coins these days..."];
+                PopKeys();
+            }
+            key ("bye") {
+                SendAssassin_i();
+                CloseSpeaker0_i();
+                Bark_i(0, "@Farewell!@", _Avatar);
+                Bark_i(2, "@Walk in Beauty!@", _Jendon);
+                JorvinBringsInvitation_i();
+                break;
+            }
+        }
+        clear_answers;
+    }
+}
+
+Usable JendonSellsFood_i #locals(17) #uses(~LordOrLady, ~AskOrdList, ~AskYesNo, ~JendonHaggles_i, ~SellItem_i, ~PartyUtters) {
+    v0 = ~LordOrLady();
+    PushKeys();
+    v1 = true;
+    v2 = << "nothing", "mutton", "ham", "rolls", "seabass", "tarpin" >>;
+    v3 = << 0, 377, 377, 377, 377, 377 >>;
+    v4 = << 65177, 8, 11, 2, 12, 13 >>;
+    v5 = << 0, 42, 50, 8, 35, 40 >>;
+    v6 = << 0, 22, 28, 6, 20, 24 >>;
+    v7 = 948;
+    v8 = << 0, 1, 1, 1, 1, 1, 1, 1 >>;
+    v9 = << 0, 1, 1, 1, 1, 1, 1, 1 >>;
+    ["What dost thou care for, <v0>?"];
+    While v1 {
+        v10 = ~AskOrdList(v2);
+        if (v10 = 1) {
+            ["Let me know if thou dost change thy mind, <v0>."];
+            v1 = false;
+        } else {
+            v11 = v5::v10;
+            v12 = 0;
+            v13 = ~rndRange(6, 1);
+            if (v13 = 1) {
+                v14 = "Dost thou accept?";
+            }
+            if (v13 = 2) {
+                v14 = "Wilt thou pay this price?";
+            }
+            if (v13 = 3) {
+                v14 = "Dost thou find the price agreeable?";
+            }
+            if (v13 = 4) {
+                v14 = "Dost thou agree?";
+            }
+            if (v13 = 5) {
+                v14 = "Is the price acceptable?";
+            }
+            if (v13 = 6) {
+                v14 = "Is the price acceptable?";
+            }
+            if (v10 = 2) {
+                ["We do not see much meat here in Fawn, so the price is a bit steep. I sell mutton for <v11> filari."];
+                ["<v14>"];
+                v15 = "joints of mutton";
+            }
+            if (v10 = 3) {
+                ["The ham dinner costs <v11> filari. 'Tis not too bad..."];
+                ["<v14>"];
+                v15 = "ham dinners";
+            }
+            if (v10 = 4) {
+                ["The rolls are hard, but nourishing. They cost <v11> filari."];
+                ["<v14>"];
+                v15 = "rolls";
+            }
+            if (v10 = 5) {
+                ["Caught fresh every day, <v0>. <v11> filari is my price."];
+                ["<v14>"];
+                v15 = "seabass";
+            }
+            if (v10 = 6) {
+                ["The tarpin costs <v11> filari. 'Tis caught from the shore now that the fleet is gone."];
+                ["<v14>"];
+                v15 = "tarpin";
+            }
+            if (v11 = v6::v10) {
+                if ~AskYesNo() {
+                    v16 = v11;
+                } else {
+                    v16 = 0;
+                }
+            } else {
+                v16 = ~JendonHaggles_i(v6::v10, v5::v10);
+            }
+            if (v16 > 0) {
+                if (v9::v10 = 1) {
+                    ["How many <v15> wouldst thou like?"];
+                    v10 = ~SellItem_i(false, 1, 20, v16, v7, 1, v4::v10, v3::v10);
+                } else {
+                    v10 = ~SellItem_i(false, 1, 0, v16, v7, v8::v10, v4::v10, v3::v10);
+                }
+            }
+            if (v10 = 1) {
+                ["Eat hearty, <v0>!"];
+            } else {
+                if (v10 = 2) {
+                    ["Thine hands are full, <v0>!"];
+                } else {
+                    if (v10 = 3) {
+                        v13 = ~PartyUtters(false, 0, (("@But " + v0) + ", we haven't the filari to pay for this.@"), 1);
+                        if (v13 <> 65180) {
+                            SetSpeaker0_i(0, _Jendon);
+                            ["I do not allow beggars in here!"];
+                            terminate;
+                        } else {
+                            ["If thou canst not pay, then thou canst leave!"];
+                            terminate;
+                        }
+                        if (31 < (~GetNPCID_i(_Jendon) + 6)) {
+                            SetNPCID_i(31, _Jendon);
+                        } else {
+                            SetNPCID_i((~GetNPCID_i(_Jendon) + 6), _Jendon);
+                        }
+                    } else {
+                    }
+                }
+            }
+            ["Wouldst thou care for more?"];
+            v1 = ~AskYesNo();
+        }
+    }
+    PopKeys();
+}
+
+Usable JendonSellsDrink_i #locals(16) #uses(~LordOrLady, ~AvatarName, ~AskOrdList, ~AskYesNo, ~JendonHaggles_i, ~SellItem_i, ~PartyUtters) {
+    v0 = ~LordOrLady();
+    v1 = ~AvatarName();
+    PushKeys();
+    v2 = true;
+    v3 = << "nothing", "ale" >>;
+    v4 = << 0, 616 >>;
+    v5 = << 65177, 9 >>;
+    v6 = << 0, 12 >>;
+    v7 = << 0, 6 >>;
+    v8 = 948;
+    v9 = << 0, 1 >>;
+    v10 = << 0, 1 >>;
+    ["What can I get ye?"];
+    While v2 {
+        v11 = ~AskOrdList(v3);
+        if (v11 = 1) {
+            ["Then why'dst thou ask in the first place?"];
+            v2 = false;
+        } else {
+            v12 = v6::v11;
+            v13 = 0;
+            if (v11 = 2) {
+                ["That'll be <v12> filari for a bottle of fine Fawn ale. Wouldst thou care for any?"];
+            }
+            if (v12 = v7::v11) {
+                if ~AskYesNo() {
+                    v14 = v12;
+                } else {
+                    v14 = 0;
+                }
+            } else {
+                v14 = ~JendonHaggles_i(v7::v11, v6::v11);
+            }
+            if (v14 > 0) {
+                if (v10::v11 = 1) {
+                    ["How many bottles wouldst thou like?"];
+                    v13 = ~SellItem_i(false, 1, 20, v14, v8, 1, v5::v11, v4::v11);
+                } else {
+                    v13 = ~SellItem_i(false, 1, 0, v14, v8, v9::v11, v5::v11, v4::v11);
+                }
+            }
+            if (v13 = 1) {
+                ["Cheers, <v0>!"];
+            } else {
+                if (v13 = 2) {
+                    ["Thou shouldst not travel so heavily burdened -- I do not think that thou canst bear the bottles that thou desirest!"];
+                } else {
+                    if (v13 = 3) {
+                        v15 = ~PartyUtters(false, 0, (("@But " + v0) + ", we do not have the filari to pay for this.@"), 1);
+                        if (v15 <> 65180) {
+                            SetSpeaker0_i(0, _Jendon);
+                            ["I don't allow no beggars in here!"];
+                            terminate;
+                        } else {
+                            ["If thou canst not pay, then thou canst leave!"];
+                            terminate;
+                        }
+                        if (31 < (~GetNPCID_i(_Jendon) + 6)) {
+                            SetNPCID_i(31, _Jendon);
+                        } else {
+                            SetNPCID_i((~GetNPCID_i(_Jendon) + 6), _Jendon);
+                        }
+                    } else {
+                    }
+                }
+            }
+            ["Wouldst thou care for more?"];
+            v2 = ~AskYesNo();
+        }
+    }
+    PopKeys();
+}
+
+Function ~JendonHaggles_i accepts a0, a1 #locals(14) #uses(~LordOrLady, ~AskList, ~Haggle_i, ~AskYesNo, ~IsNPCNear) {
+    v2 = ~LordOrLady();
+    v3 = v1;
+    v4 = ((v0 / 3) * 2);
+    v5 = (15 - (~GetNPCID_i(_Jendon) / 2));
+    v6 = 0;
+    v7 = 1;
+    v8 = 0;
+    v9 = 2;
+    v10 = ~GetNPCID_i(_Jendon);
+    While v7 {
+        v11 = ~AskList(<< "yes", "no", "haggle" >>);
+        if (v11 = "no") {
+            return 0;
+        } else {
+            if (v11 = "yes") {
+                v12 = 0;
+                goto label_8;
+            }
+        }
+        v13 = ~Haggle_i(v6, v5, v8, v4, v9, v0, v3);
+        v8 = (v8 + 1);
+        v6 = v13::4;
+        v12 = v13::3;
+        v14 = v3;
+        v3 = v13::2;
+        v4 = v13::1;
+        label_8:
+        v15 = ~Random(3);
+        if (v12 < 2) {
+            if (v3 < (v0 + ((v1 - v0) / 4))) {
+                if (v15 = 1) {
+                    ["Shh! Don't let Olon hear what price thou didst pay. He would never let me hear the last of it!"];
+                }
+                if (v15 = 2) {
+                    ["Thou dost drive a hard bargain, <v2>. I should sell the inn an' become one o' them monks!"];
+                }
+                if (v15 = 3) {
+                    ["Out-bargained by a stranger! What be next, a goblin?"];
+                }
+            } else {
+                if (v3 < (v0 + ((v1 - v0) / 3))) {
+                    if (v15 = 1) {
+                        ["Fairest prices thou wilt find hereabouts..."];
+                    }
+                    if (v15 = 2) {
+                        ["I must be going slack-witted, ta offer thee a price like this!"];
+                    }
+                    if (v15 = 3) {
+                        ["Art thou sure thou art not a wizard... Ta talk me into a price such as this?"];
+                    }
+                } else {
+                    if (v3 < (v0 + ((v1 - v0) / 2))) {
+                        if (v15 = 1) {
+                            ["Not bad... Not bad at all."];
+                        }
+                        if (v15 = 2) {
+                            ["If this is the best I can get, I had best take it."];
+                        }
+                        if (v15 = 3) {
+                            ["Remember me, if thou dost need anythin' more, <v2>."];
+                        }
+                    } else {
+                        if (v15 = 1) {
+                            ["Not a bad piece of business, <v2>."];
+                        }
+                        if (v15 = 2) {
+                            ["Thou art tough... like an ol' sailor!"];
+                        }
+                        if (v15 = 3) {
+                            ["I wish things were better, <v2>. Thou wouldst find me prices fairer, ta be sure."];
+                        }
+                    }
+                }
+            }
+            ["Dost thou agree ta a price of <v3> filari, <v2>?"];
+            if ~AskYesNo() {
+                if (v10 > 1) {
+                    SetNPCID_i((v10 - 2), _Jendon);
+                }
+                return v3;
+            } else {
+                if (v15 = 1) {
+                    ["Hast thou forgotten already? We had an agreement!"];
+                }
+                if (v15 = 2) {
+                    ["Then be gone with thee -- I have no time ta play games."];
+                }
+                if (v15 = 3) {
+                    ["Dost thou think me a fool, ta argue with me only ta change thy mind? I shall spread the word about thee in this town, wait and see!"];
+                }
+                if (31 < (v10 + 10)) {
+                    SetNPCID_i(31, _Jendon);
+                } else {
+                    SetNPCID_i((v10 + 10), _Jendon);
+                }
+                return 0;
+            }
+        }
+        if (v6 = 1) {
+            if (v12 = 5) {
+                ["Look, <v2>, I said that <v3> was my final offer. Dost thou accept?"];
+                if (v10 < 28) {
+                    SetNPCID_i((v10 + 4), _Jendon);
+                }
+                if ~AskYesNo() {
+                    return v3;
+                }
+                v7 = 0;
+            } else {
+                ["Well... <v3> filari is my final offer."];
+                if (v10 < 30) {
+                    SetNPCID_i((v10 + 2), _Jendon);
+                }
+            }
+        } else {
+            if (v12 = 2) {
+                if (v15 = 1) {
+                    ["It pleases me ta do business with such a worthy soul. How does <v3> filari sound?"];
+                }
+                if (v15 = 2) {
+                    ["May the Beauty bless thee, friend. So, have we agreed on <v3> filari?"];
+                }
+                if (v15 = 3) {
+                    ["My price is <v3> filari -- A price I would never offer strangers. Dost thou accept?"];
+                }
+            }
+            if (v12 = 3) {
+                if (v15 = 1) {
+                    ["I have few customers left these days... <v3> filari?"];
+                }
+                if (v15 = 2) {
+                    ["Wouldst thou pay <v3>?"];
+                }
+                if (v15 = 3) {
+                    ["Perhaps <v3> filari? Thou wilt find no better..."];
+                }
+            }
+            if (v12 = 4) {
+                if (v15 = 1) {
+                    ["I will take no less than <v3>. How doth that suit thee?"];
+                }
+                if (v15 = 2) {
+                    [I have no supplies coming, with these storms. <v3> filari, no less."];
+                }
+                if (v15 = 3) {
+                    ["Sharper folks than thee have tried ta cheat me! <v3> filari."];
+                }
+            }
+            if (v12 = 5) {
+                v3 = v14;
+                if (v15 = 1) {
+                    ["I would rather be eaten by rats than accept such a pitiful offer. My previous price stands, at <v3> filari."];
+                }
+                if (v15 = 2) {
+                    ["What dost thou take me for? <v3> filari, and no less!"];
+                }
+                if (v15 = 3) {
+                    ["Why, if I accepted such a price as this, I may as well sell the inn ta Olon!"];
+                    if ~IsNPCNear(_Olon) {
+                        SetSpeaker1_i(0, _Olon);
+                        ["Sounds good ta me!"];
+                        CloseSpeaker1_i();
+                        SetSpeaker0_i(0, _Jendon);
+                    }
+                    ["<v3> filari is where I stand."];
+                }
+                if (v10 < 31) {
+                    SetNPCID_i((v10 + 1), _Jendon);
+                }
+            }
+        }
+    }
+}

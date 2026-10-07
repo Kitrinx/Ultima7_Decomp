@@ -1,0 +1,294 @@
+Routine Rotoluncia accepts a0 #locals(21) #uses(~LordOrLady, ~AvatarName, ~PartyUtters, Bark_i, ~GimmePathEgg, AttackAvatar_i, SetWorkTypeAt_i, ~AskYesNo, ~BanterSpeakers_i, ~GetNPCName, ~GiveItemsOrDrop_i, ~RemoveFromList_i) {
+    v0 = ~LordOrLady();
+    v1 = ~AvatarSex();
+    v2 = ~AvatarName();
+    if ((event = _NearDeath) and ~GetItemFlag_i(_Tournament, _Rotoluncia)) {
+        SetSpeaker0_i(0, _Rotoluncia);
+        ClearItemFlag_i(_Tournament, _Rotoluncia);
+        ReduceHits_i(0, 50, _Rotoluncia);
+        v3 = ~PartyUtters(true, 0, 0, 1);
+        Bark_i(5, "@The witch is dead!@", v3);
+        ["With my dying breath, I place the Curse of the Red Witch upon thee!"];
+        ["Arrgh..."];
+        v4 = ~PostInFuture(5, << _aNO_HALT_i, _aUSABLE_i, #MgGremlin >>, ~GimmePathEgg(1, 5));
+    }
+    if (event = _Converse) {
+        Item_bark("@Listen, witch!@", _Avatar);
+        Bark_i(5, "@Cretin!@", _Rotoluncia);
+        v4 = ~PostAction(<< _aNO_HALT_i, _aWAIT_i, 5, _aUSABLE_i, #Rotoluncia >>, item);
+    }
+    if (event = _Talking) {
+        SetSpeaker0_i(0, _Rotoluncia);
+        if not flag(307) {
+            ["So, thou hast come to rescue thy friend? Well, thou must kill me first -- I have the only key to his cell!"];
+            ["Or wilt thou tell me the secret which I desire, the key to controlling Daemons!!!"];
+            v3 = ~PartyUtters(false, "@But I know nothing of Daemons...@", "@But we know nothing about gargoyles... er, Daemons.@", 1);
+            SetSpeakerSlot_i(0);
+            ["Then thou shalt die, liar."];
+            AttackAvatar_i(_Rotoluncia);
+            ClearBark_i(_Rotoluncia);
+            Bark_i(0, "@Kill the Avatar!@", _Rotoluncia);
+            SetWorkTypeAt_i(_Combat_0, 0, 65535, _Rotoluncia);
+            v4 = ~FindNearby_i(0, 30, _MgGremlin, item);
+            Foreach v7 in v4 {
+                AttackAvatar_i(v7);
+            }
+        } else {
+            ["I am tired of playing games with thee, <v2>. Thou must either give me thy secrets, or kill me -- I have the only key to this chamber!"];
+            ["This is thy last chance -- wilt thou tell me the secret which I desire, the key to controlling Daemons!!!"];
+            if ~AskYesNo() {
+                ["Thou shalt not live to regret this. Open thy mind to me!"];
+                SetItemFlag_i(_DontMove_i, _Avatar);
+                SetWorkType(_Stand, _Rotoluncia);
+                SetWorkType(_Wait, _Avatar);
+                $temp1flag = true;
+                v4 = ~PostAction(<< _aNO_HALT_i, _aBARK_i, "@Ugh...@", _aBEND_FRAME_i, _aSTAND_FRAME_i, _aFACE_i, _North, _aBEND_FRAME_i, _aKNEEL_FRAME_i, _aLIE_FRAME_i, _aBARK_i, "@Mine head!@", _aWAIT_i, 6, _aUSABLE_i, #Rotoluncia >>, _Avatar);
+                terminate;
+            } else {
+                ["Then thou shalt die with thy secret, Avatar..."];
+                AttackAvatar_i(_Rotoluncia);
+                Bark_i(0, "@Die, fool!@", _Rotoluncia);
+                SetWorkTypeAt_i(_Combat_0, 0, 65535, _Rotoluncia);
+                terminate;
+            }
+        }
+        flag(328) = true;
+    }
+    if (event = _Action) {
+        if $temp4flag {
+            $temp4flag = false;
+            SetWorkType(_Talk, _Rotoluncia);
+            Bark_i(3, "@Surprised, Avatar?@", _Rotoluncia);
+            terminate;
+        }
+        if $temp3flag {
+            FadePalette_i(0, 1, 12);
+            Item_move(<< 2146, 2101, 0 >>, _Avatar);
+            Item_move(<< 2159, 2082, 0 >>, _Rotoluncia);
+            $temp3flag = false;
+            $temp4flag = true;
+            ClearItemFlag_i(_DontMove_i, _Avatar);
+            v4 = ~PostInFuture(5, << _aNO_HALT_i, _aUSABLE_i, #FadeInArrival_i, _aWAIT_i, 8, _aUSABLE_i, #Rotoluncia >>, _Avatar);
+            terminate;
+        }
+        if $temp2flag {
+            SetWorkType(_FollowAvt, _Avatar);
+            ClearItemFlag_i(_DontMove_i, _Avatar);
+            v4 = ~PostAction(<< _aNO_HALT_i, _aLIE_FRAME_i, _aCONTINUE_i, _aHIT_i, 100, 2, _aLIE_FRAME_i, _aLIE_FRAME_i >>, _Avatar);
+            $temp2flag = false;
+            SetWorkTypeAt_i(_Combat_0, 0, 65535, _Rotoluncia);
+            terminate;
+        }
+        if $temp1flag {
+            v8 = ~GetCoord(_Avatar);
+            v8::1 = (v8::1 - (v8::3 / 2));
+            v8::2 = (v8::2 - (v8::3 / 2));
+            createSprite(65535, 0, 0, 0, (v8::2 - 3), (v8::1 - 1), 27);
+            $temp1flag = false;
+            $temp2flag = true;
+            v4 = ~PostInFuture(8, << _aNO_HALT_i, _aLIE_FRAME_i, _aCONTINUE_i, _aUSABLE_i, #Rotoluncia, _aLIE_FRAME_i >>, _Avatar);
+            terminate;
+        }
+        if (flag(308) and not flag(234)) {
+            SetSpeaker0_i(0, 65234);
+            if ~GetItemFlag_i(_Dead, _Rotoluncia) {
+                ["I am speaking to thee from beyond the grave. I shall have vengeance!"];
+                terminate;
+            } else {
+                ["Greetings, Stranger from Another Land. Once again, I am speaking to thee by means of a magic scroll."];
+                v9 = ~GetNPCName_i((0 - ~GetNPCID_i(_Rotoluncia)));
+                ["If thou art looking for thy companion, <v9>, look no further -- I have kidnapped him."];
+                ["Since thou wilt not give me thy secrets, I shall obtain them from him!"];
+                ["Farewell, <v2>..."];
+                flag(234) = true;
+                terminate;
+            }
+        }
+        if (($messgavescroll = true) and not $rotoscrollone) {
+            $rotoscrollone = true;
+            v10 = false;
+            v11 = false;
+            v12 = false;
+            v13 = ~ListSize_i(~GetParty());
+            SetSpeaker0_i(0, 65234);
+            ["Greetings, Stranger from Another Land. I am speaking to thee by means of this magic scroll -- there is no need to be afraid."];
+            v14 = ~BanterSpeakers_i(2);
+            if (v14 <> false) {
+                SetSpeaker1_i(0, v14::1);
+                ["Afraid? Why, the Avatar is not afraid of magic."];
+                CloseSpeaker1_i();
+                SetSpeakerSlot_i(0);
+                ["But all barbarians fear sorcery."];
+                SetSpeaker1_i(0, v14::2);
+                v3 = ~GetNPCName(v14::1);
+                ["Be quiet, <v3>. That witch can hear thee through that scroll!"];
+                CloseSpeaker1_i();
+                SetSpeakerSlot_i(0);
+                ["Who said that! Death draws near for those who taunt Rotoluncia the Red Witch."];
+            }
+            TurnOn(<< "magic", "Council", "not afraid", "bye" >>);
+            converse {
+                key ("magic") {
+                    TurnOff("magic");
+                    ["I am the most powerful wizard in this city, and I could teach thee many things -- if thou wert not a mere Mundane."];
+                    v14 = ~BanterSpeakers_i(2);
+                    if (v14 <> false) {
+                        SetSpeaker1_i(0, v14::1);
+                        ["But the Avatar is not a Mundane..."];
+                        CloseSpeaker1_i();
+                        SetSpeakerSlot_i(0);
+                        ["What is this that they say?"];
+                        SetSpeaker1_i(0, v14::2);
+                        v3 = ~GetNPCName(v14::1);
+                        ["Thou dost speak overly much, <v3>."];
+                        CloseSpeaker1_i();
+                        SetSpeakerSlot_i(0);
+                    }
+                    ["Thou art not a mage, or I would have detected thy powers by now."];
+                    ["Or... perhaps thou dost shield thine abilities from my senses? Most interesting..."];
+                    v10 = true;
+                }
+                key ("Council") {
+                    TurnOff("Council");
+                    ["So my servant told thee that I sit on the Council of Mages? Perhaps I shall dismantle him to adjust a loose tongue..."];
+                    ["Indeed, I am one of the Three who rule this city, along with Gustacio the Decrepit, and that weak-willed profligate, Filbercio."];
+                    v11 = true;
+                }
+                key ("not afraid") {
+                    TurnOff("not afraid");
+                    ["Thou dost surprise me. Most Mundanes are frightened by the very idea of sorcery."];
+                    TurnOn("Mundanes");
+                }
+                key ("Mundanes") {
+                    TurnOff("Mundanes");
+                    ["Indeed, thou art from a distant land if thou dost not know such a common term."];
+                    ["The world is divided into two sorts of Men -- those who can handle magics, and mere ordinary folk."];
+                    v15 = << >>;
+                    if (v13 > 1) {
+                        v15 = "and thy companion";
+                        if (v13 > 2) {
+                            v15 = (v15 + "s");
+                        }
+                        v15 = (v15 + " ");
+                    }
+                    ["Common folk such as thee <v15>are known as the Mundane."];
+                    v12 = true;
+                }
+                key ("bye") {
+                    ["Not so fast! Thou shouldst know that I met with thine ally, the fat and loathsome sage called Batlin..."];
+                    ["He travelled with a Daemon named Palos. Where did Batlin obtain such power? If I had this power, I could rule Serpent Isle!"];
+                    ["Reveal to me the secret of controlling Daemonfolk, and I shall reward thee with power beyond thy comprehension."];
+                    if ~AskYesNo() {
+                        ["Then open thy mind to me, and let me withdraw the knowledge which I lust after!"];
+                        v16 = ~PartyUtters(false, 0, "@No, my friend. Thou must not...!@", 1);
+                        if (v16 <> 65180) {
+                            SetNPCID_i((0 - v16), _Rotoluncia);
+                            SetSpeakerSlot_i(0);
+                            ["Thy friends must learn not to interfere in the interests of mages. Let them learn now!!!"];
+                            v8 = ~GetCoord(v16);
+                            CreateSpriteOn_i(65535, 0, 0, 0, 0, 0, 13, ~NPCToItem_i(v16));
+                            v17 = ~Item_create(_Field_Fire);
+                            if v17 {
+                                SetItemFlag_i(_IsTemporary_i, v17);
+                                v4 = ~PopToMap(v8);
+                            }
+                        } else {
+                            SetItemFlag_i(_DontMove_i, _Avatar);
+                            SetWorkType(_Wait, _Avatar);
+                            $temp1flag = true;
+                            v4 = ~PostAction(<< _aNO_HALT_i, _aBARK_i, "@Ugh...@", _aBEND_FRAME_i, _aSTAND_FRAME_i, _aFACE_i, _North, _aBEND_FRAME_i, _aKNEEL_FRAME_i, _aLIE_FRAME_i, _aBARK_i, "@Mine head!@", _aWAIT_i, 6, _aUSABLE_i, #Rotoluncia >>, _Avatar);
+                            terminate;
+                        }
+                    } else {
+                        ["I shall contact thee again, when perhaps thou shalt be more receptive to mine offers. Adieu."];
+                    }
+                    terminate;
+                }
+            }
+            clear_answers;
+        }
+        if ($knowturtle and not flag(234)) {
+            Item_move(<< 2489, 1813, 0 >>, _AutoMessenger);
+            SetWorkType(_Wait, _AutoMessenger);
+            SetItemFlag_i(_Tournament, _AutoMessenger);
+            v16 = (0 - ~GetNPCID_i(_Rotoluncia));
+            if ((v16 = 0) or ~GetItemFlag_i(_Dead, v16)) {
+                v4 = << >>;
+                if not ~GetItemFlag_i(_Dead, _Shamino) {
+                    v4 = (v4 & 65534);
+                }
+                if ($IOLO_MADE_EQUIPMENT_LIST and not ~GetItemFlag_i(_Dead, _Iolo)) {
+                    v4 = (v4 & 65533);
+                }
+                if ($duprefound and not ~GetItemFlag_i(_Dead, _Dupre)) {
+                    v4 = (v4 & 65535);
+                }
+                if v4 {
+                    v16 = v4::~Random(~ListSize_i(v4));
+                } else {
+                    v16 = 65180;
+                }
+            }
+            flag(234) = true;
+            if (v16 <> 65180) {
+                SetNPCID_i((0 - v16), _Rotoluncia);
+                if ~IsNPCNear_i(v16) {
+                    SetSpeaker0_i(0, v16);
+                    ["What! What's happening..."];
+                    v8 = ~GetCoord(v16);
+                    v8::1 = (v8::1 - (v8::3 / 2));
+                    v8::2 = (v8::2 - (v8::3 / 2));
+                    createSprite(65535, 0, 0, 0, v8::2, v8::1, 26);
+                    v9 = ~GetNPCName(v16);
+                    v3 = ~PartyUtters(true, 0, (("@" + v9) + "!"), 1);
+                    Bark_i(2, "@Where did he go!@", _Avatar);
+                } else {
+                    flag(308) = true;
+                    flag(234) = false;
+                    v18 = ~Item_create(_Serp_Scroll);
+                    if v18 {
+                        SetFrame(6, v18);
+                        v4 = ~SetQuality(31, v18);
+                        v8 = ~GetCoord(_Avatar);
+                        v4 = ~PopToMap(v8);
+                        CreateSpriteOn_i(65535, 0, 0, 0, 0, 0, 13, _Avatar);
+                        if v4 {
+                            v3 = ~PartyUtters(true, "@A scroll...@", "@Look! A scroll!@", 1);
+                        }
+                    } else {
+                        v4 = ~GiveItemsOrDrop_i(false, 18, 6, 31, 707, 1, _Avatar);
+                        if ((v4::1 = 0) and (v4::2 = 0)) {
+                            v3 = ~PartyUtters(true, "@A scroll!@", "@Thou hast a scroll!@", 1);
+                        } else {
+                            if (v4::1 = 0) {
+                                v3 = ~PartyUtters(true, "@A scroll...@", "@Look! A scroll!@", 1);
+                            } else {
+                                v3 = ~PartyUtters(true, "@Thou hast a scroll!@", "@Look what I have!@", ~ItemToNPC_i(v4::1));
+                            }
+                        }
+                    }
+                }
+                if ~GetItemFlag_i(_InParty_i, v16) {
+                    LeaveParty(v16);
+                }
+                NewSchedule_i(<< 2136, 2103 >>, _TendShop, 0, v16);
+                Npc_schedule(v16);
+                Item_move(<< 2136, 2103, 0 >>, v16);
+                terminate;
+            } else {
+                flag(307) = true;
+                v4 = ~RemoveFromList_i(~GetParty_i(), ~NPCToItem_i(_Avatar));
+                Foreach v18 in v4 {
+                    LeaveParty(v18);
+                    SetWorkTypeAt_i(_Wander, 0, 65535, v18);
+                }
+                SetItemFlag_i(_DontMove_i, _Avatar);
+                v8 = ~GetCoord(_Avatar);
+                CreateSpriteOn_i(65535, 0, 0, 0, 0, 0, 26, _Avatar);
+                v4 = ~PostInFuture(13, << _aNO_HALT_i, _aUSABLE_i, #Rotoluncia >>, _Avatar);
+                $temp3flag = true;
+                terminate;
+            }
+        }
+    }
+}

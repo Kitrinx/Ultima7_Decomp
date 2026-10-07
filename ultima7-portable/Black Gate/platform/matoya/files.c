@@ -557,7 +557,8 @@ int16_t plat_find_next(plat_find *find)
 		plat_find_close(find);
 		return 0;
 	}
-	memcpy(find->name, list->files[list->next].name, sizeof find->name);
+	/* As DOS findnext: a shorter name leaves the end of the last one after its NUL. */
+	strcpy(find->name, list->files[list->next].name);
 	find->size = list->files[list->next].size;
 	list->next++;
 	return 1;

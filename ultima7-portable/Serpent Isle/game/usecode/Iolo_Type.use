@@ -1,0 +1,86 @@
+Routine Iolo_Type accepts a0 #locals(6) #uses(~LordOrLady, Bark_i, FaceAvatar_i) {
+    v0 = ~LordOrLady();
+    if (event = _Action) {
+        if $tookinventory {
+            if $IOLO_MADE_EQUIPMENT_LIST {
+                if (flag(395) and not flag(400)) {
+                    SetSpeaker0_i(0, _Iolo);
+                    v1 = ~GetMusic();
+                    flag(400) = true;
+                    ["Wait, sailor! I shall sing thee mine heart's one song... I fear that it is a sad one --"];
+                    SetMusic(v1, 61);
+                    ["It is a shame, a heartsore shame,"];
+                    SetMusic(v1, 62);
+                    ["That I am singing of my love in vain."];
+                    SetMusic(v1, 59);
+                    ["For I have lost my lady, my love,"];
+                    SetMusic(v1, 60);
+                    ["And I will search for her, yes, search for her,"];
+                    SetMusic(v1, 61);
+                    ["Even through all the stars above."];
+                    SetMusic(v1, 62);
+                    ["Gwenno, canst thou hear me? Gwenno, my dear,"];
+                    SetMusic(v1, 59);
+                    ["Take heart for thy beloved Iolo is here!"];
+                    SetMusic(v1, 60);
+                    CloseSpeaker0_i();
+                    RevertSchedule_i(_Olon);
+                    Npc_schedule(_Olon);
+                    SetWorkType(_Wander, _Olon);
+                    Bark_i(0, "@How sad...@", _Delphynia);
+                    Bark_i(10, "@Catchy tune...@", _Jorvin);
+                    terminate;
+                }
+            } else {
+                SetSpeaker0_i(0, _Iolo);
+                if not $marstenarrested {
+                    ["Please free thine old friend! There hath been a terrible mistake, <v0>!"];
+                    ["That storm transported me to this odd city. Because I am a stranger, they arrested me. They say that I am an enchanter!"];
+                    ["Speak to Lord Marsten, and win my freedom! I know thou shalt not leave me..."];
+                } else {
+                    ["Avatar! Please free thine old friend! Now that Marsten is jailed, please speak to Brendann and win my freedom!"];
+                }
+                Bark_i(0, "@Return soon...@", _Iolo);
+                Npc_schedule(_Iolo);
+                $sawioloinjail = true;
+                terminate;
+            }
+        } else {
+            v2 = ~GetNPCID_i(_Iolo);
+            if (v2 < 10) {
+                LightningBolt();
+                if (v2 = 0) {
+                    v3 = ~GetCoord(_Avatar);
+                    v4 = 7;
+                    createSprite(65535, 0, 8, 8, (v3::2 - 2), (v3::1 - 2), v4);
+                    createSprite(65535, 0, 65528, 65528, (v3::2 - 2), (v3::1 - 2), v4);
+                    createSprite(65535, 0, 65528, 8, (v3::2 - 2), (v3::1 - 2), v4);
+                    createSprite(65535, 0, 8, 65528, (v3::2 - 2), (v3::1 - 2), v4);
+                    createSprite(65535, 0, 65531, 0, (v3::2 - 2), (v3::1 - 2), v4);
+                    createSprite(65535, 0, 0, 65531, (v3::2 - 2), (v3::1 - 2), v4);
+                    createSprite(65535, 0, 5, 0, (v3::2 - 2), (v3::1 - 2), v4);
+                    createSprite(65535, 0, 0, 5, (v3::2 - 2), (v3::1 - 2), v4);
+                    createSprite(65535, 0, 0, 0, (v3::2 - 2), (v3::1 - 2), v4);
+                }
+                if (v2 = 7) {
+                    Bark_i(5, "@Is everyone all right?@", _Dupre);
+                    Bark_i(0, "@What happened?@", _Shamino);
+                }
+                if (v2 = 9) {
+                    SetWorkType(_Wait, _Dupre);
+                    SetWorkType(_Wait, _Shamino);
+                    FaceAvatar_i(65535);
+                    FaceAvatar_i(65534);
+                    v5 = ~PostInFuture(15, << _aNO_HALT_i, _aUSABLE_i, #Iolo_Type >>, _Iolo);
+                } else {
+                    v5 = ~PostInFuture(0, << _aNO_HALT_i, _aUSABLE_i, #Iolo_Type >>, _Iolo);
+                }
+                SetNPCID_i((v2 + 1), _Iolo);
+                terminate;
+            } else {
+                SetWorkType(_Talk, _Iolo);
+                Bark_i(0, "@Avatar!@", _Iolo);
+            }
+        }
+    }
+}

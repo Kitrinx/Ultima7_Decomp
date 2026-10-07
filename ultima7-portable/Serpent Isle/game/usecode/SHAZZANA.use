@@ -1,0 +1,282 @@
+Routine Shazzana accepts a0 #locals(21) #uses(~LordOrLady, ~OrderList_i, ~InListField_i, ChangeHits_i, DeclareWinner_i, NowSettleDownBoys, ~RemoveFromList_i, Bark_i, PartyFaces_i, ~AskYesNo) {
+    v0 = ~LordOrLady();
+    v1 = ~GetItemFlag_i(_Met, _Shazzana);
+    v2 = "stranger";
+    if $AVATAR_IS_KNIGHT {
+        v2 = "Knight";
+    }
+    if (event = _NearDeath) {
+        if $tournamentflag {
+            v3 = ~GetAttacker_i(_Shazzana);
+            v3 = (0 - v3);
+            if not v3 {
+                v3 = 65180;
+            }
+            if ((v3 <> 65180) and not (v3 in ~OrderList_i())) {
+                v0 = ~OrderList_i();
+                v0 = (v0 & 65180);
+                Foreach v2 in v0 {
+                    if ~InListField_i(v2) {
+                        goto label_13;
+                    }
+                }
+                v2 = 65180;
+                label_13:
+                Npc_setTarget(v2, _Shazzana);
+                Npc_setTarget(v2, v3);
+                ChangeHits_i(3, _Shazzana);
+                ChangeHits_i(3, v3);
+                return;
+            }
+            if not $temp1flag {
+                $temp1flag = true;
+                DeclareWinner_i(~NPCToItem_i(_Shazzana), ~NPCToItem_i(v3));
+                return;
+            }
+            NowSettleDownBoys(v3);
+            return;
+        } else {
+            v6 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #Paladin >>, item);
+        }
+    }
+    if (event = _Bark) {
+        v7 = ~GetCoord(_Shazzana);
+        if (v7::2 > 2625) {
+            v8 = ~FindNearby_i(8, 20, 65535, _Shazzana);
+            v8 = ~RemoveFromList_i(v8, ~NPCToItem_i(_Shazzana));
+            v9 = << >>;
+            Foreach v12 in v8 {
+                if (~GetWorkType(v12) = _Duel) {
+                    v9 = (v9 & v12);
+                }
+            }
+            if (v9 = << >>) {
+                terminate;
+            }
+            ClearBark_i(_Shazzana);
+            v13 = v9::~Random(~ListSize_i(v9));
+            ClearBark_i(v13);
+            v14 = ~Random(6);
+            if (v14 = 1) {
+                Item_bark("@Work harder!@", _Shazzana);
+                Bark_i(3, "@Yes, Shazzana.@", v13);
+            }
+            if (v14 = 2) {
+                Item_bark("@Do not rest!@", _Shazzana);
+                Bark_i(3, "@Sorry, madam.@", v13);
+            }
+            if (v14 = 3) {
+                Item_bark("@Slave driver...@", v13);
+                Bark_i(3, "@I heard that!@", _Shazzana);
+            }
+            if (v14 = 4) {
+                Item_bark("@With vigor!@", _Shazzana);
+                Bark_i(3, "@Yes, Shazzana.@", v13);
+            }
+            if (v14 = 5) {
+                Item_bark("@Do not slow!@", _Shazzana);
+                Bark_i(3, "@Yes, Shazzana.@", v13);
+            }
+            if (v14 = 6) {
+                Item_bark("@Very good!@", _Shazzana);
+                Bark_i(3, "@Thanks.@", v13);
+                Bark_i(6, "@Keep working.@", _Shazzana);
+            }
+        } else {
+            v15 = << 65473, 65386 >>;
+            if not $spektorarrested {
+                v15 = (v15 & 65459);
+            }
+            Foreach v12 in v15 {
+                if not ~IsNPCNear_i(v12) {
+                    v15 = ~RemoveFromList_i(v15, v12);
+                }
+            }
+            if (v15 = << >>) {
+                terminate;
+            }
+            ClearBark_i(_Shazzana);
+            v13 = v15::~Random(~ListSize_i(v15));
+            ClearBark_i(v13);
+            v14 = ~Random(6);
+            if (v14 = 1) {
+                Item_bark("@Do it my way!@", _Shazzana);
+                Bark_i(3, "@Don't dictate to me!@", v13);
+            }
+            if (v14 = 2) {
+                Item_bark("@We should not argue.@", _Shazzana);
+            }
+            if (v14 = 3) {
+                Item_bark("@Exterminate the Goblins!@", v13);
+                Bark_i(3, "@I agree.@", _Shazzana);
+            }
+            if (v14 = 4) {
+                if not $spektorconfessed {
+                    Item_bark("@The crops sicken.@", _Shazzana);
+                    Bark_i(3, "@Is the world ending?@", v13);
+                } else {
+                    Item_bark("@Money is missing.@", _Shazzana);
+                    Bark_i(3, "@Must find the thief.@", v13);
+                }
+            }
+            if (v14 = 5) {
+                Item_bark("@Kill Marsten!@", v13);
+                Bark_i(2, "@But how...?", _Shazzana);
+            }
+            if (v14 = 6) {
+                Item_bark("@As I was saying...@", v13);
+                Bark_i(3, "@Be silent!@", _Shazzana);
+            }
+        }
+    }
+    if (event = _Converse) {
+        Item_bark("@Hail, Knight!@", _Avatar);
+        PartyFaces_i(65462);
+        Bark_i(2, "@Yes?@", _Shazzana);
+        SetWorkType(_Talk, _Shazzana);
+    }
+    if (event = _Talking) {
+        Npc_schedule(_Shazzana);
+        ClearBark_i(_Shazzana);
+        SetSpeaker0_i(0, _Shazzana);
+        if not v1 {
+            ["We have not had many strangers in our town lately. Let me introduce myself. I am Shazzana, a Knight of the Leopards."];
+            TurnOn("Leopards");
+            SetItemFlag_i(_Met, _Shazzana);
+        } else {
+            ["I am not one to waste time with words. What is thy business with me, Knight?"];
+        }
+        TurnOn(<< "duties" >>);
+        if $shazzanaknowsdeadeye {
+            TurnOn("mysterious sailor");
+        }
+        if $POMDIRGUN_IS_DEAD {
+            TurnOn("Pomdirgun");
+        }
+        if $simonshedsskin {
+            TurnOn("Simon");
+        }
+        TurnOn("bye");
+        converse {
+            key ("Pomdirgun") {
+                TurnOff("Pomdirgun");
+                ["Thou hast killed the Goblin King Pomdirgun. How wonderful!"];
+            }
+            key ("Simon") {
+                TurnOff("Simon");
+                ["I understand thou didst determine that the traitor in our town was Simon. I am certain thou didst deal properly with him."];
+            }
+            key ("mysterious sailor") {
+                TurnOff("mysterious sailor");
+                ["The mysterious sailor thou dost speak of was a pirate by the name of Deadeye. We engaged in knightly combat on the List Field and in a more esoteric form of hand to hand combat elsewhere. He was most... diverting."];
+                ["There was a very strange man who came into town not long ago. He said his name was Batlin. He wanted me to work for him.  But I felt I could not trust him, so I refused."];
+            }
+            key ("duties") {
+                TurnOff("duties");
+                if not $AVATAR_IS_KNIGHT {
+                    ["What business is this of thine? If thou dost wish to train with me, then meet me at the List Field at noon."];
+                    ["If not, then be on thy way."];
+                    Bark_i(0, "@At noon...@", _Shazzana);
+                    terminate;
+                } else {
+                    ["I am one of the best fighters in this town. This is why all of the Knights desire to be trained by me."];
+                    ["I fight harder than any man or woman alive. I commonly win, but when I do not, the victor knows that they were in a terrific fight."];
+                    TurnOn(<< "best", "train" >>);
+                }
+            }
+            key ("best") {
+                TurnOff("best");
+                ["There are few who can match me! The secret is to be in control. A Knight who doth lose his temper in battle is a defeated Knight."];
+                ["The Bears say that strength is the key. Well, I can strike before those over-muscled brutes can react!"];
+                ["The Wolves pride themselves on cunning. Fools! They cannot think past my blinding sword strikes."];
+                ["Since thou hast questioned my skill, I challenge thee to a match. Dost thou accept?"];
+                if ~AskYesNo() {
+                    ["Meet me upon the List Field at noon, and I shall teach thee to appreciate my skill with a blade."];
+                    ["If thou dost not show, then I shall know thee for the coward thou art."];
+                } else {
+                    ["Thou art not worthy of thy Knighthood..."];
+                    Bark_i(0, "@Pah!@", _Shazzana);
+                    terminate;
+                }
+                TurnOn(<< "Bears", "Wolves" >>);
+            }
+            key ("train") {
+                TurnOff("train");
+                ["I teach the art of combat. My technique is based on swiftness and accuracy of movement. If thou wert to be at the List Field at noon, I could spar with thee."];
+                if (~ListSize_i(~GetParty()) > 1) {
+                    ["I am certain I could also teach thy friend a thing or two..."];
+                    v18 = ~GetItemFlag_i(_InParty_i, _Iolo);
+                    v19 = ~GetItemFlag_i(_InParty_i, _Shamino);
+                    v20 = ~GetItemFlag_i(_InParty_i, _Dupre);
+                    if v18 {
+                        SetSpeaker1_i(0, _Iolo);
+                        ["Art thou referring to me?"];
+                        CloseSpeaker1_i();
+                    }
+                    if v20 {
+                        SetSpeaker1_i(0, _Dupre);
+                        ["I believe she was referring to thee!"];
+                        CloseSpeaker1_i();
+                    }
+                    if v19 {
+                        SetSpeaker1_i(0, _Shamino);
+                        ["I believe it was thee she was referring to, Avatar."];
+                        CloseSpeaker1_i();
+                    }
+                    SetSpeakerSlot_i(0);
+                    ["I can train anyone."];
+                }
+            }
+            key ("Leopards") {
+                TurnOff("Leopards");
+                ["The Wolves and the Bears are full of dreams. We Leopards are realistic. We live one day at a time."];
+            }
+            key ("Wolves") {
+                TurnOff("Wolves");
+                ["The Wolves have this grand scheme for uniting the Three Cities into a commonwealth, united by trade routes."];
+                ["How can this be, when the Goblins threaten our very existence? The Wolves are simply not practical."];
+            }
+            key ("Bears") {
+                TurnOff("Bears");
+                ["The Bears believe in a strong defense, I will give them that! But we cannot hide behind Monitor's walls -- we must seek out our enemies."];
+                ["Our highest priority should be to raid that hidden Goblin camp, and destroy that evil race!"];
+                TurnOn(<< "raid", "destroy" >>);
+            }
+            key ("raid") {
+                TurnOff("raid");
+                ["We must take back the Helm of Monitor, and avenge the death of Astrid!"];
+                ["War is the ultimate test for any Knight. This is how one doth test one's inner strength."];
+                ["War is both holy and obscene, beautiful and yet hideous. I love it. I am very good at it."];
+                TurnOn(<< "Astrid", "Helm of Monitor" >>);
+            }
+            key ("Astrid") {
+                TurnOff("Astrid");
+                ["Astrid was a magnificent Knight Champion! Even though she was a Bear and I a Leopard, we were boon companions."];
+                ["It takes a rare individual to lead warriors in combat. Astrid united us against the Goblins. Now I fear the Bears and Wolves shall squabble again..."];
+            }
+            key ("Helm of Monitor") {
+                TurnOff("Helm of Monitor");
+                ["The Helm was originally taken from the old goblin king, Gurnordir, in the days of the Goblin Horde."];
+                ["It is an ancient and powerful talisman, endowed with the Principle of Courage. Thus, it can only be worn by the bravest of warriors."];
+                if $gothelmofmonitor {
+                    ["Now thou art the Champion Knight of Monitor. It was an honor I had wished for myself. But I must admit thou dost wear it well."];
+                } else {
+                    ["Astrid was such a person. When I become the Knight Champion and the Helm is recovered, I shall wear it in Astrid's memory."];
+                }
+            }
+            key ("destroy") {
+                TurnOff("destroy");
+                ["If the Goblins refuse to concede that this territory belongs to us, then what else shall we do? Sue for peace?!"];
+                ["We must wage war against them until they are all dead. This is the nature of the world. So be it."];
+            }
+            key ("bye") {
+                CloseSpeaker0_i();
+                CloseSpeaker1_i();
+                Bark_i(0, "Good day to thee.", _Avatar);
+                Bark_i(2, "And to thee.", _Shazzana);
+                break;
+            }
+        }
+        clear_answers;
+    }
+}

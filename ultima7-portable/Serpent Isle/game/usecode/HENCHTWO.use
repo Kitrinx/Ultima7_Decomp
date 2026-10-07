@@ -1,0 +1,19 @@
+Routine Hench2 accepts a0 #locals(0) #uses(PartyFaces_i, RaiseAlarm_i) {
+    if (event = _Converse) {
+        Item_bark("Excuse me...", _Avatar);
+        PartyFaces_i(65333);
+        RaiseAlarm_i(item);
+    }
+    if ((event = _NearDeath) and ~GetItemFlag_i(_Tournament, item)) {
+        ClearItemFlag_i(_Tournament, item);
+        ReduceHits_i(0, 50, item);
+        RaiseAlarm_i(item);
+    }
+    if ((event = _Path_Success) or (event = _Path_Failure)) {
+        SetWorkType(_Wait, item);
+    }
+    if (event = _Action) {
+        PartyFaces_i(65333);
+        RaiseAlarm_i(item);
+    }
+}

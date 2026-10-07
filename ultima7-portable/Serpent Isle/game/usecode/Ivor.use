@@ -1,0 +1,36 @@
+Routine Ivor accepts a0 #locals(1) #uses(~WhereAmI_i, ~GimmePathEgg, PartyFaces_i, Bark_i, AttackAvatar_i) {
+    if (event = _Action) {
+        if (~GetItemFlag_i(_Dead, _Draygan) or ((~WhereAmI_i() <> 7) or (~GetItemFlag_i(_Dead, _Ivor) or (~GetNPCID_i(_Ivor) > 4)))) {
+            terminate;
+        }
+        v0 = ~PostInFuture(~Random(500), << _aNO_HALT_i, _aUSABLE_i, #Ivor >>, ~GimmePathEgg(2, 5));
+        if (~IsNPCNear_i(_Hurd) or (~IsNPCNear_i(_Draygan) or (~IsNPCNear_i(_Beryl) or ~IsNPCNear_i(_Morghrim)))) {
+            terminate;
+        }
+        v0 = ~ApproachAvatar_i(40, 120, _Ivor);
+        if v0 {
+            SetWorkType(_Shy, _Ivor);
+            SetNPCID_i((~GetNPCID_i(_Ivor) + 1), _Ivor);
+        }
+        terminate;
+    }
+    if (event = _Converse) {
+        Item_bark("@Greetings!@", _Avatar);
+        ClearBark_i(_Ivor);
+        PartyFaces_i(65378);
+        if ~IsNPCNear_i(_Draygan) {
+            Bark_i(3, "@We cannot speak...@", _Ivor);
+            SetWorkType(_Hound, _Draygan);
+            ClearBark_i(_Draygan);
+            Bark_i(5, "@Go away!@", _Draygan);
+            SetWorkType(_Shy, _Ivor);
+        } else {
+            Bark_i(3, "@I'm no thief!@", _Ivor);
+            if (~GetNPCID_i(_Ivor) > 3) {
+                AttackAvatar_i(_Ivor);
+            } else {
+                SetWorkType(_Wander, _Ivor);
+            }
+        }
+    }
+}

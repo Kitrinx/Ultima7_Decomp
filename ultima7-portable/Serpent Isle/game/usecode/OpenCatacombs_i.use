@@ -1,0 +1,33 @@
+Routine OpenCatacombs_i accepts a0 #locals(14) #uses(~IsInInv, ~GimmePathEgg) {
+    if (event = _Action) {
+        closeAllGumps();
+        v0 = ~FindNearby_i(0, 40, _Brass_Well, _Avatar);
+        if v0 {
+            v1 = ~FindNearby_i(0, 10, _Force, _Avatar);
+            if v1 {
+                Foreach v4 in v1 {
+                    if (~GetFrame(v4) = 0) {
+                        v5 = ~GetCoord(v4);
+                        Sfx(33);
+                        createSprite(65535, 0, 0, 0, v5::2, v5::1, 30);
+                        Item_destroy(v4);
+                    }
+                }
+                v6 = ~IsInInv(65177, 124, _Serp_Scroll, 1, _Party);
+                if v6 {
+                    v7 = ~TakeFromParty_i(0, _All, 124, _Serp_Scroll, 1);
+                } else {
+                    v8 = ~FindNearby_i(0, 30, _Serp_Scroll, ~GimmePathEgg(1, 0));
+                    Foreach v11 in v8 {
+                        v12 = ~GetQuality(v11);
+                        if (v12 = 124) {
+                            v13 = ~GetCoord(v11);
+                            createSprite(65535, 0, 0, 0, v13::2, v13::1, 21);
+                            Item_destroy(v11);
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,118 @@
+Routine Draygan accepts a0 #locals(5) #uses(~LordOrLady, ~AvatarName, PartyFaces_i, Bark_i, ~GimmePathEgg, DoDamage_i) {
+    v0 = ~LordOrLady();
+    v1 = ~AvatarName();
+    if (event = _Converse) {
+        Item_bark("@Hello.@", _Avatar);
+        PartyFaces_i(65380);
+        Bark_i(2, "@Speaking to me?@", _Draygan);
+        SetWorkType(_Talk, _Draygan);
+    }
+    if ((event = _Bark) and (~GetWorkType(_Draygan) = _TendShop)) {
+        if (~Random(10) < 7) {
+            terminate;
+        }
+        v2 = << "@Leave us!@", "@Go thy way!@", "@Do not steal...@", "@I am destiny.@", "@Ignore the others.@", "@I am Master here.@" >>;
+        Bark_i(0, v2::~Random(~ListSize_i(v2)), _Draygan);
+    }
+    if ((event = _NearDeath) and ~GetItemFlag_i(_Tournament, _Draygan)) && flag(700) {
+        v3 = ~PostInFuture(50, << _aNO_HALT_i, _aUSABLE_i, #Morghrim >>, ~GimmePathEgg(1, 5));
+        flag(700) = false;
+        ClearItemFlag_i(_Tournament, _Draygan);
+        DoDamage_i(50, _Draygan);
+        Npc_schedule(_Beryl);
+        Npc_setAlignment(_Neutral, _Beryl);
+        Npc_setAlignment(_Neutral, _Morghrim);
+        SetWorkType(_Talk, _Beryl);
+    }
+    if (event = _Talking) {
+        Npc_schedule(_Draygan);
+        ClearBark_i(_Draygan);
+        SetSpeaker0_i(0, _Draygan);
+        v4 = ~GetItemFlag_i(_Met, _Draygan);
+        if (v4 = false) {
+            SetItemFlag_i(_Met, _Draygan);
+            ["I do not believe we have met. My name is Draygan. I am lord of all the land that I survey."];
+            ["At present, I am hard at work fulfilling mine appointed destiny. Conversing with thee is nothing but a useless distraction from achieving that end."];
+        } else {
+            ["We meet again, I see."];
+            ["And thou art still of no use to my destiny. I do not have time to prattle with thee, stranger. Stay away from this camp, and from my followers. As the lord of this place, I order this to be so."];
+        }
+        TurnOn(<< "lord", "destiny" >>);
+        TurnOn("bye");
+        converse {
+            key ("change subject") {
+                PopKeys();
+                ["But we were soon to hear the best part..."];
+            }
+            key ("destiny") {
+                TurnOff("destiny");
+                ["I was born a pauper's son. My father was a rancid beggar-man who lived in the dirt of the road. I hated it as I hated him. But there was one thing he always told me. He told me that one day I would be a rich and powerful man. I believe this is my destiny. When I was still a lad, I stole his near-empty coin purse and sought my fortune."];
+                ["I have acquired naught but half of my legacy... though I already have the power!"];
+                PushKeys();
+                TurnOn(<< "fortune", "power", "change subject" >>);
+            }
+            key ("fortune") {
+                TurnOff("fortune");
+                ["It was one year ago that I led my band of men to this spot. We had all heard the tales of gold and fabulous gems that could be found here. We came by ship -- the Emerald Lady. As we planned to settle here, they all brought their wives and children. For months we suffered through bad luck. Then one of the miners made an important discovery. That was before I went on the hunting expedition -- but, ah, I am ahead of myself. It hath been too long since I have had a fresh face to converse with. Damned distraction!"];
+                TurnOn(<< "suffered", "discovery", "hunting expedition" >>);
+            }
+            key ("suffered") {
+                TurnOff("suffered");
+                ["For three months we toiled near the site of our original landing. But we found nothing. It made the men so discouraged that they nearly surrendered. At last, we moved camp and came here."];
+            }
+            key ("discovery") {
+                TurnOff("discovery");
+                ["One of the men, a fellow by the name of Hamlin, discovered a nugget of gold as large as my thumb. It was not far from our present location. Rest his soul."];
+            }
+            key ("hunting expedition") {
+                TurnOff("hunting expedition");
+                ["Not long after the first significant find, we had planned a great feast as a celebration. I led a group of hunters into the forest to hunt for game. We were attacked by a vicious pack of wolves. Only I survived to make it back to camp. It was then that I discovered my power. But the failed expedition was a bad omen. Soon my men were divided and our group fell into rebellion."];
+                TurnOn(<< "divided", "rebellion" >>);
+            }
+            key ("divided") {
+                TurnOff("divided");
+                ["A man named Falcon declared himself the leader of a group of dissenters that was comprised of nearly half of our number."];
+                ["He was a man of exceedingly weak character. He suggested that we return home penniless, without a single piece of treasure! All because a few of the women and children had a difficult time of it in the wilderness."];
+                ["Well, all that is the past, and there is nothing one can do for the dead. And we have the treasure..."];
+            }
+            key ("rebellion") {
+                TurnOff("rebellion");
+                ["Simple disobedience, really. Oh, yes, and someone cut Hamlin's throat and stole his gold. I do not know who did it."];
+                ["After this, most of the men chose to leave. So what was I to do? I gave them their fair share of the gold that we had found, and sent them back to the ship with my blessings."];
+                ["They were led by the weakling, Falcon. After they left, I never saw them again. Ah, well..."];
+            }
+            key ("power") {
+                TurnOff("power");
+                ["I need not bore thee with the details of how I learned of this power. Suffice it to say that I cannot die."];
+                ["Thou wouldst do well to consider that a warning. Do not think of stealing my gold, for it is thee who shall lose thy life. I cannot die because I am destined to become wealthy."];
+                ["Hurd and Ivor work the mines night and day. Beryl cooks and cleans. They are good workers. They shall make me wealthy."];
+                TurnOn("warning?");
+            }
+            key ("warning?") {
+                TurnOff("warning?");
+                ["If we ever come into conflict over the gold that I know lies somewhere in this land, I shall kill thee dead without an ounce of regret."];
+            }
+            key ("lord") {
+                TurnOff("lord");
+                ["I am the Master of the Great Northern Forest, and none can dispute it."];
+                ["And if thou shouldst ever speak to a disfigured cripple named Morghrim --"];
+                ["and I would recommend against that --"];
+                ["pay no mind to what he may say. Morghrim is an evil and depraved man. Thou shouldst avoid him like the plague."];
+                ["This is the one and only piece of friendly advice I shall give to thee."];
+            }
+            key ("bye") {
+                if not flag(701) {
+                    flag(702) = true;
+                    v3 = ~PostInFuture(75, << _aNO_HALT_i, _aUSABLE_i, #Beryl >>, ~GimmePathEgg(1, 5));
+                }
+                v3 = ~PostInFuture(300, << _aNO_HALT_i, _aUSABLE_i, #Ivor >>, ~GimmePathEgg(2, 5));
+                v3 = ~PostInFuture(200, << _aNO_HALT_i, _aUSABLE_i, #Hurd >>, ~GimmePathEgg(3, 5));
+                Bark_i(0, "@Interesting....@", _Avatar);
+                Bark_i(3, "@Do not return!@", _Draygan);
+                SetWorkType(_TendShop, _Draygan);
+                terminate;
+            }
+        }
+        clear_answers;
+    }
+}

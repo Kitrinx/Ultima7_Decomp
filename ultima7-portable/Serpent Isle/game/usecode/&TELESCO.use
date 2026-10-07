@@ -1,0 +1,85 @@
+Routine Telescope accepts a0 #locals(5) #uses(~WhereAmI_i, ~PartyUtters, ~GimmePathEgg) {
+    if (event = _Converse) {
+        v0 = ~GetFrame(item);
+        if (~WhereAmI_i() = 11) {
+            v1 = ~CreateCreature_i(<< 601, 597, 0 >>, _Cat);
+            $knowpenguinegg = true;
+        } else {
+            v2 = ~Random(8);
+            if (v0 = 0) {
+                if (v2 = 1) {
+                    v1 = ~CreateCreature_i(<< 2070, 1327, 0 >>, _Cat);
+                }
+                if (v2 = 2) {
+                    v1 = ~CreateCreature_i(<< 600, 597, 14 >>, _Cat);
+                }
+                if (v2 = 3) {
+                    v1 = ~CreateCreature_i(<< 701, 1671, 0 >>, _Cat);
+                }
+                if (v2 = 4) {
+                    v1 = ~CreateCreature_i(<< 2198, 1357, 14 >>, _Cat);
+                }
+                if (v2 = 5) {
+                    v1 = ~CreateCreature_i(<< 731, 1364, 0 >>, _Cat);
+                }
+                if (v2 = 6) {
+                    v1 = ~CreateCreature_i(<< 432, 109, 14 >>, _Cat);
+                }
+                if (v2 = 7) {
+                    v1 = ~CreateCreature_i(<< 1049, 1670, 0 >>, _Cat);
+                }
+                if (v2 = 8) {
+                    v1 = ~CreateCreature_i(<< 2345, 1989, 0 >>, _Cat);
+                }
+            } else {
+                if (v2 = 1) {
+                    v1 = ~CreateCreature_i(<< 1287, 2240, 0 >>, _Cat);
+                }
+                if (v2 = 2) {
+                    v1 = ~CreateCreature_i(<< 2198, 1357, 14 >>, _Cat);
+                }
+                if (v2 = 3) {
+                    v1 = ~CreateCreature_i(<< 1478, 2456, 2 >>, _Cat);
+                }
+                if (v2 = 4) {
+                    v1 = ~CreateCreature_i(<< 960, 2588, 14 >>, _Cat);
+                }
+                if (v2 = 5) {
+                    v1 = ~CreateCreature_i(<< 2405, 1184, 14 >>, _Cat);
+                }
+                if (v2 = 6) {
+                    v1 = ~CreateCreature_i(<< 2318, 2185, 0 >>, _Cat);
+                }
+                if (v2 = 7) {
+                    v1 = ~CreateCreature_i(<< 584, 2480, 14 >>, _Cat);
+                }
+                if (v2 = 8) {
+                    v1 = ~CreateCreature_i(<< 464, 1184, 14 >>, _Cat);
+                }
+            }
+        }
+        if not v1 {
+            v3 = ~PartyUtters(true, "@'Tis broken...@", "@It doesn't work!@", 1);
+            terminate;
+        }
+        SetWorkType(_Wait, v1);
+        SetItemFlag_i(_Tournament, v1);
+        Polymorph_i(_Blank_Type, v1);
+        EndConverse_i();
+        SetItemFlag_i(_DontMove_i, _Avatar);
+        FadePalette_i(0, 1, 12);
+        SetItemFlag_i(_IsTemporary_i, v1);
+        Camera_setCenterOn(v1);
+        v4 = ~PostInFuture(1, << _aNO_HALT_i, _aUSABLE_i, #FadeInArrival_i >>, ~GimmePathEgg(2, 5));
+        v4 = ~PostInFuture(50, << _aNO_HALT_i, _aUSABLE_i, #Telescope >>, v1);
+        terminate;
+    }
+    if (event = _Action) {
+        FadePalette_i(0, 1, 12);
+        ClearItemFlag_i(_DontMove_i, _Avatar);
+        ClearSpeakers_i();
+        Polymorph_i(_Cat, item);
+        Camera_setCenterOn(_Avatar);
+        v4 = ~PostInFuture(3, << _aNO_HALT_i, _aUSABLE_i, #FadeInArrival_i >>, ~GimmePathEgg(1, 5));
+    }
+}

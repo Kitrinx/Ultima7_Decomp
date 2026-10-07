@@ -1,0 +1,233 @@
+Function ~RemoveFromList_i accepts a0, a1 #locals(4) {
+    v2 = << >>;
+    Foreach v5 in v0 {
+        if not (v5 = v1) {
+            v2 = (v2 & v5);
+        }
+    }
+    return v2;
+}
+
+Function ~SortByCriteria_i accepts a0, a1 #locals(4) {
+    v2 = ~ListSize_i(v1);
+    if (v2 > 1) {
+        v3 = true;
+        While v3 {
+            v3 = false;
+            v4 = 1;
+            While (v4 < v2) {
+                if (v0::v4 > v0::(v4 + 1)) {
+                    v5 = v0::v4;
+                    v0::v4 = v0::(v4 + 1);
+                    v0::(v4 + 1) = v5;
+                    v5 = v1::v4;
+                    v1::v4 = v1::(v4 + 1);
+                    v1::(v4 + 1) = v5;
+                    v3 = true;
+                }
+                v4 = (v4 + 1);
+            }
+        }
+    }
+    return v1;
+}
+
+Routine IgniteLight_i accepts a0, a1 #locals(4) #uses(StartBurning_i) {
+    v2 = ~GetFrame(v1);
+    if not ~GetQuality(v1) {
+        v3 = ~SetQuality(~rndRange(60, 30), v1);
+    }
+    if (~Item_getType(v1) = _Torch) && (~GetQuality(v1) = 255) {
+        Item_bark("Spent", v1);
+        return;
+    }
+    v4 = ~Item_getContainer(v1);
+    if ~Item_isNpc(v4) && (~Npc_getEquip(11, v4) = v1) {
+        FlashMouse_i(0);
+        return;
+    }
+    if ((v4 = 0) or ~Item_isNpc(v4)) {
+        Item_setType(v0, v1);
+        v5 = ~GetParty();
+        if (v4 in v5) {
+            StartBurning_i(v1);
+        }
+    } else {
+        FlashMouse_i(0);
+    }
+    SetLight_i(true, v1);
+    SetTimePalette_i();
+}
+
+Routine ShowRinging_i accepts a0 #locals(1) {
+    v1 = ~GetCoord(v0);
+    v1::1 = (v1::1 - (v1::3 / 2));
+    v1::2 = (v1::2 - (v1::3 / 2));
+    createSprite(65535, 0, 65534, 65534, v1::2, v1::1, 24);
+}
+
+Function ~AskCopyProtection_i #locals(6) {
+	v0 = false;
+	loop {
+		v1 = false;
+		v2 = 0;
+		While (v2 < 3) {
+			v2 = (v2 + 1);
+			v3 = false;
+			While not v3 {
+				v4 = ~rndRange(15, 1);
+				if ((v4 = 1) and not flag(26)) {
+					flag(26) = true;
+					v3 = true;
+					["According to Erstam's book, how many spells are available in the Ninth Circle of Magic?"];
+					v5 = ~AskBarInput(35, 1, 70, 1);
+					if (v5 <> 8) {
+						v1 = true;
+					}
+				}
+				if ((v4 = 2) and not flag(27)) {
+					flag(27) = true;
+					v3 = true;
+					["How many different materials can armour be made from?"];
+					v5 = ~AskBarInput(35, 1, 70, 1);
+					if (v5 <> 4) {
+						v1 = true;
+					}
+				}
+				if ((v4 = 3) and not flag(28)) {
+					flag(28) = true;
+					v3 = true;
+					["How many beasts are discussed in the Bestiary in Erstam's book?"];
+					v5 = ~AskBarInput(35, 1, 70, 1);
+					if (v5 <> 52) {
+						v1 = true;
+					}
+				}
+				if ((v4 = 4) and not flag(29)) {
+					flag(29) = true;
+					v3 = true;
+					["How many different types of Reagents doth Erstam write about?"];
+					v5 = ~AskBarInput(35, 1, 70, 1);
+					if (v5 <> 11) {
+						v1 = true;
+					}
+				}
+				if ((v4 = 5) and not flag(30)) {
+					flag(30) = true;
+					v3 = true;
+					["How many reagents are required to cast the \@Mass Death\@ spell?"];
+					v5 = ~AskBarInput(35, 1, 70, 1);
+					if (v5 <> 6) {
+						v1 = true;
+					}
+				}
+				if ((v4 = 6) and not flag(31)) {
+					flag(31) = true;
+					v3 = true;
+					["How many times must ginseng be boiled before it becomes syrup?"];
+					v5 = ~AskBarInput(35, 1, 70, 1);
+					if (v5 <> 40) {
+						v1 = true;
+					}
+				}
+				if ((v4 = 7) and not flag(32)) {
+					flag(32) = true;
+					v3 = true;
+					["In what Circle of Magic doth the Create Automata spell appear?"];
+					v5 = ~AskBarInput(35, 1, 70, 1);
+					if (v5 <> 6) {
+						v1 = true;
+					}
+				}
+				if ((v4 = 8) and not flag(33)) {
+					flag(33) = true;
+					v3 = true;
+					["For how many reasons did Erstam put down the history of the land in writing?"];
+					v5 = ~AskBarInput(35, 1, 70, 1);
+					if (v5 <> 1) {
+						v1 = true;
+					}
+				}
+				if ((v4 = 9) and not flag(34)) {
+					flag(34) = true;
+					v3 = true;
+					["How many characters are there in Ophidian writing?"];
+					v5 = ~AskBarInput(35, 1, 70, 1);
+					if (v5 <> 36) {
+						v1 = true;
+					}
+				}
+				if ((v4 = 10) and not flag(35)) {
+					flag(35) = true;
+					v3 = true;
+					["In Erstam's book, the section entitled \@Other Landmarks\@ covers how many areas?"];
+					v5 = ~AskBarInput(35, 1, 70, 1);
+					if (v5 <> 4) {
+						v1 = true;
+					}
+				}
+				if ((v4 = 11) and not flag(36)) {
+					flag(36) = true;
+					v3 = true;
+					["How many cities were established in the Serpent Isle?"];
+					v5 = ~AskBarInput(35, 1, 70, 1);
+					if (v5 <> 3) {
+						v1 = true;
+					}
+				}
+				if ((v4 = 12) and not flag(37)) {
+					flag(37) = true;
+					v3 = true;
+					["How many forces, when combined, form the Principles of Balance?"];
+					v5 = ~AskBarInput(35, 1, 70, 1);
+					if (v5 <> 6) {
+						v1 = true;
+					}
+				}
+				if ((v4 = 13) and not flag(38)) {
+					flag(38) = true;
+					v3 = true;
+					["How many clans divide the city of Monitor?"];
+					v5 = ~AskBarInput(35, 1, 70, 1);
+					if (v5 <> 3) {
+						v1 = true;
+					}
+				}
+				if ((v4 = 14) and not flag(39)) {
+					flag(39) = true;
+					v3 = true;
+					["How many types of weapons are discussed in Erstam's book?"];
+					v5 = ~AskBarInput(35, 1, 70, 1);
+					if (v5 <> 4) {
+						v1 = true;
+					}
+				}
+				if ((v4 = 15) and not flag(40)) {
+					flag(40) = true;
+					v3 = true;
+					["How many Words of Power are there?"];
+					v5 = ~AskBarInput(35, 1, 70, 1);
+					if (v5 <> 27) {
+						v1 = true;
+					}
+				}
+			}
+		}
+		if (v0 and v1) {
+			SetItemFlag_i(25, _Avatar);
+			return false;
+		}
+		if v1 {
+			["I am not yet convinced..."];
+			v0 = true;
+			continue;
+		} else {
+			return true;
+		}
+	}
+}
+
+Function ~OrderList_i #locals(1) {
+    v0 = << 65535, 65534, 65533, 65387, 65508, 65510, 65491, 65502, 65492, 65384, 65368 >>;
+    return v0;
+}

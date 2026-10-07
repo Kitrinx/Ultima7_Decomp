@@ -1,0 +1,81 @@
+Routine Blonde_Mage accepts a0 #locals(12) #uses(~AvatarName, Bark_i, ~GimmePathEgg, ~PartyUtters) {
+    v0 = ~AvatarSex();
+    v1 = ~AvatarName();
+    v2 = ~GetParty();
+    v3 = ~FindNearby_i(0, 20, _Throne, _Lydia);
+    if (event = _Path_Failure) {
+        v4 = ~GetCoord(v3);
+        if (item = ~NPCToItem_i(_Lydia)) {
+            v4::2 = (v4::2 + 1);
+        } else {
+            v4::1 = (v4::1 + 1);
+        }
+        Item_move(v4, item);
+        v5 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #Blonde_Mage >>, _Lydia);
+    }
+    if (event = _Action) {
+        if (~GetNPCID_i(_Lydia) = 3) {
+            SetNPCID_i(4, _Lydia);
+            v5 = ~Item_create(_Blood_Trails);
+            if v5 {
+                SetItemFlag_i(_IsTemporary_i, v5);
+                v5 = ~PopToMap(~GetCoord(_Avatar));
+            }
+            v5 = ~PostAction(<< _aNO_HALT_i, _aWAIT_i, 4, _aSTEP_LEFT_FRAME_i, _aCONTINUE_i, _aSFX_i, 10, _aTHRUST2_FRAME_i, _aTHRUST1_FRAME_i, _aTHRUST2_FRAME_i, _aCONTINUE_i, _aSFX_i, 12, _aBARK_i, "@'Tis done!@", _aTHRUST1_FRAME_i, _aSTEP_RIGHT_FRAME_i, _aSTEP_LEFT_FRAME_i, _aSTAND_FRAME_i, _aUSABLE_i, #Blonde_Mage >>, _Lydia);
+            terminate;
+        }
+        if (~GetNPCID_i(_Lydia) = 2) {
+            SetNPCID_i(3, _Lydia);
+            v5 = ~PostAction(<< _aNO_HALT_i, _aBARK_i, "@Thou art doing well...@", _aEXTEND1_FRAME_i, _aRAISE1_FRAME_i, _aTHRUST1_FRAME_i, _aCONTINUE_i, _aSFX_i, 62, _aTHRUST2_FRAME_i, _aWAIT_i, 12, _aUP_FRAME_i, _aBARK_i, "@Whoops!@", _aEXTEND1_FRAME_i, _aTHRUST1_FRAME_i, _aTHRUST2_FRAME_i, _aCONTINUE_i, _aSFX_i, 27, _aUP_FRAME_i, _aUSABLE_i, #Blonde_Mage >>, _Lydia);
+            terminate;
+        }
+        if (~GetNPCID_i(_Lydia) = 1) {
+            SetWorkType(_Wait, _Lydia);
+            SetNPCID_i(2, _Lydia);
+            v5 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #FaceAvatar_i, _aBARK_i, "@Hold thy breath.@", _aTHRUST2_FRAME_i, _aCONTINUE_i, _aSFX_i, 10, _aWAIT_i, 4, _aTHRUST1_FRAME_i, _aCONTINUE_i, _aSFX_i, 12, _aWAIT_i, 6, _aUSABLE_i, #Blonde_Mage >>, _Lydia);
+            terminate;
+        }
+        if (~GetNPCID_i(_Lydia) = 0) {
+            SetWorkType(_Wait, _Avatar);
+            SetNPCID_i(1, _Lydia);
+            Bark_i(0, "@Now we begin...@", _Lydia);
+            v4 = ~GetCoord(v3);
+            v4::2 = (v4::2 + 1);
+            PathfindNPC_i(false, #Blonde_Mage, item, _Action, v4, _Lydia);
+            SetPathFailure_i(_Path_Failure, item, #Blonde_Mage);
+            v5 = ~PostAction(<< _aNO_HALT_i, _aFACE_i, _East, _aBEND_FRAME_i, _aSIT_FRAME_i >>, _Avatar);
+            terminate;
+        }
+        ClearSpeakers_i();
+        SetSpeaker0_i(0, _Lydia);
+        ["Use a cloth to soak up the blood..."];
+        Foreach v8 in v2 {
+            SetWorkType(_FollowAvt, v8);
+        }
+        Npc_schedule(_Lydia);
+        SetItemFlag_i(_Tatoo, _Avatar);
+        ClearItemFlag_i(_DontMove_i, _Avatar);
+        $poisonedbylydia = true;
+        $gottattoo = true;
+        v5 = ~PostInFuture(1000, << _aNO_HALT_i, _aUSABLE_i, #Lydia >>, ~GimmePathEgg(1, 5));
+        v9 = ~PartyUtters(false, 0, "@Thou dost look magnificent, Avatar!@", 65533);
+        if (v9 <> 65180) && (~ListSize_i(v2) > 2) {
+            v10 = v9;
+            While (v10 = v9) {
+                v10 = ~PartyUtters(false, 0, 0, 1);
+            }
+            v10 = ~PartyUtters(false, 0, (("@Quite becoming, " + v1) + ".@"), v10);
+            if (~ListSize_i(v2) > 3) {
+                v11 = v10;
+                While ((v11 = v10) or (v11 = v9)) {
+                    v11 = ~PartyUtters(false, 0, 0, 1);
+                }
+                if not v0 {
+                    v11 = ~PartyUtters(false, 0, "@Thou dost look quite the fop, milord!@", v11);
+                } else {
+                    v11 = ~PartyUtters(false, 0, "That is quite a beauty mark, milady. Hmpf!", v11);
+                }
+            }
+        }
+    }
+}

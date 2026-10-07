@@ -1,0 +1,299 @@
+Usable ElissaSellsSpells_i #locals(14) #uses(~AskOrdList, ~ElissaHaggles_i, ~SellSpell_i, ~AskYesNo) {
+    PushKeys();
+    v0 = true;
+    v1 = 644;
+    ["I can only accept gold coins. I hope that is acceptable with thee."];
+    While v0 {
+        ["In which circle art thou interested?"];
+        v2 = ~AskOrdList(<< "nothing", "Fifth", "Sixth", "Seventh", "Eighth", "Ninth" >>);
+        v2 = (v2 - 1);
+        if (v2 = 0) {
+            break;
+        }
+        switch v2 {
+            case 1 {
+                v3 = << "nothing", "Mass Sleep" >>;
+                v4 = << 0, 37 >>;
+                v5 = << 0, 250 >>;
+                v6 = << 0, 130 >>;
+            }
+            case 2 {
+                v3 = << "nothing", "Create Ammunition" >>;
+                v4 = << 0, 46 >>;
+                v5 = << 0, 300 >>;
+                v6 = << 0, 180 >>;
+            }
+            case 3 {
+                v3 = << "nothing", "Vibrate" >>;
+                v4 = << 0, 54 >>;
+                v5 = << 0, 350 >>;
+                v6 = << 0, 250 >>;
+            }
+            case 4 {
+                v3 = << "nothing", "Invoke Serpent", "Serpent Bond" >>;
+                v4 = << 0, 60, 61 >>;
+                v5 = << 0, 380, 450 >>;
+                v6 = << 0, 160, 275 >>;
+            }
+            case 5 {
+                v3 = << "nothing", "Imbalance" >>;
+                v4 = << 0, 71 >>;
+                v5 = << 0, 800 >>;
+                v6 = << 0, 800 >>;
+            }
+            default {
+            }
+        }
+        ["What spell dost thou wish to buy?"];
+        v7 = ~AskOrdList(v3);
+        if (v7 = 1) {
+            ["So be it..."];
+        } else {
+            v8 = v4::v7;
+            v9 = v5::v7;
+            v10 = v6::v7;
+            v11 = v3::v7;
+            ["I will sell thee <v11> for <v9> gold. Dost thou accept?"];
+            v12 = ~ElissaHaggles_i(v10, v9);
+            v13 = 0;
+            if (v12 > 0) {
+                v13 = ~SellSpell_i(v12, v1, v8);
+            }
+            if (v13 = 1) {
+                ["'Tis thine!"];
+            } else {
+                if (v13 = 2) {
+                    ["Ask me again when thou dost have a spellbook!"];
+                    v0 = false;
+                    break;
+                }
+                if (v13 = 3) {
+                    ["Thou dost not have enough gold to buy that spell!"];
+                } else {
+                    if (v13 = 4) {
+                        ["Thou dost already have that spell!"];
+                    } else {
+                    }
+                }
+            }
+        }
+        ["Wouldst thou care for another spell?"];
+        v0 = ~AskYesNo();
+    }
+    PopKeys();
+}
+
+Function ~ElissaHaggles_i accepts a0, a1 #locals(14) #uses(~LordOrLady, ~AskList, ~Haggle_i, ~AskYesNo) {
+    v2 = v1;
+    v3 = ((v0 / 3) * 2);
+    v4 = ~LordOrLady();
+    v5 = (15 - (~GetNPCID_i(1015) / 2));
+    v6 = 0;
+    v7 = 1;
+    v8 = 0;
+    v9 = 2;
+    v10 = ~GetNPCID_i(1015);
+    While v7 {
+        v11 = ~AskList(<< "yes", "no", "haggle" >>);
+        if (v11 = "no") {
+            return 0;
+        } else {
+            if (v11 = "yes") {
+                v12 = 0;
+                goto label_8;
+            }
+        }
+        v13 = ~Haggle_i(v6, v5, v8, v3, v9, v0, v2);
+        v8 = (v8 + 1);
+        v6 = v13::4;
+        v12 = v13::3;
+        v14 = v2;
+        v2 = v13::2;
+        v3 = v13::1;
+        label_8:
+        v15 = ~Random(3);
+        if (v12 < 2) {
+            if (v2 < (v0 + ((v1 - v0) / 4))) {
+                if (v15 = 1) {
+                    ["Normally I would never accept such an offer, but who do I have to train here? I hope this war ends soon..."];
+                }
+                if (v15 = 2) {
+                    ["I have no choice but to accept it at thy price. Assuredly, I have no other offers."];
+                }
+                if (v15 = 3) {
+                    ["I will accept\x09thine offer. But I shall deny it to my dying day... I have a reputation to uphold, thou knowest."];
+                }
+            } else {
+                if (v2 < (v0 + ((v1 - v0) / 3))) {
+                    if (v15 = 1) {
+                        ["Times are strange, <v4>. But thou hast the spell, and I have a bit more gold."];
+                    }
+                    if (v15 = 2) {
+                        ["Thou dost bargain well, <v4>. I will accept this price."];
+                    }
+                    if (v15 = 3) {
+                        ["I hope thou dost realize that thou art getting a bargain with this price."];
+                    }
+                } else {
+                    if (v2 < (v0 + ((v1 - v0) / 2))) {
+                        if (v15 = 1) {
+                            ["Only <v2>??! All right, all right... I will accept this price."];
+                        }
+                        if (v15 = 2) {
+                            ["A decent price."];
+                        }
+                        if (v15 = 3) {
+                            ["How else shall I make money, eh? I will accept this price."];
+                        }
+                    } else {
+                        if (v15 = 1) {
+                            ["I accept thine offer!"];
+                        }
+                        if (v15 = 2) {
+                            ["I accept thine offer. Thou hast a fine eye for a bargain!"];
+                        }
+                        if (v15 = 3) {
+                            ["Yes, a good price that is!"];
+                        }
+                    }
+                }
+            }
+            ["So, dost thou agree to a price of <v2>?"];
+            if (~AskYesNo() = true) {
+                if (v10 > 1) {
+                    SetNPCID_i((v10 - 2), 1015);
+                }
+                return v2;
+            } else {
+                if (v15 = 1) {
+                    ["I am bored, 'tis true. But I do not take kindly to wasting my time!"];
+                }
+                if (v15 = 2) {
+                    ["Now thou hast taken all sport out of the deal!"];
+                }
+                if (v15 = 3) {
+                    ["Where are thy manners"?!"];
+                }
+                if (31 < (v10 + 10)) {
+                    SetNPCID_i(31, 1015);
+                } else {
+                    SetNPCID_i((v10 + 10), 1015);
+                }
+                return 0;
+            }
+        }
+        if (v6 = 1) {
+            if (v12 = 5) {
+                ["<v2> is my final offer. Dost thou want it at this price?"];
+                if (v10 < 28) {
+                    SetNPCID_i((v10 + 4), 1015);
+                }
+                if (~AskYesNo() = true) {
+                    return v2;
+                }
+                v7 = 0;
+            } else {
+                ["<v2>.  I will go no lower."];
+                if (v10 < 30) {
+                    SetNPCID_i((v10 + 2), 1015);
+                }
+            }
+        } else {
+            if (v12 = 2) {
+                if (v15 = 1) {
+                    ["Thou dost barter well. How does <v2> sound?"];
+                }
+                if (v15 = 2) {
+                    ["I see thou dost understand the value of this fine spell. How does <v2> sound?"];
+                }
+                if (v15 = 3) {
+                    ["I shall make thee a deal. For thee only I offer it for <v2>."];
+                }
+            }
+            if (v12 = 3) {
+                if (v15 = 1) {
+                    ["Hmmm.... Wouldst thou pay <v2>?"];
+                }
+                if (v15 = 2) {
+                    ["Thou dost drive a hard bargain. <v2>?"];
+                }
+                if (v15 = 3) {
+                    ["What dost thou say to <v2>?"];
+                }
+            }
+            if (v12 = 4) {
+                if (v15 = 1) {
+                    ["Better I should fling my spells to the Chaos hordes! <v2>."];
+                }
+                if (v15 = 2) {
+                    ["Thou dost mock my years of training with such an offer! I can go no lower than <v2>."];
+                }
+                if (v15 = 3) {
+                    ["I am no fool! This fine spell is worth at least <v2>."];
+                }
+            }
+            if (v12 = 5) {
+                v2 = v14;
+                if (v15 = 1) {
+                    ["My previous offer stands, at <v2>. This spell is not some paltry bauble that thou mayest find anywhere."];
+                }
+                if (v15 = 2) {
+                    ["Do not be insulting! <v2>!"];
+                }
+                if (v15 = 3) {
+                    ["My offer stands at <v2>. Thou art a stranger, after all. I know not what use thou wilt make of this."];
+                }
+                if (v10 < 31) {
+                    SetNPCID_i((v10 + 1), 1015);
+                }
+            }
+        }
+    }
+}
+
+Usable ElissaTrains_i #locals(8) #uses(~LordOrLady, ~AskList, ~CanTrain, ~GetStat, MagicTrain_i, IntTrain_i) {
+    v0 = ~LordOrLady();
+    v1 = 644;
+    v2 = << 2, 6 >>;
+    v3 = 150;
+    ["I charge 150 gold to train thee in the use of magic. Dost thou agree?"];
+    v4 = ~AskList(<< "Yes", "No" >>);
+    if (v4 = "No") {
+        ["Suit thyself... It is thy loss."];
+        terminate;
+    }
+    if (v4 = "Yes") {
+        v5 = ~CanTrain(2, _Avatar, v3, v1, v2);
+        if (v5 = 0) {
+            ["Thou art not ready to learn yet!"];
+        }
+        if (v5 = 1) {
+            ["Thou dost not have 150 gold! Speak with me when thou dost have the money."];
+            terminate;
+        }
+        if (v5 = 2) {
+            if (~GetStat(_MaxMagic, _Avatar) < 30) {
+                goto label_12;
+            }
+            ["Thou dost already possess more skill than I could teach thee!"];
+        }
+        if (v5 = 3) {
+            label_12:
+            ["Let me see how thou dost handle the reagents...];
+            ["No, no! This is not chicken feed that thou dost handle!"];
+            ["All right, now speak the words of power...];
+            ["Slowly, slowly! If thou dost mis-pronounce them, the spell will go awry and thou wilt have wasted the reagents."];
+            ["Unleash the spell... NOW!"];
+            v6 = ~GetCoord(_Avatar);
+            createSprite(65535, 0, 0, 0, v6::2, v6::1, 26);
+            ["Thou hast potential but thou must pratice, or thou wilt be undone when haste is called for."];
+            v7 = ~TakeFromParty_i(true, _All, _All, v1, v3);
+            if (~GetStat(_MaxMagic, _Avatar) < 30) {
+                MagicTrain_i(1, _Avatar);
+            }
+            if (~GetStat(_Int, _Avatar) < 30) {
+                IntTrain_i(1, _Avatar);
+            }
+        }
+    }
+}

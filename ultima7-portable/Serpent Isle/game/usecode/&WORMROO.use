@@ -1,0 +1,64 @@
+Routine WormRoomUsable_i accepts a0 #locals(6) #uses(~GimmePathEgg, CountWormKills_i, CreateWorm_i) {
+    if (event = _Combat) {
+        v0 = ~GetTarget();
+        v1 = ~GimmePathEgg(2, 4);
+        if (~Item_getType(v0) = _Worm) {
+            v2 = ~GetQuality(v1);
+            if (v2 < 3) {
+                v3 = (v2 + 1);
+                if not ~SetQuality(v3, v1) {
+                    terminate;
+                }
+            } else {
+                v1 = ~GimmePathEgg(1, 4);
+                v4 = ~GetQuality(v1);
+                v4 = (v4 + 1);
+                v5 = ~SetQuality(v4, v1);
+                Item_destroy(v0);
+                createSprite(65535, 0, 0, 0, v0::3, v0::2, 30);
+                Sfx(41);
+                CountWormKills_i(v4);
+                if (v4 < 10) {
+                    v5 = ~PostInFuture(15, << _aUSABLE_i, #WormRoomUsable_i >>, v1);
+                }
+            }
+        }
+    }
+    if (event = _Action) {
+        CreateWorm_i();
+    }
+}
+
+Routine CountWormKills_i accepts a0 #locals(4) #uses(Bark_i, ~GimmePathEgg) {
+    flag(500) = true;
+    if (v0 = 1) {
+        v1 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #CloneDupre >>, _CloneDupre);
+    }
+    if (flag(500) and (v0 = 4)) {
+        flag(501) = true;
+        v1 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #CloneDupre >>, _CloneDupre);
+    }
+    if (flag(501) and (v0 = 7)) {
+        flag(502) = true;
+        v1 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #CloneDupre >>, _CloneDupre);
+    }
+    if ((flag(502) = true) and (v0 = 9)) {
+        flag(503) = true;
+        v1 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #CloneDupre >>, _CloneDupre);
+    }
+    if (flag(503) and (v0 = 10)) {
+        flag(504) = true;
+        v1 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #CloneDupre >>, _CloneDupre);
+    }
+    if ((v0 > 2) and (v0 < 10)) {
+        v2 = << "@These Worms are pitiful.@", "@Die, Worm! Die!@", "@Killing Worms can be boring.@", "@I'm not giving up!@", "@Begone, vile red wiggler!@", "@At least 'tis quiet in here...@" >>;
+        v3 = ~rndRange(6, 1);
+        Bark_i(12, v2::v3, _Avatar);
+        if ((v3 = 6) and (v0 < 7)) {
+            v4 = ~GimmePathEgg(1, 0);
+            v1 = ~PostInFuture(25, << _aMUSIC_i, 12 >>, v4);
+            Bark_i(40, "@Aarrrgh!@", _Avatar);
+            Bark_i(55, "@A TRUE test of patience.@", _Avatar);
+        }
+    }
+}

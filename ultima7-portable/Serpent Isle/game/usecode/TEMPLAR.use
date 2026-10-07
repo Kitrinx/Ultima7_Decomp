@@ -1,0 +1,289 @@
+Routine Templar accepts a0 #locals(11) #uses(~LordOrLady, ~IsInInv, PartyFaces_i, Bark_i, ~OrderList_i, ~InListField_i, ChangeHits_i, DeclareWinner_i, NowSettleDownBoys, SayBanquetTime_i) {
+    v0 = ~LordOrLady();
+    v1 = ~GetItemFlag_i(_Met, _Templar);
+    v2 = ~IsInInv(6, 65177, _Brush, 1, _Party);
+    v3 = false;
+    if (event = _Converse) {
+        Item_bark("@Hail, Knight.@", _Avatar);
+        PartyFaces_i(65457);
+        Bark_i(2, "@Hail.@", _Templar);
+        SetWorkType(_Talk, _Templar);
+    }
+    if (event = _Bark) && $tournamentflag {
+        v4 = ~rndRange(3, 1);
+        if (v4 = 1) {
+            Item_bark("@Strong hit!@", _Templar);
+        }
+        if (v4 = 2) {
+            Item_bark("@Nice form!@", _Templar);
+        }
+        if (v4 = 3) {
+            Item_bark("@I could do better.@", _Templar);
+        }
+    }
+    if (event = _NearDeath) {
+        if $tournamentflag {
+            v5 = ~GetAttacker_i(_Templar);
+            v5 = (0 - v5);
+            if not v5 {
+                v5 = 65180;
+            }
+            if ((v5 <> 65180) and not (v5 in ~OrderList_i())) {
+                v0 = ~OrderList_i();
+                v0 = (v0 & 65180);
+                Foreach v8 in v0 {
+                    if ~InListField_i(v8) {
+                        goto label_21;
+                    }
+                }
+                v8 = 65180;
+                label_21:
+                Npc_setTarget(v8, _Templar);
+                Npc_setTarget(v8, v5);
+                ChangeHits_i(3, _Templar);
+                ChangeHits_i(3, v5);
+                return;
+            }
+            if not $temp1flag {
+                $temp1flag = true;
+                DeclareWinner_i(~NPCToItem_i(_Templar), ~NPCToItem_i(v5));
+                return;
+            }
+            NowSettleDownBoys(v5);
+            return;
+        } else {
+            v9 = ~PostAction(<< _aUSABLE_i, #Paladin >>, item);
+        }
+    }
+    if (event = _Talking) {
+        ClearBark_i(_Templar);
+        Npc_schedule(_Templar);
+        SetSpeaker0_i(0, _Templar);
+        SayBanquetTime_i();
+        if not v1 {
+            ["What can I do for thee? I am Templar."];
+            SetItemFlag_i(_Met, _Templar);
+        } else {
+            ["Yes?"];
+        }
+        TurnOn("duties");
+        if ($asktemplarbrush and (not $knowgoblinhairbrush and $AVATAR_IS_KNIGHT)) {
+            TurnOn("grisly brush");
+        }
+        if ($ASKED_TEMPLAR_ABOUT_GOBLINS and $AVATAR_IS_KNIGHT) {
+            TurnOn("Goblins");
+        }
+        if ($foundsimonbottle and (~GetWorkType(_Simon) <> _Wait)) {
+            TurnOn("brown bottle");
+        }
+        if ($argussaidtemplar and $AVATAR_IS_KNIGHT) {
+            TurnOn("Argus");
+        }
+        if $AVATAR_IS_KNIGHT {
+            TurnOn("traitor");
+        }
+        TurnOn("bye");
+        converse {
+            key ("grisly brush") {
+                TurnOff("grisly brush");
+                ["A peculiar brush? I suspect that I already know what it is, but let me see..."];
+                if v2 {
+                    ["That is a Goblin hairbrush! Made out of the bones of their victims, or so the legends claim."];
+                    ["Perhaps crafted from the thigh bone of one of mine old friends. Someday, thou or I too may be odd bits of furnishings in some Goblin hut!"];
+                    $knowgoblinhairbrush = true;
+                    TurnOn("Goblin artifacts");
+                } else {
+                    ["I cannot identify the object if thou dost not show it to me. I will not waste my time making wild guesses."];
+                }
+            }
+            key ("Goblin artifacts") {
+                TurnOff("Goblin artifacts");
+                ["Goblins have some pretty strange things. Jewelry made from human bones. Drums made with human skin. Much broken glass. Very macabre."];
+                ["I suspect their own village must be brimming with such little nightmares."];
+                ["They eat nearly anything, except their own kind. Goblins are especially fond of children. We had to build the city walls to keep their scouts from stealing our babies."];
+                ["The Goblins consider the pelts of the Gwani to be great prizes -- thou canst recognize a Goblin chief by the pelt he wears."];
+                ["The chief always keeps the prize artifacts for himself. But he must lock them away in a safe place, or his followers will steal them!"];
+                TurnOn("Gwani pelts");
+            }
+            key ("Gwani pelts") {
+                TurnOff("Gwani pelts");
+                ["The furs are taken from the Gwani, a race of fierce warriors which live in the far north. They are said to be even more vicious than the Goblins."];
+                ["Gwani fur provides great warmth, but it is also valued for its great beauty -- it sparkles in the light."];
+            }
+            key ("duties") {
+                TurnOff("duties");
+                if not $AVATAR_IS_KNIGHT {
+                    ["What business is it of thee, stranger? Canst thou not see that I am recovering from wounds?"];
+                    ["I do not wish to spend my limited vitality in idle chatter. I am a warrior, not a clerk..."];
+                    Bark_i(0, "@Excuse me...@", _Templar);
+                    SetWorkType(_Shy, _Templar);
+                    terminate;
+                } else {
+                    ["I am a Knight of Monitor, and a member of the Command of the Bear. I also serve Lord Marsten as his tactical adviser."];
+                    TurnOn(<< "Command of the Bear", "adviser" >>);
+                }
+            }
+            key ("Command of the Bear") {
+                TurnOff("Command of the Bear");
+                ["We are by far the strongest of the three commands. The envy of the Serpent Isle."];
+            }
+            key ("adviser") {
+                TurnOff("adviser");
+                ["Adviser for military matters, that is. Some consider me to be an expert in tactics."];
+                ["For instance, hast thou ever noticed that the Goblins tend to attack in patterns? By observing them, I can sometimes predict when and how they are going to strike next. I like to imagine what it must be like, to be huddled around the fires of their village as they draw their plans against us. The better I can understand them, the better I can defend against them."];
+                if $AVATAR_IS_KNIGHT {
+                    PushKeys();
+                    TurnOn(<< "patterns", "when", "how", "change subject" >>);
+                } else {
+                    ["But I must not speak of these things to a stranger. Thou couldst be a spy for them..."];
+                }
+            }
+            key ("patterns") {
+                TurnOff("patterns");
+                ["They are creatures of habit, to be sure. If thou dost know their customs, then thou hast the knowledge to defeat them."];
+                ["They always set their travel camps in the same pattern. The chieftain's hut is the largest, and is in the center."];
+                ["Each day ends with a drunken revel, and then the exhausted celebrants stumble to their huts and sleep until long past daybreak."];
+                ["When raiding a Goblin camp, strike in the morning, just as the sun is coming up. This is when the guards are fewest, and the chance for success is greatest."];
+            }
+            key ("when") {
+                TurnOff("when");
+                ["The Goblins do not seem to like the sun and their most favored time to strike their enemies is precisely after the sun hath set for the night. Many is the time when Goblin armies have marched to the edge of a city or encampment and then they have waited until nightfall. Often these sieges lasted all night long."];
+            }
+            key ("how") {
+                TurnOff("how");
+                ["The Goblins do not practice any sophisticated sort of military strategy or tactics. Mostly they rely on sheer numbers as well as the fear that they inspire in the hearts of men and women."];
+            }
+            key ("change subject") {
+                PopKeys();
+                ["What else dost thou desire of me?"];
+            }
+            key ("Goblins") {
+                TurnOff("Goblins");
+                ["'Tis a bloody war we are fighting. That I am alive, today, speaking with thee is a miracle."];
+                ["The Goblins are foul but fascinating creatures. They are more intelligent than one would think. In a bestial way, of course."];
+                ["If only I could speak with their general Pomdirgun! Imagine what that mind must be like -- so calculating, so incisive, yet so utterly inhuman."];
+                if $gothelmofmonitor {
+                    ["Perhaps in my next life I shall see him again. But not for any prolonged period of time, I hope."];
+                }
+                TurnOn(<< "war", "miracle", "Pomdirgun" >>);
+            }
+            key ("war") {
+                TurnOff("war");
+                ["We have been fighting the damn Goblins since our forefathers landed on these shores. This city was built on the site of a Goblin village."];
+                v10 = ~IsInInv(1, 65177, _Magic_Helm, 1, _Party);
+                if ($gothelmofmonitor or v10) {
+                    ["Now that thou hast recovered the Helm of Monitor from their fiendish hands, the scales have again tipped in our favor."];
+                    ["How I look forward to the day when the Goblins have been exterminated from this land!"];
+                } else {
+                    ["There had been a balance of sorts, until the ambush of Astrid's patrol. As Knight Champion, she wore the Helm of Monitor, and now the Goblins have it."];
+                    ["The power of the Helm cannot be understated! With it, Pomdirgun can once again assemble the Goblin Horde, and invade the lands of Men."];
+                    ["Somehow, we must regain the Helm!"];
+                }
+                TurnOn("forefathers");
+            }
+            key ("forefathers") {
+                TurnOff("forefathers");
+                ["The greatest battle of the Goblin wars took place in the days when Gurnordir was King of the Goblins."];
+                ["He was the mightiest Goblin who ever lived, and he led the Goblin Horde in the invasion which placed Monitor itself under siege."];
+                ["The Goblins stormed the walls, and fought their way inside the city. However, the Bears surrounded them, and Gurnordir was at last slain."];
+                ["From his dead body was taken the Helm of Courage, and his ashes are enshrined in Knight's Test."];
+                TurnOn(<< "Helm of Courage", "ashes" >>);
+            }
+            key ("Helm of Courage") {
+                TurnOff("Helm of Courage");
+                ["We now call it the Helm of Monitor, and it is worn by the Knight Champion. But it first came from the Goblins."];
+                ["Whence it came before they got their hands upon it, no one can say."];
+                ["The Helm doth have mystical powers, which we believe are due to being imbued with the essence of Courage."];
+            }
+            key ("ashes") {
+                TurnOff("ashes");
+                ["As Renfry can tell thee, we Monitorians have a special reverence for the Ashes of the Dead."];
+                ["When a Knight dies, his body must be brought back to Monitor for cremation. The ashes are then placed in the Crypts."];
+                ["In the case of Gurnordir, his ashes have a strange power. Like all ashes, they are imbued with the essence of the living being."];
+                if $doneknightstest {
+                    ["As thou hast seen, the ashes are used in the climax of the Test of Knighthood. Somehow, they have the power to summon one's totem animal."];
+                } else {
+                    ["In the climax of the Test of Knighthood, one doth mix one's own blood with the Ashes of Gurnordir."];
+                    ["Through a mystical process, this causes one's own totem animal to appear. Thus, it is revealed to which Command thou dost belong."];
+                }
+            }
+            key ("miracle") {
+                TurnOff("miracle");
+                ["It shames me to say that I am the sole survivor from the ambush of Astrid's patrol. The Goblins left me for dead, but I was merely dazed."];
+                ["There was a heap of bodies where Astrid had last been fighting, but her body was not there. It is obvious to me that they took her alive."];
+                ["I managed to reach Knight's Test, where Shmed gave me shelter and sent for Harnna to bandage my wounds. When I recover, I am going there again!"];
+                PushKeys();
+                if not v3 {
+                    TurnOn("ambush");
+                }
+                TurnOn(<< "Astrid", "alive", "change subject" >>);
+            }
+            key ("traitor", "ambush") {
+                TurnOff("ambush");
+                TurnOff("traitor");
+                v3 = true;
+                if $simonshedsskin {
+                    ["A Goblin magically transformed himself into a man and hid amongst us as Simon. Amazing! One day we must learn the secret of how they could accomplish this thing."];
+                } else {
+                    ["It was as if they knew our plans! They were lying in wait across our path, and were upon us in moments. What carnage!"];
+                    ["It grieves me to say this, but there must be a traitor in Monitor. Someone must have revealed our plans to the Goblins."];
+                    ["As a Bear, I know that our Command is innocent. Caladin doth have many faults, but being devious is not one of them."];
+                    ["The traitor is either a Wolf or a Leopard. Perhaps if thou dost ask around, thou mightest find clues in this mystery."];
+                    TurnOn(<< "Wolf", "Leopard" >>);
+                }
+            }
+            key ("Wolf") {
+                TurnOff("Wolf");
+                ["The Wolves have been disloyal to Monitor since Brendann took charge. He would have us guard the roads, not the city itself!"];
+                ["If anyone is the spy, it must be Krayg. He is often out in the woods, alone -- and he never brings back booty or prisoners."];
+                ["What can he be doing? He says that he doth have an old injury, but he's merely a snivelling coward."];
+                $templaraccuseskrayg = true;
+            }
+            key ("Leopard") {
+                TurnOff("Leopard");
+                ["Marsten, the leader of the Leopard Command, officially runs the town and he doth have his hands full. Not only are there the Goblins to worry about, but there is also a thief stealing money from the treasury. Spektor, his right hand man, is in charge of that as well. Needless to say it hath made things unpleasant between the commands as of late."];
+                $heardaboutthief = true;
+            }
+            key ("Astrid") {
+                TurnOff("Astrid");
+                ["She was the greatest Knight that I have ever had the honor of fighting beside. Carrying on her standard is a challenge to which I will dedicate myself for the rest of my life."];
+            }
+            key ("alive") {
+                TurnOff("alive");
+                ["Being captured alive by the Goblins is a far worse fate than being killed by them on the battlefield. Survivors tell horrifying stories of torture, mutilation and things I should not even speak of."];
+            }
+            key ("Pomdirgun") {
+                TurnOff("Pomdirgun");
+                if $gothelmofmonitor {
+                    ["With Pomdirgun dead, those wicked Goblins will be much easier to defeat. His evil brain was constantly able to devise strategies that perplexed us. Thou hast done us a great service and I thank thee."];
+                } else {
+                    ["He is the Goblin leader -- a king or a chieftain, depending on how one translates the Goblin tongue."];
+                    ["Pomdirgun claims to be a direct descendant of Gurnordir. Having heard him curse us on the field of battle, I know that he speaks our tongue -- quite a feat for one of those creatures."];
+                }
+            }
+            key ("brown bottle") {
+                TurnOff("brown bottle");
+                ["How strange! Thou wouldst never find an intact bottle in a Goblin camp -- the creatures delight in smashing glass. Their barbarian urges are very strong."];
+                ["This must have been left by a Man. At last -- evidence to identify our traitor!"];
+                if ~IsInInv(9, 65177, _Bottles, 1, _Party) {
+                    ["Such an unusual bottle... Perhaps Lucilla can identify it for thee."];
+                } else {
+                    ["Thou must inquire to see if anyone can identify this bottle."];
+                }
+            }
+            key ("Argus") {
+                TurnOff("Argus");
+                ["He was a Knight of Monitor with whom I had an altercation. He took bribes, and when my friend accused him of it, Argus slew him on the List Field."];
+                ["Then there was a hue and cry, for the honor of the List Field was at stake! The Wolves wanted to protect Argus, but the Bears were for justice!"];
+                ["Shortly afterward, Argus left town. He must have been guilty, or he would have stayed to prove his innocence."];
+            }
+            key ("bye") {
+                CloseSpeaker0_i();
+                Bark_i(0, "@Bye!@", _Avatar);
+                Bark_i(2, "@Vigilance!@", _Templar);
+                break;
+            }
+        }
+        clear_answers;
+    }
+}

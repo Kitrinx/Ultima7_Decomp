@@ -1,0 +1,186 @@
+Routine GorlabSleepEgg_i accepts a0 #locals(22) #uses(~GimmePathEgg, ~PartyUtters, ~AwakeMember_i, ~PartyCompanions_i, ~RemoveFromList_i, DismissParty_i, ~IsContainer_i, AbortTournament_i, ~IsInInv) {
+    v0 = ~GimmePathEgg(1, 2);
+    if $hasserpentnecklace {
+        Item_destroy(item);
+        terminate;
+    }
+    if (event = _Trigger) {
+        v1 = ~PartyUtters(true, "@I feel sleepy@", "@I feel sleepy@", 1);
+        v1 = ~SetQuality(0, v0);
+        v1 = ~PostInFuture(15, << _aNO_HALT_i, _aUSABLE_i, #GorlabSleepEgg_i >>, v0);
+    }
+    if (event = _Action) {
+        v2 = ~GetQuality(v0);
+        if (v2 = 0) {
+            v1 = ~PartyUtters(true, "@I can go no further...@", "@Mine eyes are closing...@", 1);
+            v1 = ~SetQuality(1, v0);
+            v1 = ~PostInFuture(15, << _aNO_HALT_i, _aUSABLE_i, #GorlabSleepEgg_i >>, v0);
+        }
+        if (v2 = 1) {
+            v1 = ~PartyUtters(true, "@Mine eyes are closing...@", "@I can go no further...@", 1);
+            v3 = ~AwakeMember_i();
+            if v3 {
+                v4 = ~NPCToItem_i(v3);
+                SetItemFlag_i(_Asleep, v4);
+                SetWorkType(_Sleep, v4);
+                v5 = ~GetCoord(v3);
+                NewSchedule_i(v5, _Sleep, 0, v3);
+            } else {
+                v1 = ~SetQuality(2, v0);
+                ClearBark_i(_Avatar);
+                SetItemFlag_i(_DontMove_i, _Avatar);
+                SetWorkType(_Sleep, _Avatar);
+            }
+            v1 = ~PostInFuture(15, << _aNO_HALT_i, _aUSABLE_i, #GorlabSleepEgg_i >>, v0);
+        }
+        if (v2 = 2) {
+            v1 = ~PartyUtters(false, 0, 0, 1);
+            SetSpeaker0_i(0, v1);
+            if (v1 = 65180) {
+                ["I must stay awake..."];
+            } else {
+                ["We must stay awake..."];
+            }
+            v1 = ~PostAction(<< _aNO_HALT_i, _aBEND_FRAME_i, _aKNEEL_FRAME_i, _aSIT_FRAME_i, _aLIE_FRAME_i, _aLIE_FRAME_i, _aLIE_FRAME_i, _aLIE_FRAME_i, _aLIE_FRAME_i, _aLIE_FRAME_i, _aLIE_FRAME_i, _aWAIT_i, 5 >>, _Avatar);
+            v1 = ~SetQuality(3, v0);
+            v1 = ~PostInFuture(5, << _aNO_HALT_i, _aUSABLE_i, #GorlabSleepEgg_i >>, v0);
+        }
+        if (v2 = 3) {
+            v6 = ~PartyCompanions_i();
+            v7 = ~NPCToItem_i(_Avatar);
+            v8 = ~RemoveFromList_i(v6, v7);
+            Foreach v11 in v8 {
+                v12 = ~NPCToItem_i(v11);
+                SetWorkType(_Wait, v12);
+                v13 = ~rndRange(2, 65534);
+                v14 = ~rndRange(2, 65534);
+                Item_move(<< (1460 + v13), (1618 + v14), 0 >>, v12);
+                NewSchedule_i(<< (1460 + v13), (1618 + v14), 0 >>, _Sleep, 0, v12);
+            }
+            DismissParty_i(item);
+            v15 = ~rndRange(4, 1);
+            v16 = << 17, 1486, 0 >>;
+            if (v15 = 1) {
+                v16 = << 175, 1387, 0 >>;
+            }
+            if (v15 = 2) {
+                v16 = << 139, 1113, 0 >>;
+            }
+            if (v15 = 3) {
+                v16 = << 2899, 1123, 0 >>;
+            }
+            if (v15 = 4) {
+                v16 = << 17, 1486, 0 >>;
+            }
+            ClearItemFlag_i(_Poisoned, _Avatar);
+            FadePalette_i(0, 1, 12);
+            Item_move(v16, _Avatar);
+            v1 = ~SetQuality(4, v0);
+            v1 = ~PostInFuture(15, << _aNO_HALT_i, _aUSABLE_i, #GorlabSleepEgg_i >>, v0);
+        }
+        if (v2 = 4) {
+            ClearItemFlag_i(_Invisible, _Avatar);
+            v17 = 0;
+            v18 = ~GetContents(_All, _All, _All, _Avatar);
+            While (v17 < 2) {
+                Foreach v21 in v18 {
+                    if (~IsContainer_i(v21) or (v17 = 1)) {
+                        v1 = ~Item_getType(v21);
+                        if not ((v1 = 486) or (v1 = 607)) {
+                            if not ~Item_push(v21) {
+                                AbortTournament_i(17, _Avatar);
+                            }
+                            if not ~Item_popToEnd(_AUTO_3) {
+                                AbortTournament_i(18, _Avatar);
+                            }
+                        }
+                    }
+                }
+                v17 = (v17 + 1);
+                v18 = ~GetContents(_All, _All, _All, _Avatar);
+            }
+            v1 = ~GiveToCont_i(0, 0, _All, _Backpack, 1, _Avatar);
+            if ~IsInInv(3, 65177, _Artifacts, 1, _AUTO_3) {
+                v1 = ~GiveToCont_i(0, 3, _All, _Artifacts, 1, _Avatar);
+            }
+            if ~IsInInv(1, 65177, _Magic_Helm, 1, _AUTO_3) {
+                v1 = ~GiveToCont_i(0, 1, _All, _Magic_Helm, 1, _Avatar);
+            }
+            if ~IsInInv(11, 65177, _Artifacts, 1, _AUTO_3) {
+                v1 = ~GiveToCont_i(0, 11, _All, _Artifacts, 1, _Avatar);
+            }
+            FadePalette_i(1, 1, 12);
+            ClearItemFlag_i(_DontMove_i, _Avatar);
+            SetMusic(~GimmePathEgg(1, 5), 24);
+            SetWorkType(_FollowAvt, _Avatar);
+            v1 = ~SetQuality(0, v0);
+        }
+    }
+}
+
+Routine MoonsEyeSpeechEgg_i accepts a0 #locals(0) #uses(PlaySpeechOrText_i) {
+    if (event = _Trigger) {
+        PlaySpeechOrText_i(2);
+    }
+}
+
+Routine GorlabDreamEgg_i accepts a0 #locals(8) #uses(~PartyUtters) {
+    if (event = _Pathfind1) {
+        v0 = ~PartyUtters(true, "@Unusual place...@", "@Let us leave here.@", 1);
+    }
+    if (event = _Trigger) {
+        v1 = ~GetQuality(item);
+        v2 = ~GetCoord(item);
+        if (v1 = 1) {
+            createSprite(65535, 0, 0, 0, v2::2, v2::1, 4);
+            Sfx(42);
+            v3 = 65533;
+            While (v3 < 2) {
+                v4 = << (v2::1 + v3), v2::2, 0 >>;
+                v5 = ~CreateCreature_i(v4, _Garg_Wingless);
+                Npc_setAlignment(_Evil, v5);
+                SetWorkType(_Combat_0, v5);
+                SetAttacker_i(v5, _Avatar);
+                v3 = (v3 + 2);
+            }
+        }
+        if (v1 = 2) {
+            createSprite(65535, 0, 0, 0, v2::2, v2::1, 26);
+            v4 = << 2598, 26, 0 >>;
+            Item_move(v4, _Party);
+        }
+        if (v1 = 3) {
+            v6 = ~GetCoord(_Avatar);
+            if (v6::3 < 3) {
+                createSprite(65535, 0, 0, 0, v2::2, v2::1, 26);
+                Item_move(<< 1288, 1583, 0 >>, _Party);
+                v7 = << 1288, 1590, 0 >>;
+                v0 = ~PathfindAvatar_i(_Pathfind1, _Avatar, #GorlabDreamEgg_i, v7);
+            }
+        }
+    }
+}
+
+Routine DamageAvatarEgg_i accepts a0 #locals(1) {
+    if (event = _Trigger) {
+        v0 = ~PostAction(<< _aNO_HALT_i, _aHIT_i, 50, 0 >>, _Avatar);
+    }
+}
+
+Function ~AwakeMember_i #locals(7) #uses(~RemoveFromList_i) {
+    v0 = ~GetParty();
+    v1 = ~NPCToItem_i(_Avatar);
+    v2 = ~RemoveFromList_i(v0, v1);
+    if v2 {
+        Foreach v5 in v2 {
+            v6 = false;
+            v6 = ~GetItemFlag_i(_Asleep, v5);
+            if not v6 {
+                return v5;
+            }
+        }
+        return << >>;
+    } else {
+        return << >>;
+    }
+}

@@ -1,0 +1,374 @@
+Routine Pillar_2x2 accepts a0 #locals(11) #uses(PathToItem_i, BarkIfNear_i, ~IsContainer_i, AbortTournament_i, Bark_i, ~GimmePathEgg) {
+    if (event = _Converse) {
+        v0 = ~GetFrame(item);
+        if (v0 = 10) {
+            if ($trieddupretest and ($triediolotest and $triedshaminotest)) {
+                terminate;
+            }
+            v1 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #DismissParty_i >>, _Avatar);
+            PathToItem_i(10, item, #Pillar_2x2, 65535, << 1, 2 >>, << 1, 2 >>, item);
+            v2 = ~GetDist(item, _Avatar);
+            v1 = ~PostInFuture((v2 + 2), << _aNO_HALT_i, _aUSABLE_i, #Pillar_2x2 >>, _Avatar);
+        }
+    }
+    if (event = _Action) {
+        ClearItemFlag_i(_Invisible, _Avatar);
+        Sfx(130);
+        LightningBolt();
+        Camera_setCenterOn(_Avatar);
+        Kernel_resetRef(_Avatar);
+        FadePalette_i(0, 1, 12);
+        if not $begunpuritytest {
+            v1 = ~FindNearby_i(0, 30, _Chest, item);
+            v3 = false;
+            Foreach v6 in v1 {
+                if (~GetQuality(v6) = 61) {
+                    v3 = v6;
+                }
+            }
+        }
+        if (v3 and not $begunpuritytest) {
+            v1 = ("" & ("@Where am I?@" & "@Where are my belongings?@"));
+            BarkIfNear_i(v1, _Avatar);
+            v7 = 0;
+            v8 = ~GetContents(_All, _All, _All, _Avatar);
+            While (v7 < 2) {
+                Foreach v6 in v8 {
+                    if (~IsContainer_i(v6) or (v7 = 1)) {
+                        v1 = ~Item_getType(v6);
+                        if not ((v1 = 486) or (v1 = 607)) {
+                            if not ~Item_push(v6) {
+                                AbortTournament_i(17, _Avatar);
+                            }
+                            if not ~Item_popToEnd(v3) {
+                                AbortTournament_i(18, _Avatar);
+                            }
+                        }
+                    }
+                }
+                v7 = (v7 + 1);
+                v8 = ~GetContents(_All, _All, _All, _Avatar);
+            }
+        }
+        if $begunpuritytest {
+            Bark_i(5, "@Back here again?@", _Avatar);
+        }
+        $begunpuritytest = true;
+        Item_move(<< 102, 1647, 0 >>, _Avatar);
+        SetMusic(~GimmePathEgg(1, 5), 53);
+        v1 = ~PostInFuture(4, << _aNO_HALT_i, _aFACE_i, byte(48), _aUSABLE_i, #FadeInArrival_i >>, _Avatar);
+    }
+}
+
+Routine FurnaceTrollsEgg_i accepts a0 #locals(7) {
+    if (event = _Trigger) {
+        v0 = ~FindNearby_i(16, 20, _Egg_Type, item);
+        Foreach v3 in v0 {
+            v4 = ~GetFrame(v3);
+            if (v4 = 0) {
+                v5 = ~PostAction(<< _aNO_HALT_i, _aHATCH_i >>, v3);
+                v5 = ~PostInFuture(5, << _aNO_HALT_i, _aUSABLE_i, #FurnaceTrollsEgg_i >>, _Avatar);
+                terminate;
+            }
+        }
+    }
+    if (event = _Action) {
+        v6 = ~FindNearby_i(0, 20, _Troll, item);
+        if v6 {
+            SetNPCID_i(1, v6::1);
+            SetItemFlag_i(_Tournament, v6::1);
+            SetNPCID_i(2, v6::2);
+            SetItemFlag_i(_Tournament, v6::2);
+        }
+    }
+}
+
+Routine GotSerpStaffEgg_i accepts a0 #locals(1) {
+    if ((event = _Action) or (event = _Trigger)) {
+        v0 = ~FindNearby_i(0, 1, _Staff_Serp, item);
+        if not v0 {
+            $gotserpstaff = true;
+            if not ((item = ~NPCToItem_i(_Avatar)) or (item = 65180)) {
+                Item_destroy(item);
+            }
+        }
+    }
+}
+
+Routine FoundSimonBottleEgg_i accepts a0 #locals(10) #uses(~RemoveFromList_i, ~PartyUtters) {
+    if (event = _Trigger) {
+        if not flag(200) {
+            terminate;
+        }
+        v0 = ~FindNearby_i(0, 1, _Bottles, item);
+        Foreach v3 in v0 {
+            if (~GetFrame(v3) <> 7) {
+                v0 = ~RemoveFromList_i(v0, v3);
+            }
+        }
+        if (~ListSize_i(v0) = 0) {
+            $foundsimonbottle = true;
+            Npc_setAlignment(_Chaotic, _Simon);
+            SetItemFlag_i(_Tournament, _Simon);
+            v4 = ~PartyUtters(true, "@A clue...@", "@A clue...@", 1);
+            if (v4 <> 65180) {
+                v5 = ~PostInFuture(10, << _aNO_HALT_i, _aUSABLE_i, #FoundSimonBottleEgg_i >>, v4);
+            }
+        }
+    }
+    if (event = _Action) {
+        v6 = ~FindNearby_i(16, 20, _Egg_Type, item);
+        Foreach v9 in v6 {
+            if (~GetFrame(v9) = 7) {
+                Item_destroy(v9);
+            }
+        }
+        v4 = ~ItemToNPC_i(item);
+        if (~Item_getType(v4) = _M_Automaton) {
+            SetSpeaker0_i(0, _Forskis);
+        } else {
+            SetSpeaker0_i(0, v4);
+        }
+        if $sawsimonbottle {
+            ["Avatar! This bottle is identical to the one from which thou didst drink at the inn in Monitor!"];
+            ["'Tis a bottle of Fawnish ale."];
+            $knowsimonbottle = true;
+        } else {
+            ["I cannot help but think that this strange bottle must be a clue as to the identity of Monitor's traitor."];
+            ["Perhaps if we can find whom this bottle doth belong to, we shall find our traitor!"];
+        }
+    }
+}
+
+Routine FurnaceRemarksEgg_i accepts a0 #locals(14) #uses(~PartyUtters, Bark_i) {
+    v0 = ~FindNearby_i(0, 20, _Snake, item);
+    v1 = ~FindNearby_i(0, 20, _Garg_Wingless, item);
+    v2 = ~FindNearby_i(0, 20, _Corpses, item);
+    if (event = _Trigger) {
+        if v0 {
+            v3 = ~PartyUtters(false, 0, 0, 65533);
+            Item_bark("@Snakes!@", v3);
+        } else {
+            if v1 {
+                v3 = ~PartyUtters(false, 0, 0, 65534);
+                Item_bark("@Hmmm...@", v3);
+            } else {
+                if v2 {
+                    v3 = ~PartyUtters(false, 0, 0, 65535);
+                    Item_bark("@Damned bones!@", v3);
+                    v4 = ~FindNearby_i(16, 15, _Egg_Type, item);
+                    v5 = 0;
+                    Foreach v8 in v4 {
+                        if (~GetFrame(v8) = 0) {
+                            v5 = v8;
+                        }
+                    }
+                    if not v5 {
+                        terminate;
+                    }
+                } else {
+                    terminate;
+                }
+            }
+        }
+        if ((v3 <> 65180) and ((v3 <> 65235) and (v3 <> 65238))) {
+            v9 = ~PostInFuture(7, << _aNO_HALT_i, _aUSABLE_i, #FurnaceRemarksEgg_i >>, v3);
+        }
+    }
+    if (event = _Action) {
+        ClearBark_i(item);
+        SetSpeaker0_i(0, ~ItemToNPC_i(item));
+        if (not v0 and (not v1 and not v2)) {
+            ["Oh, mindest thou not."];
+            Bark_i(0, "@I am so confused...@", item);
+            terminate;
+        }
+        if v0 {
+            ["Snakes! Why did it have to be snakes? Why could not Lord British have sent thee somewhere akin to 'Daisy Isle' instead?"];
+            Bark_i(0, "@Why me?@", item);
+            Bark_i(5, "@Oh, desist...@", _Avatar);
+            terminate;
+        }
+        v4 = ~FindNearby_i(16, 15, _Egg_Type, item);
+        v5 = 0;
+        Foreach v8 in v4 {
+            if (~GetFrame(v8) = 0) {
+                v5 = v8;
+            }
+        }
+        if (v2 and v5) {
+            ["Skeletons! The foul things! At least they are not moving about and terrorizing the living! Let those who have died rest, and not bother those of us that live on..."];
+            v9 = ~PostInFuture(3, << _aHATCH_i >>, v5);
+            v12 = ~GetCoord(v5);
+            createSprite(65535, 0, 0, 0, v12::2, v12::1, 26);
+            SetSpeaker1_i(0, _Avatar);
+            ["Perhaps thou didst speak too soon, my friend..."];
+            CloseSpeaker1_i();
+        }
+        if v1 {
+            v13 = << 65533, 65534, 65535, 65387 >>;
+            if (~ItemToNPC_i(item) in v13) {
+                ["A hall of sleeping gargoyles..."];
+                ["'Tis reminiscent of the problems that are occurring in Britannia this very instant!"];
+                Bark_i(0, "@The emps...@", item);
+                $saidemps = true;
+            } else {
+                ["A hall of sleeping Daemons..."];
+                Bark_i(0, "@Let us go...@", item);
+            }
+        }
+        CloseSpeaker0_i();
+        terminate;
+    }
+}
+
+Routine FurnaceHeatEgg_i accepts a0 #locals(14) #uses(~GimmePathEgg, ~WhereIs_i, Bark_i, DoDamage_i) {
+    if (event = _Trigger) {
+        v0 = ~GimmePathEgg(3, 7);
+        if v0 {
+            v1 = ~PostInFuture(300, << _aUSABLE_i, #FurnaceHeatEgg_i >>, v0);
+            v1 = ~SetQuality(250, v0);
+        }
+    }
+    if (event = _Action) {
+        v2 = ~GetCoord(_Avatar);
+        v3 = v2::1;
+        v4 = v2::2;
+        if ((v3 > 13) and ((v3 < 171) and ((v4 > 1567) and (v4 < 1659)))) {
+            v1 = ~SetQuality(250, item);
+            v1 = ~PostInFuture(250, << _aUSABLE_i, #FurnaceHeatEgg_i >>, item);
+            terminate;
+        }
+        v5 = ~WhereIs_i(v2);
+        if (v5 = 4) {
+            if not $chill_active {
+                v6 = << "@'Tis hot!@", "@Yow!@", "@It feels like a steambath.@", "@I am drenched.@", "@Doth anyone have ice?@", "@Blistering heat...@", "@Dost thou possess any cold spells, Avatar?@", "@I am roasting!@", "@Think cool thoughts.@", "@'Sblood, 'tis hot.@", "@Britannia for a fan!@", "@Uugghh. I am hot.@", "@Damn this heat!@" >>;
+                v7 = ~GetParty();
+                Foreach v10 in v7 {
+                    v11 = ~rndRange(2, 1);
+                    if (v11 = 1) {
+                        v12 = ~rndRange(13, 1);
+                        v13 = ~rndRange(6, 1);
+                        Bark_i(v13, v6::v12, v10);
+                    }
+                    DoDamage_i(1, ~NPCToItem_i(v10));
+                }
+                v13 = ~GetQuality(item);
+                v13 = (v13 / 2);
+                if (v13 < 15) {
+                    v13 = 15;
+                }
+                v1 = ~PostInFuture(v13, << _aUSABLE_i, #FurnaceHeatEgg_i >>, item);
+                v1 = ~SetQuality(v13, item);
+            } else {
+                v1 = ~SetQuality(250, item);
+                v1 = ~PostInFuture(250, << _aUSABLE_i, #FurnaceHeatEgg_i >>, item);
+            }
+        }
+    }
+}
+
+Routine EnterCloneTest_i accepts a0 #locals(5) {
+    if ((event = _Action) and ($temp1flag = false)) {
+        v0 = ~GetQuality(item);
+        v1 = ~FindNearby_i(16, 30, _Path, item);
+        if v1 {
+            SetItemFlag_i(_DontMove_i, _Avatar);
+            v2 = ~GetDist(v1, item);
+            v3 = ~GetCoord(v1);
+            PathfindNPC_i(false, #EnterCloneTest_i, v1, _Pathfind1, v3, _Avatar);
+            if (v0 = 5) {
+                v4 = ~PostInFuture((v2 + 10), << _aUSABLE_i, #EnterCloneTest_i >>, _CloneIolo);
+                $triediolotest = true;
+            }
+            if (v0 = 6) {
+                v4 = ~PostInFuture((v2 + 10), << _aUSABLE_i, #EnterCloneTest_i >>, _CloneShamino);
+                $triedshaminotest = true;
+            }
+            if (v0 = 7) {
+                v4 = ~PostInFuture((v2 + 10), << _aUSABLE_i, #EnterCloneTest_i >>, _CloneDupre);
+                $trieddupretest = true;
+            }
+        }
+        $temp1flag = true;
+        terminate;
+    }
+    if ((event = _Action) and ($temp1flag = true)) {
+        $temp1flag = false;
+        SetWorkType(_Talk, item);
+        if (~ItemToNPC_i(item) = 65358) {
+            Item_bark("@Avatar! Avatar!@", _CloneIolo);
+            terminate;
+        }
+        if (~ItemToNPC_i(item) = 65357) {
+            Item_bark("@Avatar, thou hast returned!@", _CloneShamino);
+            terminate;
+        }
+        if (~ItemToNPC_i(item) = 65356) {
+            Item_bark("@Art thou ready, Avatar?@", _CloneDupre);
+            terminate;
+        }
+    }
+    if (event = _Path_Failure) {
+        v3 = ~GetCoord(item);
+        createSprite(65535, 0, 0, 0, v3::2, v3::1, 7);
+        Item_move(v3, _Avatar);
+        Sfx(130);
+    }
+}
+
+Routine LeaveCloneTest_i accepts a0 #locals(11) #uses(~GimmePathEgg, ~IsContainer_i, AbortTournament_i, RecallParty_i) {
+    Polymorph_i(_Avatar_Type, _Avatar);
+    if ($triediolotest and ($triedshaminotest and $trieddupretest)) {
+        if (item = ~GimmePathEgg(2, 5)) {
+            v0 = ~PostAction(<< _aFACE_i, byte(52) >>, _Avatar);
+            v1 = ~FindNearby_i(0, 45, _Chest, item);
+            v2 = false;
+            Foreach v5 in v1 {
+                if (~GetQuality(v5) = 61) {
+                    v2 = v5;
+                }
+            }
+            if v2 {
+                v1 = ~GetContents(_All, _All, _All, v2);
+                if v1 {
+                    v1 = ~GetContents(_All, _All, _All, _Avatar);
+                    Foreach v5 in v1 {
+                        if not ((~Item_getType(v5) = _Serp_Bracers) or (~Item_getType(v5) = _Path)) {
+                            Item_destroy(v5);
+                        }
+                    }
+                }
+                v8 = 0;
+                v1 = ~GetContents(_All, _All, _All, v2);
+                While (v8 < 2) {
+                    Foreach v5 in v1 {
+                        if (~IsContainer_i(v5) or (v8 = 1)) {
+                            if not ~Item_push(v5) {
+                                AbortTournament_i(13, _Avatar);
+                            }
+                            if not ~Item_popToEnd(_Avatar) {
+                                AbortTournament_i(14, _Avatar);
+                            }
+                        }
+                    }
+                    v8 = (v8 + 1);
+                    v1 = ~GetContents(_All, _All, _All, v2);
+                }
+            }
+            FadePalette_i(1, 1, 12);
+        } else {
+            Camera_setCenterOn(_Avatar);
+            SetMusic(~GimmePathEgg(1, 5), 39);
+            FadePalette_i(0, 1, 12);
+            Sfx(130);
+            Item_move(<< 1866, 2563, 0 >>, _Zhelkas);
+            SetWorkType(_Talk, _Zhelkas);
+            v0 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #LeaveCloneTest_i >>, ~GimmePathEgg(2, 5));
+            Item_move(<< 1863, 2541, 0 >>, _Avatar);
+            RecallParty_i(0);
+        }
+    } else {
+        v0 = ~PostAction(<< _aUSABLE_i, #Pillar_2x2 >>, _Avatar);
+    }
+}

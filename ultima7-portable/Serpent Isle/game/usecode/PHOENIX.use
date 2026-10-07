@@ -1,0 +1,126 @@
+Routine Phoenix accepts a0 #locals(6) #uses(~LordOrLady, ~AvatarName, ~GiveItemsOrDrop_i, ~AskYesNo, Bark_i) {
+    v0 = ~LordOrLady();
+    v1 = ~AvatarName();
+    if (event = _Path_Failure) {
+        ClearItemFlag_i(_DontMove_i, _Avatar);
+        ClearSpeakers_i();
+        if $phoenixegggiven {
+            event = 10;
+        } else {
+            event = 11;
+        }
+    }
+    if (event = _Pathfind1) {
+        SetSpeaker0_i(0, _Palos);
+        ["It is a phoenix egg. It is obviously quite rare, and it possesses magical qualities that go beyond explanation."];
+        v2 = ~GiveItemsOrDrop_i(true, 0, 1, 0, 649, 1, _Avatar);
+        $phoenixegggiven = true;
+        $temp1flag = true;
+        v3 = ~PostInFuture(2, << _aNO_HALT_i, _aUSABLE_i, #Phoenix >>, item);
+    }
+    if ((event = _Pathfind2) or ((event = _Converse) or (event = _Action))) {
+        ClearItemFlag_i(_DontMove_i, _Avatar);
+        if ((event = _Converse) or (event = _Action)) {
+            if ((event = _Action) and $temp1flag) {
+                Sfx(15);
+                PathfindNPC_i(true, #Phoenix, item, _Pathfind2, << 2146, 1198, 0 >>, item);
+                $temp1flag = false;
+                terminate;
+            } else {
+                SetSpeaker0_i(0, _Palos);
+                ["Greetings to thee!"];
+                TurnOn(<< "name", "bye" >>);
+            }
+        }
+        if (event = _Pathfind2) {
+            SetSpeaker0_i(0, _Palos);
+            ["That is the greatest gift that I can give to thee. Use it wisely."];
+            Sfx(15);
+            TurnOn(<< "bye" >>);
+        }
+        $temp1flag = false;
+        if $phoenixegggiven {
+            TurnOn("domain");
+        }
+        converse {
+            key ("name") {
+                TurnOff("name");
+                ["Name? Oh, my, what a formality! First thou hast saved my life and then thou dost ask my name! Thou art a curiosity!"];
+                ["No one hath asked me my real name in several hundred years! I have always been called simply Phoenix."];
+                TurnOn(<< "real name", "phoenix" >>);
+            }
+            key ("real name") {
+                TurnOff("real name");
+                ["It is a sound thou wouldst find most unpronounceable. My name is a word in the language of my kind that roughly translates as 'Skyrise'."];
+                ["It is a popular name among my kind. But enough of that! I wish to thank thee for thy deed..."];
+                TurnOn(<< "Skyrise", "thou art welcome" >>);
+            }
+            key ("Skyrise") {
+                TurnOff("Skyrise");
+                ["I was named after a famous Phoenix queen. She was so beautiful that a dragon came to court her!"];
+                ["Canst thou imagine? After many rejections, she at last agreed to go away with him. And then she flew away with the dragon, into the sky!"];
+            }
+            key ("thou art welcome") {
+                TurnOff("thou art welcome");
+                if $phoenixegggiven {
+                    ["It is rare to find a stranger who is so well-mannered! I do hope that thou didst enjoy the egg I gave to thee!"];
+                } else {
+                    ["As a token of mine appreciation, I shall give thee the most valuable possession I could bestow upon thee."];
+                    v4 = ~GetCoord(_Avatar);
+                    PathfindNPC_i(true, #Phoenix, item, _Pathfind1, << (v4::1 + 1), (v4::2 + 1), 0 >>, item);
+                    Sfx(15);
+                    terminate;
+                }
+            }
+            key ("phoenix") {
+                TurnOff("phoenix");
+                ["Thou hast never met such a creature before...? If thou dost wish it I shall tell thee my tale."];
+                TurnOn(<< "tale" >>);
+            }
+            key ("tale") {
+                TurnOff("tale");
+                ["The phoenix are creatures of fate. We are naturally drawn to places where the balance between Order and Chaos hath been upset."];
+                TurnOn(<< "fate", "balance" >>);
+            }
+            key ("fate") {
+                TurnOff("fate");
+                ["Fate is a force that is eternal. This is why those of my kind can never truly die."];
+                ["Although we may lose our lives, we are reborn from the ashes of our own funeral pyres."];
+                TurnOn(<< "eternal", "pyres" >>);
+            }
+            key ("balance") {
+                TurnOff("balance");
+                ["As the course of destiny calls us to many places and many worlds throughout the universe, mine ancestors grew wings to travel far."];
+                ["I flew between the Serpent Pillars to reach this place. I suspect that is how thou didst come here thyself."];
+            }
+            key ("eternal") {
+                TurnOff("eternal");
+                ["Now that there is a living phoenix in this world, the balance between Order and Chaos can be restored."];
+                ["A happy thought, no?"];
+            }
+            key ("pyres") {
+                TurnOff("pyres");
+                ["The flames of the pyres are a rebirth. They represent change. If the balance between Order and Chaos is misaligned, 'tis thee who must change it."];
+                ["I wish thee luck in all thine endeavors!"];
+            }
+            key ("domain") {
+                TurnOff("domain");
+                ["Dost thou wish to spend more time in my domain?"];
+                v5 = ~AskYesNo();
+                if v5 {
+                    ["Wonderful! Feel free to stay as long as thou wouldst like, though thou mightest find it to be on the warm side."];
+                } else {
+                    ["If thou dost wish to leave, thou canst return to the place from whence thou camest through a mystical means of unknown origin. The means lies beyond my lair."];
+                }
+            }
+            key ("bye") {
+                ["I wish thee good fortune, and once again I thank thee for restoring me."];
+                CloseSpeaker0_i();
+                Bark_i(0, "@Goodbye!@", _Avatar);
+                Bark_i(5, "@Balance to thee.@", item);
+                break;
+            }
+        }
+        clear_answers;
+    }
+}

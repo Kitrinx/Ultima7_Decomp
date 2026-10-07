@@ -1,0 +1,24 @@
+Routine Flux_Analyzer accepts a0 #locals(6) #uses(~GimmePathEgg) {
+    v0 = ~GimmePathEgg(3, 5);
+    if (event = _Converse) {
+        v1 = ~GetFrame(item);
+        if (v1 < 6) {
+            v2 = ~PostInFuture(20, << _aFINISH_i, _aNO_HALT_i, _aFRAME, 0 >>, item);
+            SetFrame(6, item);
+            v2 = ~PostInFuture(2, << _aNO_HALT_i, _aUSABLE_i, #Flux_Analyzer >>, v0);
+            Sfx(74);
+        }
+    }
+    if (event = _Action) {
+        v3 = ~GetTarget();
+        v4 = ~Item_getType(v3);
+        if (v4 = 806) {
+            flag(206) = true;
+            v5 = ~GetCoord(v3);
+            createSprite(65535, 0, 0, 0, v5::2, v5::1, 21);
+            Sfx(67);
+        } else {
+            Sfx(48);
+        }
+    }
+}

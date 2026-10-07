@@ -1,0 +1,40 @@
+Routine Torch accepts a0 #locals(0) #uses(IgniteLight_i) {
+    if ((event = _Converse) or (event = _Action)) {
+        IgniteLight_i(_Lit_Torch, item);
+    }
+}
+
+Routine Lit_Torch accepts a0 #locals(2) #uses(LightTorch_i, ~DirFrom_i, StartBurning_i) {
+    if ((event = _Converse) or (event = _Action)) {
+        LightTorch_i(event, _Torch, item);
+    }
+    if (event = _Pathfind1) {
+        v0 = ~DirFrom_i(item, _Avatar);
+        v1 = ~PostAction(<< _aFACE_i, v0, _aCONTINUE_i, _aTHRUST2_FRAME_i, _aSTAND_FRAME_i >>, _Avatar);
+        LightTorch_i(event, _Torch, item);
+    }
+    if (event = _Equip) {
+        StartBurning_i(item);
+    }
+}
+
+Routine LightTorch_i accepts a0, a1, a2 #locals(0) {
+    if ((v0 = 1) or (v0 = 2)) {
+        Item_setType(v1, v2);
+        Kernel_resetRef(v2);
+        Sfx(33);
+        SetLight_i(true, item);
+    }
+    if (v0 = 10) {
+        Item_setType(v1, v2);
+        Kernel_resetRef(v2);
+        Sfx(33);
+        SetLight_i(true, item);
+    }
+    if (v0 = 5) {
+        SetLight_i(true, item);
+    }
+    if (v0 = 6) {
+        SetLight_i(false, item);
+    }
+}

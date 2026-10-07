@@ -1,0 +1,103 @@
+Routine Kalen accepts a0 #locals(5) #uses(~LordOrLady, ~AvatarName, PartyFaces_i, Bark_i, JorvinBringsInvitation_i, ~PartyUtters) {
+    v0 = ~LordOrLady();
+    v1 = ~AvatarSex();
+    v2 = ~AvatarName();
+    if (event = _Converse) {
+        Item_bark("@Greetings.@", _Avatar);
+        PartyFaces_i(65479);
+        Bark_i(5, "@What dost thou want?@", _Kalen);
+        SetWorkType(_Talk, _Kalen);
+    }
+    if (event = _Talking) {
+        Npc_schedule(_Kalen);
+        ClearBark_i(_Kalen);
+        SetSpeaker0_i(0, _Kalen);
+        v3 = ~GetItemFlag_i(_Met, _Kalen);
+        if (v3 = false) {
+            if ($gottattoo = true) {
+                if (v1 = true) {
+                    ["Bold wench, thou art, to wear a tattoo so openly."];
+                } else {
+                    ["Be careful, mate, lest thou be mistaken for an honest seafarin' man."];
+                }
+            } else {
+                ["I have business to attend to. Be quick."];
+            }
+            SetItemFlag_i(_Met, _Kalen);
+        } else {
+            ["Returned again?"];
+        }
+        if ($knowsassassin = true) {
+            TurnOn("assassin");
+        }
+        TurnOn(<< "name", "job", "goblins", "storms" >>);
+        if ($BANES_RELEASED = true) {
+            TurnOn("Iolo the Mad");
+        }
+        TurnOn("bye");
+        converse {
+            key ("name") {
+                ["Second Mate Kalen, to ye."];
+                TurnOff("name");
+            }
+            key ("job") {
+                ["I'm a seafarer. And I do whate'er the Cap'n wants done."];
+                TurnOff("job");
+            }
+            key ("goblins") {
+                TurnOff("goblins");
+                ["Green fellows. Hospitable. Be thou sure to accept their dinner invitation."];
+            }
+            key ("storms") {
+                TurnOff("storms");
+                ["Afraid of a bit of rain?"];
+                if (v1 = true) {
+                    ["I can keep ye safe, darlin'. Thou shouldst come over ta mine hut..."];
+                } else {
+                    ["Run back to town like a good boy. I am sure the Lady would find ye an interesting pet."];
+                }
+            }
+            key ("assassin") {
+                ["Thou art hard to catch, Avatar. But now thou must die!"];
+                SetWorkType(_Combat_0, _Kalen);
+                SetAttacker_i(_Kalen, _Avatar);
+                terminate;
+            }
+            key ("Iolo the Mad") {
+                ["He is Master of Fawn now, Avatar. Thou wouldst be wise to leave while it amuses him to let ye live." *"He might grant to me that fine wench, Alyssand, if I bring him thine head..."];
+                SetWorkType(_Combat_0, _Kalen);
+                SetAttacker_i(_Kalen, _Avatar);
+                terminate;
+            }
+            key ("bye") {
+                CloseSpeaker0_i();
+                Bark_i(0, "@Goodbye.@", _Avatar);
+                Bark_i(5, "@Good riddance.@", _Kalen);
+                JorvinBringsInvitation_i();
+                break;
+            }
+        }
+        clear_answers;
+    }
+    if (event = _Action) {
+        if ~GetItemFlag_i(_Dead, _Kalen) {
+            terminate;
+        }
+        Bark_i(0, "@I shall return!@", _Kalen);
+        SetAttackMode_i(_Fleeing, _Kalen);
+    }
+    if ((event = _NearDeath) and ~GetItemFlag_i(_Tournament, _Kalen)) {
+        $knowsassassin = true;
+        SetSpeaker0_i(0, _Kalen);
+        ClearItemFlag_i(_Tournament, _Kalen);
+        ReduceHits_i(0, 50, _Kalen);
+        Bark_i(0, "@Urgghh...@", _Kalen);
+        v4 = ~PartyUtters(true, 0, 0, 1);
+        Bark_i(5, "@He is dead...@", v4);
+        if ($BANES_RELEASED = true) {
+            ["Thou canst defeat me, Avatar. But thou hast no hope against the power of Iolo the Mad..."];
+        } else {
+            ["My death only delays the inevitable, Avatar. Batlin will soon have more power than thou canst dream of, and my reward will be sure..."];
+        }
+    }
+}

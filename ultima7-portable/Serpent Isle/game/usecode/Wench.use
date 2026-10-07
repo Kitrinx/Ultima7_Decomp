@@ -1,0 +1,198 @@
+Routine Wench accepts a0 #locals(12) #uses(~LordOrLady, BarkIfNear_i, Bark_i, ~GimmePathEgg, UndressAvatar_i, ~GiveItemsOrDrop_i, ~PartyUtters, ~RemoveFromList_i) {
+    v0 = ~LordOrLady();
+    v1 = ~GetCoord(_Lucilla);
+    if (event = _Path_Failure) {
+        if ((~GetNPCID_i(_Lucilla) = 8) and (item = ~NPCToItem_i(_Avatar))) {
+            event = 13;
+        }
+        if ((~GetNPCID_i(_Lucilla) = 6) and (item = ~NPCToItem_i(_Lucilla))) {
+            SetNPCID_i(7, _Lucilla);
+            v2 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #Wench >>, _Lucilla);
+            v2 = ("@Thank thee...@" & "@Goodbye!@");
+            BarkIfNear_i(v2, _Lucilla);
+            terminate;
+        }
+        if ((~GetNPCID_i(_Lucilla) = 2) and (item = ~NPCToItem_i(_Avatar))) {
+            ClearBark_i(_Avatar);
+            Bark_i(4, "@Yes!@", _Avatar);
+            ClearBark_i(_Lucilla);
+            Bark_i(7, "@Oh, my!@", _Lucilla);
+            SetWorkType(_Wait, _Avatar);
+            SetNPCID_i(3, _Lucilla);
+            v2 = ~PostAction(<< _aNO_HALT_i, _aFACE_i, _West, _aUSABLE_i, #Wench, _aLIE_FRAME_i >>, _Avatar);
+            terminate;
+        }
+        if ((~GetNPCID_i(_Lucilla) < 2) and (item = ~NPCToItem_i(_Avatar))) {
+            event = 13;
+        }
+        if ((~GetNPCID_i(_Lucilla) = 0) and (item = ~NPCToItem_i(_Lucilla))) {
+            ClearBark_i(_Lucilla);
+            Bark_i(3, "@Hurry!@", _Lucilla);
+            v2 = ~FindNearby_i(0, 12, _Bed_EW, item);
+            Foreach v5 in v2 {
+                if (~GetFrame(v5) = 11) {
+                    SetFrame(12, v5);
+                }
+            }
+            SetNPCID_i(1, _Lucilla);
+            SetWorkType(_Wait, _Lucilla);
+            v2 = ~PostAction(<< _aNO_HALT_i, _aFACE_i, _West, _aWAIT_i, 5, _aUSABLE_i, #Wench, _aLIE_FRAME_i >>, _Lucilla);
+            PathfindNPC_i(false, #Wench, ~NPCToItem_i(_Avatar), _Path_Success, << 1083, 2642, 0 >>, _Avatar);
+            ClearBark_i(_Avatar);
+            Bark_i(0, "@Just a moment...@", _Avatar);
+            terminate;
+        }
+    }
+    if (event = _Path_Success) {
+        if ((~GetNPCID_i(_Lucilla) = 8) and (item = ~NPCToItem_i(_Avatar))) {
+            Polymorph_i(_Avatar_Type, _Avatar);
+            Sfx(1);
+            SetNPCID_i(~GetQuality(~GimmePathEgg(3, 5)), _Lucilla);
+            v2 = ~SetQuality(0, ~GimmePathEgg(3, 5));
+            ClearItemFlag_i(_DontMove_i, _Avatar);
+            ClearSpeakers_i();
+            Bark_i(0, "@What a beautiful morning!@", _Avatar);
+            SetMusic(~GimmePathEgg(1, 5), 22);
+            terminate;
+        }
+        if ((~GetNPCID_i(_Lucilla) = 6) and (item = ~NPCToItem_i(_Lucilla))) {
+            SetNPCID_i(7, _Lucilla);
+            v2 = ~PostAction(<< _aNO_HALT_i, _aFACE_i, _South, _aWAIT_i, 2, _aBEND_FRAME_i, _aSFX_i, 36, _aWAIT_i, 2, _aSTAND_FRAME_i, _aUSABLE_i, #Wench >>, _Lucilla);
+            v2 = ("@Thank thee...@" & "@Goodbye!@");
+            BarkIfNear_i(v2, _Lucilla);
+            terminate;
+        }
+        if ((~GetNPCID_i(_Lucilla) = 2) and (item = ~NPCToItem_i(_Avatar))) {
+            ClearBark_i(_Avatar);
+            Bark_i(4, "@Yes!@", _Avatar);
+            ClearBark_i(_Lucilla);
+            Bark_i(7, "@Oh, my!@", _Lucilla);
+            SetWorkType(_Wait, _Avatar);
+            SetNPCID_i(3, _Lucilla);
+            v2 = ~PostAction(<< _aNO_HALT_i, _aFACE_i, _West, _aWAIT_i, 2, _aBEND_FRAME_i, _aWAIT_i, 2, _aSFX_i, 134, _aCONTINUE_i, _aLIE_FRAME_i, _aWAIT_i, 2, _aUSABLE_i, #Wench >>, _Avatar);
+            terminate;
+        }
+        if ((~GetNPCID_i(_Lucilla) < 2) and (item = ~NPCToItem_i(_Avatar))) {
+            SetWorkType(_Wait, _Avatar);
+            SetNPCID_i(2, _Lucilla);
+            UndressAvatar_i();
+            Sfx(1);
+            v2 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #Wench >>, _Avatar);
+            terminate;
+        }
+        if ((~GetNPCID_i(_Lucilla) = 0) and (item = ~NPCToItem_i(_Lucilla))) {
+            ClearBark_i(_Lucilla);
+            Bark_i(3, "@Hurry!@", _Lucilla);
+            v2 = ~FindNearby_i(0, 12, _Bed_EW, item);
+            Foreach v5 in v2 {
+                if (~GetFrame(v5) = 11) {
+                    SetFrame(12, v5);
+                }
+            }
+            SetNPCID_i(1, _Lucilla);
+            SetWorkType(_Wait, _Lucilla);
+            v2 = ~PostAction(<< _aNO_HALT_i, _aFACE_i, _West, _aWAIT_i, 2, _aBEND_FRAME_i, _aWAIT_i, 2, _aUSABLE_i, #Wench, _aSFX_i, 134, _aCONTINUE_i, _aLIE_FRAME_i >>, _Lucilla);
+            PathfindNPC_i(false, #Wench, ~NPCToItem_i(_Avatar), _Path_Success, << 1083, 2642, 0 >>, _Avatar);
+            ClearBark_i(_Avatar);
+            Bark_i(0, "@Just a moment...@", _Avatar);
+            terminate;
+        }
+    }
+    if (event = _Action) {
+        if (~GetNPCID_i(_Lucilla) = 8) {
+            ClearBark_i(_Avatar);
+            Bark_i(3, "@I should dress...@", _Avatar);
+            PathfindNPC_i(false, #Wench, ~NPCToItem_i(_Avatar), _Path_Success, << 1083, 2642, 0 >>, _Avatar);
+            terminate;
+        }
+        if (~GetNPCID_i(_Lucilla) = 7) {
+            SetNPCID_i(8, _Lucilla);
+            Npc_schedule(_Lucilla);
+            v2 = ~PostInFuture(5, << _aNO_HALT_i, _aUSABLE_i, #Wench >>, _Avatar);
+            terminate;
+        }
+        if (~GetNPCID_i(_Lucilla) = 6) {
+            PathfindNPC_i(false, #Wench, ~NPCToItem_i(_Lucilla), _Path_Success, << 1079, 2650, 0 >>, _Lucilla);
+            terminate;
+        }
+        if (~GetNPCID_i(_Lucilla) = 5) {
+            SetNPCID_i(6, _Lucilla);
+            ClearSpeakers_i();
+            SetSpeaker0_i(0, _Lucilla);
+            ["Once again, thou hast proved thyself to be the love of my life. When I write my book, I shall dedicate it to thee, my love."];
+            EndConverse_i();
+            v2 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #Wench >>, _Lucilla);
+            terminate;
+        }
+        if (~GetNPCID_i(_Lucilla) = 4) {
+            SetNPCID_i(6, _Lucilla);
+            ClearSpeakers_i();
+            SetSpeaker0_i(0, _Lucilla);
+            ["Thou art the man of my dreams! I have never felt so fulfilled. What an experience..."];
+            ["As a sign of mine appreciation and great affection for thee, please accept this gift. 'Tis my greatest possession."];
+            ["Gwani cloaks are most rare, and are worn by the Goblins as a token of great bravery. My father slew the chieftain who once wore this cloak!"];
+            ["Please wear it, and remember me always."];
+            ClearBark_i(_Lucilla);
+            Bark_i(0, "@Always...@", _Lucilla);
+            v2 = ~GiveItemsOrDrop_i(true, 0, 4, 65177, 227, 1, _Avatar);
+            EndConverse_i();
+            $GAINED_GWANI_CLOAK = true;
+            v2 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #Wench >>, _Lucilla);
+            terminate;
+        }
+        if (~GetNPCID_i(_Lucilla) = 3) {
+            if $GAINED_GWANI_CLOAK {
+                SetNPCID_i(5, _Lucilla);
+            } else {
+                SetNPCID_i(4, _Lucilla);
+            }
+            FadePalette_i(0, 1, 12);
+            AdvanceTime_i((1500 * 3));
+            Item_move(<< 1077, 2644, 0 >>, _Lucilla);
+            Item_move(<< 1081, 2653, 1 >>, _Avatar);
+            v2 = ~PostInFuture(30, << _aNO_HALT_i, _aFACE_i, _West, _aSIT_FRAME_i, _aWAIT_i, 2, _aUSABLE_i, #FadeInArrival_i, _aWAIT_i, 2, _aBEND_FRAME_i, _aSTAND_FRAME_i, _aFACE_i, _South, _aWAIT_i, 2, _aUSABLE_i, #Wench >>, _Lucilla);
+            Bark_i(35, "@Where am I?@", _Avatar);
+            terminate;
+        }
+        if (~GetNPCID_i(_Lucilla) = 2) {
+            ClearBark_i(_Avatar);
+            Bark_i(0, "@I'm ready...@", _Avatar);
+            ClearBark_i(_Lucilla);
+            Bark_i(3, "@As am I!@", _Lucilla);
+            PathfindNPC_i(false, #Wench, ~NPCToItem_i(_Avatar), _Path_Success, << 1082, 2652, 0 >>, _Avatar);
+            terminate;
+        }
+        if (~GetNPCID_i(_Lucilla) = 1) {
+            Item_move(<< 1081, 2653, 1 >>, _Lucilla);
+            terminate;
+        }
+        if (~GetNPCID_i(_Lucilla) = 0) {
+            SetSpeaker0_i(0, _Lucilla);
+            v1 = ~GetCoord(_Lucilla);
+            if ((v1::1 > 1071) and ((v1::1 < 1087) and ((v1::2 > 2640) and (v1::2 < 2655)))) {
+                ["I am ready now! Come to bed, my love!"];
+                if (~ListSize_i(~GetParty()) > 1) {
+                    v8 = ~PartyUtters(false, 0, "@Er, um, I believe I need some fresh air...@", 1);
+                    v2 = ~RemoveFromList_i(~GetParty_i(), ~NPCToItem_i(_Avatar));
+                    Foreach v11 in v2 {
+                        LeaveParty(v11);
+                        NewSchedule_i(<< 1033, 2639 >>, _EatAtInn, 0, v11);
+                        Npc_schedule(v11);
+                    }
+                    Bark_i(0, "@Farewell...@", v11);
+                }
+                EndConverse_i();
+                SetItemFlag_i(_DontMove_i, _Avatar);
+                PathfindNPC_i(false, #Wench, ~NPCToItem_i(_Lucilla), _Path_Success, << 1082, 2652, 0 >>, _Lucilla);
+                ClearBark_i(_Lucilla);
+                Bark_i(0, "@Come, my love!@", _Lucilla);
+                terminate;
+            } else {
+                ["Oh, darling! Meet me in my bedroom..."];
+                Bark_i(0, "@I'm so sleepy...@", _Lucilla);
+                Npc_schedule(_Lucilla);
+                terminate;
+            }
+        }
+    }
+}

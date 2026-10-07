@@ -1,0 +1,685 @@
+Routine Julia accepts a0 #locals(16) #uses(~LordOrLady, ~AvatarName, PartyFaces_i, Bark_i, ~AskYesNo, ~IsNPCNear, ~PartyUtters, ~GetNPCName, ~AskOrdList, SayIfNear_i, JuliaSellsWine_i, ~GiveItemsOrDrop_i, ~IsInInv, MessengerBringsScroll_i) {
+    v0 = ~LordOrLady();
+    v1 = ~AvatarSex();
+    v2 = ~AvatarName();
+    v3 = ~GetTime();
+    if ((v3 > 1) or (v3 < 6)) {
+        v3 = "day";
+    } else {
+        v3 = "evening";
+    }
+    if (event = _Converse) {
+        Item_bark((("@Good " + v3) + ", miss.@"), _Avatar);
+        PartyFaces_i(65513);
+        Bark_i(2, "@So?@", _Julia);
+        SetWorkType(_Talk, _Julia);
+    }
+    if (event = _Bark) {
+        v4 = ~Random(6);
+        if (v4 = 1) {
+            Item_bark("@Do not go there!@", _Julia);
+        }
+        if (v4 = 2) {
+            Item_bark("@Wine for sale!@", _Julia);
+        }
+        if (v4 = 3) {
+            Item_bark("@Very suspicious...@", _Julia);
+        }
+        if (v4 = 4) {
+            Item_bark("@Magical wine!@", _Julia);
+        }
+        if (v4 = 5) {
+            v5 = ~FindNearby_i(_All, 10, _Ranger_M, _Julia);
+            if (v5 <> << >>) {
+                Item_bark("@Clean this!@", _Julia);
+                Foreach v8 in v5 {
+                    Bark_i(2, "@Yes, ma'am@", v8);
+                }
+            } else {
+                Item_bark("@Where is Ernesto?@", _Julia);
+            }
+        }
+        if (v4 = 6) {
+            Item_bark("@Taste the wine!@", _Julia);
+        }
+    }
+    if (event = _Talking) {
+        Npc_schedule(_Julia);
+        ClearBark_i(_Julia);
+        SetSpeaker0_i(0, _Julia);
+        v9 = ~GetItemFlag_i(_Met, _Julia);
+        if (v9 = false) {
+            ["In what way can I help thee, stranger?"];
+            SetItemFlag_i(_Met, _Julia);
+        } else {
+            ["We meet again."];
+        }
+        if ($knowcatacombs and not $gotcatakey) {
+            TurnOn("Catacombs");
+            if $HAVE_CHILL_SPELL {
+                TurnOn("key");
+            }
+        }
+        if (flag(277) and not $knowslippers) {
+            TurnOn("slippers");
+        }
+        if ($gotmagicwine and not $knowmagicwine) {
+            TurnOn("strange wine");
+        }
+        if ($foundsimonbottle and (~GetWorkType(_Simon) <> _Wait)) {
+            TurnOn("brown bottle");
+        }
+        if ($knowseleniastocking and not $knowdisappearance) {
+            TurnOn("Celennia's disappearance");
+        }
+        if (flag(234) and not ~GetItemFlag_i(_Dead, _Rotoluncia)) {
+            TurnOn("kidnap");
+        }
+        TurnOn(<< "name", "wine", "bye" >>);
+        converse {
+            key ("kidnap") {
+                TurnOff("kidnap");
+                if flag(323) {
+                    ["I have most excellent news, <v2>! I have spoken personally with the MageLord, and he hath agreed to see thee."];
+                    ["A crime that involved magic must be handled by the Council of Mages, naturally."];
+                    ["And due to mine intervention, the MageLord shall be glad to speak with thee. Please, go to him soonest!"];
+                } else {
+                    if flag(324) {
+                        ["I have no information for thee, <v2>. The crime remains a mystery."];
+                        ["Perhaps if thou couldst provide the 30 guilders which a proper investigation costs...?"];
+                        if ~AskYesNo() {
+                            if ~TakeFromParty_i(0, _All, _All, _Moon_Money, 30) {
+                                ["Most excellent! We shall be to work immediately, and hope to have information very soon. Please return in a few hours."];
+                                flag(323) = true;
+                            } else {
+                                ["We only accept guilders here, stranger. Perhaps Bucia the Provisioner can aid thee in exchanging thy worthless coins for Moonshadian money."];
+                            }
+                        } else {
+                            ["That is too bad. However, if we learn anything, we shall inform thee."];
+                        }
+                    } else {
+                        if flag(320) {
+                            ["Thou wert wise to follow the advise of the townsfolk in coming to me -- "];
+                            ["the Rangers must always be consulted in criminal matters."];
+                        }
+                        ["This crime doth seem clearly to be magical. That is a problem -- 'twill be costly to proceed. A Mage should be consulted, and his fee will be steep."];
+                        ["Canst thou afford the 20 guilders which a Mages' Analysis would cost?"];
+                        if ~AskYesNo() {
+                            if ~TakeFromParty_i(0, _All, _All, _Moon_Money, 20) {
+                                ["Most excellent! We shall be to work immediately, and hope to have information very soon. Please return to me in a few hours."];
+                                flag(323) = true;
+                            } else {
+                                ["We only accept guilders here, stranger. Perhaps Bucia the Provisioner can aid thee in exchanging thy worthless coins for Moonshadian money."];
+                            }
+                        } else {
+                            ["That is too bad. However, the Rangers shall investigate thy mystery. If we learn anything, we shall inform thee."];
+                        }
+                        flag(324) = true;
+                    }
+                }
+            }
+            key ("name") {
+                TurnOff("name");
+                ["What business is it of thine? Who art thou, coming into my city and asking questions?"];
+                ["If thou must know, I am Julia, chief of rangers. If thou dost make trouble in Moonshade, I will see that thou art sent to the dungeons!"];
+                TurnOn(<< "Rangers", "Moonshade", "dungeons" >>);
+            }
+            key ("Rangers") {
+                TurnOff("Rangers");
+                ["We are the guardians of Moonshade. The City of Mages hath always been guarded by Rangers."];
+                ["The tradition doth date to the ancient city of Moon, from whence our ancestors came."];
+                TurnOn(<< "guardians", "Moon" >>);
+            }
+            key ("guardians") {
+                TurnOff("guardians");
+                ["Dost thou think that the mighty Mages deal with every thief or common brawler? Certainly not!"];
+                ["That is what the Rangers are for. To stop common annoyances from bothering the Mages in their work. And if thou art not a Mage, thou dost qualify as a common annoyance."];
+            }
+            key ("Moon") {
+                TurnOff("Moon");
+                ["Thou art dredging up ancient history!"];
+                ["In days long gone, there was a peaceful land called Sosaria. It was a land of many kingdoms and cultures, a paradise of individuality."];
+                ["But times changed. A tyrant named British overthrew the kingdoms and declared himself king."];
+                v10 = false;
+                v11 = << >>;
+                if ~IsNPCNear(_Dupre) {
+                    v10 = ~PartyUtters(false, 0, "@She doth refer to Lord\x0D\n\x09\x09\x09\x09\x09\x09\x09\x09\x09\x09British!@", 65535);
+                } else {
+                    if ~IsNPCNear(_Shamino) {
+                        v10 = ~PartyUtters(false, 0, "@She doth refer to Lord\x0D\n\x09\x09\x09\x09\x09\x09\x09\x09\x09\x09\x09British!@", 65534);
+                    } else {
+                        if ~IsNPCNear(_Iolo) {
+                            v10 = ~PartyUtters(false, 0, "@She doth refer to\x0D\n\x09\x09\x09\x09\x09\x09\x09\x09\x09\x09\x09\x09Lord British!@", 65533);
+                        }
+                    }
+                }
+                v11 = (v11 & << "@I serve Lord British!@", "say nothing" >>);
+                if (v10 <> 0) {
+                    v11 = (v11 & (("@Hush, " + ~GetNPCName(v10)) + "@"));
+                    SetSpeakerSlot_i(0);
+                }
+                v12 = ~AskOrdList(v11);
+                if (v12 = 3) {
+                    SayIfNear_i("@But she doth slander our liege!@", v10);
+                    SetSpeakerSlot_i(0);
+                }
+                if (v12 = 1) {
+                    ["There is no need to be vulgar. The Daemon King hath been dead for many centuries. No one doth serve him now."];
+                }
+                ["The Daemon British enforced a radical\x09scheme of philosophy upon his subjects, forcing them into exile if they would not submit."];
+                ["The Mages and Rangers were bound by the travesty known as the Oath of Honesty!"];
+                v10 = ~PartyUtters(false, 0, "@But what is improper about\x0D\n\x09\x09\x09\x09\x09\x09\x09\x09\x09honesty?@", 65534);
+                CloseSpeaker1_i();
+                SetSpeakerSlot_i(0);
+                ["Nothing is more cruel than unflinching Honesty. It doth shatter hearts, instill insecurity, and promote civil strife."];
+                ["Therefore, our ancestors fled the City of Moon in the\x09land British conquered, and sailed until they found this land."];
+            }
+            key ("Moonshade") {
+                TurnOff("Moonshade");
+                ["Aye, the City of Mages. There is much magic here, and more than a little sorcery."];
+                ["The name is symbolic. Moon represents the powers beyond those of mere mortals, just as the moon is suspended over the world."];
+                ["As for Shade, it stands for shelter against the cruel light of Honesty. We believe in Truth here, but only within reason."];
+                TurnOn(<< "magic", "sorcery" >>);
+            }
+            key ("magic") {
+                TurnOff("magic");
+                ["Mages use reagents and such like to cast magic. The good or ill of it comes from the caster's intent."];
+                ["Magic, in and of itself, is neither good nor evil. But sorcery is another matter altogether."];
+                TurnOn("reagents");
+            }
+            key ("reagents") {
+                TurnOff("reagents");
+                ["Why ask me about them? I am a Ranger, not a Mage!"];
+                ["If thou dost wish such information, seek out Pothos. Do not trouble me to teach thee the rudiments of magic! I am no teacher. Thou shouldst seek Fedabiblio with thine annoying questions!"];
+                TurnOn(<< "Pothos", "Fedabiblio" >>);
+            }
+            key ("Pothos") {
+                TurnOff("Pothos");
+                ["Pothos is the Apothecary here in Moonshade. He will be able to tell thee all about anything that thou wouldst need to cast magic."];
+                ["I hear the storms have cut badly into his supplies, but he should be able to help thee. Or at least he may have more time to deal with thee... I am a very busy woman!"];
+            }
+            key ("Fedabiblio") {
+                TurnOff("Fedabiblio");
+                ["Fedabiblio is the master of novices here in Moonshade. It is his lamentable duty to try and make those miscreants into Mages!"];
+                ["If he doth not have time for thee, perhaps he could allow thee to satisfy thy curiosity in the library of magics."];
+            }
+            key ("sorcery") {
+                TurnOff("sorcery");
+                ["Sorcery is outlawed here in Moonshade, but that doth not mean that some Mages do not still practice its dark arts."];
+                ["Whereas magic is neither good nor evil, sorcery -- with its use of Bloodspawn -- hath no good intent at all. And the very possession of Stoneheart would have thee thrown into the deepest corners of the dungeons."];
+                TurnOn(<< "Bloodspawn", "Stoneheart" >>);
+            }
+            key ("Bloodspawn") {
+                TurnOff("Bloodspawn");
+                ["Thou dost not know of Bloodspawn? Good!"];
+                ["The less that thou knowest, the less trouble that thou canst cause!"];
+                ["I will say only that spells of great destruction require that vile compound. I will tell thee no more..."];
+            }
+            key ("Stoneheart") {
+                TurnOff("Stoneheart");
+                ["Thou art certainly ignorant!"];
+                v10 = ~PartyUtters(false, 0, "@Thou art rude!@", 1);
+                if (v10 <> 65180) {
+                    SetSpeakerSlot_i(0);
+                    ["My, thou art touchy! I meant no offense... Only that thou didst not know things that are common knowledge here."];
+                }
+                ["Stoneheart is the ore that produces Bloodspawn. I know not how this is done. I am not a Mage."];
+                ["And I would advise thee to use great caution about who thou dost ask... lest thou dost find thyself thrown in the dungeons."];
+            }
+            key ("dungeons") {
+                TurnOff("dungeons");
+                ["Beware how thou dost step! The MageLord is apt to send any transgressor into the pits beneath the Mountains of Freedom."];
+                ["None have returned from that dank, dark abyss."];
+                TurnOn(<< "MageLord", "transgressor", "Freedom" >>);
+            }
+            key ("MageLord") {
+                TurnOff("MageLord");
+                if ($BANES_RELEASED and (~GetWorkType(_AntiDupre) <> _Wait)) {
+                    ["Our city is ruled by Shamino the Anarch, a most powerful wizard."];
+                    ["He is a great improvement over our previous MageLord, who was indolent and deceitful. I am glad that Shamino rules."];
+                } else {
+                    ["Our city is ruled by the MageLord Filbercio. He is benevolent and wise, and rules well."];
+                    if not $filberciobanquet {
+                        ["However, he doth not receive visitors, so do not dream of entering his palace."];
+                    }
+                }
+            }
+            key ("transgressor") {
+                TurnOff("transgressor");
+                if ($BANES_RELEASED and (~GetWorkType(_AntiDupre) <> _Wait)) {
+                    ["'Tis best not to try and second guess Shamino the Anarch. His definition of a transgression changes from moment to moment..."];
+                    ["And the fine could be as insignificant as a verbal upbraiding, or as serious as thy life."];
+                } else {
+                    ["If thou art a Mage, thou must follow the Strictures. If thou art a Mundane, thou must not overly annoy a Mage. That much is simple logic."];
+                    ["But, as long as Filbercio is the MageLord, thou wouldst do well to remember that it is unhealthy to cross any of Filbercio's whims."];
+                    TurnOn("Strictures");
+                }
+            }
+            key ("Strictures") {
+                TurnOff("Strictures");
+                ["'Tis not my job to know them. 'Tis for the Council of Mages to enforce."];
+                ["In short, thou canst not possess Bloodspawn unless the Council approves of it. And thou shouldst report any research that thou dost wish to do to the Council, as well."];
+                TurnOn(<< "approves", "Council" >>);
+            }
+            key ("approves") {
+                TurnOff("approves");
+                ["Thou art as full of questions as a novice!"];
+                ["No spell is ever purposefully forgotten. But if it is dangerous, the Council tries to regulate who doth have access to such reagents and spells."];
+            }
+            key ("Council") {
+                TurnOff("Council");
+                ["The Council is comprised of the MageLord and two other Adepts. They act as the voice of all the Mages in Moonshade, except when a quorum vote is called of all Adepts..."];
+                ["Usually on the election of a new Council member, or a new MageLord."];
+            }
+            key ("Freedom") {
+                TurnOff("Freedom");
+                ["Ha! Now there is a fine jest, if ever I heard one!"];
+                ["All that was ever retrieved out of those mountains was the ore that was taken out while it was still a mine!"];
+                ["Ever since Filbercio made it a prison, no one hath come out of there again!"];
+            }
+            key ("wine") {
+                TurnOff("wine");
+                if (~GetWorkType(_Julia) = _TendShop) {
+                    ["We make the finest wine that thou wilt find anywhere. Wouldst thou care to try some?"];
+                    if (~AskYesNo() = true) {
+                        ["Good..."];
+                        JuliaSellsWine_i();
+                    } else {
+                        ["Thy loss..."];
+                    }
+                } else {
+                    ["Come to the winery when we are open and thou canst sample our wares then!"];
+                }
+            }
+            key ("Catacombs") {
+                TurnOff("Catacombs");
+                ["So, thou hast learned of the catacombs, hast thou? I hope thou hast not ventured to those ruins south of town, they are dangerous!];
+                ["I do not care what thou art after, but I'll tell thee that thou wilt throw thy life away down there.];
+                [The depths belong to the Rat-Men, not to mention the burning heat. That is why the gate must always be locked."];
+                TurnOn(<< "Rat-Men", "burning heat" >>);
+            }
+            key ("Rat-Men") {
+                TurnOff("Rat-Men");
+                ["There are too many Rat-Men to eliminate, so it is my duty to see that the gate remains closed. All that I and the other Rangers can do to keep them pacified is to toss scraps of food through the gate."];
+                ["Of course, my job is to keep any of those creatures from getting into the city,];
+                [but I might be able to forget that I saw anyone going down there, if the price was good enough..."];
+                ["But I doubt even thou would survive the heat down there. Though the Rat-Men thrive on it, the temperatures down there would most certianly boil thee in thine own flesh.];
+            }
+            key ("burning heat") {
+                TurnOff("burning heat");
+                ["Only once did I ever venture into the catacombs, with twenty strong Rangers at my back. And before we had gone far, half of our party had fallen to the heat alone..."];
+                ["It felt like we were walking into a smith's forge! We had to turn back, and no one hath gone in there since."];
+                [I might be tempted to 'loan' thee the key at a price...];
+                [...but not until thou has found a way to protect thyself from the fervid temperatures. Giving thou the key now would mean certian death should thou be foolhearty enough to venture there.];
+                [A sword may protect thee from the Rat-Men, but only magic can save thee from the fearsome heat.];
+                [Return to me for the key when thou hast found the means to survive the heat.];
+            }
+            key ("key") {
+                [I heard thou hast magic to protect thyself from the heat in the catacombs. I hope thou hast thought to take enough reagents, not that thou will survive the Rat-Men...];
+                ["I will 'loan' thou this key for say... 40 guilders? Is it worth that much to adventure in the catacombs?"];
+                if (~AskYesNo() = true) {
+                    v13 = ~CountItem(_All, _All, _Moon_Money, _Party);
+                    if (v13 >= 40) {
+                        ["Well enough! Take this blue key. It will open the gate to the catacombs for thee."];
+                        v14 = ~TakeFromParty_i(true, _All, _All, _Moon_Money, 40);
+                        v15 = ~GiveItemsOrDrop_i(true, 0, 4, 203, 641, 1, _Avatar);
+                        $gotcatakey = true;
+                        TurnOff("Catacombs");
+                        TurnOff("key");
+                    } else {
+                        ["Art thou trying to jest with me? Thou dost not have 40 guilders!"];
+                        ["Return when thou hast learned how to count!"];
+                        CloseSpeaker0_i();
+                        Bark_i(0, "@Oaf!@", _Julia);
+                        terminate;
+                    }
+                } else {
+                    ["Let me know if thou dost change thy mind."];
+                }
+            }
+            key ("slippers") {
+                TurnOff("slippers");
+                ["They are not mine, if that is what thou art asking. I would not wear anything that frilly. And a Mage would never wear anything that plain."];
+            }
+            key ("strange wine") {
+                TurnOff("strange wine");
+                if ~IsInInv(16, 65177, _Bottles, 1, _Party) {
+                    ["Thou hast wine from our winery! I hope thou didst enjoy it... Hmm. It is the same vintage as the wine that disappeared."];
+                    ["Hast thou seen our wine press? We are very proud of it."];
+                } else {
+                    ["I am no Mage to divine what it was that thou didst have! Bring to me the bottle or trouble me no more about it. I have enough to do taking care of our wine press."];
+                }
+                TurnOn("wine press");
+            }
+            key ("wine press") {
+                TurnOff("wine press");
+                ["The finest wine press in all the land! For it operates by no human hand!"];
+                ["'Tis a magic wine press, <v0>. Made by the one and only Mad Mage... before he began his weird experiments, that is."];
+                TurnOn(<< "Mad Mage", "experiments" >>);
+            }
+            key ("Mad Mage") {
+                TurnOff("Mad Mage");
+                ["Thou hast not heard of the Mad Mage?!"];
+                ["His true name is Erstam. He lives on a small island away from Moonshade. He was once the Adepts' mentor... before he went mad."];
+            }
+            key ("experiments") {
+                TurnOff("experiments");
+                ["Makes me ill to think about them!"];
+                ["The Mad Mage thinks that he can learn to create life. Or life from death, I should say."];
+                ["They say that he hacks his assistants to use in his experiments, and that he doth have all sorts of hideous things wandering around the island -- failed experiments that he turns out his door!"];
+            }
+            key ("brown bottle") {
+                TurnOff("brown bottle");
+                ["I would recognize that mud-brown bottle any day! 'Tis what those brine-drunk Fawn sailors swill! Bad enough to choke a goat, I will tell thee! Thou wilt not find any in this city!"];
+                TurnOn(<< "brine-drunk sailors", "Fawn" >>);
+            }
+            key ("brine-drunk sailors") {
+                TurnOff("brine-drunk sailors");
+                ["Nearly all who live in Fawn are sailors. I suppose after all those hours at sea, anything would taste good... Mayhaps it kills thy sense of taste. Or mayhaps the smell of fish kills thy sense of smell. I do not know how anyone could drink that bilge water any other way!"];
+            }
+            key ("Fawn") {
+                TurnOff("Fawn");
+                ["Fawn is a pretty city, built on the water. 'Tis on the west side of the mainland."];
+                ["I have met Fawn's guard captain. He is a handsome man, quite capable... though how he stomachs that swill they call ale, I shall never know."];
+                TurnOn("guard captain");
+            }
+            key ("guard captain") {
+                TurnOff("guard captain");
+                ["Fawn's guard captain is a fellow named Jorvin."];
+                ["I would have liked to have become better acquainted with him, but I think that he was already -- friendly -- with the Lady of Fawn herself..."];
+                ["A girl cannot compete with that."];
+            }
+            key ("Celennia's disappearance") {
+                TurnOff("Celennia's disappearance");
+                ["I do not know the whole of it, in truth."];
+                ["All I know is that Celennia and Frigidazzi had some sort of noisy falling out, over the Mage that came here, I did hear."];
+                ["And then Celennia disappears, just like that! Left Frigidazzi in quite a snit, I'll tell thee!"];
+                TurnOn(<< "Frigidazzi", "Mage" >>);
+            }
+            key ("Frigidazzi") {
+                TurnOff("Frigidazzi");
+                ["Frigidazzi is the Adept that specializes in cold spells. I have heard her referred to as the 'ice maiden'!"];
+                ["She and Celennia were good friends until Celennia became involved with that Mage."];
+            }
+            key ("Mage") {
+                TurnOff("Mage");
+                ["Batlin, I think his name was. Poked around Moonshade for quite a while, asking questions and buying spells."];
+                ["I hear that he had something that interested Celennia -- though I will never know what, he was not her type. And whatever it was made Frigidazzi buzzing mad!"];
+                ["Only Frigidazzi knows what happened for certain. And I would not care to ask her about it, either!"];
+            }
+            key ("certificate") {
+                TurnOff("certificate");
+                if ($gavecertificate = false) {
+                    ["With this Crime Certificate, thou canst commit one unlawful act without fear of punishment. If thou dost commit more than one, without another Certificate, Shamino the Anarch's justice will be swift!"];
+                    v15 = ~GiveItemsOrDrop_i(true, true, 65177, 187, 797, 1, _Avatar);
+                    $gavecertificate = true;
+                } else {
+                    ["I did give thee the Crime Certificate already!"];
+                }
+            }
+            key ("bye") {
+                CloseSpeaker0_i();
+                Bark_i(0, "@Goodbye!@", _Avatar);
+                Bark_i(2, "@Do not make trouble!@", _Julia);
+                MessengerBringsScroll_i();
+                break;
+            }
+        }
+        clear_answers;
+    }
+}
+
+Usable JuliaSellsWine_i #locals(17) #uses(~LordOrLady, ~AvatarName, ~AskOrdList, ~AskYesNo, ~JuliaHaggles_i, ~SellItem_i, ~PartyUtters) {
+    v0 = ~LordOrLady();
+    v1 = ~AvatarName();
+    PushKeys();
+    v2 = true;
+    v3 = << "nothing", "wine", "ice wine", "vintage wine" >>;
+    v4 = << 0, 616, 616, 616 >>;
+    v5 = << 65177, 1, 16, 17 >>;
+    v6 = << 0, 15, 25, 50 >>;
+    v7 = << 0, 9, 15, 30 >>;
+    v8 = 952;
+    v9 = << 0, 1, 1, 1 >>;
+    v10 = << 0, 1, 1, 1 >>;
+    ["What wouldst thou care to try, <v0>?"];
+    While v2 {
+        v11 = ~AskOrdList(v3);
+        if (v11 = 1) {
+            ["If thou art thirsty again, return, <v0>!"];
+            v2 = false;
+        } else {
+            v12 = v6::v11;
+            v13 = 0;
+            if (v11 = 2) {
+                ["Our wine is the finest in all of Serpent Isle! l can sell thee a bottle for <v12> guilders."];
+                ["Dost thou accept?"];
+                v14 = "wine bottles";
+            }
+            if (v11 = 3) {
+                ["The ice wine is special indeed! I will not tell thee the secret of how it is made, but be assured that it is most flavorful!"];
+                ["I charge <v12> guilders for a bottle."];
+                ["Dost thou agree?"];
+                v14 = "bottles of ice wine";
+            }
+            if (v11 = 4) {
+                ["The vintage stock hath been aged for over ten years, and is quite delicious. For <v12> guilders, I can sell thee a bottle."];
+                ["Is the price acceptable?"];
+                v14 = "bottles of vintage wine";
+            }
+            if (v12 = v7::v11) {
+                if ~AskYesNo() {
+                    v15 = v12;
+                } else {
+                    v15 = 0;
+                }
+            } else {
+                v15 = ~JuliaHaggles_i(v7::v11, v6::v11);
+            }
+            if (v15 > 0) {
+                if (v10::v11 = 1) {
+                    ["How many <v14> wouldst thou like?"];
+                    v13 = ~SellItem_i(false, 1, 10, v15, v8, 1, v5::v11, v4::v11);
+                } else {
+                    v13 = ~SellItem_i(false, 1, 0, v15, v8, v9::v11, v5::v11, v4::v11);
+                }
+            }
+            if (v13 = 1) {
+                ["To thine health, <v0>!"];
+            } else {
+                if (v13 = 2) {
+                    ["Thou canst not carry thy purchase, <v0>!"];
+                } else {
+                    if (v13 = 3) {
+                        v16 = ~PartyUtters(false, 0, (("@But " + v1) + ", we lack adequate funds!@"), 1);
+                        if (v16 <> 65180) {
+                            SetSpeaker0_i(0, _Julia);
+                            ["Thou dost not have the guilders to buy that!"];
+                        } else {
+                            ["Thou dost not have the guilders to buy that!"];
+                        }
+                        if (31 < (~GetNPCID_i(_Julia) + 6)) {
+                            SetNPCID_i(31, _Julia);
+                        } else {
+                            SetNPCID_i((~GetNPCID_i(_Julia) + 6), _Julia);
+                        }
+                    } else {
+                    }
+                }
+            }
+            ["Wouldst thou care for more?"];
+            v2 = ~AskYesNo();
+        }
+    }
+    PopKeys();
+}
+
+Function ~JuliaHaggles_i accepts a0, a1 #locals(15) #uses(~LordOrLady, ~AskList, ~Haggle_i, ~AskYesNo) {
+    v2 = ~LordOrLady();
+    v3 = ~AvatarSex();
+    v4 = v1;
+    v5 = ((v0 / 3) * 2);
+    v6 = (15 - (~GetNPCID_i(_Julia) / 2));
+    v7 = 0;
+    v8 = 1;
+    v9 = 0;
+    v10 = 2;
+    v11 = ~GetNPCID_i(_Julia);
+    While v8 {
+        v12 = ~AskList(<< "yes", "no", "haggle" >>);
+        if (v12 = "no") {
+            return 0;
+        } else {
+            if (v12 = "yes") {
+                v13 = 0;
+                goto label_8;
+            }
+        }
+        v14 = ~Haggle_i(v7, v6, v9, v5, v10, v0, v4);
+        v9 = (v9 + 1);
+        v7 = v14::4;
+        v13 = v14::3;
+        v15 = v4;
+        v4 = v14::2;
+        v5 = v14::1;
+        label_8:
+        v16 = ~Random(3);
+        if (v13 < 2) {
+            if (v4 < (v0 + ((v1 - v0) / 4))) {
+                if (v16 = 1) {
+                    ["If thou sayest a word about this price to anyone, I will deny it!"];
+                }
+                if (v16 = 2) {
+                    ["Perhaps I should give this away in the streets, after agreeing to this price!"];
+                }
+                if (v16 = 3) {
+                    ["Thou art certainly a fast talker. I will have to watch thee carefully..."];
+                }
+            } else {
+                if (v4 < (v0 + ((v1 - v0) / 3))) {
+                    if (v16 = 1) {
+                        ["A good price for such fine wine, eh?"];
+                    }
+                    if (v16 = 2) {
+                        ["I am feeling generous today... Thou art lucky!"];
+                    }
+                    if (v16 = 3) {
+                        ["I shall have to count my fingers after thou dost leave. Thou art a slick bargainer, indeed!"];
+                    }
+                } else {
+                    if (v4 < (v0 + ((v1 - v0) / 2))) {
+                        if (v16 = 1) {
+                            ["Good price. Good wine."];
+                        }
+                        if (v16 = 2) {
+                            ["I shall have no profit today, it seems."];
+                        }
+                        if (v16 = 3) {
+                            ["Tell everyone thou dost meet about our wine, <v2>... and about our fair prices!"];
+                        }
+                    } else {
+                        if (v16 = 1) {
+                            ["A well-made bargain, <v2>."];
+                        }
+                        if (v16 = 2) {
+                            ["Enjoy thy stay here in Moonshade, <v2>. I am certain that I shall not have any trouble from thee."];
+                        }
+                        if (v16 = 3) {
+                            ["Our wine is in great demand during these hard times, <v2>. So our prices are higher than they once were."];
+                        }
+                    }
+                }
+            }
+            ["Wilt thou agree to <v4> guilders, <v2>?"];
+            if ~AskYesNo() {
+                if (v11 > 1) {
+                    SetNPCID_i((v11 - 2), _Julia);
+                }
+                return v4;
+            } else {
+                if (v16 = 1) {
+                    ["Thou art a fine one! I thought we had an agreement."];
+                }
+                if (v16 = 2) {
+                    ["Thou art about to make me angry, <v2>. 'Tis a dangerous thing to break a deal..."];
+                }
+                if (v16 = 3) {
+                    ["I am a busy woman, <v2>. I do not take it kindly when someone wastes my time. Thou hadst best walk carefully here in Moonshade from now on."];
+                    terminate;
+                }
+                if (31 < (v11 + 10)) {
+                    SetNPCID_i(31, _Julia);
+                } else {
+                    SetNPCID_i((v11 + 10), _Julia);
+                }
+                return 0;
+            }
+        }
+        if (v7 = 1) {
+            if (v13 = 5) {
+                ["That <v4> was my final offer. I have no more time to deal with thee. Dost thou accept?"];
+                if (v11 < 28) {
+                    SetNPCID_i((v11 + 4), _Julia);
+                }
+                if ~AskYesNo() {
+                    return v4;
+                }
+                v8 = 0;
+            } else {
+                ["<v4> guilders... Or take thy business elsewhere."];
+                if (v11 < 30) {
+                    SetNPCID_i((v11 + 2), _Julia);
+                }
+            }
+        } else {
+            if (v13 = 2) {
+                if (v16 = 1) {
+                    ["I like thee... How does <v4> guilders sound?"];
+                }
+                if (v16 = 2) {
+                    ["Thou art a fine sort. How about <v4> guilders?"];
+                }
+                if (v16 = 3) {
+                    ["I will make thee a special deal -- How does <v4> guilders sound?"];
+                }
+            }
+            if (v13 = 3) {
+                if (v16 = 1) {
+                    ["Wilt thou consider <v4> guilders? I must pay the MageLord, after all."];
+                }
+                if (v16 = 2) {
+                    ["<v4>? Any less and I shall have to face the Council."];
+                }
+                if (v16 = 3) {
+                    ["Perhaps <v4> guilders? 'Tis not a great amount."];
+                }
+            }
+            if (v13 = 4) {
+                if (v16 = 1) {
+                    ["<v4> guilders is as low as I can go. I dare not take any less, if I am to pay the taxes."];
+                }
+                if (v16 = 2) {
+                    ["This is the only magical wine thou wilt ever find, <v2>. Surely thou canst see that I can go no lower than <v4> guilders."];
+                }
+                if (v16 = 3) {
+                    ["Even the MageLord pays <v4> guilders. I can go no lower than that."];
+                }
+            }
+            if (v13 = 5) {
+                v4 = v15;
+                if (v16 = 1) {
+                    ["My previous price stands, at <v4> guilders. I am no fool, <v2>!"];
+                }
+                if (v16 = 2) {
+                    ["<v4> guilders, and no less! Thou wilt not take advantage of my good nature so!"];
+                }
+                if (v16 = 3) {
+                    ["I have a reputation to consider... <v4> guilders is where I stand."];
+                }
+                if (v11 < 31) {
+                    SetNPCID_i((v11 + 1), _Julia);
+                }
+            }
+        }
+    }
+}

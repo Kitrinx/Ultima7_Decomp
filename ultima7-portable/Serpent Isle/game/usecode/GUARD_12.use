@@ -1,0 +1,47 @@
+Routine Guard12 accepts a0 #locals(0) #uses(PartyFaces_i, Bark_i) {
+    if (event = _Converse) {
+        Item_bark("@A metal man!@", _Avatar);
+        PartyFaces_i(65406);
+        Bark_i(3, "@Who goes there?@", _Guard12);
+        SetWorkType(_Talk, _Guard12);
+    }
+    if (event = _Talking) {
+        Npc_schedule(_Guard12);
+        ClearBark_i(_Guard12);
+        SetSpeaker0_i(0, _Forskis);
+        ["Halt! It is our duty to question thee. Dost thou serve Order or dost thou serve Chaos?"];
+        TurnOn(<< "I serve Order", "I serve Chaos" >>);
+        converse {
+            key ("I serve Order") {
+                TurnOff("I serve Order");
+                ["Very well. We have been left here to watch for any survivors of Chaos who might come from the depths of these passages. There is no escape from this place save for these doors and still no one can obtain passage through them."];
+                TurnOn(<< "escape", "passage", "bye" >>);
+            }
+            key ("escape") {
+                TurnOff("escape");
+                ["As thou hast seen or surely wilt see, this is not a place that sustains life. There is no safe way out of this place."];
+            }
+            key ("passage") {
+                TurnOff("passage");
+                ["These doors will not open without the proper keys. Not even we have them. This is not an exit."];
+            }
+            key ("I serve Chaos") {
+                TurnOff("I serve Chaos");
+                ["Thanks to thee for thine identification."];
+                SetWorkType(_Combat_0, _Guard12);
+                SetWorkType(_Combat_0, _Guard13);
+                SetWorkType(_Combat_0, _Guard14);
+                SetWorkType(_Combat_0, _Guard15);
+                terminate;
+            }
+            key ("bye") {
+                CloseSpeaker0_i();
+                CloseSpeaker1_i();
+                Bark_i(0, "@I have heard enough.@", _Avatar);
+                Bark_i(3, "@Always serving.@", _Guard12);
+                break;
+            }
+        }
+        clear_answers;
+    }
+}

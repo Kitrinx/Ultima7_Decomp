@@ -1,0 +1,354 @@
+Routine Yelinda accepts a0 #locals(23) #uses(~LordOrLady, ~AvatarName, ~RemoveFromList_i, PartyFaces_i, Bark_i, ~GimmePathEgg, ~GiveItemsOrDrop_i, ~PartyUtters, FaceAvatar_i, SendAssassin_i) {
+    if (~GetItemFlag_i(_Polymorph_i, _Yelinda) and (event = _Talking)) {
+        v0 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #Skinless >>, ~NPCToItem_i(_Yelinda));
+        Npc_schedule(_Yelinda);
+        terminate;
+    }
+    if (event = _Polymorph) && ($BANES_RELEASED and not $RETURNED_COMB_OF_BEAUTY) {
+        Polymorph_i(_Skinless, _Yelinda);
+    }
+    v1 = ~LordOrLady();
+    v2 = ~AvatarSex();
+    v3 = ~AvatarName();
+    v4 = ~GetNPCID_i(_Yelinda);
+    if (event = _NearDeath) {
+        v0 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #Green_Noble >>, item);
+    }
+    if (event = _Action) {
+        v5 = ~GetParty_i();
+        Foreach v8 in v5 {
+            v9 = ~GetWorkType(v8);
+            if (~GetWorkType(v8) = _Wait) {
+                v0 = (v0 + 1);
+            }
+        }
+        if $temp1flag {
+            FadePalette_i(0, 1, 12);
+            v10 = << 932, 1783, 6 >>;
+            v11 = 0;
+            if $DUPRE_ACCUSED {
+                v8 = 65535;
+            }
+            if $SHAMINO_ACCUSED {
+                v8 = 65534;
+            }
+            if $IOLO_ACCUSED {
+                v8 = 65533;
+            }
+            LeaveParty(v8);
+            RemoveNPC_i(v8);
+            v5 = ~GetParty_i();
+            Foreach v8 in v5 {
+                SetWorkType(_FollowAvt, v8);
+                Item_move(<< 937, (1777 + (v11 * 2)), 6 >>, v8);
+                v0 = ~PostAction(<< _aNO_HALT_i, _aFACE_i, _West >>, v8);
+                v11 = (v11 + 2);
+            }
+            Npc_setAlignment(_Neutral, _Jorvin);
+            Item_move(v10, _Avatar);
+            v0 = ~PostInFuture(10, << _aNO_HALT_i, _aUSABLE_i, #Avatar >>, _Avatar);
+            $temp1flag = false;
+            RevertSchedule_i(_Yelinda);
+            RevertSchedule_i(_Jorvin);
+            Npc_schedule(_Jorvin);
+            terminate;
+        }
+        v5 = ~RemoveFromList_i(~GetParty_i(), ~NPCToItem_i(_Avatar));
+        Foreach v8 in v5 {
+            if ~GetItemFlag_i(_Zombie, v8) {
+                ClearItemFlag_i(_Zombie, v8);
+                v0 = ~PostAction(<< _aNO_HALT_i, _aBARK_i, "@Oh!@", _aBEND_FRAME_i, _aKNEEL_FRAME_i, _aLIE_FRAME_i >>, v8);
+                SetWorkType(_Wait, v8);
+                v16 = ~GetCoord(v8);
+                v16::1 = (v16::1 - (v16::3 / 2));
+                v16::2 = (v16::2 - (v16::3 / 2));
+                createSprite(65535, 0, 0, 0, v16::2, v16::1, 23);
+                Sfx(57);
+            }
+        }
+        v8 = false;
+        Foreach v19 in v5 {
+            if (~IsNPCNear_i(v19) and (not (~GetWorkType(v19) = _Wait) and not ~GetItemFlag_i(_Zombie, v19))) {
+                v8 = v19;
+            }
+        }
+        if v8 {
+            SetItemFlag_i(_Zombie, v8);
+            v0 = ~SetAttack_i(_M_Ignite, v8, _Jorvin);
+            v0 = ~PostAction(<< _aTHRUST1_FRAME_i, _aSFX_i, 53, _aATTACK_i, _aSTAND_FRAME_i >>, _Jorvin);
+            v0 = ~PostInFuture(2, << _aNO_HALT_i, _aUSABLE_i, #Yelinda >>, _Avatar);
+        } else {
+            if ~GetItemFlag_i(_Zombie, _Jorvin) {
+                $temp1flag = true;
+                v16 = ~GetCoord(_Avatar);
+                SetItemFlag_i(_DontMove_i, _Avatar);
+                SetWorkType(_Wait, _Avatar);
+                v16::1 = (v16::1 - (v16::3 / 2));
+                v16::2 = (v16::2 - (v16::3 / 2));
+                createSprite(65535, 0, 0, 0, v16::2, v16::1, 23);
+                Sfx(57);
+                v0 = ~PostAction(<< _aNO_HALT_i, _aBEND_FRAME_i, _aKNEEL_FRAME_i, _aLIE_FRAME_i, _aUSABLE_i, #Yelinda >>, _Avatar);
+            } else {
+                v0 = ~SetAttack_i(_M_Ignite, _Avatar, _Jorvin);
+                v0 = ~PostAction(<< _aTHRUST1_FRAME_i, _aSFX_i, 53, _aATTACK_i, _aSTAND_FRAME_i >>, _Jorvin);
+                v0 = ~PostInFuture(2, << _aNO_HALT_i, _aUSABLE_i, #Yelinda >>, _Avatar);
+                SetItemFlag_i(_Zombie, _Jorvin);
+            }
+        }
+        terminate;
+    }
+    if (event = _Converse) {
+        if ~GetItemFlag_i(_Polymorph_i, _Yelinda) {
+            Item_bark("@Lady!@", _Avatar);
+            PartyFaces_i(item);
+            Bark_i(2, "@Avert thine eyes!@", item);
+            SetWorkType(_Talk, item);
+        } else {
+            Item_bark("@Greetings, Lady.@", _Avatar);
+            PartyFaces_i(65481);
+            Bark_i(2, (("@Greetings, " + v1) + ".@"), _Yelinda);
+            SetWorkType(_Talk, _Yelinda);
+            if (flag(348) and not ($DUPRE_ACCUSED or ($SHAMINO_ACCUSED or $IOLO_ACCUSED))) {
+                PathfindNPC_i(false, #Jorvin, ~NPCToItem_i(_Jorvin), _Path_Success, ~GetCoord(_Yelinda), _Jorvin);
+            }
+        }
+    }
+    if (event = _Talking) {
+        Npc_schedule(_Yelinda);
+        ClearBark_i(_Yelinda);
+        SetSpeaker0_i(0, _Yelinda);
+        if ($FAWN_TRIAL_RECESS or ($AUDIENCE_WITH_YELINDA and not $FAWN_TRIAL_DONE)) {
+            ["It is not fitting that I be seen with thee until thou hast been judged by the Oracle."];
+            ["Please do not approach me again until the Oracle hath ruled!"];
+            CloseSpeaker0_i();
+            Bark_i(0, "@'Tis unseemly!@", _Yelinda);
+            terminate;
+        }
+        if ($BANES_RELEASED = true) {
+            if ($RETURNED_COMB_OF_BEAUTY = true) {
+                ["Thank thee, Avatar! Thank thee for returning me to my former Beauty."];
+            } else {
+                ["I wish I had some way to further reward thee, <v3>. I wish thee luck on thy quest!"];
+            }
+        } else {
+            v20 = ~GetItemFlag_i(_Met, _Yelinda);
+            if (flag(348) and not flag(437)) {
+                if (~IsNPCNear_i(_Iolo) and ~GetItemFlag_i(_InParty_i, _Iolo)) {
+                    $AUDIENCE_WITH_YELINDA = true;
+                    flag(437) = true;
+                    SetMusic(~GimmePathEgg(1, 5), 31);
+                    ["I am so glad that thou hast come -- and thou hast brought the Good Bard Iolo!"];
+                    ["Dear Iolo, our subjects have spoken of that fine ballad which thou didst sing, and thy devotion to thy lost wife hath touched our heart."];
+                    ["I give thee this White Diamond Necklace, which thou mayest give to thy beloved when thou dost at last find her. It is a twin to mine own, except that mine is of a more subtle hue."];
+                    v0 = ~GiveItemsOrDrop_i(true, 0, 8, 0, 955, 1, _Iolo);
+                    SetSpeaker1_i(0, _Iolo);
+                    ["Thou art too kind, Lady! I thank thee, and shall give it to Gwenno upon our reunion!"];
+                    CloseSpeaker1_i();
+                    SetSpeakerSlot_i(0);
+                    ["This calls for a toast. Hail to Beauty!"];
+                    v21 = ~PartyUtters(false, "@To Beauty!@", "@To Beauty!@", 1);
+                    SetSpeakerSlot_i(0);
+                    ["And to love! Let us drink to the virtues of romance and bliss!"];
+                    v21 = ~PartyUtters(false, "@To bliss!@", "@To bliss!@", 1);
+                    SetSpeakerSlot_i(0);
+                    ["And to good rulers, such as beloved Queen Fawn, who founded our fine society."];
+                    v21 = false;
+                    v22 = ~GetParty();
+                    if (~NPCToItem_i(_Dupre) in v22) {
+                        v21 = 65535;
+                        $DUPRE_ACCUSED = true;
+                    } else {
+                        if (~NPCToItem_i(_Shamino) in v22) {
+                            v21 = 65534;
+                            $SHAMINO_ACCUSED = true;
+                        } else {
+                            if (~NPCToItem_i(_Iolo) in v22) {
+                                v21 = 65533;
+                                $IOLO_ACCUSED = true;
+                            }
+                        }
+                    }
+                    SetSpeaker1_i(0, v21);
+                    ["Thou must not forget our distant liege, Lady Yelinda. All hail Lord British and the glory that is Britannia!"];
+                    CloseSpeaker1_i();
+                    SetMusic(~GimmePathEgg(1, 5), 30);
+                    SetSpeakerSlot_i(0);
+                    ["Oh, my!"];
+                    SetSpeaker1_i(0, _Jorvin);
+                    ["Milady, this one is allied with that foul fiend, Beast British!"];
+                    CloseSpeaker1_i();
+                    SetSpeakerSlot_i(0);
+                    ["This is blasphemy! Jorvin, lock that criminal away and call for a speedy trial. Let this intruder be executed, even as Beast British slew our forefathers during his conquest of Sosaria!"];
+                    CloseSpeaker0_i();
+                    SetWorkType(_Wait, _Jorvin);
+                    FaceAvatar_i(65483);
+                    v0 = ~PostInFuture(0, << _aNO_HALT_i, _aUSABLE_i, #Yelinda >>, _Avatar);
+                    Bark_i(0, "@Take this!@", _Jorvin);
+                    NewSchedule_i(<< 0, 0 >>, _Shy, 0, _Yelinda);
+                    Npc_schedule(_Yelinda);
+                    Bark_i(5, "@Blasphemer!@", _Yelinda);
+                    v0 = 3;
+                    While (v0 > 0) {
+                        v8 = ~CreateCreature_i(<< 0, 0, 0 >>, _Fawn_Guard);
+                        if v8 {
+                            v0 = ~ApproachAvatar_i(40, 90, v8);
+                            if v0 {
+                                PathfindNPC_i(true, #Fawn_Guard, v8, _Path_Success, ~GetCoord(_Jorvin), v8);
+                            }
+                        }
+                        v0 = (v0 - 1);
+                    }
+                    if v8 {
+                        Bark_i(2, "@Save the Queen!@", v8);
+                    }
+                    terminate;
+                } else {
+                    [""I am so glad that thou hast come... But where is the Good Bard Iolo?"];
+                    ["I wish to welcome him as well as thee. Return when he is with thee!"];
+                    terminate;
+                }
+            } else {
+                if (v20 = false) {
+                    if ((v2 = true) and ($gottattoo = true)) {
+                        ["What an interesting Beauty mark thou hast... I am Lady Yelinda, ruler of Fawn -- the city of Beauty."];
+                    } else {
+                        ["Welcome to the city of Beauty. I am Lady Yelinda, ruler of Fawn."];
+                    }
+                } else {
+                    if ($AUDIENCE_WITH_YELINDA and not $FAWN_TRIAL_DONE) {
+                        ["Until thy friend's innocence or guilt hath been proven, Avatar, we may not speak together."];
+                        CloseSpeaker0_i();
+                        Bark_i(0, "@I am sorry...@", _Yelinda);
+                        terminate;
+                    } else {
+                        ["Welcome back, <v3>. Thy presence in Fawn adds greatly\x09to its Beauty."];
+                    }
+                }
+            }
+        }
+        SetItemFlag_i(_Met, _Yelinda);
+        TurnOn(<< "Fawn", "Beauty", "goblins", "storms", "name" >>);
+        TurnOn("bye");
+        converse {
+            key ("goblins") {
+                ["Oh, horrible, vile creatures! They have killed all the Pikemen that were guarding the road to our beautiful city."];
+                ["Whatever shall we do now?"];
+                TurnOff("goblins");
+                TurnOn("Pikemen");
+            }
+            key ("Pikemen") {
+                ["Wonderful people. They hail from Monitor. They keep the roads safe."];
+                TurnOff("Pikemen");
+                TurnOn("Monitor");
+            }
+            key ("Monitor") {
+                TurnOff("Monitor");
+                ["'Tis south of here. I do not associate with them. They are too warlike."];
+                if ($AUDIENCE_WITH_YELINDA and ($FAWN_TRIAL_DONE and not $oraclesaysinnocent)) {
+                    ["Chancellor Zulith deals with them for me."];
+                    TurnOn("Chancellor");
+                } else {
+                    ["The Great Captains deal with them for me."];
+                    TurnOn("Great Captains");
+                }
+            }
+            key ("Great Captains") {
+                ["Yes, Joth, Garth, and Voldin. They are my most trusted advisors... Aside from the Chancellor, of course."];
+                ["They handle all the horrible little details of running the city. I would be lost without them, 'tis certain."];
+                TurnOff("Great Captains");
+                TurnOn("Chancellor");
+            }
+            key ("Chancellor") {
+                ["Zulith is a dear little man. He absolutely dotes on me, I fear. He simply would not have a life if he were not looking after me. He keeps all the paperwork for me and schedules mine audiences. Quite a mouse of a man, though."];
+                TurnOff("Chancellor");
+            }
+            key ("storms") {
+                TurnOff("storms");
+                ["Quite a nuisance, actually."];
+                if ($AUDIENCE_WITH_YELINDA and ($FAWN_TRIAL_DONE and not $oraclesaysinnocent)) {
+                    ["Alyssand tells me that the storms are the result of a lack of devotion to the pure concept of Beauty.];
+                    ["She is quite helpful to me. I think I shall make her my chief advisor..."];
+                } else {
+                    ["The Oracle says the storms are a result of permitting the heretics within the city gates."];
+                    ["Odd that they did not stop after the heretics were banished from the city. I shall have to consult Kylista."];
+                    TurnOn("heretics");
+                    if not $yelindasaidoracle {
+                        TurnOn("Oracle");
+                    }
+                }
+            }
+            key ("heretics") {
+                ["Those filthy sailors camped outside the city gates have no regard whatsoever for Beauty. They preach some ridiculous notion about brotherhood... or some such."];
+                TurnOff("heretics");
+                TurnOn("sailors");
+            }
+            key ("sailors") {
+                ["They and their passengers arrived shortly before the storms began."];
+                TurnOff("sailors");
+                TurnOn("passengers");
+            }
+            key ("passengers") {
+                ["There was a portly mage named Batlin and a lovely lady named Gwenno."];
+                TurnOff("passengers");
+                TurnOn(<< "Batlin", "Gwenno" >>);
+            }
+            key ("Batlin") {
+                ["A disagreeable fellow. Travelled with some very rough sorts. He was seeking Daemon artifacts, I believe."];
+                TurnOff("Batlin");
+                TurnOn("Daemon artifacts");
+            }
+            key ("Daemon artifacts") {
+                ["Thou mayest find them throughout the land. They are of little interest... not Beautiful at all."];
+                TurnOff("Daemon artifacts");
+            }
+            key ("Gwenno") {
+                ["She was interested in folk tales, I believe. I am afraid I could not help her. My last bard was transformed into a fox during a storm and ran away."];
+                TurnOff("Gwenno");
+            }
+            key ("Fawn") {
+                TurnOff("Fawn");
+                ["Our city was named after the beautiful ruler who commissioned the Oracle."];
+                $yelindasaidfawn = true;
+                if ($FAWN_TRIAL_RECESS or not $FAWN_TRIAL_DONE) {
+                    TurnOn("Oracle");
+                }
+            }
+            key ("Oracle") {
+                ["Thou hast never heard of the Oracle of Beauty?" *"Thou shouldst speak with Kylista at the temple."];
+                $yelindasaidoracle = true;
+                TurnOff("Oracle");
+                TurnOn("Kylista");
+            }
+            key ("Kylista") {
+                ["She is the most beautiful woman in town..."];
+                ["aside from myself, of course."];
+                ["She is the Priestess of Beauty. Thou canst find her at the temple."];
+                TurnOff("Kylista");
+                TurnOn("temple");
+            }
+            key ("temple") {
+                ["'Tis the largest building in the city, except for my palace."];
+                TurnOff("temple");
+            }
+            key ("Beauty") {
+                ["We revere and protect all beautiful things here in Fawn. Everyone is dedicated to the truths of Beauty."];
+                TurnOff("Beauty");
+                if ($yelindasaidfawn = false) {
+                    TurnOn("Fawn");
+                }
+            }
+            key ("name") {
+                ["Forgive me, I thought I had already introduced myself. I am Lady Yelinda."];
+                TurnOff("name");
+            }
+            key ("bye") {
+                SendAssassin_i();
+                CloseSpeaker0_i();
+                Bark_i(0, "@Farewell, gracious Lady!@", _Avatar);
+                Bark_i(2, "@Do come again!@", _Yelinda);
+                break;
+            }
+        }
+        clear_answers;
+    }
+}

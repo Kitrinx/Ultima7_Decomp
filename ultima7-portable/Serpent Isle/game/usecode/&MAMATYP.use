@@ -1,0 +1,502 @@
+Routine Mama_Type accepts a0 #locals(33) #uses(~LordOrLady, ~AvatarName, ~GimmePathEgg, FilbercioCatchesAvatar_i, Bark_i, UndressAvatar_i, ~AskYesNo, PartyFaces_i, BarkIfNear_i, ~AskList, SetWorkTypeAt_i, ~PartyUtters, ~OrderList_i, ~RemoveFromList_i) {
+    v0 = ~GetItemFlag_i(_Met, _Frigidazzi);
+    v1 = ~LordOrLady();
+    v2 = ~AvatarSex();
+    v3 = ~AvatarName();
+    v4 = ~GetTime();
+    if ((v4 > 1) or (v4 < 6)) {
+        v4 = "day";
+    } else {
+        v4 = "evening";
+    }
+    v5 = "his";
+    if v2 {
+        v5 = "her";
+    }
+    v6 = ~GetDist(_Avatar, _Frigidazzi);
+    v7 = << 2421, 1864, 0 >>;
+    v8 = ~GetCoord(_Frigidazzi);
+    v9 = << 2438, 1894 >>;
+    v10 = (v7::1 - v8::1);
+    if (v10 < 0) {
+        v10 = (v10 * 65535);
+    }
+    v11 = (v7::2 - v8::2);
+    if (v11 < 0) {
+        v11 = (v11 * 65535);
+    }
+    v12 = (v10 + v11);
+    v13 = ~GimmePathEgg(3, 5);
+    if (event = _Action) {
+        if (~GetNPCID_i(_Frigidazzi) = 17) {
+            FilbercioCatchesAvatar_i();
+            terminate;
+        }
+        if (~GetNPCID_i(_Frigidazzi) = 16) {
+            FilbercioCatchesAvatar_i();
+            terminate;
+        }
+        if (~GetNPCID_i(_Frigidazzi) = 15) {
+            SetNPCID_i(16, _Frigidazzi);
+            ClearSpeakers_i();
+            SetSpeaker0_i(2, _Frigidazzi);
+            ["I think that I am falling in love with thee, <v3>! How did I ever live without thee..."];
+            EndConverse_i();
+            Bark_i(0, "@Kiss me again, love...@", item);
+            Bark_i(2, "@I cannot resist!@", _Avatar);
+            v14 = ~PostInFuture(8, << _aNO_HALT_i, _aUSABLE_i, #Mama_Type, 0 >>, _Frigidazzi);
+            terminate;
+        }
+        if (~GetNPCID_i(_Frigidazzi) = 14) {
+            SetNPCID_i(15, _Frigidazzi);
+            FadePalette_i(0, 1, 12);
+            SetMusic(~GimmePathEgg(1, 5), 39);
+            Item_move(<< 2422, 1861, 0 >>, _Avatar);
+            Item_move(<< 2420, 1865, 2 >>, _Frigidazzi);
+            v14 = ~PostAction(<< _aNO_HALT_i, _aSTAND_FRAME_i, _aFACE_i, _South >>, _Avatar);
+            v14 = ~PostInFuture(15, << _aNO_HALT_i, _aFACE_i, _East, _aUSABLE_i, #FadeInArrival_i, _aMUSIC_i, 28, byte(39), 4, byte(82), "@Wow...@", byte(39), 6, byte(85), 230, 0 >>, _Frigidazzi);
+            terminate;
+        }
+        if (~GetNPCID_i(_Frigidazzi) = 13) {
+            SetNPCID_i(14, _Frigidazzi);
+            ClearBark_i(_Frigidazzi);
+            ClearSpeakers_i();
+            SetSpeaker0_i(2, _Frigidazzi);
+            ["We need not these blankets..."];
+            EndConverse_i();
+            v15 = ~FindNearby_i(0, 10, _Bed_EW, item);
+            Foreach v18 in v15 {
+                v9 = ~GetCoord(v18);
+                if (v9::3 = 1) {
+                    Item_destroy(v18);
+                    createSprite(65535, 0, 0, 0, v9::2, v9::1, 21);
+                    Sfx(20);
+                }
+            }
+            v14 = ~PostAction(<< _aNO_HALT_i, _aBEND_FRAME_i, _aWAIT_i, 2, _aLIE_FRAME_i, _aBARK_i, "@Oh!@" >>, _Frigidazzi);
+            v14 = ~PostAction(<< _aNO_HALT_i, _aFACE_i, _West, _aWAIT_i, 2, _aBEND_FRAME_i, _aWAIT_i, 2, _aLIE_FRAME_i, _aWAIT_i, 2, _aBARK_i, "@Ah!@", _aWAIT_i, 2, _aUSABLE_i, #Mama_Type, 0 >>, _Avatar);
+            terminate;
+        }
+        if (~GetNPCID_i(_Frigidazzi) = 12) {
+            SetNPCID_i(13, _Frigidazzi);
+            v9 = ~GetCoord(_Avatar);
+            createSprite(65535, 0, 0, 0, v9::2, v9::1, 21);
+            UndressAvatar_i();
+            Sfx(57);
+            v14 = ~PostInFuture(2, << _aNO_HALT_i, _aBARK_i, "@I'm cold...@", _aFACE_i, _West >>, _Avatar);
+            PathfindNPC_i(false, << 230, 0 >>, item, _Path_Success, << 2421, 1863, 0 >>, _Frigidazzi);
+            terminate;
+        }
+        if (~GetNPCID_i(_Frigidazzi) = 11) {
+            SetNPCID_i(12, _Frigidazzi);
+            ClearBark_i(_Avatar);
+            ClearBark_i(_Frigidazzi);
+            ClearSpeakers_i();
+            SetSpeaker0_i(2, _Frigidazzi);
+            ["No mortal can resist the Dance of Passion! Tell me that thy blood hath been stirred to a frenzy!"];
+            if ~AskYesNo() {
+                EndConverse_i();
+                Bark_i(4, "@Likewise...@", _Frigidazzi);
+                Bark_i(0, "@I cannot wait!@", _Avatar);
+                PathfindNPC_i(false, << 230, 0 >>, ~NPCToItem_i(_Avatar), _Path_Success, << 2421, 1865, 0 >>, _Avatar);
+                v14 = ~PostInFuture(4, << _aNO_HALT_i, _aFACE_i, _South, _aWAIT_i, 3, _aFACE_i, _West >>, _Frigidazzi);
+                terminate;
+            } else {
+                ["No, thou dost not understand. As I said, no mortal can resist the Dance of Passion..."];
+                EndConverse_i();
+                v14 = ~PostAction(<< _aNO_HALT_i, _aFACE_i, _South, _aBARK_i, "@Uh-oh...@" >>, _Frigidazzi);
+                FilbercioCatchesAvatar_i();
+                terminate;
+            }
+        }
+        if (~GetNPCID_i(_Frigidazzi) = 10) {
+            PartyFaces_i(65516);
+            v9 = ~GetCoord(_Frigidazzi);
+            createSprite(65535, 0, 0, 0, v9::2, v9::1, 12);
+            SetNPCID_i(11, _Frigidazzi);
+            v14 = ~PostAction(<< _aNO_HALT_i, _aEXTEND2_FRAME_i, _aEXTEND1_FRAME_i, _aTHRUST2_FRAME_i, _aEXTEND1_FRAME_i, _aEXTEND2_FRAME_i, _aLOOP_i, 65531, 2, byte(111), byte(39), 2, byte(112), byte(39), 2, byte(11), 65530, 2, byte(85), 2002, byte(39), 2, byte(85), 230, 0 >>, _Frigidazzi);
+            terminate;
+        }
+        if (~GetNPCID_i(_Frigidazzi) = 9) {
+            SetNPCID_i(10, _Frigidazzi);
+            v9 = ~GetCoord(_Frigidazzi);
+            createSprite(65535, 0, 0, 0, v9::2, v9::1, 21);
+            PartyFaces_i(65516);
+            v14 = ~PostAction(<< _aNO_HALT_i, _aBEND_FRAME_i, _aKNEEL_FRAME_i, _aLIE_FRAME_i, _aWAIT_i, 4, _aKNEEL_FRAME_i, _aBEND_FRAME_i, _aSTAND_FRAME_i, _aWAIT_i, 2, _aUSABLE_i, #Mama_Type, 0 >>, _Frigidazzi);
+            terminate;
+        }
+        if (~GetNPCID_i(_Frigidazzi) = 8) {
+            SetNPCID_i(9, _Frigidazzi);
+            v9 = ~GetCoord(_Frigidazzi);
+            createSprite(65535, 0, 0, 0, v9::2, v9::1, 13);
+            PartyFaces_i(65516);
+            v14 = << "@Vox Erotis!@", "@Vex Nox Flam!@", "@Ort Vos!@", "@Ort Erotis!@" >>;
+            BarkIfNear_i(v14, _Frigidazzi);
+            v14 = ~PostAction(<< _aNO_HALT_i, _aUP_FRAME_i, _aOUT_FRAME_i, _aFACE_i, _West, _aUP_FRAME_i, _aOUT_FRAME_i, _aWAIT_i, 4, _aFACE_i, _North, _aSTEP_LEFT_FRAME_i, _aRAISE1_FRAME_i, _aTHRUST1_FRAME_i, _aWAIT_i, 5, _aFACE_i, _East, _aUP_FRAME_i, _aOUT_FRAME_i, _aWAIT_i, 4, _aUSABLE_i, #Mama_Type, 0 >>, _Frigidazzi);
+            terminate;
+        }
+        if (~GetNPCID_i(_Frigidazzi) = 7) {
+            SetNPCID_i(8, _Frigidazzi);
+            PartyFaces_i(65516);
+            ClearSpeakers_i();
+            SetSpeaker0_i(2, _Frigidazzi);
+            ["Beware, <v3>! I shall now begin the Dance of Passion, which no mortal can resist!"];
+            EndConverse_i();
+            v19 = ~GimmePathEgg(1, 0);
+            if v19 {
+                SetMusic(v19, 16);
+            }
+            v9 = ~GetCoord(_Frigidazzi);
+            createSprite(65535, 0, 0, 0, v9::2, v9::1, 12);
+            Bark_i(8, "@Vas Flam!@", _Frigidazzi);
+            v14 = ~PostAction(<< _aNO_HALT_i, _aUP_FRAME_i, _aRAISE1_FRAME_i, _aWAIT_i, 1, _aTHRUST1_FRAME_i, _aWAIT_i, 1, _aSTEP_i, byte(52), byte(83), _aGO_S, _aWAIT_i, 2, _aLOOP_i, 65523, 3, byte(85), 230, 0 >>, _Frigidazzi);
+            v14 = << "@Gosh!@", "@Oh, my!@", "@Do not hurt thyself!@", "@Wow!@", "@Hmmm...@", "@Dost thou need help?@", "@Oh!@" >>;
+            BarkIfNear_i(v14, _Avatar);
+            terminate;
+        }
+        if (~GetNPCID_i(_Frigidazzi) = 6) {
+            SetNPCID_i(7, _Frigidazzi);
+            Polymorph_i(_Mama_Type, _Frigidazzi);
+            v14 = ~PostAction(<< _aNO_HALT_i, _aUP_FRAME_i, _aWAIT_i, 2, _aUSABLE_i, #Mama_Type, 0 >>, _Frigidazzi);
+            terminate;
+        }
+        if (~GetNPCID_i(_Frigidazzi) = 5) {
+            SetNPCID_i(6, _Frigidazzi);
+            ClearSpeakers_i();
+            SetSpeaker0_i(0, _Frigidazzi);
+            ["Now that I have tasted thy lips, I think that mine infatuation with thee doth grow!"];
+            ["Strange -- 'twas so cold in here when thou didst enter, but now I feel suddenly warm..."];
+            ["I have not felt so alive in many months! Perhaps... I am not sure how to say this, but..."];
+            ["Dost thou desire my body, Avatar?"];
+            v14 = << "yes", "no", "What about Filbercio?" >>;
+            if ~AvatarSex() {
+                v14 = (v14 & "I'm not that kind of girl!");
+            }
+            v15 = ~AskList(v14);
+            if (v15 = "What about Filbercio?") {
+                ["The MageLord? Oh, how canst thou think of him when the two of us are here together, becoming intimate..."];
+                ["Perhaps this shall arouse thine interest!"];
+                EndConverse_i();
+                PathfindNPC_i(false, << 230, 0 >>, item, _Path_Success, << 2427, 1859, 0 >>, _Frigidazzi);
+                v14 = ~PostAction(<< _aWAIT_i, 2, _aUP_FRAME_i, _aBARK_i, "@Est Nudi!@" >>, _Frigidazzi);
+                terminate;
+            }
+            if (v15 = "yes") {
+                ["Then watch this, my love..."];
+                EndConverse_i();
+                PathfindNPC_i(false, << 230, 0 >>, item, _Path_Success, << 2427, 1859, 0 >>, _Frigidazzi);
+                v14 = ~PostAction(<< _aWAIT_i, 2, _aUP_FRAME_i, _aBARK_i, "@Est Nudi!@" >>, _Frigidazzi);
+                terminate;
+            } else {
+                if (v15 = "no") {
+                    ["Oh... this is so embarrassing!"];
+                    EndConverse_i();
+                    v14 = ~PostAction(<< _aNO_HALT_i, _aRAISE2_FRAME_i, _aWAIT_i, 2, _aFACE_i, _North, _aBARK_i, "@I could just die...@", _aWAIT_i, 6, _aUSABLE_i, #Mama_Type, 0, _aWAIT_i, 4, _aFACE_i, _East, _aFACE_i, _South >>, _Frigidazzi);
+                    SetNPCID_i(17, _Frigidazzi);
+                    terminate;
+                } else {
+                    ["Do I detect a note of disapproval? Well, I don't have to take that from anyone!"];
+                    EndConverse_i();
+                    PartyFaces_i(65516);
+                    Bark_i(2, "@Pig!@", _Frigidazzi);
+                    Bark_i(8, "@Ouch!@", _Avatar);
+                    v14 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #FaceAvatar_i, _aSTEP_i, byte(52), byte(39), 2, byte(102), byte(39), 2, byte(103), byte(88), 127, byte(39), 4, byte(97), byte(39), 8, byte(85), 230, 0 >>, _Frigidazzi);
+                    SetNPCID_i(17, _Frigidazzi);
+                    terminate;
+                }
+            }
+        }
+        if (~GetNPCID_i(_Frigidazzi) = 4) {
+            SetNPCID_i(5, _Frigidazzi);
+            ClearSpeakers_i();
+            SetSpeaker0_i(0, _Frigidazzi);
+            if ~AvatarSex() {
+                ["To be blunt, there is something uncommonly... erotic about thee. I am most attracted to thee, woman."];
+            } else {
+                ["To know that thou art a Mage, yet to see that thou art so manly -- this is most uncommon in Moonshade!"];
+            }
+            ["Thou hast come to learn spells, but I can teach thee some true magic..."];
+            if not ~AvatarSex() {
+                ["I could die to be taken into thy brawny arms!"];
+            }
+            ["Wouldst thou kiss me, <v3>?"];
+            v14 = << "yes", "no" >>;
+            if ~AvatarSex() {
+                v14 = (v14 & "Of course not!");
+            }
+            v15 = ~AskList(v14);
+            if (v15 = "yes") {
+                EndConverse_i();
+                PartyFaces_i(65516);
+                v14 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #FaceAvatar_i, _aSTEP_i, byte(52), byte(83), _aGO_S, _aWAIT_i, 2, _aRAISE2_FRAME_i, _aSFX_i, 36, _aSTAND_FRAME_i, _aWAIT_i, 1, _aSTEP_RIGHT_FRAME_i, _aWAIT_i, 4, _aUSABLE_i, #Mama_Type, 0 >>, _Frigidazzi);
+            } else {
+                if (v15 = "no") {
+                    EndConverse_i();
+                    PartyFaces_i(65516);
+                    Bark_i(2, "@Oh!@", _Frigidazzi);
+                    Bark_i(8, "@Ouch!@", _Avatar);
+                    v14 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #FaceAvatar_i, _aSTEP_i, byte(52), byte(39), 2, byte(102), byte(39), 2, byte(103), byte(88), 127, byte(39), 4, byte(97), byte(39), 8, byte(85), 230, 0 >>, _Frigidazzi);
+                    SetNPCID_i(17, _Frigidazzi);
+                } else {
+                    ["Thou dost disappoint me. I had hoped that thou wouldst be more receptive..."];
+                    EndConverse_i();
+                    SetNPCID_i(17, _Frigidazzi);
+                    v14 = ~PostAction(<< _aNO_HALT_i, _aBARK_i, "@Oh, well...@", _aFACE_i, _East, _aWAIT_i, 8, _aUSABLE_i, #Mama_Type, 0 >>, _Frigidazzi);
+                    Bark_i(5, "@Sorry...@", _Avatar);
+                }
+            }
+            terminate;
+        }
+        if (~GetNPCID_i(_Frigidazzi) = 3) {
+            SetNPCID_i(4, _Frigidazzi);
+            v14 = ~Item_create(_Brush);
+            if v14 {
+                SetFrame(5, v14);
+                ClearItemFlag_i(_IsTemporary_i, v14);
+                v14 = ~PopToMap(<< 2431, 1860, 2 >>);
+            }
+            ClearSpeakers_i();
+            SetSpeaker0_i(0, _Frigidazzi);
+            ["I feel so comfortable around thee. It is as though we have known each other before -- perhaps in some other existence?"];
+            ["Do not be formal with me, <v3>. Please, come join me here by the pool."];
+            v15 = ~AskList(<< "yes", "no", "About those spells..." >>);
+            if (v15 = "About those spells...") {
+                ["Why art thou in such a rush? In Moonshade, we know to mix pleasure with business."];
+                ["I am sure that there is time for us to know each other better, before this matter of the spells must be conducted."];
+                ["Thou shouldst learn to relax."];
+                EndConverse_i();
+                v9 = ~GetCoord(_Avatar);
+                createSprite(65535, 0, 0, 0, v9::2, v9::1, 9);
+                v9 = ~GetCoord(_Frigidazzi);
+                createSprite(65535, 0, 0, 0, (v9::2 + 4), (v9::1 + 4), 21);
+                Bark_i(0, "@Yow!@", _Avatar);
+                Sfx(57);
+                Sfx(40);
+                PathfindNPC_i(false, << 230, 0 >>, ~NPCToItem_i(_Avatar), _Path_Success, << 2432, 1864, 0 >>, _Avatar);
+                v14 = ~PostAction(<< _aNO_HALT_i, _aUP_FRAME_i, _aBARK_i, "@Vex Veni Nox!@", _aSTEP_RIGHT_FRAME_i, _aWAIT_WHILE_FAR_i, 2, _aWAIT_i, 4, _aUSABLE_i, #FaceAvatar_i, _aWAIT_i, 4, _aUSABLE_i, #Mama_Type, 0 >>, _Frigidazzi);
+                terminate;
+            }
+            if (v15 = "yes") {
+                EndConverse_i();
+                Bark_i(0, "@Do not be shy with me...@", _Frigidazzi);
+                PathfindNPC_i(false, << 230, 0 >>, ~NPCToItem_i(_Avatar), _Path_Success, << 2432, 1864, 0 >>, _Avatar);
+                v14 = ~PostAction(<< _aNO_HALT_i, _aWAIT_WHILE_FAR_i, 2, _aWAIT_i, 4, _aUSABLE_i, #FaceAvatar_i, _aWAIT_i, 4, _aUSABLE_i, #Mama_Type, 0 >>, _Frigidazzi);
+            } else {
+                ["Ah, but thou art so shy! Perhaps I can encourage thee to join me, by use of a little spell..."];
+                EndConverse_i();
+                v9 = ~GetCoord(_Avatar);
+                createSprite(65535, 0, 0, 0, v9::2, v9::1, 9);
+                v9 = ~GetCoord(_Frigidazzi);
+                createSprite(65535, 0, 0, 0, (v9::2 + 4), (v9::1 + 4), 21);
+                Sfx(57);
+                Sfx(40);
+                Bark_i(0, "@Hey!@", _Avatar);
+                PathfindNPC_i(false, << 230, 0 >>, ~NPCToItem_i(_Avatar), _Path_Success, << 2432, 1864, 0 >>, _Avatar);
+                v14 = ~PostAction(<< _aNO_HALT_i, _aUP_FRAME_i, _aBARK_i, "@Vex Veni Nox!@", _aSTEP_RIGHT_FRAME_i, _aWAIT_WHILE_FAR_i, 2, _aWAIT_i, 4, _aUSABLE_i, #FaceAvatar_i, _aWAIT_i, 4, _aUSABLE_i, #Mama_Type, 0 >>, _Frigidazzi);
+                terminate;
+            }
+            terminate;
+        }
+        if (~GetNPCID_i(_Frigidazzi) = 2) {
+            SetNPCID_i(3, _Frigidazzi);
+            ClearSpeakers_i();
+            SetSpeaker0_i(0, _Frigidazzi);
+            ["I am so glad that thou hast met me here, sweet Avatar. I find strangers..."];
+            EndConverse_i();
+            v14 = ~FindNearby_i(0, 5, _Brush, item);
+            Foreach v15 in v14 {
+                if (~GetFrame(v15) = 5) {
+                    Item_destroy(v14);
+                }
+            }
+            Bark_i(0, "@...appealing...@", _Frigidazzi);
+            v14 = ~PostInFuture(5, << _aNO_HALT_i, _aRAISE2_FRAME_i, _aSFX_i, 11, _aSTEP_RIGHT_FRAME_i, _aWAIT_i, 2, _aLOOP_i, 65530, 3, byte(39), 2, byte(85), 2002, byte(39), 2, byte(85), 230, 0 >>, _Frigidazzi);
+            terminate;
+        }
+        if (~GetNPCID_i(_Frigidazzi) = 1) {
+            v14 = << "@I love the night...@", "@so quiet...@", "@so dark...@" >>;
+            BarkIfNear_i(v14, _Frigidazzi);
+            PathfindNPC_i(false, << 230, 0 >>, item, _Path_Success, << 2432, 1862, 0 >>, _Frigidazzi);
+            terminate;
+        } else {
+            SetSpeaker0_i(0, _Frigidazzi);
+            SetWorkTypeAt_i(_Stand, 0, 65535, _Frigidazzi);
+            NewSchedule_i(<< 2438, 1894 >>, _Stand, 0, _GoblinMessenge);
+            Npc_schedule(_GoblinMessenge);
+            ClearItemFlag_i(_Asleep, _GoblinMessenge);
+            Bark_i(3, "@Tar gorlfog!@", _GoblinMessenge);
+            if ((v12 < 15) and (not ~IsNPCNear_i(_Iolo) and (not ~IsNPCNear_i(_Dupre) and (not ~IsNPCNear_i(_Shamino) and not ~IsNPCNear_i(_Boydon))))) {
+                ["I am so glad that thou hast agreed to meet me here."];
+                SetMusic(~GimmePathEgg(1, 5), 31);
+                SetNPCID_i(1, _Frigidazzi);
+                EndConverse_i();
+                SetItemFlag_i(_DontMove_i, _Avatar);
+                v14 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #Mama_Type, 0 >>, _Frigidazzi);
+                terminate;
+            } else {
+                if (~ListSize_i(~GetParty()) > 1) {
+                    ["Thou didst come! I cannot express how pleased I am to see thee again, <v3>."];
+                    ["But this matter of the spells, it must be discussed in private. Only Mages may hear the secrets which I am about to reveal."];
+                    ["Wouldst thou please ask thy minions to depart?"];
+                    if ~AskYesNo() {
+                        SetItemFlag_i(_DontMove_i, _Avatar);
+                        SetMusic(~GimmePathEgg(1, 5), 31);
+                        v22 = ~PartyUtters(false, 0, "@Um, I think I will wait outside...@", 1);
+                        EndConverse_i();
+                        v14 = ~OrderList_i();
+                        v23 = << >>;
+                        Foreach v15 in v14 {
+                            if ~IsNPCNear_i(v15) {
+                                v23 = (v23 & v15);
+                            }
+                        }
+                        v23 = (v23 & ~GetParty_i());
+                        v23 = ~RemoveFromList_i(v23, ~NPCToItem_i(_Avatar));
+                        v23 = ~RemoveFromList_i(v23, 65508);
+                        v23 = ~RemoveFromList_i(v23, 65510);
+                        v23 = ~RemoveFromList_i(v23, 65368);
+                        Foreach v15 in v23 {
+                            if ~GetItemFlag_i(_InParty_i, v15) {
+                                LeaveParty(v15);
+                            }
+                            NewSchedule_i(v9, _Stand, 0, v15);
+                            Npc_schedule(v15);
+                        }
+                        Bark_i(0, "@Have fun...@", v15);
+                        v14 = ~PostInFuture(10, << _aNO_HALT_i, _aUSABLE_i, #Mama_Type, 0 >>, _Frigidazzi);
+                        v14 = ~SetQuality(~GetNPCID_i(_Frigidazzi), ~GimmePathEgg(3, 5));
+                        SetNPCID_i(1, _Frigidazzi);
+                        terminate;
+                    } else {
+                        ["Then I can be of no use to thee."];
+                        Bark_i(0, "@Go!@", _Frigidazzi);
+                        terminate;
+                    }
+                } else {
+                    ["But we must wait, darling, until we are alone..."];
+                    EndConverse_i();
+                    SetItemFlag_i(_DontMove_i, _Avatar);
+                    Bark_i(0, "@Wait...@", _Frigidazzi);
+                    v14 = ~OrderList_i();
+                    v23 = << >>;
+                    Foreach v15 in v14 {
+                        if ~IsNPCNear_i(v15) {
+                            v23 = (v23 & v15);
+                        }
+                    }
+                    v23 = (v23 & ~GetParty_i());
+                    v23 = ~RemoveFromList_i(v23, ~NPCToItem_i(_Avatar));
+                    v23 = ~RemoveFromList_i(v23, 65508);
+                    v23 = ~RemoveFromList_i(v23, 65510);
+                    v23 = ~RemoveFromList_i(v23, 65368);
+                    Foreach v15 in v23 {
+                        if ~GetItemFlag_i(_InParty_i, v15) {
+                            LeaveParty(v15);
+                        }
+                        NewSchedule_i(v9, _Stand, 0, v15);
+                        Npc_schedule(v15);
+                    }
+                    Bark_i(0, "@Have fun...@", v15);
+                    v14 = ~PostInFuture(10, << _aNO_HALT_i, _aUSABLE_i, #Mama_Type, 0 >>, _Frigidazzi);
+                    v14 = ~SetQuality(~GetNPCID_i(_Frigidazzi), ~GimmePathEgg(3, 5));
+                    SetNPCID_i(1, _Frigidazzi);
+                    terminate;
+                }
+            }
+        }
+    }
+    if (event = _Path_Failure) {
+        if ((~GetNPCID_i(_Frigidazzi) = 13) and (item = ~NPCToItem_i(_Frigidazzi))) {
+            v9 = ~GetCoord(_Frigidazzi);
+            createSprite(65535, 0, 0, 0, v9::2, v9::1, 7);
+            Item_move(<< 2421, 1863, 0 >>, _Frigidazzi);
+            event = 13;
+        }
+        if ((~GetNPCID_i(_Frigidazzi) = 12) and (item = ~NPCToItem_i(_Avatar))) {
+            v9 = ~GetCoord(_Avatar);
+            createSprite(65535, 0, 0, 0, v9::2, v9::1, 7);
+            Item_move(<< 2421, 1865, 0 >>, _Avatar);
+            event = 13;
+        }
+        if ((~GetNPCID_i(_Frigidazzi) = 6) and (item = ~NPCToItem_i(_Frigidazzi))) {
+            v9 = ~GetCoord(_Frigidazzi);
+            createSprite(65535, 0, 0, 0, v9::2, v9::1, 7);
+            Item_move(<< 2427, 1859, 0 >>, _Frigidazzi);
+            event = 13;
+        }
+        if ((~GetNPCID_i(_Frigidazzi) = 4) and (item = ~NPCToItem_i(_Avatar))) {
+            v9 = ~GetCoord(_Avatar);
+            createSprite(65535, 0, 0, 0, v9::2, v9::1, 7);
+            Item_move(<< 2432, 1864, 0 >>, _Avatar);
+            event = 13;
+        }
+        if ((~GetNPCID_i(_Frigidazzi) = 1) and (item = ~NPCToItem_i(_Frigidazzi))) {
+            v9 = ~GetCoord(_Frigidazzi);
+            createSprite(65535, 0, 0, 0, v9::2, v9::1, 7);
+            Item_move(<< 2432, 1862, 0 >>, _Frigidazzi);
+            event = 13;
+        }
+    }
+    if (event = _Path_Success) {
+        if ((~GetNPCID_i(_Frigidazzi) = 13) and (item = ~NPCToItem_i(_Frigidazzi))) {
+            v14 = ~PostAction(<< _aNO_HALT_i, _aWAIT_i, 6, _aBARK_i, "@Kiss me again!@", _aFACE_i, _West, _aWAIT_i, 10, _aSTEP_i, byte(52), byte(83), _aGO_S, _aWAIT_i, 2, _aRAISE2_FRAME_i, _aSFX_i, 36, _aSTAND_FRAME_i, _aWAIT_i, 1, _aSTEP_RIGHT_FRAME_i, _aWAIT_i, 4, _aFACE_i, _West, _aUP_FRAME_i, _aWAIT_i, 2, _aUSABLE_i, #Mama_Type, 0 >>, _Frigidazzi);
+            v14 = ~PostAction(<< _aNO_HALT_i, _aWAIT_i, 14, _aBARK_i, "@Certainly!@", _aFACE_i, _North >>, _Avatar);
+            terminate;
+        }
+        if ((~GetNPCID_i(_Frigidazzi) = 12) and (item = ~NPCToItem_i(_Avatar))) {
+            ClearSpeakers_i();
+            SetSpeaker0_i(2, _Frigidazzi);
+            PartyFaces_i(65516);
+            ["But wait! Thou hast forgotten this..."];
+            EndConverse_i();
+            v14 = ~SetAttack_i(_M_Ignite, _Avatar, _Frigidazzi);
+            v14 = ~PostInFuture(4, << _aNO_HALT_i, _aOUT_FRAME_i, _aTHRUST2_FRAME_i, _aATTACK_i, _aSTAND_FRAME_i, _aWAIT_i, 4, _aUSABLE_i, #Mama_Type, 0 >>, _Frigidazzi);
+            v14 = ~PostAction(<< _aNO_HALT_i, _aSTAND_FRAME_i, _aFACE_i, _East, _aBARK_i, "@Huh?@" >>, _Avatar);
+            terminate;
+        }
+        if ((~GetNPCID_i(_Frigidazzi) = 6) and (item = ~NPCToItem_i(_Frigidazzi))) {
+            PartyFaces_i(65516);
+            v32 = ~GetCoord(_Frigidazzi);
+            Polymorph_i(_Blank_Type, _Frigidazzi);
+            createSprite(65535, 0, 0, 0, v32::2, v32::1, 50);
+            Sfx(83);
+            v14 = ~PostInFuture(18, << _aNO_HALT_i, _aUSABLE_i, #FaceAvatar_i, _aUP_FRAME_i, _aWAIT_i, 2, _aUSABLE_i, #Mama_Type, 0 >>, _Frigidazzi);
+            terminate;
+        }
+        if ((~GetNPCID_i(_Frigidazzi) = 4) and (item = ~NPCToItem_i(_Avatar))) {
+            PartyFaces_i(65516);
+            terminate;
+        }
+        if ((~GetNPCID_i(_Frigidazzi) = 1) and (item = ~NPCToItem_i(_Frigidazzi))) {
+            v14 = ~PostAction(<< _aNO_HALT_i, _aFACE_i, _East, _aTHRUST1_FRAME_i, _aWAIT_i, 12, _aFACE_i, _East, _aBEND_FRAME_i, _aKNEEL_FRAME_i, _aWAIT_i, 12, _aKNEEL_FRAME_i, _aBEND_FRAME_i, _aSTAND_FRAME_i, _aWAIT_i, 8, _aFACE_i, _North, _aWAIT_i, 4, _aREADY_FRAME_i, _aWAIT_i, 2, _aUSABLE_i, #Mama_Type, 0 >>, _Frigidazzi);
+            SetNPCID_i(2, _Frigidazzi);
+            PartyFaces_i(65516);
+            v14 = ~CreateCreature_i(<< 2434, 1862, 0 >>, _Fish);
+            createSprite(65535, 0, 0, 0, 1862, 2434, 21);
+            Sfx(57);
+            if v14 {
+                SetFrame(0, v14);
+                SetWorkType(_Graze, v14);
+                ClearItemFlag_i(_IsTemporary_i, v14);
+            }
+            SetWorkType(_Wait, _Frigidazzi);
+            terminate;
+        }
+    }
+}
+
+Usable FilbercioCatchesAvatar_i #locals(2) #uses(~GimmePathEgg, SetWorkTypeAt_i, Bark_i, PartyFaces_i) {
+    Sfx(130);
+    v0 = ~GimmePathEgg(1, 0);
+    if v0 {
+        SetMusic(v0, 27);
+    }
+    SetWorkTypeAt_i(_Wait, 0, 65535, _Filbercio);
+    Item_move(<< 2426, 1868, 0 >>, _Filbercio);
+    createSprite(65535, 0, 0, 0, 1868, 2426, 7);
+    Bark_i(2, "@Darling, I'm here...!@", _Filbercio);
+    PartyFaces_i(65518);
+    flag(226) = true;
+    v1 = ~PostInFuture(15, << _aNO_HALT_i, _aUSABLE_i, #M_Shopkeeper >>, _Filbercio);
+    terminate;
+}

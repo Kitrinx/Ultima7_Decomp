@@ -45,6 +45,7 @@ enum { NO_VALUE, OPTIONAL_VALUE, REQUIRED_VALUE };
 #pragma pack(push)
 #pragma pack()
 extern uint8_t QuietWeapons;
+extern uint8_t Mt32ShortWaits;
 
 static const struct {
 	const char *name;
@@ -61,6 +62,7 @@ static const struct {
 	{"--overlay-size", "b", NO_VALUE},
 	{"--version", "?", NO_VALUE},
 	{"--quiet-weapons", 0, NO_VALUE, &QuietWeapons},
+	{"--mt32-short-waits", 0, NO_VALUE, &Mt32ShortWaits},
 };
 #pragma pack(pop)
 
@@ -120,7 +122,8 @@ int16_t ProgramMain(const char *name, int16_t argc, char **argv)
 {
 	int16_t i;
 
-	if (stricmp(name, "u7") == 0) {
+	/* every program takes the port's settings; only the game has options to translate */
+	{
 		char **options = (char **) calloc(argc + 1, sizeof *options);
 
 		argc = TranslateSwitches(argc, argv, options);
@@ -136,14 +139,18 @@ int16_t ProgramMain(const char *name, int16_t argc, char **argv)
 	return 1;
 }
 
-/* Runs a program with one argument. Returns its exit code, or -1 if it can't be run. */
-static int16_t RunProgram(const char *name, const char *argument)
+/* Runs a program with one argument. Returns its exit code, or -1 if it can't be run. The reset
+ * before each program clears the port's settings, so --mt32-short-waits goes along again. */
+static int16_t RunProgram(const char *name, const char *argument, uint8_t shortWaits)
 {
+	char *arguments[2];
 	int16_t i;
 
+	arguments[0] = (char *) argument;
+	arguments[1] = "--mt32-short-waits";
 	for (i = 0; i < (int16_t) (sizeof Programs / sizeof Programs[0]); ++i) {
 		if (stricmp(name, Programs[i].name) == 0)
-			return plat_run_program(name, 1, (char **) &argument);
+			return plat_run_program(name, shortWaits ? 2 : 1, arguments);
 	}
 	return -1;
 }
@@ -153,12 +160,14 @@ int16_t Ultima7Main(int16_t argc, char **argv)
 	int16_t next = DO_MENU_M;
 	int16_t gameArgc = 0;
 	char **gameArgs;
+	uint8_t shortWaits;
 	int16_t i;
 
 	/* the game gets our own arguments, with "p" added; bad switches stop us before it starts */
 	gameArgs = (char **) calloc(argc + 1, sizeof *gameArgs);
 	if (TranslateSwitches(argc, argv, gameArgs) < 0)
 		return 1;
+	shortWaits = Mt32ShortWaits;
 	for (i = 1; i < argc; ++i)
 		gameArgs[gameArgc++] = argv[i];
 	gameArgs[gameArgc++] = "p";
@@ -168,34 +177,34 @@ int16_t Ultima7Main(int16_t argc, char **argv)
 		case DO_QUIT:
 			return 0;
 		case DO_INTRO:
-			next = RunProgram("intro", Password);
+			next = RunProgram("intro", Password, shortWaits);
 			break;
 		case DO_MENU_V:
-			next = RunProgram("mainmenu", "v");
+			next = RunProgram("mainmenu", "v", shortWaits);
 			break;
 		case DO_GAME:
 			next = plat_run_program("u7", gameArgc, gameArgs);
 			break;
 		case DO_ENDGAME:
-			next = RunProgram("endgame", Password);
+			next = RunProgram("endgame", Password, shortWaits);
 			break;
 		case DO_MENU_N:
-			if (RunProgram("mainmenu", "n") < 0)
+			if (RunProgram("mainmenu", "n", shortWaits) < 0)
 				next = -1;
 			else
 				next = 0;
 			break;
 		case DO_MENU_C:
-			next = RunProgram("mainmenu", "c");
+			next = RunProgram("mainmenu", "c", shortWaits);
 			break;
 		case DO_SURPRISE:
-			next = RunProgram("surprise", "u1");
+			next = RunProgram("surprise", "u1", shortWaits);
 			break;
 		case DO_MENU_M:
-			next = RunProgram("mainmenu", "m");
+			next = RunProgram("mainmenu", "m", shortWaits);
 			break;
 		case DO_MENU_L:
-			next = RunProgram("mainmenu", "l");
+			next = RunProgram("mainmenu", "l", shortWaits);
 			break;
 		default:
 			plat_log("Thank you for playing Ultima VII, The Black Gate!\n\n");

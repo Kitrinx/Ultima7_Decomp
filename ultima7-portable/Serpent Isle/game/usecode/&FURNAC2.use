@@ -1,0 +1,63 @@
+Routine Auto1 accepts a0 #locals(0) #uses(AutoUsable_i) {
+    if ((event = _NearDeath) and ~GetItemFlag_i(_Tournament, item)) {
+        ClearItemFlag_i(_Tournament, item);
+        ReduceHits_i(0, 50, item);
+        flag(521) = true;
+        terminate;
+    }
+    AutoUsable_i();
+}
+
+Routine Auto2 accepts a0 #locals(0) #uses(AutoUsable_i) {
+    if ((event = _NearDeath) and ~GetItemFlag_i(_Tournament, item)) {
+        ClearItemFlag_i(_Tournament, item);
+        ReduceHits_i(0, 50, item);
+        flag(522) = true;
+        terminate;
+    }
+    AutoUsable_i();
+}
+
+Routine Auto3 accepts a0 #locals(0) #uses(AutoUsable_i) {
+    if ((event = _NearDeath) and ~GetItemFlag_i(_Tournament, item)) {
+        ClearItemFlag_i(_Tournament, item);
+        ReduceHits_i(0, 50, item);
+        flag(523) = true;
+        terminate;
+    }
+    AutoUsable_i();
+}
+
+Routine Auto4 accepts a0 #locals(0) #uses(AutoUsable_i) {
+    if ((event = _NearDeath) and ~GetItemFlag_i(_Tournament, item)) {
+        ClearItemFlag_i(_Tournament, item);
+        ReduceHits_i(0, 50, item);
+        flag(524) = true;
+        terminate;
+    }
+    AutoUsable_i();
+}
+
+Routine ShaminoCastleEgg_i accepts a0 #locals(1) #uses(Bark_i, ~AskYesNo, ~GiveItemsOrDrop_i) {
+    if ((event = _Trigger) and ~GetItemFlag_i(_InParty_i, _Shamino)) {
+        Bark_i(2, "@I know this place!@", _Shamino);
+        Item_destroy(item);
+        v0 = ~PostInFuture(12, << _aNO_HALT_i, _aUSABLE_i, #ShaminoCastleEgg_i >>, _Avatar);
+    }
+    if (event = _Action) {
+        ClearBark_i(_Shamino);
+        SetSpeaker0_i(0, _Shamino);
+        ["I never thought to see this again!"];
+        ["Avatar, this castle thou dost see before thee was once mine home. This was once my kingdom -- And once, so long ago that mine heart alone remembers, within these walls dwelt the fairest lady who ever lived... Oh, my poor Beatrix! Left alone so very long ago..."];
+        ["But such remorse doth do us no good now... She is long since dust, I fear, and our peril now is real. If thou wishest, I can draw thee a map of mine home, as once I knew it."];
+        if (~AskYesNo() = true) {
+            ["I do not know what changes were made after I left, Avatar. But perhaps this will help."];
+            v0 = ~GiveItemsOrDrop_i(true, false, 4, 65177, 178, 1, _Avatar);
+        } else {
+            ["'Tis just as well... I do not know what changes were made after I left. It probably would not help."];
+        }
+        ["I seem to recall that there was a secret entrance to the west..."];
+        ["But that was a long time ago. I doubt that the two great trees near the illusionary mountain entrance are still there. The secret entrance would be most difficult to find should its landmarks be gone."];
+        ["'Tis a pity that so much hath changed without my being here..."];
+    }
+}

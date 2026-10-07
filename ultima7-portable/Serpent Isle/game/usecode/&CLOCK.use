@@ -1,0 +1,39 @@
+Routine Sundial accepts a0 #locals(2) #uses(~AvatarName, MemberSays_i) {
+    if (event = _Converse) {
+        v0 = ~GetHour();
+        if ((v0 >= 6) and (v0 <= 11)) {
+            Item_bark(((" " + ~GetHour()) + " o'clock"), item);
+            return;
+        }
+        if (v0 = 12) {
+            Item_bark("Noon", item);
+            return;
+        }
+        if ((v0 >= 13) and (v0 <= 20)) {
+            v0 = (v0 - 12);
+            Item_bark(((" " + v0) + " o'clock"), item);
+            return;
+        } else {
+            v1 = ~AvatarName();
+            MemberSays_i("@^<Avatar>, I believe the important part of the word sundial is `sun'.@");
+        }
+    }
+}
+
+Routine G_Clock accepts a0 #locals(3) {
+    if (event = _Converse) {
+        v0 = ~GetHour();
+        if (v0 > 12) {
+            v0 = (v0 - 12);
+        }
+        if (v0 = 0) {
+            v0 = 12;
+        }
+        v1 = ~GetMinute_i();
+        if (v1 < 10) {
+            v1 = ("0" + v1);
+        }
+        v2 = (((" " + v0) + ":") + v1);
+        Item_bark(v2, item);
+    }
+}

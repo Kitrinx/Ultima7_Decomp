@@ -1,0 +1,263 @@
+Routine Paladin accepts a0 #locals(6) #uses(AttackAvatar_i) {
+    if $MONITOR_BANQUET_STARTED {
+        terminate;
+    }
+    v0 = ~ChangeNPCStat_i(5, _Hits, item);
+    if (~ListSize_i(~FindNearby_i(0, 30, _Pikeman, _Avatar)) > 6) {
+        terminate;
+    }
+    v1 = ~CreateCreature_i(<< 0, 0, 0 >>, _Pikeman);
+    if v1 {
+        v0 = ~ApproachAvatar_i(40, 90, v1);
+        if v0 {
+            AttackAvatar_i(v1);
+            v2 = ~GetParty();
+            Foreach v5 in v2 {
+                Npc_setTarget(v1, item);
+                SetAttacker_i(v1, item);
+            }
+        }
+    }
+    SetItemFlag_i(_Asleep, item);
+}
+
+Routine Paldn2 accepts a0 #locals(12) #uses(BarkIfNear_i, Bark_i, ~GimmePathEgg, UndressAvatar_i, ~GiveItemsOrDrop_i, ~OrderList_i, SetWorkTypeAt_i, ~BrendannBedDistance_i, ~PartyUtters, ~RemoveFromList_i) {
+    if (event = _Path_Failure) {
+        if ((~GetNPCID_i(_Brendann) = 8) and (item = ~NPCToItem_i(_Avatar))) {
+            event = 13;
+        }
+        if ((~GetNPCID_i(_Brendann) = 6) and (item = ~NPCToItem_i(_Brendann))) {
+            SetWorkType(_Wait, _Brendann);
+            SetNPCID_i(7, _Brendann);
+            v0 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #Paldn2 >>, _Brendann);
+            v0 = ("@Thank thee...@" & "@Goodbye!@");
+            BarkIfNear_i(v0, _Brendann);
+            terminate;
+        }
+        if ((~GetNPCID_i(_Brendann) = 2) and (item = ~NPCToItem_i(_Avatar))) {
+            ClearBark_i(_Avatar);
+            Bark_i(4, "@Yes!@", _Avatar);
+            ClearBark_i(_Brendann);
+            Bark_i(7, "@Oh, my!@", _Brendann);
+            SetWorkType(_Wait, _Avatar);
+            $temp2flag = true;
+            if $temp3flag {
+                SetNPCID_i(3, _Brendann);
+                v0 = ~PostAction(<< _aNO_HALT_i, _aFACE_i, _North, _aUSABLE_i, #Paldn2, _aLIE_FRAME_i >>, _Avatar);
+            } else {
+                v0 = ~PostAction(<< _aNO_HALT_i, _aFACE_i, _North, _aLIE_FRAME_i >>, _Avatar);
+            }
+            terminate;
+        }
+        if ((~GetNPCID_i(_Brendann) > 0) and (item = ~NPCToItem_i(_Avatar))) {
+            event = 13;
+        }
+        if ((~GetNPCID_i(_Brendann) > 0) and (item = ~NPCToItem_i(_Brendann))) {
+            SetWorkType(_Wait, _Brendann);
+            $temp1flag = true;
+            v0 = ~FindNearby_i(0, 10, _Bed_NS, item);
+            Foreach v3 in v0 {
+                if (~GetFrame(v3) = 13) {
+                    SetFrame(14, v3);
+                }
+            }
+            v0 = ~PostAction(<< _aNO_HALT_i, _aFACE_i, _North, _aUSABLE_i, #Paldn2, _aLIE_FRAME_i >>, _Brendann);
+            terminate;
+        }
+        if ((~GetNPCID_i(_Brendann) = 0) and (item = ~NPCToItem_i(_Brendann))) {
+            event = 13;
+        }
+    }
+    if (event = _Path_Success) {
+        SetWorkType(_Wait, item);
+        if ((~GetNPCID_i(_Brendann) = 8) and (item = ~NPCToItem_i(_Avatar))) {
+            Polymorph_i(_Avatar_Type, _Avatar);
+            Sfx(1);
+            ClearItemFlag_i(_DontMove_i, _Avatar);
+            ClearSpeakers_i();
+            Bark_i(0, "@What a beautiful morning!@", _Avatar);
+            SetMusic(~GimmePathEgg(1, 5), 22);
+            terminate;
+        }
+        if ((~GetNPCID_i(_Brendann) = 6) and (item = ~NPCToItem_i(_Brendann))) {
+            SetNPCID_i(7, _Brendann);
+            v0 = ~PostAction(<< _aNO_HALT_i, _aFACE_i, _West, _aWAIT_i, 2, _aBEND_FRAME_i, _aSFX_i, 36, _aWAIT_i, 2, _aSTAND_FRAME_i, _aUSABLE_i, #Paldn2 >>, _Brendann);
+            v0 = ("@Thank thee...@" & "@Goodbye!@");
+            BarkIfNear_i(v0, _Brendann);
+            terminate;
+        }
+        if ((~GetNPCID_i(_Brendann) = 2) and (item = ~NPCToItem_i(_Avatar))) {
+            ClearBark_i(_Avatar);
+            Bark_i(4, "@Yes!@", _Avatar);
+            ClearBark_i(_Brendann);
+            Bark_i(7, "@Oh, my!@", _Brendann);
+            SetWorkType(_Wait, _Avatar);
+            $temp2flag = true;
+            if $temp3flag {
+                SetNPCID_i(3, _Brendann);
+                v0 = ~PostAction(<< _aNO_HALT_i, _aFACE_i, _North, _aWAIT_i, 2, _aBEND_FRAME_i, _aSFX_i, 134, _aWAIT_i, 2, _aLIE_FRAME_i, _aWAIT_i, 2, _aUSABLE_i, #Paldn2 >>, _Avatar);
+            } else {
+                v0 = ~PostAction(<< _aNO_HALT_i, _aFACE_i, _North, _aWAIT_i, 2, _aBEND_FRAME_i, _aSFX_i, 134, _aWAIT_i, 2, _aLIE_FRAME_i >>, _Avatar);
+            }
+            terminate;
+        }
+        if ((~GetNPCID_i(_Brendann) > 0) and (item = ~NPCToItem_i(_Avatar))) {
+            SetWorkType(_Wait, _Avatar);
+            SetNPCID_i(2, _Brendann);
+            UndressAvatar_i();
+            Sfx(1);
+            v0 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #Paldn2 >>, _Avatar);
+            terminate;
+        }
+        if ((~GetNPCID_i(_Brendann) > 0) and (item = ~NPCToItem_i(_Brendann))) {
+            $temp1flag = true;
+            v0 = ~FindNearby_i(0, 10, _Bed_NS, item);
+            Foreach v3 in v0 {
+                if (~GetFrame(v3) = 13) {
+                    SetFrame(14, v3);
+                }
+            }
+            v0 = ~PostAction(<< _aNO_HALT_i, _aFACE_i, _North, _aWAIT_i, 2, _aBEND_FRAME_i, _aSFX_i, 134, _aWAIT_i, 2, _aUSABLE_i, #Paldn2, _aLIE_FRAME_i >>, _Brendann);
+            terminate;
+        }
+        if ((~GetNPCID_i(_Brendann) = 0) and (item = ~NPCToItem_i(_Brendann))) {
+            ClearBark_i(_Brendann);
+            Bark_i(3, "@I am so ready...@", _Brendann);
+            Polymorph_i(_Papa_Type, _Brendann);
+            Sfx(1);
+            SetNPCID_i(1, _Brendann);
+            SetWorkType(_Wait, _Brendann);
+            PathfindNPC_i(false, #Paldn2, ~NPCToItem_i(_Avatar), _Path_Success, << 935, 2627, 0 >>, _Avatar);
+            SetPathFailure_i(_Path_Failure, ~NPCToItem_i(_Avatar), #Paldn2);
+            ClearBark_i(_Avatar);
+            Bark_i(0, "@I should change...@", _Avatar);
+            v0 = ~PostAction(<< _aNO_HALT_i, _aUP_FRAME_i, _aWAIT_i, 2, _aUSABLE_i, #Paldn2 >>, _Brendann);
+            terminate;
+        }
+    }
+    if (event = _Action) {
+        if ($temp1flag and (item = ~NPCToItem_i(_Brendann))) {
+            $temp1flag = false;
+            SetNPCID_i(3, _Brendann);
+            Item_move(<< 931, 2634, 1 >>, _Brendann);
+            $temp3flag = true;
+            if $temp2flag {
+                SetNPCID_i(3, _Brendann);
+                v0 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #Paldn2 >>, _Brendann);
+            }
+            terminate;
+        }
+        if (~GetNPCID_i(_Brendann) = 8) {
+            ClearBark_i(_Avatar);
+            Bark_i(3, "@I should dress myself...@", _Avatar);
+            PathfindNPC_i(false, #Paldn2, ~NPCToItem_i(_Avatar), _Path_Success, << 935, 2627, 0 >>, _Avatar);
+            SetPathFailure_i(_Path_Failure, ~NPCToItem_i(_Avatar), #Paldn2);
+            terminate;
+        }
+        if (~GetNPCID_i(_Brendann) = 7) {
+            SetNPCID_i(8, _Brendann);
+            Npc_schedule(_Brendann);
+            v0 = ~PostInFuture(5, << _aNO_HALT_i, _aUSABLE_i, #Paldn2 >>, _Avatar);
+            terminate;
+        }
+        if (~GetNPCID_i(_Brendann) = 6) {
+            PathfindNPC_i(false, #Paldn2, ~NPCToItem_i(_Brendann), _Path_Success, << 932, 2631, 0 >>, _Brendann);
+            SetPathFailure_i(_Path_Failure, ~NPCToItem_i(_Brendann), #Paldn2);
+            terminate;
+        }
+        if (~GetNPCID_i(_Brendann) = 5) {
+            SetNPCID_i(6, _Brendann);
+            ClearSpeakers_i();
+            SetSpeaker0_i(0, _Brendann);
+            ["Once again, thou hast proved thyself to be the love of my life. When I write my book, I shall dedicate it to thee, my love."];
+            EndConverse_i();
+            v0 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #Paldn2 >>, _Brendann);
+            terminate;
+        }
+        if (~GetNPCID_i(_Brendann) = 4) {
+            SetNPCID_i(6, _Brendann);
+            ClearSpeakers_i();
+            SetSpeaker0_i(0, _Brendann);
+            ["Thou art the woman of my dreams! I have never felt so refreshed. What an experience..."];
+            ["As a sign of mine appreciation and great affection for thee, please accept this gift. It is my greatest possession."];
+            ["Gwani cloaks are most rare, and are worn by the Goblins as a token of great bravery. I slew the chieftain who once wore this cloak!"];
+            ["Please wear it, and remember me always."];
+            ClearBark_i(_Brendann);
+            Bark_i(0, "@Always...@", _Brendann);
+            v0 = ~GiveItemsOrDrop_i(true, 0, 4, 65177, 227, 1, _Avatar);
+            EndConverse_i();
+            $GAINED_GWANI_CLOAK = true;
+            v0 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #Paldn2 >>, _Brendann);
+            terminate;
+        }
+        if (~GetNPCID_i(_Brendann) = 3) {
+            $temp2flag = false;
+            $temp3flag = false;
+            if $GAINED_GWANI_CLOAK {
+                SetNPCID_i(5, _Brendann);
+            } else {
+                SetNPCID_i(4, _Brendann);
+            }
+            FadePalette_i(0, 1, 12);
+            AdvanceTime_i((1500 * 12));
+            v0 = ~OrderList_i();
+            Foreach v3 in v0 {
+                if ~IsNPCInArea_i(v3) {
+                    SetWorkTypeAt_i(_EatAtInn, 2639, 1033, v3);
+                }
+            }
+            Item_move(<< 932, 2642, 0 >>, _Brendann);
+            SetWorkType(_Wait, _Brendann);
+            Item_move(<< 931, 2634, 1 >>, _Avatar);
+            Polymorph_i(_Paldn2, _Brendann);
+            v0 = ~PostInFuture(30, << _aNO_HALT_i, _aFACE_i, _West, _aSIT_FRAME_i, _aWAIT_i, 2, _aUSABLE_i, #FadeInArrival_i, _aWAIT_i, 2, _aBEND_FRAME_i, _aSTAND_FRAME_i, _aFACE_i, _North, _aWAIT_i, 2, _aUSABLE_i, #Paldn2 >>, _Brendann);
+            ClearBark_i(_Avatar);
+            Bark_i(35, "@Where am I?@", _Avatar);
+            ClearBark_i(_Brendann);
+            Bark_i(31, "@Darling...@", _Brendann);
+            terminate;
+        }
+        if (~GetNPCID_i(_Brendann) = 2) {
+            ClearBark_i(_Avatar);
+            Bark_i(0, "@I am ready...@", _Avatar);
+            ClearBark_i(_Brendann);
+            Bark_i(3, "@As am I!@", _Brendann);
+            PathfindNPC_i(false, #Paldn2, ~NPCToItem_i(_Avatar), _Path_Success, << 932, 2635, 0 >>, _Avatar);
+            SetPathFailure_i(_Path_Failure, ~NPCToItem_i(_Avatar), #Paldn2);
+            terminate;
+        }
+        if (~GetNPCID_i(_Brendann) = 1) {
+            PathfindNPC_i(false, #Paldn2, ~NPCToItem_i(_Brendann), _Path_Success, << 931, 2635, 0 >>, _Brendann);
+            SetPathFailure_i(_Path_Failure, ~NPCToItem_i(_Brendann), #Paldn2);
+            terminate;
+        }
+        if (~GetNPCID_i(_Brendann) = 0) {
+            SetSpeaker0_i(0, _Brendann);
+            if (~BrendannBedDistance_i() < 15) {
+                ["I have been ready since the moment I first saw thee!"];
+                if (~ListSize_i(~GetParty()) > 1) {
+                    v8 = ~PartyUtters(false, 0, "@Er, um, I believe I need some fresh air... I'll wait at the pub.@", 1);
+                    v0 = ~RemoveFromList_i(~GetParty_i(), ~NPCToItem_i(_Avatar));
+                    Foreach v11 in v0 {
+                        LeaveParty(v11);
+                        NewSchedule_i(<< 948, 2671 >>, _Wander, 0, v11);
+                        Npc_schedule(v11);
+                    }
+                    Bark_i(0, "@Farewell...@", v11);
+                }
+                EndConverse_i();
+                SetItemFlag_i(_DontMove_i, _Avatar);
+                PathfindNPC_i(false, #Paldn2, ~NPCToItem_i(_Brendann), _Path_Success, << 933, 2627, 0 >>, _Brendann);
+                SetPathFailure_i(_Path_Failure, ~NPCToItem_i(_Brendann), #Paldn2);
+                ClearBark_i(_Brendann);
+                Bark_i(0, "@Come, my love!@", _Brendann);
+                terminate;
+            } else {
+                ["This is not a good time, my love. Perhaps thou couldst come some other morning."];
+                Bark_i(0, "@Adieu...@", _Brendann);
+                SetWorkType(_Shy, _Brendann);
+                terminate;
+            }
+        }
+    }
+}

@@ -1,0 +1,67 @@
+Routine Neyobi accepts a0 #locals(4) #uses(~PartyUtters, Bark_i, ~AskYesNo) {
+    if (event = _Converse) {
+        v0 = ~GetItemFlag_i(_Zombie, _Neyobi);
+        if v0 {
+            Item_bark("@Wake up, little one!@", _Avatar);
+            v1 = ~PartyUtters(false, "@Poor little one! She is very sick.@", "@She cannot wake, Avatar. She is very sick.@", 1);
+            terminate;
+        } else {
+            Item_bark("@Good morning, little one!@", _Avatar);
+            Bark_i(3, "@Tee hee hee hee!@", _Neyobi);
+            SetWorkType(_Talk, _Neyobi);
+        }
+    }
+    if (event = _Talking) {
+        Npc_schedule(_Neyobi);
+        ClearBark_i(_Neyobi);
+        SetSpeaker0_i(0, _Neyobi);
+        ["Thou be Avatar! Thou nice!"];
+        TurnOn(<< "name", "What art thou doing?", "bye" >>);
+        converse {
+            key ("name") {
+                TurnOff("name");
+                ["Mother say thou found medicine make me better. Thank thou! My name Neyobi! Thou know what that mean?"];
+                v2 = ~AskYesNo();
+                if v2 {
+                    ["Then thou very smart!"];
+                } else {
+                    ["It mean 'little dew drops' and also mean my name. Neyobi! Me!"];
+                }
+            }
+            key ("What art thou doing?") {
+                TurnOff("What art thou doing?");
+                ["Early today I play! I like look at clouds! Other day I saw one that look like penguin! Later, mother and Baiyanda teach lessons."];
+                TurnOn(<< "mother", "Baiyanda", "lessons" >>);
+            }
+            key ("mother") {
+                TurnOff("mother");
+                ["Yenani, silly! She chieftain of our tribe. She tell me one day, after I grow, that what I be."];
+            }
+            key ("Baiyanda") {
+                TurnOff("Baiyanda");
+                v3 = ~GetItemFlag_i(_Dead, _Baiyanda);
+                if v3 {
+                    ["I not see her in long time! I miss her lot."];
+                } else {
+                    ["She healer, and smartest person in whole world!"];
+                }
+            }
+            key ("lessons") {
+                TurnOff("lessons");
+                ["Mother tells me the stories of the old days. She also teach me language of Men. She say Gwani very good at learn languages. Especially young ones."];
+                v3 = ~GetItemFlag_i(_Dead, _Baiyanda);
+                if not v3 {
+                    ["Baiyanda teach me about plants and things."];
+                }
+            }
+            key ("bye") {
+                CloseSpeaker0_i();
+                CloseSpeaker1_i();
+                Bark_i(0, "@Have fun, little one.@", _Avatar);
+                Bark_i(3, "@Bye!@", _Neyobi);
+                break;
+            }
+        }
+        clear_answers;
+    }
+}

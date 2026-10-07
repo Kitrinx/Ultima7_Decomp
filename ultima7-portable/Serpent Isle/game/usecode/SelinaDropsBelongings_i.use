@@ -1,0 +1,25 @@
+Usable SelinaDropsBelongings_i #locals(5) {
+    v0 = ~GetContents(_All, _All, _All, _Selina);
+    v1 = ~GetCoord(_Selina);
+    Foreach v4 in v0 {
+        if not ((~Item_getType(v4) = _Magic_Rings) and (~GetFrame(v4) = 2)) {
+            v4 = ~Item_push(v4);
+            if v4 {
+                SetItemFlag_i(_OkayToTake_i, v4);
+                v4 = ~PopToMap(v1);
+                if not v4 {
+                    v4 = ~PopToMap(<< (v1::1 - 2), v1::2, v1::3 >>);
+                }
+                if not v4 {
+                    v4 = ~PopToMap(<< v1::1, (v1::2 - 2), v1::3 >>);
+                }
+                if not v4 {
+                    v4 = ~PopToMap(<< (v1::1 + 2), v1::2, v1::3 >>);
+                }
+                if not v4 {
+                    v4 = ~PopToMap(<< v1::1, (v1::2 + 2), v1::3 >>);
+                }
+            }
+        }
+    }
+}

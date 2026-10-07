@@ -1,0 +1,270 @@
+Routine DeathVortexSpell_i accepts a0 #locals(4) #uses(~DirFromAvatar_i, ~IsMagicOK_i) {
+    if (event = _Converse) {
+        v0 = ~GetTarget();
+        v1 = ~DirFromAvatar_i(v0);
+        Kernel_resetRef(item);
+        Item_bark("@Vas Corp Hur@", item);
+        if ~IsMagicOK_i() {
+            v2 = ~SetAttack_i(_M_Dea_Vortex, v0, item);
+            v3 = ~PostAction(<< _aNO_HALT_i, _aFACE_i, v1, _aSFX_i, 20, _aUP_FRAME_i, _aTHRUST1_FRAME_i, _aATTACK_i >>, item);
+        } else {
+            v2 = ~PostAction(<< _aNO_HALT_i, _aFACE_i, v1, _aUP_FRAME_i, _aTHRUST1_FRAME_i, _aUSABLE_i, #FizzleSpell_i >>, item);
+        }
+    }
+}
+
+Routine MassDeathSpell_i accepts a0 #locals(13) #uses(~IsMagicOK_i, DoDamage_i) {
+    if (event = _Converse) {
+        Kernel_resetRef(item);
+        Item_bark("@Vas Corp@", item);
+        if ~IsMagicOK_i() {
+            CreateSpriteOn_i(65535, 0, 0, 0, 65534, 65534, 7, item);
+            v0 = ~PostAction(<< _aNO_HALT_i, _aSFX_i, 20, _aKNEEL_FRAME_i, _aSTAND_FRAME_i, _aUP_FRAME_i, _aOUT_FRAME_i, _aSFX_i, 130 >>, item);
+            v1 = 25;
+            v2 = ~FindNearby_i(4, v1, 65535, item);
+            v3 = ~GetParty_i();
+            v4 = false;
+            Foreach v7 in v2 {
+                if not (v7 in v3) {
+                    v1 = ~GetDist(v7, item);
+                    v1 = ((v1 / 3) + 5);
+                    Kernel_resetRef(v7);
+                    v0 = ~PostInFuture(v1, << _aNO_HALT_i, _aUSABLE_i, #MassDeathSpell_i >>, v7);
+                    v4 = true;
+                }
+            }
+            if (v4 = true) {
+                v3 = ~GetParty();
+                Foreach v10 in v3 {
+                    v11 = ~GetNPCStat_i(_Hits, v10);
+                    DoDamage_i((v11 - 2), v10);
+                }
+            }
+        } else {
+            v0 = ~PostAction(<< _aNO_HALT_i, _aKNEEL_FRAME_i, _aSTAND_FRAME_i, _aUP_FRAME_i, _aOUT_FRAME_i, _aUSABLE_i, #FizzleSpell_i >>, item);
+        }
+    }
+    if (event = _Action) {
+        v12 = ~GetItemFlag_i(_CantDie_i, item);
+        if (v12 = false) {
+            v11 = ~GetNPCStat_i(_Hits, item);
+            DoDamage_i((v11 - 2), item);
+            DoDamage_i(50, item);
+        }
+    }
+}
+
+Routine InvisibleAllSpell_i accepts a0 #locals(7) #uses(~IsMagicOK_i) {
+    if (event = _Converse) {
+        Kernel_resetRef(item);
+        Item_bark("@Vas Sact Lor@", item);
+        if ~IsMagicOK_i() {
+            CreateSpriteOn_i(65535, 0, 0, 0, 65534, 65534, 7, item);
+            v0 = ~PostAction(<< _aNO_HALT_i, _aRAISE1_FRAME_i, _aSFX_i, 130, _aSTAND_FRAME_i, _aUP_FRAME_i, _aSTAND_FRAME_i, _aTHRUST2_FRAME_i >>, item);
+            v1 = ~GetParty();
+            Foreach v4 in v1 {
+                v5 = ~GetDist(v4, item);
+                v5 = ((v5 / 3) + 5);
+                v0 = ~PostInFuture(v5, << _aNO_HALT_i, _aUSABLE_i, #InvisibleAllSpell_i >>, v4);
+            }
+        } else {
+            v6 = ~PostAction(<< _aNO_HALT_i, _aRAISE1_FRAME_i, _aSTAND_FRAME_i, _aUP_FRAME_i, _aSTAND_FRAME_i, _aTHRUST2_FRAME_i, _aUSABLE_i, #FizzleSpell_i >>, item);
+        }
+    }
+    if (event = _Action) {
+        SetItemFlag_i(_Invisible, item);
+    }
+}
+
+Routine SpiralMissilesSpell_i accepts a0 #locals(8) #uses(~IsMagicOK_i, ~NPCLevel_i, ~EnemyList_i) {
+    if (event = _Converse) {
+        Kernel_resetRef(item);
+        Item_bark("Uus Vas Jux Ylem@", item);
+        if ~IsMagicOK_i() {
+            CreateSpriteOn_i(65535, 0, 0, 0, 65534, 65534, 7, item);
+            v0 = ~PostAction(<< _aNO_HALT_i, _aRAISE1_FRAME_i, _aRAISE2_FRAME_i, _aRAISE2_FRAME_i, _aTHRUST2_FRAME_i, _aEXTEND2_FRAME_i, _aSFX_i, 67 >>, item);
+            v1 = (~NPCLevel_i(_Avatar) + ~rndRange(4, 1));
+            if (v1 > 8) {
+                v0 = ~PostInFuture(5, << _aNO_HALT_i, _aUSABLE_i, #SpiralMissilesSpell_i >>, item);
+                v0 = ~PostInFuture(6, << _aNO_HALT_i, _aUSABLE_i, #SpiralMissilesSpell_i >>, item);
+                v0 = ~PostInFuture(7, << _aNO_HALT_i, _aUSABLE_i, #SpiralMissilesSpell_i >>, item);
+                v0 = ~PostInFuture(8, << _aNO_HALT_i, _aUSABLE_i, #SpiralMissilesSpell_i >>, item);
+                v0 = ~PostInFuture(9, << _aNO_HALT_i, _aUSABLE_i, #SpiralMissilesSpell_i >>, item);
+                v0 = ~PostInFuture(10, << _aNO_HALT_i, _aUSABLE_i, #SpiralMissilesSpell_i >>, item);
+                v0 = ~PostInFuture(11, << _aNO_HALT_i, _aUSABLE_i, #SpiralMissilesSpell_i >>, item);
+                v0 = ~PostInFuture(12, << _aNO_HALT_i, _aUSABLE_i, #SpiralMissilesSpell_i >>, item);
+                v0 = ~PostInFuture(13, << _aNO_HALT_i, _aUSABLE_i, #SpiralMissilesSpell_i >>, item);
+            }
+            if (v1 = 8) {
+                v0 = ~PostInFuture(5, << _aNO_HALT_i, _aUSABLE_i, #SpiralMissilesSpell_i >>, item);
+                v0 = ~PostInFuture(6, << _aNO_HALT_i, _aUSABLE_i, #SpiralMissilesSpell_i >>, item);
+                v0 = ~PostInFuture(7, << _aNO_HALT_i, _aUSABLE_i, #SpiralMissilesSpell_i >>, item);
+                v0 = ~PostInFuture(8, << _aNO_HALT_i, _aUSABLE_i, #SpiralMissilesSpell_i >>, item);
+                v0 = ~PostInFuture(9, << _aNO_HALT_i, _aUSABLE_i, #SpiralMissilesSpell_i >>, item);
+                v0 = ~PostInFuture(10, << _aNO_HALT_i, _aUSABLE_i, #SpiralMissilesSpell_i >>, item);
+                v0 = ~PostInFuture(11, << _aNO_HALT_i, _aUSABLE_i, #SpiralMissilesSpell_i >>, item);
+                v0 = ~PostInFuture(12, << _aNO_HALT_i, _aUSABLE_i, #SpiralMissilesSpell_i >>, item);
+            }
+            if (v1 = 7) {
+                v0 = ~PostInFuture(5, << _aNO_HALT_i, _aUSABLE_i, #SpiralMissilesSpell_i >>, item);
+                v0 = ~PostInFuture(6, << _aNO_HALT_i, _aUSABLE_i, #SpiralMissilesSpell_i >>, item);
+                v0 = ~PostInFuture(7, << _aNO_HALT_i, _aUSABLE_i, #SpiralMissilesSpell_i >>, item);
+                v0 = ~PostInFuture(8, << _aNO_HALT_i, _aUSABLE_i, #SpiralMissilesSpell_i >>, item);
+                v0 = ~PostInFuture(9, << _aNO_HALT_i, _aUSABLE_i, #SpiralMissilesSpell_i >>, item);
+                v0 = ~PostInFuture(10, << _aNO_HALT_i, _aUSABLE_i, #SpiralMissilesSpell_i >>, item);
+                v0 = ~PostInFuture(11, << _aNO_HALT_i, _aUSABLE_i, #SpiralMissilesSpell_i >>, item);
+            }
+            if (v1 < 7) {
+                v0 = ~PostInFuture(5, << _aNO_HALT_i, _aUSABLE_i, #SpiralMissilesSpell_i >>, item);
+                v0 = ~PostInFuture(6, << _aNO_HALT_i, _aUSABLE_i, #SpiralMissilesSpell_i >>, item);
+                v0 = ~PostInFuture(7, << _aNO_HALT_i, _aUSABLE_i, #SpiralMissilesSpell_i >>, item);
+                v0 = ~PostInFuture(8, << _aNO_HALT_i, _aUSABLE_i, #SpiralMissilesSpell_i >>, item);
+                v0 = ~PostInFuture(9, << _aNO_HALT_i, _aUSABLE_i, #SpiralMissilesSpell_i >>, item);
+                v0 = ~PostInFuture(10, << _aNO_HALT_i, _aUSABLE_i, #SpiralMissilesSpell_i >>, item);
+            }
+        } else {
+            v0 = ~PostAction(<< _aNO_HALT_i, _aRAISE1_FRAME_i, _aRAISE2_FRAME_i, _aRAISE2_FRAME_i, _aTHRUST2_FRAME_i, _aEXTEND2_FRAME_i, _aUSABLE_i, #FizzleSpell_i >>, item);
+        }
+    }
+    if (event = _Action) {
+        v2 = 25;
+        v3 = ~EnemyList_i(v2);
+        v4 = ~ListSize_i(v3);
+        if v3 {
+            v5 = ~Random(v4);
+            v6 = v3::v5;
+            v7 = ~SetAttack_i(_M_Lightning, v6, item);
+            v0 = ~PostAction(<< _aNO_HALT_i, _aATTACK_i >>, item);
+        }
+    }
+}
+
+Routine StopStormSpell_i accepts a0 #locals(1) #uses(~IsMagicOK_i) {
+    if (event = _Converse) {
+        Kernel_resetRef(item);
+        Item_bark("@Rel Hur@", item);
+        if ~IsMagicOK_i() {
+            v0 = ~PostAction(<< _aNO_HALT_i, _aRAISE1_FRAME_i, _aTHRUST1_FRAME_i, _aSFX_i, 57 >>, item);
+            if (~GetWeather_i() <> _Sparkle) {
+                SetWeather_i(_Clear);
+            }
+        } else {
+            v0 = ~PostAction(<< _aNO_HALT_i, _aRAISE1_FRAME_i, _aTHRUST1_FRAME_i, _aUSABLE_i, #FizzleSpell_i >>, item);
+        }
+    }
+}
+
+Routine SummonSpell_i accepts a0 #locals(10) #uses(~IsMagicOK_i, ~ListCount_i) {
+    if (event = _Converse) {
+        Kernel_resetRef(item);
+        Item_bark("Kal Vas Xen", item);
+        if ~IsMagicOK_i() {
+            v0 = ~PostAction(<< _aNO_HALT_i, _aKNEEL_FRAME_i, _aSTAND_FRAME_i, _aUP_FRAME_i, _aOUT_FRAME_i, _aTHRUST2_FRAME_i, _aSFX_i, 20, _aUSABLE_i, #SummonSpell_i >>, item);
+        } else {
+            v0 = ~PostAction(<< _aNO_HALT_i, _aKNEEL_FRAME_i, _aSTAND_FRAME_i, _aUP_FRAME_i, _aOUT_FRAME_i, _aTHRUST2_FRAME_i, _aUSABLE_i, #FizzleSpell_i >>, item);
+        }
+    }
+    if (event = _Action) {
+        v1 = << 528, 337, 533, 501, 514, 661, 706 >>;
+        v2 = << 5, 5, 5, 5, 5, 5, 5 >>;
+        v3 = << 5, 5, 1, 2, 3, 5, 2 >>;
+        v4 = ~ListCount_i(v1);
+        do {
+            v5 = ~rndRange(v4, 1);
+            v6 = ~rndRange(100, 1);
+        } while (v2::v5 < v6);
+        v7 = v3::v5;
+        v8 = (v7 / 2);
+        if (v8 < 1) {
+            v8 = 1;
+        }
+        v9 = ~rndRange(v8, 1);
+        if (~rndRange(2, 1) = 1) {
+            v9 = (65535 * v9);
+        }
+        v7 = (v7 + v9);
+        While v7 {
+            v0 = ~Summon_i(true, v1::v5);
+            v7 = (v7 - 1);
+        }
+    }
+}
+
+Routine TimeStopSpell_i accepts a0 #locals(1) {
+    Kernel_resetRef(item);
+    Item_bark("@An Tym@", item);
+    v0 = ~PostAction(<< _aNO_HALT_i, _aTHRUST2_FRAME_i, _aOUT_FRAME_i, _aUSABLE_i, #FizzleSpell_i >>, item);
+}
+
+Routine ImbalanceSpell_i accepts a0 #locals(3) #uses(~IsMagicOK_i, ~NPCLevel_i) {
+    if (event = _Converse) {
+        Kernel_resetRef(item);
+        v0 = ~GetCoord(item);
+        Item_bark("@Ex Por@", item);
+        if ~IsMagicOK_i() {
+            CreateSpriteOn_i(65535, 0, 65533, 65533, 65534, 65534, 7, item);
+            CreateSpriteOn_i(65535, 0, 65533, 3, 65534, 65534, 7, item);
+            CreateSpriteOn_i(65535, 0, 3, 3, 65534, 65534, 7, item);
+            CreateSpriteOn_i(65535, 0, 3, 65533, 65534, 65534, 7, item);
+            CreateSpriteOn_i(65535, 0, 0, 0, 65534, 65534, 26, item);
+            v1 = ~PostAction(<< _aNO_HALT_i, _aRAISE1_FRAME_i, _aEXTEND2_FRAME_i, _aKNEEL_FRAME_i, _aKNEEL_FRAME_i, _aEXTEND2_FRAME_i, _aSFX_i, 67 >>, item);
+            v2 = (15 + ~NPCLevel_i(_Avatar));
+            While (v2 <> 0) {
+                v2 = (v2 - 1);
+                v1 = ~PostInFuture((v2 + 10), << _aNO_HALT_i, _aUSABLE_i, #CreateImbalanceField_i >>, _Avatar);
+            }
+        } else {
+            v1 = ~PostAction(<< _aNO_HALT_i, _aRAISE1_FRAME_i, _aEXTEND2_FRAME_i, _aKNEEL_FRAME_i, _aKNEEL_FRAME_i, _aEXTEND2_FRAME_i, _aUSABLE_i, #FizzleSpell_i >>, item);
+        }
+    }
+}
+
+Routine CreateImbalanceField_i accepts a0 #locals(18) #uses(~NPCLevel_i) {
+    v0 = << >>;
+    v1 = (10 + ~NPCLevel_i(_Avatar));
+    v2 = ~FindNearby_i(8, v1, _All, item);
+    v3 = ~GetParty();
+    v4 = << >>;
+    Foreach v7 in v2 {
+        if not (v7 in v3) {
+            v4 = (v4 & v7);
+        }
+    }
+    v8 = ~ListSize_i(v4);
+    v9 = ~rndRange(3, 1);
+    if (v9 = 1) {
+        v10 = ~GetCoord(_Avatar);
+        v11 = (v10::1 + ~rndRange(12, 65524));
+        v12 = (v10::2 + ~rndRange(12, 65524));
+        v13 = v10::3;
+        v0 = << v11, v12, 0 >>;
+    } else {
+        if (v8 <> 0) {
+            v14 = ~rndRange(v8, 1);
+            v10 = ~GetCoord(v4::v14);
+            v11 = v10::1;
+            v12 = v10::2;
+            v13 = v10::3;
+            v0 = << v11, v12, v13 >>;
+        }
+    }
+    if (v0 <> << >>) {
+        v15 = ~rndRange(5, 1);
+        v16 = 0;
+        if ((v15 = 1) or (v15 = 2)) {
+            v16 = ~Item_create(_Field_Fire);
+        }
+        if ((v15 = 3) or (v15 = 4)) {
+            v16 = ~Item_create(_Blue_Flame);
+        }
+        if v16 {
+            v15 = ~PopToMap(v0);
+            if v15 {
+                v17 = ~rndRange(15, 5);
+                v15 = ~SetQuality(v17, v16);
+                SetItemFlag_i(_IsTemporary_i, v16);
+                v15 = ~PostInFuture(v17, << _aNO_HALT_i, _aUSABLE_i, #CreateImbalanceField_i, _aREMOVE_i >>, v16);
+            }
+        }
+    }
+}

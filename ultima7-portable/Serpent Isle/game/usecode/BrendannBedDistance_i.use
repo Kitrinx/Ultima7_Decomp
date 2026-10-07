@@ -1,0 +1,367 @@
+Function ~BrendannBedDistance_i #locals(5) {
+    v0 = << 931, 2630, 0 >>;
+    v1 = ~GetCoord(_Brendann);
+    v2 = (v0::1 - v1::1);
+    if (v2 < 0) {
+        v2 = (v2 * 65535);
+    }
+    v3 = (v0::2 - v1::2);
+    if (v3 < 0) {
+        v3 = (v3 * 65535);
+    }
+    v4 = (v2 + v3);
+    return v4;
+}
+
+Routine GatherMonks_i accepts a0 #locals(3) {
+    v0::2 = (v0::2 - 3);
+    v1 = << 65325, 65324, 65323, 65329, 65327, 65322, 65328, 65326 >>;
+    v2 = 0;
+    While (v2 < 7) {
+        if (v2 > 3) {
+            v3 = (v2 - 3);
+            Item_move(<< (v0::1 - v3), (v0::2 + v3), v0::3 >>, v1::v2);
+        } else {
+            Item_move(<< (v0::1 + v2), (v0::2 + v2), v0::3 >>, v1::v2);
+        }
+        SetWorkType(_Wait, v1::v2);
+        SetNPCID_i(v2, v1::v2);
+        v2 = (v2 + 1);
+    }
+}
+
+Function ~IsBaneQuestDone_i #locals(0) {
+    if (($antishaminodead and not ~GetItemFlag_i(_Zombie, _Shamino)) and (($antidupredead and not ~GetItemFlag_i(_Zombie, _Dupre)) and ($antiiolodead and not ~GetItemFlag_i(_Zombie, _Iolo)))) {
+        return true;
+    }
+    return false;
+}
+
+Usable KarnaxAppears_i #locals(1) #uses(~IsBaneQuestDone_i) {
+    if (~IsBaneQuestDone_i() and not ~GetItemFlag_i(_Met, _XenkaMonk_215)) {
+        v0 = ~GetCoord(_Avatar);
+        v0::2 = (v0::2 - 2);
+        Item_move(v0, _Karnax);
+        Sfx(81);
+        SetNPCID_i(31, _Karnax);
+        SetWorkType(_Talk, _Karnax);
+    }
+}
+
+Routine MonkMakesPeace_i accepts a0 #locals(13) #uses(~GetStat, SetStat, ~PartyCompanions_i) {
+    SetSpeaker0_i(0, v0);
+    ["Enough, arrogant fool! Thou canst not kill a Xenkan Monk!"];
+    ["Stand thou in awe of my true power... Let there be PEACE!"];
+    CloseSpeaker0_i();
+    v1 = ~GetCoord(v0);
+    v1::1 = (v1::1 - (v1::3 / 2));
+    v1::2 = (v1::2 - (v1::3 / 2));
+    createSprite(65535, 0, 0, 0, v1::2, v1::1, 26);
+    createSprite(65535, 0, 0, 0, v1::2, v1::1, 7);
+    createSprite(65535, 0, 0, 0, v1::2, v1::1, 7);
+    v2 = << 65325, 65324, 65323, 65329, 65327, 65322, 65328, 65326 >>;
+    Foreach v5 in v2 {
+        Kernel_resetRef(v5);
+        v6 = ~NPCToItem_i(v5);
+        SetWorkType(_Stand, v6);
+        Npc_setAlignment(_Neutral, v6);
+        SetAttacker_i(0, v6);
+        v7 = ~GetStat(_Str, v6);
+        v8 = ~GetStat(_Hits, v6);
+        v9 = (v7 - v8);
+        SetStat(v9, _Hits, v6);
+    }
+    v10 = ~PartyCompanions_i();
+    v10 = << 65180, v10 >>;
+    Foreach v5 in v10 {
+        Kernel_resetRef(v5);
+        v13 = ~PostAction(<< _aNO_HALT_i, _aSTAND_FRAME_i >>, v5);
+        SetWorkType(_FollowAvt, v5);
+        SetAttacker_i(0, v5);
+        v7 = ~GetStat(_Str, v5);
+        v8 = ~GetStat(_Hits, v5);
+        v9 = (v7 - v8);
+        SetStat(v9, _Hits, v5);
+    }
+}
+
+Usable SaveDeathCoord_i #locals(9) #uses(~GimmePathEgg) {
+    v0 = ~GimmePathEgg(1, 2);
+    v1 = ~GimmePathEgg(2, 2);
+    v2 = ~GimmePathEgg(3, 2);
+    v3 = ~GimmePathEgg(4, 2);
+    v4 = ~GimmePathEgg(4, 0);
+    v5 = ~GetCoord(_Avatar);
+    v6 = (v5::1 / 256);
+    v7 = (v5::1 - (v6 * 256));
+    v8 = ~SetQuality(v6, v0);
+    v8 = ~SetQuality(v7, v1);
+    v6 = (v5::2 / 256);
+    v7 = (v5::2 - (v6 * 256));
+    v8 = ~SetQuality(v6, v2);
+    v8 = ~SetQuality(v7, v3);
+    v8 = ~SetQuality(v5::3, v4);
+}
+
+Function ~DeathCoord_i #locals(8) #uses(~GimmePathEgg) {
+    v0 = << 0, 0, 0 >>;
+    v1 = ~GimmePathEgg(1, 2);
+    v2 = ~GimmePathEgg(2, 2);
+    v3 = ~GimmePathEgg(3, 2);
+    v4 = ~GimmePathEgg(4, 2);
+    v5 = ~GimmePathEgg(4, 0);
+    v6 = ~GetQuality(v1);
+    v7 = ~GetQuality(v2);
+    v0::1 = ((v6 * 256) + v7);
+    v6 = ~GetQuality(v3);
+    v7 = ~GetQuality(v4);
+    v0::2 = ((v6 * 256) + v7);
+    v0::3 = ~GetQuality(v5);
+    return v0;
+}
+
+Function ~InRect_i accepts a0, a1, a2 #locals(0) {
+    if ((v2::1 > v1::1) and ((v2::1 < v0::1) and ((v2::2 > v1::2) and (v2::2 < v0::2)))) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+Function ~IsDeathCoordSafe_i #locals(2) #uses(~DeathCoord_i, ~WhereIs_i, ~InRect_i) {
+    v0 = ~DeathCoord_i();
+    v1 = ~WhereIs_i(v0);
+    if (v1 = 4) {
+        return true;
+    }
+    if (v1 = 11) {
+        return true;
+    }
+    if (v1 = 15) {
+        return true;
+    }
+    if (v1 = 12) {
+        return true;
+    }
+    if not ~GetItemFlag_i(_Met, _Flicken) {
+        return true;
+    }
+    if (~InRect_i(<< 2254, 2015 >>, << 2211, 1969 >>, v0) or ~InRect_i(<< 2174, 2109 >>, << 2131, 2081 >>, v0)) {
+        return true;
+    }
+    if ~InRect_i(<< 959, 2780 >>, << 804, 2668 >>, v0) {
+        return true;
+    }
+    if ~InRect_i(<< 1146, 1834 >>, << 1092, 1749 >>, v0) {
+        return true;
+    }
+    if ~InRect_i(<< 1106, 923 >>, << 1059, 835 >>, v0) {
+        return true;
+    }
+    if ~InRect_i(<< 1271, 582 >>, << 0, 0 >>, v0) {
+        return true;
+    }
+    if ~InRect_i(<< 992, 766 >>, << 0, 0 >>, v0) {
+        return true;
+    }
+    if ~InRect_i(<< 870, 1026 >>, << 0, 0 >>, v0) {
+        return true;
+    }
+    if ~InRect_i(<< 817, 1152 >>, << 307, 883 >>, v0) {
+        return true;
+    }
+    if ~InRect_i(<< 2362, 476 >>, << 2323, 442 >>, v0) {
+        return true;
+    }
+    if ~InRect_i(<< 2944, 640 >>, << 2672, 367 >>, v0) {
+        return true;
+    }
+    return false;
+}
+
+Usable MonksSendParty_i #locals(14) #uses(~DeathCoord_i, ~WhereIs_i, ~IsDeathCoordSafe_i, ~PartyCompanions_i, ~InColdRegion_i, ~GimmePathEgg) {
+    ["We have restored life to thy flesh, as promised, Hero from Another World. Now thou must continue thy quest."];
+    ["We know not for certain from where thou wilt continue..."];
+    v0 = << 1032, 1998 >>;
+    v1 = << 875, 2747 >>;
+    v2 = << 2052, 1856 >>;
+    v3 = << 1020, 940 >>;
+    v4 = v0;
+    if $hawksailedtomoonshade {
+        if $zhelkasdidfirstdrawbridge {
+            v5 = ~rndRange(3, 1);
+            if (v5 = 1) {
+                v4 = v0;
+            }
+            if (v5 = 2) {
+                v4 = v1;
+            }
+            if (v5 = 3) {
+                v4 = v2;
+            }
+        } else {
+            v4 = v2;
+        }
+    } else {
+        if (~rndRange(2, 1) = 1) {
+            v4 = v0;
+        } else {
+            v4 = v1;
+        }
+    }
+    v6 = ~DeathCoord_i();
+    v7 = ~WhereIs_i(v6);
+    if ((v7 = 5) or ((v7 = 8) or ((v7 = 10) or ((v7 = 17) or ((v7 = 18) or ((v7 = 20) or ((v7 = 21) or ((v7 = 22) or ((v7 = 23) or ((v7 = 24) or ((v7 = 25) or (v7 = 29)))))))))))) {
+        v4 = v3;
+    }
+    if ~IsDeathCoordSafe_i() {
+        v4 = ~DeathCoord_i();
+    }
+    v8 = ~PartyCompanions_i();
+    v8 = << 65180, v8 >>;
+    Foreach v11 in v8 {
+        ClearItemFlag_i(_Asleep, v11);
+        Item_move(v4, v11);
+    }
+    createSprite(65535, 0, 0, 0, v4::2, v4::1, 7);
+    Sfx(81);
+    flag(623) = false;
+    if ~InColdRegion_i() {
+        SetItemFlag_i(_Freeze, _Avatar);
+    }
+    v12 = ~GimmePathEgg(1, 5);
+    v13 = ~GimmePathEgg(2, 5);
+    Kernel_resetRef(v12);
+    Kernel_resetRef(v13);
+    terminate;
+}
+
+Function ~NearbyBodies_i #locals(12) #uses(~FindInParty_i, ~OrderList_i, ~MatchesInList_i) {
+    v0 = << >>;
+    v1 = ~FindInParty_i(65177, 65177, _NPC1_Bodies);
+    v0 = (v0 & v1);
+    v1 = ~FindInParty_i(65177, 65177, _NPC2_Bodies);
+    v0 = (v0 & v1);
+    v1 = ~FindNearby_i(0, 80, _NPC1_Bodies, _Avatar);
+    v0 = (v0 & v1);
+    v1 = ~FindNearby_i(0, 80, _NPC2_Bodies, _Avatar);
+    v0 = (v0 & v1);
+    v1 = << >>;
+    v2 = ~OrderList_i();
+    v2 = (v2 & 65472);
+    Foreach v5 in v0 {
+        v6 = ~GetQuality(v5);
+        v7 = ~GetQuantity(0, v5);
+        v8 = ~GetCoord(v5);
+        v9 = ~BodyToNPC_i(v5);
+        if ~MatchesInList_i(v2, v9) {
+            if (v9 = 65535) {
+                v10 = ~GetFrame(v5);
+                v11 = ~Item_getType(v5);
+                if ((v11 = 414) and (v10 = 20)) {
+                    v1 = (v1 & v5);
+                }
+            } else {
+                v1 = (v1 & v5);
+                if ((v9 = 65534) and $BEATRIX_PROTECTION) {
+                    SetItemFlag_i(_Tournament, _Shamino);
+                }
+            }
+        }
+    }
+    return v1;
+}
+
+Function ~IsBodyNear_i #locals(1) #uses(~NearbyBodies_i, ~WhereAmI_i) {
+    v0 = ~NearbyBodies_i();
+    if ((~ListSize_i(v0) > 0) and (~WhereAmI_i() <> 32)) {
+        return true;
+    }
+    return false;
+}
+
+Function ~OrderListNames_i #locals(1) {
+    v0 = << "Dupre", "Shamino", "Iolo", "Gwenno", "Petra", "Mortegro", "Wilfred", "Boydon", "Selina", "Sethys", "Stefano" >>;
+    return v0;
+}
+
+Usable ResurrectBodies_i #locals(13) #uses(~NearbyBodies_i, ~OrderList_i, ~OrderListNames_i, ~MatchesInList_i, ~GetStat, SetStat) {
+    v0 = ~NearbyBodies_i();
+    v1 = ~OrderList_i();
+    v1 = (v1 & 65472);
+    v2 = ~OrderListNames_i();
+    v2 = (v2 & "Cantra");
+    Foreach v5 in v0 {
+        if (v5 <> ~NPCToItem_i(_Avatar)) {
+            v6 = ~BodyToNPC_i(v5);
+            v7 = ~MatchesInList_i(v1, v6);
+            v8 = v2::v7;
+            v9 = ~GetCoord(v5);
+            v10 = ~Resurrect_i(v5);
+            if v10 {
+                ["Now thy friend <v8> doth live again."];
+                if (~GetItemFlag_i(_InParty_i, v6) and ~GetItemFlag_i(_Zombie, v6)) {
+                    LeaveParty(v6);
+                }
+                NewSchedule_i(<< v9::1, v9::2 >>, _Wait, 0, v6);
+                Npc_schedule(v6);
+                SetWorkType(_Wait, v6);
+                v11 = ~GetStat(_FoodLevel, v6);
+                v12 = (31 - v11);
+                SetStat(v12, _FoodLevel, v6);
+                if (v6 = 65472) {
+                    $cantraresurrected = true;
+                }
+                if (v6 = 65387) {
+                    SetWorkType(_Talk, _Gwenno);
+                    $GWENNO_IS_DEAD = false;
+                    v10 = ~PostInFuture(5, << _aUSABLE_i, #Gwenno >>, ~NPCToItem_i(_Avatar));
+                }
+            } else {
+                ["Thy friend <v8> hath been lost forever."];
+            }
+        }
+    }
+}
+
+Usable MessengerBringsScroll_i #locals(4) #uses(~LordOrLady, Bark_i) {
+    if flag(326) {
+        terminate;
+    }
+    if $filberciobanquet {
+        SetWorkType(_Dance, _Filbercio);
+        flag(326) = true;
+    }
+    if $messgavescroll {
+        terminate;
+    }
+    v0 = (((((((((((((((~GetItemFlag_i(_Met, _Gustacio) + ~GetItemFlag_i(_Met, _Mortegro)) + ~GetItemFlag_i(_Met, _Fedabiblio)) + ~GetItemFlag_i(_Met, _Torrissio)) + ~GetItemFlag_i(_Met, _Columna)) + ~GetItemFlag_i(_Met, _Melino)) + ~GetItemFlag_i(_Met, _Ducio)) + ~GetItemFlag_i(_Met, _Topo)) + ~GetItemFlag_i(_Met, _Julia)) + ~GetItemFlag_i(_Met, _Rocco)) + ~GetItemFlag_i(_Met, _Petra)) + ~GetItemFlag_i(_Met, _Bucia)) + ~GetItemFlag_i(_Met, _Mosh)) + ~GetItemFlag_i(_Met, _Andrio)) + ~GetItemFlag_i(_Met, _Freli)) + flag(214));
+    if ((v0 >= 3) and not $messgavescroll) {
+        v1 = ~ApproachAvatar_i(40, 90, _AutoMessenger);
+        if v1 {
+            SetWorkType(_Talk, _AutoMessenger);
+            v2 = ~GetCoord(_Avatar);
+            v3 = ~LordOrLady();
+            Bark_i(2, (("@One moment, " + v3) + " .@"), _AutoMessenger);
+        }
+    }
+}
+
+Function ~BanterSpeakers_i accepts a0 #locals(3) #uses(~PartyUtters) {
+    v1 = ~ListSize_i(~GetParty());
+    if ((v1 <= v0) or (v1 < 2)) {
+        return false;
+    }
+    v2 = << >>;
+    While (~ListSize_i(v2) <> v0) {
+        v3 = ~PartyUtters(false, 0, 0, 1);
+        if not (v3 in v2) {
+            if (~ListSize_i(v2) = 0) {
+                v2 = << v3 >>;
+            } else {
+                v2 = (v2 & v3);
+            }
+        }
+    }
+    return v2;
+}

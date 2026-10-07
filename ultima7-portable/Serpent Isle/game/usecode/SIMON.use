@@ -1,0 +1,431 @@
+Routine GSimon accepts a0 #locals(3) #uses(~AskYesNo, ~PartyUtters, Bark_i) {
+    v0 = ~GetCoord(_GSimon);
+    if (event = _Action) {
+        if ~GetItemFlag_i(_Met, _GSimon) {
+            SetSpeaker0_i(0, _GSimon);
+            ["Thou hast slain me! My blood spills away... all because of Pomdirgun, that betrayer!"];
+            ["Come nearer, that I may boast of my deeds before I die."];
+            TurnOn(<< "deeds", "Pomdirgun", "bye" >>);
+            converse {
+                key ("deeds") {
+                    TurnOff("deeds");
+                    ["I am a Goblin! I have lived amongst the foolish Knights all these many years and no one hath suspected!! Yes! I have supplied my fellow Goblins with all of Monitor's military secrets!"];
+                    TurnOn("military secrets");
+                }
+                key ("military secrets") {
+                    TurnOff("military secrets");
+                    ["That is right! I have relayed patrol plans and other military information to King Pomdirgun. The assault on Fawn Tower was a success thanks to me! Monitor's Knight Champion was ambushed because of mine ingenuity!"];
+                }
+                key ("Pomdirgun") {
+                    TurnOff("Pomdirgun");
+                    ["He is our leader! But he hath double-crossed me! That is why I am telling thee this! He promised ME the Helm of Monitor, but the greedy bastard kept it for himself! After all the loyal years I have served the Goblins, I deserve it! Well, I shall have to extract revenge!"];
+                    TurnOn(<< "loyal years", "revenge" >>);
+                }
+                key ("loyal years") {
+                    TurnOff("loyal years");
+                    ["That is right! I have been in Monitor longer than anyone else here! I came to the town many, many years ago!"];
+                    TurnOn(<< "many years ago", "cover" >>);
+                }
+                key ("many years ago") {
+                    TurnOff("many years ago");
+                    ["It was Pomdirgun's father who procured the magic potion that enabled me to change mine appearance. But now... I am tired of being a Man! I want to be a Goblin again! I have thrown away mine entire life! I want to die..."];
+                }
+                key ("cover") {
+                    TurnOff("cover");
+                    ["A Moonshadian mage created a potion that enabled us to make our appearance Man-like. But it is addictive! I cannot live without it..."];
+                }
+                key ("bye", "revenge") {
+                    ["Hmmm... Perhaps thou wouldst like to know the secret location of Pomdirgun's camp? If thou dost promise to slay King Pomdirgun, I shall tell thee!"];
+                    if ~AskYesNo() {
+                        ["There is a Great Dead Tree in the Knights' Forest, north of Knight's Test. Thou wilt know it because it is surrounded by rocks. Hidden nearby is an ancient stairway leading into the bowels of the earth."];
+                        ["This leads to a passageway which will bring thee to the chief's village, hidden in a secret valley. No Man hath ever set foot there..."];
+                        ["But be careful! There are many challenges for the unwary, and thou must survive to cleave Pomdirgun's head into two!"];
+                        ["The passageway is sealed with an iron door, but thou shalt find the key tied around my neck."];
+                    } else {
+                        ["Curse thee, then! I shall take the secret of the Goblins with me to my grave..."];
+                    }
+                    ["Urrgh..."];
+                    v1 = ~PartyUtters(true, "@He's dead.@", "@He's dead.@", 1);
+                    SetSpeakerSlot_i(0);
+                    ClearItemFlag_i(_Tournament, _GSimon);
+                    ClearItemFlag_i(_Dead, _GSimon);
+                    KillNPC_i(_GSimon);
+                    SetItemFlag_i(_Dead, _Simon);
+                    $simongavekey = true;
+                    terminate;
+                }
+            }
+            clear_answers;
+        } else {
+            SetSpeaker0_i(0, _GSimon);
+            ["Thou hast found out my secret! Now, thou must die..."];
+            SetItemFlag_i(_Tournament, _GSimon);
+            Npc_setAlignment(_Evil, _GSimon);
+            Bark_i(0, "@Die!@", _GSimon);
+            NewSchedule_i(<< v0::1, v0::2 >>, _Combat_0, 0, _GSimon);
+            Npc_schedule(_GSimon);
+            SetAttacker_i(_GSimon, _Avatar);
+            terminate;
+        }
+    }
+    if ((event = _NearDeath) and not ~GetItemFlag_i(_Met, _GSimon)) {
+        SetWorkType(_Wait, _GSimon);
+        SetItemFlag_i(_Dead, _GSimon);
+        v2 = ~PostAction(<< _aLIE_FRAME_i, _aLIE_FRAME_i, _aLIE_FRAME_i, _aLIE_FRAME_i, _aLIE_FRAME_i, _aLIE_FRAME_i, _aLIE_FRAME_i, _aLIE_FRAME_i, _aLIE_FRAME_i, _aLIE_FRAME_i >>, _GSimon);
+        SetItemFlag_i(_Met, _GSimon);
+        v2 = ~PostAction(<< _aNO_HALT_i, _aWAIT_i, 10, _aUSABLE_i, #GSimon >>, _Avatar);
+    }
+}
+
+Routine Simon accepts a0 #locals(21) #uses(~LordOrLady, ~AvatarName, Bark_i, PartyFaces_i, ~AskYesNo, ~GiveItemsOrDrop_i, ~PartyUtters, SayIfNear_i, SetBusy_i, BarkIfNear_i, ~GimmePathEgg) {
+    v0 = ~LordOrLady();
+    v1 = ~GetItemFlag_i(_Met, _Simon);
+    v2 = ~AvatarName();
+    v3 = false;
+    if ((event = _NearDeath) and (($foundsimonbottle or $knowsimonbottle) and (not ~GetItemFlag_i(_Zombie, _Simon) and not $simonshedsskin))) {
+        SetSpeaker0_i(0, _Simon);
+        ["So, thou hast found me out? Well, to the blazes with it all!"];
+        SetItemFlag_i(_Zombie, _Simon);
+        SetItemFlag_i(_Dead, _Simon);
+        v4 = ~GetCoord(_Simon);
+        v4::1 = (v4::1 - (v4::3 / 2));
+        v4::2 = (v4::2 - (v4::3 / 2));
+        createSprite(65535, 0, 0, 0, v4::2, v4::1, 21);
+        Sfx(119);
+        RemoveNPC_i(_Simon);
+        Item_move(v4, _GSimon);
+        Npc_setAlignment(_Evil, _GSimon);
+        NewSchedule_i(<< v4::1, v4::2 >>, _Dance, 0, _GSimon);
+        Npc_schedule(_GSimon);
+        Bark_i(2, "@Lorfag Tar!@", _GSimon);
+        v5 = ~PostAction(<< _aNO_HALT_i, _aWAIT_i, 15, _aUSABLE_i, #GSimon >>, _Avatar);
+        $simonshedsskin = true;
+        v5 = ~FindNearby_i(8, 40, 65535, _Avatar);
+        Foreach v8 in v5 {
+            Npc_setTarget(_GSimon, v8);
+            SetAttacker_i(_GSimon, v8);
+        }
+        terminate;
+    }
+    if ((event = _Converse) and (~GetWorkType(_Simon) <> _Stand)) {
+        Bark_i(0, "@Hello!@", _Avatar);
+        PartyFaces_i(65460);
+        Bark_i(2, "@Welcome!@", _Simon);
+        if (~GetWorkType(_Simon) <> _TendShop) {
+            SetWorkType(_Talk, _Simon);
+        } else {
+            v5 = ~PostInFuture(5, << _aNO_HALT_i, _aUSABLE_i, #Simon >>, _Simon);
+            SetWorkType(_Stand, _Simon);
+        }
+    }
+    if (event = _Action) {
+        event = 9;
+    }
+    if (event = _Talking) {
+        Npc_schedule(_Simon);
+        ClearBark_i(_Simon);
+        SetSpeaker0_i(0, _Simon);
+        if (item = ~NPCToItem_i(_Avatar)) {
+            ClearItemFlag_i(_InAction, _Avatar);
+            $sawsimonbottle = true;
+            ["Unusual taste, eh? I dare say I am the only one outside of the city of Fawn who drinks it."];
+            ["I would share more with thee, but I think that thou dost not appreciate it. Besides, I must clean this foulness!"];
+            SetWorkType(_Loiter, _Simon);
+            Bark_i(0, "@Such a waste!@", _Simon);
+            terminate;
+        }
+        if not v1 {
+            ["How may I help thee? My name is Simon."];
+            SetItemFlag_i(_Met, _Simon);
+        } else {
+            ["How can I help, <v0>?"];
+        }
+        TurnOn(<< "duties", "visitors" >>);
+        if ($foundsimonbottle and $knowsimonbottle) {
+            TurnOn("brown bottle");
+        }
+        if ($asksimonwine and not $knowmagicwine) {
+            TurnOn("strange wine");
+        }
+        if $AVATAR_IS_KNIGHT {
+            TurnOn("traitor");
+        }
+        TurnOn("bye");
+        converse {
+            key ("duties") {
+                TurnOff("duties");
+                ["I am the innkeeper of The Sleeping Soldier, Monitor's inn. If thou dost need a bed, I can certainly accommodate thee."];
+                if not $sawsimonbottle {
+                    ["Or if thou dost care to join me in a bottle of ale, I will gladly share with thee."];
+                    TurnOn("ale");
+                }
+                TurnOn(<< "innkeeper", "The Sleeping Soldier", "Monitor", "bed" >>);
+            }
+            key ("innkeeper") {
+                TurnOff("innkeeper");
+                ["I have been Monitor's innkeeper for -- well, longer than I care to remember! I am probably the oldest person in town. I can remember when Marsten, our current Lord of Monitor, was but a baby! But I have no complaints. It hath been a fair life."];
+                TurnOn("life");
+            }
+            key ("life") {
+                TurnOff("life");
+                ["Well, one cannot truly control one's destiny, can one? I have had my share of misfortune. I have learned to move forward and try and forget the past."];
+                TurnOn(<< "misfortune", "the past" >>);
+            }
+            key ("misfortune") {
+                TurnOff("misfortune");
+                ["Alas, long ago, my young bride was killed by Goblins. We had ventured out onto the roads to journey to Fawn. At that time I was a Knight, and I stupidly believed that I could protect her on mine own. We were ambushed by the foul creatures. I barely escaped with mine own life."];
+            }
+            key ("the past") {
+                TurnOff("the past");
+                ["When I was young I was a Knight of Monitor. I suppose technically I still am. Mine age prevents me from performing any Quests of Courage or going on patrol, of course. I passed the Test of Knighthood, but shortly afterwards the incident with the Goblins occurred. I am afraid that I had no more desire to battle after that. I have chosen to live quietly and run the inn."];
+            }
+            key ("The Sleeping Soldier") {
+                TurnOff("The Sleeping Soldier");
+                ["'Tis an old inn. As old as Monitor itself. I can gladly accommodate thee if thou dost wish."];
+            }
+            key ("Monitor") {
+                TurnOff("Monitor");
+                ["I have lived here all my life. My parents were killed when I was very young. In a Goblin raid, of course. Most deaths are usually caused by Goblins. We have spent our entire history fighting the creatures."];
+                TurnOn("Goblins");
+            }
+            key ("Goblins") {
+                TurnOff("Goblins");
+                ["No one knows where their home is. Templar is our local Goblin expert, so thou shouldst speak with him."];
+                $ASKED_TEMPLAR_ABOUT_GOBLINS = true;
+                ["Since the death of Astrid, some say that there is a traitor amongst us -- selling our secrets to the Goblins."];
+                if not v3 {
+                    TurnOn("traitor");
+                }
+            }
+            key ("traitor") {
+                TurnOff("traitor");
+                v3 = true;
+                ["I have mine own suspicions. Take a close look at Krayg. He seems to spend a lot of time in the woods on long walks... alone."];
+                v9 = true;
+            }
+            key ("bed") {
+                TurnOff("bed");
+                if (~GetWorkType(_Simon) = _TendShop) {
+                    ["The cost is 5 monetari per person. Wouldst thou like a room for the night?"];
+                    if ~AskYesNo() {
+                        v10 = (~ListSize_i(~GetParty()) * 5);
+                        v11 = ~CountItem(_All, _All, _Monitor_Money, _Party);
+                        if (v11 >= v10) {
+                            ["Here is thy key."];
+                            v12 = ~TakeFromParty_i(0, _All, _All, _Monitor_Money, v10);
+                            v5 = ~GiveItemsOrDrop_i(true, 0, 6, 74, 641, 1, _Avatar);
+                        } else {
+                            v13 = ~PartyUtters(false, 0, "@But we do not have enough money...@", 1);
+                            SetSpeakerSlot_i(0);
+                            if (v13 = 65180) {
+                                ["I do believe thou dost not have enough monetari. Please return when thou dost have the appropriate amount."];
+                            } else {
+                                SetSpeakerSlot_i(0);
+                                ["Please return when thou dost have the appropriate amount."];
+                            }
+                        }
+                    } else {
+                        ["Some other time, then."];
+                    }
+                } else {
+                    ["I can give thee a room if thou wilt come to mine inn when I am open!"];
+                }
+            }
+            key ("ale") {
+                TurnOff("ale");
+                ["Yes, thou mayest drink thy fill of ale here. But I am particularly fond of mine own personal brand of ale. Have a drink?"];
+                $knowsimonbottle = true;
+                if $foundsimonbottle {
+                    TurnOn("brown bottle");
+                }
+                v14 = ~AskYesNo();
+                if v14 {
+                    SetWorkType(_Wait, _Simon);
+                    SayIfNear_i("@Pfffz!@", 65180);
+                    v13 = ~PartyUtters(false, 0, 0, 1);
+                    if (v13 <> 65180) {
+                        SetSpeaker0_i(0, v13);
+                        ["<v2>! Art thou all right?"];
+                        Bark_i(5, "@What a mess!@", v13);
+                        CloseSpeaker0_i();
+                        SetSpeakerSlot_i(0);
+                    }
+                    Kernel_resetRef(_Avatar);
+                    SetBusy_i(65180);
+                    v5 = ~PostInFuture(25, << _aNO_HALT_i, _aUSABLE_i, #Simon >>, _Avatar);
+                    v5 = ~PostAction(<< _aNO_HALT_i, _aWAIT_i, 5, _aBEND_FRAME_i, _aWAIT_i, 4, _aKNEEL_FRAME_i, _aWAIT_i, 4, _aLIE_FRAME_i, _aWAIT_i, 4, _aSTAND_FRAME_i >>, _Avatar);
+                    BarkIfNear_i(<< "@Ohh!@", "@Eeehhh!@", "@Bleh!@", "@Yuk!@" >>, _Avatar);
+                    v5 = ~PostInFuture(17, << _aNO_HALT_i, _aUSABLE_i, #Puke >>, _Avatar);
+                    v15 = ~Item_create(_Bottles);
+                    if v15 {
+                        SetFrame(9, v15);
+                        SetItemFlag_i(_IsTemporary_i, v15);
+                        v16 = ~GetCoord(_Avatar);
+                        v17 = ~PopToMap(v16);
+                    }
+                    terminate;
+                } else {
+                    ["Suit thyself, then."];
+                }
+            }
+            key ("visitors") {
+                TurnOff("visitors");
+                ["The only two memorable visitors we have had -- besides thyself -- were a fat sage and a scholar."];
+                TurnOn(<< "fat sage", "scholar" >>);
+            }
+            key ("fat sage") {
+                TurnOff("fat sage");
+                ["He had such a curiosity about the ancient ruins. I believe he followed Renfry into the Crypts so he could look around -- something there fascinated him."];
+                ["Thou shouldst also speak with Andral, the sculptor. He and the sage spent many hours in conversation, here at the inn."];
+                ["I believe he went northeast from here, towards the little hamlet of Sleeping Bull."];
+                v13 = ~PartyUtters(false, 0, "@The man's name -- dost thou recall?!@", 65535);
+                if (v13 <> 65180) {
+                    SetSpeakerSlot_i(0);
+                }
+                ["Now what was that man's name? It was a simple name, unpleasant sounding and mean..."];
+                ["Batlin, that was it. He called himself the Sage Batlin."];
+                v13 = ~PartyUtters(false, 0, "@We have found Batlin's trail!@", 65534);
+                if (v13 <> 65180) {
+                    SetSpeakerSlot_i(0);
+                }
+                ["Oh, and did I mention that he had several underlings travelling with him? There was a warrior, a sailor, and a hooded man."];
+                CloseSpeaker1_i();
+                TurnOn(<< "warrior", "sailor", "hooded man" >>);
+            }
+            key ("warrior") {
+                TurnOff("warrior");
+                ["Standarr had a disagreement with this warrior. I'd wager he could tell thee a tale or two about him!"];
+                $standarrknowsbrunt = true;
+            }
+            key ("sailor") {
+                TurnOff("sailor");
+                ["A swarthy man who was called Deadeye. He had the look of a pirate about him. Shazzana spent a bit of time with him as I recall."];
+                $shazzanaknowsdeadeye = true;
+            }
+            key ("hooded man") {
+                TurnOff("hooded man");
+                ["I noticed a funny smell about him... almost like -- brimstone? I also could have sworn that under his hood there were horns upon his head. But, no -- that is foolish. It must be some kind of trick."];
+            }
+            key ("scholar") {
+                TurnOff("scholar");
+                ["She said she was researching the land and seemed anxious to learn all about Serpent Isle. Spektor dealt with her, mostly."];
+                $spektorknowsgwenno = true;
+                if ~IsNPCNear_i(_Iolo) {
+                    SetSpeaker1_i(0, _Iolo);
+                    SetSpeakerSlot_i(1);
+                    ["Gwenno! It must have been Gwenno!"];
+                    CloseSpeaker1_i();
+                    SetSpeakerSlot_i(0);
+                    ["Yes, I believe that was her name..."];
+                    SetSpeaker1_i(0, _Iolo);
+                    ["<v2>! What luck! We have found a trail to follow! Oh, Gwenno! Dost thou know where she went from here, milord?"];
+                    CloseSpeaker1_i();
+                    SetSpeakerSlot_i(0);
+                    ["I believe she went east, anxious to learn the wisdom of the Xenkan Monks. She set sail with Captain Hawk, bound for Moonshade and points beyond."];
+                    ["Of course, this was before the Storms. No sailor will brave these dangerous waters now."];
+                    SetSpeaker1_i(0, _Iolo);
+                    ["Praise Virtue! This means she is alive and well! I thank thee, sir, for this woman is my wife!"];
+                    CloseSpeaker1_i();
+                    SetSpeakerSlot_i(0);
+                    ["Very kind woman, she was, sir."];
+                } else {
+                    ["Her name was Gwenno. She left here for the east, anxious to learn the wisdom of the Xenkan Monks."];
+                    ["Of course, this was before the Storms. No sailor will brave these dangerous waters now."];
+                    v13 = ~PartyUtters(false, 0, "@What luck! We have found a trail to follow!@", 1);
+                    SetSpeakerSlot_i(0);
+                }
+            }
+            key ("brown bottle") {
+                TurnOff("brown bottle");
+                ["Hmmm. I cannot imagine... oh yes, I remember. I was taking a walk in that area. I must have been careless and dropped the bottle."];
+                PushKeys();
+                TurnOn(<< "Walk?", "area", "change subject" >>);
+            }
+            key ("Walk?") {
+                TurnOff("Walk?");
+                ["That is correct. I was taking a walk. Sometimes I want to exercise and enjoy the fresh air."];
+                TurnOn(<< "Way up there?", "What about Goblins?" >>);
+            }
+            key ("Way up there?") {
+                TurnOff("Way up there?");
+                ["Yes. What is wrong with that?"];
+            }
+            key ("What about Goblins?") {
+                TurnOff("What about Goblins?");
+                ["What about them? They did not bother me. We cannot let them control our lives!"];
+            }
+            key ("area") {
+                TurnOff("area");
+                ["Is that the area they believe is the Goblin rendezvous? I do not believe it. I have never seen Goblins there."];
+                v13 = ~PartyUtters(false, 0, 0, 65535);
+                if (v13 <> 65180) {
+                    SetSpeaker1_i(0, v13);
+                    ["So thou dost go there often?"];
+                    CloseSpeaker1_i();
+                    SetSpeakerSlot_i(0);
+                    ["Er, no, not at all. I only meant I did not see any Goblins then."];
+                    SetSpeaker1_i(0, v13);
+                    ["Mine instincts tell me this man is lying, Avatar!"];
+                    CloseSpeaker1_i();
+                    SetSpeakerSlot_i(0);
+                }
+                TurnOn("Thou art lying!");
+            }
+            key ("Thou art lying!") {
+                SetMusic(~GimmePathEgg(1, 5), 16);
+                ["So I have been found out! Well, to the blazes with it all!!"];
+                v4 = ~GetCoord(_Simon);
+                While (v4::3 > 0) {
+                    v4::1 = (v4::1 - 1);
+                    v4::2 = (v4::2 - 1);
+                    v4::3 = (v4::3 - 2);
+                }
+                CreateSpriteOn_i(65535, 0, 0, 0, 0, 0, 21, _Simon);
+                v4 = ~GetCoord(_Simon);
+                RemoveNPC_i(_Simon);
+                Item_move(v4, _GSimon);
+                Npc_setAlignment(_Evil, _GSimon);
+                NewSchedule_i(<< v4::1, v4::2 >>, _Dance, 0, _GSimon);
+                Npc_schedule(_GSimon);
+                Bark_i(2, "@Lorfag Tar!@", _GSimon);
+                v5 = ~PostAction(<< _aNO_HALT_i, _aWAIT_i, 15, _aUSABLE_i, #GSimon >>, _Avatar);
+                $simonshedsskin = true;
+                terminate;
+            }
+            key ("change subject") {
+                TurnOff("change subject");
+                ["Gladly! Thou hast come to thy senses..."];
+                PopKeys();
+            }
+            key ("strange wine") {
+                TurnOff("strange wine");
+                ["The Rangers of Moonshade make wine. Perhaps it is from there that this wine thou dost speak of hath come."];
+            }
+            key ("bye") {
+                Bark_i(0, "@So long!@", _Avatar);
+                Bark_i(2, "@Come again!@", _Simon);
+                break;
+            }
+        }
+        clear_answers;
+    }
+    if (event = _Bark) {
+        v18 = ~GetWorkType(_Simon);
+        v19 = ~rndRange(4, 1);
+        if (v18 = 7) {
+            if (v19 = 1) {
+                v20 = "@Need a room?@";
+            }
+            if (v19 = 2) {
+                v20 = "@Fine lodgings!@";
+            }
+            if (v19 = 3) {
+                v20 = "@Rest thy bones here!@";
+            }
+            if (v19 = 4) {
+                v20 = "@Sleep well here!@";
+            }
+            Item_bark(v20, _Simon);
+        }
+    }
+}

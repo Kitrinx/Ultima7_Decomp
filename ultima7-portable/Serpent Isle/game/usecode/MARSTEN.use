@@ -1,0 +1,649 @@
+Routine Marsten accepts a0 #locals(29) #uses(~LordOrLady, ~AvatarName, ~GimmePathEgg, SetWorkTypeAt_i, PartyFaces_i, Bark_i, FaceAvatar_i, SayIfNear_i, ~IsInInv, ~AskList, MarstenGrantsTest_i, ~PartyUtters, ~AskYesNo, ~GiveItemsOrDrop_i, ~RemoveFromList_i) {
+    v0 = ~LordOrLady();
+    v1 = ~AvatarName();
+    v2 = ~GetItemFlag_i(_Met, _Marsten);
+    v3 = "I serve Lord British";
+    v4 = false;
+    v5 = false;
+    v6 = false;
+    v7 = "He is my friend";
+    v8 = false;
+    v9 = ~GetItemFlag_i(_InParty_i, _Iolo);
+    v10 = ~GetItemFlag_i(_InParty_i, _Shamino);
+    v11 = ~GetItemFlag_i(_InParty_i, _Dupre);
+    v12 = ~IsDead(_Simon);
+    v13 = "he";
+    if ~AvatarSex() {
+        v13 = "she";
+    }
+    if (event = _Action) {
+        if $marstenarrested {
+            Npc_schedule(_Marsten);
+            goto label_23;
+        }
+        if $duprefound {
+            terminate;
+        }
+        v14 = ~PostInFuture(200, << _aNO_HALT_i, _aUSABLE_i, #Marsten >>, ~GimmePathEgg(1, 5));
+        if not ~IsNPCNear_i(_Dupre) {
+            v14 = ~ApproachAvatar_i(40, 100, _Dupre);
+            if v14 {
+                v15 = ~GetCoord(_Dupre);
+                v16 = ~CreateCreature_i(<< (v15::1 + 1), (v15::2 - 1), v15::3 >>, _Pikeman);
+                v17 = ~CreateCreature_i(<< (v15::1 - 1), (v15::2 - 1), v15::3 >>, _Pikeman);
+                Npc_setAlignment(_Neutral, v16);
+                Npc_setAlignment(_Neutral, v17);
+                SetWorkType(_Talk, v16);
+                SetWorkType(_Talk, v17);
+                SetNPCID_i(13, v16);
+                SetNPCID_i(13, v17);
+            }
+            SetWorkTypeAt_i(_Talk, 0, 65535, _Dupre);
+            SetWorkType(_Talk, _Dupre);
+        }
+        terminate;
+    }
+    if ((event = _NearDeath) and ~GetItemFlag_i(_Tournament, _Marsten)) {
+        if $KNOW_MARSTEN_IS_TRAITOR {
+            SetSpeaker0_i(0, _Marsten);
+            ["Thou hast ruined everything! With the current emotional and spiritual state of the city, the Goblins are certain to win this war against us!"];
+            ["The problem lies with the Bears and Wolves -- their bickering weakens us. So I had a plan! The Leopards would rule, and I would be King."];
+            ["And with the miracle weapons in our hidden arsenal, not even the Goblins could have taken this city..."];
+            ClearItemFlag_i(_Tournament, _Marsten);
+            ReduceHits_i(0, 50, _Marsten);
+            terminate;
+        } else {
+            v14 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #Paladin >>, item);
+        }
+    }
+    if (event = _Converse) {
+        Item_bark("@Greetings, sir.@", _Avatar);
+        PartyFaces_i(65467);
+        if $marstenarrested {
+            SetWorkType(_Wait, _Marsten);
+            Bark_i(2, "@What!@", _Marsten);
+            FaceAvatar_i(65467);
+            v14 = ~PostInFuture(7, << _aNO_HALT_i, _aUSABLE_i, #Marsten >>, _Marsten);
+            terminate;
+        }
+        Bark_i(2, "@Hello.@", _Marsten);
+        SetWorkType(_Talk, _Marsten);
+    }
+    if (event = _Talking) {
+        Npc_schedule(_Marsten);
+        label_23:
+        ClearBark_i(_Marsten);
+        SetSpeaker0_i(0, _Marsten);
+        if not v2 {
+            v14 = << 65386, 65473, 65463, 65459, 65467 >>;
+            Foreach v20 in v14 {
+                RevertSchedule_i(v20);
+            }
+            ["Greetings, stranger. I am Lord Marsten. Thou hast come to this city at a grievous hour. We are here to entomb the ashes of this brave Pikeman Groat, as well as to mourn the loss of our Knight Champion."];
+            SetItemFlag_i(_Met, _Marsten);
+            SayIfNear_i("@Astrid was the finest Knight that Monitor ever had!@", 65473);
+            CloseSpeaker1_i();
+            SetSpeakerSlot_i(0);
+            ["The Goblins ambushed her patrol. They slew all but one of the Pikemen, and took Astrid's body back to their camp -- to be feasted upon and used to make their sickening trophies, no doubt! When the reinforcements came, they were mere moments too late. They managed to rescue Groat but his injuries were too severe. Not even our healer Harnna could save him."];
+            SayIfNear_i("@Damn the Goblins! They should be exterminated...@", 65386);
+            CloseSpeaker1_i();
+            SetSpeakerSlot_i(0);
+            ["What business dost thou have with me, stranger?"];
+            TurnOn(<< "Astrid", "Knight Champion" >>);
+            goto label_35;
+        }
+        if ($TOLD_MARSTEN_SERVES_LORD_BRITISH and not $RENOUNCED_BRITISH) {
+            ["Oh, art thou bothering me again! No servant of Beast British is welcome here."];
+            TurnOn(<< "I renounce Lord British", "I serve Lord British" >>);
+        } else {
+            if $marstenarrested {
+                ["Didst thou come to ask me why I did betray my city? Ha! Any idiot can see the reason. With the current emotional and spiritual state of the city, the Goblins are certain to win this war against us! The foolish Bears and the cowardly Wolves are weakening us! They needed to be turned against each other so that the Leopard Command could assume their rightful leadership of Monitor. I had even devised a secret weapon to defend the city without the Bears or Wolves."];
+                TurnOn(<< "foolish Bears", "cowardly Wolves", "secret weapon" >>);
+            } else {
+                if $AVATAR_IS_KNIGHT {
+                    ["'Tis a pleasure to see thee, Knight <v1>. As the Lord of Monitor, I am always at thy service."];
+                } else {
+                    ["Greetings, <v1>. What is thy business with me?"];
+                }
+                label_35:
+                TurnOn(<< "duties", "Goblins" >>);
+                if $AVATAR_IS_KNIGHT {
+                    TurnOn("traitor");
+                }
+                if ($needspermission and not $permissionfortest) {
+                    TurnOn("ask permission");
+                }
+                if ($doneknightstest and not $AVATAR_IS_KNIGHT) {
+                    TurnOn("Knighthood");
+                }
+                if ($foundmarstenscroll and not $marstenarrested) {
+                    TurnOn("accuse");
+                }
+                if ($KNOWS_IOLO_IMPRISONED and not $IOLO_MADE_EQUIPMENT_LIST) {
+                    TurnOn("enchanter");
+                }
+                if ((~GetWorkType(_Marsten) = _TendShop) and not $marstenarrested) {
+                    TurnOn("Hall of Monitor");
+                }
+                if ($foundsimonbottle and (~GetWorkType(_Simon) <> _Wait)) {
+                    TurnOn("brown bottle");
+                }
+            }
+        }
+        TurnOn("bye");
+        converse {
+            key ("brown bottle") {
+                TurnOff("brown bottle");
+                if ~IsInInv(9, 65177, _Bottles, 1, _Party) {
+                    ["Leave me with that dirty bottle! It doth look to have been lying in the woods for weeks..."];
+                    Bark_i(0, "@'Sblood!@", _Marsten);
+                    terminate;
+                } else {
+                    ["I care not what thou didst find in the woods. 'Tis probably Goblin loot."];
+                    ["There is no traitor in Monitor. Search thou not for evidence, for thou shalt not find it. Instead, help us to eradicate the Goblins!"];
+                }
+            }
+            key ("I renounce Lord British") {
+                TurnOff(<< "I renounce Lord British", "I serve Lord British" >>);
+                ["Yes? Thou dost wish to say something to me?"];
+                SetSpeaker1_i(0, _Avatar);
+                SetSpeakerSlot_i(1);
+                ["I renounce Lord British and everything for which he stands. From this moment forward, I am his friend and servant no longer."];
+                CloseSpeaker1_i();
+                if v9 {
+                    SetSpeaker1_i(0, _Iolo);
+                    SetSpeakerSlot_i(1);
+                    ["Avatar! I cannot believe thy words!"];
+                    CloseSpeaker1_i();
+                }
+                if v10 {
+                    SetSpeaker1_i(0, _Shamino);
+                    SetSpeakerSlot_i(1);
+                    ["How could thee renounce thy rightful liege?"];
+                    CloseSpeaker1_i();
+                }
+                if v11 {
+                    SetSpeaker1_i(0, _Dupre);
+                    SetSpeakerSlot_i(1);
+                    ["Very well, Avatar. Do what thou must."];
+                }
+                SetSpeakerSlot_i(0);
+                ["Thou must feel better to have purged thyself of that burden. Thou wilt now be accepted by all of Monitor."];
+                ["Who doth know? Perhaps one day thou couldst become a true knight of Monitor. But only if thou passest the Test of Knighthood."];
+                TurnOn("Test of Knighthood");
+                $RENOUNCED_BRITISH = true;
+            }
+            key ("I serve Lord British") {
+                ["Away with thee, foul servant of the Beast!" ~"Renounce thine allegiance with that cruel tyrant or feel a halberd in thy back as the pikemen escort thee from our fine town!"];
+                terminate;
+            }
+            key ("Astrid") {
+                TurnOff("Astrid");
+                ["Canst thou imagine the horrors of being devoured alive?! She was a masterful warrior, and deserved a finer death than this..."];
+                if not $funeraldone {
+                    SayIfNear_i("@Understand, stranger, that Marsten and this woman\x09were bedmates.@", 65386);
+                    SetSpeakerSlot_i(0);
+                    TurnOn("bedmates");
+                }
+                ["There is none to replace her, and certainly none able to reclaim the Helm of Monitor from the Goblins."];
+                TurnOn("Helm of Monitor");
+            }
+            key ("Helm of Monitor") {
+                TurnOff("Helm of Monitor");
+                ["'Tis a sacred item once belonging to the Goblins. It was what gave their ancient leader, Gurnordir, the power to build the Goblin Horde."];
+                ["When our forefathers killed Gurnordir, the Helm was claimed for Monitor. It hath since been worn by the Knight Champion."];
+                TurnOn("Gurnordir");
+                if not v8 {
+                    TurnOn("Knight Champion");
+                }
+                if not ~GetItemFlag_i(_Dead, _GoblinKing) {
+                    ["We need to reclaim it! Else, the Goblins shall again build their Horde and invade this great city."];
+                    TurnOn("raid the Goblins");
+                }
+            }
+            key ("Gurnordir") {
+                TurnOff("Gurnordir");
+                ["If thou dost wish to learn more of this evil race and its history, speak to Templar. He is an expert on the subject."];
+                $ASKED_TEMPLAR_ABOUT_GOBLINS = true;
+            }
+            key ("raid the Goblins") {
+                TurnOff("raid the Goblins");
+                if $AVATAR_IS_KNIGHT {
+                    ["We must smash the Goblins! Their chieftain must be slain, the Helm recovered, and their village pillaged."];
+                    if $simonshedsskin {
+                        ["Certainly, thou didst force that cretin Simon to give thee some clue before his execution!"];
+                        ["The Goblins shall be defenseless if thou dost strike now. Take only thy companions, and surprise them, for a larger force would be seen by their scouts."];
+                        ["Go now, and regain the Helm!"];
+                    } else {
+                        ["But no one knows where the Goblin village lies. 'Tis an evil mystery..."];
+                    }
+                } else {
+                    ["I see no reason to discuss this matter with someone who is not even a Knight."];
+                }
+            }
+            key ("bedmates") {
+                TurnOff("bedmates");
+                ["Yes, Astrid and I were bedmates. I will not say we were lovers. For we were also warriors and comrades in arms. And we knew that any time either one of us took the battlefield might have been the last time we could have seen each other. I loved her, but we were not in love. I shall always remember her."];
+                SetSpeaker1_i(0, _Brendann);
+                ["As shall I...."];
+                CloseSpeaker1_i();
+                SetSpeakerSlot_i(0);
+                ["What was that thou saidest, Brendann!"];
+                SetSpeaker1_i(0, _Brendann);
+                ["What??! Oh, nothing, merely mentioning that we shall all miss her presence. She was a fine warrior."];
+                CloseSpeaker1_i();
+                SetSpeakerSlot_i(0);
+            }
+            key ("Goblins") {
+                TurnOff("Goblins");
+                ["I vow to war upon them until the end of the world! There shall be no end to my vengeance upon the Goblins."];
+                ["They have robbed, pillaged, and murdered our people since our ancestors came here centuries ago. They delight in kidnapping our women and eating them alive!"];
+                ["In the end, 'tis either Men or Goblins -- both of us cannot dwell here."];
+                TurnOn("ancestors");
+            }
+            key ("ancestors") {
+                TurnOff("ancestors");
+                ["Our people fled from their homeland when an evil tyrant united the kingdoms, and sought to force his philosophy upon them."];
+                ["So we set sail from Sosaria, and -- led beyond the Serpent Pillars by a mage named Erstam -- we came to the Serpent Isle."];
+                ["This land was deserted then, settled only by Goblins and covered with the ruins of a mysterious ancient Serpentine civilization."];
+                PushKeys();
+                TurnOn(<< "tyrant", "Sosaria", "ruins", "Erstam", "change subject" >>);
+            }
+            key ("tyrant") {
+                TurnOff("tyrant");
+                if (($RENOUNCED_BRITISH = false) and ($TOLD_MARSTEN_SERVES_LORD_BRITISH = false)) {
+                    ["He was an evil man, and Knight and Mage alike rebelled against his tyranny. So our ancestors fled here, and founded the Three Cities."];
+                    ["British was his name. Lord British, he called himself. But we call him Beast British!"];
+                    if (~AskList(<< v3, "say nothing" >>) = v3) {
+                        ["What?! I should have known that evil tyrant would yet live! Beware -- no servant of the Beast shall be aided by any Knight of Monitor!"];
+                        $TOLD_MARSTEN_SERVES_LORD_BRITISH = true;
+                        if $duprefound {
+                            RevertSchedule_i(_Marsten);
+                        }
+                        Bark_i(0, "@Begone!@", _Marsten);
+                        terminate;
+                    }
+                } else {
+                    ["Thou dost agree, since thou dost not speak well of the Beast! Aye, a tyrant if there ever were one."];
+                }
+                TurnOn(<< "Three Cities", "Beast British" >>);
+            }
+            key ("Three Cities") {
+                TurnOff("Three Cities");
+                ["Three great cities were founded by those who fled the tyrant: Moonshade, Fawn and Monitor."];
+                ["Moonshade is the City of Mages. Fawn is a city that worships Beauty. As for Monitor, 'tis the city thou art in now. 'Tis a city based on Courage."];
+            }
+            key ("Beast British") {
+                TurnOff("Beast British");
+                ["That tyrant Beast British tried to force his bent philosophical 'virtues' upon our ancestors. As magic depends greatly upon illusion, the Moon mages dismissed the value of Truth. As worshippers of Beauty, the people of Fawn saw little worth in unconditional Love. We of Monitor feel that Courage stands above his other virtues."];
+            }
+            key ("Sosaria") {
+                TurnOff("Sosaria");
+                ["This new land was originally to be called New Sosaria, but it became known as the Serpent Isle upon the discovery of various ruins and mysterious ancient serpent writing. We know little else of the race that left its mark here."];
+            }
+            key ("ruins") {
+                TurnOff("ruins");
+                ["Thou dost see them across the land, left behind by the evil creatures which once dwelled in this place."];
+                ["That fellow Krayg could tell thee more. He is most fond of taking long walks in distant places, and often sees strange sights."];
+                $askkraygruins = true;
+            }
+            key ("Erstam") {
+                TurnOff("Erstam");
+                ["He was a wild-eyed man, driven by his thirst for knowledge and his need for the freedom to pursue it. 'Tis said that in his studies and experimentations he did discover things that drove him insane. Others say it was the loss of a woman who was his true love that drove him mad. Today he is known as the Mad Mage. And his name is most often spoken in hushed whispers."];
+            }
+            key ("change subject") {
+                TurnOff("change subject");
+                ["Certainly..."];
+                PopKeys();
+            }
+            key ("duties") {
+                TurnOff("duties");
+                ["I am the Lord of Monitor, the City of Knights."];
+                ["There are three bodies of Knights in the city. No Command is better than another, for all warriors are equal."];
+                ["As the leader of the Leopards, this is my year to rule Monitor."];
+                if not v5 {
+                    TurnOn("Leopards");
+                }
+                TurnOn("Command");
+            }
+            key ("Leopards") {
+                TurnOff("Leopards");
+                v5 = true;
+                ["We are the peacemakers. The Bears and the Wolves always quarrel, but we stop them from wringing each others' necks."];
+                ["We bring balance to the community. 'Tis not always glorious to be a Leopard, but we are proud to do our duty."];
+                if not v6 {
+                    TurnOn("Wolves");
+                }
+                if not v4 {
+                    TurnOn("Bears");
+                }
+            }
+            key ("Command") {
+                TurnOff("Command");
+                ["Every citizen of the town must become a Knight of Monitor, or be banished when they reach the age of\x09fifteen."];
+                ["The Knights are organized into three war bands, which are known as Commands -- the Bears, the Wolves, and the Leopards."];
+                ["As thou hast no doubt noted, our tattoos mark us according to our Command."];
+                if not v6 {
+                    TurnOn("Wolves");
+                }
+                if not v4 {
+                    TurnOn("Bears");
+                }
+                if not v5 {
+                    TurnOn("Leopards");
+                }
+            }
+            key ("Bears") {
+                TurnOff("Bears");
+                v4 = true;
+                ["The Bears have saved this city again and again. They never forget that we live under siege, that the Goblins could always attack."];
+                ["The city walls were constructed by the Bears. They are tough, strong, powerful warriors. Caladin is their lord."];
+            }
+            key ("Wolves") {
+                v6 = true;
+                TurnOff("Wolves");
+                ["The prosperity of Monitor is due to the foresight of the Wolves. They have forced us to reach out to our fellow Man."];
+                ["The Wolves repaired the ancient highway, and added new roads to link the Three Cities. They built the guard towers."];
+                ["Brendann is their lord. The Wolves are smart, preferring cunning over brute force."];
+            }
+            key ("Knight Champion") {
+                TurnOff("Knight Champion");
+                v8 = true;
+                ["Knight Champion is the most revered title in Monitor -- more than Lord! To be Knight Champion is to be the finest warrior in the land."];
+                ["To hone their skills, our Knights meet daily on the List Field to spar. Thus, they demonstrate their martial prowess."];
+                ["From success in tournament and in battle, the Knight Champion is determined. He or she is privileged to wear the Helm of Monitor."];
+                TurnOn("List Field");
+            }
+            key ("List Field") {
+                TurnOff("List Field");
+                ["Thou canst hardly miss the List Field -- 'tis the walled field in the south part of town."];
+                ["There is no shortage of opponents, especially if thou dost go there in the late morning or afternoon."];
+                if not $AVATAR_IS_KNIGHT {
+                    ["Even strangers like thyself are welcome to spar. 'Tis good preparation for the Test of Knighthood."];
+                    TurnOn("Test of Knighthood");
+                }
+            }
+            key ("traitor") {
+                TurnOff("traitor");
+                if v12 {
+                    ["Thou hast done us a valuable service by rooting out that miserable traitor, Simon. Although in the true sense of the word, he was merely a loyal Goblin, not a traitor... Bah! A pox on all Goblins!"];
+                } else {
+                    if ~GetItemFlag_i(_Dead, _Lydia) {
+                        ["Thou hast slain the traitor, Knight! Well done!];
+                        if ~GetItemFlag_i(_Dead, _Shmed) {
+                            ["Lydia must have been part of Shmed's secret conspiracy. But that no longer matters -- both of the Goblin spies are dead!"];
+                        } else {
+                            ["The Goblins shall no more steal our secrets, eh!"];
+                        }
+                    } else {
+                        if ~GetItemFlag_i(_Dead, _Shmed) {
+                            ["I must apologize to thee for the attack upon thee by the traitor, Shmed."];
+                            ["I did not believe that there was a traitor, but this evidence proves it."];
+                        } else {
+                            ["I do not care for this talk of traitors. Who would betray us to the Goblins? No man could be that insane."];
+                        }
+                    }
+                }
+            }
+            key ("Test of Knighthood") {
+                TurnOff("Test of Knighthood");
+                ["One cannot be born a Knight, nor can the title be bestowed for money or influence. Only a worthy warrior can become a Knight."];
+                ["To test the worthiness of those who sought Knighthood, a special dungeon was prepared. If one can survive Knight's Test, then one is ready for Knighthood."];
+                ["'Tis an honor to become a Knight of Monitor, yet 'tis also a heavy responsibility. There are many enemies in the land."];
+                TurnOn(<< "Knight's Test", "responsibility" >>);
+            }
+            key ("Knight's Test") {
+                TurnOff("Knight's Test");
+                ["The dungeon lies north of town, in the mountains. At the entrance, a Knight named Shmed awaits the hopeful warriors."];
+                ["He can explain the rules of the Test to thee, or thou couldst speak with Caladin. 'Tis Caladin's duty to instruct Knight candidates."];
+                if not $needspermission {
+                    MarstenGrantsTest_i();
+                }
+            }
+            key ("responsibility") {
+                TurnOff("responsibility");
+                ["One cannot shirk one's responsibilities after becoming a Knight. Thy Command might call thee to Tower duty, or to scout the Goblins."];
+                ["There is nothing worse than deserting thy Command. In times of crisis, thy place is here in Monitor."];
+                ["For instance, young Knight Wilfred hath left Monitor to investigate the strange death of his father. Such nonsense! He is needed here, with his brother Knights."];
+            }
+            key ("ask permission") {
+                TurnOff("ask permission");
+                MarstenGrantsTest_i();
+            }
+            key ("Knighthood") {
+                TurnOff("Knighthood");
+                ["Congratulations! Thou dost not even need to tell me. I can see that thou hast triumphed in the dungeon."];
+                if not ($gotcloak and ($gottattoo and $gavemeat)) {
+                    ["Now thou must prepare for thy banquet, at which thou wilt become a Knight of Monitor."];
+                }
+                if not $gottattoo {
+                    ["Thou wouldst be a poor Knight without the Mark. Seek out Lydia, for she will give thee the Tattoo of Knighthood."];
+                }
+                if not $gotcloak {
+                    ["In the dungeon, thou didst slay the animal which the Ashes of Gurnordir did send to thee."];
+                    ["Now bring the animal's body to Cellia the Furrier. From the carcass, she shall make thy Cloak of Knighthood."];
+                }
+                if not $gavemeat {
+                    ["The traditional meal of the banquet is a stew made from the meat of the animal thou didst slay."];
+                    ["Bring the meat to Lucilla in the pub, and she shall prepare the feast."];
+                }
+                if ($gottattoo and ($gotcloak and $gavemeat)) {
+                    ["Thou art ready, young Knight! Go to the banquet hall in one hour. I shall meet thee there."];
+                } else {
+                    ["When thou hast finished thy work, then thy knighting can occur."];
+                }
+            }
+            key ("accuse") {
+                TurnOff("accuse");
+                ["What art thou talking about? Thou dost know nothing! Leave at once, or I shall call the Pikemen!"];
+                Bark_i(0, "@Leave!@", _Marsten);
+                terminate;
+            }
+            key ("enchanter") {
+                TurnOff("enchanter");
+                if not $sawioloinjail {
+                    ["It was most disrespectful, the way that enchanter did interrupt our memorial service. The white-haired wizard appeared on top of the Cremator, in the most reverent part of the ceremony!"];
+                    ["I ordered him jailed. We are very strict here in Monitor."];
+                    v21 = ~PartyUtters(false, "@Could this be my friend Iolo?", (("@Could this be our friend Iolo, " + v0) + "?@"), 1);
+                    SetSpeakerSlot_i(0);
+                    ["Then thou shouldst visit the criminal at jail. We have our hands full in this town with the Goblins and we do not need such pranksters in Monitor!"];
+                } else {
+                    if not $explainediolotomarsten {
+                        ["I understand thou hast spoken with this villain."];
+                        if (v7 = ~AskList(<< v7, "say nothing" >>)) {
+                            ["Then explain to me thy friend's actions. Is he a sorcerer?"];
+                            if ~AskYesNo() {
+                                ["Then he can remain in jail until he rots. I have no love of mages. I will not abide their pranks under any circumstances."];
+                                terminate;
+                            } else {
+                                ["Then how did he appear in the middle of the funeral? Doth he fly?"];
+                                v22 = ~AskList(<< "@Yes, he does.@", "@He was hit by lightning.@", "@I do not know.@" >>);
+                                if (v22 = "@Yes, he does.@") {
+                                    Bark_i(0, "@Bah!@", _Marsten);
+                                    terminate;
+                                }
+                                if (v22 = "@I do not know.@") {
+                                    ["Well, these are mysterious times. Strange occurrences have become usual..."];
+                                }
+                                if (v22 = "@He was hit by lightning.@") {
+                                    if $returnedcaladinashes {
+                                        ["I see! And the urn which thou didst return to Caladin -- it was exchanged for thy friend!"];
+                                    } else {
+                                        ["Indeed. The storms have been known to magically displace their victims."];
+                                    }
+                                    $explainediolotomarsten = true;
+                                }
+                            }
+                        }
+                    }
+                    if $AVATAR_IS_KNIGHT {
+                        if $MARSTEN_GAVE_JAIL_KEY {
+                            ["Art thou daft? I have already given thee the key. Thy friend is locked in the jail. It is in the northeast part of town."];
+                            Bark_i(0, "@Free thy friend!@", _Marsten);
+                            terminate;
+                        } else {
+                            ["If thou wilt vouch for thy friend's future behavior, then I shall let him go free."];
+                            if ~AskYesNo() {
+                                ["Very well. Keep thine eye on him. We do not want people popping in and out of our city like this!"];
+                                ["Here is the key to thy friend's jail cell. Set him free."];
+                                v14 = ~GiveItemsOrDrop_i(true, 0, 0, 104, 641, 1, _Avatar);
+                                $MARSTEN_GAVE_JAIL_KEY = true;
+                            } else {
+                                ["Then he must remain in his cell."];
+                            }
+                        }
+                    } else {
+                        ["If only thou wert a Knight! Then I could let thee vouch for thy friend, and let him free."];
+                        ["But thou art merely a stranger here..."];
+                        $MARSTEN_WONT_RELEASE_IOLO = true;
+                    }
+                }
+            }
+            key ("Hall of Monitor") {
+                TurnOff("Hall of Monitor");
+                ["This is a magnificent building. It serves as both a seat of government where important meetings are held, and as a museum of sorts."];
+                TurnOn(<< "meetings", "museum" >>);
+            }
+            key ("meetings") {
+                TurnOff("meetings");
+                ["Spektor, Caladin, Brendann and myself meet at noon every day to make all the decisions involved in ruling the town."];
+            }
+            key ("museum") {
+                TurnOff("museum");
+                ["There are many fine exhibits in our museum. Thou shouldst especially note the artifacts captured from the Goblins..."];
+                ["Many of the artifacts are crafted from the bones of defeated Knights, I am certain. And the drum -- I think the skin across the top is human!"];
+                v21 = ~PartyUtters(false, 0, "@I find this discussion disgusting.@", 65533);
+                SetSpeakerSlot_i(0);
+                ["Oh, show courage! Thou dost look like thou mightest lose thy last meal!"];
+            }
+            key ("foolish Bears") {
+                TurnOff("foolish Bears");
+                ["The Bear Command would have hibernated safe within the walls of the city, and would never have seen the danger until the Goblin hordes were climbing over our walls."];
+            }
+            key ("cowardly Wolves") {
+                TurnOff("cowardly Wolves");
+                ["The Wolf Command would have never remained here this long. They would have pulled up their stakes and gone roaming the day we had to fight to keep this place. Once on the run they would have been cut down like dogs!"];
+            }
+            key ("secret weapon") {
+                TurnOff("secret weapon");
+                ["I had learned of a weapon unlike any that hath ever been seen in this world. A substance that could change the face of war forever! The substance I would have used is well hidden. And thou shalt never find it. Ha!"];
+            }
+            key ("bye") {
+                if not $funeraldone {
+                    ["But why hast thou come to our town? What is thy business here?"];
+                    SetSpeaker1_i(0, _Caladin);
+                    ["Perhaps <v13> is a spy for the Goblins!"];
+                    CloseSpeaker1_i();
+                    SetSpeakerSlot_i(0);
+                    ["Now, I do not agree with all this talk of a spy in our midst. Do not let these rumors divide our city, Caladin."];
+                    SetSpeaker1_i(0, _Brendann);
+                    ["Yet there was that other suspicious stranger, the fat sage..."];
+                    CloseSpeaker1_i();
+                    SetSpeakerSlot_i(0);
+                    ["Whom I threw out of town..."];
+                    SetSpeaker1_i(0, _Brendann);
+                    ["And that scholar -- a woman with fine bone structure, but a little too old to pleasure me..."];
+                    CloseSpeaker1_i();
+                    if ~IsNPCNear_i(_Shamino) {
+                        CloseSpeaker0_i();
+                        SetSpeaker0_i(0, _Shamino);
+                        ["Could he be speaking of Iolo's wife, the good lady Gwenno?"];
+                    }
+                    SetSpeaker1_i(0, _Caladin);
+                    ["And do not forget the enchanter who appeared in the midst of the funeral services for our deceased Pikemen!"];
+                    CloseSpeaker1_i();
+                    $KNOWS_IOLO_IMPRISONED = true;
+                    CloseSpeaker0_i();
+                    SetSpeaker0_i(0, _Marsten);
+                    ["Warriors, be still! There is no spy in Monitor, and I refuse to hear more of this!"];
+                    $funeraldone = true;
+                    Bark_i(0, "@There is no spy!@", _Marsten);
+                    Bark_i(4, "@I am not convinced...@", _Caladin);
+                    Bark_i(8, "@Nor I!@", _Brendann);
+                    SetWorkType(_Shy, _Marsten);
+                    SetWorkType(_Shy, _Caladin);
+                    SetWorkType(_Shy, _Brendann);
+                    v14 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #Marsten >>, ~GimmePathEgg(1, 5));
+                } else {
+                    Bark_i(0, "@Good day!@", _Avatar);
+                    Bark_i(2, "@Certainly...@", _Marsten);
+                }
+                goto label_231;
+            }
+        }
+        clear_answers;
+    }
+    if (event = _Bark) {
+        if $marstenarrested {
+            v23 = ~rndRange(3, 1);
+            if (v23 = 1) {
+                Item_bark("@Damn that Avatar!@", _Marsten);
+            }
+            if (v23 = 2) {
+                Item_bark("@Never trust a Goblin!@", _Marsten);
+            }
+            if (v23 = 3) {
+                Item_bark("@I ruled this town!@", _Marsten);
+            }
+        } else {
+            v24 = << 65473 >>;
+            Foreach v27 in v24 {
+                if not ~IsNPCNear_i(v27) {
+                    v24 = ~RemoveFromList_i(v24, v27);
+                }
+            }
+            label_231:
+            if (v24 = << >>) {
+                terminate;
+            }
+            ClearBark_i(_Marsten);
+            v21 = v24::~Random(~ListSize_i(v24));
+            ClearBark_i(v21);
+            v28 = ~Random(6);
+            if (v28 = 1) {
+                Item_bark("@We need law and order!@", _Marsten);
+                Bark_i(3, "@Attack the Goblins!@", v21);
+            }
+            if (v28 = 2) {
+                Item_bark("@Calm yourselves.@", _Marsten);
+            }
+            if (v28 = 3) {
+                if ~GetItemFlag_i(_Dead, _GoblinKing) {
+                    Item_bark("@The Goblins are no threat.@", v21);
+                    Bark_i(3, "@I told thee so.@", _Marsten);
+                } else {
+                    Item_bark("@The Goblins are pressing south!@", v21);
+                    Bark_i(3, "@Do not be alarmed.@", _Marsten);
+                }
+            }
+            if (v28 = 4) {
+                Item_bark("@I am in charge here!@", _Marsten);
+                Bark_i(3, "@Yes, milord.@", v21);
+            }
+            if (v28 = 5) {
+                if $simonshedsskin {
+                    Item_bark("@The traitor is dead.@", _Marsten);
+                    Bark_i(2, "@Was he working alone?@", v21);
+                } else {
+                    Item_bark("@There is no traitor.@", _Marsten);
+                    Bark_i(2, "@Only a rumor.@", v21);
+                }
+            }
+            if (v28 = 6) {
+                Item_bark("@Listen to me!@", _Marsten);
+            }
+        }
+    }
+}
+
+Usable MarstenGrantsTest_i #locals(0) #uses(~AskYesNo) {
+    ["None can take the Test of Knighthood without the permission of the Lord of Monitor. Dost thou seek my permission?"];
+    $needspermission = true;
+    if ~AskYesNo() {
+        ["Very well. Shmed will ask thee the password. Tell him this --"];
+        ["'Courage is the Soul of Life.'"];
+        $permissionfortest = true;
+    } else {
+        ["Do not take the Test before thou art ready, strange warrior. But do not let fear shake thy resolve."];
+    }
+}

@@ -299,7 +299,9 @@ static void show_help(void)
 		"\n"
 		"Settings of this port:\n"
 		"  --quiet-weapons     no crackle from the fire sword and firedoom staff, no hum from\n"
-		"                      magic weapons\n");
+		"                      magic weapons\n"
+		"  --mt32-short-waits  no pauses after MT-32 memory writes (ending music), which\n"
+		"                      the emulated synth does not need\n");
 	exit(0);
 }
 

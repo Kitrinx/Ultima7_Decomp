@@ -6,7 +6,7 @@ the first backend uses [libmatoya](https://github.com/snowcone-ltd/libmatoya) fo
 input, video, audio and files, and [Munt](https://github.com/munt/munt) to emulate the Roland
 MT-32 for music and sound effects.
 
-Everything needed to build is in this folder. You supply the game data and the MT-32 ROMs.
+Everything needed to build is in this folder and the shared folders beside it. You supply the game data and the MT-32 ROMs.
 
 ## Layout
 
@@ -19,10 +19,16 @@ ultima7-portable/Black Gate/
   game/mainmenu/, intro/, endgame/, shared/   the other programs, and what menu and intro share
   platform/plat.h        everything the game needs from the host
   platform/matoya/       the libmatoya backend (window, input, audio, files, timing)
+  tools/u7_new_game.py   sets up a new game with a named Avatar
+```
+
+Shared with the Serpent Isle port, one level up in `ultima7-portable/`:
+
+```text
   third_party/libmatoya/ libmatoya, vendored at a pinned commit (MIT)
   third_party/munt/      Munt's mt32emu library, vendored at a pinned tag (LGPL 2.1+)
-  tools/u7_new_game.py   sets up a new game with a named Avatar
-  packaging/README.txt   the players' README, shipped in the release archives
+  packaging/             the players' README (both games), the macOS Info.plist, notarizing
+  assets/icons/          program icons
 ```
 
 ## Requirements
@@ -59,7 +65,7 @@ libmatoya's makefile relies on `cmd`'s `mkdir`. If Git's `usr\bin` is on `PATH`,
 Git's `mkdir` instead and the libmatoya step fails, so build from a prompt without it.
 
 The first build also builds libmatoya (through its own makefile, into
-`third_party/libmatoya/bin/`) and mt32emu (as a CMake subproject). The program is `build/Ultima7`
+`../third_party/libmatoya/bin/`) and mt32emu (as a CMake subproject). The program is `build/Ultima7`
 (`build\Ultima7.exe` on Windows, the app `build/Ultima7.app` on macOS).
 
 Options:
@@ -132,6 +138,7 @@ Settings of this port, not in the original:
 | Switch | Effect |
 | --- | --- |
 | `--quiet-weapons` | no crackle from the fire sword and firedoom staff, no hum from the magic sword, Hoe of Destruction, Magebane and Death Scythe |
+| `--mt32-short-waits` | no pauses after MT-32 memory writes in the ending's music; the emulated MT-32 needs no settle time |
 
 **Starting a new game.** Use "Start New Game" in the main menu. For scripted runs that skip the
 menu, this sets one up the way the menu does, and the game builds it on its next start:
@@ -152,7 +159,7 @@ Other environment variables:
 
 ## Dependencies
 
-Both libraries are vendored as plain source at fixed versions (see `third_party/README.md`), so
+Both libraries are vendored as plain source at fixed versions (see `../third_party/README.md`), so
 no network access or git submodules are needed.
 
 **libmatoya** has no CMake project of its own. `cmake/Libmatoya.cmake` runs its own makefile
@@ -160,16 +167,16 @@ no network access or git submodules are needed.
 static library, adding the system frameworks or libraries it needs. To build it by hand:
 
 ```sh
-cd third_party/libmatoya
+cd ultima7-portable/third_party/libmatoya
 make -f GNUmakefile TARGET=macosx ARCH=arm64    # or TARGET=linux ARCH=x86_64 / aarch64
 ```
 
-**mt32emu** is built from `third_party/munt/mt32emu` as a CMake subproject, as a static
+**mt32emu** is built from `../third_party/munt/mt32emu` as a CMake subproject, as a static
 library with its C interface. The ROMs are loaded at run time, never linked in. Munt is under the
 GNU Lesser General Public License 2.1 or later: if you distribute a binary, you must also make it
 possible to relink it against a modified mt32emu (for example, by offering the game's object
 files or building mt32emu as a shared library with `-Dlibmt32emu_SHARED=ON`), and include
-`third_party/munt/mt32emu/COPYING.LESSER.txt`.
+`../third_party/munt/mt32emu/COPYING.LESSER.txt`.
 
 ## Known limitations
 

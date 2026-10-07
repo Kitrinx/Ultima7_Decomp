@@ -1,0 +1,41 @@
+Routine KnightsTestSummonEgg_i accepts a0 #locals(4) #uses(AttackAvatar_i) {
+    v0 = ~GetCoord(item);
+    if (event = _Trigger) {
+        v1 = ~GetQuality(item);
+        createSprite(65535, 0, 0, 0, v0::2, v0::1, 13);
+        if (v1 = 0) {
+            PrintError_i("Egg quality not set.");
+        }
+        if (v1 = 1) {
+            v2 = ~CreateCreature_i(v0, _MgGremlin);
+            if v2 {
+                AttackAvatar_i(v2);
+            }
+            v2 = ~SetQuality(3, item);
+            v2 = ~PostInFuture(10, << _aUSABLE_i, #KnightsTestSummonEgg_i >>, item);
+        }
+        if (v1 = 2) {
+            v3 = ~CreateCreature_i(v0, _Cyclops);
+            if v3 {
+                Npc_setAlignment(_Evil, v3);
+                SetWorkType(_Combat_0, v3);
+                SetAttacker_i(_Avatar, v3);
+            }
+        }
+        if (v1 = 3) {
+            v0::2 = (v0::2 - 10);
+            createSprite(65535, 0, 0, 0, v0::2, v0::1, 13);
+            v2 = ~CreateCreature_i(v0, _MgGremlin);
+            if v2 {
+                AttackAvatar_i(v2);
+            }
+            Item_destroy(item);
+        }
+        v2 = ~FindNearby_i(16, 20, _Path, item);
+        if v2 {
+            v0 = ~GetCoord(v2);
+            createSprite(65535, 0, 0, 0, v0::2, v0::1, 13);
+            v2 = ~PostAction(<< _aNO_HALT_i, _aBARK_i, "@Kal Xen!@" >>, v2);
+        }
+    }
+}

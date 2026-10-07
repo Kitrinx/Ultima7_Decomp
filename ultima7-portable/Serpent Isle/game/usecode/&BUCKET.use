@@ -1,0 +1,423 @@
+Routine Path accepts a0 #locals(5) {
+    if (event = _Pathfind2) {
+        v0 = ~FindNearest_i(3, _Path, _Avatar);
+        v1 = ~GetFrame(v0);
+        v2 = 0;
+        if (v1 = 0) {
+            v2 = 3;
+        }
+        if (v1 = 1) {
+            v2 = 5;
+        }
+        if (v1 = 2) {
+            v2 = 7;
+        }
+        if (v1 = 3) {
+            v2 = 1;
+        }
+        v3 = ~PostAction(<< _aFACE_i, v2, _aCONTINUE_i, _aBEND_FRAME_i >>, _Avatar);
+        v3 = ~PostInFuture(2, << _aNO_HALT_i, _aUSABLE_i, #Path >>, item);
+    }
+    if (event = _Action) {
+        v4 = ~GetCoord(_Avatar);
+        v0 = ~FindNearest_i(3, _Path, _Avatar);
+        v1 = ~GetFrame(v0);
+        if (v1 = 0) {
+            v4::1 = (v4::1 - 1);
+            v4::2 = (v4::2 + 1);
+        }
+        if (v1 = 1) {
+            v4::1 = (v4::1 - 1);
+            v4::2 = (v4::2 - 1);
+        }
+        if (v1 = 2) {
+            v4::1 = (v4::1 - 0);
+            v4::2 = (v4::2 - 1);
+        }
+        if (v1 = 3) {
+            v4::1 = (v4::1 - 2);
+            v4::2 = (v4::2 - 0);
+        }
+        v3 = ~Item_push(item);
+        if v3 {
+            if (~GetFrame(item) = 0) {
+                SetFrame(1, item);
+                if (flag(717) and (flag(718) and (flag(719) and flag(720)))) {
+                    v3 = ~SetQuality(10, item);
+                    $gotemotionwater = true;
+                    ClearItemFlag_i(_IsTemporary_i, item);
+                }
+            } else {
+                if (~GetFrame(item) < 6) {
+                    SetFrame(0, item);
+                }
+            }
+            v3 = ~PopToMap(v4);
+        }
+    }
+}
+
+Routine Firepit accepts a0 #locals(2) #uses(~DirFrom_i) {
+    if (event = _Pathfind1) {
+        v0 = ~DirFrom_i(item, _Avatar);
+        v1 = ~PostAction(<< _aFACE_i, v0, _aCONTINUE_i, _aTHRUST2_FRAME_i, _aSTAND_FRAME_i >>, _Avatar);
+        SetFrame(0, item);
+    }
+}
+
+Routine Bucket accepts a0 #locals(4) #uses(UseBucket_i, PathToItem_i) {
+    if (~GetFrame(item) = 6) {
+        return;
+    }
+    if (event = _Converse) {
+        v0 = ~Item_getContainer(item);
+        if (v0 = ~NPCToItem_i(_Avatar)) {
+            event = 10;
+            UseBucket_i(item);
+            return;
+        } else {
+            if v0 {
+                v1 = ~Item_push(item);
+                if v1 {
+                    v1 = ~PopToNPC(_Avatar);
+                    if not v1 {
+                        v1 = ~PopToNPC(v0);
+                        FlashMouse_i(0);
+                    }
+                    event = 10;
+                    UseBucket_i(item);
+                    return;
+                } else {
+                    return;
+                }
+            }
+        }
+        closeAllGumps();
+        v2 = << 1, 65535, 0, 1, 65535, 65535, 0, 65535 >>;
+        v3 = << 0, 65535, 65535, 65535, 0, 1, 1, 1 >>;
+        PathToItem_i(10, item, #UseBucket_i, 65535, v3, v2, item);
+    }
+}
+
+Routine Campfire accepts a0 #locals(2) #uses(~DirFrom_i) {
+    if (event = _Pathfind1) {
+        v0 = ~DirFrom_i(item, _Avatar);
+        v1 = ~PostAction(<< _aFACE_i, v0, _aCONTINUE_i, _aTHRUST2_FRAME_i, _aSTAND_FRAME_i >>, _Avatar);
+        SetFrame(0, item);
+    }
+}
+
+Routine EmptyBucket_i accepts a0 #locals(6) #uses(~PartyUtters) {
+    if (event = _Pathfind1) {
+        v0 = ~PostAction(<< _aBEND_FRAME_i, _aSTAND_FRAME_i >>, _Avatar);
+        v1 = ~GetCoord(_Avatar);
+        v2 = ~GetFrame(item);
+        v3 = ~GetQuality(item);
+        if (v3 > 0) {
+            closeAllGumps();
+            v4 = ~PartyUtters(false, "@'Tis difficult to acquire! Mayhaps I should save it.@", "@'Tis difficult to acquire! Thou shouldst save it.@", 65534);
+            terminate;
+        }
+        if (v2 < 6) {
+            SetFrame(0, item);
+        }
+        if ((v2 = 1) or (v2 = 6)) {
+            v5 = ~Item_create(_Blood_Trails);
+            if v5 {
+                SetItemFlag_i(_IsTemporary_i, v5);
+                SetFrame(~rndRange(19, 16), v5);
+                v5 = ~PopToMap(v1);
+            }
+        }
+        if (v2 = 2) {
+            v5 = ~Item_create(_Blood_Trails);
+            if v5 {
+                SetItemFlag_i(_IsTemporary_i, v5);
+                SetFrame(~rndRange(3, 0), v5);
+                v5 = ~PopToMap(v1);
+            }
+        }
+        if (v2 = 3) {
+            v5 = ~Item_create(_Blood_Trails);
+            if v5 {
+                SetItemFlag_i(_IsTemporary_i, v5);
+                SetFrame(~rndRange(23, 20), v5);
+                v5 = ~PopToMap(v1);
+            }
+        }
+        if ((v2 = 4) or (v2 = 5)) {
+            v5 = ~Item_create(_Blood_Trails);
+            if v5 {
+                SetItemFlag_i(_IsTemporary_i, v5);
+                SetFrame(~rndRange(15, 12), v5);
+                v5 = ~PopToMap(v1);
+            }
+        }
+    }
+}
+
+Routine UseBucket_i accepts a0 #locals(1) #uses(PickUpBucket_i, ReachAndUse_i, FillBucket_i, PourBucket_i) {
+    if (event = _Pathfind1) {
+        closeAllGumps();
+        v0 = ~Item_getContainer(item);
+        if not v0 {
+            PickUpBucket_i();
+            ReachAndUse_i(1580, item);
+        }
+    }
+    if ((event = _Action) or v0) {
+        if (~GetFrame(item) = 0) {
+            FillBucket_i(item);
+        } else {
+            PourBucket_i(item);
+        }
+    }
+}
+
+Routine FillBucket_i accepts a0 #locals(16) #uses(PathToItem_i) {
+    v1 = ~GetTarget();
+    v2 = v1::2;
+    v3 = v1::3;
+    if (((v2 > 1459) and ((v2 < 1468) and ((v3 > 978) and (v3 < 993)))) or (((v2 = 1460) and ((v3 > 992) and (v3 < 995))) or (((v2 = 1467) and ((v3 > 992) and (v3 < 995))) or (((v2 > 1459) and ((v2 < 1462) and ((v3 > 994) and (v3 < 998)))) or (((v2 > 1465) and ((v2 < 1468) and ((v3 > 994) and (v3 < 1004)))) or (((v2 > 1447) and ((v2 < 1466) and ((v3 > 1001) and (v3 < 1004)))) or ((v2 > 1447) and ((v2 < 1460) and ((v3 > 995) and (v3 < 998)))))))))) {
+        v4 = ~FindNearest_i(30, _Path, _Avatar);
+        v5 = << 0 >>;
+        v6 = << 0 >>;
+        v7 = 65535;
+        PathToItem_i(11, v0, #Path, v7, v6, v5, v4);
+        return;
+    }
+    if not v1 {
+        return;
+    }
+    v8 = false;
+    if (v1 = ~NPCToItem_i(_Avatar)) {
+        return;
+    }
+    v9 = ~Item_getType(v1);
+    v10 = ~GetFrame(v1);
+    if (v9 = 741) {
+        v5 = << 0, 1, 1, 0, 65535, 65534, 65533, 65532, 65532, 65533, 65534, 65535 >>;
+        v6 = << 1, 0, 65535, 65534, 65534, 65534, 65534, 65535, 0, 1, 1, 1 >>;
+        v7 = 65535;
+        v8 = true;
+    }
+    if (v9 = 719) {
+        v5 = << 1, 0, 1, 1, 1, 0, 65535, 65534, 65534, 65534, 65534, 65535 >>;
+        v6 = << 0, 65535, 65535, 65534, 65533, 65532, 65531, 65533, 65534, 65535, 0, 65535 >>;
+        v7 = 65535;
+        v8 = true;
+    }
+    if (v9 = 412) {
+        v11 = ~FindNearest_i(8, _Basin3, v1);
+        if v11 && (~GetFrame(v11) <> 6) {
+            v5 = << 1, 65533, 1, 65533 >>;
+            v6 = << 1, 1, 2, 2 >>;
+            v7 = 65535;
+            v8 = true;
+        }
+    }
+    if (v9 = 714) && (v10 <> 6) {
+        v5 = << 1, 65533, 65535, 65534, 1, 65533, 1, 65533 >>;
+        v6 = << 65535, 65535, 1, 1, 65530, 65530, 65533, 65533 >>;
+        v7 = 65535;
+        v8 = true;
+    }
+    if (((v9 = 778) and (v10 = 6)) or ((v9 = 402) and (v10 = 16))) {
+        if (~GetFrame(v0) = 0) {
+            SetFrame(2, v0);
+            v12 = ~SetQuality(9, v0);
+        } else {
+            if (~GetFrame(v0) <> 6) {
+                SetFrame(0, v0);
+                v12 = ~SetQuality(0, v0);
+            }
+        }
+        terminate;
+    }
+    if (v9 = 617) && (v10 = 0) {
+        v5 = << 65531, 65531 >>;
+        v6 = << 65534, 65535 >>;
+        v7 = 65535;
+        v8 = true;
+    }
+    if (v9 = 258) {
+        v5 = << 0, 65535, 65534, 65533 >>;
+        v6 = << 2, 2, 2, 2 >>;
+        v7 = 65535;
+        v8 = true;
+    }
+    if (v9 = 434) {
+        v5 = << 2, 2, 2, 2 >>;
+        v6 = << 0, 65535, 65534, 65533 >>;
+        v7 = 65535;
+        v8 = true;
+    }
+    if (v9 = 470) {
+        if (~GetFrame(v1) <> 0) {
+            v13 = ~FindNearby_i(0, 2, _Well, v1);
+            Foreach v16 in v13 {
+                if (~GetFrame(v16) = 0) {
+                    v1 = v16;
+                    break;
+                }
+            }
+        }
+        v5 = << 65532, 65532 >>;
+        v6 = << 65534, 65534 >>;
+        v7 = 65535;
+        v8 = true;
+    }
+    if v8 {
+        PathToItem_i(11, v0, v9, v7, v6, v5, v1);
+    }
+}
+
+Routine PourBucket_i accepts a0 #locals(10) #uses(KarnaxAppears_i, ~DirFrom_i, Bark_i, EmptyBucket_i, PathToItem_i) {
+    v1 = ~GetTarget();
+    if (v1 = ~NPCToItem_i(_Avatar)) {
+        return;
+    }
+    if (v1::1 <> 0) {
+        if (~Item_isNpc(v1::1) and (~ItemToNPC_i(v1::1) <> 65180)) {
+            v2 = ~GetQuality(v0);
+            v3 = ~ItemToNPC_i(v1);
+            if (~GetFrame(v0) < 6) {
+                SetFrame(0, v0);
+                v4 = ~SetQuality(0, v0);
+            }
+            if v2 {
+                if ((v2 = 13) and (v3 = 65533)) {
+                    ClearItemFlag_i(_Zombie, _Iolo);
+                    if not ~GetItemFlag_i(_InParty_i, _Iolo) {
+                        SetWorkType(_Talk, _Iolo);
+                    }
+                    KarnaxAppears_i();
+                }
+                if ((v2 = 14) and (v3 = 65534)) {
+                    ClearItemFlag_i(_Zombie, _Shamino);
+                    if not ~GetItemFlag_i(_InParty_i, _Shamino) {
+                        SetWorkType(_Talk, _Shamino);
+                    }
+                    KarnaxAppears_i();
+                }
+                if ((v2 = 15) and (v3 = 65535)) {
+                    ClearItemFlag_i(_Zombie, _Dupre);
+                    if not ~GetItemFlag_i(_InParty_i, _Dupre) {
+                        SetWorkType(_Talk, _Dupre);
+                    }
+                    KarnaxAppears_i();
+                }
+                if ((v2 = 15) and (v3 = 65387)) {
+                    ClearItemFlag_i(_Zombie, _Gwenno);
+                    if not ~GetItemFlag_i(_InParty_i, _Gwenno) {
+                        SetWorkType(_Talk, _Gwenno);
+                    }
+                    KarnaxAppears_i();
+                }
+                return;
+            }
+            v5 = ~DirFrom_i(v1, _Avatar);
+            v4 = ~PostAction(<< _aFACE_i, v5, _aCONTINUE_i, _aTHRUST2_FRAME_i >>, _Avatar);
+            Bark_i(0, "@Cease and desist!@", v1);
+            return;
+        }
+        v6 = ~Item_getType(v1::1);
+        if (v6 = 445) {
+            if ((~GetFrame(v1) = 1) and (~GetFrame(v0) = 1)) {
+                v2 = ~GetQuality(v0);
+                if (v2 = 10) {
+                    SetFrame(2, v1);
+                }
+                if (v2 = 11) {
+                    SetFrame(3, v1);
+                }
+                if (v2 = 12) {
+                    SetFrame(4, v1);
+                }
+                v4 = ~SetQuality(0, v0);
+                SetFrame(0, v0);
+            }
+            return;
+        }
+        if (~GetQuality(v0) > 0) {
+            event = 10;
+            EmptyBucket_i(v0);
+        }
+        v7 = false;
+        if ((v6 = 338) or ((v6 = 701) or (v6 = 435))) {
+            v8 = << 2, 65534, 0, 2, 65534, 65534, 0, 65534 >>;
+            v9 = << 0, 65534, 65534, 65534, 0, 2, 2, 2 >>;
+            v10 = 65534;
+            v7 = true;
+        }
+        if ((v6 = 739) or (v6 = 825)) {
+            v8 = << 1, 1, 1, 1, 0, 65535, 65534, 65533, 65532, 65532, 65532, 65532, 65533, 65534, 65535, 65535, 0 >>;
+            v9 = << 0, 65535, 65534, 65533, 65532, 65532, 65532, 65532, 65533, 65534, 65535, 0, 65535, 65535, 65535, 65535, 65535 >>;
+            v10 = 65535;
+            v7 = true;
+        }
+        if (v6 = 741) {
+            if (~GetFrame(v0) > 0) {
+                terminate;
+            }
+            v8 = << 0, 1, 1, 0, 65535, 65534, 65533, 65532, 65532, 65533, 65534, 65535 >>;
+            v9 = << 1, 0, 65535, 65534, 65534, 65534, 65534, 65535, 0, 1, 1, 1 >>;
+            v10 = 65535;
+            v7 = true;
+        }
+        if (v6 = 719) {
+            if (~GetFrame(v0) > 0) {
+                terminate;
+            }
+            v8 = << 1, 0, 1, 1, 1, 0, 65535, 65534, 65534, 65534, 65534, 65535 >>;
+            v9 = << 0, 65535, 65535, 65534, 65533, 65532, 65531, 65533, 65534, 65535, 0, 65535 >>;
+            v10 = 65535;
+            v7 = true;
+        }
+        if (v6 = 863) {
+            if (~GetFrame(v1) = 16) {
+                SetFrame(18, v1);
+            }
+            return;
+        }
+        if v7 {
+            PathToItem_i(10, v1, v6, v10, v9, v8, v1);
+        } else {
+            if (~GetFrame(v0) < 6) {
+                SetFrame(0, v0);
+            }
+        }
+    } else {
+        v4 = ~PathfindAvatar_i(_Pathfind1, v0, #EmptyBucket_i, << v1::2, v1::3, v1::4 >>);
+        if not v4 {
+            event = 10;
+            EmptyBucket_i(v0);
+        }
+    }
+}
+
+Routine ReachAndUse_i accepts a0, a1 #locals(2) #uses(~DirFrom_i) {
+    v2 = ~DirFrom_i(v1, _Avatar);
+    v3 = ~PostAction(<< _aFACE_i, v2, _aCONTINUE_i, _aBEND_FRAME_i, _aSTAND_FRAME_i >>, _Avatar);
+    v3 = ~PostInFuture(2, << _aNO_HALT_i, _aUSABLE_i, v0 >>, v1);
+}
+
+Usable PickUpBucket_i #locals(3) {
+    v0 = ~FindNearby_i(0, 1, _Bucket, _Avatar);
+    if v0 {
+        v1 = ~GetCoord(v0);
+        v2 = ~Item_push(v0);
+        if v2 {
+            v2 = ~PopToNPC(_Avatar);
+            if not v2 {
+                v2 = ~PopToMap(v1);
+                FlashMouse_i(5);
+                terminate;
+            }
+        } else {
+            terminate;
+        }
+    } else {
+        terminate;
+    }
+}

@@ -1,0 +1,365 @@
+Routine HideAvatarEgg_i accepts a0 #locals(0) {
+    SetItemFlag_i(_DontMove_i, _Avatar);
+    EndConverse_i();
+    Polymorph_i(_Blank_Type, _Avatar);
+    Item_destroy(item);
+}
+
+Routine ScatterPartyEgg_i accepts a0 #locals(24) #uses(~RemoveFromList_i, PartyFaces_i, SetWorkTypeAt_i, Bark_i, SetGotFlags_i, BarkIfNear_i, ~IsInInv, ~GiveTeleList_i) {
+    v0 = << 65180, 65533, 65534, 65535 >>;
+    v1 = ~FindNearby_i(4, 30, 65535, _Avatar);
+    if (~ListSize_i(v1) > 1) {
+        v1 = ~RemoveFromList_i(v1, ~NPCToItem_i(_Avatar));
+        v2 = v1::~Random(~ListSize_i(v1));
+        v1 = ~RemoveFromList_i(v1, v2);
+        v3 = ~GetCoord(v2);
+        Sfx(116);
+        PartyFaces_i(v2);
+        v4 = 0;
+        if (~ItemToNPC_i(v2) < 65281) {
+            createSprite(65535, 0, 0, 0, v3::2, v3::1, 40);
+            createSprite(65535, 0, 0, 0, v3::2, v3::1, 9);
+            Item_move(<< (1520 + v4), 1933, 0 >>, v2);
+            v4 = (v4 + 2);
+        } else {
+            createSprite(65535, 0, 0, 0, v3::2, v3::1, 41);
+            createSprite(65535, 0, 0, 0, v3::2, v3::1, 26);
+            if ~GetItemFlag_i(_InParty_i, v2) {
+                LeaveParty(v2);
+            }
+            RemoveNPC_i(v2);
+            SetWorkTypeAt_i(_Wait, 0, 0, v2);
+        }
+        if v1 {
+            v5 = << "@He is gone!@", "@What hath happened?@", "@Is he dead?@", "@'Tis the storm!@", "@Help!@", "@Run!@" >>;
+            Bark_i(2, v5::~Random(~ListSize_i(v5)), v1::~Random(~ListSize_i(v1)));
+        }
+        v6 = ~PostInFuture((7 + ~Random(10)), << _aNO_HALT_i, _aUSABLE_i, #ScatterPartyEgg_i >>, _Avatar);
+        terminate;
+    }
+    if not $temp1flag {
+        v3 = ~GetCoord(_Avatar);
+        CreateSpriteOn_i(65535, 0, 0, 0, 0, 0, 42, _Avatar);
+        CreateSpriteOn_i(65535, 0, 0, 0, 0, 0, 13, _Avatar);
+        $temp1flag = true;
+        v6 = ~PostInFuture(5, << _aNO_HALT_i, _aUSABLE_i, #ScatterPartyEgg_i >>, _Avatar);
+        terminate;
+    }
+    $temp1flag = false;
+    v7 = ~GetParty();
+    if (~NPCToItem_i(_Dupre) in v7) {
+        LeaveParty(_Dupre);
+    }
+    if (~NPCToItem_i(_Shamino) in v7) {
+        LeaveParty(_Shamino);
+    }
+    if (~NPCToItem_i(_Iolo) in v7) {
+        LeaveParty(_Iolo);
+    }
+    SetWorkType(_Wait, _Dupre);
+    RemoveNPC_i(_Dupre);
+    NewSchedule_i(<< 607, 2611 >>, _Stand, 0, _Shamino);
+    Npc_schedule(_Shamino);
+    NewSchedule_i(<< 1064, 2503 >>, _Patrol, 0, _Iolo);
+    Item_move(<< 1064, 2503, 0 >>, _Iolo);
+    Npc_schedule(_Iolo);
+    SetGotFlags_i();
+    v8 = ~GetCoord(_Avatar);
+    v9 = << (v8::1 + 176), v8::2, v8::3 >>;
+    Item_move(v9, _Avatar);
+    v10 = ("@Yow!@" & ("" & ("@What happened?@" & ("@Where are my friends!@" & ("@Iolo?@" & ("@Shamino???@" & "@Dupre?!@"))))));
+    BarkIfNear_i(v10, _Avatar);
+    createSprite(65535, 0, 0, 0, v9::2, v9::1, 13);
+    $tookinventory = true;
+    if not ~IsInInv(65177, 65177, _Backpack, 1, _Avatar) {
+        v6 = ~GiveToCont_i(0, 0, _All, _Backpack, 1, _Avatar);
+    }
+    v11 = << 604, 231, 806, 771, 761, 554, 835, 262, 595, 606, 490, 178, 598, 587, 377, 594, 383, 666 >>;
+    v12 = << 65177, 65177, 65177, 65177, 65177, 65177, 65177, 65177, 65177, 65177, 65177, 65177, 65177, 65177, 65177, 65177, 65177, 65177 >>;
+    v13 = << 65177, 65177, 65177, 65177, 65177, 65177, 65177, 65177, 65177, 65177, 65177, 65177, 65177, 6, 65177, 65177, 65177, 65177 >>;
+    v14 = ~GiveTeleList_i(1);
+    v15 = ~GiveTeleList_i(2);
+    v16 = ~GiveTeleList_i(3);
+    v17 = ~ListSize_i(v11);
+    While (v17 > 0) {
+        Foreach v20 in v0 {
+            v21 = ~TakeFromCont_i(0, v13::v17, v12::v17, v11::v17, 1, v20);
+            v22 = 1;
+            if (v14::v17 = 948) {
+                v22 = ~Random(100);
+            }
+            if v21 {
+                v23 = ~CountItem(v13::v17, v12::v17, v11::v17, v20);
+                v6 = ~TakeFromCont_i(0, v13::v17, v12::v17, v11::v17, v23, v20);
+                v6 = ~GiveToCont_i(0, v16::v17, v15::v17, v14::v17, v22, v20);
+                if (v6 = 0) {
+                    goto label_34;
+                } else {
+                    v21 = false;
+                    goto label_32;
+                }
+            }
+        }
+        if not v21 {
+            label_32:
+            v6 = ~GiveToCont_i(0, v16::v17, v15::v17, v14::v17, v22, _Avatar);
+            if v6 {
+                v6 = ~GiveToParty_i(0, v16::v17, v15::v17, v14::v17, v22);
+            }
+        }
+        label_34:
+        v17 = (v17 - 1);
+    }
+}
+
+Routine ThoxaArrivesEgg_i accepts a0 #locals(3) #uses(Bark_i, FaceAvatar_i, ~GimmePathEgg, EncircleWithFire_i) {
+    if (event = _Trigger) {
+        SetItemFlag_i(_DontMove_i, _Avatar);
+        EndConverse_i();
+        ClearBark_i(_Avatar);
+        v0 = ~GetCoord(_Avatar);
+        v0::2 = (v0::2 + 7);
+        SetWorkType(_Wait, _Thoxa);
+        Item_move(v0, _Thoxa);
+        Bark_i(0, "@Thou hast arrived!@", _Thoxa);
+        Bark_i(3, "@Who said that?@", _Avatar);
+        FaceAvatar_i(65325);
+        v1 = ~PostInFuture(20, << _aNO_HALT_i, _aUSABLE_i, #Gwanni_Child >>, _Thoxa);
+        createSprite(65535, 0, 0, 0, v0::2, v0::1, 7);
+        Sfx(81);
+        SetWorkType(_Wait, _Karnax);
+        v1 = ~PostAction(<< _aFACE_i, byte(54) >>, _Karnax);
+        v2 = ~GimmePathEgg(1, 0);
+        SetMusic(v2, 63);
+    }
+    if ((event = _Action) and ($temp4flag = true)) {
+        ClearSpeakers_i();
+        SetSpeaker0_i(0, _Thoxa);
+        ["This fire ring shall save thee from being destroyed during this battle, Hero. Neither of us means thee harm, but errors can occur in the heat of combat. Remain within the ring!"];
+        EndConverse_i();
+        v2 = ~GimmePathEgg(1, 7);
+        if v2 {
+            SetMusic(v2, 2);
+        }
+        EncircleWithFire_i(_Field_Fire, ~NPCToItem_i(_Avatar));
+        v1 = ~PostAction(<< _aNO_HALT_i, _aFACE_i, _East, _aREADY_FRAME_i >>, _Thoxa);
+        $temp4flag = false;
+        terminate;
+    }
+    if (event = _Action) {
+        Sfx(71);
+        CreateSpriteOn_i(65535, 0, 0, 0, 0, 0, 17, _Thoxa);
+    }
+}
+
+Routine KarnaxAttacksThoxa_i accepts a0 #locals(11) #uses(Bark_i, BarkIfNear_i) {
+    if ((event = _Action) and (($temp1flag = false) and ($temp2flag = false))) {
+        v0 = ~GetCoord(_Karnax);
+        createSprite(65535, 0, 0, 0, (v0::2 - 2), (v0::1 - 2), 21);
+        Sfx(130);
+        v1 = ~FindNearby_i(16, 2, _Egg_Type, ~NPCToItem_i(_Thoxa));
+        v2 = ~SetAttack_i(_M_Ignite, v1, _Karnax);
+        v3 = ~PostAction(<< _aNO_HALT_i, _aUP_FRAME_i, _aTHRUST1_FRAME_i, _aCONTINUE_i, _aATTACK_i >>, _Karnax);
+        v4 = ~GetDist(_Karnax, _Thoxa);
+        v5 = (v4 / 2);
+        While (v5 < 45) {
+            v3 = ~PostInFuture(v5, << _aNO_HALT_i, _aUSABLE_i, #ThoxaArrivesEgg_i >>, _Thoxa);
+            v3 = ~PostInFuture((v5 + 1), << _aNO_HALT_i, _aUSABLE_i, #ThoxaArrivesEgg_i >>, _Thoxa);
+            v3 = ~PostInFuture(v5, << _aNO_HALT_i, _aUP_FRAME_i, _aOUT_FRAME_i, _aWAIT_i, 1, _aSTAND_FRAME_i >>, _Karnax);
+            v5 = (v5 + 10);
+        }
+        Bark_i(10, "@Damn thee!@", _Thoxa);
+        Bark_i(17, "@Oh...@", _Thoxa);
+        v3 = ~PostInFuture(1, << _aNO_HALT_i, _aWAIT_i, 6, _aBEND_FRAME_i, _aWAIT_i, 6, _aKNEEL_FRAME_i, _aWAIT_i, 10, _aLIE_FRAME_i, _aWAIT_i, 20, _aKNEEL_FRAME_i, _aWAIT_i, 5, _aBEND_FRAME_i, _aWAIT_i, 3, _aSTAND_FRAME_i, _aWAIT_i, 2, _aFACE_i, byte(50), _aWAIT_i, 2, _aUSABLE_i, #KarnaxAttacksThoxa_i >>, _Thoxa);
+        $temp1flag = true;
+        terminate;
+    }
+    if ((event = _Action) and ($temp1flag = true)) {
+        ClearSpeakers_i();
+        SetSpeaker0_i(0, _Thoxa);
+        ["I'm not so easily defeated, friend monk..."];
+        EndConverse_i();
+        v3 = ("@In Frio Grav!@" & ("@Mas Frio!@" & "@Take that!@"));
+        BarkIfNear_i(v3, _Thoxa);
+        v3 = ("" & "@Ah!@");
+        BarkIfNear_i(v3, _Karnax);
+        v3 = ~Item_create(_Blood_Trails);
+        if v3 {
+            SetItemFlag_i(_IsTemporary_i, v3);
+            v3 = ~PopToMap(~GetCoord(_Thoxa));
+        }
+        v6 = ~FindNearby_i(16, 25, _Path, ~NPCToItem_i(_Thoxa));
+        v7 = 1;
+        Foreach v10 in v6 {
+            v3 = ~PostInFuture(v7, << _aNO_HALT_i, _aUSABLE_i, #ThoxaDeparts_i >>, v10);
+            v7 = (v7 + 3);
+            v4 = ~GetDist(v10, _Thoxa);
+            v3 = ~PostInFuture((v7 + (v4 / 2)), << _aUSABLE_i, #KarnaxAttacksThoxa_i >>, v10);
+        }
+        v3 = ~PostInFuture(((v7 + (v4 / 2)) + 2), << _aNO_HALT_i, _aUSABLE_i, #KarnaxFalls_i >>, _Karnax);
+        $temp1flag = false;
+        $temp2flag = true;
+        terminate;
+    }
+    if ((event = _Action) and ($temp2flag = true)) {
+        Sfx(41);
+        CreateSpriteOn_i(65535, 0, 0, 0, 0, 0, 31, item);
+        terminate;
+    }
+}
+
+Routine KarnaxFalls_i accepts a0 #locals(8) #uses(Bark_i, PathNPCToItem_i) {
+    if ((event = _Action) and ($temp2flag = true)) {
+        SetWeather_i(_Clear);
+        $temp2flag = false;
+        ClearSpeakers_i();
+        SetSpeaker0_i(0, _Karnax);
+        ["Hero, listen to me before the fires consume me! Beware of thy friends -- they shall only bring destruction upon thee!"];
+        EndConverse_i();
+        Bark_i(7, "@Vile witch!@", _Karnax);
+        v0 = ~GetCoord(item);
+        createSprite(65535, 0, 0, 0, (v0::2 - 2), (v0::1 - 2), 27);
+        Sfx(42);
+        v1 = ~PostInFuture(6, << _aNO_HALT_i, _aBEND_FRAME_i, _aWAIT_i, 2, _aLIE_FRAME_i, _aWAIT_i, 12, _aBARK_i, "@Thou wilt pay!@", _aBEND_FRAME_i, _aSTAND_FRAME_i, _aFACE_i, byte(50), _aUSABLE_i, #KarnaxFalls_i >>, _Karnax);
+        v2 = 0;
+        While (v2 < 8) {
+            v3 = ~rndRange(4, 65532);
+            v4 = ~rndRange(4, 65532);
+            v5 = ~Item_create(_Fire_Pillar);
+            if v5 {
+                v6 = ~rndRange(5, 0);
+                SetFrame(v6, v5);
+                ClearItemFlag_i(_IsTemporary_i, v5);
+                v1 = ~PopToMap(<< (v0::1 + v3), (v0::2 + v4), 0 >>);
+            }
+            v2 = (v2 + 1);
+        }
+        $temp2flag = false;
+        $temp3flag = true;
+        terminate;
+    }
+    if ((event = _Action) and ($temp3flag = true)) {
+        v5 = ~Item_create(_Path);
+        if v5 {
+            ClearItemFlag_i(_IsTemporary_i, v5);
+            v0 = ~GetCoord(_Thoxa);
+            v0::1 = (v0::1 + 8);
+            v0::2 = (v0::2 + 3);
+            v1 = ~PopToMap(v0);
+            v7 = ~GetDist(v5, _Thoxa);
+            PathNPCToItem_i(true, _Bark, 0, 0, 0, 0, 0, v5, _Thoxa);
+            PathNPCToItem_i(true, _Bark, 0, 0, 0, 0, 0, v5, _Karnax);
+            v1 = ~PostInFuture((v7 - 2), << _aUSABLE_i, #KarnaxFalls_i >>, v5);
+            $temp3flag = false;
+            $temp4flag = true;
+            terminate;
+        }
+    }
+    if ((event = _Action) and ($temp4flag = true)) {
+        v0 = ~GetCoord(item);
+        createSprite(65535, 0, 0, 0, v0::2, v0::1, 31);
+        Sfx(42);
+        SetWorkType(_Wait, _Karnax);
+        v1 = ~PostAction(<< _aBARK_i, "@Aaahhh!@", _aBEND_FRAME_i, _aWAIT_i, 2, _aKNEEL_FRAME_i, _aWAIT_i, 2, _aLIE_FRAME_i >>, _Karnax);
+        v1 = ~PostAction(<< _aWAIT_i, 8, _aFACE_i, byte(54), _aSTEP_i, byte(54), byte(83), _aGO_W, _aSTEP_i, byte(54), byte(83), _aGO_W, _aSTEP_i, byte(54), byte(83), _aGO_W, _aSTEP_i, byte(54), byte(83), _aGO_W, _aBEND_FRAME_i, _aKNEEL_FRAME_i, _aSTAND_FRAME_i, _aUSABLE_i, #ThoxaDeparts_i >>, _Thoxa);
+        terminate;
+    }
+}
+
+Routine ThoxaDeparts_i accepts a0 #locals(10) #uses(SetWorkTypeAt_i, Bark_i, ~GimmePathEgg) {
+    if ((event = _Action) and (item = ~NPCToItem_i(_Shamino))) {
+        SetWorkTypeAt_i(_Talk, 0, 65535, _Shamino);
+        terminate;
+    }
+    if ((event = _Action) and ($temp2flag = true)) {
+        v0 = ~SetAttack_i(_M_Ignite, item, _Thoxa);
+        v1 = ~PostAction(<< _aNO_HALT_i, _aEXTEND1_FRAME_i, _aEXTEND2_FRAME_i, _aCONTINUE_i, _aATTACK_i, _aSTAND_FRAME_i >>, _Thoxa);
+        terminate;
+    }
+    if ((event = _Action) and ($temp4flag = true)) {
+        SetWorkType(_Wait, _Thoxa);
+        v2 = ~GetCoord(_Karnax);
+        Sfx(81);
+        createSprite(65535, 0, 0, 0, v2::2, v2::1, 26);
+        RemoveNPC_i(_Karnax);
+        v1 = ~Item_create(_Blood_Trails);
+        if v1 {
+            SetItemFlag_i(_IsTemporary_i, v1);
+            v1 = ~PopToMap(~GetCoord(_Karnax));
+        }
+        Bark_i(2, "@Goodbye...@", _Thoxa);
+        Bark_i(22, "@Hero...@", _Thoxa);
+        v1 = ~PostInFuture(25, << _aNO_HALT_i, _aBEND_FRAME_i, _aWAIT_i, 2, _aKNEEL_FRAME_i, _aWAIT_i, 2, _aUSABLE_i, #ThoxaDeparts_i >>, _Thoxa);
+        $temp4flag = false;
+        $temp1flag = true;
+        terminate;
+    }
+    if ((event = _Action) and ($temp1flag = true)) {
+        ClearSpeakers_i();
+        SetSpeaker0_i(0, _Thoxa);
+        ClearItemFlag_i(_DontMove_i, _Avatar);
+        ["Karnax is defeated, for now... I am weak, and must leave..."];
+        if flag(707) {
+            ["Remember to seek out the Three Companions -- they must be at thy side!"];
+        } else {
+            ["The writings of Xenka speak of the Three which shall travel with thee. Without them, thou canst not succeed."];
+            ["Thou must find them, Hero! And then never let them leave thy side..."];
+            flag(707) = true;
+        }
+        if flag(706) {
+            ["And watch for the Ring, Necklace and Earring -- for by these, the Power shall guide thee."];
+        } else {
+            ["Thou must also seek three artifacts -- a Ring, a Necklace, and an Earring."];
+            ["Through these ancient items, a Power shall communicate with thee. More than this, I know not."];
+        }
+        ["Seek out thy black sword with the caged demon that thou didst bring with thee from the other land. Thou must have it to complete thy quest."];
+        CloseSpeaker0_i();
+        v3 = ~GetCoord(_Thoxa);
+        createSprite(65535, 0, 0, 0, v3::2, v3::1, 7);
+        v4 = ~GimmePathEgg(1, 7);
+        if v4 {
+            SetMusic(v4, 49);
+        }
+        Sfx(81);
+        RemoveNPC_i(_Thoxa);
+        v1 = ~Item_create(_Blood_Trails);
+        if v1 {
+            SetItemFlag_i(_IsTemporary_i, v1);
+            v1 = ~PopToMap(~GetCoord(_Thoxa));
+        }
+        v5 = ~FindNearby_i(0, 10, _Field_Fire, _Avatar);
+        Foreach v8 in v5 {
+            v9 = ~rndRange(10, 1);
+            if (v9 < 10) {
+                Item_destroy(v8);
+            }
+        }
+        $temp1flag = false;
+        $temp3flag = true;
+        v1 = ~PostInFuture(50, << _aNO_HALT_i, _aUSABLE_i, #ThoxaDeparts_i >>, _Avatar);
+        terminate;
+    }
+    if ((event = _Action) and ($temp3flag = true)) {
+        SetWorkType(_Talk, _Shamino);
+        v1 = ~PostInFuture(2, << _aNO_HALT_i, _aBARK_i, "@The Avatar!@" >>, _Shamino);
+        v1 = ~GiveToCont_i(0, 0, 0, _Torch, 2, _Shamino);
+        $temp3flag = false;
+        v1 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #ThoxaDeparts_i >>, _Shamino);
+        terminate;
+    }
+}
+
+Function ~GiveTeleList_i accepts a0 #locals(3) {
+    if (v0 = 1) {
+        v1 = << 264, 577, 842, 749, 267, 285, 887, 677, 377, 244, 729, 616, 914, 587, 948, 794, 1004, 419 >>;
+        return v1;
+    }
+    if (v0 = 2) {
+        v2 = << false, false, false, false, false, false, false, false, false, false, false, false, 255, false, 20, false, false, false >>;
+        return v2;
+    }
+    if (v0 = 3) {
+        v3 = << 0, 3, 15, 1, 0, 6, 0, 0, 21, 0, 0, 16, 0, 5, 0, 0, 4, 0 >>;
+        return v3;
+    }
+}

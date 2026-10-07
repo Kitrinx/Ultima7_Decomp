@@ -1,0 +1,522 @@
+Routine Zhelkas accepts a0 #locals(26) #uses(~IsNPCNear, ~LordOrLady, ~AvatarName, ~IsInInv, ZhelkasOpensBridge_i, BarkIfNear_i, Bark_i, ZhelkasResumesWork_i, ToggleSliders_i, PartyFaces_i, FaceAvatar_i, ZhelkasGivesSerpentRing_i, ZhelkasGreets_i, ~AskYesNo, ~PartyUtters, ZhelkasAdmitsAvatar_i) {
+    v0 = ~IsNPCNear(_Shamino);
+    v1 = ~IsNPCNear(_Iolo);
+    v2 = ~IsNPCNear(_Dupre);
+    v3 = ~LordOrLady();
+    v4 = ~AvatarSex();
+    v5 = ~AvatarName();
+    v6 = ~IsInInv(20, 65177, _Bottles, 1, _Party);
+    v7 = ~GetItemFlag_i(_Met, _Zhelkas);
+    v8 = (("I am " + v5) + ".");
+    v9 = "his";
+    v10 = "him";
+    v11 = "he";
+    if v4 {
+        v9 = "her";
+        v10 = "her";
+        v11 = "she";
+    }
+    if (event = _Bark) {
+        v12 = ~FindNearby_i(0, 10, _Lever, item);
+        v13 = ~GetQuality(v12);
+        if ((v13 = 71) and ($zhelkasdidfirstdrawbridge = false)) {
+            v14 = (~GetFrame(v12) + 1);
+            SetFrame(v14, v12);
+            ZhelkasOpensBridge_i();
+            BarkIfNear_i("To enter our realm...", _Zhelkas);
+            $zhelkasdidfirstdrawbridge = true;
+            Bark_i(16, "@To seek the Pillars!@", _Zhelkas);
+            ZhelkasResumesWork_i();
+            terminate;
+        }
+        if ((v13 = 73) and ($zhelkasdidfirstdrawbridge and not flag(511))) {
+            flag(511) = true;
+            v14 = (~GetFrame(v12) + 1);
+            SetFrame(v14, v12);
+            ToggleSliders_i(65177, 73);
+            BarkIfNear_i("To go in Virtue!", _Zhelkas);
+            Bark_i(16, "@May Virtue be with thee!@", _Avatar);
+            ZhelkasResumesWork_i();
+            v15 = ~FindNearby_i(0, 30, _Switch, item);
+            Foreach v18 in v15 {
+                v19 = ~GetQuality(v18);
+                if (v19 = 0) {
+                    v20 = ~SetQuality(73, v18);
+                    v21 = ~GetCoord(v18);
+                    ToggleSliders_i(1, v18);
+                }
+            }
+            terminate;
+        }
+    }
+    if (event = _Converse) {
+        Item_bark("@Greetings, fine Gargoyle!@", _Avatar);
+        PartyFaces_i(65366);
+        Bark_i(2, "@To say greetings.@", _Zhelkas);
+        if $zhelkasdidfirstdrawbridge {
+            SetWorkType(_Talk, _Zhelkas);
+        } else {
+            if (~GetWorkType(_Zhelkas) <> _Wait) {
+                SetWorkType(_Wait, _Zhelkas);
+                FaceAvatar_i(65366);
+                v20 = ~PostInFuture(7, << _aNO_HALT_i, _aUSABLE_i, #Zhelkas >>, _Zhelkas);
+            }
+        }
+    }
+    if (event = _Action) {
+        if (item = ~NPCToItem_i(_Zhelkas)) {
+            event = 9;
+        } else {
+            ZhelkasOpensBridge_i();
+        }
+    }
+    if (event = _Talking) {
+        Npc_schedule(_Zhelkas);
+        ClearBark_i(_Zhelkas);
+        SetSpeaker0_i(0, _Zhelkas);
+        if ($zhelkasdidfirstdrawbridge and not $begunpuritytest) {
+            ["To have told you to seek the Pillar of Fire. To grasp it and enter the Test of the Ancients."];
+            ["To delay no longer."];
+            Bark_i(0, "@The Pillar!@", _Zhelkas);
+            SetWorkType(_Shy, _Zhelkas);
+            terminate;
+        }
+        if $begunpuritytest {
+            if ($passedioloclonetest and ($passedshaminoclonetest and ($passeddupreclonetest and not flag(519)))) {
+                TurnOn("explain test");
+                ZhelkasGivesSerpentRing_i();
+            } else {
+                if flag(519) {
+                    ZhelkasGreets_i();
+                } else {
+                    if not flag(512) {
+                        ["To be caught in indecision!"];
+                        ["To say that you have returned from the Test, as the Dream said that the Hero would."];
+                        ["Yet you did not succeed at the Test. You have failed to show Virtue. To have thought that you would have passed all the tests if you were the Hero!"];
+                        TurnOn(<< "second chance", "never mind" >>);
+                    } else {
+                        if not $broughtgoblet {
+                            ["To ask if you have brought me the Goblet. To know that this shall prove you to be the Hero of the Dream."];
+                            if (~AskYesNo() = true) {
+                                if (v6 = true) {
+                                    v22 = ~PartyUtters(false, "@I have the Goblet...@", "@We have brought the Goblet!@", 1);
+                                    SetSpeakerSlot_i(0);
+                                    ["To be true! To apologize most sincerely for doubting you..."];
+                                    ["To keep the Goblet, Hero From Another World. To hope that it might have powers to aid you on your quest."];
+                                    ZhelkasGivesSerpentRing_i();
+                                    $broughtgoblet = true;
+                                } else {
+                                    v22 = ~PartyUtters(false, 0, "@We do not have the Goblet!@", 1);
+                                    SetSpeakerSlot_i(0);
+                                    ["To wonder if you jest. To say you do not have the Goblet. To be unwilling to deal with you until you have gotten it."];
+                                    CloseSpeaker0_i();
+                                    Bark_i(2, "@Not until then.@", _Zhelkas);
+                                    terminate;
+                                }
+                            } else {
+                                if (v6 = true) {
+                                    v22 = ~PartyUtters(false, 0, "@But we do have the Goblet!@", 1);
+                                    SetSpeakerSlot_i(0);
+                                    ["To say that you are confused, but to give you the ring as promised. To say that I am certain that you are the Hero from our dream."];
+                                    ["To keep the Goblet, Hero From Another World. To hope that it might have powers to aid you on your quest."];
+                                    ZhelkasGivesSerpentRing_i();
+                                    $broughtgoblet = true;
+                                } else {
+                                    v22 = ~PartyUtters(false, 0, "@We do not have the Goblet!@", 1);
+                                    SetSpeakerSlot_i(0);
+                                    ["To be displeased that you do not have the Goblet. To be unwilling to deal with you until you have gotten it."];
+                                    CloseSpeaker0_i();
+                                    Bark_i(2, "@Not until then.@", _Zhelkas);
+                                    terminate;
+                                }
+                            }
+                        } else {
+                            ZhelkasGreets_i();
+                        }
+                    }
+                }
+            }
+        } else {
+            if (flag(495) = true) {
+                ["To ask if you have reconsidered. The Twin Pillars await the Hero of the Dream."];
+                if (~AskYesNo() = true) {
+                    ZhelkasAdmitsAvatar_i();
+                } else {
+                    ["To waste our precious time! To leave now!"];
+                    SetWorkType(_Wander, _Zhelkas);
+                    terminate;
+                }
+            } else {
+                ZhelkasGreets_i();
+            }
+        }
+        TurnOn("bye");
+        converse {
+            key (v8) {
+                ["To be wary that you might be like others of your kind, who come here to slay my people and steal our treasures."];
+                ["And yet... to wonder if you are the Hero of the Dream."];
+                if v4 {
+                    ["To be female as the Hero was in the dream..."];
+                }
+                TurnOff(<< v8, "I am the Avatar.", "I am lost..." >>);
+                TurnOn(<< "others of your kind", "treasures", "dream" >>);
+                if not $zhelkasdidfirstdrawbridge {
+                    TurnOn("drawbridge");
+                }
+            }
+            key ("drawbridge") {
+                TurnOff("drawbridge");
+                ["To be protection against our enemies. To be lowered and raised by ancient levers."];
+                ["To know that only gargoyles are strong enough to pull the levers!"];
+            }
+            key ("others of your kind") {
+                TurnOff("others of your kind");
+                ["To say sadly that Men come to do us harm. To not understand why they call us Daemons..."];
+                ["To say they are brawny warriors in stout armour. To delight in shedding our blood. To hate us greatly."];
+                ["To regret that we cannot make peace with them."];
+                TurnOn("Daemons");
+            }
+            key ("Daemons") {
+                TurnOff("Daemons");
+                ["To tell you there is no such thing as a daemon. To be sure that Daemons are creatures from stories, used to frighten young ones."];
+                ["To disbelieve that Men can believe us to be Daemons. To be Gargoyles."];
+            }
+            key ("treasures") {
+                TurnOff("treasures");
+                ["To say that many Men have come here to steal the wealth of the Lost City."];
+                ["To be willing to share... To be angry that the Men in Armour do not want to share. To want only to kill us."];
+                ["To be as ignorant as they are\x09greedy."];
+                TurnOn(<< "ignorant", "Lost City" >>);
+            }
+            key ("ignorant") {
+                TurnOff("ignorant");
+                ["To say that these invaders cannot stand the heat of this place! To quickly die."];
+                ["To be amused to see them come again and again, only to die. To survive long enough to vex us with their weapons, before their deaths."];
+            }
+            key ("Lost City") {
+                TurnOff("Lost City");
+                ["To say that several generations of gargoyles have dwelled here. To assure you that this place was old before we came."];
+                ["To look about and know that the people who dwelt here revered serpents. To say that they also suffered a great calamity."];
+                ["To wonder what happened to those who once dwelt here..."];
+            }
+            key ("dream") {
+                TurnOff("dream");
+                PushKeys();
+                ["To tell you that our slumber is filled with a single Dream, a vision of a Hero from another world..."];
+                if v4 {
+                    ["To say that the Hero is most like you..."];
+                } else {
+                    ["To say that the Hero is a Man, most like you."];
+                }
+                v22 = ~PartyUtters(false, 0, (("@It must be thee, " + v5) + "!@"), 65535);
+                if (v22 <> 65180) {
+                    if (~ListSize_i(~GetParty()) > 2) {
+                        v23 = v22;
+                        While (v23 = v22) {
+                            v23 = ~PartyUtters(false, 0, 0, 1);
+                        }
+                        v23 = ~PartyUtters(false, 0, "@The Avatar is the Hero... No doubt about it!@", v23);
+                    }
+                    SetSpeakerSlot_i(0);
+                }
+                ["To wonder if you are the Hero."];
+                TurnOn(<< "I am not the Hero", "tell me more" >>);
+            }
+            key ("I am not the Hero") {
+                ["To go your way! To leave my people to their slumbers, and the fate which grasps them in the night."];
+                ["To hope the Hero comes soon..."];
+                Bark_i(0, "@Soon...@", _Zhelkas);
+                SetWorkType(_Wander, _Zhelkas);
+                terminate;
+            }
+            key ("tell me more") {
+                TurnOff(<< "I am not the Hero", "tell me more" >>);
+                ["To say that the Dream tells of great disasters -- storms that disintegrate with their bolts, diseases which kill the meek, and a spectral Trinity which spreads Evil."];
+                ["To declare that a Hero shall come from beyond this world. To have seen that this warrior shall slay the Trinity, and triumph through virtue."];
+                ["To be required to give this Hero an ancient artifact, which will provide guidance to <v10>."];
+                ["To know the Hero by this sign -- <v11> shall submit to the Test of Purity, and be shown worthy by returning in virtue."];
+                TurnOn(<< "Test of Purity", "ancient artifact", "storms", "diseases", "Evil Trinity", "nothing" >>);
+            }
+            key ("Test of Purity") {
+                TurnOff("Test of Purity");
+                ["To tell you that this city is old. To have a long history before the gargoyles found it."];
+                ["To know little about the former inhabitants, but to believe that they were not Evil. To have visited their sacred places amid the ruins."];
+                ["To know that the Dream says that the Hero shall go to the Place of the Twin Pillars, where <v11> must face the ordeal of the ancients."];
+                if (~ListSize_i(~GetParty()) > 1) {
+                    ["To assure your companions that no harm shall come to you or to them during the Test. To believe this myself."];
+                }
+                TurnOn(<< "Twin Pillars" >>);
+            }
+            key ("Twin Pillars") {
+                TurnOff("Twin Pillars");
+                ["To have visited this place within the Underground City. To be in the north-eastern chambers of the city."];
+                ["To have seen two stone pillars of great size, in the semblance of serpents."];
+                ["To say that the Pillar of Ice is broken. To say that the Pillar of Fire yet stands."];
+                ["To have dreamed of the Hero grasping the fiery serpent with <v9> hands, and thus commencing the Test."];
+            }
+            key ("ancient artifact") {
+                TurnOff("ancient artifact");
+                ["To have a great treasure among the Gargoyles, an artifact discovered among the ruins. To not know its powers."];
+                ["To have seen by the Dream, that we must entrust this device to the Hero who shall come."];
+                ["To say that this Ring of the Serpent shall be the means of guiding the Hero in his struggle against the Imbalance."];
+            }
+            key ("storms") {
+                TurnOff("storms");
+                ["To have detected a change in the structure of the world, by means of an Imbalance of Essences."];
+                ["To know this is the reason why great storms now howl across the face of this world, hurling their lightnings down."];
+                ["To know this is not all -- to become worse with time, until the End of the World. Unless the Hero prevails."];
+            }
+            key ("diseases") {
+                TurnOff("diseases");
+                ["To weep for the creatures that succumb most easily to the sickness of this world."];
+                ["To have dreamed of dying infants, of minds numbed or gone insane, and of beings which simply waste away due to the Imbalance."];
+                ["To despair for my people, for they are lost in slumbers and the Dream. Only I remain."];
+            }
+            key ("Evil Trinity") {
+                TurnOff("Evil Trinity");
+                ["To have seen the Three Ghosts stalking the land, through the Dream."];
+                ["To declare that one has the Evil Glow. One has the haunting eyes that mock. One has the Serpent's Head."];
+                ["To know that this is not yet, but shall soon be. These are the Enemies of the Hero."];
+            }
+            key ("nothing") {
+                TurnOff("nothing");
+                ["To delay my purpose no longer..."];
+                ["To ask if you are willing to take the Test. To prove that you are the Hero of which we dream."];
+                if (~AskYesNo() = true) {
+                    ZhelkasAdmitsAvatar_i();
+                } else {
+                    ["To be sad... To know that we are fading rapidly. To hope that the Hero comes soon."];
+                    Bark_i(0, "@Depart...@", _Zhelkas);
+                    SetWorkType(_Wander, _Zhelkas);
+                    terminate;
+                }
+            }
+            key ("I am the Avatar.") {
+                TurnOff(<< v8, "I am the Avatar.", "I am lost..." >>);
+                ["To not have heard of any Avatar..."];
+                ["To be wary that you are not like other Men, and to hope that you are not here to steal our treasures."];
+                v22 = ~PartyUtters(false, 0, "@The Avatar is the Champion of Virtue, dear gargoyle.@", 65533);
+                if (v22 <> 65180) {
+                    SetSpeakerSlot_i(0);
+                    ["To be possible? To be the Hero that we have dreamed of?"];
+                } else {
+                    ["To seem to recognize you, as if from the vision of my slumbers... To wonder if you are the Hero of the Dream..."];
+                }
+                flag(509) = true;
+                TurnOn(<< "others of your kind", "treasures", "dream" >>);
+            }
+            key ("I am lost...") {
+                ["To think that you wish to do us harm, like all of your kind. To think that you are here to steal our treasures. To demand that you leave now!"];
+                Bark_i(0, "@Leave!@", _Zhelkas);
+                SetWorkType(_Wander, _Zhelkas);
+                terminate;
+            }
+            key ("dreaming sickness") {
+                ["To be concerned. To have an imbalance in the land. To have affected the gargoyles and thrown them into helpless dreaming." *"To be the only one that remains awake to fight back the trolls..."];
+                TurnOff("dreaming sickness");
+                TurnOn("trolls");
+            }
+            key ("trolls") {
+                ["To be uncivilized creatures! To enjoy killing... To have been plaguing us for generations." *"To be advised to be cautious if you hear drums."];
+                TurnOff("trolls");
+                TurnOn("drums");
+            }
+            key ("drums") {
+                ["To be thought of as the trolls' communication. To be trouble for all within the sound of the drums."];
+                TurnOff("drums");
+            }
+            key ("ring") {
+                ["To be a relic of the humans who once dwelt here... To have dreamed that it is a thing of great power." *"To have seen in the dream that you will receive great assistance from the ring."];
+                TurnOff("ring");
+                TurnOn("assistance");
+            }
+            key ("assistance") {
+                ["To have been unclear. To have only seen two snakes fighting... To know that the ring is important in the battle. To know nothing else."];
+                TurnOff("assistance");
+            }
+            key ("Serpent Staff") {
+                ["To have once had the Serpent Staff. To have been taken by the troll king."];
+                TurnOff("Serpent Staff");
+                TurnOn("troll king");
+            }
+            key ("troll king") {
+                TurnOff("troll king");
+                ["To be thinking that the staff will bring the trolls the power to destroy the gargoyles. To be certain that you will have to kill the troll king to reclaim the staff." *"To regret that the dreamers must remain guarded. To wish to go with you..."];
+            }
+            key ("information") {
+                TurnOff("information");
+                ["To have little to tell you..."];
+                ["To only say that the Imbalance is growing worse. To fear that there will be no gargoyles left undreaming soon."];
+            }
+            key ("aid") {
+                TurnOff("aid");
+                ["To be fighting the dreaming. To regret that there is no aid to give as long as the Imbalance exists!"];
+            }
+            key ("second chance") {
+                TurnOff("second chance");
+                SetNPCID_i(1, _Zhelkas);
+                ["To need one last task from you. To be without doubt. To be done before giving thee the artifact."];
+                v22 = ~PartyUtters(false, 0, "@The Avatar took thy test willingly! Nothing was said about passing all the tests!@", 65534);
+                if (v22 <> 65180) {
+                    SetSpeakerSlot_i(0);
+                    ["To be sure that your friends are hasty in your behalf."];
+                }
+                ["To be unwilling to allow the ring to fall into the wrong hands. To say that the Dream warns of the deceitfulness of the Spectral Trinity."];
+                ["To set you this test: To show Virtue by risking your life to enter the Conjury of the Ancients, and obtain the Goblet of Replenishing Water."];
+                flag(512) = true;
+                TurnOn(<< "goblet", "Conjury" >>);
+                ZhelkasResumesWork_i();
+            }
+            key ("Conjury") {
+                TurnOff("Conjury");
+                ["To have been a mighty hall within the city of the Ancients. To be recognized by the tiles of gold and black which floor the chamber. To be in the northern chambers of the city."];
+                ["To keep its secrets well guarded. To have slain all of our warriors who entered."];
+            }
+            key ("goblet") {
+                TurnOff("goblet");
+                ["To have listened to the dying speech of one explorer, and have heard of a Magic Goblet which lies in this room."];
+                ["To believe that only the noblest Hero could retrieve such an object."];
+            }
+            key ("never mind") {
+                TurnOff("never mind");
+                ["To refuse to give you the Ring of the Serpent. To ask that you submit further proof of your Virtue."];
+                Bark_i(0, "@Proof!@", _Zhelkas);
+                ZhelkasResumesWork_i();
+                terminate;
+            }
+            key ("leave Furnace") {
+                TurnOff("leave Furnace");
+                v24 = ~FindNearby_i(0, 20, _Lever, _Zhelkas);
+                if (~GetQuality(v24) = 73) {
+                    ["To open the brass gate, that you may gain the surface."];
+                    Bark_i(0, "@To wait.@", _Zhelkas);
+                    NewSchedule_i(~GetCoord(_Zhelkas), _Patrol, 0, _Zhelkas);
+                    Npc_schedule(_Zhelkas);
+                } else {
+                    ["To know that the only exit is at the brass gate at where we first met. To know that Men are too weak to pull the levers to open it."];
+                    ["To go now to the brass gate, Hero. To meet you there and\x09to let you return to the surface."];
+                    Bark_i(0, "@To meet you there...@", _Zhelkas);
+                    Bark_i(0, "@See thee at the gate...@", _Avatar);
+                    v25 = << 1476, 2483 >>;
+                    NewSchedule_i(<< v25 >>, _Stand, 0, _Zhelkas);
+                    Npc_schedule(_Zhelkas);
+                    terminate;
+                }
+            }
+            key ("explain test") {
+                TurnOff("explain test");
+                ["To reveal that the emotional pleas for you to flee this dying world were a test of your Logic. As all worlds are connected, it would have done you no good to flee."];
+                ["To commend you for your Ethicality when faced with the coercion of others. To be heartened that you did not seek to benefit from their servitude."];
+                ["To see that you are the Hero, for you are Virtuous and able to complete a task -- no matter how tedious. To be relieved that you have come at last..."];
+                flag(506) = true;
+            }
+            key ("bye") {
+                if (~GetNPCID_i(_Zhelkas) = 1) {
+                    SetNPCID_i(0, _Zhelkas);
+                    ["To give me your answer -- will you bring me the Goblet of the Conjury?"];
+                    if ~AskYesNo() {
+                        ["To have nothing to fear, if you are the Hero. To meditate to give you strength."];
+                        Bark_i(0, "@To be strong!@", _Zhelkas);
+                    } else {
+                        ["To know that time is short. To wish that the true Hero shall come soon."];
+                        Bark_i(0, "@Soon...@", _Zhelkas);
+                    }
+                    SetWorkType(_Shy, _Zhelkas);
+                    terminate;
+                } else {
+                    CloseSpeaker0_i();
+                    Bark_i(0, "@Well met!@", _Avatar);
+                    Bark_i(2, "@To wish you luck!@", _Zhelkas);
+                    break;
+                }
+            }
+        }
+        clear_answers;
+    }
+}
+
+Usable ZhelkasGreets_i #locals(4) #uses(~AvatarName, ~GimmePathEgg) {
+    v0 = ~AvatarName();
+    v1 = (("I am " + v0) + ".");
+    if not $zhelkasdidfirstdrawbridge {
+        v2 = ~GetItemFlag_i(_Met, _Zhelkas);
+        if v2 {
+            ["To be asking what you want with Zhelkas, ruler of Gargoyles! To be thinking how sad and sorry you look as you cower over to speak. To be telling you to be brave!  To be telling you to have pride.  To be telling you announce yourself."];
+        } else {
+            ["To be called ruler of gargoyles. To respond to Zhelkas. To mean `Iron Helm.'"];
+            ["To ask who you are and why you are here."];
+            SetItemFlag_i(_Met, _Zhelkas);
+        }
+        TurnOn(<< v1, "I am the Avatar.", "I am lost..." >>);
+        if not flag(730) {
+            flag(730) = true;
+            v3 = ~PostInFuture(100, << _aNO_HALT_i, _aUSABLE_i, #Ring >>, ~GimmePathEgg(4, 5));
+        }
+    } else {
+        ["To be glad to see you again, <v0>. To inquire what you seek from the Gargoyles this day."];
+        TurnOn(<< "information", "aid" >>);
+        if ($sithsaidstaff = true) {
+            TurnOn("Serpent Staff");
+        }
+        if ($begunpuritytest and not flag(506)) {
+            TurnOn("explain test");
+        }
+        if ($broughtgoblet or ($passedioloclonetest and ($passedshaminoclonetest and $passeddupreclonetest))) {
+            TurnOn("leave Furnace");
+            if flag(511) {
+                TurnOff("leave Furnace");
+            }
+        }
+    }
+}
+
+Usable ZhelkasGivesSerpentRing_i #locals(2) #uses(~AvatarName, ~GiveItemsOrDrop_i) {
+    v0 = ~AvatarName();
+    if (flag(509) = true) {
+        ["To be honored to see you, Avatar of Virtue! To be certain that you are the Hero we have dreamed about."];
+    } else {
+        ["To be certain that you are the Hero we have dreamed about, <v0>."];
+    }
+    ["To be relieved that you came before the dreaming sickness spread. To have feared that none would remain awake to give you the ring. Now it is yours."];
+    v1 = ~GiveItemsOrDrop_i(true, false, 1, 65177, 887, 1, _Avatar);
+    flag(519) = true;
+    TurnOn(<< "information", "aid", "dreaming sickness" >>);
+}
+
+Usable ZhelkasResumesWork_i #locals(7) {
+    v0 = << 1651, 2511 >>;
+    v1 = << 1667, 2581 >>;
+    v2 = << 1739, 2599 >>;
+    v3 = << 1787, 2615 >>;
+    v4 = << 1771, 2615 >>;
+    v5 = << 1595, 2615 >>;
+    v6 = << 1707, 2616 >>;
+    NewSchedule_i(<< v0, v1, v2, v3, v4, v5, v6 >>, << 11, 12, 12, 2, 1, 12, 12 >>, << 0, 1, 2, 3, 4, 5, 6 >>, _Zhelkas);
+    Npc_schedule(_Zhelkas);
+}
+
+Usable ZhelkasAdmitsAvatar_i #locals(0) #uses(Bark_i) {
+    ["To be pleased... To bid you to go to the Pillars of Purity."];
+    ["To ask you to prepare yourself in virtue. Then to grasp the Pillar of Fire and let the Test begin..."];
+    ["To admit you to the Underground City."];
+    Bark_i(0, "@A moment!@", _Zhelkas);
+    NewSchedule_i(~GetCoord(_Zhelkas), _Patrol, 0, _Zhelkas);
+    Npc_schedule(_Zhelkas);
+    terminate;
+}
+
+Usable ZhelkasOpensBridge_i #locals(5) #uses(~CreateItemAt_i) {
+    v0 = ~FindNearby_i(0, 10, _Closed_Drawbridge, _Zhelkas);
+    if v0 {
+        v1 = ~GetFrame(v0);
+        if (v1 = 5) {
+            SetFrame(7, v0);
+            v2 = ~PostInFuture(2, << _aNO_HALT_i, _aUSABLE_i, #Zhelkas >>, v0);
+        }
+        if (v1 = 7) {
+            v3 = ~GetCoord(v0);
+            Item_destroy(v0);
+            v4 = ~CreateItemAt_i(v3, 0, 65177, 4, _Drawbridge);
+        }
+    }
+}

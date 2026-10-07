@@ -1,0 +1,329 @@
+Routine Gwenno accepts a0 #locals(8) #uses(~LordOrLady, ~AvatarName, PartyFaces_i, Bark_i, ~GimmePathEgg, ~IsInInv, ~TransferItems_i, GwennoReturnsBelongings_i, ChooseMeetingPlace_i) {
+    v0 = ~LordOrLady();
+    v1 = ~AvatarSex();
+    v2 = ~AvatarName();
+    v3 = ~GetTime();
+    if ((event = _Converse) or (event = _Action)) {
+        Item_bark("@A pleasure to see thee...@", _Avatar);
+        PartyFaces_i(65387);
+        if not ~GetItemFlag_i(_Zombie, _Gwenno) {
+            Bark_i(2, "@'Tis good to see thee!@", _Gwenno);
+            SetWorkType(_Talk, _Gwenno);
+        } else {
+            NewSchedule_i(<< 2423, 1164 >>, _DeskWork, 0, _Gwenno);
+            Npc_schedule(_Gwenno);
+            if not $SERPENT_GWENNO_BANE_SPEECH {
+                $SERPENT_GWENNO_BANE_SPEECH = true;
+                v4 = ~PostInFuture(30, << _aNO_HALT_i, _aUSABLE_i, #Ring >>, ~GimmePathEgg(4, 5));
+            }
+            v5 = ~rndRange(4, 1);
+            if (v5 = 1) {
+                Bark_i(2, "@I must sate mine hunger!@", _Gwenno);
+            }
+            if (v5 = 2) {
+                Bark_i(2, "@Come, allow me to feed upon thee!@", _Gwenno);
+            }
+            if (v5 = 3) {
+                Bark_i(2, "@Blood! Blood everywhere!@", _Gwenno);
+            }
+            if (v5 = 4) {
+                Bark_i(2, "@Let me feel thy naked flesh!@", _Gwenno);
+            }
+        }
+    }
+    if (event = _Talking) {
+        if ~GetItemFlag_i(_InParty_i, _Gwenno) {
+            SetWorkType(_FollowAvt, _Gwenno);
+            TurnOn("leave");
+        } else {
+            Npc_schedule(_Gwenno);
+            TurnOn("join");
+        }
+        ClearBark_i(_Gwenno);
+        SetSpeaker0_i(0, _Gwenno);
+        v6 = ~GetItemFlag_i(_Met, _Gwenno);
+        if ((not ~GetItemFlag_i(_Zombie, _Iolo) and $antiiolodead) and not $IOLO_GWENNO_REUNITED) {
+            ["Iolo! My beloved Iolo!"];
+            ["Oh, I had feared that I would never see thee again!"];
+            SetSpeaker1_i(0, _Iolo);
+            ["My lovely Gwenno!"];
+            ["Now mine heart can sing, at the sight of thee!"];
+            SetSpeakerSlot_i(0);
+            ["Thou dost look pale, dear Iolo."];
+            ["Thou didst never take care of thyself when I was away..."];
+            SetSpeakerSlot_i(1);
+            if ~IsInInv(5, 65177, _Amulet, 1, _Party) {
+                ["The Lady of Fawn gave me this necklace to give to thee, when at last I found thee, my love."];
+                ["Take it as a token of my love."];
+                v7 = ~TransferItems_i(true, 5, 65177, _Amulet, 1, _Gwenno, _Iolo);
+            } else {
+                ["The Lady of Fawn gave me a necklace to give to thee, my love. But in all my trials to find thee, I seem to have lost it."];
+                ["I had thought to give it to thee as a token of my love."];
+            }
+            CloseSpeaker1_i();
+            SetSpeakerSlot_i(0);
+            if (v7 = true) {
+                ["I shall cherish it always, Iolo."];
+                ["But thou didst not have to give me anything to prove thy love. That thou art here now is proof enough."];
+            } else {
+                ["It doth not matter, Iolo."];
+                ["Thou dost not have to give me anything to prove thy love. That thou art here now is proof enough."];
+            }
+            $IOLO_GWENNO_REUNITED = true;
+        }
+        if (~GetItemFlag_i(_Zombie, _Iolo) and $antiiolodead) {
+            ["A thousand thanks for bringing back mine husband, <v2>."];
+            ["I grieve that his wits seem to have left him. But at least he is safe with me."];
+            ["I shall do all that I can to aid thee in restoring him. Or gladly care for him all the remainder of my days... even as he is."];
+        }
+        if not ~GetItemFlag_i(_Met, _Gwenno) {
+            SetItemFlag_i(_Met, _Gwenno);
+            ["What a relief to see thee again, <v2>."];
+            ["I fear that thy work hath only begun. Batlin's deeds have only worsened the storms."];
+            ["As the sand dwindles within the Hourglass of Fate, the danger will only increase. Thou must find the answer quickly, Avatar!"];
+        } else {
+            ["I have been doing much study, <v2>."];
+            ["There is much I must tell thee before the sand runs down in the Hourglass of Fate."];
+        }
+        if not $KNOWS_OF_SOUL_GEMS {
+            TurnOn(<< "Batlin's deeds", "danger", "answer" >>);
+        }
+        if ($KNOWS_OF_SOUL_GEMS and (not $antishaminodead or (not $antiiolodead or not $antidupredead))) {
+            ["Avatar! I have found a most intriguing scroll that tells of some sort of mystic connection between the Banes and the ancient temples!"];
+            TurnOn("mystic connection");
+        }
+        if ($methierophant and not $metchaoshierophant) {
+            ["Now I understand what Xenka meant by being aided by specters. But, unless thou canst find the grave of the last Chaos Hierophant, I know not how thou wilt restore Balance."];
+            ["Perhaps if thou wouldst ask one of the monks -- perhaps Thoxa -- she could try to divine where the Chaos Hierophant lies."];
+        }
+        if ($GWENNO_HAS_BELONGINGS and (not ~GetItemFlag_i(_InParty_i, _Gwenno) and ~GetContents(_All, _All, _All, _Gwenno))) {
+            TurnOn("belongings");
+        }
+        TurnOn(<< "bye" >>);
+        converse {
+            key ("belongings") {
+                TurnOff("belongings");
+                GwennoReturnsBelongings_i();
+            }
+            key ("join") {
+                TurnOff("join");
+                if $DUPRE_IS_TOAST {
+                    if (~ListSize_i(~GetParty_i()) < 5) {
+                        TurnOn("leave");
+                        ["If thou dost think I can be of use..."];
+                        JoinParty(_Gwenno);
+                        $GWENNO_HAS_BELONGINGS = true;
+                    } else {
+                        ["I hardly think that thou hast need of me, Avatar. Look at all thy fine companions!"];
+                        ["Instead, I shall remain here. After all, what can one old woman do for thee?"];
+                    }
+                } else {
+                    if ~GetItemFlag_i(_Zombie, _Iolo) {
+                        ["But I must remain here and study! I must help thee find a way to restore my dear Iolo!"];
+                    } else {
+                        ["I will be of more use to thee if I remain here. I seem to have a talent for finding the information thou dost need."];
+                    }
+                }
+            }
+            key ("leave") {
+                TurnOff("leave");
+                TurnOn("join");
+                ["I understand, <v2>..."];
+                LeaveParty(_Gwenno);
+                ChooseMeetingPlace_i(_Gwenno);
+            }
+            key ("Batlin's deeds") {
+                TurnOff("Batlin's deeds");
+                ["Until Batlin interfered, this land had no Balance, but complete chaos was held in check... Until he loosed the Banes."];
+                ["Unless Balance is restored, this land shall die... And take every world that touches it into the dust of oblivion as well."];
+                TurnOn(<< "Banes", "every world" >>);
+            }
+            key ("Banes") {
+                TurnOff("Banes");
+                PushKeys();
+                ["The Banes are the splintered force of Chaos."];
+                ["Thou wilt have to cage them again, as they were before Batlin came. 'Tis only a temporary solution at best."];
+                ["Perhaps I can consult the materials here on Monk Isle and discover a way to rid this land of the threat entirely."];
+                TurnOn(<< "cage them", "materials", "change subject" >>);
+            }
+            key ("cage them") {
+                TurnOff("cage them");
+                ["Thou shouldst go to Moonshade."];
+                ["If thou canst learn who gave Batlin the secret of trapping souls, I will try to learn what can make them able to withstand the forces that we wish to contain."];
+                TurnOn(<< "Moonshade", "secret" >>);
+                $lookforsoulprism = true;
+            }
+            key ("Moonshade") {
+                TurnOff("Moonshade");
+                ["I do not believe that caging souls was possible within Britannia. Therefore, the spell must have come from this land."];
+                ["And where else but Moonshade wilt thou find a spell in this land? But they are a closed-mouthed lot -- I wish thee luck."];
+            }
+            key ("secret") {
+                TurnOff("secret");
+                ["Although I spent quite a bit of time within Moonshade, I heard nothing about such a spell."];
+                ["Since the Mages are all basically vain, that must mean that the spell is a secret... or at least not common knowledge."];
+            }
+            key ("materials") {
+                TurnOff("materials");
+                ["The Monks have said that they have an extensive library here. Perhaps, with all I have learned from my travels throughout the land, I can use their books and scrolls to find the answer."];
+            }
+            key ("every world") {
+                TurnOff("every world");
+                PushKeys();
+                ["Britannia -- even thine home, Avatar -- is in deadly peril!"];
+                ["No world exists without influencing another. So all may be destroyed if New Sosaria dies."];
+                TurnOn(<< "New Sosaria", "change subject" >>);
+            }
+            key ("New Sosaria") {
+                TurnOff("New Sosaria");
+                ["According to the Mages of Moonshade, New Sosaria is the name of this land, <v2>, though 'tis often called Serpent Isle."];
+                ["The forefathers of all the people here were dissenters of Lord British's rule."];
+                TurnOn(<< "Serpent Isle", "Lord British's rule" >>);
+            }
+            key ("Serpent Isle") {
+                TurnOff("Serpent Isle");
+                ["I came upon the ruins of a civilization in many places during my travels."];
+                ["They all bore the mark of some serpent design or another. I noted that there appeared to be a different serpent motif in different areas."];
+                TurnOn("serpent motif");
+            }
+            key ("serpent motif") {
+                TurnOff("serpent motif");
+                ["One serpent always seems to crawl toward the left. Another serpent always crawls toward the right, and the remaining serpent always crawls straight."];
+                ["I have no idea if it means anything, but there was a difference between the different ruins."];
+            }
+            key ("Lord British's rule") {
+                TurnOff("Lord British's rule");
+                ["It doth seem difficult to believe that they could be talking about the Lord British we know."];
+                ["But perhaps time runs differently here than in Britannia."];
+            }
+            key ("danger") {
+                TurnOff("danger");
+                PushKeys();
+                ["Thou hast already experienced the power of the Storms of Imbalance. As time passes, these will increase in frequency and strength."];
+                ["After a further period of time, earthquakes will begin to tear the land apart... Until it at last destroys itself."];
+                TurnOn(<< "Storms of Imbalance", "period of time", "change subject" >>);
+            }
+            key ("Storms of Imbalance") {
+                TurnOff("Storms of Imbalance");
+                ["The Prophecies of Xenka speak of the Storms of Imbalance."];
+                ["Storms unlike any living man hath seen. Storms whose results no man can predict..."];
+                ["I am sorry, the prophecies are cryptic at best."];
+                TurnOn(<< "prophecies", "cryptic" >>);
+            }
+            key ("prophecies") {
+                TurnOff("prophecies");
+                ["The monks have recorded all of Xenka's visions. They keep this tome of wisdom within their Chapel, on the altar."];
+                ["It is very confusing to read."];
+            }
+            key ("cryptic") {
+                TurnOff("cryptic");
+                ["The language is vague and hard to understand."];
+                ["Much of it sounds like bad poetry... In fact, if Iolo's songs were as bad, I would break his lute rather than allow him to inflict them on others!"];
+            }
+            key ("period of time") {
+                TurnOff("period of time");
+                ["I do not know! These forsaken prophecies are so poorly written that I cannot make any headway in finding any reference to any other!"];
+                ["I do not know who is responsible, the monks or Xenka herself, but I sometimes feel as if I could strike someone!"];
+            }
+            key ("answer") {
+                TurnOff("answer");
+                PushKeys();
+                ["According to Xenka's visions, 'The Hero from Another World will succeed through the use of powerful magic, the aid of specters, and the implements of the Hierophant.'"];
+                ["Before the sands run down, we must find the meaning of these accursed riddles!"];
+                TurnOn(<< "powerful magic", "specters", "implements", "change subject" >>);
+            }
+            key ("powerful magic") {
+                TurnOff("powerful magic");
+                ["I know not what a farm wife would consider great magic!"];
+                ["For all I know it could be as simple as lighting a candle! Or perhaps she is referring to the power to trap souls."];
+                ["It would be so much more simple if Xenka would return and explain these infernal riddles herself! She is worse than Chuckles!"];
+            }
+            key ("specters") {
+                TurnOff("specters");
+                ["For all I know, Xenka is talking about herself!"];
+                ["All of these monks are convinced that she will return to help thee finish thy quest... While I wade through all these insane ramblings!"];
+                ["What I need is to talk to her specter and see if I can wring any sense out of her rather than these writings!"];
+            }
+            key ("implements") {
+                TurnOff("implements");
+                ["From what Karnax hath told me, a Hierophant was some sort of priest or holy man for these Ophidians."];
+                ["What tools would a holy man use? Something for blessing people, perhaps... I know not. I must search further for more clues."];
+            }
+            key ("mystic connection") {
+                TurnOff("mystic connection");
+                PushKeys();
+                ["Before thou canst redeem thy faithful companions, thou must take the soul cages and bathe them in the water of the temple that is connected to that Bane."];
+                ["And whilst thou art at each temple, according to the scroll, there is a device of some sort through which thou canst divine the location of each Bane."];
+                TurnOn(<< "bathe", "temple", "device", "change subject" >>);
+            }
+            key ("bathe") {
+                TurnOff("bathe");
+                ["The soul cages... er, prisms... that thou dost have cannot withstand the powers of beings such as the Banes."];
+                ["Only a prism purified by the water of the appropriate temple can hold each Bane. Otherwise, the prism will be ineffective."];
+            }
+            key ("temple") {
+                TurnOff("temple");
+                ["Karnax did tell me that Miggim doth have maps to the various temples..."];
+                ["Apparently each temple was dedicated to one of the six virtues of the Ophidians. Thou shouldst seek out the correct temple before thou canst defeat the Banes."];
+                TurnOn(<< "Karnax", "Miggim", "Ophidians" >>);
+            }
+            key ("Karnax") {
+                TurnOff("Karnax");
+                ["Karnax is quite pompous. He is more inclined to lecture me than to help."];
+                ["But I will gladly suffer his speeches if they can help me find the way to restore mine husband."];
+                ["His knowledge of the history of these islands hath been invaluable!"];
+            }
+            key ("Miggim") {
+                TurnOff("Miggim");
+                ["Miggim is very quiet and helpful."];
+                ["He hath been most helpful reading books and scrolls that might hold some clue or another. I am thankful for his knowledge of this library... without him I would never find anything!"];
+            }
+            key ("Ophidians") {
+                TurnOff("Ophidians");
+                ["'Ophidians' is the word that Karnax uses for the people that once dwelled in the serpent ruins throughout the land."];
+                ["I do not know if it is their name for themselves, or if it is a name that he concocted for them."];
+            }
+            key ("device") {
+                TurnOff("device");
+                ["Once again, Avatar, I have nothing further that I can tell thee. I have been unable to find any more references to devices within the temples."];
+                ["I can find tallies of grain given to the temples, or lists of stonework hired by each temple caretaker. But I can find nothing else to help thee... I will keep searching."];
+            }
+            key ("change subject") {
+                ["Certainly..."];
+                PopKeys();
+            }
+            key ("bye") {
+                CloseSpeaker0_i();
+                Bark_i(0, "@I shall return...@", _Avatar);
+                Bark_i(2, "@Hurry back!@", _Gwenno);
+                break;
+            }
+        }
+        clear_answers;
+    }
+}
+
+Usable GwennoReturnsBelongings_i #locals(1) #uses(~AskYesNo, ~ReturnBelongings_i) {
+    if ~GetContents(_All, _All, _All, _Gwenno) {
+        ["I have many items in my possession which may aid thee in thy journeys. Wouldst thou like them?"];
+        if ~AskYesNo() {
+            ["Here they are."];
+            $GWENNO_HAS_BELONGINGS = false;
+            v0 = ~ReturnBelongings_i(65387);
+            if (v0::1 <> 0) {
+                ["Thy companions will have to help thee with this burden."];
+            }
+            if (v0::2 > 0) {
+                v0 = v0::2;
+                if (v0 > 1) {
+                    ["Since thou canst not carry these remaining <v0> items, I will place them at thy feet."];
+                } else {
+                    ["Since thou dost not have enough room for this last item, I will place it at thy feet."];
+                }
+            }
+        } else {
+            $GWENNO_HAS_BELONGINGS = true;
+            ["If thou changest thy mind, thou hast but to return and ask."];
+        }
+    }
+}

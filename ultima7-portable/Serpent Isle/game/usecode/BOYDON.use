@@ -1,0 +1,296 @@
+Routine Body_Parts accepts a0 #locals(1) {
+    if (event = _Converse) {
+        if (~GetFrame(item) <> 18) {
+            terminate;
+        }
+        Item_bark("@Hello, head.@", _Avatar);
+        v0 = ~PostAction(<< _aNO_HALT_i, _aBARK_i, "@Who said that?@", _aWAIT_i, 7, _aUSABLE_i, #Boydon >>, item);
+    }
+}
+
+Routine Boydon accepts a0 #locals(20) #uses(~LordOrLady, ~AvatarName, DeclareWinner_i, NowSettleDownBoys, PartyFaces_i, Bark_i, ~PartyUtters, BoydonReturnsBelongings_i, ~AskYesNo, ChooseMeetingPlace_i) {
+    v0 = ~LordOrLady();
+    v1 = ~AvatarName();
+    v2 = ~GetItemFlag_i(_InParty_i, _Shamino);
+    v3 = ~GetItemFlag_i(_InParty_i, _Iolo);
+    v4 = ~GetItemFlag_i(_InParty_i, _Dupre);
+    v5 = ~GetItemFlag_i(_InParty_i, _Boydon);
+    v6 = ~GetItemFlag_i(_Met, _Boydon);
+    v7 = ~GetItemFlag_i(_Dead, _Boydon);
+    if ((event = _NearDeath) and $tournamentflag) {
+        v8 = ~GetAttacker_i(_Boydon);
+        v8 = (0 - v8);
+        if not $temp1flag {
+            $temp1flag = true;
+            DeclareWinner_i(~NPCToItem_i(_Boydon), ~NPCToItem_i(v8));
+            return;
+        }
+        NowSettleDownBoys(item);
+        return;
+    }
+    if ((event = _NearDeath) and ~GetItemFlag_i(_Tournament, _Boydon)) {
+        ClearItemFlag_i(_Tournament, _Boydon);
+        v9 = ~GetCoord(_Boydon);
+        Sfx(42);
+        v9::1 = (v9::1 - (v9::3 / 2));
+        v9::2 = (v9::2 - (v9::3 / 2));
+        createSprite(65535, 0, 0, 0, v9::2, v9::1, 30);
+        v9 = ~GetCoord(_Boydon);
+        KillNPC_i(_Boydon);
+        v10 = ~Item_create(_Body_Parts);
+        if v10 {
+            SetFrame(18, v10);
+            v11 = ~PopToMap(v9);
+            v11 = ~PostAction(<< _aNO_HALT_i, _aBARK_i, "@My beautiful body!!@" >>, v10);
+        }
+        v12 = 1;
+        v13 = << 6, 12, 18, 24 >>;
+        v14 = << 4, 65531, 65533, 5, 0, 65534, 1, 5, 5, 5, 65531, 4, 3, 2, 1, 5, 1, 0, 0, 2, 2, 2, 1, 65533, 0, 3, 2, 3, 65535, 4, 4, 4 >>;
+        v15 = << 1, 65534, 1, 65531, 1, 65532, 4, 65532, 65533, 2, 1, 65531, 5, 5, 5, 0, 5, 1, 2, 0, 2, 1, 2, 0, 3, 2, 65533, 1, 3, 4, 3, 2 >>;
+        While (v12 < 5) {
+            v16 = 0;
+            v10 = ~Item_create(_Creeping_Limb);
+            if v10 {
+                SetFrame(v13::v12, v10);
+                While (v16 < 26) {
+                    v17 = << (v9::1 + v14::v16), (v9::2 + v15::v16), v9::3 >>;
+                    if ~canExistAt(0, _Body_Parts, v17) {
+                        v12 = (v12 + 1);
+                        v16 = 27;
+                        v11 = ~PopToMap(v17);
+                        v10 = ~Item_create(_Blood_Trails);
+                        if v10 {
+                            SetFrame(~rndRange(3, 0), v10);
+                            v17 = << ((v9::1 + v14::v16) + 1), ((v9::2 + v15::v16) + 1), v9::3 >>;
+                            v11 = ~PopToMap(v17);
+                        }
+                    } else {
+                        v16 = (v16 + 1);
+                    }
+                }
+            }
+        }
+    }
+    if (event = _Converse) {
+        Item_bark("@Ahem...@", _Avatar);
+        PartyFaces_i(65502);
+        Bark_i(2, "@Thou didst speak?@", _Boydon);
+        SetWorkType(_Talk, _Boydon);
+    }
+    if (event = _Action) {
+        event = 9;
+    }
+    if (event = _Talking) {
+        if (item = ~NPCToItem_i(_Boydon)) {
+            if ~GetItemFlag_i(_InParty_i, _Boydon) {
+                SetWorkType(_FollowAvt, _Boydon);
+                TurnOn("leave");
+            } else {
+                Npc_schedule(_Boydon);
+                if $erstamsaidokay {
+                    TurnOn("join");
+                }
+            }
+            SetSpeaker0_i(0, _Boydon);
+            if (~GetNPCID_i(_Boydon) = 30) {
+                ["Master, I am grateful that thou dost still live! I have grown fond of thee, almost as a son looks upon a parent..."];
+                if not $AFTER_FREEDOM_NEWS {
+                    ["It might please thee to know that there is good news!"];
+                    TurnOn("good news");
+                }
+                SetNPCID_i(0, _Boydon);
+                JoinParty(_Boydon);
+                $BOYDON_HAS_BELONGINGS = true;
+                TurnOff("join");
+                TurnOn(<< "leave" >>);
+            } else {
+                if not v6 {
+                    ["I have a body! I have a body!"];
+                    SetItemFlag_i(_Met, _Boydon);
+                } else {
+                    ["Hello, there!"];
+                }
+            }
+        } else {
+            SetSpeaker0_i(0, _BatlinMonster);
+            ["Now I see thee. Greetings! I am Boydon, the Living Head."];
+            if not $metboydonhead {
+                v18 = ~PartyUtters(false, 0, "The severed head speaks!", 65533);
+                if (v18 <> 65180) {
+                    SetSpeakerSlot_i(0);
+                    ["Yes, I do. Strange, is it not?"];
+                }
+                $metboydonhead = true;
+            }
+        }
+        if ($BOYDON_HAS_BELONGINGS and (not ~GetItemFlag_i(_InParty_i, _Boydon) and ~GetContents(_All, _All, _All, _Boydon))) {
+            TurnOn("return my belongings");
+        }
+        TurnOn(<< "name", "duties", "bye" >>);
+        converse {
+            key ("return my belongings") {
+                TurnOff("return my belongings");
+                BoydonReturnsBelongings_i();
+            }
+            key ("good news") {
+                TurnOff("good news");
+                ["Master, I have taken the time to speak with the Mages of this place. I do believe that the one known as Gustacio is of\x09a mind to aid thee."];
+                ["He said that anyone who can survive Freedom is worthy of his time!"];
+                $AFTER_FREEDOM_NEWS = true;
+            }
+            key ("name") {
+                TurnOff("name");
+                ["My name is Boydon."];
+            }
+            key ("duties") {
+                TurnOff("duties");
+                if not $boydonmade {
+                    ["I am hardly capable of performing my duties now, I'm sorry to say. I was the assistant to Erstam, the one they call the Mad Mage -- dost thou know him? Wonderful fellow. Well, one night he woke me to help him with one of his experiments."];
+                    TurnOn(<< "Erstam", "experiments" >>);
+                } else {
+                    if v7 {
+                        ["It seems I am no longer able to perform any duties save being an observer of thine adventures. But thank goodness Erstam chose me as the subject of his experiment! The man hath now saved my life twice over! As his one-time assistant, however, I can assure thee my body hath been destroyed beyond repair, and mine head will reject any new body that it might be attatched to. Oh, well! I am sorry that I can be of no further use to thee. If I squinch up my face I am fairly certain that I shall hardly take up any room in thy backpack."];
+                    } else {
+                        ["Actually, I do believe my job now is to be observed by a careful eye in order to judge the success of Erstam's experiment. Although now I am most certainly capable of many jobs."];
+                        if not v5 {
+                            v18 = ~PartyUtters(false, 0, ((("@My first job would be to " + "take a long hot bath. I swear some of those ") + "body parts must have been lying about ") + "Erstam's Manor for some time!@"), 65535);
+                            if (v18 <> 65180) {
+                                SetSpeakerSlot_i(0);
+                            }
+                        }
+                        if v5 {
+                            ["I do hope I shall be of some assistance to thee as I travel with thee during thine adventures! I am having quite a bit of fun, actually."];
+                        }
+                        TurnOn(<< "observed", "many jobs" >>);
+                    }
+                }
+            }
+            key ("Erstam") {
+                ["I found working for Erstam extremely interesting and most educational. Why, for example, my knowledge of anatomy hath improved so much. He is not exactly a friendly fellow, the Master, but there is never a dull moment."];
+                TurnOff("Erstam");
+            }
+            key ("experiments") {
+                ["Of course Erstam, having mastered the art of teleportation, hath turned his sights to the creation of life. On this particular night that I am remembering we went down to his lab. He pulled an abundance of levers and things... my memory begins to fade a bit after that. The next thing I remember is awakening in this condition."];
+                TurnOff("experiments");
+                TurnOn(<< "teleportation", "creation of life", "condition" >>);
+            }
+            key ("teleportation") {
+                ["Oh, I am afraid I cannot tell thee anything about that. After all, I was merely the Mad Mage's assistant."];
+                TurnOff("teleportation");
+            }
+            key ("creation of life") {
+                ["Is that not amazing? It doth go far beyond my comprehension of life and death. The mind fairly boggles at the ramifications of it."];
+                TurnOff("creation of life");
+            }
+            key ("condition") {
+                ["It is not so bad. I am never hungry because I do not have a stomach. I do not need to breathe because I do not have any lungs. I do sleep occasionally. Sometimes my nose itches. Nothing bothers me. Most people tend to find a talking severed head a bit unsettling. Right now I am enjoying talking to someone."];
+                TurnOff("condition");
+            }
+            key ("observed") {
+                TurnOff("observed");
+                ["Certainly someone should keep an eye on me. To make sure my new body will not start to fall apart. Not to worry, I feel strange, but very well indeed."];
+                if not v5 {
+                    v18 = ~PartyUtters(false, 0, (("@Thou dost not need to observe. " + "Not when the smell reaches one ") + "first! Phew!@"), 65533);
+                    if (v18 <> 65180) {
+                        SetSpeakerSlot_i(0);
+                    }
+                }
+                TurnOn("strange feelings");
+            }
+            key ("strange feelings") {
+                TurnOff("strange feelings");
+                ["Well, for one thing I have decided something about my new self. I have been thinking about it for a while and I have come to the realization that I simply do not like fire. I simply do not. I cannot exactly say why. I simply do not."];
+            }
+            key ("many jobs") {
+                ["I feel I am capable of doing most anything in my present condition."];
+                if not flag(441) {
+                    ["In fact, I was wondering if thou couldst use someone like me to accompany thee in thy travels and adventures."];
+                    ["Wouldst thou like me to join thee?"];
+                    v19 = ~AskYesNo();
+                    if v19 {
+                        ["I am delighted to hear thee say that. But first thou shouldst ask Erstam if I may go. After all, I am his creation. He is the one who made me what I am today."];
+                        flag(441) = true;
+                        v18 = ~PartyUtters(false, 0, (((("@Art thou certain about this, " + v1) + "? Boydon seems game enough, but he is also ") + "extremely gamey. I am surprised thou hast ") + "not noticed this for thyself.@"), 65534);
+                        if (v18 <> 65180) {
+                            SetSpeakerSlot_i(0);
+                        }
+                    } else {
+                        ["If thou wouldst ever change thy mind, or find thyself in need of a companion, I would be most honored if thou wouldst consider me."];
+                        v18 = ~PartyUtters(false, 0, 0, 65533);
+                        if (v18 <> 65180) {
+                            SetSpeaker1_i(0, v18);
+                            ["That was a near escape. I could not believe thou wouldst consider having that fellow join us. Just the smell of him is near enough to kill a dragon! He is otherwise a most pleasant fellow, I will concede."];
+                            CloseSpeaker1_i();
+                            SetSpeakerSlot_i(0);
+                        }
+                    }
+                }
+                TurnOff("many jobs");
+            }
+            key ("join") {
+                TurnOff("join");
+                if (~ListSize_i(~GetParty_i()) < 5) {
+                    TurnOn("leave");
+                    ["That is wonderful news! Lead on!"];
+                    v18 = ~PartyUtters(false, 0, (("@Far be it from me to question thy judgment, Avatar. " + "But are thy senses so dulled that thou dost not notice ") + "the potent aroma emanating from this fellow?@"), 65534);
+                    if (v18 <> 65180) {
+                        SetSpeakerSlot_i(0);
+                    }
+                    JoinParty(_Boydon);
+                    $BOYDON_HAS_BELONGINGS = true;
+                } else {
+                    ["But there are so many in thy travelling party! I am not accustomed to crowds."];
+                    ["I think that I must remain where I am. Apologies, <v1>."];
+                }
+            }
+            key ("leave") {
+                TurnOff("leave");
+                ["If that is what thou dost truly want, I will leave. But if thou dost ever change thy mind, do ask me to join again and I will."];
+                LeaveParty(_Boydon);
+                BoydonReturnsBelongings_i();
+                ChooseMeetingPlace_i(_Boydon);
+                v18 = ~PartyUtters(false, 0, ((("@I am also sad to see him go." * "But in truth, ") + "mine eyes were watering more while he was with us than ") + "when he left!@"), 65535);
+                if (v18 <> 65180) {
+                    SetSpeakerSlot_i(0);
+                }
+                TurnOn("join");
+            }
+            key ("bye") {
+                CloseSpeaker0_i();
+                Bark_i(0, "@Good luck!@", _Avatar);
+                if (item = ~NPCToItem_i(_Boydon)) {
+                    Bark_i(2, "@And to thee!@", _Boydon);
+                } else {
+                    v11 = ~PostInFuture(5, << _aNO_HALT_i, _aBARK_i, "@And to thee!@" >>, item);
+                }
+                break;
+            }
+        }
+        clear_answers;
+    }
+}
+
+Usable BoydonReturnsBelongings_i #locals(1) #uses(~AskYesNo, ~ReturnBelongings_i) {
+    if ~GetContents(_All, _All, _All, _Boydon) {
+        ["I have some of thy belongings in my possession. Wouldst thou like them returned?"];
+        if ~AskYesNo() {
+            ["Here they are."];
+            $BOYDON_HAS_BELONGINGS = false;
+            v0 = ~ReturnBelongings_i(65502);
+            if (v0::1 <> 0) {
+                ["Thy companions will have to help thee carry some of these things."];
+            }
+            if (v0::2 > 0) {
+                v0 = v0::2;
+                if (v0 > 1) {
+                    ["Since thou canst not carry these remaining <v0> items, they shall go at thy feet."];
+                } else {
+                    ["Since thou dost not have enough room for this last item, it shall go at thy feet."];
+                }
+            }
+        } else {
+            $BOYDON_HAS_BELONGINGS = true;
+            ["If that is what thou dost want, I will keep them for thee. Return when thou wantest them."];
+        }
+    }
+}

@@ -1,0 +1,223 @@
+Routine Leon accepts a0 #locals(7) #uses(~LordOrLady, ~AvatarName, ~IsNPCNear, PartyFaces_i, Bark_i, DescribeFellowship_i, ExplainPhilosophy_i, ~AskYesNo) {
+    v0 = ~LordOrLady();
+    v1 = ~AvatarSex();
+    v2 = ~AvatarName();
+    v3 = ~IsNPCNear(_Kalen);
+    if (event = _NearDeath) {
+        v4 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #Green_Noble >>, item);
+    }
+    if (event = _Converse) {
+        Item_bark("@A moment if thou wilt, sir.@", _Avatar);
+        PartyFaces_i(65480);
+        Bark_i(2, (("@At thy service, " + v0) + ".@"), _Leon);
+        SetWorkType(_Talk, _Leon);
+    }
+    if (event = _Talking) {
+        Npc_schedule(_Leon);
+        ClearBark_i(_Leon);
+        SetSpeaker0_i(0, _Leon);
+        v5 = ~GetItemFlag_i(_Met, _Leon);
+        if (v5 = false) {
+            if ($gottattoo = true) {
+                ["At last, the values of The Fellowship have reached into the ranks of the Pikemen! I am honored."];
+                ["I am Leon, a speaker for The Fellowship and former farmer."];
+                TurnOn("Fellowship");
+            } else {
+                ["I always have time for those who come seeking knowledge. Be welcome."];
+                ["I am Leon, a speaker for The Fellowship and former farmer."];
+            }
+            SetItemFlag_i(_Met, _Leon);
+        } else {
+            ["As always, I am honored that thou choosest to visit me, <v2>. How may I help thy quest for Unity?"];
+        }
+        TurnOn(<< "goblins", "storms", "bye" >>);
+        converse {
+            key ("Fellowship") {
+                ["While the Virtues that Lord British expounded are all very well and good, they are nearly impossible for ordinary people to achieve."];
+                ["Simple people need a simple philosophy."];
+                ["The Triad of Inner Strength is the answer."];
+                TurnOff("Fellowship");
+                $leonsaidfellow = true;
+                TurnOn("Triad of Inner Strength");
+                DescribeFellowship_i();
+            }
+            key ("Triad of Inner Strength") {
+                TurnOff("Triad of Inner Strength");
+                ["The Triad of Inner Strength is based on three basic principles that all people can grasp. The first is Unity. The next is Trust, and the last is Worthiness."];
+                PushKeys();
+                TurnOn(<< "Unity", "Trust", "Worthiness" >>);
+            }
+            key ("Unity") {
+                ["Surely thou must know the importance of learning to cooperate and work together."];
+                ["If we seek to live in harmony with one another, there is nothing we cannot accomplish. One rock doth not make a wall. But many rocks can -- with a common purpose."];
+                TurnOff("Unity");
+                $leonsaidunity = true;
+                if (($leonsaidunity = true) and (($leonsaidtrust = true) and (($leonsaidworthy = true) and ($leonsaidinner = true)))) {
+                    PopKeys();
+                }
+            }
+            key ("Trust") {
+                ["The main stumbling block to Unity lies in a lack of Trust."];
+                ["If thou dost trust thy brother, thou wouldst not live in fear. Without fear, our lives are happier and Unity may grow and thrive."];
+                TurnOff("Trust");
+                $leonsaidtrust = true;
+                if (($leonsaidunity = true) and (($leonsaidtrust = true) and (($leonsaidworthy = true) and ($leonsaidinner = true)))) {
+                    PopKeys();
+                }
+            }
+            key ("Worthiness") {
+                ["How wouldst thou feel, if all that thou hadst strived for were given to a man who had done nothing to deserve it?"];
+                ["I will wager that thou wouldst feel the injustice."];
+                ["If everyone strives to be worthy of that which they seek, such injustices would be few."];
+                ["Let every person be rewarded according to their merits and Trust and Unity will follow naturally."];
+                ["Following the Triad of Inner Strength allows one to become attuned to the Inner Voice."];
+                TurnOff("Worthiness");
+                TurnOn("Inner Voice");
+                $leonsaidworthy = true;
+                if (($leonsaidunity = true) and (($leonsaidtrust = true) and (($leonsaidworthy = true) and ($leonsaidinner = true)))) {
+                    PopKeys();
+                }
+            }
+            key ("Inner Voice") {
+                ["The Inner Voice is within all living beings. It flows from pure instinct and contains all the wisdom and irreproachable logic that anyone would ever need to live peacefully and happily."];
+                ["If everyone learned to listen to their Inner Voice, I could return to Britannia and farm contentedly for the rest of my life."];
+                TurnOff("Inner Voice");
+                $leonsaidinner = true;
+                if (($leonsaidunity = true) and (($leonsaidtrust = true) and (($leonsaidworthy = true) and ($leonsaidinner = true)))) {
+                    PopKeys();
+                }
+            }
+            key ("philosophy") {
+                TurnOff("philosophy");
+                ExplainPhilosophy_i();
+            }
+            key ("goblins") {
+                TurnOff("goblins");
+                if ($AUDIENCE_WITH_YELINDA and ($FAWN_TRIAL_DONE and not $oraclesaysinnocent)) {
+                    ["Now that Lady Yelinda hath admitted my people within the city walls, we shall be safe from the goblins."];
+                } else {
+                    if ($gottattoo = true) {
+                        if ($fawntowerretaken = true) {
+                            ["Without the fine aid of thee and thy Monitorian comrades, these poor sailors and I would have been lost long ago."];
+                            ["Kylista refused us the safety of the city walls, even when the tower fell to the barbaric goblins."];
+                            ["I never thought that I would rue the day that another intelligent being learned the truths of The Fellowship."];
+                            ["But we would be doing far better if the goblins had not found Unity under the leadership of Pomdirgun."];
+                        } else {
+                            ["Hast thou come seeking the wisdom of The Fellowship so that thee and thy Monitorian comrades can reclaim the tower?"];
+                            ["Even now, Kylista refuses us refuge within the city walls."];
+                            ["Obviously, she fears the truths of The Fellowship as much as she fears Pomdirgun."];
+                        }
+                    } else {
+                        if ($fawntowerretaken = true) {
+                            ["Without the fine aid of the Pikemen, these poor sailors and I would have been lost long ago."];
+                            ["Kylista refused us the safety of the city walls, even when the tower fell to the barbaric goblins."];
+                            ["I never thought that I would rue the day that another intelligent being learned the truths of The Fellowship."];
+                            ["But we would be doing far better if the goblins had not found Unity under the leadership of Pomdirgun."];
+                        } else {
+                            ["Thou art one among many that have come seeking the wisdom of The Fellowship to withstand these difficult times."];
+                            ["Thou shouldst not stay overlong outside the city walls, even if Kylista refuses refuge to me and my companions."];
+                            ["Obviously, she fears the truths of The Fellowship as much as she fears Pomdirgun."];
+                        }
+                    }
+                    TurnOn(<< "Kylista", "Pomdirgun" >>);
+                    if ($leonsaidfellow = false) {
+                        TurnOn("Fellowship");
+                    }
+                }
+            }
+            key ("Kylista") {
+                ["She is the Priestess of Beauty -- the cult that controls Fawn."];
+                ["Kylista presides over the Oracle, which never varies in supporting her views..."];
+                ["One might suspect that Kylista uses the Oracle to increase her own personal power. But I have no idea how such a thing would be accomplished."];
+                TurnOff("Kylista");
+                TurnOn("Oracle");
+            }
+            key ("Oracle") {
+                ["It was commissioned by Lady Fawn herself, and built by the Mages of Britannia."];
+                ["'Twas to be an instrument of truth... I cannot say that that is still so."];
+                ["It gives revelations throughout the day."];
+                TurnOff("Oracle");
+                TurnOn("revelations");
+            }
+            key ("revelations") {
+                ["For the most part, they are simple platitudes that further ingrain their reverence of Beauty."];
+                ["They do nothing to help the people improve their lives."];
+                ["At other times -- like when the sailors and I were banished from the city -- they reflect the wishes of Kylista and the Great Captains."];
+                TurnOff("revelations");
+                TurnOn("Great Captains");
+            }
+            key ("Great Captains") {
+                ["They are the counselors of Lady Yelinda, by title. They control the fishing fleets... or did before the storms began."];
+                ["In reality, they control all of Fawn. It is painfully obvious that Lady Yelinda is merely a figurehead to be manipulated by Zulith at the behest of Garth, Joth, and Voldin."];
+                TurnOff("Great Captains");
+                TurnOn(<< "Zulith", "Garth", "Joth", "Voldin" >>);
+            }
+            key ("Zulith") {
+                ["'Tis easy enough to overlook him, unless he wants thy notice. He is a simpering little man who styles himself as the consort of Lady Yelinda."];
+                ["Sadly, she pays no more heed of him than her mirror. Her interests, I think, lie more in line with Jorvin, Captain of the Guard."];
+                ["Zulith is a puppet for Kylista and the Great Captains. But beware of him, friend, for he can be vicious if slighted."];
+                TurnOff("Zulith");
+            }
+            key ("Garth") {
+                ["Garth is the most junior of the three Great Captains. His interests seem to lie mostly in impressing the ladies of the city."];
+                ["I do not think he dares go against the wishes of the other two Captains."];
+                TurnOff("Garth");
+            }
+            key ("Joth") {
+                ["Joth is the only one of the Great Captains that seems to have any real interest in the fleets. He would certainly be more at home on the deck of a ship than here on land."];
+                TurnOff("Joth");
+            }
+            key ("Voldin") {
+                ["Voldin is perhaps the person who would most benefit from practicing Worthiness."];
+                ["I have heard that he is diverting funds from the fleets for his own gain. But who can say for sure?"];
+                ["It is his heavy hand that holds the reins of the city. Thou shouldst be careful around him. He is a violent man."];
+                TurnOff("Voldin");
+            }
+            key ("Pomdirgun") {
+                ["He hath but lately declared himself chief of all goblins."];
+                ["Where once they could be discouraged by the mere presence of armed resistance, they now are bold and organized. They no longer flee, but stay and fight."];
+                TurnOff("Pomdirgun");
+            }
+            key ("storms") {
+                ["The storms at sea cannot compare to these unnatural occurrences. Their very existence says that we are in a land so far from the natural order of things that even the skies lash out at us."];
+                ["Batlin was right. We cannot hope to survive if Unity is not brought to this place."];
+                TurnOff("storms");
+                TurnOn("Batlin");
+            }
+            key ("Batlin") {
+                ["Thou knowest Batlin?"];
+                v6 = ~AskYesNo();
+                if v6 {
+                    ["What canst thou tell us of home? What news of his noble cause?"];
+                    TurnOn(<< "All Is Well.", "It Hath Been Disbanded." >>);
+                } else {
+                    ["What a wondrous man of insight he is!"];
+                    ["Without him giving voice to the Triad of Inner Strength, we would all be doomed to failure... failure to live up to Lord British's high standards, or realize the full potential of every one of us."];
+                    ["'Tis a pity that thou didst miss him. He hath gone inland to spread word of The Fellowship."];
+                }
+                TurnOff("Batlin");
+            }
+            key ("All Is Well.") {
+                ["Marvelous! Soon thou shalt see, everyone shall embrace the Triad of Inner Strength. The storms shall end and we shall live in peace and happiness all our days."];
+                TurnOff("All Is Well.");
+            }
+            key ("It Hath Been Disbanded.") {
+                ["This is unthinkable! Surely there hath been some mistake!"];
+                ["There is nothing evil in our principles! They are meant for all, without regard for station of birth."];
+                ["Batlin must be told of this! If he returns to Britannia to explain to Lord British, I am sure that everything will be settled."];
+                ["Perhaps our good name was degraded by those wishing to stop our ministering... But that shows a lack of Trust."];
+                ["I must meditate on this. Mine Inner Voice will no doubt provide an answer for such horrible news."];
+                Bark_i(0, "@This cannot be!@", _Leon);
+                SetWorkType(_Shy, _Leon);
+                terminate;
+            }
+            key ("bye") {
+                CloseSpeaker0_i();
+                Bark_i(0, "@Many thanks for thine help.@", _Avatar);
+                Bark_i(5, (("@Go in Fellowship, " + v2) + ".@"), _Leon);
+                break;
+            }
+        }
+        clear_answers;
+    }
+}

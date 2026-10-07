@@ -1,0 +1,155 @@
+Routine Artifacts accepts a0 #locals(29) #uses(Bark_i, ~OuterContainer_i, ~GimmePathEgg, Powder_Keg, ~IsInInv, ClimbWell_i, ~PartyUtters) {
+    v0 = ~GetFrame(item);
+    if (event = _Converse) {
+        if (v0 = 6) {
+            v1 = ~GetTarget();
+            if ~Item_isNpc(v1) {
+                Bark_i(0, "@Ow!@", v1);
+                v2 = ~PostAction(<< _aNO_HALT_i, _aHIT_i, 1, 0 >>, v1);
+                v3 = ~FindNearby_i(0, 10, _Bucket, _Avatar);
+                v4 = 0;
+                if v3 {
+                    Foreach v7 in v3 {
+                        if (~GetFrame(v7) = 0) {
+                            v4 = v7;
+                        }
+                    }
+                    if (v4 <> 0) {
+                        SetFrame(2, v4);
+                    }
+                }
+            }
+        }
+        if (v0 = 4) {
+            closeAllGumps();
+            if ~OuterContainer_i(item) {
+                v8 = ~OuterContainer_i(item);
+            } else {
+                v8 = item;
+            }
+            CreateSpriteOn_i(65535, 0, 0, 0, 65534, 65534, 24, v8);
+            Sfx(29);
+            v9 = ~FindNearby_i(0, 30, _Hound_874, _Avatar);
+            if (v9 = << >>) {
+                SetItemFlag_i(_Tournament, _HoundOfDoskar);
+                Npc_setAlignment(_Good, _HoundOfDoskar);
+                v10 = ~ApproachAvatar_i(40, 120, _HoundOfDoskar);
+                if v10 {
+                    PathfindNPC_i(true, #Hound, ~NPCToItem_i(_HoundOfDoskar), _Talking, << 0, 0, 0 >>, _HoundOfDoskar);
+                } else {
+                    $temp1flag = true;
+                    v2 = ~PostInFuture(15, << _aNO_HALT_i, _aUSABLE_i, #Artifacts >>, ~GimmePathEgg(1, 5));
+                }
+            } else {
+                SetWorkType(_Talk, v9::1);
+            }
+        }
+        if (v0 = 8) {
+            closeAllGumps();
+            v11 = ~GetCoord(_Avatar);
+            CreateSpriteOn_i(65535, 0, 0, 0, 0, 0, 9, _Avatar);
+            v11 = ~GetCoord(item);
+            CreateSpriteOn_i(65535, 0, 0, 0, 0, 0, 9, item);
+            v2 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #CallLightning_i >>, _Avatar);
+            v2 = ~PostInFuture(2, << _aNO_HALT_i, _aUSABLE_i, #CallLightning_i >>, _Avatar);
+            v2 = ~PostInFuture(4, << _aNO_HALT_i, _aUSABLE_i, #CallLightning_i >>, _Avatar);
+            Bark_i(3, "Yeeooww!", _Avatar);
+            ClearItemFlag_i(_IsTemporary_i, item);
+            Item_destroy(item);
+            v2 = ~PostInFuture(10, << _aNO_HALT_i, _aUSABLE_i, #Artifacts >>, _Avatar);
+        }
+        if (v0 = 9) {
+            v12 = ~GetCoord(item);
+            if not (((v12::1 > 1552) and (v12::1 < 1647)) and ((v12::2 > 112) and (v12::2 < 191))) {
+                Sfx(63);
+                v13 = ~FindNearby_i(0, 10, _Ice_Block, item);
+                if v13 {
+                    Foreach v7 in v13 {
+                        v11 = ~GetCoord(v7);
+                        v16 = ~GetContents(_All, _All, _All, v7);
+                        createSprite(65535, 0, 0, 0, v11::2, v11::1, 13);
+                        Powder_Keg(v7);
+                        Foreach v19 in v16 {
+                            if ((~Item_getType(v19) = _NPC1_Bodies) and (~GetFrame(v19) = 8)) {
+                                v20 = ~ChangeNPCStat_i(1, _Hits, _Gwenno);
+                                $FREED_GWENNOS_BODY = true;
+                                $knowgwennodead = true;
+                            }
+                            v2 = ~Item_push(v19);
+                            v2 = ~PopToMap(v11);
+                        }
+                    }
+                }
+                v21 = ~FindNearby_i(0, 10, _Ice_Door, item);
+                if v21 {
+                    Foreach v7 in v21 {
+                        v11 = ~GetCoord(v7);
+                        Powder_Keg(v7);
+                        createSprite(65535, 0, 0, 0, v11::2, v11::1, 13);
+                    }
+                }
+            }
+        }
+        if (v0 = 12) {
+            v12 = ~GetCoord(item);
+            if ((v12::1 > 564) and ((v12::1 < 573) and ((v12::2 > 3015) and (v12::2 < 3021)))) {
+                $KARNAX_WITNESSED_SEED_PLANTING = true;
+                $temp1flag = false;
+                $temp2flag = false;
+                $temp3flag = false;
+                $temp4flag = false;
+                SetWeather_i(_Rain);
+                v11 = ~GetCoord(item);
+                Item_destroy(item);
+                createSprite(65535, 0, 0, 0, v11::2, v11::1, 26);
+                createSprite(65535, 0, 0, 0, v11::2, v11::1, 7);
+                createSprite(65535, 0, 0, 0, v11::2, v11::1, 7);
+                v24 = ~GimmePathEgg(1, 0);
+                SetMusic(v24, 65);
+                v2 = ~PostInFuture(30, << _aNO_HALT_i, _aUSABLE_i, #GrowSilverTree_i >>, v24);
+                $PLANTED_SILVER_SEED = true;
+            }
+        }
+    }
+    if (v0 = 13) {
+        closeAllGumps();
+        v25 = ~GetTarget();
+        v26 = ~Item_getType(v25);
+        if (v25 = ~NPCToItem_i(_Avatar)) {
+            return;
+        }
+        if (v25::1 <> 0) {
+            if (~Item_isNpc(v25::1) and (~ItemToNPC_i(v25::1) <> 65180)) {
+                v27 = ~ItemToNPC_i(v25);
+                Bark_i(0, "@Don't tie me up!@", v27);
+            } else {
+                if (v26 = 958) {
+                    if ~IsInInv(13, 65177, _Artifacts, 1, _Party) {
+                        ClimbWell_i(v25);
+                    } else {
+                        v28 = ~PartyUtters(false, "@I shouldn't leave the rope!@", "@Don't leave the rope!@", 1);
+                        return;
+                    }
+                } else {
+                    v28 = ~PartyUtters(false, "@Perhaps something else...@", "@Try it on something else!@", 1);
+                }
+            }
+        } else {
+            v28 = ~PartyUtters(false, "@That won't work!@", "@That won't work!@", 1);
+        }
+    }
+    if (event = _Action) {
+        if ($temp1flag = true) {
+            $temp1flag = false;
+            v28 = ~PartyUtters(false, 0, 0, 1);
+            if (v28 <> 65180) {
+                SetSpeaker0_i(0, v28);
+                ["The dog doth not come! Perhaps thou shouldst try the whistle in a more open place, where the sound will travel."];
+            } else {
+                v28 = ~PartyUtters(true, "@I should try this elsewhere...@", 0, 65180);
+            }
+            terminate;
+        }
+        v28 = ~PartyUtters(false, 0, "@The spellbook! It disintegrated!@", 65533);
+    }
+}

@@ -1,0 +1,446 @@
+Routine Erstam accepts a0 #locals(29) #uses(~LordOrLady, ~AvatarName, ~IsNPCNear, ~IsInInv, ~GiveItemsOrDrop_i, Bark_i, ~GimmePathEgg, PartyFaces_i, ~PartyUtters, SayIfNear_i, ~AskYesNo, ~AskList) {
+    v0 = ~LordOrLady();
+    v1 = ~AvatarName();
+    v2 = ~IsNPCNear(_Vasel);
+    v3 = ~IsNPCNear(_Boydon);
+    v4 = ~GetItemFlag_i(_Met, _Erstam);
+    v5 = ~IsInInv(16, 65177, _Bottles, 1, _Party);
+    v6 = ~IsInInv(65177, 65177, _Dagger, 1, _Party);
+    v7 = ~IsInInv(1, 65177, _Artifacts, 1, _Party);
+    v8 = ~IsInInv(65177, 65177, _Jawbone, 1, _Party);
+    v9 = ~IsInInv(5, 65177, _Teeth, 1, _Party);
+    v10 = ~IsInInv(11, 65177, _Teeth, 1, _Party);
+    v11 = ~IsInInv(12, 65177, _Teeth, 1, _Party);
+    v12 = ~IsInInv(1, 65177, _Al_App_1, 1, _Party);
+    v13 = ~IsInInv(3, 65177, _Gwani_Artifacts, 1, _Party);
+    v14 = ~IsInInv(12, 202, _Unique_Key, 1, _Party);
+    if ((event = _Action) or (event = _Path_Failure)) {
+        if $temp1flag {
+            $temp1flag = false;
+            SetSpeaker0_i(0, _Erstam);
+            ["At last, the labor of a lifetime hath come to consummation! I think Boydon hath been created rather well. Thou hast done an excellent job in assisting me in his creation."];
+            ["For thine excellent work I shall reward thee. Here is the key to my storeroom. There thou wilt find the secret of teleportation. It is an old serpent jawbone."];
+            flag(457) = true;
+            ["Also, please take this serpent tooth as a token of mine appreciation."];
+            v15 = ~GiveItemsOrDrop_i(true, 0, 12, 202, 641, 1, _Avatar);
+            v15 = ~GiveItemsOrDrop_i(true, false, 11, 65177, 559, 1, _Avatar);
+            flag(451) = true;
+            SetSpeaker0_i(0, _Erstam);
+            ["Once thou hast found the jawbone, return to me -- for I have something else to give thee as well."];
+            Bark_i(0, "@See thee soon...@", _Erstam);
+            Bark_i(8, "@I shall return!@", _Avatar);
+            terminate;
+        } else {
+            FadePalette_i(0, 1, 12);
+            v15 = ~PostInFuture(1, << _aNO_HALT_i, _aUSABLE_i, #FadeInArrival_i >>, ~GimmePathEgg(2, 5));
+            Item_move(<< 2038, 1221, 0 >>, _Party);
+        }
+    }
+    if (event = _Converse) {
+        Item_bark("@Might we speak?@", _Avatar);
+        PartyFaces_i(65501);
+        Bark_i(2, "@No!@", _Erstam);
+        SetWorkType(_Talk, _Erstam);
+    }
+    if (event = _Talking) {
+        Npc_schedule(_Erstam);
+        ClearBark_i(_Erstam);
+        SetSpeaker0_i(0, _Erstam);
+        if not $passwordgiven {
+            ["Begone from my sight! Thy meddling in my business is unwelcome, stranger!"];
+            ["Thou dost have the distinct bearing of a Britannian about thee! No doubt thou art some fiend in league with that evil Beast British!"];
+            ["Why, I ought to cast a spell on thee! I could tear thee limb from limb but still leave thee alive! In fact I may do it yet! Now, out with it! Why hast thou come to disturb me here?! Bah! In truth I care not! Begone!"];
+            v16 = ~PartyUtters(false, 0, "@The password! Avatar, tell him the password!@", 65533);
+            SetSpeakerSlot_i(0);
+            ["What is this I hear?"];
+            SayIfNear_i("@A mutual friend told me to mention Iskatradeeth to thee.@", 65180);
+            SetSpeakerSlot_i(0);
+            ["Iskatradeeth! The password? Then I shall not feed thee to the whales..."];
+            ["I shall speak with thee... for the moment."];
+            $passwordgiven = true;
+        } else {
+            ["Why hast thou returned? Why dost thou disturb mine experiments in the secrets of immortality? What could possibly be more important than the answers to the riddle of life and death?!"];
+        }
+        if not flag(453) {
+            TurnOn("experiments");
+        }
+        if not flag(454) {
+            TurnOn("immortality");
+        }
+        if not flag(455) {
+            TurnOn("riddle of life and death");
+        }
+        if ($boydonmade and not $erstamgavejawbone) {
+            TurnOn("Boydon");
+        }
+        if not v4 {
+            TurnOn("Introduce thyself");
+        }
+        if not flag(456) {
+            TurnOn("Disturb?");
+        }
+        if $vaselsaidjawbone {
+            TurnOn("jawbone");
+        }
+        if ($sentoneggquest and not $giveneggtoerstam) {
+            if $phoenixegggiven {
+                TurnOn("phoenix egg");
+            }
+            TurnOn("instructions");
+        }
+        if ($giveneggtoerstam and not $boydonmade) {
+            TurnOn("ready to create life");
+        }
+        if $erstamgavejawbone {
+            TurnOn("I have the jawbone.");
+        }
+        if (flag(441) and not $erstamsaidokay) {
+            TurnOn("May Boydon join?");
+        }
+        if $gotpenguinegg {
+            TurnOn("blue egg");
+        }
+        if ($gotbloodyhand and not $knowbloodyhand) {
+            TurnOn("severed hand");
+        }
+        if ($gotlabitem and not $knowlabitem) {
+            TurnOn("lab apparatus");
+        }
+        TurnOn("bye");
+        converse {
+            key ("Introduce thyself") {
+                TurnOff("Introduce thyself");
+                ["I do not care to know thy name! As for myself, my fame hath grown with each passing century. I am Erstam, he whom some dare call the Mad Mage!"];
+                SetItemFlag_i(_Met, _Erstam);
+                TurnOn("Mad Mage");
+            }
+            key ("Mad Mage") {
+                TurnOff("Mad Mage");
+                ["I said that some call me the Mad Mage! I did not give permission for thee to call me that! That is a name by which I have been called since the days when I took the dissenters of the reign of Beast British away to live here at this place."];
+            }
+            key ("Disturb?") {
+                TurnOff("Disturb?");
+                ["I am a master sorcerer, and as such I am dedicated to my life's work -- mine experiments! I am searching for the secret of immortality and to find it I must be able to answer the riddle of life and death."];
+                flag(456) = true;
+            }
+            key ("experiments") {
+                TurnOff("experiments");
+                if not $giveneggtoerstam {
+                    if $boydonmade {
+                        ["Now that mine initial experiment of Boydon hath been completed, my true work hath only begun. I shall now rest until I have learned all of the secrets of the universe. What? Thou art still here! I have no time to speak with thee! I have work to do!"];
+                        Bark_i(3, "@Away with thee!@", _Erstam);
+                        flag(453) = true;
+                        terminate;
+                    } else {
+                        ["These experiments are most dangerous! If thou art faint of heart I would advise thee to stay away! As thou canst see if thou dost look around thee, these experiments are a threat to both life... and limb!"];
+                        if not ($sentoneggquest or $boydonmade) {
+                            TurnOn(<< "life", "limb" >>);
+                        }
+                    }
+                } else {
+                    ["Thanks to thee mine experiments in the creation of life have been successful! But there is still much for me to do! Much research! Now that I have created mine own wholly unique solution to the riddle of life and death, I must begin work on solving the rest of the problems of the universe."];
+                }
+            }
+            key ("life") {
+                TurnOff("life");
+                ["The terrible science that I pursue hath taken its toll in the lives of countless assistants. But if it leads me to the secret of eternal life, the price shall be well worth it."];
+            }
+            key ("limb") {
+                TurnOff("limb");
+                ["Aye, thou wilt see many of them strewn about as thou dost look around the manor."];
+            }
+            key ("immortality") {
+                TurnOff("immortality");
+                PushKeys();
+                TurnOn("change subject");
+                if $giveneggtoerstam {
+                    if $boydonmade {
+                        ["With the successful creation of Boydon we have taken the first small but vitally important step in achieving that great dream of all men -- immortality!"];
+                        flag(454) = true;
+                    } else {
+                        ["Quickly! Thou must finish the experiment! On mine oath, I will be dead of old age before I can discover the secret of immortality with an assistant such as thee!"];
+                    }
+                } else {
+                    ["Immortality represents the ultimate defeat of death. 'Tis essential that I obtain this as soon as possible... No doubt thou hast heard of or perhaps even witnessed the teleportation storms."];
+                }
+                if not v6 {
+                    ["It seems that I recall a strange dagger appearing in the Manor about the same time as a teleportation storm. Perhaps that dagger is still around somewhere..."];
+                } else {
+                    ["I see thou hast discovered the strange dagger that appeared in my Manor. Damn teleport storms! Thou hast laid claim to it as thine own, eh? Very well then, if it truly belongs to thee, thou mayest take it..."];
+                }
+                TurnOn(<< "death", "teleportation storms" >>);
+            }
+            key ("death") {
+                ["Unchained for all time from death and the fear of death, there would be nothing that mankind would not be capable of accomplishing! HA, ha, ha, ha, ha!"];
+                TurnOff("death");
+            }
+            key ("teleportation storms") {
+                TurnOff("teleportation storms");
+                ["The power of teleportation is most certainly an awesome one. These storms have been wreaking havoc on us for some time. I fear that their increasing frequency and intensity most certainly signals an end of the world."];
+                TurnOn("end of the world");
+                if not $erstamsaidteleport {
+                    TurnOn("teleportation");
+                }
+            }
+            key ("teleportation") {
+                ["Hrmpph... I know nothing of this foolish, dangerous power they call teleportation, dost thou hear me? Nothing! Do not ask me of this again! And do not harry my servant about it either, I warn thee!"];
+                $erstamsaidteleport = true;
+                if v2 {
+                    SetSpeaker1_i(0, _Vasel);
+                    ["But Master, thou dost know something of teleportation! What about the...?"];
+                    SetSpeakerSlot_i(0);
+                    ["Silence thine imbecilic rantings, Vasel! Not another word from thee! Pay my silly servant no mind. He is daft in the head. I know nothing about this teleportation business. I have no secrets to share with thee!"];
+                    SetSpeakerSlot_i(1);
+                    ["So I have given away thy secret? Do not beat me! Please Master! Do not beat me!"];
+                    CloseSpeaker1_i();
+                    SetSpeakerSlot_i(0);
+                }
+                TurnOff("teleportation");
+            }
+            key ("end of the world") {
+                TurnOff("end of the world");
+                ["Someone must survive the end of the world. That person may as well be me."];
+            }
+            key ("riddle of life and death") {
+                TurnOff("riddle of life and death");
+                ["In order to obtain the secret of achieving immortality, I must first uncover the answer to the secret of life and death. In the past when people have searched for the answer, they have only brooded over the nature of death itself. What a foolish thing to do! If there is an answer to the riddle of life and death, it can only be in the creation of life!"];
+                if $boydonmade {
+                    ["Finally, the secrets of the universe are nearly within my grasp!"];
+                    flag(455) = true;
+                } else {
+                    ["That is what I am seeking to do!"];
+                    if $giveneggtoerstam {
+                        ["So, hurry!"];
+                    } else {
+                        TurnOn(<< "create life", "secret of immortality" >>);
+                    }
+                }
+            }
+            key ("create life") {
+                TurnOff("create life");
+                ["Lately mine experiments have been halted for there is one necessary ingredient that I lack. Bah! Thou canst tell me nothing about the creation of life that would help me advance mine experiments! There is no point in speaking to thee of the subject!"];
+            }
+            key ("secret of immortality") {
+                ["Mine experiments in immortality have led to the demise of all of mine assistants save for Vasel. Oh, they are not dead! Why one may encounter them virtually anywhere throughout the manor. Or, at least, pieces of them."];
+                TurnOff("secret of immortality");
+            }
+            key ("jawbone") {
+                TurnOff("jawbone");
+                PushKeys();
+                TurnOn("change subject");
+                if $erstamgavejawbone {
+                    ["Thou art welcome to it."];
+                } else {
+                    if not $sentoneggquest {
+                        ["So! That little knave Vasel hath been telling thee of my magical serpent jawbone! Thou wilt not obtain it under pain of death, torture or for any price. All that concerns me is mine efforts in creating life. And there is nothing that thou canst do to aid me in that endeavor. Hmmm, or perhaps there is..."];
+                        TurnOn(<< "Vasel", "What can I do?" >>);
+                    } else {
+                        if $boydonmade {
+                            ["Did I not give thee the key to my storeroom? If thou canst not find it, thou art not as intelligent as I thought thou to be!"];
+                        } else {
+                            if $phoenixegggiven {
+                                ["Come now! Thou dost not take me for a fool, I hope! How am I to know that it is a real phoenix egg thou hast brought me unless I can first use it in mine experiments? There shall be plenty of time for this jawbone affair after mine experiment to create life hath been successfully performed. I will hear nothing more on the matter."];
+                            } else {
+                                ["We shall speak of this after thou hast helped me with mine experiment."];
+                            }
+                        }
+                    }
+                }
+            }
+            key ("Vasel") {
+                ["Concern thyself not with him. I shall deal with him later!"];
+                TurnOff("Vasel");
+            }
+            key ("What can I do?") {
+                TurnOff("What can I do?");
+                ["There is something thou canst do for me! On the northern island there is a phoenix. Retrieve for me its egg, which is the missing ingredient that I need. I would go myself, but I am getting much too old for that sort of thing. There are terrible beasts along the way. And I do detest beasts, especially terrible ones."];
+                TurnOn(<< "northern island", "phoenix" >>);
+            }
+            key ("northern island") {
+                TurnOff("northern island");
+                ["Thou wilt have to discover the way back by thyself. Thou canst not expect me to tell thee everything!"];
+            }
+            key ("phoenix") {
+                ["Thou must surely be familiar with the legend of the phoenix! It dies in flames, only to rise again in rebirth from the flame. There, I thought I saw a look of recognition in thine eyes! Then it is settled. Bring to me the egg of the phoenix and in return I shall give thee the serpent jawbone. Dost thou agree to help me?"];
+                v17 = ~AskYesNo();
+                if v17 {
+                    ["Excellent! Then go and bring to me my phoenix egg. I shall send thee there immediately."];
+                    $sentoneggquest = true;
+                    v18 = ~GetCoord(_Avatar);
+                    createSprite(65535, 0, 0, 0, (v18::2 - 2), (v18::1 - 2), 12);
+                    createSprite(65533, 10, 0, 0, v18::2, v18::1, 12);
+                    Sfx(119);
+                    v15 = ~PostInFuture(7, << _aNO_HALT_i, _aUSABLE_i, #Erstam >>, _Erstam);
+                    terminate;
+                } else {
+                    ["Thou canst put from thy mind that serpent jawbone then!"];
+                }
+                TurnOff("phoenix");
+            }
+            key ("instructions") {
+                TurnOff("instructions");
+                if ($sentoneggquest and not $giveneggtoerstam) {
+                    ["Thou hast returned without my phoenix egg! Is this some kind of great meaningless joke to thee?"];
+                    if $phoenixegggiven {
+                        v15 = ~AskList(<< "I have the egg", "I do not have the egg" >>);
+                        if (v15 = "I have the egg") {
+                            ["Then bring it to me!"];
+                            Bark_i(0, "@Fool!@", _Erstam);
+                            terminate;
+                        } else {
+                            ["Then thou must go back to the Isle of the Phoenix!"];
+                            v18 = ~GetCoord(_Avatar);
+                            createSprite(65535, 0, 0, 0, (v18::2 - 2), (v18::1 - 2), 12);
+                            createSprite(65533, 10, 0, 0, v18::2, v18::1, 12);
+                            Sfx(119);
+                            v15 = ~PostInFuture(7, << _aNO_HALT_i, _aUSABLE_i, #Erstam >>, _Erstam);
+                            terminate;
+                        }
+                    } else {
+                        ["If so I do not find it funny! Thou art not playing a game, fool! Go, and do not return until thou hast completed thy promised task!"];
+                        v18 = ~GetCoord(_Avatar);
+                        createSprite(65535, 0, 0, 0, (v18::2 - 2), (v18::1 - 2), 12);
+                        createSprite(65533, 10, 0, 0, v18::2, v18::1, 12);
+                        Sfx(119);
+                        v15 = ~PostInFuture(7, << _aNO_HALT_i, _aUSABLE_i, #Erstam >>, _Erstam);
+                        terminate;
+                    }
+                } else {
+                    ["Thou canst begin by gathering all the various body parts scattered throughout the Manor. That includes a torso, arms, legs, and oh, yes, make extra certain that thou dost not forget the head. Place them one by one on top of the assimilation machine. Once thou hast put all the parts and phoenix egg into the machine, Boydon shall at last become complete.];
+                    Bark_i(0, "@Don't forget the torso!@", _Erstam);
+                    terminate;
+                }
+            }
+            key ("phoenix egg") {
+                TurnOff("phoenix egg");
+                ["Dost thou have my phoenix egg?"];
+                v19 = ~AskYesNo();
+                if v19 {
+                    v20 = ~IsInInv(1, 65177, _Artifacts, 1, _Party);
+                    if v20 {
+                        ["Now I have what I need to create life! Thou canst help me complete mine experiments! We shall begin immediately!];
+                        ["Thou canst begin by gathering all the various body parts scattered throughout the Manor. That includes a torso, arms, legs, and oh, yes, make extra certain that thou dost not forget the head. Place them within the hopper, on top of the life creation machine in the center of my laboratory. Once thou hast finished that, we shall speak again.];
+                        ["Quickly, put the egg into the machine!"];
+                        $giveneggtoerstam = true;
+                        Bark_i(0, "@Into the machine!@", _Erstam);
+                        terminate;
+                    } else {
+                        ["If thou dost have my phoenix egg, why dost thou not give it to me?"];
+                    }
+                } else {
+                    ["Then we have nothing further to discuss until thou dost go and bring it to me."];
+                    terminate;
+                }
+            }
+            key ("ready to create life") {
+                TurnOff("ready to create life");
+                ["Very good! So thou dost have all of the body parts in the vat! Two arms, two legs, and a torso?"];
+                v21 = ~AskYesNo();
+                if v21 {
+                    ["Doth that include the head?"];
+                    v22 = ~AskYesNo();
+                    if v22 {
+                        ["Excellent! Then wait until the life-creating reaction begins! But I warn thee, it may be dangerous. I am staying here."];
+                    } else {
+                        ["Then thou must find the head and put it in the hopper before the experiment can begin."];
+                        terminate;
+                    }
+                } else {
+                    ["Thou art a leadpate even worse than Vasel! Go and finish thy task and return to me!"];
+                    Bark_i(0, "@Leadpate!@", _Erstam);
+                    terminate;
+                }
+            }
+            key ("Boydon") {
+                TurnOff("Boydon");
+                ["I think Boydon hath been created rather well! Thou hast done an excellent job in assisting me in his creation."];
+                if not flag(457) {
+                    v23 = ~GiveItemsOrDrop_i(true, false, 65177, 202, 641, 1, _Avatar);
+                    ["Here is the key to my storeroom. There thou wilt find the secret of teleportation. It is an old serpent jawbone."];
+                    flag(457) = true;
+                }
+                if not flag(451) {
+                    v24 = ~GiveItemsOrDrop_i(true, false, 11, 65177, 559, 1, _Avatar);
+                    ["Also, please take this serpent tooth as a token of my appreciation. Once you have found the jawbone, please return, as I have other items for you."];
+                    flag(451) = true;
+                }
+            }
+            key ("I have the jawbone.") {
+                TurnOff("I have the jawbone.");
+                if (flag(450) and (flag(451) and flag(452))) {
+                    ["Yes. Very nice. I have already given thee my serpent teeth. I have no more of them. Good luck to thee."];
+                    Bark_i(0, "@Good fortune!@", _Erstam);
+                    terminate;
+                }
+                if not flag(450) {
+                    ["Yes, I see that thou hast found thy way into my storeroom and back."];
+                    ["Here is a serpent's tooth. This will allow thee to travel back from whence thou didst come."];
+                    ["As to the method of how it works -- Thou hast proven thyself intelligent. Discern it for thyself."];
+                    v25 = ~GiveItemsOrDrop_i(true, false, 12, 65177, 559, 1, _Avatar);
+                    flag(450) = true;
+                }
+                if not flag(451) {
+                    ["Here is another tooth. It will allow thee to travel back to this island. Although, I trust that it shall not be necessary to do so."];
+                    v26 = ~GiveItemsOrDrop_i(true, false, 11, 65177, 559, 1, _Avatar);
+                    flag(451) = true;
+                }
+                if not flag(452) {
+                    ["Here is a tooth that will enable thee to travel to another place."];
+                    flag(452) = true;
+                    v27 = ~GiveItemsOrDrop_i(true, false, 5, 65177, 559, 1, _Avatar);
+                }
+            }
+            key ("May Boydon join?") {
+                TurnOff("May Boydon join?");
+                ["Certainly he may. It will serve my creation well to see the world. Good journey to thee. But take care. My creation may be very durable and powerful, but if his new body should be destroyed there is no force in the universe that can remake him."];
+                $erstamsaidokay = true;
+            }
+            key ("blue egg") {
+                TurnOff("blue egg");
+                if v13 {
+                    ["If thou dost wish to know the mystery of that object, the answer is simple."];
+                    ["Glance into my telescope, and its magical view shall penetrate the universe for thee!"];
+                } else {
+                    ["Bring the item to me, and I shall discern its origin. Or perhaps I won't. We shall see."];
+                }
+            }
+            key ("lab apparatus") {
+                TurnOff("lab apparatus");
+                if v12 {
+                    ["I recognize that! I have not seen it in some time, in fact."];
+                    $knowlabitem = true;
+                    v28 = ~TakeFromParty_i(false, 1, _All, _Al_App_1, 1);
+                    if v28 {
+                        ["That rightfully belongs to me, and I find it most suspicious that thou didst come into possession of it!"];
+                        ["But, of course! It must have been a teleportation storm!"];
+                    } else {
+                        ["I want that back! It belongs to me!"];
+                    }
+                } else {
+                    ["That item resembles one of my laboratory apparati -- but I don't recall that anything is missing..."];
+                }
+            }
+            key ("severed hand") {
+                TurnOff("severed hand");
+                if (~IsInInv(0, 65177, _Creeping_Limb, 1, _Party) or (~IsInInv(1, 65177, _Creeping_Limb, 1, _Party) or (~IsInInv(2, 65177, _Creeping_Limb, 1, _Party) or (~IsInInv(3, 65177, _Creeping_Limb, 1, _Party) or (~IsInInv(4, 65177, _Creeping_Limb, 1, _Party) or ~IsInInv(5, 65177, _Creeping_Limb, 1, _Party)))))) {
+                    ["That is a remnant from one of mine experiments, something for Vasel to clean after. What art thou doing carrying that thing around?"];
+                    ["I do not know about thee... Thou art a strange one!"];
+                    $knowbloodyhand = true;
+                } else {
+                    ["Bring it to me, and I shall inspect it! It might be from one of my experiments..."];
+                }
+            }
+            key ("change subject") {
+                ["Certainly..."];
+                PopKeys();
+            }
+            key ("bye") {
+                CloseSpeaker0_i();
+                Bark_i(0, "@Most interesting...@", _Avatar);
+                Bark_i(2, "@On thy way!@", _Erstam);
+                terminate;
+            }
+        }
+        clear_answers;
+    }
+}

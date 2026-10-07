@@ -1,0 +1,150 @@
+Routine StoleCombEgg_i accepts a0 #locals(0) #uses(~IsInInv) {
+    if ~IsInInv(0, 65177, _Artifacts, 1, _Party) {
+        flag(253) = true;
+        Item_destroy(item);
+    }
+}
+
+Routine OrbWinchEgg_i accepts a0 #locals(7) #uses(~GimmePathEgg) {
+    v0 = ~FindNearest_i(20, _Winch_EW, item);
+    v1 = ~FindNearby_i(0, 1, _Magic_Orbs, item);
+    if (~ListSize_i(v1) > 0) {
+        Foreach v4 in v1 {
+            if (v0 and (~GetQuality(v0) = 200)) {
+                v5 = ~GetFrame(v4);
+                if (v5 = 1) {
+                    v6 = ~SetQuality(203, v0);
+                    Sfx(57);
+                    SetMusic(~GimmePathEgg(1, 5), 16);
+                }
+                if (v5 = 2) {
+                    v6 = ~SetQuality(201, v0);
+                    Sfx(57);
+                    SetMusic(~GimmePathEgg(1, 5), 23);
+                }
+            }
+        }
+    } else {
+        if v0 {
+            SetWeather_i(_Clear);
+            v6 = ~SetQuality(200, v0);
+        }
+    }
+}
+
+Routine ErnestoEgg_i accepts a0 #locals(9) {
+    v0 = ~GetQuality(item);
+    v1 = ~GetHour();
+    v2 = ~GetCoord(item);
+    if (flag(288) = false) {
+        v3 = 1;
+        v4 = ~FindNearest_i(80, _Ranger_M, item);
+        Foreach v7 in v4 {
+            if (~GetNPCID_i(v7) = 1) {
+                v3 = 0;
+            }
+        }
+        if ((v1 < 7) and ((v0 = 1) and v3)) {
+            v8 = ~CreateCreature_i(v2, _Ranger_M);
+            SetWorkType(_Sleep, v8);
+            SetNPCID_i(1, v8);
+            SetItemFlag_i(_Tournament, v8);
+        }
+        if ((v1 > 7) and ((v1 < 15) and v3)) {
+            v8 = ~CreateCreature_i(v2, _Ranger_M);
+            SetWorkType(_TendShop, v8);
+            SetNPCID_i(1, v8);
+            SetItemFlag_i(_Tournament, v8);
+        }
+        if ((v1 > 16) and ((v1 < 20) and v3)) {
+            v8 = ~CreateCreature_i(v2, _Ranger_M);
+            SetWorkType(_Patrol, v8);
+            SetNPCID_i(1, v8);
+            SetItemFlag_i(_Tournament, v8);
+        }
+        if ((v1 > 19) and v3) {
+            v8 = ~CreateCreature_i(v2, _Ranger_M);
+            SetWorkType(_TendShop, v8);
+            SetNPCID_i(1, v8);
+            SetItemFlag_i(_Tournament, v8);
+        }
+    }
+}
+
+Routine MadnessStatueEgg_i accepts a0 #locals(2) {
+    if $BANES_RELEASED {
+        v0 = ~Item_create(_Statues2);
+        if v0 {
+            ClearItemFlag_i(_IsTemporary_i, v0);
+            SetFrame(6, v0);
+            v1 = ~PopToMap(~GetCoord(item));
+            if v1 {
+                Item_destroy(item);
+            }
+        }
+    }
+}
+
+Routine RangerEgg_i accepts a0 #locals(4) {
+    if ((event = _Trigger) and ($BANES_RELEASED = false)) {
+        v0 = ~GetQuality(item);
+        v1 = ~GetCoord(item);
+        v2 = ~CreateCreature_i(v1, _Ranger_M);
+        Npc_setAlignment(_Neutral, v2);
+        v3 = ~GiveToCont_i(true, 0, 0, _Bow, 1, v2);
+        v3 = ~GiveToCont_i(true, 0, 0, _Arrow, 12, v2);
+        v3 = ~GiveToCont_i(true, 0, 0, _Leath_Armour, 1, v2);
+        SetWorkType(_Loiter, v2);
+        if (v0 = 1) {
+            SetWorkType(_Sleep, v2);
+        }
+        if (v0 = 2) {
+            SetWorkType(_Eat, v2);
+        }
+        if (v0 = 3) {
+            SetWorkType(_Farm, v2);
+        }
+        if (v0 > 3) {
+            SetWorkType(_Combat_0, v2);
+        }
+    }
+}
+
+Routine ToothChestEgg_i accepts a0 #locals(5) {
+    if ((event = _Trigger) and $BANES_RELEASED) {
+        v0 = ~Item_create(_Chest);
+        ClearItemFlag_i(_IsTemporary_i, v0);
+        Sfx(62);
+        if v0 {
+            SetFrame(4, v0);
+            v1 = ~Item_create(_Teeth);
+            if v1 {
+                v2 = ~GetQuality(item);
+                if (v2 = 1) {
+                    SetFrame(7, v1);
+                }
+                if (v2 = 2) {
+                    SetFrame(8, v1);
+                }
+                if (v2 = 3) {
+                    SetFrame(15, v1);
+                }
+                if (v2 = 4) {
+                    SetFrame(16, v1);
+                }
+                if (v2 = 5) {
+                    SetFrame(1, v1);
+                    ClearItemFlag_i(_IsTemporary_i, v1);
+                    v3 = ~PopToNPC(v0);
+                }
+                ClearItemFlag_i(_IsTemporary_i, v1);
+                v3 = ~PopToNPC(v0);
+            }
+            v4 = ~GetCoord(item);
+            v3 = ~PopToMap(v4);
+            if v3 {
+                Item_destroy(item);
+            }
+        }
+    }
+}

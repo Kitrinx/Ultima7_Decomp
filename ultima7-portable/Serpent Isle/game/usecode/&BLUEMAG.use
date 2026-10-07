@@ -1,0 +1,285 @@
+Routine Blue_Mage accepts a0 #locals(35) #uses(~LordOrLady, ~AvatarName, Bark_i, ~GimmePathEgg, IntroduceNPC_i, SetDoorState_i, ~RemoveFromList_i, ~OrderList_i) {
+    v0 = ~LordOrLady();
+    v1 = ~AvatarSex();
+    v2 = "his";
+    v3 = "him";
+    v4 = "he";
+    v5 = "man";
+    if ~AvatarSex() {
+        v2 = "her";
+        v4 = "she";
+        v3 = "her";
+        v5 = "woman";
+    }
+    v6 = ~AvatarName();
+    v7 = ~GetTime();
+    v8 = 0;
+    if (~GetNPCID_i(_Frigidazzi) > 1) {
+        v8 = 2;
+    }
+    if ((v7 > 1) or (v7 < 6)) {
+        v7 = "day";
+    } else {
+        v7 = "evening";
+    }
+    if (event = _Trigger) {
+        SetWorkType(_Wait, item);
+        terminate;
+    }
+    if (event = _Path_Failure) {
+        event = 2;
+    }
+    if ((event = _Action) and not $filberciobanquet) {
+        if (~GetNPCID_i(_Filbercio) = 12) {
+            SetNPCID_i(13, _Filbercio);
+            v9 = ~PostAction(<< _aNO_HALT_i, _aFACE_i, _North, _aBEND_FRAME_i, _aKNEEL_FRAME_i, _aWAIT_i, 2, _aUSABLE_i, #Blue_Mage >>, _Pothos);
+            terminate;
+        }
+        if (~GetNPCID_i(_Filbercio) = 11) {
+            SetNPCID_i(12, _Filbercio);
+            ClearSpeakers_i();
+            SetSpeaker0_i(0, _Filbercio);
+            ["And to think she was once a young and beautiful sorceress, before her ambitions turned her cold and heartless..."];
+            EndConverse_i();
+            PathfindNPC_i(false, #Blue_Mage, item, _Action, << 2314, 1818, 0 >>, _Pothos);
+            Bark_i(5, "@Pardon me...@", _Pothos);
+            SetMusic(~GimmePathEgg(1, 5), 18);
+            terminate;
+        }
+        if (~GetNPCID_i(_Filbercio) = 10) {
+            SetNPCID_i(11, _Filbercio);
+            ClearSpeakers_i();
+            SetSpeaker0_i(0, _Gustacio);
+            ["See here, Rotoluncia! This stranger may have secrets -- as do we all! But I will not condone treating a guest of the Council like a criminal!"];
+            SetSpeaker1_i(0, _Rotoluncia);
+            ["Thou dost dare to interfere with my spells! MageLord, I demand that thou reprimandest this sorcerer."];
+            CloseSpeaker1_i();
+            CloseSpeaker0_i();
+            SetSpeaker0_i(0, _Filbercio);
+            ["My dear, calm thyself. Perhaps our visitor shall tell us all, without the use of force..."];
+            SetSpeaker1_i(0, _Rotoluncia);
+            ["If there is one thing I cannot stand, it is being hamstrung by petty politics. Thou art not half the man thou once wert, Filbercio..."];
+            ["I bid you all a pleasant dinner. I have lost mine appetite and am leaving. But mark my words -- I shall have my way!"];
+            EndConverse_i();
+            v10 = ~GetCoord(_Rotoluncia);
+            createSprite(65535, 0, 0, 0, v10::2, v10::1, 26);
+            Sfx(130);
+            NewSchedule_i(<< 2157, 2103 >>, _Wander, 0, _Rotoluncia);
+            Npc_schedule(_Rotoluncia);
+            Item_move(<< 2157, 2103, 0 >>, _Rotoluncia);
+            SetItemFlag_i(_Tournament, _Rotoluncia);
+            Bark_i(4, "@Goodbye, witch...@", _Frigidazzi);
+            v9 = ~PostAction(<< _aNO_HALT_i, _aFACE_i, _South, _aBEND_FRAME_i, _aSIT_FRAME_i, _aWAIT_i, 2 >>, _Gustacio);
+            v9 = ~PostInFuture(8, << _aNO_HALT_i, _aWAIT_i, 8, _aBARK_i, "@Good riddance!@", _aWAIT_i, 4, _aUSABLE_i, #Blue_Mage >>, _Filbercio);
+            terminate;
+        }
+        if (~GetNPCID_i(_Filbercio) = 9) {
+            SetNPCID_i(10, _Filbercio);
+            v11 = ~FindNearby_i(0, 20, _Fire_Pillar, item);
+            Foreach v14 in v11 {
+                v10 = ~GetCoord(v14);
+                Item_destroy(v14);
+                createSprite(65535, 0, 0, 0, v10::2, v10::1, 9);
+                Sfx(104);
+            }
+            v9 = ~PostAction(<< _aNO_HALT_i, _aWAIT_i, 5, _aFACE_i, _East >>, _Rotoluncia);
+            v9 = ~PostInFuture(10, << _aFACE_i, _West, _aWAIT_i, 2, _aUSABLE_i, #Blue_Mage >>, _Gustacio);
+            terminate;
+        }
+        if (~GetNPCID_i(_Filbercio) = 8) {
+            SetNPCID_i(9, _Filbercio);
+            v10 = ~GetCoord(_Gustacio);
+            createSprite(65535, 0, 0, 0, (v10::2 - 3), (v10::1 - 3), 47);
+            Sfx(131);
+            v9 = ~PostInFuture(15, << _aNO_HALT_i, _aUSABLE_i, #Blue_Mage >>, _Gustacio);
+            Bark_i(10, "@How darest thou!@", _Rotoluncia);
+            terminate;
+        }
+        if (~GetNPCID_i(_Filbercio) = 7) {
+            SetNPCID_i(8, _Filbercio);
+            v11 = ~FindNearby_i(16, 20, _Path, item);
+            v10 = ~GetCoord(v11);
+            Item_destroy(v11);
+            v11 = ~Item_create(_Fire_Pillar);
+            if v11 {
+                v9 = ~PopToMap(v10);
+                createSprite(65535, 0, 0, 0, v10::2, v10::1, 30);
+                Sfx(42);
+            }
+            v9 = ~PostAction(<< _aNO_HALT_i, _aBARK_i, "@Stop this!@", _aWAIT_i, 5, _aBEND_FRAME_i, _aSTAND_FRAME_i, _aUP_FRAME_i, _aBARK_i, "@Contra Flam!@", _aUSABLE_i, #Blue_Mage >>, _Gustacio);
+            terminate;
+        }
+        if (~GetNPCID_i(_Filbercio) = 6) {
+            SetNPCID_i(7, _Filbercio);
+            v11 = ~FindNearby_i(16, 20, _Path, item);
+            v10 = ~GetCoord(v11);
+            Item_destroy(v11);
+            v11 = ~Item_create(_Fire_Pillar);
+            if v11 {
+                v9 = ~PopToMap(v10);
+                createSprite(65535, 0, 0, 0, v10::2, v10::1, 30);
+                Sfx(39);
+            }
+            v11 = ~Item_create(_Path);
+            if v11 {
+                ClearItemFlag_i(_IsTemporary_i, v11);
+                v10 = ~GetCoord(_Avatar);
+                v9 = ~PopToMap(<< (v10::1 + 2), v10::2, v10::3 >>);
+                v9 = ~SetAttack_i(_M_Ignite, v11, _Rotoluncia);
+            }
+            v9 = ~PostAction(<< _aNO_HALT_i, _aSTAND_FRAME_i, _aBARK_i, "@Mas Mas!@", _aTHRUST1_FRAME_i, _aCONTINUE_i, _aSFX_i, 20, _aATTACK_i, _aSTAND_FRAME_i, _aWAIT_i, 2, _aUSABLE_i, #Blue_Mage >>, _Rotoluncia);
+            Bark_i(5, "@Must thou?@", _Filbercio);
+            terminate;
+        }
+        if (~GetNPCID_i(_Filbercio) = 5) {
+            SetNPCID_i(6, _Filbercio);
+            v11 = ~FindNearby_i(16, 20, _Path, item);
+            v10 = ~GetCoord(v11);
+            Item_destroy(v11);
+            v11 = ~Item_create(_Fire_Pillar);
+            if v11 {
+                v9 = ~PopToMap(v10);
+                createSprite(65535, 0, 0, 0, v10::2, v10::1, 30);
+                Sfx(41);
+            }
+            v11 = ~Item_create(_Path);
+            if v11 {
+                ClearItemFlag_i(_IsTemporary_i, v11);
+                v10 = ~GetCoord(_Avatar);
+                v9 = ~PopToMap(<< (v10::1 - 2), v10::2, v10::3 >>);
+                v9 = ~SetAttack_i(_M_Ignite, v11, _Rotoluncia);
+            }
+            v9 = ~PostAction(<< _aNO_HALT_i, _aSTAND_FRAME_i, _aBARK_i, "@Flam Mas!@", _aTHRUST1_FRAME_i, _aCONTINUE_i, _aSFX_i, 20, _aATTACK_i, _aSTAND_FRAME_i, _aWAIT_i, 2, _aUSABLE_i, #Blue_Mage >>, _Rotoluncia);
+            Bark_i(0, "@Help!@", _Serv06);
+            PathfindNPC_i(false, #Blue_Mage, item, _Trigger, << 2326, 1858, 0 >>, _Serv06);
+            Bark_i(6, "@How rude...@", _Frigidazzi);
+            Bark_i(2, "@Stop that!@", _Shamino);
+            Bark_i(10, "@No!@", _Dupre);
+            terminate;
+        }
+        if (~GetNPCID_i(_Filbercio) = 4) {
+            SetNPCID_i(5, _Filbercio);
+            ClearSpeakers_i();
+            SetSpeaker0_i(0, _Filbercio);
+            ["Good Mages, this is the adventurer from a distant land whose arrival was foretold in our conjurings!"];
+            SetSpeaker1_i(0, _Frigidazzi);
+            ["Could <v4> be responsible for the storms which plague the land? Or for the growing strangenesses which afflict our spellcasting?"];
+            CloseSpeaker1_i();
+            SetSpeakerSlot_i(0);
+            ["I hope, my dear, that <v4> is the solution to our problems, rather than the cause..."];
+            SetSpeaker1_i(0, _Rotoluncia);
+            ["Thou art a fool, MageLord! Our guest is most certainly a factor in the supernatural disturbances that are threatening our world. Let us question <v3> now!"];
+            SetMusic(~GimmePathEgg(1, 5), 16);
+            EndConverse_i();
+            CloseSpeaker1_i();
+            v11 = ~Item_create(_Path);
+            if v11 {
+                ClearItemFlag_i(_IsTemporary_i, v11);
+                v10 = ~GetCoord(_Avatar);
+                v9 = ~PopToMap(<< v10::1, (v10::2 + 2), v10::3 >>);
+                v9 = ~SetAttack_i(_M_Ignite, v11, _Rotoluncia);
+            }
+            v9 = ~PostAction(<< _aNO_HALT_i, _aSTAND_FRAME_i, _aBARK_i, "@Ex Ort Flam!@", _aTHRUST1_FRAME_i, _aCONTINUE_i, _aSFX_i, 20, _aATTACK_i, _aSTAND_FRAME_i, _aWAIT_i, 2, _aUSABLE_i, #Blue_Mage >>, _Rotoluncia);
+            terminate;
+        }
+        if (~GetNPCID_i(_Filbercio) = 3) {
+            SetNPCID_i(4, _Filbercio);
+            ClearSpeakers_i();
+            SetSpeaker0_i(0, _Frigidazzi);
+            ["Welcome to thee. These cursed teleportation storms have made travel so difficult that we are becoming isolated! It hath disturbed everyone, but it is good to see a new face."];
+            EndConverse_i();
+            v9 = ~PostAction(<< _aFACE_i, _North, _aBEND_FRAME_i, _aSIT_FRAME_i, _aWAIT_i, 2, _aUSABLE_i, #Blue_Mage >>, _Frigidazzi);
+            terminate;
+        }
+        if (~GetNPCID_i(_Filbercio) = 2) {
+            SetNPCID_i(3, _Filbercio);
+            ClearSpeakers_i();
+            SetSpeaker0_i(0, _Rotoluncia);
+            ["Filbercio is never lacking in social graces, <v0>. Now if he only attended to the problems of Moonshade as he doth attend to his mistresses. Speaking of which..."];
+            SetSpeaker1_i(0, _Filbercio);
+            ["Ahem--! Also present, as my dinner companion, is the most charming Frigidazzi. She, too, is a Mage."];
+            EndConverse_i();
+            IntroduceNPC_i(814, 4, _Frigidazzi, _Rotoluncia);
+            terminate;
+        }
+        if (~GetNPCID_i(_Filbercio) = 1) {
+            SetNPCID_i(2, _Filbercio);
+            ClearSpeakers_i();
+            SetSpeaker0_i(0, _Gustacio);
+            ["Thou needest not worry, <v0>. We have brought thee here against thy will, but only that we may get to know thee. Thou art free to leave, once this dinner is concluded."];
+            SetSpeaker1_i(0, _Filbercio);
+            ["Quite right, Gustacio... and here is Adept Rotoluncia, whom I believe thou hast met."];
+            EndConverse_i();
+            IntroduceNPC_i(814, 4, _Rotoluncia, _Gustacio);
+            terminate;
+        }
+        if (~GetNPCID_i(_Filbercio) = 0) {
+            SetMusic(~GimmePathEgg(1, 5), 27);
+            SetNPCID_i(1, _Filbercio);
+            SetItemFlag_i(_Met, _Filbercio);
+            v15 = ~FindNearby_i(0, 45, _Door_EW, _Avatar);
+            v16 = ~FindNearby_i(0, 45, _DDoor_EW, _Avatar);
+            Foreach v19 in v15 {
+                if (~GetQuality(v19) = 207) {
+                    SetDoorState_i(0, v19);
+                }
+            }
+            Foreach v19 in v16 {
+                if (~GetQuality(v19) = 207) {
+                    SetDoorState_i(0, v19);
+                }
+            }
+            v22 = ~GetParty();
+            Foreach v11 in v22 {
+                SetWorkType(_FollowAvt, v11);
+            }
+            ClearSpeakers_i();
+            SetSpeaker0_i(0, _Filbercio);
+            ["Please be seated. We have been waiting for thee. I am the MageLord Filbercio."];
+            ["Allow me to introduce the others. First, my fellow members on the Council of Mages. Adept Gustacio..."];
+            EndConverse_i();
+            IntroduceNPC_i(814, 2, _Gustacio, _Filbercio);
+            terminate;
+        }
+        ClearSpeakers_i();
+        SetSpeaker0_i(0, _Pothos);
+        ["I beg thy pardon, MageLord Filbercio, but I have an urgent message for thee."];
+        ["I regret to report that mine attempts to locate any significant quantity of the reagent Blood Moss have met with failure."];
+        SetSpeaker1_i(0, _Filbercio);
+        ["Pothos! I should send thee to the dungeons and have the rats feed on thy carcass!"];
+        ["Dear guests, I am afraid that I shall have to adjourn this pleasant repast."];
+        ["Pothos and I must speak privately concerning important matters of state. I thank thee all for coming!"];
+        $filberciobanquet = true;
+        v25 = << 65518, 65516, 65514, 65507 >>;
+        Foreach v11 in v25 {
+            RevertSchedule_i(v11);
+        }
+        v25 = ~RemoveFromList_i(v25, 65514);
+        Foreach v11 in v25 {
+            v10 = ~GetCoord(v11);
+            createSprite(65535, 0, 0, 0, v10::2, v10::1, 7);
+            RemoveNPC_i(v11);
+        }
+        SetWorkType(_EatAtInn, _Gustacio);
+        SetWorkType(_Waiter, _Serv06);
+        Sfx(130);
+        NewSchedule_i(<< 2342, 1830, 2295, 1820, 2314, 1815, 2295, 1847, 2314, 1815, 2328, 1839 >>, << 16, 14, 26, 16, 26, 12 >>, << 0, 1, 3, 4, 6, 7 >>, _Filbercio);
+        v30 = << 2291, 1913 >>;
+        v31 = << 2278, 1910 >>;
+        v32 = << 2248, 1814 >>;
+        NewSchedule_i(<< v32, v30, v31 >>, << 26, 29, 14 >>, << 2, 3, 7 >>, _Pothos);
+        Item_move(<< 2297, 1912, 0 >>, _Pothos);
+        Npc_schedule(_Pothos);
+        v22 = ~FindNearby_i(4, 45, 65535, _Avatar);
+        v9 = ~OrderList_i();
+        Foreach v11 in v22 {
+            if ((~GetNPCID_i(v11) = 11) and (~ItemToNPC_i(v11) in v9)) {
+                JoinParty(v11);
+            }
+        }
+        ClearItemFlag_i(_DontMove_i, _Avatar);
+        $FILBERCIO_BANQUET_WILL_HAPPEN = false;
+        SetNPCID_i(0, _Filbercio);
+        terminate;
+    }
+}

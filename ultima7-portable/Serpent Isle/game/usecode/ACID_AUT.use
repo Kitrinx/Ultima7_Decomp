@@ -1,0 +1,25 @@
+Routine AcidAutomaton accepts a0 #locals(2) #uses(AutomatonUsable_i, ~LordOrLady, ~AvatarName, PartyFaces_i, Bark_i) {
+    if ~GetItemFlag_i(_Zombie, item) {
+        AutomatonUsable_i();
+    }
+    v0 = ~LordOrLady();
+    v1 = ~AvatarName();
+    if (event = _Converse) {
+        Item_bark("@May we speak?@", _Avatar);
+        PartyFaces_i(65453);
+        Bark_i(2, "@Speak... Creak... Weak...@", _AcidAutomaton);
+        SetWorkType(_Talk, _AcidAutomaton);
+    }
+    if (event = _Talking) {
+        Npc_schedule(_AcidAutomaton);
+        ClearBark_i(_AcidAutomaton);
+        SetSpeaker0_i(0, _Forskis);
+        ["Soldiers... Discipline... fountain..."];
+        ["Seek... Meek..."];
+        ["Die in acid!... automaton... fetches Water!"];
+        ["Sleek... Speak... Squeak..."];
+        flag(550) = true;
+        CloseSpeaker0_i();
+        terminate;
+    }
+}

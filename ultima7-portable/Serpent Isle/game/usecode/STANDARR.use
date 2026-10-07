@@ -1,0 +1,906 @@
+Routine Standarr accepts a0 #locals(8) #uses(~LordOrLady, PartyFaces_i, Bark_i, ~AskList, StandarrSellsWeapons_i, StandarrSellsArmour_i, StandarrBuysArmour_i, ~IsInInv, BarkAboutWork_i) {
+    v0 = ~LordOrLady();
+    if $AVATAR_IS_KNIGHT {
+        v0 = "Knight";
+    }
+    v1 = ~GetItemFlag_i(_Met, _Standarr);
+    if (~GetWorkType(_Standarr) = _Blacksmith) {
+        v2 = true;
+    }
+    if (event = _Converse) {
+        Item_bark("@Hail there!@", _Avatar);
+        PartyFaces_i(65458);
+        Bark_i(3, "@Greetings.@", _Standarr);
+        SetWorkType(_Talk, _Standarr);
+    }
+    if (event = _Talking) {
+        Npc_schedule(_Standarr);
+        ClearBark_i(_Standarr);
+        SetSpeaker0_i(0, _Standarr);
+        if v1 {
+            ["What dost thou wish of me, <v0>?"];
+        } else {
+            ["I am Standarr the Armourer. What dost thou wish of me?"];
+            SetItemFlag_i(_Met, _Standarr);
+        }
+        if ($askstandarrarmor and not $knowbreastplate) {
+            TurnOn("strange breastplate");
+        }
+        if $standarrknowsbrunt {
+            TurnOn("Brunt");
+        }
+        if $askstandarrfurnace {
+            TurnOn("Quests of Courage");
+        }
+        if $marstenarrested {
+            TurnOn("Marsten");
+        }
+        if $gothelmofmonitor {
+            TurnOn("Helm of Monitor");
+        }
+        if $simonshedsskin {
+            TurnOn("Simon");
+        }
+        if $POMDIRGUN_IS_DEAD {
+            TurnOn("Pomdirgun");
+        }
+        TurnOn(<< "buy", "bye" >>);
+        converse {
+            key ("Pomdirgun") {
+                TurnOn("Pomdirgun");
+                ["I envy thee the chance to kill Pomdirgun. I hope thou didst make him suffer!"];
+            }
+            key ("Helm of Monitor") {
+                TurnOff("Helm of Monitor");
+                ["Thanks to thee for liberating the Helm of Monitor from the Goblins. Thou hast truly earned the title of Champion Knight."];
+            }
+            key ("Simon") {
+                TurnOff("Simon");
+                ["Simon was a Goblin spy! I would never have suspected..."];
+            }
+            key ("Marsten") {
+                TurnOff("Marsten");
+                ["Before he was arrested I worked for Marsten. He was, after all, acting Lord of Monitor. I created a new type of weapon for him. A highly combustible powder that exploded when it came in contact with fire. Thou shouldst keep thine eye open for it. It would be a disaster if it ever fell into the hands of the Goblins."];
+            }
+            key ("Quests of Courage") {
+                TurnOff("Quests of Courage");
+                ["We Knights on occasion go on what we call Quests of Courage. Many times they involve going into the woods on Goblin raids. Other times they involve entering the depths of a dungeon called Furnace. That place is filled with a withering heat and many monsters live there. Recently, a Knight and good friend of ours named Pendar went off on a quest to Furnace in search of a treasure of which he had heard rumors. He hath not returned, and we worry about him and wonder if we shall ever see him again. Perhaps, he is spending his\x09treasure! Ha!"];
+            }
+            key ("Brunt") {
+                TurnOff("Brunt");
+                ["Let me tell thee, when in the trade of blacksmith, one doth develop his muscles. I am no weakling, I can assure thee. But this fellow Brunt who did accompany the sage Batlin through town could probably hoist me with his weak arm. Not the brightest of fellows, mind thee. But strong as an ox! He bested me in the tournament, but not by skill. By sheer muscle."];
+            }
+            key ("buy") {
+                if (~GetWorkType(_Standarr) = _Blacksmith) {
+                    ["Wouldst thou be interested in buying or selling?"];
+                    v3 = ~AskList(<< "nothing", "buying", "selling" >>);
+                    if (v3 = "buying") {
+                        ["Wouldst thou care to buy weapons or armour?"];
+                        v4 = ~AskList(<< "weapons", "armour" >>);
+                        if (v4 = "weapons") {
+                            StandarrSellsWeapons_i();
+                            TurnOn("buy weapons");
+                        } else {
+                            StandarrSellsArmour_i();
+                            TurnOn("buy armour");
+                        }
+                    }
+                    if (v3 = "selling") {
+                        ["I buy only armour, friend, and I do not haggle on the price."];
+                        StandarrBuysArmour_i();
+                        TurnOn("sell armour");
+                    }
+                    if (v3 = "nothing") {
+                        ["Another time, perhaps."];
+                    }
+                } else {
+                    ["Return when my shop is open, and we can talk business."];
+                }
+            }
+            key ("buy weapons") {
+                StandarrSellsWeapons_i();
+            }
+            key ("buy armour") {
+                StandarrSellsArmour_i();
+            }
+            key ("sell armour") {
+                StandarrBuysArmour_i();
+            }
+            key ("strange breastplate") {
+                TurnOff("strange breastplate");
+                v5 = ~IsInInv(0, 65177, _White_Brest, 1, _Party);
+                if v5 {
+                    ["I recognize this!  This is the ornamental breastplate that I made for Kylista, priestess of Fawn."];
+                    $knowbreastplate = true;
+                } else {
+                    ["I am familiar with the making of many types of weapon and armour. A pity thou dost not have it with thee. Without looking at it, I can tell thee no more."];
+                }
+            }
+            key ("bye") {
+                CloseSpeaker0_i();
+                CloseSpeaker1_i();
+                Bark_i(0, "@Stay well!@", _Avatar);
+                Bark_i(3, "@Farewell!@", _Standarr);
+                break;
+            }
+        }
+        clear_answers;
+    }
+    if (event = _Bark) {
+        v6 = ~rndRange(4, 1);
+        if v2 {
+            if (v6 = 1) {
+                v7 = "@Armour?@";
+            }
+            if (v6 = 2) {
+                v7 = "@We sell the best armour here!@";
+            }
+            if (v6 = 3) {
+                v7 = "@Finest goods here!@";
+            }
+            if (v6 = 4) {
+                v7 = "@Best weapons in Monitor!@";
+            }
+            Item_bark(v7, _Standarr);
+        } else {
+            BarkAboutWork_i(_Standarr);
+        }
+    }
+}
+
+Usable StandarrSellsArmour_i #locals(20) #uses(~AskOrdList, ~AskYesNo, ~StandarrHaggles_i, ~SellItem_i, ~PartyUtters) {
+    v0 = "friend";
+    v1 = ~GetItemFlag_i(_Met, _Standarr);
+    if not v1 {
+        v0 = "stranger";
+    }
+    PushKeys();
+    v2 = true;
+    v3 = << "nothing", "scale mail", "chain armour", "plate mail", "chain leggings", "plate leggings", "gauntlets", "spiked shield", "great helm", "crested helm" >>;
+    v4 = << 0, 570, 571, 573, 575, 576, 580, 578, 541, 542 >>;
+    v5 = << 65177, 0, 0, 0, 0, 0, 0, 0, 0, 1 >>;
+    v6 = << 0, 150, 200, 350, 100, 150, 60, 90, 75, 45 >>;
+    v7 = << 0, 85, 100, 175, 50, 90, 35, 50, 40, 25 >>;
+    v8 = 951;
+    v9 = << 0, 1, 1, 1, 1, 1, 1, 1, 1, 1 >>;
+    v10 = << 0, 1, 1, 1, 1, 1, 1, 1, 1, 1 >>;
+    if ~AvatarSex() {
+        v11 = "Milady";
+    } else {
+        v11 = "Friend";
+    }
+    While v2 {
+        ["What dost thou care to buy, <v0>?"];
+        v12 = ~AskOrdList(v3);
+        if (v12 = 1) {
+            ["Perhaps another time, <v0>."];
+            v2 = false;
+        } else {
+            v13 = v6::v12;
+            v14 = 0;
+            v15 = ~rndRange(5, 1);
+            if (v15 = 1) {
+                v16 = "Dost thou accept?";
+            }
+            if (v15 = 2) {
+                v16 = "Wilt thou pay my price?";
+            }
+            if (v15 = 3) {
+                v16 = "Dost thou find the price agreeable?";
+            }
+            if (v15 = 4) {
+                v16 = (v11 + ", dost thou agree?");
+            }
+            if (v15 = 5) {
+                v16 = (v11 + ", is the price acceptable?");
+            }
+            if (v12 = 2) {
+                ["<v13> monetari is a low price for durable scale armour, my friend."];
+                [<v16>"];
+                v17 = "suits of scale armour";
+            }
+            if (v12 = 3) {
+                ["If thou art serious about fighting, then thou shouldst purchase the best chain armour found in Monitor. I charge <v13> monetari for a chain byrnie."];
+                ["<v16>"];
+                v17 = "chain byrnies";
+            }
+            if (v12 = 4) {
+                ["Ah, plate mail is the best armour a knight could ask for, <v0>. I will sell thee a suit for <v13> monetari."];
+                ["<v16>"];
+                v17 = "suits of plate armour";
+            }
+            if (v12 = 5) {
+                ["I can sell thee chain leggings for <v13> monetari."];
+                ["<v16>"];
+                v17 = "pairs of chain leggings";
+            }
+            if (v12 = 6) {
+                ["Plate leggings will protect thy legs very well indeed, <v0>. I will sell thee a pair for <v13> monetari."];
+                ["<v16>"];
+                v17 = "pairs of plate leggings";
+            }
+            if (v12 = 7) {
+                ["A pair of gauntlets sell for <v13> monetari."];
+                ["<v16>"];
+                v17 = "pairs of gauntlets";
+            }
+            if (v12 = 8) {
+                ["An excellent choice, friend! The spiked shield can be used in close quarters to surprise thy foe. <v13> monetari is a small price to pay for one of these shields."];
+                ["<v16>"];
+                v17 = "spiked shields";
+            }
+            if (v12 = 9) {
+                ["'Tis nothing fancy, but it serves its purpose well. I can sell thee a great helm for <v13> monetari."];
+                ["<v16>"];
+                v17 = "great helms";
+            }
+            if (v12 = 10) {
+                ["Most Knights of Monitor prefer the great helm, but the crested helm doth not obstruct thy view as much. I charge <v13> monetari for one."];
+                ["<v16>"];
+                v17 = "crested helms";
+            }
+            if (v13 = v7::v12) {
+                if ~AskYesNo() {
+                    v18 = v13;
+                } else {
+                    v18 = 0;
+                }
+            } else {
+                v18 = ~StandarrHaggles_i(v7::v12, v6::v12);
+            }
+            if (v18 > 0) {
+                if (v10::v12 = 1) {
+                    ["How many <v17> wouldst thou like?"];
+                    v14 = ~SellItem_i(false, 1, 5, v18, v8, v9::v12, v5::v12, v4::v12);
+                } else {
+                    v14 = ~SellItem_i(false, 1, 0, v18, v8, 1, v5::v12, v4::v12);
+                }
+            }
+            if (v14 = 1) {
+                ["It hath been a pleasure, <v0>! Enjoy thy purchase!"];
+            } else {
+                if (v14 = 2) {
+                    ["<v11>, thine hands are full!"];
+                } else {
+                    if (v14 = 3) {
+                        v19 = ~PartyUtters(false, 0, (("@But " + v0) + ", we do not have the monetari to purchase this.@"), 1);
+                        if (v19 <> 65180) {
+                            SetSpeaker0_i(0, _Standarr);
+                            ["If thou canst not pay, please leave!"];
+                        } else {
+                            ["Thou dost not have enough monetari to purchase this..."];
+                        }
+                        if (31 < (~GetNPCID_i(_Standarr) + 6)) {
+                            SetNPCID_i(31, _Standarr);
+                        } else {
+                            SetNPCID_i((~GetNPCID_i(_Standarr) + 6), _Standarr);
+                        }
+                    } else {
+                    }
+                }
+            }
+            ["Dost thou want to buy more armour?"];
+            v2 = ~AskYesNo();
+        }
+    }
+    PopKeys();
+}
+
+Usable StandarrSellsWeapons_i #locals(20) #uses(~AskOrdList, ~AskYesNo, ~StandarrHaggles_i, ~SellItem_i, ~PartyUtters) {
+    v0 = "friend";
+    v1 = ~GetItemFlag_i(_Met, _Standarr);
+    if not v1 {
+        v0 = "stranger";
+    }
+    PushKeys();
+    v2 = true;
+    v3 = << "nothing", "spear", "morning star", "bow", "arrows", "sword", "two-handed sword", "two-handed axe", "halberd", "crossbow", "quarrels" >>;
+    v4 = << 0, 592, 596, 597, 722, 599, 602, 601, 603, 598, 723 >>;
+    v5 = << 65177, 0, 0, 0, 7, 0, 0, 0, 0, 0, 7 >>;
+    v6 = << 0, 20, 40, 120, 20, 125, 200, 150, 100, 145, 18 >>;
+    v7 = << 0, 12, 20, 60, 10, 65, 120, 90, 55, 75, 10 >>;
+    v8 = 951;
+    v9 = << 0, 1, 1, 1, 20, 1, 1, 1, 1, 1, 20 >>;
+    v10 = << 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 >>;
+    if ~AvatarSex() {
+        v11 = "Milady";
+    } else {
+        v11 = "Milord";
+    }
+    While v2 {
+        ["What weapon wouldst thou care to purchase?"];
+        v12 = ~AskOrdList(v3);
+        if (v12 = 1) {
+            ["Perhaps another time, <v0>."];
+            v2 = false;
+        } else {
+            v13 = v6::v12;
+            v14 = 0;
+            v15 = ~rndRange(5, 1);
+            if (v15 = 1) {
+                v16 = "Dost thou accept?";
+            }
+            if (v15 = 2) {
+                v16 = "Wilt thou pay my price?";
+            }
+            if (v15 = 3) {
+                v16 = "Dost thou find the price agreeable?";
+            }
+            if (v15 = 4) {
+                v16 = "Dost thou agree?";
+            }
+            if (v15 = 5) {
+                v16 = "Is the price acceptable?";
+            }
+            if (v12 = 2) {
+                ["My spears can gut a goblin even as well as a sword can. I charge <v13> monetari for one."];
+                [<v16>"];
+                v17 = "spears";
+            }
+            if (v12 = 3) {
+                ["A true Knight doth have a selection of weapons to choose from. This is an excellent weapon. The morning star sells for <v13> monetari."];
+                ["<v16>"];
+                v17 = "morning stars";
+            }
+            if (v12 = 4) {
+                ["I will sell thee a bow for <v13> monetari. Though most Knights do not carry these weapons, I think one should always be prepared, eh?"];
+                ["<v16>"];
+                v17 = "bows";
+            }
+            if (v12 = 5) {
+                ["I can sell thee 20 arrows for <v13> monetari."];
+                ["<v16>"];
+                v17 = "arrows, in bundles of 20,";
+            }
+            if (v12 = 6) {
+                ["<v13> monetari for the sharpest swords in all of Serpent Isle! Many of my blades have been blooded in goblin flesh, my friend."];
+                ["<v16>"];
+                v17 = "swords";
+            }
+            if (v12 = 7) {
+                ["An excellent choice, my friend! Thou wilt have a decisive edge in combat with this blade! <v13> monetari is what I charge."];
+                ["<v16>"];
+                v17 = "two-handed swords";
+            }
+            if (v12 = 8) {
+                ["Not very subtle, but a goblin doth understand thine argument anyway, eh? I can sell thee a fine two-handed axe for <v13> monetari."];
+                ["<v16>"];
+                v17 = "two-handed axes";
+            }
+            if (v12 = 9) {
+                ["Mine halberds are nothing fancy, but they are inexpensive and they do the job well. I can sell thee one for <v13> monetari."];
+                ["<v16>"];
+                v17 = "halberds";
+            }
+            if (v12 = 10) {
+                ["Crossbows are not the most Knightly of weapons, but they are useful indeed. For <v13> monetari I will sell thee one."];
+                ["<v16>"];
+                v17 = "crossbows";
+            }
+            if (v12 = 11) {
+                ["For the cost of <v13> monetari I can sell thee 20 quarrels."];
+                ["<v16>"];
+                v17 = "quarrels, in bundles of 20,";
+            }
+            if (v13 = v7::v12) {
+                if ~AskYesNo() {
+                    v18 = v13;
+                } else {
+                    v18 = 0;
+                }
+            } else {
+                v18 = ~StandarrHaggles_i(v7::v12, v6::v12);
+            }
+            if (v18 > 0) {
+                if (v10::v12 = 1) {
+                    ["How many <v17> wouldst thou like?"];
+                    v14 = ~SellItem_i(false, 1, 5, v18, v8, v9::v12, v5::v12, v4::v12);
+                } else {
+                    v14 = ~SellItem_i(false, 1, 0, v18, v8, 1, v5::v12, v4::v12);
+                }
+            }
+            if (v14 = 1) {
+                ["It hath been a pleasure, friend! Enjoy thy purchase!"];
+            } else {
+                if (v14 = 2) {
+                    ["<v11>, thine hands are full!"];
+                } else {
+                    if (v14 = 3) {
+                        v19 = ~PartyUtters(false, 0, (("@But " + v0) + ", we do not have the monetari to purchase this.@"), 1);
+                        if (v19 <> 65180) {
+                            SetSpeaker0_i(0, _Standarr);
+                            ["If thou canst not pay, please leave!"];
+                        } else {
+                            ["Thou dost not have enough monetari to purchase this!"];
+                        }
+                        if (31 < (~GetNPCID_i(_Standarr) + 6)) {
+                            SetNPCID_i(31, _Standarr);
+                        } else {
+                            SetNPCID_i((~GetNPCID_i(_Standarr) + 6), _Standarr);
+                        }
+                    } else {
+                    }
+                }
+            }
+            ["Dost thou wish to purchase more weapons?"];
+            v2 = ~AskYesNo();
+        }
+    }
+    PopKeys();
+}
+
+Usable StandarrBuysArmour_i #locals(24) #uses(~AskList, ~AskYesNo, ~GiveItemsOrDrop_i) {
+    v0 = "friend";
+    v1 = ~GetItemFlag_i(_Met, _Standarr);
+    if not v1 {
+        v0 = "stranger";
+    }
+    v2 = "Friend";
+    if ~AvatarSex() {
+        v2 = "Milady";
+    }
+    PushKeys();
+    v3 = true;
+    v4 = 951;
+    ["I am interested only in buying plate, chain, or scale armour, plate or chain leggings, and great or crested helms."];
+    While v3 {
+        v5 = ~CountItem(_All, _All, _Scale_Armour, _Party);
+        v6 = ~CountItem(_All, _All, _Chain_Armour, _Party);
+        v7 = ~CountItem(_All, _All, _Plate_Armour, _Party);
+        v8 = ~CountItem(_All, _All, _Chain_Leggings, _Party);
+        v9 = ~CountItem(_All, _All, _Plate_Leggings, _Party);
+        v10 = ~CountItem(_All, _All, _Great_Helm, _Party);
+        v11 = ~CountItem(_All, _All, _Crested_Helm, _Party);
+        v12 = << "nothing" >>;
+        v13 = false;
+        if v5 {
+            v12 = (v12 & "scale armour");
+            v13 = true;
+        }
+        if v6 {
+            v12 = (v12 & "chain armour");
+            v13 = true;
+        }
+        if v7 {
+            v12 = (v12 & "plate armour");
+            v13 = true;
+        }
+        if v8 {
+            v12 = (v12 & "chain leggings");
+            v13 = true;
+        }
+        if v9 {
+            v12 = (v12 & "plate leggings");
+            v13 = true;
+        }
+        if v10 {
+            v12 = (v12 & "great helm");
+            v13 = true;
+        }
+        if v11 {
+            v12 = (v12 & "crested helm");
+            v13 = true;
+        }
+        if (v13 = true) {
+            ["What dost thou care to sell, friend?"];
+            v14 = ~AskList(v12);
+            if (v14 = "nothing") {
+                ["As thou dost wish."];
+                v3 = false;
+            } else {
+                v15 = ~rndRange(5, 1);
+                if (v15 = 1) {
+                    v16 = "Dost thou accept?";
+                }
+                if (v15 = 2) {
+                    v16 = "Wilt thou sell at my price?";
+                }
+                if (v15 = 3) {
+                    v16 = "Dost thou find the price agreeable?";
+                }
+                if (v15 = 4) {
+                    v16 = (v2 + ", dost thou agree?");
+                }
+                if (v15 = 5) {
+                    v16 = (v2 + ", is the price acceptable?");
+                }
+                v17 = ~rndRange(5, 1);
+                if (v17 = 1) {
+                    v18 = "Hmmm... I am not sure.";
+                    v19 = "Well... these are not the best of wares.";
+                }
+                if (v17 = 2) {
+                    v18 = "It doth have rust on it!";
+                    v19 = "They are rusted!";
+                }
+                if (v17 = 3) {
+                    v18 = "It is not in very good condition.";
+                    v19 = "They are not in very good condition.";
+                }
+                if (v17 = 4) {
+                    v18 = (v2 + ", this will take weeks to repair!");
+                    v19 = (v2 + ", these will take weeks to repair!");
+                }
+                if (v17 = 5) {
+                    v18 = "Where didst thou find this -- buried under the ground?";
+                    v19 = "Where didst thou find these -- moldering under the ground?";
+                }
+                if (v14 = "scale armour") {
+                    v20 = 570;
+                    v21 = 30;
+                    if (v5 > 1) {
+                        ["How many suits of scale armour wouldst thou care to sell?"];
+                        v22 = ~AskBarInput(0, 1, v5, 0);
+                        if (v22 = 1) {
+                            goto label_50;
+                        }
+                        v21 = (30 * v22);
+                        if (v22 = 0) {
+                            ["Perhaps another time, <v0>..."];
+                            goto label_102;
+                        }
+                        ["<v19>"];
+                        ["Very well, I will buy thy <v22> suits of scale armour from thee for <v21> monetari."];
+                        ["<v16>"];
+                        goto label_51;
+                    }
+                    label_50:
+                    ["<v18>"];
+                    ["Very well, I will buy this scale armour from thee for <v21> monetari."];
+                    ["<v16>"];
+                    v22 = 1;
+                }
+                label_51:
+                if (v14 = "chain armour") {
+                    v20 = 571;
+                    v21 = 50;
+                    if (v6 > 1) {
+                        ["How many suits of chain armour wouldst thou care to sell?"];
+                        v22 = ~AskBarInput(0, 1, v6, 0);
+                        if (v22 = 1) {
+                            goto label_58;
+                        }
+                        v21 = (50 * v22);
+                        if (v22 = 0) {
+                            ["Perhaps another time, <v0>..."];
+                            goto label_102;
+                        }
+                        ["<v19>"];
+                        ["Hmmm... I suppose I could buy thy <v22> suits of chain armour from thee for <v21> monetari."];
+                        ["<v16>"];
+                        goto label_59;
+                    }
+                    label_58:
+                    ["<v18>"];
+                    ["I suppose I could pay thee <v21> monetari for a suit of chain armour."];
+                    ["<v16>"];
+                    v22 = 1;
+                }
+                label_59:
+                if (v14 = "plate armour") {
+                    v20 = 573;
+                    v21 = 75;
+                    if (v7 > 1) {
+                        ["How many suits of plate armour wouldst thou care to sell?"];
+                        v22 = ~AskBarInput(0, 1, v7, 0);
+                        if (v22 = 1) {
+                            goto label_66;
+                        }
+                        v21 = (75 * v22);
+                        if (v22 = 0) {
+                            ["Perhaps another time, <v0>..."];
+                            goto label_102;
+                        }
+                        ["<v19>"];
+                        ["I will give thee <v21> monetari for thy <v22> suits of plate armour."];
+                        ["<v16>"];
+                        goto label_67;
+                    }
+                    label_66:
+                    ["<v18>"];
+                    ["For this plate armour, I can offer <v21> monetari."];
+                    ["<v16>"];
+                    v22 = 1;
+                }
+                label_67:
+                if (v14 = "chain leggings") {
+                    v20 = 575;
+                    v21 = 25;
+                    if (v8 > 1) {
+                        ["How many pairs of chain leggings wouldst thou care to sell?"];
+                        v22 = ~AskBarInput(0, 1, v8, 0);
+                        if (v22 = 1) {
+                            goto label_74;
+                        }
+                        v21 = (25 * v22);
+                        if (v22 = 0) {
+                            ["Perhaps another time, <v0>..."];
+                            goto label_102;
+                        }
+                        ["<v19>"];
+                        ["Hmmm... perhaps I can give thee <v21> monetari for thy <v22> pairs of chain leggings."];
+                        ["<v16>"];
+                        goto label_75;
+                    }
+                    label_74:
+                    ["<v18>"];
+                    ["So be it, I will offer <v21> monetari for the chain leggings."];
+                    ["<v16>"];
+                    v22 = 1;
+                }
+                label_75:
+                if (v14 = "plate leggings") {
+                    v20 = 576;
+                    v21 = 45;
+                    if (v9 > 1) {
+                        ["And how many pairs of plate leggings wouldst thou care to sell?"];
+                        v22 = ~AskBarInput(0, 1, v9, 0);
+                        if (v22 = 1) {
+                            goto label_82;
+                        }
+                        v21 = (45 * v22);
+                        if (v22 = 0) {
+                            ["Perhaps another time, <v0>..."];
+                            goto label_102;
+                        }
+                        ["<v19>"];
+                        ["For thy <v22> pairs of plate leggings, I can give thee <v21> monetari."];
+                        ["<v16>"];
+                        goto label_83;
+                    }
+                    label_82:
+                    ["<v18>"];
+                    ["<v21> monetari is what I can give thee for the pair of plate leggings."];
+                    ["<v16>"];
+                    v22 = 1;
+                }
+                label_83:
+                if (v14 = "great helm") {
+                    v20 = 541;
+                    v21 = 20;
+                    if (v10 > 1) {
+                        ["How many great helms wouldst thou care to sell?"];
+                        v22 = ~AskBarInput(0, 1, v10, 0);
+                        if (v22 = 1) {
+                            goto label_90;
+                        }
+                        v21 = (20 * v22);
+                        if (v22 = 0) {
+                            ["Perhaps another time, <v0>..."];
+                            goto label_102;
+                        }
+                        ["<v19>"];
+                        ["Very well..." ~"I can offer thee <v21> monetari for thy <v22> great helms."];
+                        ["<v16>"];
+                        goto label_91;
+                    }
+                    label_90:
+                    ["<v18>"];
+                    ["Very well, I will buy thy great helm for <v21> monetari."];
+                    ["<v16>"];
+                    v22 = 1;
+                }
+                label_91:
+                if (v14 = "crested helm") {
+                    v20 = 542;
+                    v21 = 10;
+                    if (v11 > 1) {
+                        ["How many crested helms wouldst thou care to sell?"];
+                        v22 = ~AskBarInput(0, 1, v11, 0);
+                        if (v22 = 1) {
+                            goto label_98;
+                        }
+                        v21 = (10 * v22);
+                        if (v22 = 0) {
+                            ["Perhaps another time, <v0>..."];
+                            goto label_102;
+                        }
+                        ["<v19>"];
+                        ["I suppose I can give thee <v21> monetari for thy <v22> crested helms."];
+                        ["<v16>"];
+                        goto label_99;
+                    }
+                    label_98:
+                    ["<v18>"];
+                    ["For this crested helm, I can give thee <v21> monetari."];
+                    ["<v16>"];
+                    v22 = 1;
+                }
+                label_99:
+                if ~AskYesNo() {
+                    v23 = ~TakeFromParty_i(true, _All, _All, v20, v22);
+                    v23 = ~GiveItemsOrDrop_i(true, 0, 65177, 65177, v4, v21, _Avatar);
+                } else {
+                    ["Thy loss, then."];
+                }
+                label_102:
+                ["Dost thou wish to sell more armour?"];
+                v3 = ~AskYesNo();
+            }
+        } else {
+            ["Thou dost not have anything that I care to purchase!"];
+            v3 = false;
+        }
+    }
+    PopKeys();
+}
+
+Function ~StandarrHaggles_i accepts a0, a1 #locals(17) #uses(~AskList, ~Haggle_i, ~AskYesNo) {
+    v2 = "friend";
+    v3 = ~GetItemFlag_i(_Met, _Standarr);
+    if not v3 {
+        v2 = "stranger";
+    }
+    v4 = ~AvatarSex();
+    if ~AvatarSex() {
+        v5 = "Milady";
+    } else {
+        v5 = "Milord";
+    }
+    v6 = v1;
+    v7 = ((v0 / 3) * 2);
+    v8 = (15 - (~GetNPCID_i(_Standarr) / 2));
+    v9 = 0;
+    v10 = 1;
+    v11 = 0;
+    v12 = 2;
+    v13 = ~GetNPCID_i(_Standarr);
+    While v10 {
+        v14 = ~AskList(<< "yes", "no", "haggle" >>);
+        if (v14 = "no") {
+            return 0;
+        } else {
+            if (v14 = "yes") {
+                v15 = 0;
+                goto label_13;
+            }
+        }
+        v16 = ~Haggle_i(v9, v8, v11, v7, v12, v0, v6);
+        v11 = (v11 + 1);
+        v9 = v16::4;
+        v15 = v16::3;
+        v17 = v6;
+        v6 = v16::2;
+        v7 = v16::1;
+        label_13:
+        v18 = ~Random(3);
+        if (v15 < 2) {
+            if (v6 < (v0 + ((v1 - v0) / 4))) {
+                if (v18 = 1) {
+                    ["Thou hast a good eye for a bargain, <v2>. I am thankful that more of my customers are not like thee."];
+                }
+                if (v18 = 2) {
+                    ["<v5>, thou hast good bargaining sense. I fear I have actually lost money in this deal."];
+                }
+                if (v18 = 3) {
+                    ["Thy trading skills are as sharp as one of my blades, <v2>."];
+                }
+            } else {
+                if (v6 < (v0 + ((v1 - v0) / 3))) {
+                    if (v18 = 1) {
+                        ["Thou shouldst be glad that I like thee, <v2>! 'Tis not often I lower my prices..."];
+                    }
+                    if (v18 = 2) {
+                        ["<v5>, I hope thou dost leave town soon! If thou stayest much longer I will be penniless!"];
+                    }
+                    if (v18 = 3) {
+                        ["I hope thou art as fine a warrior as thou art as a trader, <v2>! Thou wilt do my products honor."];
+                    }
+                } else {
+                    if (v6 < (v0 + ((v1 - v0) / 2))) {
+                        if (v18 = 1) {
+                            ["Thou art paying for quality work, <v2>. If thou dost not agree, then thou shouldst leave."];
+                        }
+                        if (v18 = 2) {
+                            ["'Tis not often I have such a challenge in bargaining, <v2>. Please come again!"];
+                        }
+                        if (v18 = 3) {
+                            ["<v5>, remember that we take great pride in our work!"];
+                        }
+                    } else {
+                        if (v18 = 1) {
+                            ["Many thanks, <v5>!"];
+                        }
+                        if (v18 = 2) {
+                            ["May it serve thee well, <v2>!"];
+                        }
+                        if (v18 = 3) {
+                            ["I fear the Goblin raids have raised my prices, <v2>. It takes time to produce quality goods, and demand hath been great."];
+                        }
+                    }
+                }
+            }
+            ["Thou hast agreed to a price of <v6> monetari, <v2>?"];
+            if ~AskYesNo() {
+                if (v13 > 1) {
+                    SetNPCID_i((v13 - 2), _Standarr);
+                }
+                return v6;
+            } else {
+                if (v18 = 1) {
+                    ["'Tis unwise to change thy mind after agreeing to a firm price!"];
+                }
+                if (v18 = 2) {
+                    ["Take care, <v2>. I am as skilled a warrior as I am a weaponsmith."];
+                }
+                if (v18 = 3) {
+                    ["Thou hast no honor! Leave, before I take thine head from thy shoulders!"];
+                    terminate;
+                }
+                if (31 < (v13 + 10)) {
+                    SetNPCID_i(31, _Standarr);
+                } else {
+                    SetNPCID_i((v13 + 10), _Standarr);
+                }
+                return 0;
+            }
+        }
+        if (v9 = 1) {
+            if (v15 = 5) {
+                ["I said that <v6> was my final offer. Dost thou accept?"];
+                if (v13 < 28) {
+                    SetNPCID_i((v13 + 4), _Standarr);
+                }
+                if ~AskYesNo() {
+                    return v6;
+                }
+                v10 = 0;
+            } else {
+                ["<v6> monetari is my final offer."];
+                if (v13 < 30) {
+                    SetNPCID_i((v13 + 2), _Standarr);
+                }
+            }
+        } else {
+            if (v15 = 2) {
+                if (v18 = 1) {
+                    ["'Tis a pleasure to trade with such an honorable person, <v2>. How doth <v6> monetari sound?"];
+                }
+                if (v18 = 2) {
+                    ["<v5>, I shall offer thee a special price. How doth <v6> monetari sound to thee?"];
+                }
+                if (v18 = 3) {
+                    ["My price is <v6> monetari, <v2>. Wilt thou accept?"];
+                }
+            }
+            if (v15 = 3) {
+                if (v18 = 1) {
+                    ["Let me think... Perhaps <v6> monetari?"];
+                }
+                if (v18 = 2) {
+                    ["I must reconsider... <v6> monetari?"];
+                }
+                if (v18 = 3) {
+                    ["Thou dost realize that I make only quality products. Perhaps <v6> monetari?"];
+                }
+            }
+            if (v15 = 4) {
+                if (v18 = 1) {
+                    ["<v6> monetari is as low as I can go. I must keep some honor for myself."];
+                    ["What dost thou say to this?"];
+                }
+                if (v18 = 2) {
+                    ["I cannot accept less than <v6> monetari. I have a business to run."];
+                }
+                if (v18 = 3) {
+                    ["I can accept no less than <v6> monetari. What would the townsfolk say?"];
+                }
+            }
+            if (v15 = 5) {
+                v6 = v17;
+                if (v18 = 1) {
+                    ["My previous price stands, at <v6> monetari. I am no fool!"];
+                }
+                if (v18 = 2) {
+                    ["I am not a charity! <v6> monetari, and no less!"];
+                }
+                if (v18 = 3) {
+                    [""<v6> monetari is as low as I will go! I must eat and pay for my supplies..."];
+                }
+                if (v13 < 31) {
+                    SetNPCID_i((v13 + 1), _Standarr);
+                }
+            }
+        }
+    }
+}

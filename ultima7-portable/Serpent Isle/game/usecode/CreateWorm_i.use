@@ -1,0 +1,18 @@
+Usable CreateWorm_i #locals(7) #uses(~GimmePathEgg) {
+    v0 = << 154, 1644, 0 >>;
+    v1 = ~rndRange(6, 1);
+    v2 = ~rndRange(6, 1);
+    v0::1 = (v0::1 + v1);
+    v0::2 = (v0::2 + v2);
+    createSprite(65535, 0, 0, 0, v0::2, v0::1, 21);
+    Sfx(130);
+    v3 = ~Item_create(_Worm);
+    if v3 {
+        v4 = ~PopToMap(v0);
+    }
+    v5 = ~GimmePathEgg(2, 4);
+    v6 = ~SetQuality(0, v5);
+    if not v4 {
+        PrintError_i("error, somebody stepped on the worm!-ewb");
+    }
+}

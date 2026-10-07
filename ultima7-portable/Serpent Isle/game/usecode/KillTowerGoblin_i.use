@@ -1,0 +1,35 @@
+Usable KillTowerGoblin_i #locals(10) {
+    v0 = << 65413, 65414, 65415, 65416, 65417 >>;
+    v1 = 0;
+    Foreach v4 in v0 {
+        v1 = (v1 + ~GetItemFlag_i(_Dead, v4));
+    }
+    if (v1 = (~ListSize_i(v0) - 1)) {
+        $fawntowerretaken = true;
+        v5 = "@Damn thee!@";
+    } else {
+        v5 = "@Grok...@";
+    }
+    v6 = ~GetCoord(item);
+    SetItemFlag_i(_Dead, item);
+    RemoveNPC_i(item);
+    v7 = ~Item_create(_NPC2_Bodies);
+    if v7 {
+        SetFrame(4, v7);
+        SetItemFlag_i(_IsTemporary_i, v7);
+        v8 = ~GiveToCont_i(true, 6, 0, _Leath_Boots, 1, v7);
+        v8 = ~GiveToCont_i(true, 0, 0, _Antique_Armour, 1, v7);
+        v9 = ~rndRange(9, 1);
+        if (v9 > 5) {
+            v8 = ~GiveToCont_i(true, 0, 0, _Boomerang, 1, v7);
+            v8 = ~GiveToCont_i(true, ~rndRange(8, 1), 0, _Food, v9, v7);
+        } else {
+            v8 = ~GiveToCont_i(true, 6, 4, _Bottles, 1, v7);
+            v8 = ~GiveToCont_i(true, 0, 0, _Spear, v9, v7);
+        }
+        v8 = ~PopToMap(v6);
+    }
+    if (v7 and v8) {
+        v8 = ~PostAction(<< _aNO_HALT_i, _aBARK_i, v5 >>, v7);
+    }
+}

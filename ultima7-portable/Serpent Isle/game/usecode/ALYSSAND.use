@@ -1,0 +1,878 @@
+Routine Alyssand accepts a0 #locals(17) #uses(~LordOrLady, ~AvatarName, ~IsNPCNear, ~GimmePathEgg, BarkIfNear_i, PartyFaces_i, Bark_i, AlyssandWhispers_i, ~JailedNPC_i, ~GiveItemsOrDrop_i, AlyssandSells_i, ~AskYesNo, JoinTheCause_i, ~AskList, ~PartyUtters, ~IsInInv, SendAssassin_i, JorvinBringsInvitation_i) {
+    v0 = false;
+    if (~GetWorkType(_Alyssand) = _Sew) {
+        v0 = true;
+    }
+    v1 = ~LordOrLady();
+    v2 = ~AvatarSex();
+    v3 = ~AvatarName();
+    v4 = ~IsNPCNear(_Iolo);
+    v5 = ~IsNPCNear(_Shamino);
+    v6 = ~IsNPCNear(_Dupre);
+    v7 = ~IsNPCNear(_Delin);
+    v8 = false;
+    v9 = false;
+    v10 = "";
+    if ((event = _Path_Success) or (event = _Path_Failure)) {
+        SetWorkType(_Wander, _Alyssand);
+    }
+    if (event = _Action) {
+        if (flag(424) or not $FAWN_TRIAL_RECESS) {
+            terminate;
+        }
+        v11 = ~ApproachAvatar_i(40, 120, _Alyssand);
+        SetWorkType(_Talk, _Alyssand);
+        v11 = ~PostInFuture(50, << _aNO_HALT_i, _aUSABLE_i, #Alyssand >>, ~GimmePathEgg(2, 1));
+        v11 = ("" & ("@Psst!@" & "@Avatar...@"));
+        BarkIfNear_i(v11, _Alyssand);
+        terminate;
+    }
+    if (event = _NearDeath) {
+        v11 = ~PostAction(<< _aNO_HALT_i, _aUSABLE_i, #Green_Noble >>, item);
+    }
+    if (event = _Converse) {
+        Item_bark("@Might I speak with thee?@", _Avatar);
+        PartyFaces_i(65490);
+        Bark_i(5, (("@Certainly, " + v1) + ".@"), _Alyssand);
+        SetWorkType(_Talk, _Alyssand);
+    }
+    if (event = _Talking) {
+        Npc_schedule(_Alyssand);
+        v0 = false;
+        if (~GetWorkType(_Alyssand) = _Sew) {
+            v0 = true;
+        }
+        if (~GetWorkType(_Alyssand) = _Talk) {
+            SetWorkType(_Shy, _Alyssand);
+        }
+        ClearBark_i(_Alyssand);
+        SetSpeaker0_i(0, _Alyssand);
+        v12 = ~GetItemFlag_i(_Met, _Alyssand);
+        if ($FAWN_TRIAL_RECESS and (flag(435) and not flag(424))) {
+            SetMusic(~GimmePathEgg(1, 5), 20);
+            AlyssandWhispers_i();
+            v13 = ~JailedNPC_i(false);
+            ["<v3>, I have discovered where thy companion <v13> is being held. He is directly beneath the Temple, in a locked cell."];
+            ["One of the Temple guards is sympathetic to our Cause. He hath given me this key, which will lead thee into the hidden parts of the Temple."];
+            ["If thou dost explore the Temple tonight, I can arrange for the guards to be absent. Now, I must go, before Zulith doth see me speaking with thee!"];
+            v11 = ~GiveItemsOrDrop_i(true, 0, 1, 180, 641, 1, _Avatar);
+            flag(424) = true;
+            Bark_i(0, "@Good fortune!@", _Alyssand);
+            if ~IsNPCNear_i(_Zulith) {
+                v11 = ("" & ("@Alyssand!@" & "@What art thou doing?@"));
+                BarkIfNear_i(v11, _Zulith);
+            }
+            SetWorkType(_Shy, _Alyssand);
+            terminate;
+        }
+        if (v12 = false) {
+            if ($gottattoo = true) {
+                ["'Tis always an honor to serve the Pikemen." *"I am Alyssand, daughter of Delin. I am a weaver by trade."];
+            } else {
+                ["I am Alyssand, daughter of Delin. I am a weaver by trade." *"How might I be of assistance?"];
+            }
+            SetItemFlag_i(_Met, _Alyssand);
+        } else {
+            if ($alyssandtalk and not flag(435)) {
+                SetMusic(~GimmePathEgg(1, 5), 20);
+                AlyssandWhispers_i();
+                ["Again we meet, <v3>. Perhaps by now, thine experiences have given thee reason to change thine answer..."];
+                ["We need thee. The Cause needs thee!"];
+                TurnOn("answer");
+            } else {
+                ["'Tis a pleasure to see thee again, <v3>."];
+            }
+        }
+        if ($alknowsfishnet and not $knowfishnetstockings) {
+            TurnOn("fishnet stockings");
+        }
+        if ($zulithcaughtfollowing and not ($AUDIENCE_WITH_YELINDA or $FAWN_TRIAL_DONE)) {
+            TurnOn("Zulith");
+        }
+        if ($alknowsmoonsilk and not $knowmoonsilkstockings) {
+            TurnOn("Moonsilk stockings");
+        }
+        if ($HAS_CLUE_RING and not $alyssandtalk) {
+            TurnOn("engagement ring");
+        }
+        if flag(435) {
+            TurnOn("the Cause");
+        }
+        if ($alyssandtalk and not flag(420)) {
+            TurnOn("gauntlets");
+        }
+        if (v0 = true) {
+            TurnOn("provisions");
+        }
+        TurnOn(<< "storms", "Goblins", "bye" >>);
+        converse {
+            key ("provisions") {
+                if (~GetWorkType(_Alyssand) = _Sew) {
+                    ["I help father with the shop when he is... indisposed. What dost thou wish to purchase?"];
+                    AlyssandSells_i();
+                } else {
+                    ["I will gladly sell to thee if thou wilt come to my father's shop when we are open for business."];
+                }
+                TurnOff("provisions");
+            }
+            key ("storms") {
+                ["The storms have not been kind to us, <v1>. Without our fleet, Fawn cannot hope to survive for long."];
+                TurnOff("storms");
+                TurnOn(<< "Fawn", "fleet" >>);
+            }
+            key ("Fawn") {
+                ["Fawn, the city of Beauty. Fawn, the city that lost Love in vanity and the pursuit of power."];
+                if ($AUDIENCE_WITH_YELINDA and ($FAWN_TRIAL_DONE and not $oraclesaysinnocent)) {
+                    ["But there is fresh hope in Fawn, for Lady Yelinda doth rule for herself now. It is a new dawning for Beauty and Love."];
+                } else {
+                    ["Beauty nourisheth the senses, <v1>. But Love nourisheth the soul. The soul of Fawn withered long ago..."];
+                }
+                TurnOff("Fawn");
+                TurnOn(<< "Beauty", "Love" >>);
+            }
+            key ("Beauty") {
+                TurnOff("Beauty");
+                if ($AUDIENCE_WITH_YELINDA and ($FAWN_TRIAL_DONE and not $oraclesaysinnocent)) {
+                    ["The consequences of the trial of thy friend hath been far-reaching. I think that the people of Fawn doth again see Beauty for the light divine that she can be."];
+                } else {
+                    ["The people of Fawn are content to let the world end... As long as it doth not mar their Beautiful view of the dying embers!"];
+                }
+            }
+            key ("Love") {
+                ["Love and Beauty were once regarded as aspects of the same entity. Whoever loved was beautiful. Whoever nurtured the beauty of truth was loved."];
+                if ($AUDIENCE_WITH_YELINDA and ($FAWN_TRIAL_DONE and not $oraclesaysinnocent)) {
+                    ["With the aid of Lady Yelinda, those ways shall be restored to Fawn. These are such glorious times..."];
+                } else {
+                    ["Now the two are sundered, and Fawn cares for no one but herself."];
+                }
+                TurnOff("Love");
+            }
+            key ("fleet") {
+                ["The storms stripped us of our ships, one by one."];
+                ["Some were plucked away, even as we watched. Others left harbor and never returned. And Beauty is cold comfort to those who have lost their loved ones."];
+                ["Thou hast not seen the storms hit, and watched as something vanished before thy very eyes?"];
+                ["Then count thy blessings, <v1>."];
+                TurnOff("fleet");
+            }
+            key ("Goblins") {
+                TurnOff("Goblins");
+                ["The Goblins have grown bold of late. They have often come to hurl themselves upon our gate. Thankfully, we have held fast so far."];
+                if ($AUDIENCE_WITH_YELINDA and ($FAWN_TRIAL_DONE and not $oraclesaysinnocent)) {
+                    ["Thankfully, Leon and his followers have been allowed to enter the city once again. I shall not fear for their safety now."];
+                } else {
+                    ["Their attacks bring fear in me for Leon and his companions. Lady Yelinda hath forbidden them entrance into the city, even if 'twere certain death to remain outside."];
+                    PushKeys();
+                    TurnOn(<< "Leon", "companions", "Lady Yelinda", "change subject" >>);
+                }
+            }
+            key ("change subject") {
+                PopKeys();
+                if (v10 = "") {
+                    ["What shall we speak of, then?"];
+                }
+                if (v10 = "Cause") {
+                    v10 = "";
+                    if not flag(435) {
+                        ["Now that I have explained it, thy duty must be evident. Wilt thou join us in this Cause?"];
+                        if ~AskYesNo() {
+                            ["Thy courage doth delight the soul of a weary rebel like myself."];
+                            JoinTheCause_i();
+                        } else {
+                            ["I regret that thou wilt not aid the Cause. Nevertheless, we will not be turned from our quest to save this society."];
+                            ["If events should change thy mind, contact me."];
+                        }
+                    }
+                    if flag(435) {
+                        if $FAWN_TRIAL_RECESS {
+                            v13 = ~JailedNPC_i(false);
+                            ["<v3>, I have discovered where thy companion <v13> is being held. He is directly beneath the Temple, in a locked cell."];
+                            ["One of the Temple guards is sympathetic to our Cause. He hath given me this key, which will lead thee into the hidden parts of the Temple."];
+                            ["If thou dost explore the Temple tonight, I can arrange for the guards to be absent. Now, I must go, before Zulith doth see me speaking with thee!"];
+                            v11 = ~GiveItemsOrDrop_i(true, 0, 1, 180, 641, 1, _Avatar);
+                            flag(424) = true;
+                            Bark_i(0, "@Good fortune!@", _Alyssand);
+                            if ~IsNPCNear_i(_Zulith) {
+                                v11 = ("" & ("@Alyssand!@" & "@What art thou doing?@"));
+                                BarkIfNear_i(v11, _Zulith);
+                            }
+                            SetWorkType(_Shy, _Alyssand);
+                            terminate;
+                        } else {
+                            ["Be ready at any time, for one doth not know when the time to act shall arrive."];
+                            ["We once tried to enter the Temple during the night, while Kylista was with one of her lovers... but the guards foiled our attempt."];
+                            ["Nevertheless -- look everywhere, talk to everyone, see if thou canst find the clue that hath eluded us!"];
+                        }
+                    }
+                }
+                if (v10 = "Ring") {
+                    SetMusic(~GimmePathEgg(1, 5), 20);
+                    v10 = "";
+                    ["One more moment of thy time, if thou wilt, <v3>."];
+                    AlyssandWhispers_i();
+                    ["A person like thyself, brave and adventurous, could be useful in times like these..."];
+                    ["Wouldst thou be willing to aid us in liberating this city from false traditions and evil schemes?"];
+                    v11 = ~AskList(<< "yes", "no", "perhaps" >>);
+                    if (v11 = "no") {
+                        ["I regret that thou wilt not aid the Cause. Nevertheless, we will not be turned from our quest to save this society."];
+                        ["If events should change thy mind, contact me."];
+                    } else {
+                        if (v11 = "yes") {
+                            ["Thy thinking is more advanced than I had hoped! But surely, thou hast questions...?"];
+                            JoinTheCause_i();
+                        } else {
+                            ["If thou wilt only let me explain the concepts, I am certain that thou wilt join our Cause."];
+                        }
+                        PushKeys();
+                        v10 = "Cause";
+                        TurnOn(<< "false traditions", "evil schemes", "change subject" >>);
+                    }
+                }
+            }
+            key ("answer") {
+                TurnOff("answer");
+                ["Do not toy with mine expectations -- hast thou reconsidered?"];
+                ["Wouldst thou aid us in liberating this city from false traditions and evil schemes?"];
+                v11 = ~AskList(<< "yes", "no", "perhaps" >>);
+                if (v11 = "no") {
+                    ["If events should change thy mind, contact me."];
+                } else {
+                    if (v11 = "yes") {
+                        ["I knew that thou wouldst perceive the ethicality of this Cause, given time. If thou hast questions, I shall be glad to answer them."];
+                        JoinTheCause_i();
+                    } else {
+                        ["I beg thee, let me explain the concepts which propel the Cause. When thou dost understand, thou wilt surely join us..."];
+                    }
+                    PushKeys();
+                    v10 = "Cause";
+                    TurnOn(<< "false traditions", "evil schemes", "change subject" >>);
+                }
+            }
+            key ("the Cause") {
+                TurnOff("the Cause");
+                SetMusic(~GimmePathEgg(1, 5), 20);
+                AlyssandWhispers_i();
+                if not ($AUDIENCE_WITH_YELINDA or $FAWN_TRIAL_DONE) {
+                    ["Persevere, <v3>, for one cannot tell when the time to act shall arrive."];
+                    ["Continue to pry secrets from the townsfolk -- sometimes, a stranger can learn more than an old friend."];
+                    ["Go places thou art not wanted, and look for the hidden things. Surely, thou wilt find a clue."];
+                    ["Thou must find the evidence that hath eluded us, so that Fawn can be freed!"];
+                }
+                if ($AUDIENCE_WITH_YELINDA and (not $FAWN_TRIAL_RECESS and not $FAWN_TRIAL_DONE)) {
+                    ["I have heard that thy friend hath been taken prisoner, to be placed on trial before the Oracle."];
+                    ["I have no faith in the truth of the Oracle, but perhaps an opportunity shall present itself to advance the Cause."];
+                    ["Thou shouldst submit thyself to the trial, for the time being. That is mine advice."];
+                }
+                if $FAWN_TRIAL_RECESS {
+                    if not flag(422) {
+                        ["Why dost thou delay? Take the key that I gave thee, and enter the hidden places within the Temple."];
+                        ["Perhaps thou canst free thy companion -- or unearth the secret of the Oracle!"];
+                    }
+                    if (flag(422) and not ($oraclesaysinnocent or $ORACLE_SET_TO_CORRUPT)) {
+                        ["Return to the Temple! The secret room which thou hast seen must have some influence over the Oracle."];
+                    }
+                    if $ORACLE_SET_TO_CORRUPT {
+                        ["Now let the trial resume! Kylista and her knaves shall regret the day they were born..."];
+                        if not ~AvatarSex() {
+                            flag(436) = true;
+                            ["I think I could love a man like thee, <v3>..."];
+                        }
+                    }
+                    if $oraclesaysinnocent {
+                        ["Hast thou forgotten thine allies, <v3>? 'Tis not enough to coerce the Oracle into freeing thy friend..."];
+                        ["Thou must find a way to make the thing denounce Kylista and the Great Captains, and overthrow this evil system!"];
+                    }
+                }
+                if ($AUDIENCE_WITH_YELINDA and $FAWN_TRIAL_DONE) {
+                    if $oraclesaysinnocent {
+                        ["The Cause is doomed, <v3>. I am pleased that thy friend hath been freed from jail..."];
+                        ["Yet I believe that we somehow missed the last chance to expose Kylista and her minions for the hypocrites they truly are!"];
+                        ["Thy part is done. Go thy way, continue thy quest -- we of the Cause shall struggle on without thee."];
+                    } else {
+                        ["The Cause is triumphant, <v3>! Lady Yelinda hath ended the exile of The Fellowship. The Great Captains are in disgrace, and Lady Yelinda doth rule for herself now."];
+                        ["If there is anything I can ever do for thee, return to Fawn, and I shall aid thee."];
+                        if flag(436) {
+                            TurnOn("Kiss me.");
+                        }
+                    }
+                }
+            }
+            key ("Kiss me.") {
+                TurnOff("Kiss me.");
+                ["Um, <v3>... when I said that I loved thee, 'twas a moment of weakness..."];
+                ["Surely, thou wouldst not take advantage of a girl for a few hasty words?"];
+                ["Besides, there is so much to be done for the Cause and Lady Yelinda. I'm hopeful of becoming an advisor to the Lady! There is not time for love, not now..."];
+            }
+            key ("false traditions") {
+                TurnOff("false traditions");
+                ["According to legend, the Oracle was brought by our ancestors from Sosaria, our homeland. It now stands in the Temple of Beauty."];
+                ["Our traditions teach us that the statue is an infallible guide to Truth and Beauty."];
+                ["But we suspect that the legends are false."];
+                TurnOn(<< "guide to Truth" >>);
+                if not v8 {
+                    TurnOn("We?");
+                }
+            }
+            key ("We?") {
+                v8 = true;
+                TurnOff("We?");
+                ["Most of the young people of the town belong to the Cause -- but they are not willing to say so publicly, for fear of exile."];
+                ["I am also pleased to say that Leon supports us, as do the other Fellowship members."];
+            }
+            key ("guide to Truth") {
+                TurnOff("guide to Truth");
+                ["The Oracle actually speaks -- all of us have heard it. It speaks in reply to the Priestess of Beauty."];
+                ["The Statue of Beauty only speaks at certain times, such as during the spring festivals or when the city needs special guidance."];
+                ["According to tradition, it will also reply to the ruler of Fawn. However, I have never seen Lady Yelinda speak to the statue. She leaves such duties to Kylista."];
+            }
+            key ("evil schemes") {
+                TurnOff("evil schemes");
+                ["The Oracle is supposed to speak only the Truth, yet it too often parrots the words of the Priestess and the Great Captains."];
+                ["We do not believe that truth only serves those in power... we think that someone hath corrupted the Oracle!"];
+                TurnOn(<< "Priestess", "Great Captains" >>);
+                if not v8 {
+                    TurnOn("We?");
+                }
+            }
+            key ("Priestess") {
+                TurnOff("Priestess");
+                ["Kylista is the worst example of this pernicious doctrine of Beauty..."];
+                ["She believes that her attractiveness marks her as superior to all others, and that her sensuality is a divine gift by which to influence men's minds."];
+                ["Kylista is lustful and greedy, but she is also cunning. She is very dangerous to us."];
+            }
+            key ("Great Captains") {
+                ["According to all of our traditions, only women are capable of ruling in Fawn -- for only women are capable of True Beauty."];
+                ["The highest station which a male can hope for is to serve as one of the Great Captains. These men serve as Lady Yelinda's advisors."];
+                ["Yet they do much more than merely advise. There are three of them -- Garth, Joth and Voldin."];
+                v9 = true;
+                TurnOff("Great Captains");
+                TurnOn(<< "Garth", "Joth", "Voldin", "Lady Yelinda" >>);
+            }
+            key ("Garth") {
+                ["Because he is the youngest of the Captains, we had hoped to find a way to persuade Garth to support our Cause."];
+                ["When one of us spoke with him, he claimed to be sympathetic to the Cause. Yet Garth says he is afraid to confront Voldin with our suspicions."];
+                ["I do not trust him..."];
+                TurnOff("Garth");
+            }
+            key ("Joth") {
+                TurnOff("Joth");
+                ["The sailors trust and respect Joth. In mine heart, I cannot believe he is part of any conspiracy to control the Oracle."];
+                ["We thought of asking Joth to aid us, but he hath not been the same since the storms."];
+                ["He doth live in his memories and stare out to sea. I think he cannot stop yearning to return to sea long enough to be of much help."];
+            }
+            key ("Voldin") {
+                ["Voldin is the one who truly controls the Great Captains. I think he would make himself ruler of Fawn, if he could find a way."];
+                ["Voldin is a cruel man who secretly despises women. If there is an evil scheme, then Voldin must be the mastermind."];
+                TurnOff("Voldin");
+            }
+            key ("Zulith") {
+                TurnOff("Zulith");
+                ["That worm hath been following thee? Then he doth suspect that thou art allied with the Cause..."];
+                ["Watch thy step, lest thou be exiled like the Fellowship folks. Without thee to help us, our Cause would be lost."];
+            }
+            key ("Leon") {
+                ["Thou hast not heard Leon speak? Oh, thou shouldst!"];
+                ["He doth tell of something wonderful, wherein all people are equal and capable of independent thought. Something called The Fellowship."];
+                ["Thou canst find him at the camp outside the city gates."];
+                v14 = ~PartyUtters(false, 0, 0, 1);
+                if ((v14 = 65533) or ((v14 = 65535) or (v14 = 65534))) {
+                    v11 = ("@I had thought we had rid ourselves of that blight." & "@But it seems that it is following in Batlin's footsteps.@");
+                    v14 = ~PartyUtters(false, 0, v11, v14);
+                    SetSpeakerSlot_i(0);
+                }
+                TurnOff("Leon");
+                TurnOn("Fellowship");
+            }
+            key ("Fellowship") {
+                ["Imagine, <v1>! Imagine what the world would be like if only we trusted one another, worked together, and sought to earn that which we strived for!"];
+                ["Imagine if women were not coddled or thought of as inferior! What would the world be like if we all listened to our Inner Voice?"];
+                v14 = ~PartyUtters(false, 0, ("@The world would be full of frustrated fools, " + "I am sure.@"), 65533);
+                if (v14 <> 65180) {
+                    if (~ListSize_i(~GetParty()) > 2) {
+                        v15 = v14;
+                        While (v15 = v14) {
+                            v15 = ~PartyUtters(false, 0, 0, 1);
+                        }
+                        v15 = ~PartyUtters(false, 0, ("@Another one who hath fallen prey to the empty promises " + "of The Fellowship, Avatar.@"), v15);
+                    }
+                    SetSpeakerSlot_i(0);
+                }
+                TurnOff("Fellowship");
+            }
+            key ("companions") {
+                ["Leon's companions are the sailors that brought him here. Their names are Scots, Ruggs and Kalen."];
+                TurnOff("companions");
+                PushKeys();
+                TurnOn(<< "Scots", "Ruggs", "Kalen", "change subject" >>);
+            }
+            key ("Scots") {
+                ["Scots is not precisely a sailor, I suppose. He is actually a cartographer."];
+                ["He is most often with his pens and ink, drawing intricate little lines..."];
+                TurnOff("Scots");
+                TurnOn("lines");
+            }
+            key ("lines") {
+                ["I surmise all those lines make a map, I do not know. But I do not know how he could be making a map, either. He cannot go anywhere because of the storms."];
+                TurnOff("lines");
+            }
+            key ("Ruggs") {
+                ["Ruggs is a sailor, for sure. Although he seems to take well to gardening now that he's on shore."];
+                ["Thou canst not mistake which of the three is Ruggs. His face is hideous to behold, though he speaks fair enough."];
+                TurnOff("Ruggs");
+            }
+            key ("Kalen") {
+                ["Of the three of Leon's companions, I know the least about Kalen, and I have no desire to learn more."];
+                ["He always seems to be hovering about, staring at me. He never seems to be doing anything around the camp."];
+                TurnOff("Kalen");
+            }
+            key ("Lady Yelinda") {
+                TurnOff("Lady Yelinda");
+                if v9 {
+                    ["She, too, is a prisoner of Beauty! Yelinda must not strain herself, lest she mar her perfect appearance with any sign of weariness."];
+                    ["The Great Captains therefore have usurped many of her duties, on the pretext of sparing Yelinda from tedium."];
+                    ["I do not think the Lady to be the mindless, spineless creature which some others do. I think she is a victim of this system."];
+                } else {
+                    ["Lady Yelinda is the ruler of Fawn. Her word is law... Usually delivered by her little shadow, Zulith."];
+                    ["Zulith's official title is Chancellor. But he is little more than a glorified messenger."];
+                }
+            }
+            key ("fishnet stockings") {
+                ["I had not expected a stranger to know of my tiny industry. I weave the nets and sew in my father's shop."];
+                ["It assists me in mine attempts to keep a watchful eye on my father... He hath not been right since my mother, Elissia, died."];
+                ["I have few customers, but perhaps people are beginning to take an interest."];
+                TurnOff("fishnet stockings");
+                TurnOn("customers");
+            }
+            key ("customers") {
+                ["Well, to be truthful, I have only one returning customer. Flindo, a merchant from Moonshade, hath only just left here after ordering several more pair."];
+                ["Apparently one of the mages hath taken a liking to them. They are the only ones who could afford such luxuries now."];
+                TurnOff("customers");
+            }
+            key ("Moonsilk stockings") {
+                TurnOff("Moonsilk stockings");
+                if ~IsInInv(0, 65177, _Stockings, 1, _Party) {
+                    if v2 {
+                        ["Thou art a lucky woman to possess such a fine pair of stockings!"];
+                        ["I knew that such fine work was possible. But I had never actually seen the stockings they sell in Moonshade."];
+                        ["It doth cause me to wonder why anyone in the city of Mages would buy the rough stockings I make, when they could purchase ones so soft."];
+                    } else {
+                        ["Thou wilt make some woman happy with so fine a pair of stockings!"];
+                        ["I knew that such fine work was possible. But I had never actually seen the stockings they sell in Moonshade."];
+                        ["It doth cause me to wonder why anyone in the city of Mages would buy the rough stockings I make when they could purchase ones so soft."];
+                    }
+                } else {
+                    ["I have heard of the stockings they sell in Moonshade. So I know that such fine work is possible."];
+                    ["Without seeing them, I cannot be sure that the stockings thou hast are from Moonshade. They could be merely homespun, like unto the ones I make..."];
+                }
+            }
+            key ("engagement ring") {
+                v10 = "Ring";
+                TurnOff("engagement ring");
+                ["I had heard that thou hadst been asking after me. That thou didst have an interest in my missing engagement ring... Or perhaps in the gauntlets that replaced it."];
+                if ~IsInInv(0, 65177, _Ring, 1, _Party) {
+                    ["That is it, indeed. I thank thee for telling me... But thou mayest keep it if thou wishest."];
+                } else {
+                    ["I thank thee for telling me that thou hast seen it... But if thou dost have it, thou mayest keep it."];
+                }
+                $alyssandtalk = true;
+                NewSchedule_i(<< 1032, 1912, 936, 1832, 936, 1736, 1096, 1732, 1032, 1928, 936, 1832, 1096, 1732 >>, << 9, 9, 9, 9, 9, 9, 9 >>, << 0, 2, 3, 4, 5, 6, 7 >>, _Zulith);
+                v11 = ~PostInFuture(100, << _aNO_HALT_i, _aUSABLE_i, #Zulith >>, ~GimmePathEgg(1, 5));
+                $knowengagementring = true;
+                PushKeys();
+                TurnOn(<< "gauntlets", "Keep it?", "change subject" >>);
+            }
+            key ("Keep it?") {
+                TurnOff("Keep it?");
+                ["If thou wouldst wish the honest truth, I do not think that my beloved Keth will ever come back from wherever that storm took him."];
+                ["Therefore, this ring hath only melancholy memories for me. This jewelry hath become bitter to me."];
+                TurnOn("Keth");
+            }
+            key ("gauntlets") {
+                TurnOff("gauntlets");
+                if not flag(420) {
+                    ["I assume that the gauntlets are thine... They are clearly meant for someone more adventurous than a mere weaver."];
+                    ["Wouldst thou like to have them back?"];
+                    if (~AskYesNo() = true) {
+                        ["Then thou shalt have them. Here!"];
+                        v11 = ~GiveItemsOrDrop_i(true, false, 0, 65177, 835, 1, _Avatar);
+                        flag(420) = true;
+                    } else {
+                        ["If thou dost change thy mind, let me know. I have no use for them, and know of no one else who would."];
+                        v16 = true;
+                    }
+                } else {
+                    ["I am glad that I was able to give thee thy gauntlets. I had no use for them, and I am sure that thou didst miss their protection."];
+                }
+            }
+            key ("Keth") {
+                ["Keth and I were to marry, but it was not fated to be."];
+                ["He was first mate on one of the largest merchant ships. On one of his voyages, he purchased the engagement ring -- from an artisan in Moonshade, as I recall."];
+                ["But then the storms came, and ships began disappearing. And eventually it was Keth's ship that never came back."];
+                TurnOff("Keth");
+            }
+            key ("bye") {
+                $temp2flag = false;
+                SendAssassin_i();
+                CloseSpeaker0_i();
+                Bark_i(0, "@Goodbye!@", _Avatar);
+                Bark_i(2, "@Farewell!@", _Alyssand);
+                JorvinBringsInvitation_i();
+                break;
+            }
+        }
+        clear_answers;
+    }
+}
+
+Usable AlyssandWhispers_i #locals(6) {
+    v0 = false;
+    v1 = << 65475, 65483, 65487, 65485, 65486 >>;
+    Foreach v4 in v1 {
+        if ~IsNPCNear_i(v4) {
+            v0 = true;
+        }
+    }
+    if (v0 and not ($ORACLE_SET_TO_CORRUPT and $FAWN_TRIAL_DONE)) {
+        v5 = ("@Lower thy voice, lest our enemies hear...@" & ("@We must whisper, or they shall hear us.@" & ("@Come closer, so none can hear what we say.@" & "@Our enemies are near -- keep thy voice down.@")));
+        v5 = v5::~Random(~ListSize_i(v5));
+        append v5;
+        append "";
+        say;
+    }
+}
+
+Usable JoinTheCause_i #locals(0) {
+    flag(435) = true;
+    RevertSchedule_i(_Alyssand);
+    Npc_schedule(_Alyssand);
+}
+
+Usable AlyssandSells_i #locals(20) #uses(~LordOrLady, ~IsNPCNear, ~AskOrdList, ~AskYesNo, ~AlyssandHaggles_i, ~SellItem_i, ~PartyUtters) {
+    v0 = ~LordOrLady();
+    v1 = ~IsNPCNear(_Alyssand);
+    PushKeys();
+    v2 = true;
+    v3 = << "nothing", "bag", "bucket", "fishing pole", "candle", "torch", "bedroll", "fur boots", "backpack", "stockings", "great helm", "crossbow", "bolts", "sextant", "mirror" >>;
+    v4 = << 0, 802, 810, 662, 336, 595, 583, 587, 801, 677, 541, 598, 723, 650, 675 >>;
+    v5 = << 65177, 0, 0, 0, 0, 0, 0, 3, 0, 1, 0, 0, 7, 0, 16 >>;
+    v6 = 948;
+    v7 = << 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 20, 1, 1 >>;
+    v8 = << 0, 1, 0, 0, 1, 1, 0, 1, 1, 1, 0, 0, 1, 0, 0 >>;
+    v9 = << 0, 30, 35, 25, 4, 8, 150, 100, 200, 25, 300, 550, 75, 100, 120 >>;
+    v10 = << 0, 17, 19, 13, 2, 4, 90, 60, 115, 15, 190, 350, 45, 50, 70 >>;
+    if ~AvatarSex() {
+        v11 = "Milady";
+    } else {
+        v11 = "Milord";
+    }
+    While v2 {
+        v12 = ~AskOrdList(v3);
+        if (v12 = 1) {
+            ["Some other time, then."];
+            v2 = false;
+        } else {
+            v13 = v9::v12;
+            v14 = 0;
+            v15 = ~rndRange(4, 1);
+            if (v15 = 1) {
+                v16 = "Dost thou accept?";
+            }
+            if (v15 = 2) {
+                v16 = "Wilt thou accept the price?";
+            }
+            if (v15 = 3) {
+                v16 = "Wilt thou agree to this price?";
+            }
+            if (v15 = 4) {
+                v16 = (v11 + ", dost thou agree?");
+            }
+            if (v12 = 2) {
+                ["That will be <v13> filari. <v16>"];
+                v17 = "bags";
+            }
+            if (v12 = 3) {
+                ["Father stocks finely crafted buckets. He sells them for <v13> filari each."];
+                ["<v16>"];
+            }
+            if (v12 = 4) {
+                ["I will sell one to thee for <v13> filari."];
+                ["<v16>"];
+            }
+            if (v12 = 5) {
+                ["That will be <v13> filari. <v16>"];
+                v17 = "candles";
+            }
+            if (v12 = 6) {
+                ["I can sell one to thee for <v13> filari."];
+                ["<v16>"];
+                v17 = "torches";
+            }
+            if (v12 = 7) {
+                ["I can sell this to thee for <v13> filari."];
+                ["<v16>"];
+            }
+            if (v12 = 8) {
+                ["I can sell a pair of fine fur-lined boots to thee for <v13> filari."];
+                ["<v16>"];
+                v17 = "pairs of fur-lined boots";
+            }
+            if (v12 = 9) {
+                ["These backpacks are made by the women of Fawn, <v0>. For <v13>\x09filari, one can be thine."];
+                ["<v16>"];
+                v17 = "backpacks";
+            }
+            if (v12 = 10) {
+                ["I make these stockings, <v0>. Thou canst not find any finer! For <v13> filari I can sell thee a pair."];
+                ["<v16>"];
+                v17 = "stockings";
+            }
+            if (v12 = 11) {
+                ["For <v13> filari I can sell thee a great helm."];
+                ["<v16>"];
+                v17 = "great helms";
+            }
+            if (v12 = 12) {
+                ["The crossbows father stocks are well-kept, <v0>, and will do thee good against the vile goblins. <v13> filari is what father charges for one."];
+                ["<v16>"];
+                v17 = "crossbows";
+            }
+            if (v12 = 13) {
+                ["Crossbow bolts sell for <v13> filari for a bundle of twenty."];
+                ["<v16>"];
+                v17 = "crossbow bolts, in bundles of twenty,";
+            }
+            if (v12 = 14) {
+                ["I am not certain if thou wishest to own a sextant, <v0>, seeing that there now is no sea travel. Father sells them for the low cost of <v13> filari each."];
+                ["<v16>"];
+                v17 = "sextants";
+            }
+            if (v12 = 15) {
+                if ~AvatarSex() {
+                    ["I suppose I can sell thee one, though I have no idea why thou wouldst want one. We sell hand mirrors at <v13> filari each."];
+                } else {
+                    ["What dost thou need a hand mirror for? Surely, thou dost not believe in the virtue of \@Beauty\@? Well, 'tis not my place to say either way. We sell them for <v13> filari each."];
+                }
+                ["<v16>"];
+                v17 = "hand mirror";
+            }
+            if (v13 = v10::v12) {
+                if ~AskYesNo() {
+                    v18 = v13;
+                } else {
+                    v18 = 0;
+                }
+            } else {
+                v18 = ~AlyssandHaggles_i(v10::v12, v9::v12);
+            }
+            if (v18 > 0) {
+                if (v8::v12 = 1) {
+                    ["How many <v17> wouldst thou like?"];
+                    v14 = ~SellItem_i(false, 1, 5, v18, v6, v7::v12, v5::v12, v4::v12);
+                } else {
+                    v14 = ~SellItem_i(false, 1, 0, v18, v6, 1, v5::v12, v4::v12);
+                }
+            }
+            if (v14 = 1) {
+                ["I am sure that thou wilt enjoy thy purchase, <v0>."];
+            } else {
+                if (v14 = 2) {
+                    ["Thine hands are full, <v0>!"];
+                } else {
+                    if (v14 = 3) {
+                        v19 = ~PartyUtters(false, 0, (("@But " + v0) + ", we haven't the coins to purchase this.@"), 1);
+                        if (v19 <> 65180) {
+                            SetSpeaker0_i(0, _Alyssand);
+                            ["It doth appear that thy purse is empty, <v0>."];
+                        } else {
+                            ["If thou canst not pay for our goods, please say so..."];
+                        }
+                        if (31 < (~GetNPCID_i(_Alyssand) + 6)) {
+                            SetNPCID_i(31, _Alyssand);
+                        } else {
+                            SetNPCID_i((~GetNPCID_i(_Alyssand) + 6), _Alyssand);
+                        }
+                    } else {
+                    }
+                }
+            }
+            ["Perhaps another purchase, <v0>?"];
+            v2 = ~AskYesNo();
+        }
+    }
+    PopKeys();
+}
+
+Function ~AlyssandHaggles_i accepts a0, a1 #locals(16) #uses(~LordOrLady, ~AskList, ~Haggle_i, ~AskYesNo) {
+    v2 = ~LordOrLady();
+    v3 = ~AvatarSex();
+    if ~AvatarSex() {
+        v4 = "Milady";
+    } else {
+        v4 = "Milord";
+    }
+    v5 = v1;
+    v6 = ((v0 / 3) * 2);
+    v7 = (15 - (~GetNPCID_i(_Alyssand) / 2));
+    v8 = 0;
+    v9 = 1;
+    v10 = 0;
+    v11 = 1;
+    v12 = ~GetNPCID_i(_Alyssand);
+    While v9 {
+        v13 = ~AskList(<< "yes", "no", "haggle" >>);
+        if (v13 = "no") {
+            return 0;
+        } else {
+            if (v13 = "yes") {
+                v14 = 0;
+                goto label_11;
+            }
+        }
+        v15 = ~Haggle_i(v8, v7, v10, v6, v11, v0, v5);
+        v10 = (v10 + 1);
+        v8 = v15::4;
+        v14 = v15::3;
+        v16 = v5;
+        v5 = v15::2;
+        v6 = v15::1;
+        label_11:
+        v17 = ~Random(3);
+        if (v14 < 2) {
+            if (v5 < (v0 + ((v1 - v0) / 4))) {
+                if (v17 = 1) {
+                    ["Thou art a shrewd bargainer, <v2>."];
+                }
+                if (v17 = 2) {
+                    ["<v4>, Father would blush if he learned I had sold our goods to thee at such a price..."];
+                }
+                if (v17 = 3) {
+                    ["Thou hast a quick tongue, <v2>, to bring me to this price."];
+                }
+            } else {
+                if (v5 < (v0 + ((v1 - v0) / 3))) {
+                    if (v17 = 1) {
+                        ["Our prices are fair here."];
+                    }
+                    if (v17 = 2) {
+                        ["<v4>, Father would not believe I had sold goods at this price!"];
+                    }
+                    if (v17 = 3) {
+                        ["Father must make some profit!"];
+                    }
+                } else {
+                    if (v5 < (v0 + ((v1 - v0) / 2))) {
+                        if (v17 = 1) {
+                            ["Thou couldst not obtain a better deal from Father, <v2>."];
+                        }
+                        if (v17 = 2) {
+                            ["Father enjoys bargaining much more than I, <v2>."];
+                        }
+                        if (v17 = 3) {
+                            ["I am sure Father would be pleased with this price."];
+                        }
+                    } else {
+                        if (v17 = 1) {
+                            ["This is a good price <v2>. I am sure Father will be pleased."];
+                        }
+                        if (v17 = 2) {
+                            ["<v4>, I am sure Father will be happy with this price."];
+                        }
+                        if (v17 = 3) {
+                            ["Father must charge reasonably high prices or we will be made paupers!"];
+                        }
+                    }
+                }
+            }
+            ["Thou dost agree to a price of <v5> filari, <v2>?"];
+            if ~AskYesNo() {
+                if (v12 > 1) {
+                    SetNPCID_i((v12 - 2), _Alyssand);
+                }
+                return v5;
+            } else {
+                if (v17 = 1) {
+                    ["<v4>, thou hast broken our agreement!"];
+                }
+                if (v17 = 2) {
+                    ["I am disappointed. What of our bargain?"];
+                }
+                if (v17 = 3) {
+                    ["Father will be most upset to learn of this..."];
+                }
+                if (31 < (v12 + 10)) {
+                    SetNPCID_i(31, _Alyssand);
+                } else {
+                    SetNPCID_i((v12 + 10), _Alyssand);
+                }
+                return 0;
+            }
+        }
+        if (v8 = 1) {
+            if (v14 = 5) {
+                ["<v5> is my final offer. Dost thou accept?"];
+                if (v12 < 28) {
+                    SetNPCID_i((v12 + 4), _Alyssand);
+                }
+                if ~AskYesNo() {
+                    return v5;
+                }
+                v9 = 0;
+            } else {
+                ["So be it. <v5> filari is my final offer."];
+                if (v12 < 30) {
+                    SetNPCID_i((v12 + 2), _Alyssand);
+                }
+            }
+        } else {
+            if (v14 = 2) {
+                if (v17 = 1) {
+                    ["Father would be pleased to bargain with thee, <v2>. How doth <v5> filari sound?"];
+                }
+                if (v17 = 2) {
+                    ["<v4>, have we agreed on <v5> filari?"];
+                }
+                if (v17 = 3) {
+                    ["My price is <v5> filari. Dost thou accept?"];
+                }
+            }
+            if (v14 = 3) {
+                if (v17 = 1) {
+                    ["Father would say that these are trying times, and goods are scarce... Wouldst thou consider <v5> filari?"];
+                }
+                if (v17 = 2) {
+                    ["I am not sure... Wouldst thou consider <v5> filari?"];
+                }
+                if (v17 = 3) {
+                    ["Father would not accept such a price! Wouldst thou consider <v5> filari?"];
+                }
+            }
+            if (v14 = 4) {
+                if (v17 = 1) {
+                    ["I cannot possibly accept less than <v5> filari!"];
+                    ["What dost thou say to this?"];
+                }
+                if (v17 = 2) {
+                    ["Father's costs are soaring! I\x09can go no lower than <v5> filari."];
+                }
+                if (v17 = 3) {
+                    ["<v4>, thou art sweet, but Father deserves no less than <v5> filari."];
+                }
+            }
+            if (v14 = 5) {
+                v5 = v16;
+                if (v17 = 1) {
+                    ["Father would be stricken if he learned I had accepted such a pitiful offer! My previous price stands, at <v5> filari."];
+                }
+                if (v17 = 2) {
+                    ["I may be new to trading, <v2>, but this offer is shameful! <v5> filari, and no less!"];
+                }
+                if (v17 = 3) {
+                    ["I am certain Father would not approve of such a deal."];
+                    ["<v5> filari is where I stand."];
+                }
+                if (v12 < 31) {
+                    SetNPCID_i((v12 + 1), _Alyssand);
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,734 @@
+Routine Petra accepts a0 #locals(16) #uses(~LordOrLady, ~AvatarName, ChangeHits_i, PartyFaces_i, Bark_i, ~IsNPCNear, ~WhereAmI_i, ~AskYesNo, PetraSellsFood_i, PetraSellsDrink_i, PetraRentsRoom_i, ~ReturnBelongings_i, ChooseMeetingPlace_i, PathNPCToItem_i, MessengerBringsScroll_i) {
+    v0 = ~LordOrLady();
+    v1 = ~AvatarSex();
+    v2 = ~AvatarName();
+    v3 = ~GetCoord(_Petra);
+    if ((v3::1 < 2271) and ((v3::1 > 2192) and ((v3::2 < 1839) and (v3::2 > 1792)))) {
+        v4 = true;
+    }
+    v5 = false;
+    v6 = ~GetTime();
+    if ((v6 > 1) or (v6 < 6)) {
+        v6 = "day";
+    } else {
+        v6 = "evening";
+    }
+    if (event = _NearDeath) && ~GetItemFlag_i(_Tournament, _Petra) {
+        ChangeHits_i(5, _Petra);
+        ClearItemFlag_i(_Tournament, _Petra);
+        v3 = ~PostAction(<< _aUSABLE_i, #SwapBodiesBack_i >>, _Petra);
+    }
+    if (event = _Converse) {
+        Item_bark("@Hello, there.@", _Avatar);
+        PartyFaces_i(65508);
+        Bark_i(2, (("@Greetings, " + v0) + ".@"), _Petra);
+        SetWorkType(_Talk, _Petra);
+    }
+    if (event = _Bark) {
+        v7 = ~Random(6);
+        if (v7 = 1) {
+            Item_bark("@Art thou thirsty?@", _Petra);
+        }
+        if (v7 = 2) {
+            Item_bark("@Ale! Wine!@", _Petra);
+        }
+        if (v7 = 3) {
+            Item_bark("@Welcome!@", _Petra);
+        }
+        if (v7 = 4) {
+            Item_bark("@Want a room?@", _Petra);
+        }
+        if (v7 = 5) {
+            if ~IsNPCNear(_Rocco) {
+                Item_bark("@Rocco!@", _Petra);
+                Bark_i(2, "@In a minute...@", _Rocco);
+            } else {
+                Item_bark("@Work, work, work...@", _Petra);
+            }
+        }
+        if (v7 = 6) {
+            Item_bark("@Baked fish!@", _Petra);
+        }
+    }
+    if (event = _Polymorph) {
+        if $avatarwasmale {
+            v3 = ~ChangeNPCStat_i(0, _Sex, _Avatar);
+            Polymorph_i(_Avatar_Type, _Petra);
+            v3 = ~ChangeNPCStat_i(1, _Sex, _Avatar);
+        } else {
+            Polymorph_i(_Avatar_Type, _Petra);
+        }
+    }
+    if (event = _Pathfind1) {
+        Item_bark("@I'm ready.@", _Petra);
+    }
+    if (event = _Talking) {
+        if ~GetItemFlag_i(_InParty_i, _Petra) {
+            SetWorkType(_FollowAvt, _Petra);
+            TurnOn("leave");
+        } else {
+            Npc_schedule(_Petra);
+            ClearBark_i(_Petra);
+            if $knowacidsecret {
+                TurnOn("belongings");
+            }
+        }
+        SetSpeaker0_i(0, _Petra);
+        v8 = ~GetItemFlag_i(_Met, _Petra);
+        if ((v8 = false) and not $BANES_RELEASED) {
+            SetItemFlag_i(_Met, _Petra);
+            ["This is the Blue Boar Inn, and I am the barmaid. My name is Petra."];
+            TurnOn(<< "Blue Boar Inn", "barmaid" >>);
+        } else {
+            if $BANES_RELEASED {
+                if not flag(313) {
+                    ["Mine existence is pointless now, <v0>. Rocco -- my love -- is dead, and the Blue Boar destroyed."];
+                    ["I am only an automaton, with no hope that any soul I may have will join Rocco in the world beyond this one. There is nothing left for me."];
+                    flag(313) = true;
+                } else {
+                    if (~GetItemFlag_i(_InParty_i, _Petra) or not (~WhereAmI_i() = 14)) {
+                        ["Glad to talk to thee again, <v2>. I only wish I could be of more help to thee. I am merely an automaton..."];
+                    } else {
+                        ["Aiding thee is mine only solace. How may I be of service, <v0>?"];
+                    }
+                }
+            } else {
+                if v4 {
+                    ["Can I bring thee anything, <v0>?"];
+                } else {
+                    ["Is this not a nice day?"];
+                }
+            }
+        }
+        if (flag(550) and not ~GetItemFlag_i(_InParty_i, _Petra)) {
+            TurnOn("acid");
+        }
+        if (flag(551) and ((~WhereAmI_i() = 17) and not ~GetItemFlag_i(_Petra_i, _Avatar))) {
+            v9 = ~FindNearby_i(0, 15, _Switch, _Avatar);
+            Foreach v12 in v9 {
+                if (~GetQuality(v12) = 61) {
+                    TurnOn("switch bodies");
+                    break;
+                }
+            }
+        }
+        if (flag(234) and not ~GetItemFlag_i(_Dead, _Rotoluncia)) {
+            TurnOn("kidnap");
+        }
+        if (v4 and not ~GetItemFlag_i(_InParty_i, _Petra)) {
+            TurnOn(<< "food", "drink", "room" >>);
+        }
+        TurnOn(<< "bye" >>);
+        converse {
+            key ("food") {
+                ["We have a fine selection of meals available for thee to choose from. Art thou hungry, <v0>?"];
+                if (~AskYesNo() = true) {
+                    PetraSellsFood_i();
+                } else {
+                    ["Summon me if thou dost change thy mind, <v0>."];
+                }
+            }
+            key ("drink") {
+                ["I think thou wilt like our selection of potables, <v0>. Dost thou wish a drink?"];
+                if (~AskYesNo() = true) {
+                    PetraSellsDrink_i();
+                } else {
+                    ["Perhaps later, then, <v0>."];
+                }
+            }
+            key ("room") {
+                PetraRentsRoom_i();
+            }
+            key ("kidnap") {
+                TurnOff("kidnap");
+                ["Oh, this is horrible! Though I am but a woman of metal, I have a heart that feels pain for thee."];
+                ["Thou shouldst go quickly to Julia -- the Rangers can solve crimes such as this!"];
+            }
+            key ("leave") {
+                TurnOff("leave");
+                if $gotdisciplinewater {
+                    ["I will do so with haste. I have duties which need attending."];
+                } else {
+                    ["As thou wishest, <v0>... If thou hast further need of me, thou hast but to ask."];
+                }
+                LeaveParty(_Petra);
+                if ~GetContents(_All, _All, _All, _Petra) {
+                    ["Dost thou wish thy belongings returned to thee?"];
+                    if ~AskYesNo() {
+                        ["Here they are."];
+                        $knowacidsecret = false;
+                        v3 = ~ReturnBelongings_i(65508);
+                        if (v3::1 <> 0) {
+                            ["Thy companions carry some of thine inventory."];
+                            if (v3::2 > 0) {
+                                v3 = v3::2;
+                                ["I also had to place <v3> items of thine upon the ground."];
+                            }
+                        } else {
+                            if (v3::2 > 0) {
+                                v3 = v3::2;
+                                ["I had to place <v3> items of thine on the ground."];
+                            }
+                        }
+                    } else {
+                        $knowacidsecret = true;
+                        ["Then I will keep thine inventory for thee. Find me if thou changest thy mind."];
+                    }
+                }
+                ChooseMeetingPlace_i(_Petra);
+            }
+            key ("belongings") {
+                TurnOff("belongings");
+                ["Thou hast returned for thy belongings. Dost thou want them now?"];
+                if ~AskYesNo() {
+                    ["Here they are."];
+                    $knowacidsecret = false;
+                    v3 = ~ReturnBelongings_i(65508);
+                    if (v3::1 <> 0) {
+                        ["Thy companions carry some of thine inventory."];
+                        if (v3::2 > 0) {
+                            v3 = v3::2;
+                            ["I also had to place <v3> items of thine upon the ground."];
+                        }
+                    } else {
+                        if (v3::2 > 0) {
+                            v3 = v3::2;
+                            ["I had to place <v3> items of thine on the ground."];
+                        }
+                    }
+                } else {
+                    $knowacidsecret = true;
+                    ["Then I will continue to keep thine inventory for thee. Find me if thou dost truly want them returned."];
+                }
+            }
+            key ("Blue Boar Inn") {
+                TurnOff("Blue Boar Inn");
+                ["The finest eating and drinking establishment in all Moonshade! Run by the finest man in all Moonshade..."];
+                if (~IsNPCNear(_Rocco) = true) {
+                    SetSpeaker1_i(0, _Rocco);
+                    ["What madness art thou saying, Petra?"];
+                    CloseSpeaker1_i();
+                    SetSpeakerSlot_i(0);
+                    ["It is not madness, Rocco. I am proud of thee..."];
+                }
+                ["Rocco, the innkeeper. A finer man thou shalt not find."];
+                TurnOn(<< "Rocco" >>);
+            }
+            key ("Rocco") {
+                TurnOff("Rocco");
+                ["Thou mayest find Rocco a bit gruff, but he doth have a good heart. After all, he alone hath stood between Torrissio and me... At great peril to himself, I might add."];
+                PushKeys();
+                TurnOn(<< "Torrissio", "peril", "change subject" >>);
+            }
+            key ("change subject") {
+                ["Oh, of course! I did not mean to bore thee..."];
+                PopKeys();
+            }
+            key ("Torrissio") {
+                TurnOff("Torrissio");
+                ["Thou canst not have failed to notice that I am an automaton. Torrissio is my maker... Curse his black heart!"];
+                ["Torrissio is a man who feeds off the misery of others. He created me with the sole intent of having a captive to torment for the rest of his life."];
+                ["But I escaped and Rocco took me in."];
+                TurnOn("automaton");
+            }
+            key ("automaton") {
+                TurnOff("automaton");
+                ["I am a magical construct. An animated body of metal."];
+                ["Yet I can think. I can reason. And I believe I can care for others."];
+                ["Whether this means that I have a soul locked away within the confines of mine hollow body, I do not know. All I do know is that I am much more complex than the automatons Torrissio normally makes for the other Mages."];
+                TurnOn(<< "soul", "other Mages" >>);
+            }
+            key ("soul") {
+                TurnOff("soul");
+                ["If thou dost love, if thou hast compassion for others, if thou dost feel the injustice of the world, art thou not said to possess a soul?"];
+                ["If I have all these things, can I not say that I, too, have a soul?"];
+                ["In this I am unique, for none of the other automatons claim to feel emotions as I do. But I do not know why I should be different."];
+            }
+            key ("other Mages") {
+                TurnOff("other Mages");
+                ["Most Mages do not wish to be disturbed by the presence of other living beings. Therefore they come to Torrissio to provide them with servants and guards of undemanding metal."];
+                ["However, the magic did not originate with Torrissio --"];
+                [he is merely the latest master of the ancient spells which he did find in certain buried ruins. It is said that automatons served those who dwelt in this land anciently."];
+                ["Even with all his magic, Torrissio cannot construct new automatons --"];
+                [he can merely reanimate those broken automatons which are discovered in the ruins."];
+                ["What better servants to have? Automatons can exist for centuries without any maintenance at all."];
+                ["They ask nothing. They expect nothing. They do what task is assigned to them until their magic at last fails, and then they simply stop."];
+            }
+            key ("peril") {
+                TurnOff("peril");
+                ["Oh, <v0>! Thou canst not know what danger there is in thwarting the will of a Mage!"];
+                ["Rocco could be killed easily, and spells are untraceable. Or he could be spirited away to hideous torture. No one would be the wiser."];
+                ["So I look after him as best I can, even as he doth care for me. It also helps that everyone believes the tale we have spread."];
+                TurnOn("tale");
+            }
+            key ("tale") {
+                TurnOff("tale");
+                ["Rocco hath led everyone to believe that he and Torrissio reached an agreement to have me work here to advertise Torrissio's skill."];
+                ["In truth, my cooking ability doth do Torrissio no small credit. And I dare say that it wins him many customers as well."];
+                ["But he is still a willful, vicious man who doth not take it kindly when he feels cheated. And I fear his vengeance, for both myself and Rocco."];
+            }
+            key ("barmaid") {
+                TurnOff("barmaid");
+                ["I serve Rocco in whatever function I can... Barmaid, cook, whatever needs to be done. I have performed every job thou canst imagine here at the inn. Everything from painting the ceiling to keeping Mosh from stealing our fish."];
+                TurnOn("Mosh");
+                if v4 {
+                    ["Can I bring thee something?"];
+                }
+            }
+            key ("Mosh") {
+                TurnOff("Mosh");
+                ["They call her the Rat Woman, which is not a very kind description, but is a reasonably true one, I am sorry to say. There are others in town who can tell thee about her. She doth like fish, I will say that one thing for her."];
+            }
+            key ("acid") {
+                TurnOff("acid");
+                ["Yes, I know what acid is, <v0>. It is a corrosive liquid that is very detrimental to human flesh and most metals... Except mine."];
+                ["Dost thou desire mine help, <v0>?"];
+                if ~AskYesNo() {
+                    if flag(551) {
+                        ["Let me see if I understand thee correctly. Thou wishest me to accompany thee to an ancient temple."];
+                        ["Once there, I will take thy form, and thou wilt take mine, for a brief period of time. Hmmm..."];
+                        ["It sounds intriguing. I shall discover, if only for an instant, what it is to truly be human."];
+                        if $xenkareturned {
+                            if (~WhereAmI_i() = 14) {
+                                ["No, I must decline thine offer. Though I have enjoyed thy companionship, I must return to my duties. I shall keep the Blue Boar open, despite any calamity -- in Rocco's memory."];
+                            } else {
+                                ["No, I must decline thine offer. Though I have enjoyed thy companionship, I must return to Moonshade. I must bury my beloved Rocco."];
+                            }
+                        } else {
+                            if (~ListSize_i(~GetParty_i()) < 5) {
+                                TurnOn("leave");
+                                $knowacidsecret = true;
+                                ["If thou dost wish it, then I shall accompany thee. Perhaps the danger shall cause me to forget my grief."];
+                                JoinParty(_Petra);
+                            } else {
+                                ["Thou art not serious, <v2>! With so many companions, thou hast no need of me."];
+                                ["I think thou art merely trying to cheer me. For this, I thank thee, but nothing can fill an empty heart."];
+                            }
+                        }
+                    } else {
+                        ["But I am not very brave, <v0>! I could not face the hazards of such a place, even with thy company!"];
+                        ["If only there were a way to put thy courage into my metal body..."];
+                    }
+                } else {
+                    ["Oh, I am so glad! I am not very brave, <v0>."];
+                }
+            }
+            key ("switch bodies") {
+                TurnOff("switch bodies");
+                v13 = ~FindNearest_i(8, _DNG_Floor, v12);
+                if not v13 {
+                    ["Once we find the Body Transferance Chamber, I will oblige thee."];
+                } else {
+                    ["If thou canst promise my safety, I will agree to aid thee."];
+                    ["Dost thou give me thy promise?"];
+                    if ~AskYesNo() {
+                        ["These temples are awful old. I hope thou knowest what thou art doing."];
+                        v14 = ~GetCoord(v13);
+                        v15 = ~Item_create(_Path);
+                        if v15 {
+                            SetFrame(7, v15);
+                            v3 = ~PopToMap(<< (v14::1 - 1), (v14::2 - 1), (v14::3 + 1) >>);
+                            if v3 {
+                                SetWorkType(_Wait, _Petra);
+                                PathNPCToItem_i(false, _Pathfind1, ~NPCToItem_i(_Petra), #Petra, 65535, 0, 0, v15, _Petra);
+                            }
+                        }
+                        return;
+                    } else {
+                        ["Then I am sorry, but I will not take any unnecessary risks."];
+                    }
+                }
+            }
+            key ("bye") {
+                CloseSpeaker0_i();
+                if (~GetItemFlag_i(_InParty_i, _Petra) or not (~WhereAmI_i() = 14)) {
+                    Bark_i(0, "@Thanks.@", _Avatar);
+                    Bark_i(2, "@Glad to be of help.@", _Petra);
+                } else {
+                    Bark_i(0, "@So long!@", _Avatar);
+                    if $BANES_RELEASED {
+                        Bark_i(2, "@Farewell...@", _Petra);
+                    } else {
+                        Bark_i(2, "@Please come again!@", _Petra);
+                    }
+                }
+                MessengerBringsScroll_i();
+                break;
+            }
+        }
+        clear_answers;
+    }
+}
+
+Usable PetraRentsRoom_i #locals(5) #uses(~AskYesNo, ~GiveItemsOrDrop_i, ~PartyUtters) {
+    ["The cost is 12 guilders per person. Wouldst thou like a room for the night?"];
+    if ~AskYesNo() {
+        v0 = (~ListSize_i(~GetParty()) * 12);
+        v1 = ~CountItem(_All, _All, _Moon_Money, _Party);
+        if (v1 >= v0) {
+            ["Here is thy key."];
+            v2 = ~TakeFromParty_i(0, _All, _All, _Moon_Money, v0);
+            v3 = ~GiveItemsOrDrop_i(true, 0, 11, 184, 641, 1, _Avatar);
+            ["'Tis the northwest corner room."];
+        } else {
+            v4 = ~PartyUtters(false, 0, "@But Avatar, we do not have the guilders!@", 1);
+            if (v4 <> 65180) {
+                SetSpeaker0_i(0, _Rocco);
+                ["Then thou canst not stay at the inn. In these hard times, I cannot afford to keep thee and thy companions for free."];
+            } else {
+                ["Thou hast not enough guilders for my rooms."];
+            }
+        }
+    } else {
+        ["Another time..."];
+    }
+}
+
+Usable PetraSellsFood_i #locals(19) #uses(~LordOrLady, ~AskOrdList, ~AskYesNo, ~PetraHaggles_i, ~SellItem_i, ~PartyUtters) {
+    v0 = ~LordOrLady();
+    PushKeys();
+    v1 = true;
+    v2 = << "nothing", "jerky", "fish", "sausage", "roast lamb", "honey cake" >>;
+    v3 = << 0, 377, 377, 377, 377, 377 >>;
+    v4 = << 65177, 15, 13, 7, 14, 6 >>;
+    v5 = << 0, 20, 22, 25, 35, 10 >>;
+    v6 = << 0, 12, 13, 10, 19, 6 >>;
+    v7 = 952;
+    v8 = << 0, 2, 1, 1, 1, 1 >>;
+    v9 = << 0, 1, 1, 1, 1, 1 >>;
+    if ~AvatarSex() {
+        v10 = "Milady";
+    } else {
+        v10 = "Milord";
+    }
+    ["What art thou hungry for, <v0>?"];
+    While v1 {
+        v11 = ~AskOrdList(v2);
+        if (v11 = 1) {
+            ["Thou dost not know what thou art missing..."];
+            v1 = false;
+        } else {
+            v12 = v5::v11;
+            v13 = 0;
+            v14 = ~rndRange(5, 1);
+            if (v14 = 1) {
+                v15 = "Wilt thou have some?";
+            }
+            if (v14 = 2) {
+                v15 = "Will this be fine with thee?";
+            }
+            if (v14 = 3) {
+                v15 = "Dost thou find the price agreeable?";
+            }
+            if (v14 = 4) {
+                v15 = (v10 + ", dost thou agree?");
+            }
+            if (v14 = 5) {
+                v15 = (v10 + ", is the price acceptable?");
+            }
+            if (v11 = 2) {
+                ["<v12> guilders will buy thee two strips of jerky."];
+                ["<v15>"];
+                v16 = "strips of jerky, in bunches of two,";
+            }
+            if (v11 = 3) {
+                ["Most people in Moonshade think that my fish is excellent. But have a care! When last I prepared a meal of fish it was stolen away by Mosh, the rat catcher! So I daresay she enjoys it greatly."];
+                ["The dinner costs <v12> guilders."];
+                ["<v15>"];
+                v16 = "fish dinners";
+            }
+            if (v11 = 4) {
+                ["My sausage is very good. <v12> guilders is my price."];
+                ["<v15>"];
+                v16 = "sausages";
+            }
+            if (v11 = 5) {
+                ["I believe thou wilt find the taste to thy liking. I charge <v12> guilders for my lamb roast."];
+                ["<v15>"];
+                v16 = "lamb roasts";
+            }
+            if (v11 = 6) {
+                ["If thou dost crave something sweet, <v0>, thou shouldst try mine honey cake. <v12> guilders will buy thee a treat."];
+                ["<v15>"];
+                v16 = "honey cakes";
+            }
+            if (v12 = v6::v11) {
+                if ~AskYesNo() {
+                    v17 = v12;
+                } else {
+                    v17 = 0;
+                }
+            } else {
+                v17 = ~PetraHaggles_i(v6::v11, v5::v11);
+            }
+            if (v17 > 0) {
+                if (v9::v11 = 1) {
+                    ["How many <v16> wouldst thou like?"];
+                    v13 = ~SellItem_i(false, 1, 20, v17, v7, v8::v11, v4::v11, v3::v11);
+                } else {
+                    v13 = ~SellItem_i(false, 1, 0, v17, v7, v8::v11, v4::v11, v3::v11);
+                }
+            }
+            if (v13 = 1) {
+                ["Enjoy thy meal, <v0>!"];
+            } else {
+                if (v13 = 2) {
+                    ["Thou canst not carry so much food, <v0>!"];
+                } else {
+                    if (v13 = 3) {
+                        v18 = ~PartyUtters(false, 0, (("@But " + v0) + ", we have not the guilders to pay for this.@"), 1);
+                        if (v18 <> 65180) {
+                            SetSpeaker0_i(0, _Petra);
+                            ["I am sorry, but Rocco cannot afford to feed thee for free, <v0>."];
+                        } else {
+                            ["Thou dost not have enough money for that..."];
+                        }
+                    } else {
+                    }
+                }
+            }
+            ["Wouldst thou care for more?"];
+            v1 = ~AskYesNo();
+        }
+    }
+    PopKeys();
+}
+
+Usable PetraSellsDrink_i #locals(17) #uses(~LordOrLady, ~AvatarName, ~AskOrdList, ~AskYesNo, ~PetraHaggles_i, ~SellItem_i, ~PartyUtters) {
+    v0 = ~LordOrLady();
+    v1 = ~AvatarName();
+    PushKeys();
+    v2 = true;
+    v3 = << "nothing", "wine", "mead", "ale" >>;
+    v4 = << 0, 616, 616, 616 >>;
+    v5 = << 65177, 0, 5, 3 >>;
+    v6 = << 0, 15, 20, 7 >>;
+    v7 = << 0, 8, 11, 4 >>;
+    v8 = 952;
+    v9 = << 0, 1, 1, 1 >>;
+    v10 = << 0, 1, 1, 1 >>;
+    ["What dost thou want to drink, <v0>?"];
+    While v2 {
+        v11 = ~AskOrdList(v3);
+        if (v11 = 1) {
+            ["If thou dost change thy mind, ask me again!"];
+            v2 = false;
+        } else {
+            v12 = v6::v11;
+            v13 = 0;
+            if (v11 = 2) {
+                ["<v12> guilders is what Rocco charges for wine, though it is very good. Dost thou accept?"];
+                v14 = "wine bottles";
+            }
+            if (v11 = 3) {
+                ["The mead Rocco imports is sweetly flavored with the honey of bees raised in the mountain highlands."];
+                ["For the price of <v12> guilders, thou wilt accept some?"];
+                v14 = "bottles of mead";
+            }
+            if (v11 = 4) {
+                ["Our ale is weak, as it is imported from the mainland, but Rocco must still charge <v12> guilders for it. Dost thou find the price acceptable?"];
+                v14 = "flasks of ale";
+            }
+            if (v12 = v7::v11) {
+                if ~AskYesNo() {
+                    v15 = v12;
+                } else {
+                    v15 = 0;
+                }
+            } else {
+                v15 = ~PetraHaggles_i(v7::v11, v6::v11);
+            }
+            if (v15 > 0) {
+                if (v10::v11 = 1) {
+                    ["How many <v14> wouldst thou like?"];
+                    v13 = ~SellItem_i(false, 1, 20, v15, v8, v9::v11, v5::v11, v4::v11);
+                } else {
+                    v13 = ~SellItem_i(false, 1, 0, v15, v8, v9::v11, v5::v11, v4::v11);
+                }
+            }
+            if (v13 = 1) {
+                ["Enjoy thy drink, <v0>!"];
+            } else {
+                if (v13 = 2) {
+                    ["Thou canst not carry thy drink!"];
+                } else {
+                    if (v13 = 3) {
+                        v16 = ~PartyUtters(false, 0, (("@But " + v1) + ", we lack adequate funds!@"), 1);
+                        if (v16 <> 65180) {
+                            SetSpeaker0_i(0, _Petra);
+                            ["Then thy thirst must be quenched by well water, I'm afraid."];
+                        } else {
+                            ["It seems thou dost not have the funds to pay me... Hast thou considered drinking from the public well?"];
+                        }
+                    } else {
+                    }
+                }
+            }
+            ["Wouldst thou care for more?"];
+            v2 = ~AskYesNo();
+        }
+    }
+    PopKeys();
+}
+
+Function ~PetraHaggles_i accepts a0, a1 #locals(15) #uses(~LordOrLady, ~AskList, ~Haggle_i, ~AskYesNo, ~IsNPCNear) {
+    v2 = ~LordOrLady();
+    v3 = ~AvatarSex();
+    v4 = v1;
+    v5 = ((v0 / 3) * 2);
+    v6 = 5;
+    v7 = 0;
+    v8 = 1;
+    v9 = 0;
+    v10 = 2;
+    While v8 {
+        v11 = ~AskList(<< "yes", "no", "haggle" >>);
+        if (v11 = "no") {
+            return 0;
+        } else {
+            if (v11 = "yes") {
+                v12 = 0;
+                goto label_8;
+            }
+        }
+        v13 = ~Haggle_i(v7, v6, v9, v5, v10, v0, v4);
+        v9 = (v9 + 1);
+        v7 = v13::4;
+        v12 = v13::3;
+        v14 = v4;
+        v4 = v13::2;
+        v5 = v13::1;
+        label_8:
+        v15 = ~Random(3);
+        if (v12 < 2) {
+            if (v4 < (v0 + ((v1 - v0) / 4))) {
+                if (v15 = 1) {
+                    ["Rocco would have me scrapped for lowering my prices like this. Please do not tell him..."];
+                }
+                if (v15 = 2) {
+                    ["Thou art most forceful, <v2>! We will not be in business long at this rate!"];
+                }
+                if (v15 = 3) {
+                    ["Rocco would never have been out-bargained so!"];
+                }
+            } else {
+                if (v4 < (v0 + ((v1 - v0) / 3))) {
+                    if (v15 = 1) {
+                        ["The Blue Boar doth have the finest prices, eh?"];
+                    }
+                    if (v15 = 2) {
+                        ["Today hath gone well, so I will be generous. On another day thou mayest not be so lucky!"];
+                    }
+                    if (v15 = 3) {
+                        ["Perhaps it is a human trait... To bargain so well."];
+                    }
+                } else {
+                    if (v4 < (v0 + ((v1 - v0) / 2))) {
+                        if (v15 = 1) {
+                            ["Even Rocco would consider this a fair deal..."];
+                        }
+                        if (v15 = 2) {
+                            ["We shall not profit this way..."];
+                        }
+                        if (v15 = 3) {
+                            ["Good service and fair prices is what hath made the Blue Boar famous!"];
+                        }
+                    } else {
+                        if (v15 = 1) {
+                            ["I am pleased, <v2>."];
+                        }
+                        if (v15 = 2) {
+                            ["Thou art a fine person!"];
+                        }
+                        if (v15 = 3) {
+                            ["If times were not so bad, our prices would be far lower..."];
+                        }
+                    }
+                }
+            }
+            ["Dost thou agree to <v4> guilders, <v2>?"];
+            if ~AskYesNo() {
+                return v4;
+            } else {
+                if (v15 = 1) {
+                    ["I thought thou didst agree to that price!"];
+                }
+                if (v15 = 2) {
+                    ["Take thy slick ways elsewhere then! I have more important things to do!"];
+                }
+                if (v15 = 3) {
+                    ["Be gone... Before I fetch Rocco to break thy thick head for thee!"];
+                }
+                return 0;
+            }
+        }
+        if (v7 = 1) {
+            if (v12 = 5) {
+                ["<v4> is my final offer. Dost thou accept?"];
+                if ~AskYesNo() {
+                    return v4;
+                }
+                v8 = 0;
+            } else {
+                ["Fine... <v4> guilders is my final offer."];
+            }
+        } else {
+            if (v12 = 2) {
+                if (v15 = 1) {
+                    ["It is so interesting bargaining with thee. How doth <v4> guilders sound?"];
+                }
+                if (v15 = 2) {
+                    ["Thou art a gem among customers. Have we agreed on <v4> guilders?"];
+                }
+                if (v15 = 3) {
+                    ["I offer thee a price of <v4> guilders -- a special deal for those I consider good customers. Dost thou accept?"];
+                }
+            }
+            if (v12 = 3) {
+                if (v15 = 1) {
+                    ["We have so little in stock... Perhaps <v4> guilders?"];
+                }
+                if (v15 = 2) {
+                    ["<v4>? I should charge more, though..."];
+                }
+                if (v15 = 3) {
+                    ["I must consider what Rocco will say. Perhaps <v4> guilders?"];
+                }
+            }
+            if (v12 = 4) {
+                if (v15 = 1) {
+                    ["<v4> guilders is as low as I can go. Wilt thou agree?"];
+                }
+                if (v15 = 2) {
+                    ["Surely thou canst see that I can go no lower than <v4> guilders. We must pay for the upkeep on the inn."];
+                }
+                if (v15 = 3) {
+                    ["I may be an automaton, but I am no fool! I will accept no less than <v4> guilders."];
+                }
+            }
+            if (v12 = 5) {
+                v4 = v14;
+                if (v15 = 1) {
+                    ["I would rather Rocco sell me for scrap! My previous price stands, at <v4> guilders."];
+                }
+                if (v15 = 2) {
+                    ["<v4> guilders! I shall not be tricked into accepting less!"];
+                }
+                if (v15 = 3) {
+                    ["Thou must think me witless!"];
+                    if ~IsNPCNear(_Rocco) {
+                        v16 = "his";
+                        if v3 {
+                            v16 = "her";
+                        }
+                        SetSpeaker1_i(0, _Rocco);
+                        ["If this person is bothering thee, Petra, I shall be happy to soften <v16> skull for thee."];
+                        CloseSpeaker1_i();
+                        SetSpeaker0_i(0, _Petra);
+                    }
+                    ["<v4> guilders is where I stand."];
+                }
+            }
+        }
+    }
+}
