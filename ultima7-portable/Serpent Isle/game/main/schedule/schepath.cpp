@@ -26,7 +26,7 @@
 #define NPC(p)          GetNpcBufferForIbo(p)
 #define CUR_SCHED(p)    (NPC(p)->schedules[NPC(p)->currentSchedule])
 
-extern int16_t DiscardedPathLength;
+extern int16_t DiscardedPathLength[2];
 
 /* the NPCs walking for usecode, and how often each has tried */
 int16_t PathfindNpcs[10] = { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 };
@@ -80,7 +80,7 @@ void RunPathfindSchedule(objref *npc)
 			if (Item_getX(*npc) == x && Item_getY(*npc) == y) {
 				END_WALK(NPC(npc)->iVr[1] & 0xff);
 			}
-			if (StartPath(*npc, x, y, z, 150, &DiscardedPathLength, 0) == 0)
+			if (StartPath(*npc, x, y, z, 150, DiscardedPathLength, 0) == 0)
 				return;
 			/* walk toward the place in ever shorter hops */
 		next:
@@ -108,7 +108,7 @@ void RunPathfindSchedule(objref *npc)
 						cy = y;
 				}
 			}
-			result = StartPath(*npc, cx, cy, z, 150, &DiscardedPathLength, 0);
+			result = StartPath(*npc, cx, cy, z, 150, DiscardedPathLength, 0);
 			if (result != 2)
 				return;
 			if (step >= 6) {
@@ -130,7 +130,7 @@ void RunPathfindSchedule(objref *npc)
 					} else {
 						FindItemInArea(&items, cx, cy, cx, cy, 0x20, -1, 255, 255);
 						if (items.found() && FindSpotNextToItem(npc, items.current, &cx, &cy, &spotZ)) {
-							result = StartPath(*npc, cx, cy, spotZ, 150, &DiscardedPathLength, 0);
+							result = StartPath(*npc, cx, cy, spotZ, 150, DiscardedPathLength, 0);
 							if (result == 0 || result == 1)
 								return;
 						}

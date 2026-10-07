@@ -4,7 +4,7 @@
 struct Coord;
 
 extern int16_t RemoteViewActive;
-extern Coord MarkedX, MarkedY, MarkedZ;     /* the place SaveCoord keeps for RecallCoord */
+extern "C" Coord MarkedX, MarkedY, MarkedZ;     /* the place SaveCoord keeps for RecallCoord */
 
 struct Value;
 

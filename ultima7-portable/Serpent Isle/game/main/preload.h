@@ -14,8 +14,8 @@ extern Speech SpeechPlayer;
 uint8_t GetAudioOptions(uint8_t *music, uint8_t *speech, uint8_t *effects);
 uint8_t SetAudioState(uint8_t music, uint8_t speech, uint8_t effects);
 
-extern int16_t CursorX, CursorY;
-extern uint8_t CursorDrawn, CursorTracking;
+extern "C" int16_t CursorX, CursorY;
+extern "C" uint8_t CursorDrawn, CursorTracking;
 extern char *const U7MapFileName;
 extern char *const U7IregFileFormat;
 extern char *const U7ChunksFileName;

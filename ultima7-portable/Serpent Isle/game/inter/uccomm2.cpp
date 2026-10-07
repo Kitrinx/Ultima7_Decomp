@@ -46,7 +46,7 @@ int16_t SpeechTrack;
 extern uint8_t ArmageddonDone;
 
 /* party members who died, to rejoin when raised */
-extern objref DeadPartyMembers[];
+extern "C" objref DeadPartyMembers[];
 extern int16_t DeadPartyCount;
 
 /* Usecode engine calls: args - 1 is the first argument, ret takes the result. */
