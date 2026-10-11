@@ -747,15 +747,13 @@ static void ConfigureSound(char *configuration, char *preferences, int16_t *irq,
 	preferencesPath = new char[strlen(preferences) + 1];
 	strcpy(preferencesPath, preferences);
 	SoundSetup.readConfig(configuration);
-	if ((uint8_t) SoundSetup.isRoland())
-		*device = MUSIC_DEVICE_MT32;
-	else if ((uint8_t) SoundSetup.isAdlib() || (uint8_t) SoundSetup.isSoundBlaster())
-		*device = MUSIC_DEVICE_ADLIB;
-	if (*device != 0 && plat_midi_available()) {
+	if ((uint8_t) SoundSetup.isRoland()) {
 		strcpy(MusicFlexName, DataPath(StaticPath, "intrordm.dat"));
 		*device = MUSIC_DEVICE_MT32;
-	} else
-		*device = 0;
+	} else if ((uint8_t) SoundSetup.isAdlib() || (uint8_t) SoundSetup.isSoundBlaster()) {
+		strcpy(MusicFlexName, DataPath(StaticPath, "introadm.dat"));
+		*device = MUSIC_DEVICE_ADLIB;
+	}
 	*irq = SoundSetup.irq;
 	*port = SoundSetup.speechPort;
 	*dma = SoundSetup.dma;

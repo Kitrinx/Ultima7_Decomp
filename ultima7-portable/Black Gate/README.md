@@ -3,10 +3,11 @@
 A port of the reconstructed Ultima VII: The Black Gate source (originally 16-bit Borland C++ for
 DOS) to modern systems. The game code talks to the machine only through a small platform layer;
 the first backend uses [libmatoya](https://github.com/snowcone-ltd/libmatoya) for the window,
-input, video, audio and files, and [Munt](https://github.com/munt/munt) to emulate the Roland
-MT-32 for music and sound effects.
+input, video, audio and files, [Munt](https://github.com/munt/munt) to emulate the Roland
+MT-32 and [Nuked OPL3](https://github.com/nukeykt/Nuked-OPL3) to emulate the AdLib, for music
+and sound effects.
 
-Everything needed to build is in this folder and the shared folders beside it. You supply the game data and the MT-32 ROMs.
+Everything needed to build is in this folder and the shared folders beside it. You supply the game data and, optionally, the MT-32 ROMs.
 
 ## Layout
 
@@ -27,6 +28,7 @@ Shared with the Serpent Isle port, one level up in `ultima7-portable/`:
 ```text
   third_party/libmatoya/ libmatoya, vendored at a pinned commit (MIT)
   third_party/munt/      Munt's mt32emu library, vendored at a pinned tag (LGPL 2.1+)
+  third_party/nuked-opl3/ Nuked OPL3, vendored at a pinned commit (LGPL 2.1+)
   packaging/             the players' README (both games), the macOS Info.plist, notarizing
   assets/icons/          program icons
 ```
@@ -87,12 +89,14 @@ letter case. The game writes to this folder, so use a copy.
 **MT-32 ROMs.** Munt needs the Roland MT-32 control and PCM ROM images (any file names; they
 are recognised by content). CM-32L images and split control-ROM halves are not used. They are
 not included. The game looks in the `U7_MT32_ROMS` folder, else the `U7_MT32_ROM_DIR` build
-option, else the game data folder. Without them the game runs with no music or MIDI sound
-effects.
+option, else the game data folder. Without them music and effects play on the AdLib.
 
-**Sound setup.** `U7.CFG` is the setup the DOS installer wrote. Music here is the MT-32 or
-nothing, so when the ROMs are found the game reads `U7.CFG` as saying Roland (`r 330`), and with
-no speech line it reads one (`220 7 1`), whatever the file says (`platform/matoya/files.c`). The
+**AdLib.** An OPL3 (Nuked OPL3) at any port, filtered as a Sound Blaster 16's FM output; its
+timers run on the program clock, so the drivers detect it as on DOS. `--adlib` picks it even
+when the ROMs are found; `--roland` picks the MT-32 (with no ROMs it falls back to the AdLib).
+
+**Sound setup.** `U7.CFG` is the setup the DOS installer wrote. The game reads its music line
+as Roland (`r 330`) when the MT-32 plays and AdLib (`a 388`) otherwise, and with no speech line it reads one (`220 7 1`), whatever the file says (`platform/matoya/files.c`). The
 file on disk is never changed. The in-game audio options still turn each part off.
 
 ## Run
@@ -127,8 +131,8 @@ The game's own command-line options, as switches (with the letter U7.EXE took):
 | `--cheat` | `ABCD` + Alt-255 | cheat keys (F1 lists them, on the game screen as in DOS) |
 | `--cheat-start` | `s` | with `--cheat`: move at once, move anything, an Avatar that can't die, debug output |
 | `--speech` | `v` | speech on |
-| `--adlib[=port]` | `a` | AdLib music (every score plays on the MT-32 here) |
-| `--roland[=n]` | `r` | Roland MT-32 music |
+| `--adlib[=port]` | `a` | AdLib music and effects, even when the MT-32 ROMs are found |
+| `--roland[=n]` | `r` | Roland MT-32 music and effects (the default when the ROMs are found) |
 | `--shape-pool=KB` | `c` | size of the shape cache |
 | `--overlay-size` | `b` | report the DOS overlay buffer size, then stop |
 | `--version` | `?` | show the version, then stop |
@@ -159,7 +163,7 @@ Other environment variables:
 
 ## Dependencies
 
-Both libraries are vendored as plain source at fixed versions (see `../third_party/README.md`), so
+The libraries are vendored as plain source at fixed versions (see `../third_party/README.md`), so
 no network access or git submodules are needed.
 
 **libmatoya** has no CMake project of its own. `cmake/Libmatoya.cmake` runs its own makefile
@@ -178,13 +182,14 @@ possible to relink it against a modified mt32emu (for example, by offering the g
 files or building mt32emu as a shared library with `-Dlibmt32emu_SHARED=ON`), and include
 `../third_party/munt/mt32emu/COPYING.LESSER.txt`.
 
+**Nuked OPL3** (`../third_party/nuked-opl3/opl3.c`) is compiled into the program. It is under the
+same licence as Munt, with the same obligations; its text is `../third_party/nuked-opl3/LICENSE`.
+
 ## Known limitations
 
 - **Null-pointer reads** that the DOS game relied on are served by a fault handler that exists
   only for arm64 macOS, x64 Windows and x64 Linux so far (`platform/matoya/nullpage.c`).
   Elsewhere (arm64 Linux or Windows, for one) they crash.
-- **AdLib** music is not supported: the AdLib driver inside `U7STRAX.DRV` has not been recovered.
-  MT-32 music and speech work.
 - **The main menu, intro and endgame** are separate programs in the original and are not
   ported. Quitting ends the program; restart and endgame are not handled yet.
 - **Game speed** follows the community frame-limiter patch: about 10 world updates a second.

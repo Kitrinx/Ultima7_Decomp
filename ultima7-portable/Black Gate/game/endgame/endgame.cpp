@@ -44,7 +44,6 @@ struct AudioOptions {
 #include "flic.h"
 #include "textwin.h"
 #include "speech.h"
-#include "ailmt32.h"
 #include "xmidi.h"
 
 namespace Endgame {
@@ -149,13 +148,19 @@ static int16_t Run(int16_t argc, char **argv)
 	config.readConfig("u7.cfg");
 	if (!config.speechEnabled)
 		speech = 0;
-	/* Music plays only on the MT-32: any configured music device becomes one. Without the synth
-	 * the ending is silent. */
+	/* Without the synth the ending is silent. */
 	SoundDriver *musicDriver = 0;
 	if (config.hasMusic()) {
-		if (Mt32Open()) {
-			musicDriver = new SoundDriver("static\\xmidi.mt");
+		if (config.isRoland()) {
+			musicDriver = new SoundDriver("static\\mt32mpu.adv", "static\\xmidi.mt");
 			song = 1;
+		} else if (config.isAdlib() || config.isSoundBlaster()) {
+			musicDriver = new SoundDriver("static\\adlib.adv", "static\\xmidi.ad");
+			song = 3;
+		}
+		if (musicDriver && !musicDriver->isOpen()) {
+			delete musicDriver;
+			musicDriver = 0;
 		}
 	}
 	if (musicDriver == 0)
@@ -189,9 +194,11 @@ static int16_t Run(int16_t argc, char **argv)
 	XmidiPlayer *score = 0;
 	if (music) {
 		score = new XmidiPlayer(musicDriver, "static\\endscore.xmi");
-		score->play(0);
-		while (!score->isDone(0))
-			plat_yield();
+		if (config.isRoland()) {
+			score->play(0);
+			while (!score->isDone(0))
+				plat_yield();
+		}
 	}
 
 	/* The Guardian at the Gate. */

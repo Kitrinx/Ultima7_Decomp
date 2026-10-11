@@ -10,6 +10,7 @@
 
 struct DriverSlot {
 	int16_t kind;
+	uint8_t old;        /* the 1991 build of the driver */
 	uint8_t active;     /* initialized and served */
 };
 
@@ -34,21 +35,21 @@ static int16_t ImageKind(const uint8_t *image)
 		if (memcmp(image + i, "Digital Sound", 13) == 0)
 			return AIL_KIND_DIGITAL;
 		if (memcmp(image + i, "Ad Lib", 6) == 0)
-			return AIL_KIND_NONE;
+			return AIL_KIND_ADLIB;
 	}
 	return AIL_KIND_NONE;
 }
 
-/* The drivers' interrupt-time work: the MT-32 driver at 120 Hz, the digital one to keep the
+/* The drivers' interrupt-time work: the XMIDI drivers at 120 Hz, the digital one to keep the
  * output fed. */
 static void SoundTick(void)
 {
 	for (int16_t i = 0; i < MAX_DRIVERS; i++) {
 		if (!Drivers[i].active)
 			continue;
-		if (Drivers[i].kind == AIL_KIND_MT32) {
-			Mt32Serve();
-			Mt32Serve();
+		if (Drivers[i].kind == AIL_KIND_MT32 || Drivers[i].kind == AIL_KIND_ADLIB) {
+			XmidiServe();
+			XmidiServe();
 		} else if (Drivers[i].kind == AIL_KIND_DIGITAL)
 			DigitalServe();
 	}
@@ -72,8 +73,8 @@ static void ShutdownDriver(HDRIVER driver, const char *signOff)
 		return;
 	Drivers[driver].active = 0;
 	UpdateTick();
-	if (Drivers[driver].kind == AIL_KIND_MT32)
-		Mt32Shutdown(signOff);
+	if (Drivers[driver].kind != AIL_KIND_DIGITAL)
+		XmidiStop(signOff);
 	else
 		DigitalShutdown();
 }
@@ -94,7 +95,7 @@ void AIL_shutdown(const char *signoff_msg)
 	plat_sound_unlock();
 }
 
-/* -1 when the image is no driver the port has; there is no Ad Lib driver. */
+/* -1 when the image is no driver the port has. */
 HDRIVER AIL_register_driver(void *driver_base_addr)
 {
 	int16_t kind = ImageKind((const uint8_t *) driver_base_addr);
@@ -107,8 +108,11 @@ HDRIVER AIL_register_driver(void *driver_base_addr)
 		;
 	if (driver == MAX_DRIVERS)
 		driver = -1;
-	else
+	else {
 		Drivers[driver].kind = kind;
+		Drivers[driver].old = memcmp((const uint8_t *) driver_base_addr + 2,
+			"Copyright (C) 1991 John Miles", 29) == 0;
+	}
 	plat_sound_unlock();
 	return driver;
 }
@@ -127,6 +131,8 @@ drvr_desc *AIL_describe_driver(HDRIVER driver)
 	switch (AilDriverKind(driver)) {
 	case AIL_KIND_MT32:
 		return Mt32Describe();
+	case AIL_KIND_ADLIB:
+		return OplDescribe();
 	case AIL_KIND_DIGITAL:
 		return DigitalDescribe();
 	}
@@ -140,6 +146,8 @@ uint16_t AIL_detect_device(HDRIVER driver, uint16_t IO_addr, uint16_t IRQ, uint1
 	switch (AilDriverKind(driver)) {
 	case AIL_KIND_MT32:
 		return Mt32Detect();
+	case AIL_KIND_ADLIB:
+		return OplDetect(IO_addr, Drivers[driver].old);
 	case AIL_KIND_DIGITAL:
 		return DigitalDetect();
 	}
@@ -153,8 +161,10 @@ void AIL_init_driver(HDRIVER driver, uint16_t IO_addr, uint16_t IRQ, uint16_t DM
 	if (kind == AIL_KIND_NONE)
 		return;
 	plat_sound_lock();
-	if (kind == AIL_KIND_MT32)
-		Mt32Init();
+	if (kind == AIL_KIND_ADLIB)
+		OplSetPort(IO_addr, Drivers[driver].old);
+	if (kind != AIL_KIND_DIGITAL)
+		XmidiStart(kind);
 	else
 		DigitalInit();
 	Drivers[driver].active = 1;

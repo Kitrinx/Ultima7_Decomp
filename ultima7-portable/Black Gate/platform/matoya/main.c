@@ -40,7 +40,6 @@ static int16_t program_code;
 /* The window's client size, for mapping scripted mouse positions on the game thread. */
 static MTY_Mutex *view_lock;
 static MTY_Size view_size = {3 * 320, 3 * 240};
-static bool backgrounded;
 
 MTY_Size backend_view_size(void)
 {
@@ -52,27 +51,10 @@ MTY_Size backend_view_size(void)
 	return size;
 }
 
-#ifdef __APPLE__
-#include <objc/message.h>
-#include <objc/runtime.h>
-
-/* Scripted test runs stay out of the user's way: no Dock icon, no focus, window hidden. */
-static void run_in_background(void)
-{
-	id nsapp = ((id (*)(id, SEL)) objc_msgSend)((id) objc_getClass("NSApplication"),
-		sel_registerName("sharedApplication"));
-
-	((void (*)(id, SEL, long)) objc_msgSend)(nsapp, sel_registerName("setActivationPolicy:"), 2L);
-	((void (*)(id, SEL, id)) objc_msgSend)(nsapp, sel_registerName("hide:"), (id) 0);
-}
-#else
-static void run_in_background(void)
-{
-}
-#endif
-
 int64_t backend_elapsed_us(void)
 {
+	if (test_clock_fixed())
+		return test_clock_us();
 	return (int64_t) (MTY_TimeDiff(start_time, MTY_GetTime()) * 1000.0);
 }
 
@@ -195,6 +177,20 @@ static void on_event(const MTY_Event *event, void *opaque)
 	events_push(event, MTY_WindowGetSize(app, window));
 }
 
+/* Scripted runs open no window, so nothing takes focus or switches Spaces and no display is
+ * needed. Frames still reach video's shared buffer, where "shot" reads them. */
+static void run_without_window(void)
+{
+	while (!MTY_Atomic32Get(&exit_requested)) {
+		if (MTY_Atomic32Get(&fatal_pending)) {
+			MTY_Atomic32Set(&exit_code, 1);
+			break;
+		}
+		MTY_Sleep(16);
+	}
+	end_process(MTY_Atomic32Get(&exit_code));
+}
+
 static bool on_frame(void *opaque)
 {
 	uint32_t x, y;
@@ -211,10 +207,6 @@ static bool on_frame(void *opaque)
 	MTY_MutexLock(view_lock);
 	view_size = MTY_WindowGetSize(app, window);
 	MTY_MutexUnlock(view_lock);
-	if (test_input_active() && !backgrounded) {
-		backgrounded = true;
-		run_in_background();
-	}
 	if (events_take_warp(MTY_WindowGetSize(app, window), &x, &y))
 		MTY_WindowWarpCursor(app, window, x, y);
 	video_draw(app, window);
@@ -291,8 +283,8 @@ static void show_help(void)
 		"  --cheat-start       with --cheat: move at once, move anything, an Avatar that can't\n"
 		"                      die, debug output\n"
 		"  --speech            speech on\n"
-		"  --adlib[=port]      AdLib music (this port plays every score on the MT-32)\n"
-		"  --roland[=n]        Roland MT-32 music\n"
+		"  --adlib[=port]      AdLib music, even when MT-32 ROMs are found\n"
+		"  --roland[=n]        Roland MT-32 music (the default when its ROMs are found)\n"
 		"  --shape-pool=<KB>   size of the shape cache\n"
 		"  --overlay-size      report the DOS overlay buffer size, then stop\n"
 		"  --version           show the version, then stop\n"
@@ -317,8 +309,14 @@ static const char *take_data_dir(int argc, char **argv)
 			program_name = argv[++i];
 		else if (i > 0 && strcmp(argv[i], "--help") == 0)
 			show_help();
-		else
+		else {
+			/* The programs read these too; which synth plays is the backend's choice. */
+			if (strcmp(argv[i], "--adlib") == 0 || strncmp(argv[i], "--adlib=", 8) == 0)
+				audio_choose_music('a');
+			else if (strcmp(argv[i], "--roland") == 0 || strncmp(argv[i], "--roland=", 9) == 0)
+				audio_choose_music('r');
 			game_argv[game_argc++] = argv[i];
+		}
 	}
 	return dir != NULL && dir[0] != '\0' ? dir : NULL;
 }
@@ -452,6 +450,11 @@ int main(int argc, char **argv)
 	view_lock = MTY_MutexCreate();
 	program_done = MTY_WaitableCreate();
 
+	if (test_input_active()) {
+		audio_start();
+		MTY_ThreadDetach(launcher_thread, NULL);
+		run_without_window();
+	}
 	app = MTY_AppCreate(0, on_frame, on_event, NULL);
 	if (app == NULL)
 		plat_fatal("Could not start the window system.");

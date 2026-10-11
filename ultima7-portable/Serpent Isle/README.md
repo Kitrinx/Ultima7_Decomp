@@ -4,14 +4,15 @@ A port of the reconstructed Ultima VII Part Two: Serpent Isle source (originally
 C++ for DOS) to modern systems, built the same way as the Black Gate port beside it. The game
 code talks to the machine only through a small platform layer; the first backend uses
 [libmatoya](https://github.com/snowcone-ltd/libmatoya) for the window, input, video, audio and
-files, and [Munt](https://github.com/munt/munt) to emulate the Roland MT-32 for music and sound
+files, [Munt](https://github.com/munt/munt) to emulate the Roland MT-32 and
+[Nuked OPL3](https://github.com/nukeykt/Nuked-OPL3) to emulate the AdLib, for music and sound
 effects.
 
 **Status: in progress.** The program does not link yet. Everything below about running it
 follows the Black Gate port and is untested for Serpent Isle until said otherwise.
 
 Everything needed to build is in this folder and the shared folders beside it. You supply the
-game data and the MT-32 ROMs.
+game data and, optionally, the MT-32 ROMs.
 
 ## Layout
 
@@ -33,6 +34,7 @@ Shared with the Black Gate port, one level up in `ultima7-portable/`:
 ```text
   third_party/libmatoya/ libmatoya, vendored at a pinned commit (MIT)
   third_party/munt/      Munt's mt32emu library, vendored at a pinned tag (LGPL 2.1+)
+  third_party/nuked-opl3/ Nuked OPL3, vendored at a pinned commit (LGPL 2.1+)
   packaging/             the players' README (both games), the macOS Info.plist, notarizing
   assets/icons/          program icons
 ```
@@ -81,13 +83,17 @@ game writes to this folder, so use a copy.
 
 **MT-32 ROMs.** Munt needs the Roland MT-32 control and PCM ROM images (any file names; they
 are recognised by content). The game looks in the `U7_MT32_ROMS` folder, else the
-`U7_MT32_ROM_DIR` build option, else the game data folder. Without them there is no music or
-MIDI sound effects.
+`U7_MT32_ROM_DIR` build option, else the game data folder. Without them music and effects play
+on the AdLib.
+
+**AdLib.** An OPL3 (Nuked OPL3) at any port, filtered as a Sound Blaster 16's FM output; its
+timers run on the program clock, so the drivers detect it as on DOS. `--adlib` picks it even
+when the ROMs are found; `--roland` picks the MT-32 (with no ROMs it falls back to the AdLib).
 
 **Sound setup.** `SERPENT.CFG` is the setup the DOS installer wrote: line 1 the music card and
 port (`s 388` as shipped), line 2 the speech card's port, IRQ, DMA and `o` for the Sound
-Blaster Pro driver (`220 7 1 o`). When the ROMs are found the game reads line 1 as Roland
-(`r 330`), and with no full speech line it reads `220 7 1 o`, whatever the file says
+Blaster Pro driver (`220 7 1 o`). The game reads line 1 as Roland (`r 330`) when the MT-32
+plays and AdLib (`a 388`) otherwise, and with no full speech line it reads `220 7 1 o`, whatever the file says
 (`platform/matoya/files.c`). The file on disk is never changed. The in-game audio options
 still turn each part off.
 
@@ -116,8 +122,8 @@ The game's own command-line options, as switches (with what SI.EXE took):
 | `--cheat` | `manimal` | cheat keys |
 | `--cheat-start` | `s` | with `--cheat`: move at once, move anything, an Avatar that can't die, debug output |
 | `--speech` | `v` | speech on |
-| `--adlib[=port]` | `a` | AdLib music (every score plays on the MT-32 here) |
-| `--roland[=n]` | `r` | Roland MT-32 music |
+| `--adlib[=port]` | `a` | AdLib music and effects, even when the MT-32 ROMs are found |
+| `--roland[=n]` | `r` | Roland MT-32 music and effects (the default when the ROMs are found) |
 | `--shape-pool=KB` | `c` | size of the shape cache |
 | `--overlay-size` | `b` | report the DOS overlay buffer size, then stop |
 | `--version` | `?` | show the version, then stop |
@@ -149,14 +155,14 @@ Other environment variables:
 
 ## Dependencies
 
-As the Black Gate port: both libraries are vendored as plain source at fixed versions (see
+As the Black Gate port: the libraries are vendored as plain source at fixed versions (see
 `../third_party/README.md`). Munt is under the GNU Lesser General Public License 2.1 or later:
 if you distribute a binary, you must also make it possible to relink it against a modified
-mt32emu, and include `../third_party/munt/mt32emu/COPYING.LESSER.txt`.
+mt32emu, and include `../third_party/munt/mt32emu/COPYING.LESSER.txt`. Nuked OPL3 is under the
+same licence (`../third_party/nuked-opl3/LICENSE`).
 
 ## Known limitations
 
 - **Null-pointer reads** that the DOS game relied on are served by a fault handler that exists
   only for arm64 macOS, x64 Windows and x64 Linux so far (`platform/matoya/nullpage.c`).
   Elsewhere they crash. Each one found is meant to be fixed in the game code.
-- **AdLib** music is not supported; music is the MT-32 or nothing.

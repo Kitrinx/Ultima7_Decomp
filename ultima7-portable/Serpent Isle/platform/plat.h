@@ -14,6 +14,7 @@
 #ifndef PLAT_H
 #define PLAT_H
 
+#include <stdbool.h>
 #include <stdint.h>
 
 /* The game packs its own structs; these keep the host's layout on both sides. */
@@ -186,6 +187,14 @@ void plat_find_close(plat_find *find);
 /* MIDI to the MT-32: a channel message (1-3 bytes) or a whole SysEx message. */
 int16_t plat_midi_available(void);
 void plat_midi_send(const uint8_t *message, int16_t length);
+
+/* AdLib: an OPL3 at any base port, written and read as the DOS drivers did with out and in.
+ * port & 3: 0 the address, 1 the data, 2 the second bank's address, 3 its data. Reads give
+ * the status register, with timers 1 and 2 running on the platform clock. Safe from any
+ * thread; each port access counts as 1 microsecond on that clock, as an ISA access took. */
+bool plat_opl_available(void);
+void plat_opl_write(uint16_t port, uint8_t value);
+uint8_t plat_opl_read(uint16_t port);
 
 /* Digitised speech: unsigned 8-bit mono at the given rate. Never blocks. */
 void plat_pcm_start(uint32_t rate);

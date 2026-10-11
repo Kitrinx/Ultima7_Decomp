@@ -1174,10 +1174,14 @@ static void ConfigureSound(char *configuration, char *preferences, int16_t *irq,
 	preferencesPath = new char[strlen(preferences) + 1];
 	strcpy(preferencesPath, preferences);
 	SoundSetup.readConfig(configuration);
-	if ((uint8_t) SoundSetup.isAdlib() || (uint8_t) SoundSetup.isSoundBlaster())
+	if ((uint8_t) SoundSetup.isAdlib() || (uint8_t) SoundSetup.isSoundBlaster()) {
+		strcpy(MusicFlexName, DataPath(StaticPath, "introadm.dat"));
 		*device = MUSIC_DEVICE_ADLIB;
-	if ((uint8_t) SoundSetup.isRoland())
+	}
+	if ((uint8_t) SoundSetup.isRoland()) {
+		strcpy(MusicFlexName, DataPath(StaticPath, "intrordm.dat"));
 		*device = MUSIC_DEVICE_MT32;
+	}
 	*irq = SoundSetup.irq;
 	*port = SoundSetup.speechPort;
 	*dma = SoundSetup.dma;
@@ -1199,19 +1203,6 @@ static void ConfigureSound(char *configuration, char *preferences, int16_t *irq,
 			SpeechEnabled = 1;
 	}
 	delete[] preferencesPath;
-}
-
-/* The music card named on the command line or configured, made the MT-32 if there is one.
- * Without one, songs and effects are off, as with no card configured. */
-static uint8_t ChooseMusicDevice(uint8_t device)
-{
-	if (device != 0 && plat_midi_available()) {
-		strcpy(MusicFlexName, DataPath(StaticPath, "intrordm.dat"));
-		return MUSIC_DEVICE_MT32;
-	}
-	Shared::DisableMusic();
-	Shared::DisableSfx();
-	return 0;
 }
 
 /* A second argument starting with A or R picks the Adlib or Roland music over the configured card.
@@ -1240,7 +1231,6 @@ static void Main(int16_t argc, char **argv)
 			break;
 		}
 	}
-	device = ChooseMusicDevice(device);
 	InstallFatalHook();
 	SystemTimer.install();
 	InitEnvironment();

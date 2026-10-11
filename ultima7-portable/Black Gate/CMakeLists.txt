@@ -127,10 +127,10 @@ if(U7_BACKEND_MATOYA)
     add_subdirectory("${U7_THIRD_PARTY_DIR}/munt/mt32emu" mt32emu EXCLUDE_FROM_ALL)
 
     file(GLOB U7_MATOYA_SOURCES CONFIGURE_DEPENDS "${U7_PLATFORM_DIR}/matoya/*.c")
-    add_executable(u7 ${U7_MATOYA_SOURCES})
+    add_executable(u7 ${U7_MATOYA_SOURCES} "${U7_THIRD_PARTY_DIR}/nuked-opl3/opl3.c")
     # Ultima7(.exe), so it can sit in the game folder beside the DOS U7.EXE without clashing.
     set_target_properties(u7 PROPERTIES OUTPUT_NAME Ultima7)
-    target_include_directories(u7 PRIVATE "${U7_PLATFORM_DIR}")
+    target_include_directories(u7 PRIVATE "${U7_PLATFORM_DIR}" "${U7_THIRD_PARTY_DIR}/nuked-opl3")
     target_link_libraries(u7 PRIVATE u7_game Matoya::matoya mt32emu)
     if(WIN32)
         target_link_libraries(u7 PRIVATE dbghelp)       # names null accesses (nullpage.c)

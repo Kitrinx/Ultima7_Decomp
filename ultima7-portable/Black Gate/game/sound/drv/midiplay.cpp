@@ -10,6 +10,7 @@
 #include "init.h"
 #include "plat.h"
 #include "mt32drv.h"
+#include "adlibdrv.h"
 
 /*
  * The MIDI player: sound effects on borrowed channels, and a Standard MIDI File
@@ -103,8 +104,8 @@ void ( *DriverPitchEntry)(int16_t, int16_t, int16_t);
 void ( *DriverProgramEntry)(int16_t, int16_t);
 void ( *DriverPortEntry)(int16_t);
 void ( *DriverSysexEntry)(int32_t, int16_t, void *);
-void ( *DriverReleaseChannelEntry)(void);
-void ( *DriverClaimChannelEntry)(void);
+void ( *DriverReleaseChannelEntry)(int16_t);
+void ( *DriverClaimChannelEntry)(int16_t);
 void (*SoundTickFirst)(void) = 0;
 void *TimbreBank;
 char unused_global_7[20];       /* never referenced */
@@ -950,6 +951,22 @@ int16_t LoadSoundDriver(char *timbres, char *)
 			DriverSysexEntry = Mt32Sysex;
 			DriverReleaseChannelEntry = 0;
 			DriverClaimChannelEntry = 0;
+		}
+		if (MusicDevice == MUSIC_DEVICE_ADLIB) {
+			DriverDescribeEntry = AdlibDescribe;
+			DriverInitEntry = AdlibInit;
+			DriverShutdownEntry = AdlibShutdown;
+			DriverTimerEntry = AdlibTimer;
+			DriverNoteEntry = AdlibNote;
+			DriverControlEntry = AdlibControl;
+			DriverPitchEntry = AdlibPitch;
+			DriverProgramEntry = AdlibProgram;
+			DriverPortEntry = AdlibPort;
+			DriverSysexEntry = AdlibSysex;
+			DriverReleaseChannelEntry = AdlibReleaseVoice;
+			DriverClaimChannelEntry = AdlibClaimVoice;
+		}
+		if (MusicDevice == MUSIC_DEVICE_MT32 || MusicDevice == MUSIC_DEVICE_ADLIB) {
 			SoundDriverInfo = DriverDescribeEntry();
 			if (DriverInitEntry(TimbreBank) == 0) {
 				FreeFarHeap(TimbreBank);

@@ -354,8 +354,7 @@ static int16_t Run(int16_t argc, char **argv)
 	char *timbres = 0;
 	char song[26];
 	if (Config.hasMusic()) {
-		/* Any music device plays the MT-32 score. */
-		if (Config.isRoland() || Config.isAdlib() || Config.isSoundBlaster()) {
+		if (Config.isRoland()) {
 			driver = "static\\mt32mpu.adv";
 			timbres = "static\\xmidi.mt";
 			strcpy(song, "static\\r_sintro.xmi");
@@ -366,7 +365,7 @@ static int16_t Run(int16_t argc, char **argv)
 		}
 		if (driver)
 			MusicDriver = new SoundDriver(driver, timbres, 0, 0, 0, 0, 1);
-		/* Without an MT-32 there is no music. */
+		/* Without the synth there is no music. */
 		if (MusicDriver && !MusicDriver->isOpen()) {
 			delete MusicDriver;
 			MusicDriver = 0;

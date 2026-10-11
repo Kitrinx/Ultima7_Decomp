@@ -1,8 +1,9 @@
 #ifndef AIL_H
 #define AIL_H
 
-/* The Miles Audio Interface Library 2.14 calls the game makes, over native drivers: the MT-32
- * XMIDI driver (MT32MPU.ADV) and the Sound Blaster digital driver (SBDIG.ADV, SBPDIG.ADV).
+/* The Miles Audio Interface Library 2.14 calls the game makes, over native drivers: the XMIDI
+ * drivers for the MT-32 (MT32MPU.ADV) and the Ad Lib (ADLIB.ADV), and the Sound Blaster digital
+ * driver (SBDIG.ADV, SBPDIG.ADV).
  * AIL_register_driver takes the loaded .ADV image and picks the native driver by the device it
  * names. Timers are the platform's; the drivers run on its sound tick.
  */

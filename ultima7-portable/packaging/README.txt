@@ -8,7 +8,8 @@ DOSBox:
   Serpent    Ultima VII Part Two: Serpent Isle (with The Silver Seed)
 
 They are only the programs: you need your own copy of each game you want to
-play. Music also needs Roland MT-32 ROM files, which are not included.
+play. Music plays as on an AdLib card, or on a Roland MT-32 if you add its ROM
+files, which are not included.
 
 The Serpent Isle port is new and has so far been tested on macOS only.
 
@@ -21,10 +22,10 @@ WHAT YOU NEED
      Black Gate:     usually next to U7.EXE and ULTIMA7.COM
      Serpent Isle:   usually next to SI.EXE and SERPENT.COM
 
-2. For music and sound effects (optional): the Roland MT-32 ROM files, a
-   "control" ROM and a "PCM" ROM. They must be from an MT-32; CM-32L ROMs are
-   not used. The file names don't matter. Without them the games play with
-   speech but no music or sound effects.
+2. For MT-32 music and sound effects (optional): the Roland MT-32 ROM files,
+   a "control" ROM and a "PCM" ROM. They must be from an MT-32; CM-32L ROMs
+   are not used. The file names don't matter. Without them the games play
+   their AdLib music and sound effects instead.
 
 
 SETTING UP
@@ -90,8 +91,8 @@ When you are done, Documents looks like this:
          MT32_PCM.ROM      (any name; optional)
          SI.EXE, SERPENT.COM and other files from the game
 
-You don't need to change any settings: music turns on by itself when the
-ROMs are there, and speech is always on.
+You don't need to change any settings: music plays on the MT-32 when the
+ROMs are there and on the AdLib otherwise, and speech is always on.
 
 
 PLAYING
@@ -128,6 +129,8 @@ Started from a terminal, each program accepts options (--help lists them):
 
   --data <folder>    use the game files in this folder
   --cheat            enable the original cheat keys
+  --adlib            AdLib music and effects, even when the MT-32 ROMs are there
+  --roland           MT-32 music and effects (the default when the ROMs are there)
   --mt32-short-waits skip the original's pauses after MT-32 memory writes
 
 and these environment variables:
@@ -141,7 +144,7 @@ Messages and errors are printed to the terminal.
 LICENSES
 --------
 
-These programs include libmatoya (MIT license) and Munt's mt32emu (GNU Lesser
-General Public License 2.1 or later). Their license texts are in the licenses
-folder. Ultima VII and Serpent Isle are trademarks of Electronic Arts; the
+These programs include libmatoya (MIT license), Munt's mt32emu and Nuked
+OPL3 (both GNU Lesser General Public License 2.1 or later). Their license texts
+are in the licenses folder. Ultima VII and Serpent Isle are trademarks of Electronic Arts; the
 game files are not included.

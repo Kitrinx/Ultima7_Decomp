@@ -128,10 +128,10 @@ if(U7_BACKEND_MATOYA)
     add_subdirectory("${U7_THIRD_PARTY_DIR}/munt/mt32emu" mt32emu EXCLUDE_FROM_ALL)
 
     file(GLOB U7_MATOYA_SOURCES CONFIGURE_DEPENDS "${U7_PLATFORM_DIR}/matoya/*.c")
-    add_executable(serpent ${U7_MATOYA_SOURCES})
+    add_executable(serpent ${U7_MATOYA_SOURCES} "${U7_THIRD_PARTY_DIR}/nuked-opl3/opl3.c")
     # Serpent(.exe), so it can sit in the game folder beside the DOS SI.EXE without clashing.
     set_target_properties(serpent PROPERTIES OUTPUT_NAME Serpent)
-    target_include_directories(serpent PRIVATE "${U7_PLATFORM_DIR}")
+    target_include_directories(serpent PRIVATE "${U7_PLATFORM_DIR}" "${U7_THIRD_PARTY_DIR}/nuked-opl3")
     target_link_libraries(serpent PRIVATE u7_game Matoya::matoya mt32emu)
     if(WIN32)
         target_link_libraries(serpent PRIVATE dbghelp)       # names null accesses (nullpage.c)

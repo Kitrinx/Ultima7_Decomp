@@ -12,6 +12,7 @@ void YieldAdlibChannels();
 int16_t StartAdlibSound(uint8_t *, int16_t);
 void SetAdlibVolume(int16_t, int16_t);
 void ResetAdlib(void);
+void SetAdlibSoundArea(uint8_t *start, int32_t size);
 #ifdef __cplusplus
 }
 #endif

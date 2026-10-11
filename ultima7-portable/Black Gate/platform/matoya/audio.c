@@ -1,12 +1,14 @@
-/* Sound: the 60 Hz sound tick, MT-32 music through Munt, and 8-bit speech.
+/* Sound: the 60 Hz sound tick, MT-32 music through Munt, AdLib through Nuked OPL3, and
+ * 8-bit speech.
  *
  * One audio thread renders 800-frame blocks at 48 kHz, exactly one tick each:
  *
  *   sound tick (under the sound lock) -> queued MIDI into Munt -> Munt renders
- *   -> speech mixed in -> queued to the output, kept 3-4 blocks ahead
+ *   -> queued OPL writes into the OPL3, which renders -> speech mixed in
+ *   -> queued to the output, kept 3-4 blocks ahead
  *
- * MIDI and speech arrive from any thread through locked queues, so only this thread
- * touches Munt.
+ * MIDI, OPL writes and speech arrive from any thread through locked queues, so only this
+ * thread touches Munt and the OPL3.
  */
 #include <math.h>
 #include <stdio.h>
@@ -14,6 +16,8 @@
 #include <string.h>
 
 #include <mt32emu/c_interface/c_interface.h>
+
+#include "opl3.h"
 
 #include "backend.h"
 
@@ -27,6 +31,7 @@
 #define QUEUE_AHEAD_MS 60
 #define MIDI_BUFFER_SIZE (256 * 1024)
 #define PCM_BUFFER_SIZE 65536
+#define OPL_QUEUE_SIZE 16384
 
 /* Sound lock: recursive per thread. */
 static MTY_Mutex *sound_mutex;
@@ -38,6 +43,9 @@ static MTY_Audio *output;
 static FILE *dump;
 static MTY_Thread *thread;
 static MTY_Atomic32 running;
+static _Thread_local bool on_audio_thread;
+/* 'a' for --adlib, 'r' for --roland, 0 to use the MT-32 when its ROMs are found. */
+static char music_choice;
 
 /* MIDI bytes waiting for the audio thread. */
 static MTY_Mutex *midi_mutex;
@@ -198,13 +206,13 @@ static mt32emu_context open_synth(void)
 	if (dir == NULL || dir[0] == '\0')
 		dir = U7_DEFAULT_ROM_DIR;
 	if (!find_roms(dir, control, pcm, sizeof control)) {
-		fprintf(stderr, "u7: no MT-32 ROMs in %s; music is off\n", dir);
+		fprintf(stderr, "u7: no MT-32 ROMs in %s\n", dir);
 		return NULL;
 	}
 	context = mt32emu_create_context(reports, NULL);
 	if (mt32emu_add_rom_file(context, control) != MT32EMU_RC_ADDED_CONTROL_ROM
 		|| mt32emu_add_rom_file(context, pcm) != MT32EMU_RC_ADDED_PCM_ROM) {
-		fprintf(stderr, "u7: MT-32 ROMs in %s could not be loaded; music is off\n", dir);
+		fprintf(stderr, "u7: MT-32 ROMs in %s could not be loaded\n", dir);
 		mt32emu_free_context(context);
 		return NULL;
 	}
@@ -212,11 +220,154 @@ static mt32emu_context open_synth(void)
 	mt32emu_set_analog_output_mode(context, MT32EMU_AOM_ACCURATE);
 	mt32emu_set_stereo_output_samplerate(context, RATE);
 	if (mt32emu_open_synth(context) != MT32EMU_RC_OK) {
-		fprintf(stderr, "u7: the MT-32 synth could not start; music is off\n");
+		fprintf(stderr, "u7: the MT-32 synth could not start\n");
 		mt32emu_free_context(context);
 		return NULL;
 	}
 	return context;
+}
+
+/* ---- AdLib ----
+ *
+ * Port state and the timers live here, on the caller's thread, so a status read sees its own
+ * writes at once; the register writes go to the audio thread, which owns the chip. */
+
+typedef struct opl_write {
+	int64_t us;
+	uint16_t reg;
+	uint8_t value;
+	bool in_tick;
+} opl_write;
+
+static opl3_chip opl;
+static MTY_Mutex *opl_mutex;
+static opl_write opl_queue[OPL_QUEUE_SIZE];
+static uint32_t opl_count;
+static bool opl_overflow_logged;
+static bool opl_reset_pending;
+/* The chip renders only once a program has written to it. */
+static bool opl_in_use;
+static int64_t opl_last_block_us;
+
+static uint16_t opl_address;
+static bool opl_new_mode;
+/* ISA time spent in port accesses, which native code doesn't take. */
+static int64_t opl_io_us;
+
+/* Timer 1 counts 80 us steps, timer 2 320 us steps, from the preset up to 256; each overflow
+ * sets the timer's flag unless masked, and reloads. */
+static struct {
+	uint8_t preset;
+	bool running;
+	bool masked;
+	bool flag;
+	int64_t start_us;
+	int64_t period_us;
+	int64_t overflows_seen;
+} opl_timer[2];
+
+bool plat_opl_available(void)
+{
+	return opl_mutex != NULL;
+}
+
+static int64_t opl_clock_us(void)
+{
+	return backend_elapsed_us() + opl_io_us;
+}
+
+static void opl_update_timers(int64_t now)
+{
+	for (int i = 0; i < 2; i++) {
+		int64_t overflows;
+
+		if (!opl_timer[i].running || now < opl_timer[i].start_us)
+			continue;
+		overflows = (now - opl_timer[i].start_us) / opl_timer[i].period_us;
+		if (overflows > opl_timer[i].overflows_seen) {
+			opl_timer[i].overflows_seen = overflows;
+			if (!opl_timer[i].masked)
+				opl_timer[i].flag = true;
+		}
+	}
+}
+
+/* Register 4: bit 7 clears both flags (and nothing else); otherwise bits 6 and 5 mask timers
+ * 1 and 2, and bits 0 and 1 start or stop them. */
+static void opl_timer_control(uint8_t value, int64_t now)
+{
+	opl_update_timers(now);
+	if (value & 0x80) {
+		opl_timer[0].flag = opl_timer[1].flag = false;
+		return;
+	}
+	for (int i = 0; i < 2; i++) {
+		bool start = (value & (1 << i)) != 0;
+
+		opl_timer[i].masked = (value & (i == 0 ? 0x40 : 0x20)) != 0;
+		if (opl_timer[i].masked)
+			opl_timer[i].flag = false;
+		if (start && !opl_timer[i].running) {
+			opl_timer[i].start_us = now;
+			opl_timer[i].period_us = (256 - opl_timer[i].preset) * (i == 0 ? 80 : 320);
+			opl_timer[i].overflows_seen = 0;
+		}
+		opl_timer[i].running = start;
+	}
+}
+
+void plat_opl_write(uint16_t port, uint8_t value)
+{
+	int64_t now;
+
+	MTY_MutexLock(opl_mutex);
+	opl_io_us++;
+	now = opl_clock_us();
+	switch (port & 3) {
+	case 0:
+		opl_address = value;
+		break;
+	case 2:
+		/* The second bank answers only in OPL3 mode, apart from the mode register. */
+		opl_address = (opl_new_mode || value == 0x05) ? 0x100 | value : value;
+		break;
+	default:
+		if (opl_address == 0x02 || opl_address == 0x03)
+			opl_timer[opl_address - 2].preset = value;
+		else if (opl_address == 0x04)
+			opl_timer_control(value, now);
+		else if (opl_address == 0x105)
+			opl_new_mode = (value & 1) != 0;
+		if (opl_count < OPL_QUEUE_SIZE) {
+			opl_queue[opl_count++] = (opl_write) {backend_elapsed_us(), opl_address, value,
+				on_audio_thread};
+		} else if (!opl_overflow_logged) {
+			opl_overflow_logged = true;
+			plat_log("u7: OPL queue full, writes dropped\n");
+		}
+		break;
+	}
+	MTY_MutexUnlock(opl_mutex);
+}
+
+/* An OPL3's status: bit 7 when either flag is up, bit 6 timer 1, bit 5 timer 2; the low bits
+ * an OPL2 set read as zero. */
+uint8_t plat_opl_read(uint16_t port)
+{
+	uint8_t status = 0;
+
+	(void) port;
+	MTY_MutexLock(opl_mutex);
+	opl_io_us++;
+	opl_update_timers(opl_clock_us());
+	if (opl_timer[0].flag)
+		status |= 0x40;
+	if (opl_timer[1].flag)
+		status |= 0x20;
+	if (status != 0)
+		status |= 0x80;
+	MTY_MutexUnlock(opl_mutex);
+	return status;
 }
 
 /* ---- Speech ---- */
@@ -324,6 +475,166 @@ static void mix_speech(int16_t *block)
 	MTY_MutexUnlock(pcm_mutex);
 }
 
+/* FM through a Sound Blaster 16. The YAC512 DAC holds each of the chip's 49716 Hz samples until
+ * the next, and the board passes that staircase on without further filtering in the audio
+ * band, so the hold's droop (about 1.3 dB at 16 kHz) is the whole response. Each 48 kHz
+ * sample is the staircase band-limited to 22 kHz: a Kaiser-windowed sinc integrated over one
+ * hold, taken from a table of kernels at FM_PHASES points between two chip samples. */
+#define OPL_RATE 49716
+#define FM_TAPS 64
+#define FM_PHASES 256
+#define FM_CUTOFF_HZ 22000.0
+#define FM_KAISER_BETA 8.0
+#define FM_HISTORY 128
+
+static float fm_kernel[FM_PHASES + 1][FM_TAPS];
+static int16_t fm_history[FM_HISTORY][2];
+/* Chip samples made since reset, and the output's place among them: fm_index plus
+ * fm_step_rest / RATE. */
+static int64_t fm_made;
+static int64_t fm_index;
+static int64_t fm_step_rest;
+
+static double bessel_i0(double x)
+{
+	double sum = 1.0, term = 1.0;
+
+	for (int k = 1; k < 32; k++) {
+		term *= (x / (2.0 * k)) * (x / (2.0 * k));
+		sum += term;
+	}
+	return sum;
+}
+
+/* The band-limiting kernel at v chip samples from its centre. */
+static double fm_lowpass(double v)
+{
+	const double pi = 3.14159265358979323846;
+	double fc = FM_CUTOFF_HZ / OPL_RATE;
+	double half = FM_TAPS / 2 - 1;
+	double r = v / half;
+	double sinc = v == 0.0 ? 1.0 : sin(2.0 * pi * fc * v) / (2.0 * pi * fc * v);
+
+	if (r <= -1.0 || r >= 1.0)
+		return 0.0;
+	return 2.0 * fc * sinc * bessel_i0(FM_KAISER_BETA * sqrt(1.0 - r * r))
+		/ bessel_i0(FM_KAISER_BETA);
+}
+
+static void opl_filter_init(void)
+{
+	for (int phase = 0; phase <= FM_PHASES; phase++) {
+		double sum = 0.0;
+
+		for (int k = 0; k < FM_TAPS; k++) {
+			/* The held sample covers [u - 1, u] of the kernel; Simpson's rule over it. */
+			double u = (double) phase / FM_PHASES + k - FM_TAPS / 2, area = 0.0;
+
+			for (int s = 0; s <= 16; s++)
+				area += (s == 0 || s == 16 ? 1 : s % 2 ? 4 : 2) * fm_lowpass(u - 1.0 + s / 16.0);
+			fm_kernel[phase][k] = (float) (area / 48.0);
+			sum += fm_kernel[phase][k];
+		}
+		for (int k = 0; k < FM_TAPS; k++)
+			fm_kernel[phase][k] = (float) (fm_kernel[phase][k] / sum);
+	}
+}
+
+static void opl_filter_reset(void)
+{
+	memset(fm_history, 0, sizeof fm_history);
+	fm_made = 0;
+	fm_index = 0;
+	fm_step_rest = 0;
+}
+
+/* The next 48 kHz frame, running the chip as far ahead as the kernel reaches. */
+static void opl_filter(double *left, double *right)
+{
+	double at = (double) fm_step_rest / RATE * FM_PHASES, l = 0.0, r = 0.0;
+	int phase = (int) at;
+	double blend = at - phase;
+
+	while (fm_made <= fm_index + FM_TAPS / 2) {
+		OPL3_Generate(&opl, fm_history[fm_made % FM_HISTORY]);
+		fm_made++;
+	}
+	for (int k = 0; k < FM_TAPS; k++) {
+		int64_t n = fm_index + FM_TAPS / 2 - k;
+		double c = fm_kernel[phase][k] + blend * (fm_kernel[phase + 1][k] - fm_kernel[phase][k]);
+
+		if (n < 0)
+			continue;
+		l += c * fm_history[n % FM_HISTORY][0];
+		r += c * fm_history[n % FM_HISTORY][1];
+	}
+	*left = l;
+	*right = r;
+	fm_step_rest += OPL_RATE;
+	fm_index += fm_step_rest / RATE;
+	fm_step_rest %= RATE;
+}
+
+/* Frame in this block where a write made at us lands: its place between the last block and
+ * this one. */
+static uint32_t opl_offset(int64_t us, int64_t now)
+{
+	int64_t span = now - opl_last_block_us;
+	int64_t offset;
+
+	if (span <= 0 || us <= opl_last_block_us)
+		return 0;
+	offset = (us - opl_last_block_us) * BLOCK_FRAMES / span;
+	return (uint32_t) (offset >= BLOCK_FRAMES ? BLOCK_FRAMES - 1 : offset);
+}
+
+/* Plays the queued writes into the chip at their places in the block, in the order they were
+ * made, and adds what it renders. The sound tick runs as the block is made, so its writes land
+ * at the block's end, after the game's: a note's timbre is loaded before the tick keys it. */
+static void mix_opl(int16_t *block)
+{
+	static opl_write taken[OPL_QUEUE_SIZE];
+	static opl_write ordered[OPL_QUEUE_SIZE];
+	static uint32_t at[OPL_QUEUE_SIZE];
+	int64_t now = backend_elapsed_us();
+	uint32_t count, n = 0, next = 0;
+	bool reset;
+
+	MTY_MutexLock(opl_mutex);
+	count = opl_count;
+	memcpy(taken, opl_queue, count * sizeof *taken);
+	opl_count = 0;
+	reset = opl_reset_pending;
+	opl_reset_pending = false;
+	MTY_MutexUnlock(opl_mutex);
+
+	if (reset) {
+		OPL3_Reset(&opl, OPL_RATE);
+		opl_filter_reset();
+		opl_in_use = false;
+	}
+	for (uint32_t i = 0; i < count; i++) {
+		at[n] = taken[i].in_tick ? BLOCK_FRAMES - 1 : opl_offset(taken[i].us, now);
+		if (n > 0 && at[n] < at[n - 1])
+			at[n] = at[n - 1];
+		ordered[n++] = taken[i];
+	}
+	if (count > 0)
+		opl_in_use = true;
+	for (uint32_t i = 0; opl_in_use && i < BLOCK_FRAMES; i++) {
+		double left, right;
+
+		while (next < n && at[next] <= i) {
+			OPL3_WriteRegBuffered(&opl, ordered[next].reg, ordered[next].value);
+			next++;
+		}
+		opl_filter(&left, &right);
+		block[2 * i] = clamp_sample(block[2 * i] + (int32_t) lrint(left));
+		block[2 * i + 1] = clamp_sample(block[2 * i + 1] + (int32_t) lrint(right));
+	}
+	opl_last_block_us = now;
+}
+
 /* ---- Between programs ---- */
 
 void audio_reset(void)
@@ -343,6 +654,15 @@ void audio_reset(void)
 	pcm_phase = 0.0;
 	lp_x1 = lp_x2 = lp_y1 = lp_y2 = 0.0;
 	MTY_MutexUnlock(pcm_mutex);
+
+	MTY_MutexLock(opl_mutex);
+	opl_count = 0;
+	opl_overflow_logged = false;
+	opl_reset_pending = true;
+	opl_address = 0;
+	opl_new_mode = false;
+	memset(opl_timer, 0, sizeof opl_timer);
+	MTY_MutexUnlock(opl_mutex);
 }
 
 /* ---- Audio thread ---- */
@@ -361,6 +681,7 @@ static void render_block(int16_t *block)
 	} else {
 		memset(block, 0, BLOCK_FRAMES * 2 * sizeof *block);
 	}
+	mix_opl(block);
 	mix_speech(block);
 	if (dump != NULL)
 		fwrite(block, sizeof *block, BLOCK_FRAMES * 2, dump);
@@ -381,6 +702,7 @@ static void *audio_thread(void *opaque)
 	int64_t blocks = 0;
 
 	(void) opaque;
+	on_audio_thread = true;
 	while (MTY_Atomic32Get(&running)) {
 		if (ahead_of_output(blocks, start_us)) {
 			MTY_Sleep(2);
@@ -394,6 +716,11 @@ static void *audio_thread(void *opaque)
 	return NULL;
 }
 
+void audio_choose_music(char device)
+{
+	music_choice = device;
+}
+
 void audio_start(void)
 {
 	const char *dump_path = getenv("U7_AUDIO_DUMP");
@@ -401,8 +728,15 @@ void audio_start(void)
 	sound_mutex = MTY_MutexCreate();
 	midi_mutex = MTY_MutexCreate();
 	pcm_mutex = MTY_MutexCreate();
+	opl_mutex = MTY_MutexCreate();
 	sb_filter_init();
-	synth = open_synth();
+	opl_filter_init();
+	OPL3_Reset(&opl, OPL_RATE);
+	if (music_choice != 'a')
+		synth = open_synth();
+	if (synth == NULL)
+		fprintf(stderr, music_choice == 'r' ? "u7: --roland needs the MT-32 ROMs; playing AdLib\n"
+			: "u7: playing AdLib music\n");
 	/* Playback starts once two blocks are queued. Scripted test runs stay silent. */
 	if (getenv("U7_TEST_INPUT") == NULL)
 		output = MTY_AudioCreate(RATE, 34, 250, 2, NULL, true);

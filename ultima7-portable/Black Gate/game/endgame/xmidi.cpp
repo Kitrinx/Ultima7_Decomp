@@ -1,8 +1,9 @@
-/* Black Gate ENDGAME.EXE: xmidi.c, and the timbre loading of sounddrv.c. */
+/* Black Gate ENDGAME.EXE: xmidi.c, and the driver and timbre loading of sounddrv.c. */
 
 #include "u7port.h"
 #include "plat.h"
-#include "ailmt32.h"
+#include "memapi.h"
+#include "ail.h"
 #include "xmidi.h"
 
 namespace Endgame {
@@ -14,16 +15,56 @@ static uint32_t ReadBigLong(const uint8_t *p)
 	return (uint32_t) p[0] << 24 | (uint32_t) p[1] << 16 | (uint32_t) p[2] << 8 | p[3];
 }
 
-SoundDriver::SoundDriver(const char *timbres)
+/* Loads the driver and starts it at its default settings. Without its synth (DOS stopped with
+ * "Sound hardware not found") the ending goes on silent. */
+SoundDriver::SoundDriver(const char *driver, const char *timbres)
 {
+	int16_t file = plat_file_open(driver, PLAT_FILE_READ);
+	drvr_desc *descriptor;
+	uint16_t size;
+
+	handle = -1;
+	image = 0;
+	timbreCache = 0;
+	timbreFile = -1;
+	if (file < 0)
+		return;
+	size = (uint16_t) plat_file_length(file);
+	image = AllocateFarHeap(size, 2);
+	plat_file_read(file, image, size);
+	plat_file_close(file);
+	handle = AIL_register_driver(image);
+	if (handle == -1)
+		return;
+	descriptor = AIL_describe_driver(handle);
+	if (!AIL_detect_device(handle, descriptor->default_IO, descriptor->default_IRQ,
+			descriptor->default_DMA, descriptor->default_DRQ)) {
+		AIL_release_driver_handle(handle);
+		handle = -1;
+		return;
+	}
+	AIL_init_driver(handle, descriptor->default_IO, descriptor->default_IRQ,
+		descriptor->default_DMA, descriptor->default_DRQ);
+	size = AIL_default_timbre_cache_size(handle);
+	if (size) {
+		timbreCache = AllocateFarHeap(size, 0);
+		AIL_define_timbre_cache(handle, timbreCache, size);
+	}
 	timbreFile = plat_file_open(timbres, PLAT_FILE_READ);
 }
 
 SoundDriver::~SoundDriver()
 {
-	Mt32Close("SCSCSCFY!");
+	if (handle != -1) {
+		AIL_shutdown_driver(handle, "SCSCSCFY!");
+		AIL_release_driver_handle(handle);
+	}
 	if (timbreFile >= 0)
 		plat_file_close(timbreFile);
+	if (timbreCache)
+		FreeFarHeap(timbreCache);
+	if (image)
+		FreeFarHeap(image);
 }
 
 /* Reads a timbre from the timbre file, its size in its first word; 0 if absent. Entries are a
@@ -57,9 +98,9 @@ void SoundDriver::installTimbre(uint8_t bank, uint8_t patch)
 {
 	uint8_t *data;
 
-	if (!Mt32TimbreStatus(bank, patch)) {
+	if (!AIL_timbre_status(handle, bank, patch)) {
 		data = loadTimbre(bank, patch);
-		Mt32InstallTimbre(bank, patch, data);
+		AIL_install_timbre(handle, bank, patch, data);
 		delete[] data;
 	}
 }
@@ -94,12 +135,25 @@ XmidiPlayer::XmidiPlayer(SoundDriver *d, const char *name)
 		}
 	}
 	handles = new int16_t[count];
-	for (uint16_t i = 0; i < count; i++)
+	states = new void *[count];
+	for (uint16_t i = 0; i < count; i++) {
 		handles[i] = -1;
+		states[i] = 0;
+	}
 }
 
 XmidiPlayer::~XmidiPlayer()
 {
+	for (uint16_t i = 0; i < count; i++) {
+		if (handles[i] != -1) {
+			if (isPlaying(i))
+				stop(i);
+			AIL_release_sequence_handle(driver->handle, handles[i]);
+		}
+		if (states[i])
+			FreeFarHeap(states[i]);
+	}
+	delete[] states;
 	delete[] handles;
 	delete[] data;
 }
@@ -107,38 +161,42 @@ XmidiPlayer::~XmidiPlayer()
 /* Registers sequence n the first time, with the timbres it asks for, and starts it. */
 void XmidiPlayer::play(int16_t n)
 {
-	int16_t request;
+	uint16_t request;
 
 	if (driver == 0 || n >= count)
 		return;
 	if (handles[n] == -1) {
-		handles[n] = Mt32RegisterSequence(data, size, n);
-		if (handles[n] == -1)
+		states[n] = AllocateFarHeap(AIL_state_table_size(driver->handle), 0);
+		handles[n] = AIL_register_sequence(driver->handle, data, n, states[n], 0);
+		if (handles[n] == -1) {
+			FreeFarHeap(states[n]);
+			states[n] = 0;
 			return;
-		while ((request = Mt32TimbreRequest(handles[n])) != -1)
+		}
+		while (((request = AIL_timbre_request(driver->handle, handles[n])) >> 8) != 0xff)
 			driver->installTimbre((uint8_t) (request >> 8), (uint8_t) request);
 	}
-	Mt32StartSequence(handles[n]);
+	AIL_start_sequence(driver->handle, handles[n]);
 }
 
 void XmidiPlayer::stop(int16_t n)
 {
 	if (driver && n < count)
-		Mt32StopSequence(handles[n]);
+		AIL_stop_sequence(driver->handle, handles[n]);
 }
 
 uint8_t XmidiPlayer::isDone(int16_t n)
 {
 	if (driver == 0 || n >= count)
 		return 1;
-	return Mt32SequenceStatus(handles[n]) == SEQ_DONE;
+	return AIL_sequence_status(driver->handle, handles[n]) == SEQ_DONE;
 }
 
 uint8_t XmidiPlayer::isPlaying(int16_t n)
 {
 	if (driver == 0 || n >= count)
 		return 0;
-	return Mt32SequenceStatus(handles[n]) == SEQ_PLAYING;
+	return AIL_sequence_status(driver->handle, handles[n]) == SEQ_PLAYING;
 }
 
 }

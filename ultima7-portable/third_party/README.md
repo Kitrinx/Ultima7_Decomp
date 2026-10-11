@@ -7,6 +7,7 @@ metadata). Update them only on purpose, and record the new version here.
 | --- | --- | --- | --- | --- |
 | libmatoya | https://github.com/snowcone-ltd/libmatoya | commit `952f2a22bdb4cf832db110c00aa3e57952358eae` | MIT (`libmatoya/LICENSE`) | the whole repository |
 | Munt mt32emu | https://github.com/munt/munt | tag `libmt32emu_2_8_3`, commit `3b05ec276f9e605af86b0eaef7f5eda43477a31f` | LGPL 2.1 or later (`munt/mt32emu/COPYING.LESSER.txt`) | the `mt32emu` library only |
+| Nuked OPL3 | https://github.com/nukeykt/Nuked-OPL3 | commit `765ec962e473aeb767e4cba74ffdc8f588ffbfe8` (source version 1.8) | LGPL 2.1 or later (`nuked-opl3/LICENSE`) | the whole repository |
 
 To refresh one from a checkout of its upstream repository:
 
@@ -16,6 +17,9 @@ git -C /path/to/libmatoya archive <commit> | tar -x -C third_party/libmatoya
 
 rm -rf third_party/munt && mkdir third_party/munt
 git -C /path/to/munt archive <commit> mt32emu | tar -x -C third_party/munt
+
+rm -rf third_party/nuked-opl3 && mkdir third_party/nuked-opl3
+git -C /path/to/Nuked-OPL3 archive <commit> | tar -x -C third_party/nuked-opl3
 ```
 
 libmatoya writes its build output to `libmatoya/bin/`, which is ignored.

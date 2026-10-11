@@ -501,14 +501,14 @@ uint32_t plat_milliseconds(void)
 
 void plat_sleep(uint32_t milliseconds)
 {
-	MTY_Sleep(milliseconds);
+	backend_sleep(milliseconds);
 }
 
 void plat_yield(void)
 {
 	plat_pump();
 	video_refresh(false);
-	MTY_Sleep(1);
+	backend_sleep(1);
 }
 
 void plat_game_timer_add(plat_timer_fn fn)

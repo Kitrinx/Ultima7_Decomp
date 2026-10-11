@@ -83,6 +83,7 @@ void plat_video_present(const uint8_t *pixels)
 {
 	last_pixels = pixels;
 	convert(pixels);
+	test_input_frame();
 }
 
 uint8_t *video_screen(void)
@@ -110,7 +111,7 @@ void plat_video_wait_retrace(void)
 	now = backend_elapsed_us();
 	next = (int64_t) ((floor((double) now / period_us) + 1.0) * period_us);
 	/* Rounding up lands past the boundary, so the next wait finds a later one. */
-	MTY_Sleep((uint32_t) ((next - now + 999) / 1000));
+	backend_sleep((uint32_t) ((next - now + 999) / 1000));
 }
 
 static uint32_t integer_scale(MTY_Size view)

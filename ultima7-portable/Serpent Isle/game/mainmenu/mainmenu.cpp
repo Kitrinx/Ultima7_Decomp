@@ -814,12 +814,6 @@ void ConfigureSound(char *configuration, char *preferences, int16_t *irq, int16_
 		MusicResourceType = 0;
 		*device = MUSIC_DEVICE_ADLIB;
 	}
-	/* Only the MT-32 plays music here: any music card becomes one while MIDI output is there. */
-	if (*device != 0 && plat_midi_available()) {
-		MusicResourceType = 1;
-		*device = MUSIC_DEVICE_MT32;
-	} else
-		*device = 0;
 	*irq = SoundSetup.getIrq();
 	*port = SoundSetup.getPort();
 	*dma = SoundSetup.getDma();

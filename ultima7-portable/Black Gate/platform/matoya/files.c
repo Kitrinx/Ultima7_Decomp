@@ -219,9 +219,9 @@ static FILE *use_handle(int16_t file, int op)
 }
 
 /* U7.CFG is the sound setup the DOS installer wrote: line 1 the music card, line 2 the speech
- * card's port, IRQ and DMA. Here music is MT-32 emulation or nothing, and speech always has an
- * output, so the game reads a setup to match: "r 330" when the MT-32 ROMs were found, and a
- * speech line when the file has none. The rest is the file's own; the file is never changed. */
+ * card's port, IRQ and DMA. Here music is MT-32 or AdLib emulation, and speech always has an
+ * output, so the game reads a setup to match: "r 330" when the MT-32 plays, else "a 388", and
+ * a speech line when the file has none. The rest is the file's own; the file is never changed. */
 static bool is_sound_config(const char *name)
 {
 	return strcasecmp(name, "u7.cfg") == 0 || strcasecmp(name, ".\\u7.cfg") == 0;
@@ -244,8 +244,7 @@ static FILE *open_sound_config(const char *name)
 	snprintf(copy, sizeof copy, "%s", speech);
 	for (char *t = strtok(copy, " \t"); t != NULL; t = strtok(NULL, " \t"))
 		tokens++;
-	if (plat_midi_available())
-		snprintf(music, sizeof music, "r 330");
+	snprintf(music, sizeof music, plat_midi_available() ? "r 330" : "a 388");
 	if (tokens < 3)
 		snprintf(speech, sizeof speech, "220 7 1");
 

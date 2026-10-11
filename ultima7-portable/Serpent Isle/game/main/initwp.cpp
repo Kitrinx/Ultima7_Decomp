@@ -23,7 +23,6 @@
 #include "memapi.h"
 #include "init.h"
 #include "initwp.h"
-#include "plat.h"
 #include "text.h"
 
 char *const TfaFileName = "TFA.DAT";
@@ -53,9 +52,6 @@ void InitWorldPhysics(void)
 
 uint8_t InitSound(void)
 {
-	/* music plays only on the MT-32: any configured music device becomes one */
-	if (MusicDevice != 0)
-		MusicDevice = plat_midi_available() ? MUSIC_DEVICE_MT32 : 0;
 	if (MusicDevice != 0) {
 		drvr_desc *description;
 		int32_t driverSize;

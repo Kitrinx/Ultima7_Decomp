@@ -1,0 +1,16 @@
+# U7STRAX.DRV: the Flex header, then the MT-32 and AdLib driver records.
+
+u7strax.drv: u7strax.com mt32drv.com adlibdrv.com
+	copy /b u7strax.com+mt32drv.com+adlibdrv.com u7strax.drv
+
+u7strax.com: u7strax.asm
+	tasm u7strax
+	tlink /t u7strax
+
+mt32drv.com: mt32drv.asm
+	tasm mt32drv
+	tlink /t mt32drv
+
+adlibdrv.com: adlibdrv.asm
+	tasm adlibdrv
+	tlink /t adlibdrv

@@ -41,6 +41,13 @@ MTY_Size backend_view_size(void);
 bool test_input_active(void);
 /* Queues the U7_TEST_INPUT steps that are due, as if the user had made them. Game thread. */
 void test_input_poll(void);
+/* Called as each frame is presented. Game thread. */
+void test_input_frame(void);
+/* True when the script runs the game on its fixed clock, which test_clock_us reads. */
+bool test_clock_fixed(void);
+int64_t test_clock_us(void);
+/* Sleeps, and moves the fixed clock on by the same time. Game thread. */
+void backend_sleep(uint32_t milliseconds);
 
 /* video.c */
 void video_init(void);
@@ -75,6 +82,8 @@ void nullpage_install(void);
 void nullpage_reset(void);
 
 /* audio.c */
+/* 'a' plays AdLib, 'r' the MT-32; otherwise the MT-32 when its ROMs are found. */
+void audio_choose_music(char device);
 void audio_start(void);
 /* Stops the sound tick, flushes queued MIDI and speech, and restarts the synth as powered on. */
 void audio_reset(void);

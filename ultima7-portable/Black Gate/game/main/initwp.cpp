@@ -97,9 +97,6 @@ void UploadRolandPatches(void)
 
 uint8_t InitSound(void)
 {
-	/* music plays only on the MT-32: any configured music device becomes one */
-	if (MusicDevice != 0)
-		MusicDevice = plat_midi_available() ? MUSIC_DEVICE_MT32 : 0;
 	if (MusicDevice != 0) {
 		MusicFileName = MusicDevice == MUSIC_DEVICE_ADLIB ? AdlibMusicFile : Mt32MusicFile;
 		StartSoundDriver(BuildPath(StaticPath, VoiceFlexName, 0), BuildPath(StaticPath, DriverFileName, 0));
@@ -210,6 +207,7 @@ uint8_t AllocSfxBuffers(void)
 			/* each channel gets a quarter of the buffer */
 			for (i = 0; i < 4; i++)
 				SfxChannels[i].buffer = (uint8_t *)buffer + i * maxSize;
+			SetAdlibSoundArea((uint8_t *)buffer, maxSize << 2);
 		} else
 			return 0;
 	}
