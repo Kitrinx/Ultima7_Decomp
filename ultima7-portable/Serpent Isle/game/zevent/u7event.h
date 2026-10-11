@@ -56,8 +56,9 @@ struct MouseState {
 	uint8_t released() { return action == MOUSE_RELEASE && button == 1; }
 };
 
-extern uint8_t CursorDrawn, CursorTracking;
-extern int16_t CursorX, CursorY, DoubleClickDelay;
+extern "C" uint8_t CursorDrawn, CursorTracking;
+extern "C" int16_t CursorX, CursorY;
+extern int16_t DoubleClickDelay;
 
 /* Starts with the cursor hidden and redrawn as the mouse moves. */
 struct MouseDevice : MouseHandler {

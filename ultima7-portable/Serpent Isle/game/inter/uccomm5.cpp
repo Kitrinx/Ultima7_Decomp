@@ -37,7 +37,9 @@ extern objref AvatarRef;
 
 const char UsecodeSpeechFileName[] = "u7speech.spc";  /* never referenced */
 int16_t RemoteViewActive = 0;
+extern "C" {
 int16_t MarkedX = 0, MarkedY = 0, MarkedZ = 0;      /* declared Coord where they are used */
+}
 int8_t UnusedMarkByte = 0;
 
 extern uint8_t StrikeItemWithWeapon(objref actor, objref target, int16_t weapon);

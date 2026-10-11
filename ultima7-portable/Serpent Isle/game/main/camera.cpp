@@ -48,7 +48,7 @@ struct View {
 
 Camera gCamera;
 extern View Viewport;
-extern View ScreenView;
+extern "C" View ScreenView;
 extern "C" void FillRectangle(View *view, int16_t x0, int16_t y0, int16_t x1, int16_t y1, int8_t color);
 
 WorldView MainWorldView;

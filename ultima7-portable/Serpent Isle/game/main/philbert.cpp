@@ -11,7 +11,7 @@
 #include "uccomm7.h"
 
 /* Where usecode last saved the Avatar's position. */
-extern int16_t MarkedX, MarkedY, MarkedZ;
+extern "C" int16_t MarkedX, MarkedY, MarkedZ;
 
 /* The PHILBERT.DAT file in a saved game: the keyring, infravision and the saved Avatar position. */
 struct PhilbertSaver : DataNode {
