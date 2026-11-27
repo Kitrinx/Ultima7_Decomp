@@ -81,6 +81,7 @@ const char *files_root(void);
 /* Whether the game's folder holds its files; if not, says what is wrong in message. */
 bool files_check_data(int16_t game, char *message, size_t size);
 void files_reset(void);
+bool files_make_dir(const char *dir);
 
 /* settings.c */
 /* Finds the user data folder and reads settings.json from it. */

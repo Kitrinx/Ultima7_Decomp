@@ -132,6 +132,6 @@ void plat_save_settings(void)
 		if (!MTY_JSONObjGetInt16(saved, defaults[i].name, &value))
 			MTY_JSONObjSetInt(saved, defaults[i].name, defaults[i].value);
 	}
-	if (!MTY_Mkdir(data_dir) || !MTY_JSONWriteFile(MTY_JoinPath(data_dir, "settings.json"), saved))
+	if (!files_make_dir(data_dir) ||!MTY_JSONWriteFile(MTY_JoinPath(data_dir, "settings.json"), saved))
 		fprintf(stderr, "u7: could not write the settings to %s\n", data_dir);
 }

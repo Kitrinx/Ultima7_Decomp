@@ -124,6 +124,25 @@ static bool is_dir(const char *path)
 	return stat_path(path, &st) && (st.st_mode & S_IFMT) == S_IFDIR;
 }
 
+/* Makes the folder and any missing ones above it, from "/" or "\" paths, relative or not. */
+bool files_make_dir(const char *dir)
+{
+	char path[PATH_SIZE];
+
+	snprintf(path, sizeof path, "%s", dir);
+	for (char *p = path + 1; *p != '\0'; p++) {
+		if (is_separator(*p) && !is_separator(p[-1]) && p[-1] != ':') {
+			char separator = *p;
+
+			*p = '\0';
+			if (!is_dir(path))
+				mkdir(path, 0777);
+			*p = separator;
+		}
+	}
+	return is_dir(path) || mkdir(path, 0777) == 0;
+}
+
 static bool join(char *path, size_t size, const char *dir, const char *name)
 {
 	int n = snprintf(path, size, "%s/%s", dir, name);
@@ -264,7 +283,7 @@ static bool resolve_write(const char *dos, char *path)
 	char dir_dos[PATH_SIZE], game_dir[PATH_SIZE];
 	int make = MAKE_LAST;
 
-	if (!is_dir(save_root()) && !MTY_Mkdir(save_root()))
+	if (!files_make_dir(save_root()))
 		return false;
 	snprintf(dir_dos, sizeof dir_dos, "%.*s", (int) (last - dos), dos);
 	if (!saves_only(dos) && resolve_in(files_root(), dir_dos, FIND, game_dir) && is_dir(game_dir))
@@ -552,8 +571,7 @@ uint32_t plat_disk_free(void)
 	const char *root = save_root();
 	uint64_t bytes = 0;
 
-	if (!is_dir(root))
-		MTY_Mkdir(root);
+	files_make_dir(root);
 #ifdef _WIN32
 	ULARGE_INTEGER available;
 
