@@ -297,17 +297,20 @@ static Box CentredText(Menu *menu, int16_t x, int16_t y, const char *text, int16
 static const struct {
 	const char *name;
 	const char *label;
+	int16_t first;
 	int16_t count;
 	const char *values[11];
 } Settings[] = {
-	{"aspect", "Screen shape", 3, {"4:3", "16:10", "16:9"}},
-	{"filter", "Scaling", 2, {"Fill", "Pixel-exact"}},
-	{"fullscreen", "Full screen", 2, {"Off", "On"}},
-	{"sound", "Sound", 4, {"Best available", "Adlib", "MT32", "OPL3"}},
-	{"volume", "Volume", 11, {"0%", "10%", "20%", "30%", "40%", "50%", "60%", "70%", "80%", "90%", "100%"}},
-	{"npc_pace", "Townsfolk pace", 2, {"Original", "Relaxed"}},
-	{"runes", "Runic writing", 2, {"Original", "Translated"}},
-	{"cheats", "Cheats", 2, {"Off", "On"}},
+	{"aspect", "Screen shape", 0, 3, {"4:3", "16:10", "16:9"}},
+	{"filter", "Scaling", 0, 2, {"Fill", "Pixel-exact"}},
+	{"fullscreen", "Full screen", 0, 2, {"Off", "On"}},
+	{"frame_limit", "Frame limit", PLAT_GAME_FPS_MIN, PLAT_GAME_FPS_MAX - PLAT_GAME_FPS_MIN + 1,
+		{"2 FPS", "3 FPS", "4 FPS", "5 FPS", "6 FPS", "7 FPS", "8 FPS", "9 FPS", "10 FPS"}},
+	{"sound", "Sound", 0, 4, {"Best available", "Adlib", "MT32", "OPL3"}},
+	{"volume", "Volume", 0, 11, {"0%", "10%", "20%", "30%", "40%", "50%", "60%", "70%", "80%", "90%", "100%"}},
+	{"npc_pace", "Townsfolk pace", 0, 2, {"Original", "Relaxed"}},
+	{"runes", "Runic writing", 0, 2, {"Original", "Translated"}},
+	{"cheats", "Cheats", 0, 2, {"Off", "On"}},
 };
 
 #define SETTING_COUNT ((int16_t) (sizeof Settings / sizeof Settings[0]))
@@ -322,7 +325,7 @@ static int16_t SettingAvailable(int16_t row, int16_t value)
 
 static int16_t SettingValue(int16_t row)
 {
-	int16_t value = plat_setting(Settings[row].name);
+	int16_t value = (int16_t) (plat_setting(Settings[row].name) - Settings[row].first);
 
 	return value >= 0 && value < Settings[row].count && SettingAvailable(row, value) ? value : 0;
 }
@@ -334,7 +337,7 @@ static void StepSetting(int16_t row, int16_t step)
 	do {
 		value = (int16_t) ((value + step + count) % count);
 	} while (!SettingAvailable(row, value));
-	plat_set_setting(Settings[row].name, value);
+	plat_set_setting(Settings[row].name, (int16_t) (value + Settings[row].first));
 }
 
 static void DrawSettings(Menu *menu, int16_t selected, Box *rows)

@@ -5,7 +5,7 @@ struct ItemId;
 
 void PlayAmbientSounds();
 void ResetContinuousSounds();
-void PlayItemAmbientSound(uint16_t type, int16_t frame, int16_t dx, int16_t dy);
+void PlayItemAmbientSound(uint16_t type, int16_t frame, int16_t dx, int16_t dy, bool playOneShots = true);
 extern "C" void PlaySoundAtItem(uint8_t sound, ItemId object);
 
 struct CellCoord;

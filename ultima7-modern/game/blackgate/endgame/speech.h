@@ -19,7 +19,7 @@ struct SpeechStream {
 	~SpeechStream();
 	void readHeader();
 	uint8_t nextBlock();
-	void play(int16_t marker);
+	void play(int16_t marker, int16_t hqSlot);
 	void service();
 	uint8_t isDone();
 	void stopPlayback();

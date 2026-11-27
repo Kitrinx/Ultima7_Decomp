@@ -32,6 +32,9 @@ is one folder. `U7_USER_DATA` overrides either place.
 `--saves <dir>` puts the saves elsewhere. Saves of the original games are not imported. MT-32
 ROMs are looked for in both game folders and the user data folder (or `U7_MT32_ROMS`).
 
+**Frame limit** in the start menu caps gameplay in both games. It offers whole values from
+2 to 10 FPS and defaults to 10 FPS. Lower values slow game turns and world animation.
+
 The start menu's **Sound** setting offers **Best available** (default), **Adlib**, **MT32** and
 **OPL3**. Best available uses MT32 with loaded ROMs, otherwise OPL3; MT32 cannot be selected without
 ROMs. Adlib preserves the original OPL2 sound. OPL3 keeps FM instruments and envelopes, adds
@@ -42,6 +45,17 @@ Positional effects use their world location; continuous merged ambience stays ce
 Original game files remain unchanged. The choice covers music and effects, including intros, menus
 and endings. Volume controls either device and speech; native sound toggles still apply.
 `--adlib`, `--roland` and `--opl3` override the choice for one run.
+
+## Black Gate speech
+
+Modern plays high quality speech from an optional `u7hq.spc` in Black Gate's `STATIC` folder.
+Slots 0–33 use the clip numbers from `U7SPEECH.SPC` for gameplay and menus. Slot 34 plays the
+Guardian's intro, and slots 35–37 play the three ending cues. For a missing or unusable entry
+the game plays the corresponding original audio through the legacy player.
+
+`u7hq.spc` is a FLEX archive with PCM WAV entries. Each populated entry holds little-endian
+48 kHz, 16-bit stereo PCM (WAV format 1). Modern mixes those frames at their native rate and
+uses the usual speech toggle and volume setting.
 
 ## Layout
 

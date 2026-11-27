@@ -72,10 +72,19 @@ uint8_t SpeechStream::nextBlock()
 }
 
 /* Finds the first sound block at or after marker and starts playing from there. */
-void SpeechStream::play(int16_t marker)
+void SpeechStream::play(int16_t marker, int16_t hqSlot)
 {
 	int16_t current = -1;
 	uint8_t timeConstant = 0;
+
+	if (marker == -1 && plat_pcm_play_hq("static\\u7hq.spc", hqSlot)) {
+		/* The host has the whole cue. Let it drain like the last VOC block. */
+		Playing = this;
+		active = 1;
+		type = VOC_END;
+		left = 0;
+		return;
+	}
 
 	if (PeekWord(source + VOC_CHECK) != VOC_CHECK_VALUE)
 		return;

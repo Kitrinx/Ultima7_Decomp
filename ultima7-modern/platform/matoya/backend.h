@@ -100,7 +100,10 @@ void nullpage_install(void);
 void nullpage_reset(void);
 
 /* audio.c */
+#define U7_AUDIO_RATE 48000
 void audio_start(void);
+/* Takes ownership of interleaved, little-endian signed stereo samples at the output rate. */
+void audio_play_pcm16(uint8_t *samples, uint32_t frames);
 /* The volume in tenths of full, 0 to 10. */
 void audio_set_volume(int16_t tenths);
 /* Applies the sound-device setting before a program starts. */

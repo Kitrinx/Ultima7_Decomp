@@ -19,6 +19,7 @@ static const struct {
 	{"npc_pace", 1},        /* 1 townsfolk at half speed, 0 as the originals */
 	{"runes", 1},           /* 1 signs translated, 0 in their runes */
 	{"fullscreen", 0},
+	{"frame_limit", PLAT_GAME_FPS_MAX},
 	{"volume", 10},         /* tenths of full */
 	{"sound", 0},           /* 0 best available, 1 Adlib, 2 MT32, 3 OPL3 */
 	{"filter", 0},          /* 0 fill the window, 1 pixel-exact */
@@ -102,9 +103,11 @@ int16_t plat_setting(const char *name)
 	if (i < 0)
 		return MTY_JSONObjGetInt16(saved, name, &value) ? value : 0;
 	if (overridden[i])
-		return overrides[i];
-	if (!MTY_JSONObjGetInt16(saved, name, &value))
+		value = overrides[i];
+	else if (!MTY_JSONObjGetInt16(saved, name, &value))
 		value = defaults[i].value;
+	if (strcmp(name, "frame_limit") == 0 && (value < PLAT_GAME_FPS_MIN || value > PLAT_GAME_FPS_MAX))
+		value = PLAT_GAME_FPS_MAX;
 	return value;
 }
 

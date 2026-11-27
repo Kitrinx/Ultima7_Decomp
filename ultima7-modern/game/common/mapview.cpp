@@ -394,11 +394,11 @@ void WorldView::paintItem(int16_t handle)
 				DrawFrameNumber++;
 		}
 	}
-	if (IsAmbient(DrawType) && AnimationEnabled) {
+	if (IsAmbient(DrawType) && GameTime.running() && !GameInput.isGumpMode()) {
 		AnimationPhase = renderer.animationTick & 3;
 		PlayItemAmbientSound(DrawType, DrawFrameNumber,
-			GetDelta(Item_getX(objref(handle)), centerX),
-			GetDelta(Item_getY(objref(handle)), centerY));
+			GetDelta(Item_getX(objref(handle)), centerX), GetDelta(Item_getY(objref(handle)), centerY),
+			AnimationEnabled != 0);
 	}
 }
 
@@ -421,7 +421,7 @@ void WorldView::paint()
 
 	UpdateAnimationEnabled();
 	BargeAnimationDue = 1;
-	/* shapes and their ambient sounds step on every other draw */
+	/* Shapes and their one-shot sounds step on every other draw. */
 	if (AnimationEnabled && AnimatesEveryOtherDraw() && (++AnimationDraws & 1))
 		AnimationEnabled = 0;
 	if (AnimationEnabled) {

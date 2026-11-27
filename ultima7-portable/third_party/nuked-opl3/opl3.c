@@ -1095,11 +1095,22 @@ static void OPL3_ProcessSlot(opl3_slot *slot)
     OPL3_SlotGenerate(slot);
 }
 
+/* The waveform tables represent negative zero as -1. */
+static int16_t OPL3_MixChannel(const opl3_channel *channel)
+{
+    int32_t mix = 0;
+    for (uint8_t i = 0; i < 4; i++)
+    {
+        int16_t sample = *channel->out[i];
+        mix += sample == -1 ? 0 : sample;
+    }
+    return (int16_t)mix;
+}
+
 inline void OPL3_Generate4Ch(opl3_chip *chip, int16_t *buf4)
 {
     opl3_channel *channel;
     opl3_writebuf *writebuf;
-    int16_t **out;
     int32_t mix[2];
     uint8_t ii;
     int16_t accm;
@@ -1121,8 +1132,7 @@ inline void OPL3_Generate4Ch(opl3_chip *chip, int16_t *buf4)
     for (ii = 0; ii < 18; ii++)
     {
         channel = &chip->channel[ii];
-        out = channel->out;
-        accm = *out[0] + *out[1] + *out[2] + *out[3];
+        accm = OPL3_MixChannel(channel);
 #if OPL_ENABLE_STEREOEXT
         mix[0] += (int16_t)((accm * channel->leftpan) >> 16);
 #else
@@ -1154,8 +1164,7 @@ inline void OPL3_Generate4Ch(opl3_chip *chip, int16_t *buf4)
     for (ii = 0; ii < 18; ii++)
     {
         channel = &chip->channel[ii];
-        out = channel->out;
-        accm = *out[0] + *out[1] + *out[2] + *out[3];
+        accm = OPL3_MixChannel(channel);
 #if OPL_ENABLE_STEREOEXT
         mix[0] += (int16_t)((accm * channel->rightpan) >> 16);
 #else

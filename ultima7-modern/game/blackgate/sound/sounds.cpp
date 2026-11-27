@@ -89,7 +89,7 @@ void UpdateContinuousSounds()
 }
 
 /* The sound an item of this type makes nearby, at a volume and pan set by its distance. */
-void PlayItemAmbientSound(uint16_t type, int16_t frame, int16_t dx, int16_t dy)
+void PlayItemAmbientSound(uint16_t type, int16_t frame, int16_t dx, int16_t dy, bool playOneShots)
 {
 	int16_t volume;
 	int16_t pan = 64;
@@ -106,6 +106,48 @@ void PlayItemAmbientSound(uint16_t type, int16_t frame, int16_t dx, int16_t dy)
 	/* a wide view reaches past full right */
 	if (pan < 0)
 		pan = 0;
+	switch (type) {
+	case 893:                       /* pool of water */
+		RequestContinuousSound(0, volume, pan);
+		return;
+	case 794:                       /* water */
+		RequestContinuousSound(1, volume, pan);
+		return;
+	case 157: case 776: case 777: case 779:     /* moongates */
+		RequestContinuousSound(2, volume, pan);
+		return;
+	case 305:                       /* the Guardian's portal */
+		RequestContinuousSound(3, volume, pan);
+		return;
+	/* the sphere, cube and tetrahedron generators */
+	case 234: case 235: case 236: case 237:
+		if (frame != 7)
+			RequestContinuousSound(5, volume, pan);
+		return;
+	case 238: case 239: case 240: case 241:
+		if (frame != 7)
+			RequestContinuousSound(4, volume, pan);
+		return;
+	case 242: case 243: case 244: case 245:
+		if (frame != 7)
+			RequestContinuousSound(6, volume, pan);
+		return;
+	case 755: case 767: case 770:   /* orreries */
+		RequestContinuousSound(7, volume, pan);
+		return;
+	/* a ghost, the Well of Souls, smoke and poison and sleep fields */
+	case 337: case 748: case 769: case 900: case 902:
+		RequestContinuousSound(9, volume, pan);
+		return;
+	case 168: case 230: case 786:   /* beam of light, ethereal monster, vortex cube */
+		RequestContinuousSound(10, volume, pan);
+		return;
+	case 494:                       /* bee */
+		RequestContinuousSound(11, volume, pan);
+		return;
+	}
+	if (!playOneShots)
+		return;
 	switch (type) {
 	/* fire: burning weapons, oil and fields, firepits and campfires */
 	case 551: case 553: case 630: case 739: case 782: case 825: case 895:
@@ -138,31 +180,6 @@ void PlayItemAmbientSound(uint16_t type, int16_t frame, int16_t dx, int16_t dy)
 		if (ChimeDue())
 			PlaySfx(19, volume, pan, 0);
 		break;
-	case 893:                       /* pool of water */
-		RequestContinuousSound(0, volume, pan);
-		break;
-	case 794:                       /* water */
-		RequestContinuousSound(1, volume, pan);
-		break;
-	case 157: case 776: case 777: case 779:     /* moongates */
-		RequestContinuousSound(2, volume, pan);
-		break;
-	case 305:                       /* the Guardian's portal */
-		RequestContinuousSound(3, volume, pan);
-		break;
-	/* the sphere, cube and tetrahedron generators */
-	case 234: case 235: case 236: case 237:
-		if (frame != 7)
-			RequestContinuousSound(5, volume, pan);
-		break;
-	case 238: case 239: case 240: case 241:
-		if (frame != 7)
-			RequestContinuousSound(4, volume, pan);
-		break;
-	case 242: case 243: case 244: case 245:
-		if (frame != 7)
-			RequestContinuousSound(6, volume, pan);
-		break;
 	case 711:                       /* mill stone; its flag is never set */
 		if (frame == 0 && !MillStonePlayed)
 			PlaySfx(26, volume, pan, 1);
@@ -172,13 +189,6 @@ void PlayItemAmbientSound(uint16_t type, int16_t frame, int16_t dx, int16_t dy)
 			PlaySfx(59, volume, pan, 1);
 			WaterWheelPlayed = 1;
 		}
-		break;
-	case 755: case 767: case 770:   /* orreries */
-		RequestContinuousSound(7, volume, pan);
-		break;
-	/* a ghost, the Well of Souls, smoke and poison and sleep fields */
-	case 337: case 748: case 769: case 900: case 902:
-		RequestContinuousSound(9, volume, pan);
 		break;
 	case 768: case 1010:            /* energy field, prism */
 		if (GenerateRandomIntegerInRange(100) < 20)
@@ -190,15 +200,9 @@ void PlayItemAmbientSound(uint16_t type, int16_t frame, int16_t dx, int16_t dy)
 		if (GenerateRandomIntegerInRange(100) < 10)
 			PlaySfx(104, volume, pan, 0);
 		break;
-	case 168: case 230: case 786:   /* beam of light, ethereal monster, vortex cube */
-		RequestContinuousSound(10, volume, pan);
-		break;
 	case 529:                       /* slime */
 		if (GenerateRandomIntegerInRange(100) < 5)
 			PlaySfx(GenerateRandomIntegerInRange(5) + 54, volume, pan, 0);
-		break;
-	case 494:                       /* bee */
-		RequestContinuousSound(11, volume, pan);
 		break;
 	case 389: case 391:             /* cavern */
 		if (GenerateRandomIntegerInRange(100) < 5)

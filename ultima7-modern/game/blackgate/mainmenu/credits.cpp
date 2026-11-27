@@ -69,6 +69,8 @@ static const int16_t flightY[FLIGHT_POINTS] = {
 /* Plays a speech entry and waits for it to end. */
 static void SayEntry(int16_t entry)
 {
+	if (SpeechCard.playHq(entry))
+		return;
 	SpeechCard.resetPlayback();
 	MenuSpeech.playEntry(DataPath(StaticPath, "u7speech.spc"), entry, 0);
 	SpeechCard.play(&MenuSpeech);

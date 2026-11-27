@@ -152,6 +152,21 @@ void SoundBlaster::play(SpeechCache *sound)
 	feed();
 }
 
+bool SoundBlaster::playHq(int16_t track)
+{
+	if (!ready || !plat_pcm_play_hq("static\\u7hq.spc", track))
+		return false;
+
+	/* The host has the whole clip, so only wait for it to finish. */
+	resetPlayback();
+	CurrentSpeech = nullptr;
+	SpeechStreaming = 0;
+	SpillStart = SpillCount = 0;
+	SpeechDraining = 1;
+	SpeechRunning = 1;
+	return true;
+}
+
 /* Keeps about two seconds queued ahead; the card's interrupt did this at the end of each half. */
 void SoundBlaster::feed()
 {
@@ -170,7 +185,8 @@ void SoundBlaster::feed()
 		OnDmaDone();
 	if (SpeechDraining && SpillCount == 0 && plat_pcm_pending() == 0) {
 		SpeechRunning = 0;
-		CurrentSpeech->stop();
+		if (CurrentSpeech)
+			CurrentSpeech->stop();
 		SpeechFinished = 1;
 	}
 }

@@ -21,6 +21,7 @@ public:
 	void shutdown();
 	void stop();
 	void play(SpeechCache *sound);
+	bool playHq(int16_t track);
 	void feed();
 	void queueBlock(int32_t source, uint16_t count);
 	void fail(char *message);

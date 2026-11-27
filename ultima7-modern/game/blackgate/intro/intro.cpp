@@ -82,6 +82,7 @@ using BgSound::BlockConsumed;
 
 #define SPEECH_BUFFER   2596
 #define SPEECH_RATE     16000
+#define HQ_INTRO_TRACK  34
 #define FLIGHT_POINTS   96      /* the butterfly's path over the title */
 #define FADE_TICKS      60
 #define FLIGHT_START    990     /* ticks into the song the butterfly takes off */
@@ -548,7 +549,7 @@ static void ShowGuardian(int16_t cycles, int16_t delay, int16_t firstInRate, int
 		}
 		screen.paint(-1, 0);
 		uint8_t done = 0;
-		if (SpeechEnabled) {
+		if (SpeechEnabled && !SpeechCard.playHq(HQ_INTRO_TRACK)) {
 			SpeechCard.resetPlayback();
 			Speech.play(DataPath(StaticPath, "introsnd.dat"), 5);
 			SpeechCard.play(&Speech);

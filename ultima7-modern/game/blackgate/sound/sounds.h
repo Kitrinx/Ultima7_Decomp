@@ -12,7 +12,7 @@ namespace BgSound {
 
 void PlayAmbientSounds();
 void ResetContinuousSounds();
-void PlayItemAmbientSound(uint16_t type, int16_t frame, int16_t dx, int16_t dy);
+void PlayItemAmbientSound(uint16_t type, int16_t frame, int16_t dx, int16_t dy, bool playOneShots);
 void PlaySoundAtItem(uint8_t sound, ItemId object);
 void PlaySoundAt(uint8_t sound, CellCoord x, CellCoord y);
 void RequestContinuousSound(uint8_t which, int16_t volume, int16_t pan);

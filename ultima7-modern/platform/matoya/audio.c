@@ -1,5 +1,5 @@
 /* Sound: the 60 Hz sound tick, MT-32 music through Munt, AdLib through Nuked OPL3, and
- * 8-bit speech.
+ * digitised speech.
  *
  * One audio thread renders 800-frame blocks at 48 kHz, exactly one tick each:
  *
@@ -28,7 +28,7 @@
 #define U7_DEFAULT_ROM_DIR NULL
 #endif
 
-#define RATE 48000
+#define RATE U7_AUDIO_RATE
 #define BLOCK_FRAMES (RATE / PLAT_TICKS_PER_SECOND)
 #define QUEUE_AHEAD_MS 60
 #define MIDI_BUFFER_SIZE (256 * 1024)
@@ -66,6 +66,8 @@ static uint32_t pcm_head;
 static uint32_t pcm_count;
 static uint32_t pcm_rate;
 static double pcm_phase;
+static uint8_t *pcm16_samples;
+static uint32_t pcm16_head, pcm16_count;
 
 void plat_sound_lock(void)
 {
@@ -402,13 +404,23 @@ uint8_t plat_opl_read(uint16_t port)
 
 /* ---- Speech ---- */
 
-void plat_pcm_start(uint32_t rate)
+/* Called with pcm_mutex held. */
+static void clear_speech(void)
 {
-	MTY_MutexLock(pcm_mutex);
-	pcm_rate = rate;
+	pcm_rate = 0;
 	pcm_head = 0;
 	pcm_count = 0;
 	pcm_phase = 0.0;
+	free(pcm16_samples);
+	pcm16_samples = NULL;
+	pcm16_head = pcm16_count = 0;
+}
+
+void plat_pcm_start(uint32_t rate)
+{
+	MTY_MutexLock(pcm_mutex);
+	clear_speech();
+	pcm_rate = rate;
 	MTY_MutexUnlock(pcm_mutex);
 }
 
@@ -430,7 +442,7 @@ int32_t plat_pcm_pending(void)
 	int32_t pending;
 
 	MTY_MutexLock(pcm_mutex);
-	pending = (int32_t) pcm_count;
+	pending = (int32_t) (pcm16_samples != NULL ? pcm16_count - pcm16_head : pcm_count);
 	MTY_MutexUnlock(pcm_mutex);
 	return pending;
 }
@@ -451,6 +463,16 @@ static int16_t clamp_sample(int32_t v)
 
 static double lp_b0, lp_b1, lp_b2, lp_a1, lp_a2;
 static double lp_x1, lp_x2, lp_y1, lp_y2;
+
+void audio_play_pcm16(uint8_t *samples, uint32_t frames)
+{
+	MTY_MutexLock(pcm_mutex);
+	clear_speech();
+	lp_x1 = lp_x2 = lp_y1 = lp_y2 = 0.0;
+	pcm16_samples = samples;
+	pcm16_count = frames;
+	MTY_MutexUnlock(pcm_mutex);
+}
 
 /* Butterworth biquad (Q = 1/sqrt 2). */
 static void sb_filter_init(void)
@@ -480,11 +502,30 @@ static double sb_filter(double x)
 	return y;
 }
 
-/* Adds speech to the block, each sample held for its share of 48 kHz, then filtered. Running
- * out is silence; the filter keeps running so a clip's end rings out as it did. */
+static int16_t pcm16_sample(const uint8_t *p)
+{
+	return (int16_t) (p[0] | (uint16_t) p[1] << 8);
+}
+
+static void mix_pcm16(int16_t *block)
+{
+	for (int i = 0; i < BLOCK_FRAMES && pcm16_head < pcm16_count; i++) {
+		const uint8_t *frame = pcm16_samples + 4 * pcm16_head++;
+
+		block[2 * i] = clamp_sample(block[2 * i] + pcm16_sample(frame));
+		block[2 * i + 1] = clamp_sample(block[2 * i + 1] + pcm16_sample(frame + 2));
+	}
+}
+
 static void mix_speech(int16_t *block)
 {
 	MTY_MutexLock(pcm_mutex);
+	if (pcm16_samples != NULL) {
+		mix_pcm16(block);
+		MTY_MutexUnlock(pcm_mutex);
+		return;
+	}
+	/* Keep the filter running through silence so a legacy clip's end can ring out. */
 	for (int i = 0; i < BLOCK_FRAMES; i++) {
 		double x = 0.0;
 		int32_t v;
@@ -686,10 +727,7 @@ void audio_reset(void)
 	MTY_MutexUnlock(midi_mutex);
 
 	MTY_MutexLock(pcm_mutex);
-	pcm_rate = 0;
-	pcm_head = 0;
-	pcm_count = 0;
-	pcm_phase = 0.0;
+	clear_speech();
 	lp_x1 = lp_x2 = lp_y1 = lp_y2 = 0.0;
 	MTY_MutexUnlock(pcm_mutex);
 

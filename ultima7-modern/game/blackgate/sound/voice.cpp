@@ -92,9 +92,11 @@ void Speech::play(char *path, int16_t track)
 {
 	if (SpeechOn && SpeechCardStarted) {
 		stop();
-		SpeechCard.resetPlayback();
-		SpeechStream.playEntry(path, track, 0);
-		SpeechCard.play(&SpeechStream);
+		if (!SpeechCard.playHq(track)) {
+			SpeechCard.resetPlayback();
+			SpeechStream.playEntry(path, track, 0);
+			SpeechCard.play(&SpeechStream);
+		}
 		SpeechStarted = 1;
 	} else {
 		SpeechTrack = track;

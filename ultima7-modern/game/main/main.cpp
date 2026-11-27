@@ -62,14 +62,18 @@ void AdvanceTime(void)
 	TimeAdvanceRate = 0;
 }
 
-/* World draws, and so game steps, are held to one per FrameDelay ticks of the 60 Hz timer:
- * 10 a second. The shipped game ran as fast as the machine could draw. */
-uint16_t FrameDelay = 6;
 static uint32_t PreviousFrameTime = 0;
+static uint16_t FrameTickRemainder = 0;
 
 void WaitForFrameTime(void)
 {
-	while ((uint16_t)(TickCount - PreviousFrameTime) < FrameDelay) {
+	uint16_t fps = (uint16_t) plat_setting("frame_limit");
+	uint16_t ticks = PLAT_TICKS_PER_SECOND + FrameTickRemainder;
+	uint16_t delay = ticks / fps;
+
+	/* Carry fractional ticks so rates like 7 FPS average out on the 60 Hz timer. */
+	FrameTickRemainder = ticks % fps;
+	while ((uint16_t)(TickCount - PreviousFrameTime) < delay) {
 		GameScreen.stepLighting();
 		plat_yield();
 	}
@@ -138,6 +142,6 @@ extern "C" void ResetMainGlobals(void)
 	PendingSteps = 0;
 	EndgameQuitRequested = 0;
 	TimeAdvanceRate = 0;
-	FrameDelay = 6;
 	PreviousFrameTime = 0;
+	FrameTickRemainder = 0;
 }

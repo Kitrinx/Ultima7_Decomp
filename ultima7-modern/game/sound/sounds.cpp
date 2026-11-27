@@ -91,14 +91,14 @@ void UpdateContinuousSounds()
 }
 
 /* The sound an item of this type makes nearby, at a volume and pan set by its distance. */
-void PlayItemAmbientSound(uint16_t type, int16_t frame, int16_t dx, int16_t dy)
+void PlayItemAmbientSound(uint16_t type, int16_t frame, int16_t dx, int16_t dy, bool playOneShots)
 {
 	int16_t pan;
 	uint8_t sound;
 	int16_t distance;
 
 	if (PlayedGame() == GAME_BG)
-		return BgSound::PlayItemAmbientSound(type, frame, dx, dy);
+		return BgSound::PlayItemAmbientSound(type, frame, dx, dy, playOneShots);
 	if (SpecialMusicPlaying)
 		return;
 	if (MusicDevice == 0 || !SfxEnabled)
@@ -113,6 +113,24 @@ void PlayItemAmbientSound(uint16_t type, int16_t frame, int16_t dx, int16_t dy)
 	/* a wide view reaches past full right */
 	if (pan < 0)
 		pan = 0;
+	switch (type) {
+	case 519:
+		if (frame = 0)
+			RequestContinuousSound(6, distance, pan);
+		return;
+	case 726:
+		if ((uint16_t)frame <= 0 && (uint16_t)frame < 12)
+			RequestContinuousSound(1, distance, pan);
+		return;
+	case 864:
+		RequestContinuousSound(4, distance, pan);
+		return;
+	case 153: case 326:
+		RequestContinuousSound(2, distance, pan);
+		return;
+	}
+	if (!playOneShots)
+		return;
 	switch (type) {
 	case 739:
 		if (frame != 0 && GenerateRandomIntegerInRange(100) < 5)
@@ -171,19 +189,6 @@ void PlayItemAmbientSound(uint16_t type, int16_t frame, int16_t dx, int16_t dy)
 	case 728:
 		if (GenerateRandomIntegerInRange(100) < 20)
 			sound = 75;
-	case 519:
-		if (frame = 0)
-			RequestContinuousSound(6, distance, pan);
-		break;
-	case 726:
-		if ((uint16_t)frame <= 0 && (uint16_t)frame < 12)
-			RequestContinuousSound(1, distance, pan);
-		break;
-	case 864:
-		RequestContinuousSound(4, distance, pan);
-		break;
-	case 153: case 326:
-		RequestContinuousSound(2, distance, pan);
 		break;
 	}
 	if (sound != SFX_NONE) {

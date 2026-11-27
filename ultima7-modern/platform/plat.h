@@ -40,12 +40,16 @@ void plat_set_played_game(int16_t game);
 /* The npc_pace setting: 1 when townsfolk run their routines at half speed (the default), 0 for
  * the original pace. */
 int16_t plat_relaxed_npc_pace(void);
+
+#define PLAT_GAME_FPS_MIN 2
+#define PLAT_GAME_FPS_MAX 10
+
 /* Settings by name, kept in settings.json and across resets; names not listed below read from
  * the file alone, 0 when absent (tests use no_start_items, full_rate_animation and
  * original_lighting). A command-line switch overrides one for the run until it is set here.
  *   aspect 0 4:3, 1 16:10, 2 16:9    npc_pace 1 relaxed, 0 original    runes 1 translated
  *   fullscreen 0    volume 10 (tenths)    sound 0 best available, 1 Adlib, 2 MT32, 3 OPL3
- *   filter 0 fill, 1 pixel-exact    cheats 0 */
+ *   filter 0 fill, 1 pixel-exact    cheats 0    frame_limit 2–10 FPS (default 10) */
 int16_t plat_setting(const char *name);
 void plat_set_setting(const char *name, int16_t value);
 /* Writes settings.json. */
@@ -240,7 +244,9 @@ static inline uint8_t plat_opl_pan_value(int16_t pan)
 void plat_pcm_start(uint32_t rate);
 /* Queues samples; returns how many were taken. */
 int32_t plat_pcm_queue(const uint8_t *samples, int32_t count);
-/* Samples queued and not yet played. */
+/* Plays a FLEX entry containing a 48 kHz stereo PCM WAV. False leaves playback intact. */
+bool plat_pcm_play_hq(const char *archive, int16_t entry);
+/* Frames queued and not yet played. */
 int32_t plat_pcm_pending(void);
 void plat_pcm_stop(void);
 

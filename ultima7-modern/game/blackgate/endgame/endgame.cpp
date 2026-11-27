@@ -63,6 +63,10 @@ using BgSound::SoundConfig;
 #define NO_FRAME        155     /* where the Guardian cries "No! You must not!" */
 #define DAMN_FRAME      34      /* flic2 draws the overlay only after this frame */
 
+#define HQ_VOC1_SLOT    35
+#define HQ_VOC2_SLOT    36
+#define HQ_VOC3_SLOT    37
+
 #define PAGE_TICKS      1000    /* each epilogue page, unless a key is pressed */
 #define LAST_TICKS      36000L
 
@@ -241,7 +245,7 @@ static int16_t Run(int16_t argc, char **argv)
 			Timer_set(&timer, FRAME_TICKS);
 			if (i == NO_FRAME) {
 				if (speech)
-					voice->play(-1);
+					voice->play(-1, HQ_VOC1_SLOT);
 				else
 					sayNo++;
 			}
@@ -274,7 +278,7 @@ static int16_t Run(int16_t argc, char **argv)
 			voc2 = new uint8_t[file.chunk.size];
 			speaker = new SpeechStream(voc2, file.chunk.size);
 			file.readChunk(voc2);
-			speaker->play(-1);
+			speaker->play(-1, HQ_VOC2_SLOT);
 		}
 		if (music) {
 			score->play(song + 1);
@@ -393,7 +397,7 @@ static int16_t Run(int16_t argc, char **argv)
 			flic.rewind();
 		}
 		if (speaker)
-			speaker->play(-1);
+			speaker->play(-1, HQ_VOC3_SLOT);
 		/* No score counts as silent. */
 		if (speech) {
 			while (!speaker->isDone() || (score && score->isPlaying(song + 1))) {
